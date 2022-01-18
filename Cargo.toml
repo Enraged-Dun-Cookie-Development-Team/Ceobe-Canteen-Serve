@@ -1,0 +1,11 @@
+[package]
+name = "Ceobe-Canteen-Serve"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tungstenite = "0.14.0"
+url = "2.2.2"
+device_query = "0.2.8"
