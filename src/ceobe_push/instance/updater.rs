@@ -44,20 +44,20 @@ impl Updater {
     ) -> HashMap<String, Vec<DataItem>> {
         income
             .into_iter()
-            .map(|(k, v)| (k.clone(), self.inner_checker(&k, v)))
+            .map(|(k, v)| (k.clone(), self.inner_checker(k, v)))
             .collect()
     }
     /// 内部检查更新，并更新 `last_id`
-    fn inner_checker(&mut self, name: &str, income: Vec<DataItem>) -> Vec<DataItem> {
+    fn inner_checker(&mut self, name: String, income: Vec<DataItem>) -> Vec<DataItem> {
         let new_id = income.get(0).unwrap().get_id().to_string();
         // 检擦是否为最新
-        let res = if let Some(last_id) = self.last_id.get(name) {
+        let res = if let Some(last_id) = self.last_id.get(&name) {
             Self::inner_check_update(&*last_id, income).unwrap_or_default()
         } else {
             income
         };
         // 更新
-        self.last_id.insert(name.to_string(), new_id);
+        self.last_id.insert(name, new_id);
 
         res
     }
