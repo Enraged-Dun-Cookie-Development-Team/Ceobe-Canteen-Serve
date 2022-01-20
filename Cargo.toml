@@ -27,3 +27,13 @@ features =[
     "rt-multi-thread",
     "time"
 ]
+
+[dependencies.reqwest]
+version="0.11.9"
+
+[dependencies.serde]
+version="1.0.133"
+features = ["derive"]
+
+[dependencies.serde_json]
+version="1.0.75"
