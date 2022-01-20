@@ -1,11 +1,8 @@
 use std::sync::Arc;
 
-use futures::{SinkExt, StreamExt};
-use tokio::{net::TcpListener, runtime, sync::broadcast};
-use tokio_tungstenite::{
-    accept_hdr_async, connect_async,
-    tungstenite::{handshake::client::Request, Message},
-};
+use futures::StreamExt;
+use tokio::runtime;
+use tokio_tungstenite::{connect_async, tungstenite::Message};
 use url::Url;
 
 const DUN_BACKEND: &str = "ws://127.0.0.1/";
