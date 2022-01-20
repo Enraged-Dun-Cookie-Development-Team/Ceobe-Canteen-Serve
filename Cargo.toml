@@ -1,11 +1,29 @@
 [package]
-name = "Ceobe-Canteen-Serve"
+name = "ceobe-canteen-serve"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tungstenite = "0.14.0"
 url = "2.2.2"
 device_query = "0.2.8"
+#state = "0.5.2"
+futures = "0.3.19"
+
+[dependencies.futures-util]
+version = "0.3"
+default-features = false
+features = [ "std","sink"] 
+
+[dependencies.tokio-tungstenite]
+version = "0.16.1"
+
+[dependencies.tokio]
+version="1.15.0"
+features =[
+    "sync",
+    "rt",
+    "rt-multi-thread",
+    "time"
+]
