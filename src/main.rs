@@ -6,7 +6,7 @@ use tokio_tungstenite::{connect_async, tungstenite::Message};
 use url::Url;
 
 const DUN_BACKEND: &str = "ws://127.0.0.1/";
-const SERVE_URL: &str = "http://localhost";
+const PUSH_URL: &str = "http://localhost";
 fn main() {
     // 最简单异步服务
     let rt = runtime::Builder::new_multi_thread()
@@ -25,7 +25,7 @@ async fn task() {
         .expect("Can not Connect To Ws Server");
     // 广播分发
 
-    let url = Url::parse(SERVE_URL).unwrap();
+    let url = Url::parse(PUSH_URL).unwrap();
 
     let client = Arc::new(
         reqwest::Client::builder()
