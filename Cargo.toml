@@ -11,6 +11,7 @@ device_query = "0.2.8"
 #state = "0.5.2"
 futures = "0.3.19"
 
+
 [dependencies.futures-util]
 version = "0.3"
 default-features = false
@@ -37,3 +38,7 @@ features = ["derive"]
 
 [dependencies.serde_json]
 version="1.0.75"
+
+[dependencies.dashmap]
+version="5.0.0"
+features = ["serde"]
