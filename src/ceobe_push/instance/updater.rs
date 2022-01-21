@@ -19,7 +19,7 @@ use crate::ceobe_push::dao::DataItem;
 /// ```
 ///
 #[derive(Default)]
-struct Updater {
+pub struct Updater {
     last_id: DashMap<String, String>,
 }
 
