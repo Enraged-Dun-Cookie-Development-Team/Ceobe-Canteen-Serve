@@ -1,8 +1,12 @@
 use std::collections::HashMap;
 
 use dashmap::DashMap;
+use futures::future::Select;
 
-use crate::ceobe_push::dao::DataItem;
+use super::DataCollect;
+const DATA_SOURCE_SIZE:usize = 16;
+
+
 /// Updater 蹲饼器更新器
 /// 内部使用`DashMap`保证 Sync+Send
 /// # Usage
@@ -24,6 +28,13 @@ pub struct Updater {
 }
 
 impl Updater {
+    // 预分配空间的构造函数
+    pub(crate) fn new()->Self{
+        Self{
+            last_id:DashMap::with_capacity(DATA_SOURCE_SIZE)
+        }
+    }
+
     /// 检查更新
     /// 
     /// # Panic
@@ -38,17 +49,17 @@ impl Updater {
     /// # return
     /// 
     /// 筛选后的更新的蹲饼消息
-    pub fn check_update<'s>(
+    pub fn check_update(
         &mut self,
-        income: HashMap<String, Vec<DataItem>>,
-    ) -> HashMap<String, Vec<DataItem>> {
+        income: HashMap<String, DataCollect>,
+    ) -> HashMap<String, DataCollect> {
         income
             .into_iter()
             .map(|(k, v)| (k.clone(), self.inner_checker(k, v)))
             .collect()
     }
     /// 内部检查更新，并更新 `last_id`
-    fn inner_checker(&mut self, name: String, income: Vec<DataItem>) -> Vec<DataItem> {
+    fn inner_checker(&mut self, name: String, income: DataCollect) -> DataCollect {
         let new_id = income.get(0).unwrap().get_id().to_string();
         // 检擦是否为最新
         let res = if let Some(last_id) = self.last_id.get(&name) {
@@ -63,7 +74,7 @@ impl Updater {
     }
 
     /// 内部检查更新，获取最新队列
-    fn inner_check_update<T>(last_id: T, income: Vec<DataItem>) -> Option<Vec<DataItem>>
+    fn inner_check_update<T>(last_id: T, income: DataCollect) -> Option<DataCollect>
     where
         T: AsRef<str>,
     {
@@ -177,7 +188,7 @@ mod test_updater {
     }
 
     fn init(init: bool) -> Updater {
-        let mut updater = Updater::default();
+        let mut updater = Updater::new();
         if init {
             let mock_init = serde_json::from_value(init_value()).unwrap();
             updater.check_update(mock_init);
