@@ -29,7 +29,9 @@ fn main()->Result<(),GolbalError> {
 }
 
 async fn task() -> Result<(), crate::error::GolbalError> {
-    let _db = ServeDatabase::connet(&DbConfig {
+    let _db = ServeDatabase::connet(
+        // 这里是临时用法，通常情况下通过配置文件读取配置
+        &DbConfig {
         scheme: "mysql".to_string(),
         username: "root".to_string(),
         password: "password".to_string(),

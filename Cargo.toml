@@ -16,6 +16,8 @@ rust-crypto = "0.2"
 figment = "0.10"
 chrono = {version="0.4",features=["serde"]}
 
+async-trait="0.1.52"
+
 
 [dependencies.futures-util]
 version = "0.3"
