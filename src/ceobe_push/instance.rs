@@ -27,21 +27,14 @@ impl Instance {
     }
 
     /// 开启单独线程运行
-    pub fn run(self) {
-        std::thread::spawn(move || {
-            let rt = runtime::Builder::new_current_thread()
-                .enable_all()
-                .build()
-                .expect("Can not Start Async Runtime");
+    pub async fn run(self) {
+        async move {
+            // 连接到ws服务器
+            let (mut socket, _) = connect_async(Url::parse(SOURCE_SERVER).unwrap())
+                .await
+                .expect("Can not Connect To Ws Server");
 
-            rt.block_on(async move {
-                // 连接到ws服务器
-                let (mut socket, _) = connect_async(Url::parse(SOURCE_SERVER).unwrap())
-                    .await
-                    .expect("Can not Connect To Ws Server");
-
-                // TODO:Push Messages
-            })
-        });
+            // TODO:Push Messages
+        }.await;
     }
 }
