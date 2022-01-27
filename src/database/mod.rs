@@ -1,3 +1,4 @@
+pub mod traits;
 use sea_orm::{ConnectOptions, ConnectionTrait, Database};
 
 use self::{
