@@ -17,7 +17,7 @@ figment = "0.10"
 chrono = {version="0.4",features=["serde"]}
 
 async-trait="0.1.52"
-
+log="0.4.14"
 
 [dependencies.futures-util]
 version = "0.3"
