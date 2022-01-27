@@ -8,7 +8,9 @@ use url::Url;
 
 mod ceobe_push;
 mod mansion;
+mod database;
 mod utils;
+mod error;
 
 #[macro_use]
 extern crate serde;
