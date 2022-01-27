@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use dashmap::DashMap;
-use futures::future::Select;
 
 use super::DataCollect;
 const DATA_SOURCE_SIZE:usize = 16;
