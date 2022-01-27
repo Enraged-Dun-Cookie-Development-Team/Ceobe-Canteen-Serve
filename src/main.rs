@@ -1,23 +1,23 @@
-use std::sync::Arc;
+use std::net::Ipv4Addr;
 
 use ceobe_push::dao::DataItem;
-use futures::StreamExt;
+use database::{config::DbConfig, ServeDatabase};
+use error::GolbalError;
 use tokio::runtime;
-use tokio_tungstenite::{connect_async, tungstenite::Message};
 use url::Url;
 
 mod ceobe_push;
-mod mansion;
 mod database;
-mod utils;
 mod error;
+mod mansion;
+mod utils;
 
 #[macro_use]
 extern crate serde;
 
 const DUN_BACKEND: &str = "ws://127.0.0.1/";
 const PUSH_URL: &str = "http://localhost";
-fn main() {
+fn main()->Result<(),GolbalError> {
     // 最简单异步服务
     let rt = runtime::Builder::new_multi_thread()
         .max_blocking_threads(32)
@@ -28,32 +28,19 @@ fn main() {
     rt.block_on(task())
 }
 
-async fn task() {
-    // 连接到ws服务器
-    let (mut socket, _) = connect_async(Url::parse(DUN_BACKEND).unwrap())
-        .await
-        .expect("Can not Connect To Ws Server");
+async fn task() -> Result<(), crate::error::GolbalError> {
+    let _db = ServeDatabase::connet(&DbConfig {
+        scheme: "mysql".to_string(),
+        username: "root".to_string(),
+        password: "password".to_string(),
+        host: Ipv4Addr::LOCALHOST,
+        port: 3306,
+        name: "mansion_data".to_string(),
+        max_conn: 16,
+        min_conn: 2,
+        logger: false,
+    })
+    .await?;
 
-    // 广播分发
-    let url = Url::parse(PUSH_URL).unwrap();
-
-    let client = Arc::new(
-        reqwest::Client::builder()
-            .referer(true)
-            .build()
-            .expect("Create http Client Failure"),
-    );
-
-    while let Some(Ok(msg)) = socket.next().await {
-        let url = url.clone();
-        let lclinet = Arc::clone(&client);
-        tokio::spawn(async move {
-            if let Message::Text(t) = msg {
-                let _ = lclinet.post(url.clone()).body(t).send().await;
-            } else if let Message::Binary(b) = msg {
-                let _ = lclinet.post(url.clone()).body(b).send().await;
-            }
-        });
-    }
+    Ok(())
 }
-

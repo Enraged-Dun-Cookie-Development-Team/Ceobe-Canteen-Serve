@@ -8,7 +8,8 @@ use self::{
 pub mod config;
 pub mod error;
 
-struct ServeDatabase<D>(D);
+#[derive(Debug)]
+pub struct ServeDatabase<D>(D);
 
 impl ServeDatabase<sea_orm::DatabaseConnection> {
     pub async fn connet<C>(config: &C) -> Result<Self, DatabaseError>
@@ -36,3 +37,13 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
         Ok(Self(connet))
     }
 }
+
+impl<'a, D> AsRef<D> for ServeDatabase<D>
+where
+    D: sea_orm::ConnectionTrait<'a>,
+{
+    fn as_ref(&self) -> &D {
+        &self.0
+    }
+}
+
