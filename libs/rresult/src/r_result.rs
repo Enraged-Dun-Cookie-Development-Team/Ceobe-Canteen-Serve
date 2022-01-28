@@ -1,5 +1,6 @@
 use rocket_::http::Status;
 
+#[derive(Debug,PartialEq, Eq)]
 pub enum RResult<T, E = String> {
     Success(T),
     Error(Status, E),
