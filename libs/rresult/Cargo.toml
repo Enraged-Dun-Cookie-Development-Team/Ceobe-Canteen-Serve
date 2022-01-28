@@ -1,0 +1,27 @@
+[package]
+name = "rresult"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default=["rocket","logger","outcome"]
+logger=["log"]
+outcome=[]
+rocket=["rocket_"]
+
+[dependencies]
+log={version="0",optional=true}
+
+[dependencies.serde]
+version="1.0"
+
+
+[dependencies.rocket_]
+package="rocket"
+optional=true
+version="0.5.0-rc.1"
+
+
+[dependencies.serde_json]
+version="1.0"
