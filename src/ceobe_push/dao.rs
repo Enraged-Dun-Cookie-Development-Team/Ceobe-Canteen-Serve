@@ -1,10 +1,14 @@
+use std::sync::Arc;
 
-#[derive(Deserialize, Debug,Serialize)]
+pub type CachedId = Arc<String>;
+pub type DataSource = Arc<String>;
+
+#[derive(Deserialize, Debug, Serialize,Clone)]
 pub struct DataItem {
     #[serde(rename = "dataSource")]
-    pub(crate) data_source: String,
+    pub(crate) data_source: Arc<String>,
 
-    pub(crate) id: String,
+    pub(crate) id: Arc<String>,
     #[serde(rename = r#"timeForSort"#)]
     time_for_sort: u64,
     #[serde(rename = r#"timeForDisplay"#)]
@@ -15,9 +19,9 @@ pub struct DataItem {
     jump_url: String,
     #[serde(rename = r#"coverImage"#)]
     cover_image: Option<String>,
-    #[serde(rename = r#"imageList"#,default="Default::default")]
+    #[serde(rename = r#"imageList"#, default = "Default::default")]
     image_list: Option<Vec<String>>,
-    #[serde(rename = r#"imageHttpList"#,default="Default::default")]
+    #[serde(rename = r#"imageHttpList"#, default = "Default::default")]
     image_http_list: Option<Vec<String>>,
     #[serde(rename = r#"isTop"#, default = "default_top")]
     is_top: bool,
@@ -31,7 +35,9 @@ fn default_top() -> bool {
     false
 }
 
-
 impl DataItem {
-    pub fn get_id(&self)->&str{&self.id}
+    pub fn get_id(&self) -> &str {
+        &self.id
+    }
 }
+

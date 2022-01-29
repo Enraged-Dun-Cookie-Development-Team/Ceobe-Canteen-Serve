@@ -6,3 +6,4 @@ mod to_response;
 mod marco;
 
 pub use r_result::RResult;
+pub use crate::serde::Wrap;

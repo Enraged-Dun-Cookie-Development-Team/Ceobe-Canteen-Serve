@@ -1,10 +1,17 @@
-use std::net::Ipv4Addr;
+use std::collections::HashMap;
 
-use ceobe_push::dao::DataItem;
-use database::{config::DbConfig, ServeDatabase};
+use ceobe_push::{
+    dao::{DataItem, DataSource},
+    instance::DataCollect,
+};
+
 use error::GolbalError;
-use rocket::Rocket;
-use tokio::{runtime, sync};
+use rocket::{get, Rocket, State};
+use rresult::{RResult, Wrap};
+use tokio::{
+    runtime,
+    sync::watch::{self, Ref},
+};
 use url::Url;
 
 mod ceobe_push;
@@ -16,9 +23,7 @@ mod utils;
 #[macro_use]
 extern crate serde;
 
-const DUN_BACKEND: &str = "ws://127.0.0.1/";
-const PUSH_URL: &str = "http://localhost";
-fn main()->Result<(),GolbalError> {
+fn main() -> Result<(), GolbalError> {
     // 最简单异步服务
     let rt = runtime::Builder::new_multi_thread()
         .max_blocking_threads(32)
@@ -30,12 +35,30 @@ fn main()->Result<(),GolbalError> {
 }
 
 async fn task() -> Result<(), crate::error::GolbalError> {
-    let (tx,rx)=sync::mpsc::channel(16);
-    let ceobe=ceobe_push::instance::Instance::new(rx);
+    // 启动 ws客户端
+    let (ceobe, updater) = ceobe_push::instance::Instance::new();
     tokio::spawn(ceobe.run());
-
+    let recv = updater.go();
+    // 启动rocket 客户端
     Rocket::build()
-    .launch().await?;
+        .manage(recv)
+        .mount("/", rocket::routes![handle, abab])
+        .launch()
+        .await?;
 
     Ok(())
+}
+
+#[get("/")]
+async fn handle(
+    msgr: &State<watch::Receiver<HashMap<DataSource, DataCollect>>>,
+) -> RResult<Ref<'_, HashMap<DataSource, DataCollect>>, GolbalError> {
+    let w = msgr.inner();
+    let v = w.borrow();
+
+    RResult::ok(v)
+}
+#[get("/i")]
+async fn abab() -> RResult<Wrap<String>, GolbalError> {
+    RResult::wrap_ok("ABAB".to_string())
 }

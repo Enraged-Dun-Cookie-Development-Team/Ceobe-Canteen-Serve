@@ -1,4 +1,4 @@
-use std::io::Cursor;
+use std::{io::Cursor, ops::Deref};
 
 use rocket_::{
     http::{ContentType, Status},
@@ -9,10 +9,11 @@ use serde::Serialize;
 
 use crate::RResult;
 
-impl<'r, 'o, T, E> Responder<'r, 'o> for RResult<T, E>
+impl<'r, 'o, T,I, E> Responder<'r, 'o> for RResult<T, E>
 where
     'o: 'r,
-    T: Serialize,
+    T: Deref<Target = I>,
+    I: Serialize,
     E: std::error::Error,
 {
     fn respond_to(self, _request: &'r Request<'_>) -> response::Result<'o> {

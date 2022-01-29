@@ -1,110 +1,119 @@
 use std::collections::HashMap;
 
+use chrono::Utc;
 use dashmap::DashMap;
+use tokio::sync::{self, watch};
+use tokio_tungstenite::tungstenite::Message;
 
-use super::DataCollect;
-const DATA_SOURCE_SIZE:usize = 11;
+use crate::ceobe_push::dao::{DataItem, DataSource};
 
+use super::{cached::Cached, DataCollect};
+const DATA_SOURCE_SIZE: usize = 11;
 
 /// Updater 蹲饼器更新器
 /// 内部使用`DashMap`保证 Sync+Send
 /// # Usage
-/// 
+///
 /// ---
-/// 
+///
 /// ```rust [no test]
 /// // 假设这是最新收到的蹲饼信息
 /// let updater = Updater::default();
-/// 
+///
 /// let newest: HashMap<String, Vec<DataItem>> = HashMap::default();
 /// // new_dun 就是最新的蹲饼信息
 /// let new_dun = updater.check_update(newest);
 /// ```
 ///
-#[derive(Default)]
 pub struct Updater {
-    last_id: DashMap<String, String>,
+    recive: sync::mpsc::Receiver<Message>,
+    last_id: DashMap<DataSource, Cached>,
 }
 
 impl Updater {
     // 预分配空间的构造函数
-    pub(crate) fn new()->Self{
-        Self{
-            last_id:DashMap::with_capacity(DATA_SOURCE_SIZE)
+    pub(crate) fn new() -> (Self, sync::mpsc::Sender<Message>) {
+        let (rx, tx) = sync::mpsc::channel(16);
+        (
+            Self {
+                recive: tx,
+                last_id: DashMap::with_capacity(DATA_SOURCE_SIZE),
+            },
+            rx,
+        )
+    }
+
+    pub(crate) fn check_update(&self, src: HashMap<DataSource, DataCollect>) {
+        let now = Utc::now().timestamp();
+        src.into_iter()
+            .for_each(|(k, v)| self.update_one_source(k, v, now))
+    }
+
+    fn update_one_source(&self, src: DataSource, collect: DataCollect, timestamp: i64) {
+        if let Some((k, v)) = self.last_id.remove(&src) {
+            let cached = v.reflash(collect, timestamp);
+            self.last_id.insert(k, cached);
+        } else {
+            let cached = Cached::new(collect, timestamp);
+            self.last_id.insert(src, cached);
         }
     }
 
-    /// 检查更新
-    /// 
-    /// # Panic
-    /// 
-    /// ***对于每一`Vec<DataItem>`长度为0时将会panic***
-    /// 
-    /// # effect
-    /// 
-    /// 每次`check_update`将会更新内部的Updater
-    /// 不提供内部可变
-    /// 
-    /// # return
-    /// 
-    /// 筛选后的更新的蹲饼消息
-    pub fn check_update(
-        &mut self,
-        income: HashMap<String, DataCollect>,
-    ) -> HashMap<String, DataCollect> {
-        income
-            .into_iter()
-            .map(|(k, v)| (k.clone(), self.inner_checker(k, v)))
-            .collect()
-    }
-    /// 内部检查更新，并更新 `last_id`
-    fn inner_checker(&mut self, name: String, income: DataCollect) -> DataCollect {
-        let new_id = income.get(0).unwrap().get_id().to_string();
-        // 检擦是否为最新
-        let res = if let Some(last_id) = self.last_id.get(&name) {
-            Self::inner_check_update(&*last_id, income).unwrap_or_default()
-        } else {
-            income
-        };
-        // 更新
-        self.last_id.insert(name, new_id);
-
-        res
+    fn into_map(&self) -> HashMap<DataSource, Vec<DataItem>> {
+        self.into()
     }
 
-    /// 内部检查更新，获取最新队列
-    fn inner_check_update<T>(last_id: T, income: DataCollect) -> Option<DataCollect>
-    where
-        T: AsRef<str>,
-    {
-        if income.len() > 1 {
-            let first = unsafe { income.get_unchecked(0) };
-            if first.id != last_id.as_ref() {
-                let mut res = Vec::with_capacity(income.len());
-                let mut find_last = false;
-                for inner in income {
-                    if inner.id != last_id.as_ref() {
-                        res.push(inner)
-                    } else {
-                        find_last = true;
-                        break;
+    pub fn go(mut self) -> sync::watch::Receiver<HashMap<DataSource, Vec<DataItem>>> {
+        let (rx, tx) = watch::channel(Default::default());
+        tokio::spawn(async move {
+            while let Some(msg) = self.recive.recv().await {
+                log::info!("Recive From Ws Message");
+                match msg {
+                    tokio_tungstenite::tungstenite::Message::Text(t) => {
+                        let data =
+                            match serde_json::from_str::<HashMap<DataSource, DataCollect>>(&t) {
+                                Ok(d) => d,
+                                Err(e) => {
+                                    println!("Error from Json {}", e);
+                                    continue;
+                                }
+                            };
+                        self.check_update(data);
+                        rx.send(self.into_map()).ok();
                     }
+                    _ => continue,
                 }
-                match find_last {
-                    true => Some(res),
-                    false => Some(vec![res.into_iter().next().unwrap()]),
-                }
-            } else {
-                None
             }
-        } else {
-            unreachable!()
-        }
+        });
+        tx
+    }
+}
+
+impl<'s> Into<HashMap<DataSource, DataCollect>> for &'s Updater {
+    fn into(self) -> HashMap<DataSource, DataCollect> {
+        let map = &self.last_id;
+
+        let res = map
+            .iter()
+            .map(|f| {
+                (
+                    f.key().clone(),
+                    f.value()
+                        .into_slice()
+                        .into_iter()
+                        .map(|f| f.clone())
+                        .collect(),
+                )
+            })
+            .collect();
+        res
     }
 }
 
 #[cfg(test)]
 mod test_updater {
+
+    use std::{collections::HashMap, sync::Arc};
 
     use serde_json::Value;
 
@@ -187,7 +196,7 @@ mod test_updater {
     }
 
     fn init(init: bool) -> Updater {
-        let mut updater = Updater::new();
+        let (updater, _s) = Updater::new();
         if init {
             let mock_init = serde_json::from_value(init_value()).unwrap();
             updater.check_update(mock_init);
@@ -198,37 +207,37 @@ mod test_updater {
     #[test]
     fn test_no_init() {
         // 第一次启动，没有任何记录
-        let mut updater = init(false);
+        let updater = init(false);
 
         assert_eq!(updater.last_id.len(), 0);
 
-        let res = updater.check_update(serde_json::from_value(init_value()).unwrap());
-
+        updater.check_update(serde_json::from_value(init_value()).unwrap());
+        let res: HashMap<_, _> = (&updater).into();
         assert_eq!(res.len(), 1);
-        assert_eq!(res.get("Mock").unwrap().len(), 3);
+        assert_eq!(res.get(&"Mock".to_string()).unwrap().len(), 3);
         assert_eq!(
-            updater
-                .last_id
-                .get("Mock")
-                .and_then(|s| Some(s.to_string())),
-            Some("Mock_id_0".to_string())
+            res.get(&"Mock".to_string())
+                .and_then(|s| s.get(0).and_then(|d| Some(d.clone())))
+                .and_then(|d| Some(d.id)),
+            Some(Arc::new("Mock_id_0".to_string()))
         );
     }
 
     #[test]
     fn test_normal_update() {
         // 第一次更新后
-        let mut updater = init(true);
+        let updater = init(true);
         assert_eq!(updater.last_id.len(), 1);
 
-        let res = updater.check_update(serde_json::from_value(update_value_normal()).unwrap());
-
+        updater.check_update(serde_json::from_value(update_value_normal()).unwrap());
+        let res: HashMap<_, _> = (&updater).into();
         assert_eq!(res.len(), 1);
-        assert_eq!(res.get("Mock").unwrap().len(), 1);
-        {
-            let last = &updater.last_id;
-            let new_id = last.get("Mock").unwrap().to_string();
-            assert_eq!(new_id, "Mock_id_-1".to_string())
-        }
+        assert_eq!(res.get(&"Mock".to_string()).unwrap().len(), 3);
+        assert_eq!(
+            res.get(&"Mock".to_string())
+                .and_then(|s| s.get(0).and_then(|d| Some(d.clone())))
+                .and_then(|d| Some(d.id)),
+            Some(Arc::new("Mock_id_-1".to_string()))
+        );
     }
 }
