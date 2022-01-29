@@ -3,7 +3,8 @@ use std::net::Ipv4Addr;
 use ceobe_push::dao::DataItem;
 use database::{config::DbConfig, ServeDatabase};
 use error::GolbalError;
-use tokio::runtime;
+use rocket::Rocket;
+use tokio::{runtime, sync};
 use url::Url;
 
 mod ceobe_push;
@@ -29,20 +30,12 @@ fn main()->Result<(),GolbalError> {
 }
 
 async fn task() -> Result<(), crate::error::GolbalError> {
-    let _db = ServeDatabase::connet(
-        // 这里是临时用法，通常情况下通过配置文件读取配置
-        &DbConfig {
-        scheme: "mysql".to_string(),
-        username: "root".to_string(),
-        password: "password".to_string(),
-        host: Ipv4Addr::LOCALHOST,
-        port: 3306,
-        name: "mansion_data".to_string(),
-        max_conn: 16,
-        min_conn: 2,
-        logger: false,
-    })
-    .await?;
+    let (tx,rx)=sync::mpsc::channel(16);
+    let ceobe=ceobe_push::instance::Instance::new(rx);
+    tokio::spawn(ceobe.run());
+
+    Rocket::build()
+    .launch().await?;
 
     Ok(())
 }

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use dashmap::DashMap;
 
 use super::DataCollect;
-const DATA_SOURCE_SIZE:usize = 16;
+const DATA_SOURCE_SIZE:usize = 11;
 
 
 /// Updater 蹲饼器更新器

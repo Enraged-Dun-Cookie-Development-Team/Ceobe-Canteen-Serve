@@ -68,3 +68,6 @@ features=[
     "secrets",
     "json"
 ]
+
+[dependencies.rresult]
+path="./libs/rresult"

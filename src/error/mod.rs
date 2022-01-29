@@ -45,4 +45,5 @@ macro_rules! error_generate {
 error_generate!(
     pub GolbalError 
     Db=DatabaseError
+    Rocket=rocket::error::Error
 );

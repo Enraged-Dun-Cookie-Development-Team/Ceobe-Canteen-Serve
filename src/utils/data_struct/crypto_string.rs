@@ -52,6 +52,8 @@ impl<const L: usize, const H: usize> CryptoString<L, H> {
         Ok(Self::Raw(RangeLimitString::try_from(data)?))
     }
     fn crypto(raw: &str) -> String {
+        // crypto::bcrypt::bcrypt(cost, salt, password, output)
+
         let mut hasher = Sha3::keccak256();
         hasher.input_str(&raw);
         hasher.result_str()

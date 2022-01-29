@@ -15,10 +15,10 @@ pub struct DataItem {
     jump_url: String,
     #[serde(rename = r#"coverImage"#)]
     cover_image: Option<String>,
-    #[serde(rename = r#"imageList"#)]
-    image_list: Vec<String>,
-    #[serde(rename = r#"imageHttpList"#)]
-    image_http_list: Vec<String>,
+    #[serde(rename = r#"imageList"#,default="Default::default")]
+    image_list: Option<Vec<String>>,
+    #[serde(rename = r#"imageHttpList"#,default="Default::default")]
+    image_http_list: Option<Vec<String>>,
     #[serde(rename = r#"isTop"#, default = "default_top")]
     is_top: bool,
 
@@ -30,6 +30,7 @@ pub struct DataItem {
 fn default_top() -> bool {
     false
 }
+
 
 impl DataItem {
     pub fn get_id(&self)->&str{&self.id}
