@@ -1,10 +1,8 @@
-use std::ops::Deref;
-
 use rocket_::http::Status;
 
 use crate::Wrap;
 
-#[derive(Debug,PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum RResult<T, E = String> {
     Success(T),
     Error(Status, E),
@@ -43,13 +41,11 @@ impl<T, E> RResult<T, E> {
     }
 }
 
-impl<T,E> RResult<Wrap<T>,E> {
-    pub fn wrap_ok(data:T)->Self{
+impl<T, E> RResult<Wrap<T>, E> {
+    pub fn wrap_ok(data: T) -> Self {
         Self::ok(Wrap(data))
     }
-    
 }
-
 
 impl<T, E> RResult<T, E> {
     pub fn from_result(r: Result<T, E>) -> Self {

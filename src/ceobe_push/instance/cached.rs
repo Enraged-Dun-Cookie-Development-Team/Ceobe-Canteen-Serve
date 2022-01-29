@@ -1,7 +1,9 @@
 use dashmap::DashMap;
+use std::ops::Deref;
 
 use crate::{ceobe_push::dao::CachedId, DataItem};
 
+/// 饼信息缓存器，一个实例用于缓存一个DataSource 的饼信息
 pub struct Cached {
     // 缓存
     pub(super) cached: Vec<DataItem>,
@@ -41,5 +43,24 @@ impl Cached {
 
     pub fn into_slice(&self) -> &[DataItem] {
         self.cached.as_slice()
+    }
+}
+
+impl Cached {
+    pub fn new_ceobe_after(&self, timestamp: i64) -> &[DataItem] {
+        if self.cached.len() > 0 {
+            let mut idx = 0;
+            self.cached.iter().for_each(|v| {
+                if let Some(v) = self.map.get(&v.id) {
+                    if v.deref() < &timestamp {
+                        idx += 1;
+                    }
+                }
+            });
+
+            &self.cached[..=idx]
+        } else {
+            &[]
+        }
     }
 }

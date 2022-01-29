@@ -42,7 +42,8 @@ impl Updater {
             rx,
         )
     }
-
+    /// 检查更新
+    /// 传递最新获取的全部蹲饼数据来源，更新内部缓存信息
     pub(crate) fn check_update(&self, src: HashMap<DataSource, DataCollect>) {
         let now = Utc::now().timestamp();
         src.into_iter()
@@ -63,7 +64,8 @@ impl Updater {
         self.into()
     }
 
-    pub fn go(mut self) -> sync::watch::Receiver<HashMap<DataSource, Vec<DataItem>>> {
+    /// 启动updater 监听，并返接受最新饼的接受端
+    pub fn run(mut self) -> sync::watch::Receiver<HashMap<DataSource, Vec<DataItem>>> {
         let (rx, tx) = watch::channel(Default::default());
         tokio::spawn(async move {
             while let Some(msg) = self.recive.recv().await {

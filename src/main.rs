@@ -38,7 +38,7 @@ async fn task() -> Result<(), crate::error::GolbalError> {
     // 启动 ws客户端
     let (ceobe, updater) = ceobe_push::instance::Instance::new();
     tokio::spawn(ceobe.run());
-    let recv = updater.go();
+    let recv = updater.run();
     // 启动rocket 客户端
     Rocket::build()
         .manage(recv)
