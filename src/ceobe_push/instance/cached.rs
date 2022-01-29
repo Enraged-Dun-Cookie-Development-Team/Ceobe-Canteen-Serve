@@ -52,13 +52,16 @@ impl Cached {
             let mut idx = 0;
             self.cached.iter().for_each(|v| {
                 if let Some(v) = self.map.get(&v.id) {
-                    if v.deref() < &timestamp {
+                    if v.deref() > &timestamp {
                         idx += 1;
                     }
                 }
             });
-
-            &self.cached[..=idx]
+            if idx > 0 {
+                &self.cached[..=idx]
+            } else {
+                &[]
+            }
         } else {
             &[]
         }
