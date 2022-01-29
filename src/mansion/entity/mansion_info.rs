@@ -10,6 +10,7 @@ pub struct Model {
     pub eid: i64,
     #[sea_orm(column_type = "Custom(\"ENUM ('false', 'unknown', 'true')\".to_owned())")]
     pub predict_level: String,
+    #[sea_orm(column_type = "Text")]
     pub info: String,
 }
 

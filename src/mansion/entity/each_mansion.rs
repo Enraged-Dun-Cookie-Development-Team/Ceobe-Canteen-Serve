@@ -10,6 +10,7 @@ pub struct Model {
     pub mid: i64,
     #[sea_orm(unique)]
     pub date: Date,
+    #[sea_orm(column_type = "Text", nullable)]
     pub content: Option<String>,
 }
 
