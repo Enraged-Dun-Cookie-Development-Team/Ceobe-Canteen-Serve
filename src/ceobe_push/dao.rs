@@ -3,7 +3,7 @@ use std::sync::Arc;
 pub type CachedId = Arc<String>;
 pub type DataSource = Arc<String>;
 
-#[derive(Deserialize, Debug, Serialize,Clone)]
+#[derive(Deserialize, Debug, Serialize,Clone,Default)]
 pub struct DataItem {
     #[serde(rename = "dataSource")]
     pub(crate) data_source: Arc<String>,
