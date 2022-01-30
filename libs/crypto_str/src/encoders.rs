@@ -3,6 +3,8 @@ use std::borrow::Cow;
 #[cfg(feature = "bcrypt")]
 pub mod bcrypt;
 
+#[cfg(feature="none")]
+pub mod none;
 /// 可以编码和比对一致性的密码加密器trait
 pub trait Encoder {
     /// 当无法使用对应算法编码时使用这种加密算法时的异常内容

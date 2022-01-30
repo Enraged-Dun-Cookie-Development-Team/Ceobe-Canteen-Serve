@@ -50,10 +50,18 @@ impl<E> AsRef<str> for CryptoString<E> {
     }
 }
 
+
 impl<E> Deref for CryptoString<E> {
     type Target = str;
 
     fn deref(&self) -> &Self::Target {
         self.as_ref()
+    }
+}
+
+#[cfg(feature="wrap")]
+impl<E> CryptoString<E>  {
+    pub fn into_crypto(self)->crate::CryptoWarp<crate::Crypto,E>{
+        crate::CryptoWarp(crate::Crypto,self)
     }
 }
