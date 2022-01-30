@@ -1,6 +1,6 @@
 use self::range_limit::RangeLimit;
 
-pub mod crypto_string;
+
 pub mod header_info;
 pub mod measureable;
 pub mod range_limit;
