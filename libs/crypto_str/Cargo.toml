@@ -5,12 +5,14 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default=["bcrypt"]
+default=["bcrypt","serde"]
 bcrypt=["bcrypt_"]
+serde= ["serde_"]
 
 [dependencies]
 bcrypt_ = { package = "bcrypt", version = "0.10", optional = true }
 
-[dependencies.serde]
-version="1.0.133"
-features = ["derive"]
+[dependencies.serde_]
+package="serde"
+optional=true
+version="1.0"

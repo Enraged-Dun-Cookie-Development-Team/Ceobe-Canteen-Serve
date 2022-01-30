@@ -1,13 +1,14 @@
-use std::{borrow::Cow, cmp::PartialEq};
+use std::{borrow::Cow, ops::Deref};
 
 use crate::Encoder;
 
-pub enum CryptoString<'p, E> {
-    Raw(Cow<'p, str>, E),
-    Crypto(Cow<'p, str>),
+#[derive(Debug, Clone)]
+pub enum CryptoString<E> {
+    Raw(Cow<'static, str>, E),
+    Crypto(Cow<'static, str>),
 }
 
-impl<'p, E: Encoder> CryptoString<'p, E> {
+impl<E: Encoder> CryptoString<E> {
     pub fn new_raw<S>(raw: S) -> Self
     where
         E: Default,
@@ -37,5 +38,22 @@ impl<'p, E: Encoder> CryptoString<'p, E> {
             (Self::Crypto(c), Self::Raw(r, _)) => E::verify(c, r),
             (Self::Crypto(c1), Self::Crypto(c2)) => Ok(c1 == c2),
         }
+    }
+}
+
+impl<E> AsRef<str> for CryptoString<E> {
+    fn as_ref(&self) -> &str {
+        match self {
+            CryptoString::Raw(r, _) => &r,
+            CryptoString::Crypto(r) => &r,
+        }
+    }
+}
+
+impl<E> Deref for CryptoString<E> {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        self.as_ref()
     }
 }
