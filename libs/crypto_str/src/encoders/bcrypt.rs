@@ -10,12 +10,12 @@ pub struct BcryptEncoder<const COST: u32>;
 impl<const C: u32> Encoder for BcryptEncoder<C> {
     type Error = bcrypt_::BcryptError;
 
-    fn encode<'s, S: AsRef<str>>(raw: &'s S) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
+    fn encode<'s, S: AsRef<str>>(raw:  S) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
         bcrypt_::hash(raw.as_ref().as_bytes(), C).and_then(|s| Ok(Cow::Owned(s)))
     }
 
     fn verify<'s, S: AsRef<str>>(
-        cryptoed: std::borrow::Cow<'s, str>,
+        cryptoed: &std::borrow::Cow<'s, str>,
         input: &S,
     ) -> Result<bool, Self::Error> {
         bcrypt_::verify(input.as_ref(), &*cryptoed)
@@ -36,7 +36,7 @@ use super::DefaultBcryptEncoder;
 
         println!("encode pwd: {}",encode_pwd);
 
-        assert!(DefaultBcryptEncoder::verify(encode_pwd, &"123456").unwrap());
+        assert!(DefaultBcryptEncoder::verify(&encode_pwd, &"123456").unwrap());
     }
 
 }

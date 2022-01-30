@@ -1,4 +1,5 @@
 mod encoders;
+mod crytpto;
 
 pub use encoders::Encoder;
 pub mod inner_encoders {
