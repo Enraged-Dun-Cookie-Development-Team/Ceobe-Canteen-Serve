@@ -1,9 +1,6 @@
 use std::borrow::Cow;
 
 use crate::Encoder;
-
-pub type DefaultBcryptEncoder = BcryptEncoder<12>;
-
 #[derive(Default, Debug, Clone)]
 pub struct BcryptEncoder<const COST: u32>;
 
@@ -24,8 +21,7 @@ impl<const C: u32> Encoder for BcryptEncoder<C> {
 
 #[cfg(test)]
 mod test_bcrypt {
-    use super::DefaultBcryptEncoder;
-    use crate::encoders::Encoder;
+    use crate::{encoders::Encoder, inner_encoders::bcrypt::DefaultBcryptEncoder};
 
     #[test]
     fn test_match() {
