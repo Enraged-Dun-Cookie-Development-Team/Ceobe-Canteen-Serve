@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::{borrow::Cow, ops::Deref};
 
 use serde::{ser::SerializeStruct, Serialize};
 
@@ -6,7 +6,7 @@ use crate::r_result::RResult;
 
 impl<T, E> Serialize for RResult<T, E>
 where
-    T: IntoSerde,
+    T: for<'a>IntoSerde<'a>,
     E: std::error::Error,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -40,19 +40,19 @@ impl<T> Deref for Wrap<T> {
     }
 }
 
-pub trait IntoSerde {
-    type Target: Serialize + ?Sized;
-    fn into_serde<'s>(&'s self) -> &'s Self::Target;
+pub trait IntoSerde<'s> {
+    type Target: Serialize;
+    fn into_serde(&'s self) -> Self::Target;
 }
 
-impl<T> IntoSerde for T
+impl<'s, T> IntoSerde<'s> for T
 where
     T: Deref,
-    <T as Deref>::Target: Serialize,
+    <T as Deref>::Target: Serialize + 's,
 {
-    type Target = <T as Deref>::Target;
+    type Target = &'s <T as Deref>::Target;
 
-    fn into_serde<'s>(&'s self) -> &'s Self::Target {
+    fn into_serde(&'s self) -> Self::Target {
         self.deref()
     }
 }
