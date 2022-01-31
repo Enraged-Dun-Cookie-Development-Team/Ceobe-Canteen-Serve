@@ -43,7 +43,7 @@ impl Cached {
                 }
             })
             .unzip();
-        Self {
+        Self{
             cached,
             map,
             reflesh_time: timestamp,
