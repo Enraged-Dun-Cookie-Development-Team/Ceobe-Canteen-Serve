@@ -1,3 +1,5 @@
+use std::{borrow::Cow, ops::Deref};
+
 use crate::{
     crypto::CryptoString,
     wrap::{Crypto, CryptoWarp, Raw},
@@ -30,7 +32,7 @@ where
     }
 }
 
-impl<E> serde_::Serialize for CryptoString<E>
+impl<E> serde_::Serialize for CryptoWarp<Crypto, E>
 where
     E: Encoder,
 {
@@ -38,8 +40,13 @@ where
     where
         S: serde_::Serializer,
     {
-        match self {
-            CryptoString::Raw(r, _) | CryptoString::Crypto(r) => serializer.serialize_str(r),
-        }
+        let crypt = match &self.1 {
+            CryptoString::Raw(r, _) => {
+                E::encode(Cow::Borrowed(r)).or_else(|e| Err(serde_::ser::Error::custom(e)))?
+            }
+            CryptoString::Crypto(r) => Cow::Borrowed(r.deref()),
+        };
+
+        crypt.serialize(serializer)
     }
 }
