@@ -8,7 +8,10 @@ pub enum CryptoString<E> {
     Crypto(Cow<'static, str>),
 }
 
-impl<E: Encoder> CryptoString<E> {
+impl<E> CryptoString<E>
+where
+    E: Encoder,
+{
     pub fn new_raw<S>(raw: S) -> Self
     where
         E: Default,
@@ -44,12 +47,10 @@ impl<E: Encoder> CryptoString<E> {
 impl<E> AsRef<str> for CryptoString<E> {
     fn as_ref(&self) -> &str {
         match self {
-            CryptoString::Raw(r, _) => &r,
-            CryptoString::Crypto(r) => &r,
+            CryptoString::Raw(r, _) | CryptoString::Crypto(r) => &r,
         }
     }
 }
-
 
 impl<E> Deref for CryptoString<E> {
     type Target = str;
@@ -59,9 +60,9 @@ impl<E> Deref for CryptoString<E> {
     }
 }
 
-#[cfg(feature="wrap")]
-impl<E> CryptoString<E>  {
-    pub fn into_crypto(self)->crate::CryptoWarp<crate::Crypto,E>{
-        crate::CryptoWarp(crate::Crypto,self)
+#[cfg(feature = "wrap")]
+impl<E> CryptoString<E> {
+    pub fn into_crypto(self) -> crate::CryptoWarp<crate::Crypto, E> {
+        crate::CryptoWarp(crate::Crypto, self)
     }
 }

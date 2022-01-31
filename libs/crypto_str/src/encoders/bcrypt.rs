@@ -7,7 +7,7 @@ pub struct BcryptEncoder<const COST: u32>;
 impl<const C: u32> Encoder for BcryptEncoder<C> {
     type Error = bcrypt_::BcryptError;
 
-    fn encode<'s, S: AsRef<str>>(raw: S) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
+    fn encode<'s>(raw: Cow<'s, str>) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
         bcrypt_::hash(raw.as_ref().as_bytes(), C).and_then(|s| Ok(Cow::Owned(s)))
     }
 
@@ -26,7 +26,7 @@ mod test_bcrypt {
     #[test]
     fn test_match() {
         let pwd = "123456";
-        let encode_pwd = DefaultBcryptEncoder::encode(&pwd).unwrap();
+        let encode_pwd = DefaultBcryptEncoder::encode(pwd.into()).unwrap();
 
         println!("encode pwd: {}", encode_pwd);
         assert!(encode_pwd.len() < 64);

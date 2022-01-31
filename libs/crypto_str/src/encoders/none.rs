@@ -7,8 +7,8 @@ pub struct NoCrypto;
 impl Encoder for NoCrypto {
     type Error = NoErr;
 
-    fn encode<'s, S: AsRef<str>>(raw: S) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
-        Ok(Cow::Owned(raw.as_ref().to_owned()))
+    fn encode<'s>(raw: Cow<'s,str>) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
+        Ok(raw)
     }
 
     fn verify<'s, S: AsRef<str>>(
