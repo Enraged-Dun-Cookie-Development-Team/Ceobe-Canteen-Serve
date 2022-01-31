@@ -1,11 +1,11 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use chrono::Utc;
 use dashmap::DashMap;
 use tokio::sync::{self, watch};
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::ceobe_push::dao::{DataItem, DataSource};
+use crate::ceobe_push::dao::DataSource;
 
 use super::{cached::Cached, DataCollect};
 const DATA_SOURCE_SIZE: usize = 11;
@@ -27,7 +27,7 @@ const DATA_SOURCE_SIZE: usize = 11;
 ///
 pub struct Updater {
     recive: sync::mpsc::Receiver<Message>,
-    last_id: DashMap<DataSource, Cached>,
+    last_id: Arc<DashMap<DataSource, Arc<Cached>>>,
 }
 
 impl Updater {
@@ -37,7 +37,7 @@ impl Updater {
         (
             Self {
                 recive: tx,
-                last_id: DashMap::with_capacity(DATA_SOURCE_SIZE),
+                last_id: Arc::new(DashMap::with_capacity(DATA_SOURCE_SIZE)),
             },
             rx,
         )
@@ -56,16 +56,16 @@ impl Updater {
             self.last_id.insert(k, cached);
         } else {
             let cached = Cached::new(collect, timestamp);
-            self.last_id.insert(src, cached);
+            self.last_id.insert(src, Arc::new(cached));
         }
     }
 
-    fn into_map(&self) -> HashMap<DataSource, Vec<DataItem>> {
+    fn into_map(&self) -> HashMap<DataSource, Arc<Cached>> {
         self.into()
     }
 
     /// 启动updater 监听，并返接受最新饼的接受端
-    pub fn run(mut self) -> sync::watch::Receiver<HashMap<DataSource, Vec<DataItem>>> {
+    pub fn run(mut self) -> sync::watch::Receiver<HashMap<DataSource, Arc<Cached>>> {
         let (rx, tx) = watch::channel(Default::default());
         tokio::spawn(async move {
             while let Some(msg) = self.recive.recv().await {
@@ -91,22 +91,13 @@ impl Updater {
     }
 }
 
-impl<'s> Into<HashMap<DataSource, DataCollect>> for &'s Updater {
-    fn into(self) -> HashMap<DataSource, DataCollect> {
+impl<'s> Into<HashMap<DataSource, Arc<Cached>>> for &'s Updater {
+    fn into(self) -> HashMap<DataSource, Arc<Cached>> {
         let map = &self.last_id;
 
         let res = map
             .iter()
-            .map(|f| {
-                (
-                    f.key().clone(),
-                    f.value()
-                        .into_slice()
-                        .into_iter()
-                        .map(|f| f.clone())
-                        .collect(),
-                )
-            })
+            .map(|f| (f.key().clone(), f.value().clone()))
             .collect();
         res
     }
@@ -216,10 +207,10 @@ mod test_updater {
         updater.check_update(serde_json::from_value(init_value()).unwrap());
         let res: HashMap<_, _> = (&updater).into();
         assert_eq!(res.len(), 1);
-        assert_eq!(res.get(&"Mock".to_string()).unwrap().len(), 3);
+        assert_eq!(res.get(&"Mock".to_string()).unwrap().cached.len(), 3);
         assert_eq!(
             res.get(&"Mock".to_string())
-                .and_then(|s| s.get(0).and_then(|d| Some(d.clone())))
+                .and_then(|s| s.cached.get(0).and_then(|d| Some(d.clone())))
                 .and_then(|d| Some(d.id)),
             Some(Arc::new("Mock_id_0".to_string()))
         );
@@ -234,10 +225,10 @@ mod test_updater {
         updater.check_update(serde_json::from_value(update_value_normal()).unwrap());
         let res: HashMap<_, _> = (&updater).into();
         assert_eq!(res.len(), 1);
-        assert_eq!(res.get(&"Mock".to_string()).unwrap().len(), 3);
+        assert_eq!(res.get(&"Mock".to_string()).unwrap().cached.len(), 3);
         assert_eq!(
             res.get(&"Mock".to_string())
-                .and_then(|s| s.get(0).and_then(|d| Some(d.clone())))
+                .and_then(|s| s.cached.get(0).and_then(|d| Some(d.clone())))
                 .and_then(|d| Some(d.id)),
             Some(Arc::new("Mock_id_-1".to_string()))
         );

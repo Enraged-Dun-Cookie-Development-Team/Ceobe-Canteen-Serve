@@ -1,8 +1,8 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use ceobe_push::{
     dao::{DataItem, DataSource},
-    instance::DataCollect,
+    instance::{DataCollect, cached::Cached},
 };
 
 use error::GolbalError;
@@ -13,6 +13,8 @@ use tokio::{
     sync::watch::{self, Ref},
 };
 use url::Url;
+
+use crate::ceobe_push::instance::ceobe_set::LazyFilter;
 
 mod ceobe_push;
 mod database;
@@ -50,13 +52,13 @@ async fn task() -> Result<(), crate::error::GolbalError> {
 }
 
 #[get("/")]
-async fn handle(
-    msgr: &State<watch::Receiver<HashMap<DataSource, DataCollect>>>,
-) -> RResult<Ref<'_, HashMap<DataSource, DataCollect>>, GolbalError> {
+async fn handle<'s>(
+    msgr: & 's  State<watch::Receiver<HashMap<DataSource, Arc<Cached>>>>,
+) -> RResult<LazyFilter<'s>,GolbalError> {
     let w = msgr.inner();
     let v = w.borrow();
 
-    RResult::ok(v)
+    RResult::ok(LazyFilter::new(v, &["官网"], 0))
 }
 #[get("/i")]
 async fn abab() -> RResult<Wrap<String>, GolbalError> {

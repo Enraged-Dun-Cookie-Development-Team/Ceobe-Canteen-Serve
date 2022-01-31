@@ -1,4 +1,4 @@
-use std::{borrow::Cow, ops::Deref};
+use std::ops::Deref;
 
 use serde::{ser::SerializeStruct, Serialize};
 
@@ -6,7 +6,7 @@ use crate::r_result::RResult;
 
 impl<T, E> Serialize for RResult<T, E>
 where
-    T: for<'a>IntoSerde<'a>,
+    T: for<'a> IntoSerde<'a>,
     E: std::error::Error,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

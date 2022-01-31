@@ -1,4 +1,4 @@
-use std::{io::Cursor, ops::Deref};
+use std::io::Cursor;
 
 use rocket_::{
     http::{ContentType, Status},

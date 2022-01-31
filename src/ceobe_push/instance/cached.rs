@@ -1,5 +1,5 @@
 use dashmap::DashMap;
-use std::ops::Deref;
+use std::{ops::Deref, sync::Arc};
 
 use crate::{ceobe_push::dao::CachedId, DataItem};
 
@@ -27,7 +27,7 @@ impl Cached {
         }
     }
 
-    pub fn reflash(self, newest: Vec<DataItem>, timestamp: i64) -> Self {
+    pub fn reflash(self: Arc<Self>, newest: Vec<DataItem>, timestamp: i64) -> Arc<Self> {
         let (map, cached): (DashMap<_, _>, Vec<_>) = newest
             .into_iter()
             // 拆分 id 和数据
@@ -43,11 +43,11 @@ impl Cached {
                 }
             })
             .unzip();
-        Self{
+        Arc::new(Self {
             cached,
             map,
             reflesh_time: timestamp,
-        }
+        })
     }
 
     pub fn into_slice(&self) -> &[DataItem] {
@@ -93,7 +93,7 @@ mod test {
     fn test_reflesh() {
         let mut t: DataItem = Default::default();
         t.id = Arc::new(String::from("Mock 1"));
-        let cached = Cached::new(vec![t], 1);
+        let cached = Arc::new(Cached::new(vec![t], 1));
 
         let newest = cached.new_ceobe_after(0);
 
