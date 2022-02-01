@@ -9,9 +9,9 @@ use crate::{error, measurable::Measurable};
 
 use super::{RangeBound, SizeStatus};
 
-pub struct RangeLimit<T, Rb>(T, Rb);
+pub struct RangeBoundLimit<T, Rb>(T, Rb);
 
-impl<T: Debug + Measurable, Rb: Debug> Debug for RangeLimit<T, Rb> {
+impl<T: Debug + Measurable, Rb: Debug> Debug for RangeBoundLimit<T, Rb> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("RangeLimit")
             .field("data", &self.0)
@@ -21,13 +21,13 @@ impl<T: Debug + Measurable, Rb: Debug> Debug for RangeLimit<T, Rb> {
     }
 }
 
-impl<T: Display, Rb> Display for RangeLimit<T, Rb> {
+impl<T: Display, Rb> Display for RangeBoundLimit<T, Rb> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
     }
 }
 
-impl<T, Rb> Deref for RangeLimit<T, Rb> {
+impl<T, Rb> Deref for RangeBoundLimit<T, Rb> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -35,7 +35,7 @@ impl<T, Rb> Deref for RangeLimit<T, Rb> {
     }
 }
 
-impl<P, T, Rb> RangeLimit<P, Rb>
+impl<P, T, Rb> RangeBoundLimit<P, Rb>
 where
     P: Deref<Target = T>,
     T: Measurable,
@@ -56,7 +56,7 @@ where
     }
 }
 
-impl<T: Measurable, Rb: RangeBound> RangeLimit<T, Rb> {
+impl<T: Measurable, Rb: RangeBound> RangeBoundLimit<T, Rb> {
     pub fn try_from(value: T) -> Result<Self, error::Error> {
         match Rb::match_range(value.size()) {
             SizeStatus::Ok => Ok(Self(value, Rb::default())),
@@ -76,13 +76,13 @@ impl<T: Measurable, Rb: RangeBound> RangeLimit<T, Rb> {
     }
 }
 
-impl<T: Measurable, Rb> Measurable for RangeLimit<T, Rb> {
+impl<T: Measurable, Rb> Measurable for RangeBoundLimit<T, Rb> {
     fn size(&self) -> usize {
         self.0.size()
     }
 }
 
-impl<T: serde::Serialize, Rb> serde::Serialize for RangeLimit<T, Rb> {
+impl<T: serde::Serialize, Rb> serde::Serialize for RangeBoundLimit<T, Rb> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -91,7 +91,7 @@ impl<T: serde::Serialize, Rb> serde::Serialize for RangeLimit<T, Rb> {
     }
 }
 
-impl<'de, T, Rb> serde::Deserialize<'de> for RangeLimit<T, Rb>
+impl<'de, T, Rb> serde::Deserialize<'de> for RangeBoundLimit<T, Rb>
 where
     T: serde::Deserialize<'de> + Measurable,
     Rb: RangeBound,
