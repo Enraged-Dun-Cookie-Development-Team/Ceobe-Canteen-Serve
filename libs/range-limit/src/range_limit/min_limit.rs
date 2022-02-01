@@ -1,10 +1,46 @@
-use std::ops::Deref;
+use std::{
+    fmt::{Debug, Display},
+    ops::Deref,
+};
 
 use serde::de;
 
 use crate::{error, measurable::Measurable};
 
 pub struct MinLimit<T, const MIN: usize>(T);
+
+impl<P, T, const MIN: usize> MinLimit<P, MIN>
+where
+    P: Deref<Target = T>,
+    T: Measurable,
+{
+    pub fn try_from_ptr(value: P) -> Result<Self, error::Error> {
+        if value.deref().size() > MIN {
+            Ok(Self(value))
+        } else {
+            Err(error::Error::TooSmall {
+                require: MIN,
+                get: value.size(),
+            })
+        }
+    }
+}
+
+impl<T: Display, const MIN: usize> Display for MinLimit<T, MIN> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl<T: Debug + Measurable, const MIN: usize> Debug for MinLimit<T, MIN> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("MinLimit")
+            .field("data", &self.0)
+            .field("min limit", &MIN)
+            .field("exact lenght", &self.0.size())
+            .finish()
+    }
+}
 
 impl<T, const M: usize> Deref for MinLimit<T, M> {
     type Target = T;
