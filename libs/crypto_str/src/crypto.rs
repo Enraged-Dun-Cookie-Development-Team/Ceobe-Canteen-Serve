@@ -1,10 +1,10 @@
-use std::{borrow::Cow, ops::Deref};
+use std::{borrow::Cow, ops::Deref, marker::PhantomData};
 
 use crate::Encoder;
 
 #[derive(Debug, Clone)]
 pub enum CryptoString<E> {
-    Raw(Cow<'static, str>, E),
+    Raw(Cow<'static, str>, PhantomData<E>),
     Crypto(Cow<'static, str>),
 }
 
@@ -14,10 +14,9 @@ where
 {
     pub fn new_raw<S>(raw: S) -> Self
     where
-        E: Default,
         S: Into<String>,
     {
-        Self::Raw(Cow::Owned(raw.into()), E::default())
+        Self::Raw(Cow::Owned(raw.into()), Default::default())
     }
 
     pub fn new_crypto<S>(raw: S) -> Self
@@ -63,6 +62,6 @@ impl<E> Deref for CryptoString<E> {
 #[cfg(feature = "wrap")]
 impl<E> CryptoString<E> {
     pub fn into_crypto(self) -> crate::CryptoWarp<crate::Crypto, E> {
-        crate::CryptoWarp(crate::Crypto, self)
+        crate::CryptoWarp(Default::default(), self)
     }
 }

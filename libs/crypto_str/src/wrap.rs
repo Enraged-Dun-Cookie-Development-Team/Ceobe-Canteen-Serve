@@ -7,7 +7,10 @@ pub(crate) mod private {
 }
 
 /// 包装 `CryptoString` 的智能指针，用于提供原始数据来源类型（反序列化和Into时使用）
-pub struct CryptoWarp<Src, E>(pub(crate) Src, pub(crate) CryptoString<E>);
+pub struct CryptoWarp<Src, E>(
+    pub(crate) std::marker::PhantomData<Src>,
+    pub(crate) CryptoString<E>,
+);
 
 impl<Src, E> Deref for CryptoWarp<Src, E> {
     type Target = CryptoString<E>;

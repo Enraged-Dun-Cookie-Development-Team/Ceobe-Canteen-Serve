@@ -8,27 +8,27 @@ use crate::{
 
 impl<'de, E> serde_::Deserialize<'de> for CryptoWarp<Raw, E>
 where
-    E: Encoder + Default,
+    E: Encoder,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde_::Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
-        Ok(Self(Raw, CryptoString::new_raw(s)))
+        Ok(Self(Default::default(), CryptoString::new_raw(s)))
     }
 }
 
 impl<'de, E> serde_::Deserialize<'de> for CryptoWarp<Crypto, E>
 where
-    E: Encoder + Default,
+    E: Encoder,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde_::Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
-        Ok(Self(Crypto, CryptoString::new_crypto(s)))
+        Ok(Self(Default::default(), CryptoString::new_crypto(s)))
     }
 }
 

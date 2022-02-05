@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, marker::PhantomData};
 
 use crate::{Crypto, CryptoString, CryptoWarp, Encoder, Raw};
 
@@ -7,7 +7,7 @@ where
     E: Encoder + Default,
 {
     fn from(s: String) -> Self {
-        CryptoWarp(Raw, CryptoString::new_raw(s))
+        CryptoWarp(PhantomData::default(), CryptoString::new_raw(s))
     }
 }
 
@@ -16,7 +16,7 @@ where
     E: Encoder + Default,
 {
     fn from(s: String) -> Self {
-        CryptoWarp(Crypto, CryptoString::new_crypto(s))
+        CryptoWarp(PhantomData::default(), CryptoString::new_crypto(s))
     }
 }
 
