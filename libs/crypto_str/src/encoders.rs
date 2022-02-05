@@ -12,5 +12,5 @@ pub trait Encoder {
     /// 将原文编码成密码，编码失败时返回`Err(Self::Error)`
     fn encode<'s>(raw: Cow<'s,str>) -> Result<Cow<'s, str>, Self::Error>;
     /// 判定密码是否匹配，如果无法判断返回 `Err(Self::Error)`
-    fn verify<'s, S: AsRef<str>>(cryptoed: &Cow<'s, str>, input: &S) -> Result<bool, Self::Error>;
+    fn verify<'s, S: AsRef<str>>(encrypted: &Cow<'s, str>, input: &S) -> Result<bool, Self::Error>;
 }

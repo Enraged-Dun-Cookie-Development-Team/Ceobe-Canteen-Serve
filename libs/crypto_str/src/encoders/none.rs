@@ -12,10 +12,10 @@ impl Encoder for NoCrypto {
     }
 
     fn verify<'s, S: AsRef<str>>(
-        cryptoed: &std::borrow::Cow<'s, str>,
+        encrypted: &std::borrow::Cow<'s, str>,
         input: &S,
     ) -> Result<bool, Self::Error> {
-        Ok(cryptoed == input.as_ref())
+        Ok(encrypted == input.as_ref())
     }
 }
 

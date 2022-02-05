@@ -12,10 +12,10 @@ impl<const C: u32> Encoder for BcryptEncoder<C> {
     }
 
     fn verify<'s, S: AsRef<str>>(
-        cryptoed: &std::borrow::Cow<'s, str>,
+        encrypted: &std::borrow::Cow<'s, str>,
         input: &S,
     ) -> Result<bool, Self::Error> {
-        bcrypt_::verify(input.as_ref(), &*cryptoed)
+        bcrypt_::verify(input.as_ref(), &*encrypted)
     }
 }
 

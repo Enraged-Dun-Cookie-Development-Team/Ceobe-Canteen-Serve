@@ -3,7 +3,7 @@ use std::ops::Deref;
 use crate::{crypto::CryptoString, Encoder};
 
 pub(crate) mod private {
-    pub trait CryptoSrouce {}
+    pub trait CryptoSource {}
 }
 
 /// 包装 `CryptoString` 的智能指针，用于提供原始数据来源类型（反序列化和Into时使用）
@@ -20,7 +20,7 @@ impl<Src, E> Deref for CryptoWarp<Src, E> {
 impl<Src, E> Into<CryptoString<E>> for CryptoWarp<Src, E>
 where
     E: Encoder,
-    Src: private::CryptoSrouce,
+    Src: private::CryptoSource,
 {
     fn into(self) -> CryptoString<E> {
         self.1
@@ -29,7 +29,7 @@ where
 
 pub struct Raw;
 
-impl private::CryptoSrouce for Raw {}
+impl private::CryptoSource for Raw {}
 
 pub struct Crypto;
-impl private::CryptoSrouce for Crypto {}
+impl private::CryptoSource for Crypto {}
