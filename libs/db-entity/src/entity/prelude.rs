@@ -3,3 +3,5 @@
 pub use super::each_mansion::Entity as EachMansion;
 pub use super::mansion::Entity as Mansion;
 pub use super::mansion_info::Entity as MansionInfo;
+pub use super::seaql_migrations::Entity as SeaqlMigrations;
+pub use super::users::Entity as Users;
