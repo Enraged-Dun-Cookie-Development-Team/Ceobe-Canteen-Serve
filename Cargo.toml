@@ -9,7 +9,6 @@ members=["libs/*"]
 
 [dependencies]
 url = "2.2.2"
-device_query = "0.2.8"
 #state = "0.5.2"
 futures = "0.3.19"
 dotenv = "0.15"
@@ -80,3 +79,10 @@ features=[
     "serde",
     "bcrypt"
 ]
+
+[dependencies.db-entity]
+path ="./libs/db-entity"
+
+[dependencies.orm-migrate]
+package="migration"
+path="./libs/orm-migrate/"

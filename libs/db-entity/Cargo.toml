@@ -1,0 +1,17 @@
+[package]
+name = "db-entity"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+# data base crate
+[dependencies.sea-orm]
+version="0.6"
+default-features = false
+features=[
+    "sqlx-mysql",
+    "runtime-tokio-rustls",
+    "macros",
+    # "debug-print"
+]
