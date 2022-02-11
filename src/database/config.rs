@@ -1,7 +1,7 @@
 use std::net::Ipv4Addr;
 
 /// 用于构造databas的配置文件信息
-pub trait DbConnetConfig: serde::de::DeserializeOwned {
+pub trait DbConnectConfig: serde::de::DeserializeOwned {
     fn scheme(&self) -> &str;
     fn username(&self) -> &str;
     fn password(&self) -> &str;
@@ -36,7 +36,7 @@ pub struct DbConfig {
     pub(crate) logger: bool,
 }
 
-impl DbConnetConfig for DbConfig {
+impl DbConnectConfig for DbConfig {
     fn scheme(&self) -> &str {
         &self.scheme
     }

@@ -2,7 +2,7 @@ pub mod traits;
 use sea_orm::{ConnectOptions, ConnectionTrait, Database};
 
 use self::{
-    config::{DbConnetConfig, DbOptionsConfig},
+    config::{DbConnectConfig, DbOptionsConfig},
     error::DatabaseError,
 };
 
@@ -13,9 +13,9 @@ pub mod error;
 pub struct ServeDatabase<D>(D);
 
 impl ServeDatabase<sea_orm::DatabaseConnection> {
-    pub async fn connet<C>(config: &C) -> Result<Self, DatabaseError>
+    pub async fn connect<C>(config: &C) -> Result<Self, DatabaseError>
     where
-        C: DbConnetConfig + DbOptionsConfig,
+        C: DbConnectConfig + DbOptionsConfig,
     {
         let db_url = format!(
             "{scheme}://{username}:{password}@{host}:{port}/{name}",
@@ -33,9 +33,9 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
             .min_connections(config.min_conn())
             .sqlx_logging(config.sql_logger());
 
-        let connet = Database::connect(db_options).await?;
+        let connect = Database::connect(db_options).await?;
 
-        Ok(Self(connet))
+        Ok(Self(connect))
     }
 }
 
