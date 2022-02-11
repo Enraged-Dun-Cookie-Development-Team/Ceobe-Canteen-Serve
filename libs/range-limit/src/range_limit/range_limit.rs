@@ -12,7 +12,7 @@ use crate::{
 
 use super::{RangeBound, SizeStatus};
 
-pub struct RangeBoundLimit<T, Rb>(T, Rb);
+pub struct RangeBoundLimit<T, Rb>(pub(crate) T, pub(crate) Rb);
 
 impl<T, Rb: Default> RangeBoundLimit<T, Rb> {
     fn handle_arms(status: SizeStatus, size: usize, value: T) -> Result<Self, error::Error> {
@@ -80,25 +80,5 @@ impl<T: Measurable, Rb> Measurable for RangeBoundLimit<T, Rb> {
     }
 }
 
-impl<T: serde::Serialize, Rb> serde::Serialize for RangeBoundLimit<T, Rb> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.0.serialize(serializer)
-    }
-}
 
-impl<'de, T, Rb> serde::Deserialize<'de> for RangeBoundLimit<T, Rb>
-where
-    T: serde::Deserialize<'de> + Measurable,
-    Rb: RangeBound,
-{
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let tmp = T::deserialize(deserializer)?;
-        Self::try_from(tmp).or_else(|e| Err(de::Error::custom(e)))
-    }
-}
+

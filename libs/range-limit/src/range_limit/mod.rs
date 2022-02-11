@@ -1,3 +1,4 @@
+pub mod serde;
 pub mod limits;
 pub mod range_limit;
 
