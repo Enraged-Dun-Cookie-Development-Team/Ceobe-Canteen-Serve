@@ -1,5 +1,5 @@
 pub mod traits;
-use sea_orm::{ConnectOptions, ConnectionTrait, Database};
+use sea_orm::{ConnectOptions, ConnectionTrait, Database, Statement};
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
@@ -39,9 +39,9 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
     }
 }
 
-impl<'a, D> AsRef<D> for ServeDatabase<D>
+impl<D> AsRef<D> for ServeDatabase<D>
 where
-    D: sea_orm::ConnectionTrait<'a>,
+    D: sea_orm::ConnectionTrait,
 {
     fn as_ref(&self) -> &D {
         &self.0
@@ -49,67 +49,35 @@ where
 }
 
 #[async_trait::async_trait]
-impl<'a, D> ConnectionTrait<'a> for ServeDatabase<D>
+impl<D> ConnectionTrait for ServeDatabase<D>
 where
-    D: ConnectionTrait<'a>,
+    D: ConnectionTrait+Send,
 {
-    fn support_returning(&self) -> bool {
-        self.as_ref().support_returning()
-    }
-
-    fn is_mock_connection(&self) -> bool {
-        self.as_ref().is_mock_connection()
-    }
-
-    type Stream = D::Stream;
-
     fn get_database_backend(&self) -> sea_orm::DbBackend {
-        self.as_ref().get_database_backend()
+        self.0.get_database_backend()
     }
 
     async fn execute(
         &self,
-        stmt: sea_orm::Statement,
-    ) -> Result<sea_orm::ExecResult, sea_orm::DbErr> {
-        self.as_ref().execute(stmt).await
+        stmt: Statement,
+    ) -> Result<sea_orm::ExecResult, orm_migrate::DbErr> {
+        self.0.execute(stmt).await
     }
 
     async fn query_one(
         &self,
-        stmt: sea_orm::Statement,
-    ) -> Result<Option<sea_orm::QueryResult>, sea_orm::DbErr> {
-        self.as_ref().query_one(stmt).await
+        stmt: Statement,
+    ) -> Result<Option<sea_orm::QueryResult>, orm_migrate::DbErr>
+                
+    {
+        self.0.query_one(stmt).await
     }
 
     async fn query_all(
         &self,
-        stmt: sea_orm::Statement,
-    ) -> Result<Vec<sea_orm::QueryResult>, sea_orm::DbErr> {
-        self.as_ref().query_all(stmt).await
-    }
-
-    fn stream(
-        &'a self,
-        stmt: sea_orm::Statement,
-    ) -> std::pin::Pin<Box<dyn futures::Future<Output = Result<Self::Stream, sea_orm::DbErr>> + 'a>>
+        stmt: Statement,
+    ) -> Result<Vec<sea_orm::QueryResult>, orm_migrate::DbErr>
     {
-        self.as_ref().stream(stmt)
-    }
-
-    async fn begin(&self) -> Result<sea_orm::DatabaseTransaction, sea_orm::DbErr> {
-        self.as_ref().begin().await
-    }
-
-    async fn transaction<F, T, E>(&self, callback: F) -> Result<T, sea_orm::TransactionError<E>>
-    where
-        F: for<'c> FnOnce(
-                &'c sea_orm::DatabaseTransaction,
-            ) -> std::pin::Pin<
-                Box<dyn futures::Future<Output = Result<T, E>> + Send + 'c>,
-            > + Send,
-        T: Send,
-        E: std::error::Error + Send,
-    {
-        self.as_ref().transaction(callback).await
+        self.0.query_all(stmt).await
     }
 }
