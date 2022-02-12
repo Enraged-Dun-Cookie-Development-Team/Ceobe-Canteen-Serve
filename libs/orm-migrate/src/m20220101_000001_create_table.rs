@@ -37,11 +37,19 @@ impl MigrationTrait for Migration {
                     .col(
                         ColumnDef::new(Users::Policy)
                             .enumeration("Policy", ["ceobe-user", "admin", "mansion-uploader"])
-                            .not_null(),
+                            .not_null()
                     )
                     .to_owned(),
             )
             .await?;
+
+        manager.create_index(sea_query::index::Index::create()
+            .name("policy-idx")
+            .table(Users::Table)
+            .col(Users::Policy)
+            .to_owned()
+    ).await?;
+
         Ok(())
     }
 
