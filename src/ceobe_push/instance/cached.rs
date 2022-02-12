@@ -5,7 +5,7 @@ use crate::{ceobe_push::dao::CachedId, DataItem};
 
 /// 饼信息缓存器，一个实例用于缓存一个DataSource 的饼信息
 pub struct Cached {
-    reflesh_time: i64,
+    refresh_time: i64,
     // 缓存
     pub(super) cached: Vec<DataItem>,
     // map
@@ -23,11 +23,11 @@ impl Cached {
         Self {
             cached,
             map,
-            reflesh_time: timestamp,
+            refresh_time: timestamp,
         }
     }
 
-    pub fn reflash(self: Arc<Self>, newest: Vec<DataItem>, timestamp: i64) -> Arc<Self> {
+    pub fn refresh(self: Arc<Self>, newest: Vec<DataItem>, timestamp: i64) -> Arc<Self> {
         let (map, cached): (DashMap<_, _>, Vec<_>) = newest
             .into_iter()
             // 拆分 id 和数据
@@ -46,7 +46,7 @@ impl Cached {
         Arc::new(Self {
             cached,
             map,
-            reflesh_time: timestamp,
+            refresh_time: timestamp,
         })
     }
 
@@ -77,7 +77,7 @@ impl Cached {
     }
 
     pub fn is_refleshed(&self, timestamp: i64) -> bool {
-        self.reflesh_time > timestamp
+        self.refresh_time > timestamp
     }
 }
 
@@ -104,7 +104,7 @@ mod test {
         let mut t2: DataItem = Default::default();
         t2.id = Arc::new(String::from("Mock 2"));
 
-        let new = cached.reflash(vec![t1, t2], 2);
+        let new = cached.refresh(vec![t1, t2], 2);
 
         let newest = new.new_ceobe_after(0);
 

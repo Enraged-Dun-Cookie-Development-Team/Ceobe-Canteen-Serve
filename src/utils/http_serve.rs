@@ -3,7 +3,7 @@
 use rocket::Route;
 
 pub trait Controller {
-    fn base()->&'static str;
+    fn base<'s>()->&'s str;
     fn routes()->Vec<Route>;
 }
 
@@ -12,7 +12,7 @@ pub trait Controller {
 macro_rules! generate_controller {
     ($name:ident,$base:literal,$($routes:path),*) => {
         pub struct $name;
-        impl crate::controllers::Controller for $name  {
+        impl $crate::utils::http_serve::Controller for $name  {
             fn routes()->Vec<rocket::Route>{
                 rocket::routes![
                     $(

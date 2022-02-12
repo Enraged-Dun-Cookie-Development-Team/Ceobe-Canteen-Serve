@@ -52,7 +52,7 @@ impl Updater {
 
     fn update_one_source(&self, src: DataSource, collect: DataCollect, timestamp: i64) {
         if let Some((k, v)) = self.last_id.remove(&src) {
-            let cached = v.reflash(collect, timestamp);
+            let cached = v.refresh(collect, timestamp);
             self.last_id.insert(k, cached);
         } else {
             let cached = Cached::new(collect, timestamp);
