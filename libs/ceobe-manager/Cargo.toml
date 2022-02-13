@@ -6,3 +6,25 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+actix-web-actors="3"
+actix-codec="0.3.0"
+dashmap="5"
+serde_json="1"
+chrono = {version="0.4",features=["serde"]}
+awc = "2.0.0"
+
+futures-util="0"
+
+[dependencies.actix-web]
+version="3"
+
+[dependencies.actix]
+version="0.10.0"
+
+[dependencies.serde]
+version="1.0.133"
+features=["derive"]
+
+[dependencies.tokio]
+version="1"
+features=["full"]
