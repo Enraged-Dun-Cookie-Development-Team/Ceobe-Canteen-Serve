@@ -8,6 +8,7 @@ use crate::models::{CachedId, DataItem};
 
 use super::{CachedFilter, CachedUpdateMsg, CachedWatcherMsg, CheckCachedUpdate};
 
+#[derive(Debug)]
 pub struct Cached {
     /// 记录的上次更新时间
     update_time: AtomicU64,

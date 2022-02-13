@@ -1,10 +1,6 @@
-use std::sync::Arc;
-
 use serde::{Deserialize, Serialize};
 
 use super::share_str::AShareString;
-
-
 
 #[derive(Deserialize, Debug, Serialize, Clone, Default)]
 pub struct DataItem {
@@ -38,8 +34,3 @@ fn default_top() -> bool {
     false
 }
 
-impl DataItem {
-    pub fn get_id(&self) -> &str {
-        &self.id
-    }
-}

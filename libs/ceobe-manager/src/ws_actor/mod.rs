@@ -105,8 +105,9 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                             c.spawn(wrapped_task);
                         }));
                     }
-                    ws::Frame::Ping(_p) => {
-                        println!("Ping!")
+                    ws::Frame::Ping(p) => {
+                        println!("Ping!");
+                        self.slink.write(Message::Pong(p));
                     }
                     ws::Frame::Pong(_) => println!("Pong!"),
                     ws::Frame::Close(c) => {
@@ -122,7 +123,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                 }
             }
             Err(err) => {
-                eprintln!("Websocket Connect Error {}", err);
+                eprintln!("Websocket Connect Error: `{}`", err);
                 //TODO attempt restart
             }
         }
@@ -140,4 +141,34 @@ async fn wsaa() {
         .expect("msg");
 
     let (slink, stream) = b.split();
+}
+
+#[cfg(test)]
+mod test {
+    use futures_util::StreamExt;
+
+    use crate::ws_actor::CeoboWebsocket;
+
+    #[test]
+    fn test() {
+        let mut system = actix::System::new("test");
+
+        system.block_on(async {
+            let client = awc::Client::builder().finish();
+            let (mut resp, stream) = client
+                .ws("ws://81.68.101.79:5683/")
+                .max_frame_size(1024*1024*2)
+                .connect()
+                .await
+                .unwrap();
+            let bod = resp.body().await;
+            println!("{:?}", bod);
+
+            let (slink, stream) = stream.split();
+
+            let _addr = CeoboWebsocket::start(slink, stream);
+
+            let _s = actix_rt::signal::ctrl_c().await;
+        });
+    }
 }

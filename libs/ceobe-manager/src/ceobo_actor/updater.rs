@@ -48,7 +48,9 @@ impl Handler<NewCeobeIncome> for Updater {
                         let cached = Cached::new(now_timestamp, v).start();
                         self.ceobe_record.insert(k, cached);
                     }
+
                 });
+                println!("updated {:#?}",self.ceobe_record);
                 MessageResult(())
             }
         }
