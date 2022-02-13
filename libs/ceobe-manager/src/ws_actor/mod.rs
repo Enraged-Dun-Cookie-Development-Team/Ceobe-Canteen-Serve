@@ -1,28 +1,27 @@
 mod continuation;
+mod json_loader;
 use awc::ws::Message;
-use std::collections::HashMap;
+use awc::ClientResponse;
 
-use actix::{
-    fut::wrap_future, io::SinkWrite, Actor, ActorContext, ActorFuture, Addr, AsyncContext, Context,
-    StreamHandler,
-};
+use actix::{io::SinkWrite, Actor, ActorContext, Addr, AsyncContext, Context, StreamHandler};
 use actix_codec::Framed;
 
 use awc::{error::WsProtocolError, ws, BoxedSocket};
 use futures_util::stream::{SplitSink, SplitStream, StreamExt};
 
-use crate::ceobo_actor::NewCeobeIncome;
-use crate::fut_utils::{do_feature, do_with_func, ExecutableFut, FutureTask};
-use crate::models::{DataItem, DataSource};
+use crate::fut_utils::{do_feature, do_with_func};
 
 use self::continuation::Continuation;
+use self::json_loader::JsonLoader;
+
+
 
 type WsFramedSink = SplitSink<Framed<BoxedSocket, ws::Codec>, ws::Message>;
 type WsFramedStream = SplitStream<Framed<BoxedSocket, ws::Codec>>;
 
 pub struct CeoboWebsocket {
     slink: SinkWrite<ws::Message, WsFramedSink>,
-    updater: Addr<crate::ceobo_actor::Updater>,
+    json_handle: Addr<JsonLoader>,
     continue_handle: Addr<Continuation>,
 }
 
@@ -32,7 +31,7 @@ impl CeoboWebsocket {
             ctx.add_stream(stream);
             Self {
                 slink: SinkWrite::new(sink, ctx),
-                updater: crate::ceobo_actor::Updater::new().start(),
+                json_handle: JsonLoader::start(),
                 continue_handle: Continuation::start(),
             }
         })
@@ -50,48 +49,16 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
         match item {
             Ok(msg) => match msg {
                 ws::Frame::Text(text) | ws::Frame::Binary(text) => {
-                    match serde_json::from_slice::<HashMap<DataSource, Vec<DataItem>>>(&text) {
-                        Ok(data) => {
-                            let req = self.updater.send(NewCeobeIncome::new_loaded(data));
-                            do_feature(req, ctx);
-                        }
-                        Err(e) => {
-                            self.slink
-                                .write(Message::Text(format!("Wrong Json Format {}", e)));
-                        }
-                    }
+                    do_feature(self.json_handle.send(text.into()), ctx);
                 }
                 ws::Frame::Continuation(c) => {
                     let req = self.continue_handle.send(continuation::NextIncome(c));
 
-                    FutureTask::<_, Self>::start(req)
-                        .done(|res, actor, ctx| {
-                            if let Ok(Some(msg)) = res {
-                                match msg {
-                                    continuation::FullData::Text(t)
-                                    | continuation::FullData::Bin(t) => {
-                                        match serde_json::from_slice::<
-                                            HashMap<DataSource, Vec<DataItem>>,
-                                        >(&t)
-                                        {
-                                            Ok(data) => {
-                                                let req = actor
-                                                    .updater
-                                                    .send(NewCeobeIncome::new_loaded(data));
-                                                do_feature(req, ctx);
-                                            }
-                                            Err(e) => {
-                                                actor.slink.write(Message::Text(format!(
-                                                    "Wrong Json Format {}",
-                                                    e
-                                                )));
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        })
-                        .exec(ctx);
+                    do_with_func(req, ctx, |res, actor, ctx| {
+                        if let Ok(Some(msg)) = res {
+                            do_feature(actor.json_handle.send(msg.unwrap().into()), ctx);
+                        }
+                    });
                 }
                 ws::Frame::Ping(p) => {
                     println!("Ping!");
@@ -118,16 +85,19 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
 }
 
 /// [ws client](https://stackoverflow.com/questions/70118994/build-a-websocket-client-using-actix)
-async fn wsaa() {
-    let cli = actix_web::client::ClientBuilder::new().finish();
+pub async fn strat_ws(uri: &str) -> (ClientResponse, Addr<CeoboWebsocket>) {
+    let client = awc::Client::builder().finish();
 
-    let (a, b) = cli
-        .ws("ws://81.68.101.79:5683/")
+    let (resp, stream) = client
+        .ws(uri)
+        .max_frame_size(1024 * 1024 * 2)
         .connect()
         .await
-        .expect("msg");
+        .expect("connect Failure");
 
-    let (slink, stream) = b.split();
+    let (sink, stream) = stream.split();
+
+    (resp, CeoboWebsocket::start(sink, stream))
 }
 
 #[cfg(test)]

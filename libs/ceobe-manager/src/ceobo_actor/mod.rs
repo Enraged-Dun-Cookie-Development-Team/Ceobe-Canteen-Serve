@@ -32,13 +32,11 @@ pub struct CachedFilter(u64);
 #[derive(actix::Message)]
 #[rtype(result = "()")]
 pub enum NewCeobeIncome {
-    Loaded( HashMap<DataSource, Vec<DataItem>>),
-    Nil,
+    Loaded(HashMap<DataSource, Vec<DataItem>>),
 }
 
 impl NewCeobeIncome {
     pub fn new_loaded(map: HashMap<DataSource, Vec<DataItem>>) -> Self {
         Self::Loaded(map)
     }
-    pub const EMPTY: Self = Self::Nil;
 }

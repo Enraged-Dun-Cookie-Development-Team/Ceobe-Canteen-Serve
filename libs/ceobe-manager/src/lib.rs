@@ -1,7 +1,4 @@
-mod fut_utils;
-use actix::{fut::wrap_future, Actor, ActorFuture, AsyncContext, Context, SpawnHandle};
-use futures_util::Future;
-
+pub mod fut_utils;
 mod ceobo_actor;
 mod models;
 mod ws_actor;
@@ -12,4 +9,9 @@ mod tests {
         let result = 2 + 2;
         assert_eq!(result, 4);
     }
+}
+pub const WS_SERVICE: &str = "ws://81.68.101.79:5683/";
+
+pub mod ws{
+    pub use crate::ws_actor::{CeoboWebsocket,strat_ws};
 }

@@ -29,6 +29,14 @@ pub enum FullData {
     Bin(Bytes),
 }
 
+impl FullData {
+    pub(crate) fn unwrap(self) -> Bytes {
+        match self {
+            FullData::Text(b) | FullData::Bin(b) => b,
+        }
+    }
+}
+
 impl Handler<NextIncome> for Continuation {
     type Result = MessageResult<NextIncome>;
 

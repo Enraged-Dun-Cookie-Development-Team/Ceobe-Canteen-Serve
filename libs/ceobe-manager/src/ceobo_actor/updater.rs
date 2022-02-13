@@ -27,7 +27,6 @@ impl Handler<NewCeobeIncome> for Updater {
 
     fn handle(&mut self, msg: NewCeobeIncome, ctx: &mut Self::Context) -> Self::Result {
         match msg {
-            NewCeobeIncome::Nil => MessageResult(()),
             NewCeobeIncome::Loaded(map) => {
                 let now_timestamp = Local::now().timestamp() as u64;
                 map.into_iter().for_each(|(k, v)| {
