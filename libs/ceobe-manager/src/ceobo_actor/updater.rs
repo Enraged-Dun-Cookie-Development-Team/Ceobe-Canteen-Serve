@@ -1,20 +1,29 @@
-use actix::{Actor, Addr, AsyncContext, Context, Handler, MessageResult};
-use chrono::Local;
-use dashmap::DashMap;
+use std::collections::HashMap;
 
-use crate::models::DataSource;
+use actix::{Actor, Addr, Context, Handler, MessageResult};
+use chrono::Local;
+
+use tokio::sync::watch;
+
+use crate::{fut_utils::do_feature, models::DataSource};
 
 use super::{cached::Cached, CachedUpdateMsg, NewCeobeIncome};
 
 pub struct Updater {
-    ceobe_record: DashMap<DataSource, Addr<Cached>>,
+    sender: tokio::sync::watch::Sender<Option<HashMap<DataSource, Addr<Cached>>>>,
 }
 
+pub type UpdaterReceiver = watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>;
+
 impl Updater {
-    pub fn new() -> Self {
-        Self {
-            ceobe_record: DashMap::with_capacity(16),
-        }
+    pub fn new() -> (Self, UpdaterReceiver) {
+        let (s, r) = tokio::sync::watch::channel(None);
+        (
+            Self {
+                sender: s,
+            },
+            r,
+        )
     }
 }
 
@@ -29,27 +38,25 @@ impl Handler<NewCeobeIncome> for Updater {
         match msg {
             NewCeobeIncome::Loaded(map) => {
                 let now_timestamp = Local::now().timestamp() as u64;
+                let mut record = self
+                    .sender
+                    .send_replace(None)
+                    .unwrap_or(HashMap::with_capacity(16));
                 map.into_iter().for_each(|(k, v)| {
-                    if let Some(addr) = self.ceobe_record.get(&k) {
-                        let addr = addr.value();
+                    if let Some(addr) = record.get(&k) {
                         let res_timestamp = now_timestamp;
                         let msg = addr.send(CachedUpdateMsg {
                             res_timestamp,
                             data: v,
                         });
-                        let no_return_msg = async move {
-                            msg.await.ok();
-                            ()
-                        };
-                        let fut_warp = actix::fut::wrap_future::<_, Self>(no_return_msg);
-                        ctx.spawn(fut_warp);
+                        do_feature(msg, ctx);
                     } else {
                         let cached = Cached::new(now_timestamp, v).start();
-                        self.ceobe_record.insert(k, cached);
+                        record.insert(k, cached);
                     }
-
                 });
-                println!("updated {:#?}",self.ceobe_record);
+                self.sender.send_replace(Some(record));
+
                 MessageResult(())
             }
         }

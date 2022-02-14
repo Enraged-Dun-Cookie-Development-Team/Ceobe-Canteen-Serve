@@ -4,7 +4,7 @@ use actix::{Actor, Addr, Context, Handler, MessageResult};
 use actix_web::web::Bytes;
 
 use crate::{
-    ceobo_actor::{NewCeobeIncome, Updater},
+    ceobo_actor::{NewCeobeIncome, Updater, UpdaterReceiver},
     fut_utils::do_feature,
     models::{DataItem, DataSource},
 };
@@ -18,11 +18,15 @@ impl Actor for JsonLoader {
 }
 
 impl JsonLoader {
-    pub(crate) fn start() -> Addr<Self> {
-        Self {
-            updater: Updater::new().start(),
-        }
-        .start()
+    pub(crate) fn start() -> (Addr<Self>, UpdaterReceiver) {
+        let (updater, rec) = Updater::new();
+        (
+            Self {
+                updater: updater.start(),
+            }
+            .start(),
+            rec,
+        )
     }
 }
 

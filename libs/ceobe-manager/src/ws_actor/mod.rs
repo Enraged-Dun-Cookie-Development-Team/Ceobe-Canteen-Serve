@@ -10,11 +10,10 @@ use awc::{error::WsProtocolError, ws, BoxedSocket};
 use futures_util::stream::{SplitSink, SplitStream, StreamExt};
 
 use crate::fut_utils::{do_feature, do_with_func};
+use crate::updater_loader::UpdateLoader;
 
 use self::continuation::Continuation;
 use self::json_loader::JsonLoader;
-
-
 
 type WsFramedSink = SplitSink<Framed<BoxedSocket, ws::Codec>, ws::Message>;
 type WsFramedStream = SplitStream<Framed<BoxedSocket, ws::Codec>>;
@@ -26,15 +25,19 @@ pub struct CeoboWebsocket {
 }
 
 impl CeoboWebsocket {
-    pub fn start(sink: WsFramedSink, stream: WsFramedStream) -> Addr<Self> {
-        Self::create(|ctx| {
-            ctx.add_stream(stream);
-            Self {
-                slink: SinkWrite::new(sink, ctx),
-                json_handle: JsonLoader::start(),
-                continue_handle: Continuation::start(),
-            }
-        })
+    pub fn start(sink: WsFramedSink, stream: WsFramedStream) -> (Addr<Self>, UpdateLoader) {
+        let (json_handle, updater) = JsonLoader::start();
+        (
+            Self::create(|ctx| {
+                ctx.add_stream(stream);
+                Self {
+                    slink: SinkWrite::new(sink, ctx),
+                    json_handle,
+                    continue_handle: Continuation::start(),
+                }
+            }),
+            UpdateLoader::new(updater),
+        )
     }
 }
 
@@ -85,7 +88,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
 }
 
 /// [ws client](https://stackoverflow.com/questions/70118994/build-a-websocket-client-using-actix)
-pub async fn strat_ws(uri: &str) -> (ClientResponse, Addr<CeoboWebsocket>) {
+pub async fn strat_ws(uri: &str) -> (ClientResponse, (Addr<CeoboWebsocket>, UpdateLoader)) {
     let client = awc::Client::builder().finish();
 
     let (resp, stream) = client

@@ -65,7 +65,7 @@ impl Handler<CachedUpdateMsg> for Cached {
             .unzip();
         self.last_record_time.clear();
         self.last_record_time.extend(map);
-
+        
         self.sender.send(records).ok();
         MessageResult(())
     }
@@ -98,15 +98,15 @@ impl Handler<CachedFilter> for Cached {
     fn handle(&mut self, msg: CachedFilter, _ctx: &mut Self::Context) -> Self::Result {
         let time = msg.0;
 
-        let end_idx = self
+        let start_idx = self
             .recv
             .borrow()
             .iter()
             .map(|k| *self.last_record_time.get(&k.id).unwrap())
             .enumerate()
-            .find(|(_u, v)| v <= &time)
+            .find(|(_u, v)| v > &time)
             .and_then(|f| Some(f.0))
             .unwrap_or_default();
-        MessageResult(0..end_idx)
+        MessageResult(start_idx..self.recv.borrow().len())
     }
 }

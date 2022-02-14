@@ -9,6 +9,7 @@ use std::ops::Range;
 
 pub use cached::Cached;
 pub use updater::Updater;
+pub use updater::UpdaterReceiver;
 
 #[derive(actix::Message)]
 #[rtype(result = "()")]
@@ -23,11 +24,11 @@ pub struct CachedWatcherMsg;
 
 #[derive(actix::Message)]
 #[rtype(result = "bool")]
-pub struct CheckCachedUpdate(u64);
+pub struct CheckCachedUpdate(pub(crate) u64);
 
 #[derive(actix::Message)]
 #[rtype(result = "Range<usize>")]
-pub struct CachedFilter(u64);
+pub struct CachedFilter(pub(crate) u64);
 
 #[derive(actix::Message)]
 #[rtype(result = "()")]

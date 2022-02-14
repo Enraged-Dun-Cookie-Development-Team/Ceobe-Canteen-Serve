@@ -1,6 +1,6 @@
 mod share_str;
 
-use self::share_str::AShareString;
+pub use self::share_str::AShareString;
 
 mod ws_msg;
 pub type CachedId = AShareString;
