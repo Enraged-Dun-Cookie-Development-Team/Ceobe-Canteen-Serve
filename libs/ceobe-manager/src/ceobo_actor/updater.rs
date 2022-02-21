@@ -5,7 +5,7 @@ use chrono::Local;
 
 use tokio::sync::watch;
 
-use crate::{fut_utils::do_feature, models::DataSource};
+use crate::{fut_utils::do_fut, models::DataSource};
 
 use super::{cached::Cached, CachedUpdateMsg, NewCeobeIncome};
 
@@ -18,12 +18,7 @@ pub type UpdaterReceiver = watch::Receiver<Option<HashMap<DataSource, Addr<Cache
 impl Updater {
     pub fn new() -> (Self, UpdaterReceiver) {
         let (s, r) = tokio::sync::watch::channel(None);
-        (
-            Self {
-                sender: s,
-            },
-            r,
-        )
+        (Self { sender: s }, r)
     }
 }
 
@@ -49,7 +44,7 @@ impl Handler<NewCeobeIncome> for Updater {
                             res_timestamp,
                             data: v,
                         });
-                        do_feature(msg, ctx);
+                        do_fut(msg, ctx);
                     } else {
                         let cached = Cached::new(now_timestamp, v).start();
                         record.insert(k, cached);

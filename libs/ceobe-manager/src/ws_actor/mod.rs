@@ -9,7 +9,7 @@ use actix_codec::Framed;
 use awc::{error::WsProtocolError, ws, BoxedSocket};
 use futures_util::stream::{SplitSink, SplitStream, StreamExt};
 
-use crate::fut_utils::{do_feature, do_with_func};
+use crate::fut_utils::{do_fut, do_fut_with};
 use crate::updater_loader::UpdateLoader;
 
 use self::continuation::Continuation;
@@ -52,20 +52,20 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
         match item {
             Ok(msg) => match msg {
                 ws::Frame::Text(text) | ws::Frame::Binary(text) => {
-                    do_feature(self.json_handle.send(text.into()), ctx);
+                    do_fut(self.json_handle.send(text.into()), ctx);
                 }
                 ws::Frame::Continuation(c) => {
                     let req = self.continue_handle.send(continuation::NextIncome(c));
 
-                    do_with_func(req, ctx, |res, actor, ctx| {
+                    do_fut_with(req, ctx, |res, actor, ctx| {
                         if let Ok(Some(msg)) = res {
-                            do_feature(actor.json_handle.send(msg.unwrap().into()), ctx);
+                            do_fut(actor.json_handle.send(msg.unwrap().into()), ctx);
                         }
                     });
                 }
                 ws::Frame::Ping(p) => {
                     println!("Ping!");
-                    self.slink.write(Message::Pong(p));
+                    self.slink.write(Message::Pong(p)).ok();
                 }
                 ws::Frame::Pong(_) => println!("Pong!"),
                 ws::Frame::Close(c) => {
@@ -88,7 +88,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
 }
 
 /// [ws client](https://stackoverflow.com/questions/70118994/build-a-websocket-client-using-actix)
-pub async fn start_ws(uri: &str) -> (ClientResponse,  UpdateLoader) {
+pub async fn start_ws(uri: &str) -> (ClientResponse, UpdateLoader) {
     let client = awc::Client::builder().finish();
 
     let (resp, stream) = client
@@ -111,7 +111,7 @@ mod test {
 
     #[test]
     fn test() {
-        let mut system = actix::System::new("test");
+        let system = actix::System::new();
 
         system.block_on(async {
             let client = awc::Client::builder().finish();

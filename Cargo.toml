@@ -10,14 +10,14 @@ members=["libs/*"]
 [dependencies]
 url = "2.2.2"
 #state = "0.5.2"
-futures = "0.3.19"
+futures = "0.3"
 dotenv = "0.15"
 lazy_static = "1.4"
 rust-crypto = "0.2"
 figment = "0.10"
 chrono = {version="0.4",features=["serde"]}
 
-actix="0.10.0"
+actix="0.12.0"
 actix-web="3"
 actix-http="2"
 

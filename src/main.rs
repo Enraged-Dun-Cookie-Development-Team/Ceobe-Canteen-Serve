@@ -3,9 +3,7 @@ use std::sync::Arc;
 use actix_web::{App, HttpServer};
 
 use ceobe_push::controllers::CeobeController;
-use error::GolbalError;
-
-use tokio::runtime;
+use error::GlobalError;
 
 mod ceobe_push;
 mod database;
@@ -17,18 +15,12 @@ extern crate serde;
 
 generate_controller!(RootController, "/", CeobeController);
 
-fn main() -> Result<(), GolbalError> {
-    // 最简单异步服务
-    let rt = runtime::Builder::new_multi_thread()
-        .max_blocking_threads(32)
-        .enable_all()
-        .build()
-        .expect("Create Async Runtime Failure");
-
-    rt.block_on(task())
+#[actix_web::main]
+async fn main() -> Result<(), GlobalError> {
+    task().await
 }
 
-async fn task() -> Result<(), crate::error::GolbalError> {
+async fn task() -> Result<(), crate::error::GlobalError> {
     let (_resp, updater) = ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
     let updater = Arc::new(updater);
     HttpServer::new(move || App::new().data(updater.clone()).service(RootController))

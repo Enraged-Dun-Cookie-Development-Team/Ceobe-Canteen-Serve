@@ -5,8 +5,7 @@ use actix_web::web::Bytes;
 
 use crate::{
     ceobo_actor::{NewCeobeIncome, Updater, UpdaterReceiver},
-    fut_utils::do_feature,
-    models::{DataItem, DataSource},
+    models::{DataItem, DataSource}, fut_utils::do_fut,
 };
 
 pub struct JsonLoader {
@@ -48,7 +47,7 @@ impl Handler<JsonData> for JsonLoader {
         match serde_json::from_slice::<HashMap<DataSource, Vec<DataItem>>>(&bytes) {
             Ok(data) => {
                 let req = self.updater.send(NewCeobeIncome::new_loaded(data));
-                do_feature(req, ctx);
+                do_fut(req, ctx);
                 MessageResult(Ok(()))
             }
             Err(e) => MessageResult(Err(e)),
