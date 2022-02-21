@@ -17,12 +17,15 @@ rust-crypto = "0.2"
 figment = "0.10"
 chrono = {version="0.4",features=["serde"]}
 
+actix="0.10.0"
+actix-web="3"
+actix-http="2"
+
 async-trait="0.1.52"
 log="0.4.14"
 
 [dependencies.futures-util]
 version = "0.3"
-default-features = false
 features = [ "std","sink"] 
 
 [dependencies.tokio-tungstenite]
@@ -89,3 +92,6 @@ path ="./libs/db-entity"
 [dependencies.orm-migrate]
 package="migration"
 path="./libs/orm-migrate/"
+
+[dependencies.ceobe-manager]
+path="./libs/ceobe-manager"

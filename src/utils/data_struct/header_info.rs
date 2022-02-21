@@ -1,21 +1,19 @@
-use std::vec::IntoIter;
+use futures::future::ok;
+use futures_util::future::Ready;
+use std::{marker::PhantomData, vec::IntoIter};
 
-use rocket::request::FromRequest;
-use rocket::request::Outcome;
-use rocket::Request;
-
-pub enum HeaderInfo<'s, H> {
-    Exist(Vec<&'s str>, H),
-    None(H),
+pub enum HeaderInfo<H> {
+    Exist(Vec<String>, PhantomData<H>),
+    None(PhantomData<H>),
 }
 
-impl<'s, H> IntoIterator for HeaderInfo<'s, H>
+impl< H> IntoIterator for HeaderInfo< H>
 where
     H: FromHeaders,
 {
-    type Item = &'s str;
+    type Item = String;
 
-    type IntoIter = IntoIter<&'s str>;
+    type IntoIter = IntoIter<String>;
 
     fn into_iter(self) -> Self::IntoIter {
         match self {
@@ -25,40 +23,58 @@ where
     }
 }
 
-impl<'s, H> HeaderInfo<'s, H>
+impl<H> HeaderInfo< H>
 where
     H: FromHeaders,
 {
-    pub fn get_one(self) -> Option<&'s str> {
+    pub fn get_one(self) -> Option<String> {
         match self {
-            HeaderInfo::Exist(v, _) => Some(unsafe { v.get_unchecked(0) }),
+            HeaderInfo::Exist(v, _) => Some(v.into_iter().next().unwrap() ),
             HeaderInfo::None(_) => None,
         }
     }
 
+    pub fn iter(&self)->Option<impl Iterator<Item = &str>>{
+        match self {
+            HeaderInfo::Exist(v, _) => Some(v.iter().map(|s|s.as_str())),
+            HeaderInfo::None(_) => None,
+        }
+    }
 }
 
 pub trait FromHeaders {
     fn header_name() -> &'static str;
 }
 
-#[rocket::async_trait]
-impl<'r, H> FromRequest<'r> for HeaderInfo<'r, H>
-where
-    H: FromHeaders + Default,
-{
-    type Error = ();
 
-    async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let sign = H::default();
-        let headers = request.headers();
-        let res = headers.get(H::header_name()).collect::<Vec<_>>();
+impl< H> actix_web::FromRequest for HeaderInfo< H>
+where
+    H: FromHeaders,
+{
+    type Error = actix_http::Error;
+
+    type Future = Ready<Result<Self, actix_http::Error>>;
+
+    type Config = ();
+
+    fn from_request(
+        req: &actix_web::HttpRequest,
+       _payload: &mut actix_web::dev::Payload,
+    ) -> Self::Future {
+        let header = req.headers();
+        let res = header
+            .get_all(H::header_name())
+            .into_iter()
+            .filter_map(|v|v.to_str().ok())
+            .map(|s|s.to_owned())
+            .collect::<Vec<_>>();
+
         let result = if res.len() == 0 {
-            Self::None(sign)
+            Self::None(Default::default())
         } else {
-            Self::Exist(res, sign)
+            Self::Exist(res, Default::default())
         };
-        Outcome::Success(result)
+        ok(result)
     }
 }
 
@@ -67,7 +83,7 @@ macro_rules! header_captures {
     ($v:vis $i:ident : $hn:literal) => {
         #[derive(Default)]
         $v struct $i;
-        impl $crate::utils::data_structs::header_info::FromHeaders for $i{
+        impl $crate::utils::data_struct::header_info::FromHeaders for $i{
             fn header_name() -> &'static str{
                 $hn
             }

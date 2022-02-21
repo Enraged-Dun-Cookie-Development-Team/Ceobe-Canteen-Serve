@@ -1,20 +1,11 @@
-use std::{collections::HashMap, sync::Arc};
+use std::sync::Arc;
 
-use ceobe_push::{
-    dao::{DataItem, DataSource},
-    instance::{DataCollect, cached::Cached},
-};
+use actix_web::{App, HttpServer};
 
+use ceobe_push::controllers::CeobeController;
 use error::GolbalError;
-use rocket::{get, Rocket, State};
-use rresult::{RResult, Wrap};
-use tokio::{
-    runtime,
-    sync::watch::{self, Ref},
-};
-use url::Url;
 
-use crate::ceobe_push::instance::ceobe_set::LazyFilter;
+use tokio::runtime;
 
 mod ceobe_push;
 mod database;
@@ -22,8 +13,9 @@ mod error;
 mod mansion;
 mod utils;
 
-#[macro_use]
 extern crate serde;
+
+generate_controller!(RootController, "/", CeobeController);
 
 fn main() -> Result<(), GolbalError> {
     // 最简单异步服务
@@ -37,30 +29,11 @@ fn main() -> Result<(), GolbalError> {
 }
 
 async fn task() -> Result<(), crate::error::GolbalError> {
-    // 启动 ws客户端
-    let (ceobe, updater) = ceobe_push::instance::Instance::new();
-    tokio::spawn(ceobe.run());
-    let recv = updater.run();
-    // 启动rocket 客户端
-    Rocket::build()
-        .manage(recv)
-        .mount("/", rocket::routes![handle, abab])
-        .launch()
+    let (_resp, updater) = ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
+    let updater = Arc::new(updater);
+    HttpServer::new(move || App::new().data(updater.clone()).service(RootController))
+        .bind("127.0.0.1:8000")?
+        .run()
         .await?;
-
     Ok(())
-}
-
-#[get("/")]
-async fn handle<'s>(
-    msgr: & 's  State<watch::Receiver<HashMap<DataSource, Arc<Cached>>>>,
-) -> RResult<LazyFilter<'s>,GolbalError> {
-    let w = msgr.inner();
-    let v = w.borrow();
-
-    RResult::ok(LazyFilter::new(v, &["官网"], 0))
-}
-#[get("/i")]
-async fn abab() -> RResult<Wrap<String>, GolbalError> {
-    RResult::wrap_ok("ABAB".to_string())
 }

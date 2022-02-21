@@ -1,11 +1,11 @@
-use rocket_::http::Status;
+use http::StatusCode;
 
 use crate::Wrap;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum RResult<T, E = String> {
     Success(T),
-    Error(Status, E),
+    Error(http::StatusCode, E),
 }
 
 impl<T, E> RResult<T, E> {
@@ -13,12 +13,12 @@ impl<T, E> RResult<T, E> {
         Self::Success(data)
     }
 
-    fn new_status_err(status: Status, err: E) -> Self {
+    fn new_status_err(status: StatusCode, err: E) -> Self {
         Self::Error(status, err)
     }
 
     fn new_err(err: E) -> Self {
-        Self::Error(Status::NotAcceptable, err)
+        Self::Error(http::StatusCode::NOT_ACCEPTABLE, err)
     }
 }
 
@@ -29,11 +29,11 @@ impl<T, E> RResult<T, E> {
     pub fn err(err: E) -> Self {
         Self::new_err(err)
     }
-    pub fn status_err(status: Status, err: E) -> Self {
+    pub fn status_err(status: StatusCode, err: E) -> Self {
         Self::new_status_err(status, err)
     }
 
-    pub fn change_status(self, status: Status) -> Self {
+    pub fn change_status(self, status: StatusCode) -> Self {
         match self {
             RResult::Error(_, e) => Self::new_status_err(status, e),
             s => s,
@@ -51,7 +51,7 @@ impl<T, E> RResult<T, E> {
     pub fn from_result(r: Result<T, E>) -> Self {
         r.into()
     }
-    pub fn from_status_result(r: Result<T, E>, status: Status) -> Self {
+    pub fn from_status_result(r: Result<T, E>, status: StatusCode) -> Self {
         Self::from_result(r).change_status(status)
     }
 
@@ -59,7 +59,7 @@ impl<T, E> RResult<T, E> {
         (o, msg).into()
     }
 
-    pub fn from_status_option<M: AsRef<str>>(o: Option<T>, msg: &M, status: Status) -> RResult<T> {
+    pub fn from_status_option<M: AsRef<str>>(o: Option<T>, msg: &M, status: StatusCode) -> RResult<T> {
         Self::from_option(o, msg).change_status(status)
     }
 }

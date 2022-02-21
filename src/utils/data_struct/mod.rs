@@ -1,11 +1,11 @@
-use self::range_limit::RangeLimit;
-
+use range_limit::{
+    limits::{double_end_limit::DoubleEndLimit, max_limit::MaxLimit},
+    RangeBoundLimit,
+};
 
 pub mod header_info;
-pub mod measureable;
-pub mod range_limit;
 
-pub type RangeLimitString<const L: usize, const H: usize> = RangeLimit<String, L, H>;
-pub type MaxLimitString<const H: usize> = RangeLimitString<0, H>;
+pub type RangeLimitString<const L: usize, const H: usize> =
+    RangeBoundLimit<String, DoubleEndLimit<L, H>>;
+pub type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
-pub type RangeLimitVec<T, const L: usize, const H: usize> = RangeLimit<Vec<T>, L, H>;

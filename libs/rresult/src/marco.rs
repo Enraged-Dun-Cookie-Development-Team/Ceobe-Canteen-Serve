@@ -45,35 +45,35 @@ macro_rules! to_rresult {
     (op $x:expr, $s:expr) => {
         match $x {
             Some(d) => d,
-            None => return $crate::r_result::RResult::err($s),
+            None => return $crate::RResult::err($s),
         }
     };
 
     (op $x:expr,[$sta:expr], $s:expr) => {
         match $x {
             Some(d) => d,
-            None => return $crate::r_result::RResult::status_err($sta, $s),
+            None => return $crate::RResult::status_err($sta, $s),
         }
     };
 
     (rs $x:expr) => {
         match $x {
             Ok(d) => d,
-            Err(err) => return $crate::r_result::RResult::err(err),
+            Err(err) => return $crate::RResult::err(err),
         }
     };
 
     (rs $x:expr, [$sta:expr]) => {
         match $x {
             Ok(d) => d,
-            Err(err) => return $crate::r_result::RResult::status_err($sta, err),
+            Err(err) => return $crate::RResult::status_err($sta, err),
         }
     };
 
     (rs $x:expr, $info:expr) => {
         match $x {
             Ok(d) => d,
-            Err(err) => return $crate::r_result::RResult::err(format!("{} => {}", $info, err)),
+            Err(err) => return $crate::RResult::err(format!("{} => {}", $info, err)),
         }
     };
 
@@ -81,7 +81,7 @@ macro_rules! to_rresult {
         match $x {
             Ok(d) => d,
             Err(err) => {
-                return $crate::r_result::RResult::status_err($sta, format!("{} => {}", $info, err))
+                return $crate::RResult::status_err($sta, format!("{} => {}", $info, err))
             }
         }
     };
@@ -89,7 +89,7 @@ macro_rules! to_rresult {
 
 #[cfg(test)]
 mod test_macro {
-    use rocket_::http::Status;
+    use http::StatusCode;
 
     use crate::RResult;
 
@@ -99,7 +99,7 @@ mod test_macro {
         let b = Option::<i32>::None;
 
         let f = move || {
-            let t = to_rresult!(op a, [Status::Ok],"None Data");
+            let t = to_rresult!(op a, [StatusCode::OK],"None Data");
 
             RResult::Success(t)
         };

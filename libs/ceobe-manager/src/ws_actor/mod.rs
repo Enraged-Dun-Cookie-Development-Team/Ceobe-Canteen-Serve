@@ -25,9 +25,10 @@ pub struct CeoboWebsocket {
 }
 
 impl CeoboWebsocket {
-    pub fn start(sink: WsFramedSink, stream: WsFramedStream) -> (Addr<Self>, UpdateLoader) {
+    pub fn start(sink: WsFramedSink, stream: WsFramedStream) -> UpdateLoader {
         let (json_handle, updater) = JsonLoader::start();
-        (
+        UpdateLoader::new(
+            updater,
             Self::create(|ctx| {
                 ctx.add_stream(stream);
                 Self {
@@ -36,7 +37,6 @@ impl CeoboWebsocket {
                     continue_handle: Continuation::start(),
                 }
             }),
-            UpdateLoader::new(updater),
         )
     }
 }
@@ -88,7 +88,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
 }
 
 /// [ws client](https://stackoverflow.com/questions/70118994/build-a-websocket-client-using-actix)
-pub async fn strat_ws(uri: &str) -> (ClientResponse, (Addr<CeoboWebsocket>, UpdateLoader)) {
+pub async fn start_ws(uri: &str) -> (ClientResponse,  UpdateLoader) {
     let client = awc::Client::builder().finish();
 
     let (resp, stream) = client

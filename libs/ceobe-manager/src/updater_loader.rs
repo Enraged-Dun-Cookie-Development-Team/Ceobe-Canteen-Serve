@@ -10,14 +10,14 @@ use tokio::sync::watch;
 
 use crate::{
     ceobo_actor::{Cached, CachedFilter, CachedWatcherMsg, CheckCachedUpdate, UpdaterReceiver},
-    models::{AShareString, DataItem, DataSource},
+    models::{AShareString, DataItem, DataSource}, ws_actor::CeoboWebsocket,
 };
 
-pub struct UpdateLoader(Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>);
+pub struct UpdateLoader(Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>,Addr<CeoboWebsocket>);
 
 impl UpdateLoader {
-    pub fn new(rec: UpdaterReceiver) -> Self {
-        Self(Mutex::new(rec))
+    pub fn new(rec: UpdaterReceiver,ws:Addr<CeoboWebsocket>) -> Self {
+        Self(Mutex::new(rec),ws)
     }
 }
 
