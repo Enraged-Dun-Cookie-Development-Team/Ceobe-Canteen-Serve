@@ -1,4 +1,4 @@
-use actix::{fut::wrap_future, fut::ActorFutureExt, Actor, Context, SpawnHandle};
+use actix::{fut::wrap_future, Actor, Context, SpawnHandle, ActorFuture};
 use futures_util::Future;
 
 use actix::AsyncContext;

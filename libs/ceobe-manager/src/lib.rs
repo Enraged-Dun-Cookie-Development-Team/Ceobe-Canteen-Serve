@@ -17,7 +17,7 @@ mod test {
     use crate::{ws, WS_SERVICE};
     #[test]
     fn test_ws() {
-        let sys = System::new();
+        let mut sys = System::new("test");
 
         sys.block_on(async move {
             let (_res, updater) = ws::start_ws(WS_SERVICE).await;

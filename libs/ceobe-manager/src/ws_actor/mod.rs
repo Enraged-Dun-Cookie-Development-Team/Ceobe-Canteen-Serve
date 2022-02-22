@@ -65,7 +65,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                 }
                 ws::Frame::Ping(p) => {
                     println!("Ping!");
-                    self.slink.write(Message::Pong(p)).ok();
+                    self.slink.write(Message::Pong(p));
                 }
                 ws::Frame::Pong(_) => println!("Pong!"),
                 ws::Frame::Close(c) => {
@@ -111,7 +111,7 @@ mod test {
 
     #[test]
     fn test() {
-        let system = actix::System::new();
+        let mut system = actix::System::new("test");
 
         system.block_on(async {
             let client = awc::Client::builder().finish();
