@@ -17,15 +17,22 @@ generate_controller!(RootController, "/", CeobeController);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
+    logger::init(log::LevelFilter::Debug).expect("Can not Start Logger");
     task().await
 }
 
 async fn task() -> Result<(), crate::error::GlobalError> {
     let (_resp, updater) = ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
     let updater = Arc::new(updater);
-    HttpServer::new(move || App::new().data(updater.clone()).service(RootController))
-        .bind("127.0.0.1:8000")?
-        .run()
-        .await?;
+    HttpServer::new(move || {
+        App::new()
+            .wrap(actix_web::middleware::Logger::default())
+            .wrap(actix_web::middleware::Logger::new("%a %{User-Agent}i"))
+            .data(updater.clone())
+            .service(RootController)
+    })
+    .bind("127.0.0.1:8000")?
+    .run()
+    .await?;
     Ok(())
 }

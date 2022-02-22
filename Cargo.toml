@@ -95,3 +95,6 @@ path="./libs/orm-migrate/"
 
 [dependencies.ceobe-manager]
 path="./libs/ceobe-manager"
+
+[dependencies.logger]
+path="./libs/logger"
