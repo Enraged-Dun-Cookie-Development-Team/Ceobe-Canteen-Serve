@@ -1,15 +1,20 @@
-use chrono::{Datelike, Timelike};
-use log::Level;
+use chrono::Local;
 
-pub struct Logger;
+use crate::{
+    config::Config,
+    logger_adapter::LoggerAdapter,
+    logger_info::{LoggerInfo, RecordLevel, Time},
+};
 
-impl Logger {
-    pub(crate) fn new() -> Self {
-        Self
+pub struct Logger<A>(Config, A);
+
+impl<A: LoggerAdapter> Logger<A> {
+    pub(crate) fn new(cfg: Config, adapter: A) -> Self {
+        Self(cfg, adapter)
     }
 }
 
-impl log::Log for Logger {
+impl<A: LoggerAdapter> log::Log for Logger<A> {
     fn enabled(&self, _metadata: &log::Metadata) -> bool {
         true
     }
@@ -18,34 +23,27 @@ impl log::Log for Logger {
         if !Self::enabled(&self, record.metadata()) {
             return;
         }
-        let color = match record.level() {
-            Level::Error => yansi::Color::Red,
-            Level::Warn => yansi::Color::Yellow,
-            Level::Info => yansi::Color::Green,
-            Level::Debug => yansi::Color::Magenta,
-            Level::Trace => yansi::Color::Blue,
+        let level = if self.0.enable_color {
+            Into::<RecordLevel>::into(record.level())
+        } else {
+            RecordLevel::no_color(record.level())
         };
-        let time = chrono::Utc::now();
 
-        
-        println!(
-            "{}-{}-{} {}:{}:{} | [{}] - {}:{} => {}",
-            // time
-            time.year(),
-            time.month(),
-            time.day(),
-            time.hour(),
-            time.minute(),
-            time.second(),
-            // level
-            color.paint(record.level()),
-            // local
-            record.file().unwrap_or("-"),
-            record.line().unwrap_or(0),
-            // msg
-            record.args()
-        )
+        let info = LoggerInfo {
+            time: Time::from_time(Local::now()),
+            level,
+            location: crate::logger_info::Location::new(
+                record.module_path().unwrap_or("Unknown"),
+                record.file().unwrap_or("Unknown"),
+                record.line().unwrap_or_default(),
+            ),
+            msg: record.args(),
+        };
+
+        self.1.do_log(info);
     }
 
-    fn flush(&self) {}
+    fn flush(&self) {
+        self.1.flush()
+    }
 }
