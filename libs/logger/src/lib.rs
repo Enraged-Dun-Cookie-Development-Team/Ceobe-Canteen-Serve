@@ -5,17 +5,17 @@ mod logger_info;
 
 use std::io::stdout;
 
-pub use config::Config;
+pub use config::Config  as LoggerConfig;
 
 pub use logger::Logger;
 pub use logger_adapter::LoggerAdapter;
 
-pub fn init_std(config: Config) -> Result<(), log::SetLoggerError> {
+pub fn init_std(config: LoggerConfig) -> Result<(), log::SetLoggerError> {
     init(config, stdout())
 }
 
 pub fn init<A: LoggerAdapter + Sync + Send + 'static>(
-    config: Config,
+    config: LoggerConfig,
     adapter: A,
 ) -> Result<(), log::SetLoggerError> {
     let filter = config.level_filter.clone();

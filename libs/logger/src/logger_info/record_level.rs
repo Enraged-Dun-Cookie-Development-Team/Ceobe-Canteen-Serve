@@ -19,23 +19,14 @@ impl RecordLevel {
 
 impl Display for RecordLevel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let st = format!("[{}]", self.color.paint(self.level));
-        match (f.align(), f.width()) {
-            (Some(al), Some(width)) => match al {
-                std::fmt::Alignment::Left => write!(f, "{:<width$}", &st),
-                std::fmt::Alignment::Right => write!(f, "{:>width$}", &st),
-                std::fmt::Alignment::Center => write!(f, "{:^width$}", &st),
+        let st=  format!("[{}]", self.color.paint(self.level));
+        match self.color {
+            Color::Unset =>{
+               write!(f,"{:<7}",st)
+
             },
-            (None, None) => {
-                write!(f, "{}", st)
-            }
-            (Some(al), None) => match al {
-                std::fmt::Alignment::Left => write!(f, "{:<}", &st),
-                std::fmt::Alignment::Right => write!(f, "{:>}", &st),
-                std::fmt::Alignment::Center => write!(f, "{:^}", &st),
-            },
-            (None, Some(width)) => {
-                write!(f, "{:width$}", st)
+            _=>{
+                write!(f,"{:<16}",st)
             }
         }
     }

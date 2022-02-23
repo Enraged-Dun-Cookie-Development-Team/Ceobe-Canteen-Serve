@@ -1,4 +1,4 @@
-use std::{borrow::Cow, fmt::Display};
+use std::fmt::Display;
 
 pub struct Location<'re> {
     pub model: &'re str,
@@ -18,13 +18,20 @@ impl<'re> Location<'re> {
 
 impl Display for Location<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let file = if self.file.len() <= 25 {
-            Cow::Borrowed(self.file)
+        let model = if self.model.len() < 20 {
+            format!("{:->20}", self.model)
         } else {
-            let cut = &self.file[self.file.len() - 23..self.file.len()];
-            Cow::Owned(format!("..{}", cut))
+            let cut = &self.model[self.model.len() - 18..self.model.len()];
+            format!("..{}", cut)
         };
 
-        write!(f, "[{} | {:<25}:{}]", self.model, file, self.line)
+        let file = if self.file.len() <= 25 {
+            format!("{:->25}", self.file)
+        } else {
+            let cut = &self.file[self.file.len() - 23..self.file.len()];
+            format!("..{}", cut)
+        };
+
+        write!(f, "[{} | {}:{:04}]", model, file, self.line)
     }
 }
