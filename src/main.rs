@@ -17,7 +17,7 @@ generate_controller!(RootController, "/", CeobeController);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
-    logger::init(log::LevelFilter::Debug).expect("Can not Start Logger");
+    logger::init_std(logger::LoggerConfig::default().set_filter(log::LevelFilter::Trace)).expect("Can not Start Logger");
     task().await
 }
 
