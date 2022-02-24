@@ -5,19 +5,24 @@ use std::{
 };
 
 use actix::{Addr, MailboxError};
+
 use serde::{ser::SerializeMap, Serialize};
 use tokio::sync::watch;
 
 use crate::{
     ceobo_actor::{Cached, CachedFilter, CachedWatcherMsg, CheckCachedUpdate, UpdaterReceiver},
-    models::{AShareString, DataItem, DataSource}, ws_actor::CeoboWebsocket,
+    models::{AShareString, DataItem, DataSource},
+    ws_actor::CeoboWebsocket,
 };
 
-pub struct UpdateLoader(Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>,Addr<CeoboWebsocket>);
+pub struct UpdateLoader(
+    Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>,
+    Addr<CeoboWebsocket>,
+);
 
 impl UpdateLoader {
-    pub fn new(rec: UpdaterReceiver,ws:Addr<CeoboWebsocket>) -> Self {
-        Self(Mutex::new(rec),ws)
+    pub fn new(rec: UpdaterReceiver, ws: Addr<CeoboWebsocket>) -> Self {
+        Self(Mutex::new(rec), ws)
     }
 }
 
@@ -45,7 +50,9 @@ impl UpdateLoader {
                         let w = v.send(CachedWatcherMsg).await?;
                         let r = v.send(CachedFilter(timestamp)).await?;
 
-                        vec.push((k.clone(), w, r))
+                        if !r.is_empty() {
+                            vec.push((k.clone(), w, r))
+                        }
                     }
                 }
             }
@@ -57,6 +64,16 @@ impl UpdateLoader {
 }
 
 pub struct LazyLoad(pub(crate) Vec<(AShareString, watch::Receiver<Vec<DataItem>>, Range<usize>)>);
+
+impl LazyLoad {
+    pub fn into_not_empty(self) -> Option<Self> {
+        if self.0.len() == 0 {
+            None
+        } else {
+            Some(self)
+        }
+    }
+}
 
 impl Serialize for LazyLoad {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

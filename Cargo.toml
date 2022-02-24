@@ -21,6 +21,8 @@ actix="0.10.0"
 actix-web="3"
 actix-http="2"
 
+http="0.2"
+
 async-trait="0.1.52"
 log="0.4.14"
 

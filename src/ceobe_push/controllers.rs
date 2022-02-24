@@ -2,9 +2,12 @@ use std::sync::Arc;
 
 use actix_web::{get, post, web};
 use ceobe_manager::LazyLoad;
-use rresult::{RResult, Wrap};
+use rresult::{to_rresult, RResult, Wrap};
 
-use crate::{generate_controller, header_captures, utils::data_struct::header_info::HeaderInfo};
+use crate::{
+    ceobe_push::error::NoUpdateError, generate_controller, header_captures,
+    utils::data_struct::header_info::HeaderInfo,
+};
 
 use super::error::CeobeError;
 
@@ -41,7 +44,11 @@ async fn update(
         .and_then(|iter| Some(iter.collect::<Vec<_>>()))
         .unwrap_or_default();
 
-    let res = rresult::to_rresult!(rs updater.as_ref().lazy_load(time, &filter).await.map_err(CeobeError::from));
+    let res =
+        to_rresult!(rs updater.as_ref().lazy_load(time, &filter).await.map_err(CeobeError::from));
+
+    let res =
+        to_rresult!(op res.into_not_empty(),[http::StatusCode::NOT_MODIFIED],NoUpdateError.into());
 
     RResult::wrap_ok(res)
 }
