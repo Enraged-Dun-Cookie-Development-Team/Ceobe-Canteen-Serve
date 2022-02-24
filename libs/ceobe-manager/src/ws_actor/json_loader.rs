@@ -5,7 +5,8 @@ use actix_web::web::Bytes;
 
 use crate::{
     ceobo_actor::{NewCeobeIncome, Updater, UpdaterReceiver},
-    models::{DataItem, DataSource}, fut_utils::do_fut,
+    fut_utils::do_fut,
+    models::{DataItem, DataSource},
 };
 
 pub struct JsonLoader {
@@ -46,11 +47,17 @@ impl Handler<JsonData> for JsonLoader {
         let bytes = msg.0;
         match serde_json::from_slice::<HashMap<DataSource, Vec<DataItem>>>(&bytes) {
             Ok(data) => {
+                #[cfg(feature = "log")]
+                log_::info!("Loading New Cached From Json String size:[{}]", bytes.len());
+
                 let req = self.updater.send(NewCeobeIncome::new_loaded(data));
                 do_fut(req, ctx);
                 MessageResult(Ok(()))
             }
-            Err(e) => MessageResult(Err(e)),
+            Err(e) => {
+                log_::error!("Loading Json String Error :`{}`", e);
+                MessageResult(Err(e))
+            }
         }
     }
 }

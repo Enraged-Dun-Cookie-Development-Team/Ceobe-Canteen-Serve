@@ -26,6 +26,9 @@ pub struct CeoboWebsocket {
 
 impl CeoboWebsocket {
     pub fn start(sink: WsFramedSink, stream: WsFramedStream) -> UpdateLoader {
+        #[cfg(feature = "log")]
+        log_::info!("Init Ws Actor");
+
         let (json_handle, updater) = JsonLoader::start();
         UpdateLoader::new(
             updater,
@@ -52,25 +55,36 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
         match item {
             Ok(msg) => match msg {
                 ws::Frame::Text(text) | ws::Frame::Binary(text) => {
+                    #[cfg(feature = "log")]
+                    log_::info!("Handling ws Frame Data");
                     do_fut(self.json_handle.send(text.into()), ctx);
                 }
                 ws::Frame::Continuation(c) => {
+                    #[cfg(feature = "log")]
+                    log_::info!("Handling ws Split Frame");
                     let req = self.continue_handle.send(continuation::NextIncome(c));
 
                     do_fut_with(req, ctx, |res, actor, ctx| {
                         if let Ok(Some(msg)) = res {
+                            #[cfg(feature = "log")]
+                            log_::info!("Split Frame Data clear Handling");
                             do_fut(actor.json_handle.send(msg.unwrap().into()), ctx);
                         }
                     });
                 }
                 ws::Frame::Ping(p) => {
-                    println!("Ping!");
+                    #[cfg(feature = "log")]
+                    log_::info!("Ping!");
                     self.slink.write(Message::Pong(p));
                 }
-                ws::Frame::Pong(_) => println!("Pong!"),
+                ws::Frame::Pong(_) => {
+                    #[cfg(feature = "log")]
+                    log_::info!("Pong!")
+                }
                 ws::Frame::Close(c) => {
                     if let Some(reason) = c {
-                        eprintln!(
+                        #[cfg(feature = "log")]
+                        log_::warn!(
                             "Websocket Service Close Connection. \ncode :{:?} `{}`",
                             reason.code,
                             reason.description.unwrap_or_default()
@@ -80,8 +94,8 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                 }
             },
             Err(err) => {
-                eprintln!("Websocket Connect Error: `{}`", err);
-                //TODO attempt restart
+                #[cfg(feature = "log")]
+                log_::error!("Websocket Connect Error: `{}`", err);
             }
         }
     }
@@ -90,7 +104,8 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
 /// [ws client](https://stackoverflow.com/questions/70118994/build-a-websocket-client-using-actix)
 pub async fn start_ws(uri: &str) -> (ClientResponse, UpdateLoader) {
     let client = awc::Client::builder().finish();
-
+    #[cfg(feature = "log")]
+    log_::info!("Connect Ws Client To {}", uri);
     let (resp, stream) = client
         .ws(uri)
         .max_frame_size(1024 * 1024 * 2)
@@ -99,7 +114,7 @@ pub async fn start_ws(uri: &str) -> (ClientResponse, UpdateLoader) {
         .expect("connect Failure");
 
     let (sink, stream) = stream.split();
-
+    
     (resp, CeoboWebsocket::start(sink, stream))
 }
 

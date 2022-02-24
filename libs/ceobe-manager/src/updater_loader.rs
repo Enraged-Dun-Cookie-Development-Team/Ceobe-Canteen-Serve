@@ -58,7 +58,12 @@ impl UpdateLoader {
             }
             None => unreachable!(),
         }
-
+        #[cfg(feature = "log")]
+        log_::info!(
+            "Create New LazyLoad time[{}] size[{}]",
+            timestamp,
+            vec.len()
+        );
         Ok(LazyLoad(vec))
     }
 }
@@ -67,6 +72,9 @@ pub struct LazyLoad(pub(crate) Vec<(AShareString, watch::Receiver<Vec<DataItem>>
 
 impl LazyLoad {
     pub fn into_not_empty(self) -> Option<Self> {
+        #[cfg(feature = "log")]
+        log_::info!("Checking LazyLoad Is Empty size[{}]", self.0.len());
+
         if self.0.len() == 0 {
             None
         } else {

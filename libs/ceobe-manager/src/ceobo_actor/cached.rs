@@ -22,6 +22,11 @@ pub struct Cached {
 
 impl Cached {
     pub fn new(timestamp: u64, data: Vec<DataItem>) -> Self {
+        #[cfg(feature = "log")]
+        {
+            log_::info!("New DataSource Cached Created at TimeStamp({})", timestamp);
+        }
+
         let update_time = AtomicU64::new(timestamp);
         let last_record_time = data.iter().map(|f| (f.id.clone(), timestamp)).collect();
         let (sender, recv) = watch::channel(data);
@@ -48,6 +53,16 @@ impl Handler<CachedUpdateMsg> for Cached {
             data,
             ..
         } = msg;
+
+        #[cfg(feature = "log")]
+        {
+            log_::info!(
+                "DataSource Cached Updating at TimeStamp({}) Size:[{}]",
+                res_timestamp,
+                data.len()
+            );
+        }
+
         self.update_time.store(res_timestamp, Ordering::Release);
 
         // let mut records = Vec::with_capacity(data.len());
@@ -65,7 +80,6 @@ impl Handler<CachedUpdateMsg> for Cached {
             .unzip();
         self.last_record_time.clear();
         self.last_record_time.extend(map);
-        
         self.sender.send(records).ok();
         MessageResult(())
     }
@@ -76,11 +90,16 @@ impl Handler<CheckCachedUpdate> for Cached {
 
     fn handle(&mut self, msg: CheckCachedUpdate, _ctx: &mut Self::Context) -> Self::Result {
         let time = msg.0;
-        MessageResult(if time > self.update_time.load(Ordering::Relaxed) {
+        let res = if time > self.update_time.load(Ordering::Relaxed) {
             false
         } else {
             self.last_record_time.iter().any(|f| f.value() > &time)
-        })
+        };
+        #[cfg(feature = "log")]
+        {
+            log_::info!("DataSource Cached Updated Check {}", res);
+        }
+        MessageResult(res)
     }
 }
 
@@ -88,6 +107,10 @@ impl Handler<CachedWatcherMsg> for Cached {
     type Result = MessageResult<CachedWatcherMsg>;
 
     fn handle(&mut self, _msg: CachedWatcherMsg, _ctx: &mut Self::Context) -> Self::Result {
+        #[cfg(feature = "log")]
+        {
+            log_::info!("Prevent Cached Watcher");
+        }
         MessageResult(self.sender.subscribe())
     }
 }
@@ -107,6 +130,11 @@ impl Handler<CachedFilter> for Cached {
             .find(|(_u, v)| v > &time)
             .and_then(|f| Some(f.0))
             .unwrap_or_default();
-        MessageResult(start_idx..self.recv.borrow().len())
+        let range = start_idx..self.recv.borrow().len();
+        #[cfg(feature = "log")]
+        {
+            log_::info!("Loading New Cached After {} range {:?}", time, range);
+        }
+        MessageResult(range)
     }
 }

@@ -13,11 +13,11 @@ mod utils;
 
 extern crate serde;
 
-generate_controller!(RootController, "/", CeobeController);
+generate_controller!(RootController, "/api/v0", CeobeController);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
-    logger::init_std(logger::LoggerConfig::default().set_filter(log::LevelFilter::Trace)).expect("Can not Start Logger");
+    logger::init_std(logger::LoggerConfig::default().set_filter(log::LevelFilter::Info)).expect("Can not Start Logger");
     task().await
 }
 
