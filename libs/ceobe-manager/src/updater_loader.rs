@@ -38,11 +38,16 @@ impl UpdateLoader {
             rec.changed().await.ok();
         }
 
+        #[cfg(feature = "log")]
+        log_::info!("Lazy Load ignores : {:?}", ignores);
+
         let updated_msg = rec.deref().borrow();
         let mut vec = Vec::with_capacity(16);
         match updated_msg.deref() {
             Some(map) => {
                 for (k, v) in map {
+                    #[cfg(feature = "log")]
+                    log_::info!("Lazy Load Move To : {}", k.as_str());
                     if ignores.contains(&(k.deref().deref())) {
                         continue;
                     }

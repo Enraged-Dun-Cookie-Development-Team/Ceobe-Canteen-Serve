@@ -2,41 +2,10 @@ use std::io::Cursor;
 
 use futures_util::future::{err, ok, Ready};
 
-use rocket_::{
-    http::{ContentType, Status},
-    response::{self, Responder},
-    Request,
-};
 
 use crate::{IntoSerde, RResult};
 
-impl<'r, 'o, T, E> Responder<'r, 'o> for RResult<T, E>
-where
-    'o: 'r,
-    T: for<'s> IntoSerde<'s>,
-    E: std::error::Error,
-{
-    fn respond_to(self, _request: &'r Request<'_>) -> response::Result<'o> {
-        let t = serde_json::to_vec(&self).or_else(|_e| Err(Status::InternalServerError))?;
-        let status = match self {
-            RResult::Success(_) => Status::Ok.code,
-            RResult::Error(s, _) => s.as_u16(),
-        };
 
-        #[cfg(feature = "logger")]
-        log::info!(
-            "Respond by RRsult | status: {}, content-size: {}",
-            status,
-            t.len()
-        );
-
-        rocket_::Response::build()
-            .header(ContentType::JSON)
-            .sized_body(t.len(), Cursor::new(t))
-            .status(Status::new(status))
-            .ok()
-    }
-}
 
 impl<T, E> actix_web::Responder for RResult<T, E>
 where

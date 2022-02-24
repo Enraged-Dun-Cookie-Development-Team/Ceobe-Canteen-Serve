@@ -7,7 +7,7 @@ pub enum HeaderInfo<H> {
     None(PhantomData<H>),
 }
 
-impl< H> IntoIterator for HeaderInfo< H>
+impl<H> IntoIterator for HeaderInfo<H>
 where
     H: FromHeaders,
 {
@@ -23,20 +23,20 @@ where
     }
 }
 
-impl<H> HeaderInfo< H>
+impl<H> HeaderInfo<H>
 where
     H: FromHeaders,
 {
     pub fn get_one(self) -> Option<String> {
         match self {
-            HeaderInfo::Exist(v, _) => Some(v.into_iter().next().unwrap() ),
+            HeaderInfo::Exist(v, _) => Some(v.into_iter().next().unwrap()),
             HeaderInfo::None(_) => None,
         }
     }
 
-    pub fn iter(&self)->Option<impl Iterator<Item = &str>>{
+    pub fn iter(&self) -> Option<impl Iterator<Item = &str>> {
         match self {
-            HeaderInfo::Exist(v, _) => Some(v.iter().map(|s|s.as_str())),
+            HeaderInfo::Exist(v, _) => Some(v.iter().map(|s| s.as_str())),
             HeaderInfo::None(_) => None,
         }
     }
@@ -46,8 +46,7 @@ pub trait FromHeaders {
     fn header_name() -> &'static str;
 }
 
-
-impl< H> actix_web::FromRequest for HeaderInfo< H>
+impl<H> actix_web::FromRequest for HeaderInfo<H>
 where
     H: FromHeaders,
 {
@@ -59,14 +58,15 @@ where
 
     fn from_request(
         req: &actix_web::HttpRequest,
-       _payload: &mut actix_web::dev::Payload,
+        _payload: &mut actix_web::dev::Payload,
     ) -> Self::Future {
         let header = req.headers();
         let res = header
             .get_all(H::header_name())
             .into_iter()
-            .filter_map(|v|v.to_str().ok())
-            .map(|s|s.to_owned())
+            .filter_map(|v| v.to_str().ok())
+            .filter_map(|s| urlencoding::decode(s).ok())
+            .map(|s| s.into_owned())
             .collect::<Vec<_>>();
 
         let result = if res.len() == 0 {

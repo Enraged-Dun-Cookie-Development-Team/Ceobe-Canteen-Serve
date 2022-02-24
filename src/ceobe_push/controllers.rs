@@ -15,7 +15,7 @@ generate_controller!(CeobeController, "/ceobe", update, save_setting, get_settin
 
 header_captures!(pub LastUpdateTimestamp:"Last-Timestamp");
 header_captures!(pub UserAuth:"User-Auth");
-header_captures!(pub DeviceVerify:"Device-verify");
+header_captures!(pub DeviceVerify:"Device-Verify");
 header_captures!(pub FilterOut:"Filer-Out-Source");
 
 /// update 获取最新的饼

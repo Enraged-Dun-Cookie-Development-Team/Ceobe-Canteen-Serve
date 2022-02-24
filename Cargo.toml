@@ -20,8 +20,10 @@ chrono = {version="0.4",features=["serde"]}
 actix="0.10.0"
 actix-web="3"
 actix-http="2"
+actix-service="1"
 
 http="0.2"
+urlencoding = "2.1.0"
 
 async-trait="0.1.52"
 log="0.4.14"
@@ -30,8 +32,7 @@ log="0.4.14"
 version = "0.3"
 features = [ "std","sink"] 
 
-[dependencies.tokio-tungstenite]
-version = "0.16.1"
+
 
 [dependencies.tokio]
 version="1.15.0"
@@ -41,9 +42,6 @@ features =[
     "rt-multi-thread",
     "time"
 ]
-
-[dependencies.reqwest]
-version="0.11.9"
 
 [dependencies.serde]
 version="1.0.133"
@@ -67,13 +65,6 @@ features=[
    # "debug-print"
 ]
 
-#web server crate
-[dependencies.rocket]
-version="0.5.0-rc.1"
-features=[
-    "secrets",
-    "json"
-]
 
 [dependencies.rresult]
 path="./libs/rresult"

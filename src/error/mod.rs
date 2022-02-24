@@ -55,5 +55,4 @@ error_generate!(
     pub GlobalError 
     Io=std::io::Error
     Db=DatabaseError
-    Rocket=rocket::error::Error
 );

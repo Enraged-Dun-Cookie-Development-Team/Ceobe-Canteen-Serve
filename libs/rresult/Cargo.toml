@@ -5,10 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default=["rocket","logger","outcome"]
+default=["logger","outcome"]
 logger=["log"]
 outcome=[]
-rocket=["rocket_"]
 
 [dependencies]
 futures-util="0"
@@ -21,10 +20,7 @@ log={version="0",optional=true}
 version="1.0"
 
 
-[dependencies.rocket_]
-package="rocket"
-optional=true
-version="0.5.0-rc.1"
+
 
 
 [dependencies.serde_json]

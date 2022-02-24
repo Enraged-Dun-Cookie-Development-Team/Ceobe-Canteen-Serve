@@ -50,12 +50,3 @@ impl<T, E> Into<Option<T>> for RResult<T, E> {
     }
 }
 
-#[cfg(feature = "outcome")]
-impl<T, E> Into<rocket_::outcome::Outcome<T, (), ()>> for RResult<T, E> {
-    fn into(self) -> rocket_::outcome::Outcome<T, (), ()> {
-        match self {
-            RResult::Success(d) => rocket_::outcome::Outcome::Success(d),
-            RResult::Error(_, _) => rocket_::outcome::Outcome::Forward(()),
-        }
-    }
-}
