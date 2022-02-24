@@ -14,6 +14,8 @@ use super::error::CeobeError;
 generate_controller!(CeobeController, "/ceobe", update, save_setting, get_setting);
 
 header_captures!(pub LastUpdateTimestamp:"Last-Timestamp");
+header_captures!(pub UserAuth:"User-Auth");
+header_captures!(pub DeviceVerify:"Device-verify");
 header_captures!(pub FilterOut:"Filer-Out-Source");
 
 /// update 获取最新的饼
