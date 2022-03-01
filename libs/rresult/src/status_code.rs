@@ -62,3 +62,4 @@ coded_error!(actix::dev::MailboxError[4006]);
 coded_error!(std::io::Error[5001]);
 coded_error!(sea_orm::DbErr[3001]);
 coded_error!(url::ParseError[3002]);
+coded_error!(actix_web::error::Error[4001]);

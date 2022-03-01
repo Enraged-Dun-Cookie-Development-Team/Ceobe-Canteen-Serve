@@ -4,6 +4,8 @@ mod models;
 mod updater_loader;
 mod ws_actor;
 
+
+
 pub const WS_SERVICE: &str = "ws://81.68.101.79:5683/";
 pub use updater_loader::{LazyLoad, UpdateLoader};
 pub mod ws {
@@ -22,7 +24,7 @@ mod test {
         sys.block_on(async move {
             let (_res, updater) = ws::start_ws(WS_SERVICE).await;
 
-            let res = updater.lazy_load(0, &[]).await.unwrap();
+            let res = updater.lazy_load(&[]).await.unwrap();
 
             println!("{}", serde_json::to_string_pretty(&res).unwrap());
         });

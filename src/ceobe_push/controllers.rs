@@ -5,19 +5,11 @@ use actix_web::{get, post, web};
 use ceobe_manager::LazyLoad;
 use rresult::{RResult, Wrap};
 
-use crate::{
-    ceobe_push::error::NoUpdateError, generate_controller, header_captures,
-    utils::data_struct::header_info::HeaderInfo,
-};
+use crate::{ceobe_push::error::NoUpdateError, generate_controller};
 
 use super::error::CeobeError;
 
 generate_controller!(CeobeController, "/ceobe", update, save_setting, get_setting);
-
-header_captures!(pub LastUpdateTimestamp:"Last-Timestamp");
-header_captures!(pub UserAuth:"User-Auth");
-header_captures!(pub DeviceVerify:"Device-Verify");
-header_captures!(pub FilterOut:"Filer-Out-Source");
 
 /// update 获取最新的饼
 ///
@@ -28,29 +20,18 @@ header_captures!(pub FilterOut:"Filer-Out-Source");
 /// - `user-auth`: 用户认证信息
 /// - `device-verify`: 设备信息
 /// - `last-timestamp`: 上次更新时间搓
-/// 
+///
 /// ### from request body
 /// N/A
 ///
 #[post("/update")]
 async fn update(
     updater: web::Data<Arc<ceobe_manager::UpdateLoader>>,
-    last_time: HeaderInfo<LastUpdateTimestamp>,
-    filter_out: HeaderInfo<FilterOut>,
+    filter: Result<web::Json<super::model::DataSourceFilter>, actix_web::error::Error>,
 ) -> RResult<Wrap<LazyLoad>, CeobeError> {
-    let time = last_time
-        .get_one()
-        .and_then(|s| s.trim().parse::<u64>().ok())
-        .unwrap_or_default();
-
-    let filter = filter_out
-        .iter()
-        .and_then(|iter| Some(iter.collect::<Vec<_>>()))
-        .unwrap_or_default();
-
     let res = updater
         .as_ref()
-        .lazy_load(time, &filter)
+        .lazy_load(filter.map_err(Into::into).into_result()?.as_slice())
         .await
         .map_err(CeobeError::from)
         .into_result()?;

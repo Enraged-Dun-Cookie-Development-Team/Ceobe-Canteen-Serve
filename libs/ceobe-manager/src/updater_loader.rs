@@ -1,4 +1,5 @@
 use std::{
+    borrow::Cow,
     collections::HashMap,
     ops::{Deref, Index, Range},
     sync::Mutex,
@@ -29,8 +30,7 @@ impl UpdateLoader {
 impl UpdateLoader {
     pub async fn lazy_load(
         &self,
-        timestamp: u64,
-        ignores: &[&str],
+        filter: &[(u64, Cow<'static, str>)],
     ) -> Result<LazyLoad, MailboxError> {
         let mut rec = self.0.lock().unwrap();
 
@@ -39,19 +39,19 @@ impl UpdateLoader {
         }
 
         #[cfg(feature = "log")]
-        log_::info!("Lazy Load ignores : {:?}", ignores);
+        log_::info!("获取的新饼 源数量{} : {:?}", filter.len(),filter);
 
         let updated_msg = rec.deref().borrow();
         let mut vec = Vec::with_capacity(16);
         match updated_msg.deref() {
             Some(map) => {
-                for (k, v) in map {
-                    #[cfg(feature = "log")]
-                    log_::info!("Lazy Load Move To : {}", k.as_str());
-                    if ignores.contains(&(k.deref().deref())) {
-                        continue;
-                    }
+                for (timestamp, (k, v)) in filter.into_iter().filter_map(|(t, ds)| {
+                    map.get_key_value(ds.deref().deref())
+                        .and_then(|res| Some((*t, res)))
+                }) {
                     if let Ok(true) = v.send(CheckCachedUpdate(timestamp)).await {
+                        #[cfg(feature = "log")]
+                        log_::info!("获取缓存中“{}”数据源最新数据", k.deref());
                         let w = v.send(CachedWatcherMsg).await?;
                         let r = v.send(CachedFilter(timestamp)).await?;
 
@@ -63,12 +63,6 @@ impl UpdateLoader {
             }
             None => unreachable!(),
         }
-        #[cfg(feature = "log")]
-        log_::info!(
-            "Create New LazyLoad time[{}] size[{}]",
-            timestamp,
-            vec.len()
-        );
         Ok(LazyLoad(vec))
     }
 }

@@ -1,4 +1,4 @@
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::{sync::atomic::{AtomicU64, Ordering}, collections::HashMap};
 
 use actix::{Actor, Context, Handler, MessageResult};
 use dashmap::DashMap;
@@ -13,7 +13,7 @@ pub struct Cached {
     /// 记录的上次更新时间
     update_time: AtomicU64,
     /// 记录的每条记录上次更新时间
-    last_record_time: DashMap<CachedId, u64>,
+    last_record_time: HashMap<CachedId, u64>,
     /// 记录的上次的缓存的数据
     /// 发送给接送端的使用
     sender: watch::Sender<Vec<DataItem>>,
@@ -71,8 +71,8 @@ impl Handler<CachedUpdateMsg> for Cached {
             .into_iter()
             .map(|d| (d.id.clone(), d))
             .filter_map(|(id, d)| {
-                if let Some((k, v)) = self.last_record_time.remove(&id) {
-                    Some(((k, v), d))
+                if let Some(v) = self.last_record_time.remove(&id) {
+                    Some(((id, v), d))
                 } else {
                     Some(((id, res_timestamp), d))
                 }
@@ -93,7 +93,7 @@ impl Handler<CheckCachedUpdate> for Cached {
         let res = if time > self.update_time.load(Ordering::Relaxed) {
             false
         } else {
-            self.last_record_time.iter().any(|f| f.value() > &time)
+            self.last_record_time.iter().any(|f| f.1 > &time)
         };
         #[cfg(feature = "log")]
         {

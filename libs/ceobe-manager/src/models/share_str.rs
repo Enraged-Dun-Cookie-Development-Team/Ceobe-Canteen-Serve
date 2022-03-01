@@ -1,4 +1,4 @@
-use std::{ops::Deref, sync::Arc};
+use std::{borrow::Borrow, ops::Deref, sync::Arc};
 
 use serde::{Deserialize, Serialize};
 
@@ -10,6 +10,18 @@ impl Deref for AShareString {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl Borrow<String> for AShareString {
+    fn borrow(&self) -> &String {
+        self.0.deref()
+    }
+}
+
+impl Borrow<str> for AShareString {
+    fn borrow(&self) -> &str {
+        self.0.deref()
     }
 }
 
