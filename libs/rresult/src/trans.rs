@@ -36,7 +36,7 @@ impl<T, E> Into<Result<T, E>> for RResult<T, E> {
     fn into(self) -> Result<T, E> {
         match self {
             RResult::Success(da) => Ok(da),
-            RResult::Error(_, e) => Err(e),
+            RResult::Error(e) => Err(e),
         }
     }
 }
@@ -45,7 +45,7 @@ impl<T, E> Into<Option<T>> for RResult<T, E> {
     fn into(self) -> Option<T> {
         match self {
             RResult::Success(d) => Some(d),
-            RResult::Error(_, _) => None,
+            RResult::Error(_) => None,
         }
     }
 }

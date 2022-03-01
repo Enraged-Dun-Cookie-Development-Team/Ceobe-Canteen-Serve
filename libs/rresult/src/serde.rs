@@ -2,12 +2,12 @@ use std::ops::Deref;
 
 use serde::{ser::SerializeStruct, Serialize};
 
-use crate::r_result::RResult;
+use crate::{r_result::RResult, ErrorCode};
 
 impl<T, E> Serialize for RResult<T, E>
 where
     T: for<'a> IntoSerde<'a>,
-    E: std::error::Error,
+    E: crate::ErrorCode,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -16,14 +16,10 @@ where
         let mut stur = serializer.serialize_struct("ResResult", 3)?;
         match self {
             RResult::Success(data) => {
-                stur.serialize_field("err", &false)?;
-                stur.serialize_field("emsg", "")?;
                 stur.serialize_field("data", &data.into_serde())?;
             }
-            RResult::Error(_status, msg) => {
-                stur.serialize_field("err", &true)?;
-                stur.serialize_field("emsg", &format!("Error: {}", msg))?;
-                stur.serialize_field("data", &Option::<()>::None)?;
+            RResult::Error(msg) => {
+                stur.serialize_field("emsg", &ErrorCode::description(msg) )?;
             }
         };
         stur.end()

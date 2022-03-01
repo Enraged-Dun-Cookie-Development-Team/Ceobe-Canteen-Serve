@@ -1,8 +1,9 @@
+use rresult::{IntoRResult, IntoRResultWithCodeError};
 use std::sync::Arc;
 
 use actix_web::{get, post, web};
 use ceobe_manager::LazyLoad;
-use rresult::{to_rresult, RResult, Wrap};
+use rresult::{RResult, Wrap};
 
 use crate::{
     ceobe_push::error::NoUpdateError, generate_controller, header_captures,
@@ -27,6 +28,7 @@ header_captures!(pub FilterOut:"Filer-Out-Source");
 /// - `user-auth`: 用户认证信息
 /// - `device-verify`: 设备信息
 /// - `last-timestamp`: 上次更新时间搓
+/// 
 /// ### from request body
 /// N/A
 ///
@@ -46,11 +48,16 @@ async fn update(
         .and_then(|iter| Some(iter.collect::<Vec<_>>()))
         .unwrap_or_default();
 
-    let res =
-        to_rresult!(rs updater.as_ref().lazy_load(time, &filter).await.map_err(CeobeError::from));
+    let res = updater
+        .as_ref()
+        .lazy_load(time, &filter)
+        .await
+        .map_err(CeobeError::from)
+        .into_result()?;
 
-    let res =
-        to_rresult!(op res.into_not_empty(),[http::StatusCode::NOT_MODIFIED],NoUpdateError.into());
+    let res = res
+        .into_not_empty()
+        .into_result_status(NoUpdateError.into())?;
 
     RResult::wrap_ok(res)
 }

@@ -1,12 +1,21 @@
 #![feature(type_alias_impl_trait)]
+#![feature(try_trait_v2)]
+pub mod rr_try;
 
-pub mod trans;
 mod r_result;
 mod serde;
 mod to_response;
+pub mod trans;
 #[macro_use]
 mod marco;
+mod into_rresult;
+#[macro_use]
+mod status_code;
 
-pub use r_result::RResult;
-pub use crate::serde::Wrap;
 pub use crate::serde::IntoSerde;
+pub use crate::serde::Wrap;
+pub use r_result::RResult;
+
+pub use crate::status_code::ErrorCode;
+
+pub use crate::into_rresult::{IntoRResult,IntoRResultWithCodeError};

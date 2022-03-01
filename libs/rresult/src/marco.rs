@@ -3,41 +3,41 @@
 /// ```rust
 /// let a = Some(11);
 /// let b = Option::<i32>::None;
-/// 
+///
 /// let f = move || {
 ///     let t = to_rresult!(op a, [Status::Ok],"None Data");
-/// 
+///
 ///     RResult::Success(t)
 /// };
-/// 
+///
 /// assert_eq!(f(), RResult::ok(11));
-/// 
+///
 /// let f = move || {
 ///     let t = to_rresult!(op b,"None Data");
 ///     RResult::ok(t)
 /// };
-/// 
+///
 /// assert_eq!(f(), RResult::err("None Data"))
 /// ```
 /// * handle Result
-/// 
+///
 /// ```rust
 /// let a = Result::<_, ()>::Ok(11);
 /// let b = Result::<i32, _>::Err(());
-/// 
+///
 /// let f = move || {
 ///     let t = to_rresult!(rs a);
-/// 
+///
 ///     RResult::Success(t)
 /// };
-/// 
+///
 /// assert_eq!(f(), RResult::ok(11));
-/// 
+///
 /// let f = move || {
 ///     let t = to_rresult!(rs b);
 ///     RResult::ok(t)
 /// };
-/// 
+///
 /// assert_eq!(f(), RResult::err(()))
 /// ```
 #[macro_export]
@@ -46,13 +46,6 @@ macro_rules! to_rresult {
         match $x {
             Some(d) => d,
             None => return $crate::RResult::err($s),
-        }
-    };
-
-    (op $x:expr,[$sta:expr], $s:expr) => {
-        match $x {
-            Some(d) => d,
-            None => return $crate::RResult::status_err($sta, $s),
         }
     };
 
@@ -80,16 +73,13 @@ macro_rules! to_rresult {
     (rs $x:expr, [$sta:expr], $info:expr) => {
         match $x {
             Ok(d) => d,
-            Err(err) => {
-                return $crate::RResult::status_err($sta, format!("{} => {}", $info, err))
-            }
+            Err(err) => return $crate::RResult::status_err($sta, format!("{} => {}", $info, err)),
         }
     };
 }
 
 #[cfg(test)]
 mod test_macro {
-    use http::StatusCode;
 
     use crate::RResult;
 
@@ -99,7 +89,7 @@ mod test_macro {
         let b = Option::<i32>::None;
 
         let f = move || {
-            let t = to_rresult!(op a, [StatusCode::OK],"None Data");
+            let t = to_rresult!(op a, "None Data");
 
             RResult::Success(t)
         };
@@ -133,11 +123,5 @@ mod test_macro {
         };
 
         assert_eq!(f(), RResult::err(()))
-
-
-
     }
-
 }
-
-

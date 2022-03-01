@@ -3,7 +3,7 @@ use sea_orm::{ConnectOptions, ConnectionTrait, Database, Statement};
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
-    error::DatabaseError,
+    error::{DatabaseError, OrmError},
 };
 
 pub mod config;
@@ -33,7 +33,9 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
             .min_connections(config.min_conn())
             .sqlx_logging(config.sql_logger());
 
-        let connect = Database::connect(db_options).await?;
+        let connect = Database::connect(db_options)
+            .await
+            .map_err(OrmError::from)?;
 
         Ok(Self(connect))
     }
@@ -51,33 +53,27 @@ where
 #[async_trait::async_trait]
 impl<D> ConnectionTrait for ServeDatabase<D>
 where
-    D: ConnectionTrait+Send,
+    D: ConnectionTrait + Send,
 {
     fn get_database_backend(&self) -> sea_orm::DbBackend {
         self.0.get_database_backend()
     }
 
-    async fn execute(
-        &self,
-        stmt: Statement,
-    ) -> Result<sea_orm::ExecResult, orm_migrate::DbErr> {
+    async fn execute(&self, stmt: Statement) -> Result<sea_orm::ExecResult, orm_migrate::DbErr> {
         self.0.execute(stmt).await
     }
 
     async fn query_one(
         &self,
         stmt: Statement,
-    ) -> Result<Option<sea_orm::QueryResult>, orm_migrate::DbErr>
-                
-    {
+    ) -> Result<Option<sea_orm::QueryResult>, orm_migrate::DbErr> {
         self.0.query_one(stmt).await
     }
 
     async fn query_all(
         &self,
         stmt: Statement,
-    ) -> Result<Vec<sea_orm::QueryResult>, orm_migrate::DbErr>
-    {
+    ) -> Result<Vec<sea_orm::QueryResult>, orm_migrate::DbErr> {
         self.0.query_all(stmt).await
     }
 }
