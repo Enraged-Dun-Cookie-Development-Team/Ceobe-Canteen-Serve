@@ -1,0 +1,26 @@
+[package]
+name = "cached-db"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.tower]
+version="0.4"
+features=[
+    "util"
+]
+
+[dependencies.bincode]
+version="1"
+
+[dependencies.sled]
+version="0"
+
+[dependencies.serde]
+version="1"
+
+
+[dev-dependencies.tokio]
+version="1"
+features=["full"]
