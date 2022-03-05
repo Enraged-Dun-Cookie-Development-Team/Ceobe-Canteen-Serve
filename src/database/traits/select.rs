@@ -1,11 +1,16 @@
 use async_trait::async_trait;
+use futures::Future;
 
 use crate::database::{error::DatabaseError, ServeDatabase};
 
-#[async_trait]
-pub trait SelectBy<Db> {
+pub trait LoadFromDb {
+    type Fut:Future<Output = Result<Self::Target,Self::Err>>;
     type Target;
-    async fn select_by(&self, db: &ServeDatabase<Db>) -> Result<Self::Target, DatabaseError>;
+    type Err;
+    type Args;
+    fn select_by<Db>(args:Self::Args, db: &ServeDatabase<Db>) -> Self::Fut;
 }
+
+
 
 

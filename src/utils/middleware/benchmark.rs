@@ -1,5 +1,5 @@
 use actix_service::{Service, Transform};
-use actix_web::dev::{ServiceRequest, ServiceResponse};
+
 use futures::future::{ok, Ready};
 
 use futures::Future;
@@ -8,17 +8,16 @@ pub struct BenchMark<S> {
     service: S,
 }
 
-impl<S, B> actix_service::Service for BenchMark<S>
+impl<S> actix_service::Service for BenchMark<S>
 where
-    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = actix_web::Error>,
+    S: Service,
     S::Future: 'static,
-    B: 'static,
 {
-    type Request = ServiceRequest;
+    type Request = S::Request;
 
-    type Response = ServiceResponse<B>;
+    type Response = S::Response;
 
-    type Error = actix_web::Error;
+    type Error = S::Error;
 
     type Future = impl Future<Output = Result<Self::Response, Self::Error>>;
 
@@ -47,17 +46,16 @@ where
 
 pub struct BenchMarkFactor;
 
-impl<S, B> Transform<S> for BenchMarkFactor
+impl<S> Transform<S> for BenchMarkFactor
 where
-    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = actix_web::Error>,
+    S: Service,
     S::Future: 'static,
-    B: 'static,
 {
-    type Request = ServiceRequest;
+    type Request = S::Request;
 
-    type Response = ServiceResponse<B>;
+    type Response = S::Response;
 
-    type Error = actix_web::Error;
+    type Error = S::Error;
 
     type Transform = BenchMark<S>;
 
