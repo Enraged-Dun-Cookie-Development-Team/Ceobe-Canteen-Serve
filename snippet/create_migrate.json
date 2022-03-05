@@ -1,0 +1,46 @@
+{
+  "New Migration": {
+    "prefix": "sea orm migration",
+    "body": [
+      "use sea_schema::migration::prelude::*;",
+
+      "pub struct Migration;",
+
+      "impl MigrationName for Migration {",
+      "    fn name(&self) -> &str {",
+      "        \"${1}-migration\"",
+      "    }",
+      "}",
+
+      "#[async_trait::async_trait]",
+      "impl MigrationTrait for Migration {",
+      "    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {",
+      "      manager",
+      "      .create_table(",
+      "          sea_query::Table::create()",
+      "          .table(${1}::Table)",
+      "          .if_not_exists()",
+      "          ${3}",
+      "          .to_owned()",
+      "      ).await",
+      "    }",
+
+      "    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {",
+      "      manager",
+      "      .drop_table(",
+      "          sea_query::Table::drop()",
+      "          .table(${1}::Table)",
+      "          .to_owned())",
+      "      .await",
+      "    }",
+      "}",
+      "#[derive(Iden)]",
+      "pub enum ${1} {",
+      "    Table,",
+      "    Id,",
+      "    ${2} ",
+      "}"
+    ],
+    "description": "新建Sea Orm Migration"
+  }
+}

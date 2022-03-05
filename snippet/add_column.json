@@ -1,0 +1,7 @@
+{
+    "Add Column": {
+        "prefix": "add col",
+        "body": [".col(ColumnDef::new(${1})${2})${0}"],
+        "description": "添加列"
+      }
+}
