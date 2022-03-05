@@ -9,7 +9,7 @@ members=["libs/*"]
 
 [dependencies]
 url = "2.2.2"
-#state = "0.5.2"
+
 futures = "0.3"
 dotenv = "0.15"
 lazy_static = "1.4"
@@ -49,10 +49,6 @@ features = ["derive"]
 
 [dependencies.serde_json]
 version="1.0.75"
-
-[dependencies.dashmap]
-version="5.0.0"
-features = ["serde"]
 
 # data base crate
 [dependencies.sea-orm]
