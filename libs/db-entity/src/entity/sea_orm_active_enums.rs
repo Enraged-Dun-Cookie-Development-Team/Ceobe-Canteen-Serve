@@ -12,13 +12,3 @@ pub enum PredictLevel {
     #[sea_orm(string_value = "true")]
     True,
 }
-#[derive(Debug, Clone, PartialEq, EnumIter, DeriveActiveEnum)]
-#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "policy")]
-pub enum Policy {
-    #[sea_orm(string_value = "ceobe-user")]
-    CeobeUser,
-    #[sea_orm(string_value = "admin")]
-    Admin,
-    #[sea_orm(string_value = "mansion-uploader")]
-    MansionUploader,
-}

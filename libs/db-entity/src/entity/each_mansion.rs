@@ -24,8 +24,8 @@ pub enum Relation {
         on_delete = "NoAction"
     )]
     Mansion,
-    #[sea_orm(has_many = "super::mansion_info::Entity")]
-    MansionInfo,
+    #[sea_orm(has_many = "super::inner_mansion::Entity")]
+    InnerMansion,
 }
 
 impl Related<super::mansion::Entity> for Entity {
@@ -34,9 +34,9 @@ impl Related<super::mansion::Entity> for Entity {
     }
 }
 
-impl Related<super::mansion_info::Entity> for Entity {
+impl Related<super::inner_mansion::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::MansionInfo.def()
+        Relation::InnerMansion.def()
     }
 }
 
