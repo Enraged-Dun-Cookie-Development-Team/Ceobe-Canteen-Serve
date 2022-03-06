@@ -1,7 +1,6 @@
 use std::{marker::PhantomData, sync::Arc};
 
 use futures::Future;
-use rresult::ErrorCode;
 
 use crate::database::{traits::select::LoadFromDb, ServeDatabase};
 

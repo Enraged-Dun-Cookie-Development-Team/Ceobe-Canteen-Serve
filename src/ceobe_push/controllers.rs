@@ -64,7 +64,7 @@ async fn update(
 /// ## Notice
 /// 保存是如果是创建，未提供是值将会为默认值
 #[post("/setting/{id}")]
-async fn save_setting(web::Path((id)):web::Path<(String)>) -> RResult<Wrap<()>, CeobeError> {
+async fn save_setting() -> RResult<Wrap<()>, CeobeError> {
     unimplemented!()
 }
 

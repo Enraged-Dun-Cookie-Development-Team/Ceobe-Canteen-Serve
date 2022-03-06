@@ -23,7 +23,7 @@ impl super::Pretreatment for SplitId {
 
             let first = split.next().ok_or(UnknownId)?;
             let first = first.trim().parse::<u32>().map_err(|_e| UnknownId)?;
-            let second = split.next().ok_or(UnknownId)?;
+            let second = split.next().unwrap_or("0");
             let second = second.trim().parse::<u32>().map_err(|_e| UnknownId)?;
 
             Ok((first, second))

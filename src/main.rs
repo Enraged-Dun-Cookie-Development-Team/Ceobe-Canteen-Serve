@@ -49,3 +49,4 @@ async fn task() -> Result<(), crate::error::GlobalError> {
     .await?;
     Ok(())
 }
+
