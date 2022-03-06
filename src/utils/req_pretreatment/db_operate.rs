@@ -11,7 +11,8 @@ pub struct DbOp<Select, P>(P, PhantomData<Select>);
 impl<Select, P> Pretreatment for DbOp<Select, P>
 where
     P: Pretreatment,
-    Select: LoadFromDb<Args = P::Resp>,
+    Select: LoadFromDb,
+    Select::Args: From<P::Resp>,
     P::Err: Into<Select::Err>,
 {
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
@@ -31,7 +32,7 @@ where
         let p_task = P::call(req, payload);
         async move {
             let args = p_task.await.map_err(Into::into)?;
-            let res = Select::load(args, &db).await?;
+            let res = Select::load(args.into(), &db).await?;
             Ok(res)
         }
     }

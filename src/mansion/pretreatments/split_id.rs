@@ -11,7 +11,7 @@ impl super::Pretreatment for SplitId {
     type Resp = (u32, u32);
 
     type Err = error::MansionError;
-
+    #[inline]
     fn call<'r>(
         req: &'r actix_web::HttpRequest,
         payload: &'r mut actix_http::Payload,

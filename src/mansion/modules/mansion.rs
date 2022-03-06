@@ -47,24 +47,19 @@ impl
         ),
     ) -> Self {
         let db_ops::mansion::Model {
-            mid, sub_mid, link, ..
+            mid,
+            sub_mid,
+            link,
+            start_at,
+            end_at,
+            ..
         } = m;
 
         let each: Vec<EachMansion> = e.into_iter().map(Into::into).collect();
-        let start = each
-            .iter()
-            .map(|e| e.at)
-            .min()
-            .unwrap_or(NaiveDate::from_ymd(2017, 5, 1));
-        let end = each
-            .iter()
-            .map(|e| e.at)
-            .max()
-            .unwrap_or(NaiveDate::from_ymd(2017, 5, 1));
         Self {
             id: format!("{}.{}", mid, sub_mid),
-            from: start,
-            to: end,
+            from: start_at,
+            to: end_at,
             link,
             children: each,
         }
@@ -96,10 +91,9 @@ impl
 impl From<db_ops::inner_mansion::Model> for Inner {
     fn from(model: db_ops::inner_mansion::Model) -> Self {
         let db_ops::inner_mansion::Model {
-            id: _,
-            eid: _,
             predict_level,
             info,
+            ..
         } = model;
         Self {
             predict: match predict_level {

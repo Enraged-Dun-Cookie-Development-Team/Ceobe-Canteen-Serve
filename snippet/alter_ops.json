@@ -1,0 +1,23 @@
+{
+    "Alter Add Column": {
+        "prefix": "alter add col",
+        "body": [
+            "let mut al = sea_query::Table::alter();",
+            "al.table(${1}::Table)",
+            "    .add_column(ColumnDef::new(${1}::${2})${3});",
+            "manager.alter_table(al).await?;",
+            "${0}"
+        ],
+        "description": "为已有的table添加新列"
+    },
+    "Alter Drop Column": {
+        "prefix": "alter drop col",
+        "body": [
+            "let mut al = sea_query::Table::alter();",
+            "al.table(${1}::Table).drop_column(${1}::${2});",
+            "manager.alter_table(al).await?;",
+            "${0}"
+        ],
+        "description": "为已有的table删除列"
+    }
+}

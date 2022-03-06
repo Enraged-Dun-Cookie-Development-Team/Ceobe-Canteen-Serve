@@ -1,0 +1,24 @@
+{
+    "Create Table": {
+        "prefix": "create table",
+        "body": [
+            "let mut table = sea_query::Table::create();",
+            "table.table(${1}::Table).if_not_exists()",
+            "${2}",
+            ";",
+            "manager.create_table(table).await?;",
+            "${0}"
+        ],
+        "description": "新建 table"
+    },
+    "Drop Table": {
+        "prefix": "drop table",
+        "body": [
+            "let mut table=sea_query::Table::drop();",
+            "table.table(${1}::Table);",
+            "manager.drop_table(table).await?;",
+            "${0}"
+        ],
+        "description": "删除Table"
+    }
+}

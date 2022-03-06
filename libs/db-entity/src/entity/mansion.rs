@@ -9,8 +9,8 @@ pub struct Model {
     pub id: i64,
     pub mid: i32,
     pub sub_mid: i32,
-    pub create_time: DateTime,
-    pub edit_time: DateTime,
+    pub start_at: Date,
+    pub end_at: Date,
     pub link: String,
 }
 

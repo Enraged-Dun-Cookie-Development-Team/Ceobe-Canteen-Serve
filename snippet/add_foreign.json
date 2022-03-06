@@ -2,12 +2,13 @@
     "Add ForeignKey": {
         "prefix": "add foreign",
         "body": [
-            ".foreign_key(",
-            "    ForeignKey::create()",
-            "        .from_col(${1})",
-            "        .to_col(${2}),",
-            ")${0}"
+          ".col(ColumnDef::new(${1})${2})",
+          ".foreign_key(",
+          "    ForeignKey::create()",
+          "        .from_col(${1})",
+          "        .to_col(${3}),",
+          ")${0}"
         ],
         "description": "添加外键约束"
-    }
+      }
 }
