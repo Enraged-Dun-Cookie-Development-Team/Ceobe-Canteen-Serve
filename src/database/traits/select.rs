@@ -1,4 +1,7 @@
+use std::sync::Arc;
+
 use futures::Future;
+use sea_orm::{ConnectionTrait, StreamTrait, TransactionTrait};
 
 use crate::database::ServeDatabase;
 
@@ -7,5 +10,7 @@ pub trait LoadFromDb {
     type Target;
     type Err;
     type Args;
-    fn select_by<Db>(args: Self::Args, db: &ServeDatabase<Db>) -> Self::Fut;
+    fn load<'db, Db>(args: Self::Args, db: &Arc<ServeDatabase<Db>>) -> Self::Fut
+    where
+        Db: ConnectionTrait + TransactionTrait + StreamTrait<'db> + Send+'static;
 }

@@ -21,9 +21,22 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .auto_increment(),
                     )
+                    .col(ColumnDef::new(Mansion::Mid).integer().not_null())
+                    .col(
+                        ColumnDef::new(Mansion::SubMid)
+                            .integer()
+                            .not_null()
+                            .default(0),
+                    )
                     .col(ColumnDef::new(Mansion::CreateTime).date_time().not_null())
                     .col(ColumnDef::new(Mansion::EditTime).date_time().not_null())
                     .col(ColumnDef::new(Mansion::Link).string_len(128).not_null())
+                    .index(
+                        Index::create()
+                            .col(Mansion::Mid)
+                            .col(Mansion::SubMid)
+                            .name("mansion_id"),
+                    )
                     .to_owned(),
             )
             .await
@@ -38,6 +51,8 @@ impl MigrationTrait for Migration {
 pub enum Mansion {
     Table,
     Id,
+    Mid,
+    SubMid,
     CreateTime,
     EditTime,
     Link,

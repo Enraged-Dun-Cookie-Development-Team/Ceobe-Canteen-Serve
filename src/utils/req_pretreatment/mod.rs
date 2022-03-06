@@ -28,7 +28,7 @@ where
 
     #[inline]
     pub fn unwrap(self) -> Pre::Resp {
-        self.0
+        self.into_inner()
     }
 }
 

@@ -1,5 +1,5 @@
 pub mod traits;
-use sea_orm::{ConnectOptions, ConnectionTrait, Database, Statement};
+use sea_orm::{ConnectOptions, ConnectionTrait, Database, Statement, TransactionTrait};
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
@@ -10,7 +10,7 @@ pub mod config;
 pub mod error;
 
 #[derive(Debug)]
-pub struct ServeDatabase<D>(D);
+pub struct ServeDatabase<D = sea_orm::DatabaseConnection>(D);
 
 impl ServeDatabase<sea_orm::DatabaseConnection> {
     pub async fn connect<C>(config: &C) -> Result<Self, DatabaseError>
@@ -75,5 +75,50 @@ where
         stmt: Statement,
     ) -> Result<Vec<sea_orm::QueryResult>, orm_migrate::DbErr> {
         self.0.query_all(stmt).await
+    }
+}
+impl<D: TransactionTrait> TransactionTrait for ServeDatabase<D> {
+    fn begin<'life0, 'async_trait>(
+        &'life0 self,
+    ) -> core::pin::Pin<
+        Box<
+            dyn core::future::Future<
+                    Output = Result<sea_orm::DatabaseTransaction, orm_migrate::DbErr>,
+                > + core::marker::Send
+                + 'async_trait,
+        >,
+    >
+    where
+        'life0: 'async_trait,
+        Self: 'async_trait,
+    {
+        self.0.begin()
+    }
+
+    fn transaction<'life0, 'async_trait, F, T, E>(
+        &'life0 self,
+        callback: F,
+    ) -> core::pin::Pin<
+        Box<
+            dyn core::future::Future<Output = Result<T, sea_orm::TransactionError<E>>>
+                + core::marker::Send
+                + 'async_trait,
+        >,
+    >
+    where
+        F: for<'c> FnOnce(
+                &'c sea_orm::DatabaseTransaction,
+            ) -> std::pin::Pin<
+                Box<dyn futures::Future<Output = Result<T, E>> + Send + 'c>,
+            > + Send,
+        T: Send,
+        E: std::error::Error + Send,
+        F: 'async_trait,
+        T: 'async_trait,
+        E: 'async_trait,
+        'life0: 'async_trait,
+        Self: 'async_trait,
+    {
+        self.0.transaction(callback)
     }
 }

@@ -11,7 +11,7 @@ pub trait Controller {
 #[macro_export]
 /// 快捷构造Controller
 macro_rules! generate_controller {
-    ($name:ident,$base:literal,$($routes:path),*) => {
+    ($name:ident,$base:literal$(,$routes:path)*) => {
         pub struct $name;
         impl $crate::utils::http_serve::Controller for $name  {
             type Service=actix_web::Scope;

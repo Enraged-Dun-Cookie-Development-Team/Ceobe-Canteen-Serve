@@ -6,6 +6,7 @@ use actix_web::{App, HttpServer};
 
 use ceobe_push::controllers::CeobeController;
 use error::GlobalError;
+use mansion::controllers::MansionController;
 use utils::middleware::benchmark::BenchMarkFactor;
 
 mod ceobe_push;
@@ -16,7 +17,14 @@ mod utils;
 
 extern crate serde;
 
-generate_controller!(RootController, "/api/v0", CeobeController);
+generate_controller!(
+    RootController,
+    "/api/v0",
+    CeobeController 
+    
+    // database not add yet
+    // ,MansionController
+);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
