@@ -11,18 +11,6 @@ pub enum PairErr<Le, Re> {
     Right(Re),
 }
 
-impl<Le, Re> Into<actix_http::Error> for PairErr<Le, Re>
-where
-    Le: Into<actix_http::Error>,
-    Re: Into<actix_http::Error>,
-{
-    fn into(self) -> actix_http::Error {
-        match self {
-            PairErr::Left(l) => l.into(),
-            PairErr::Right(r) => r.into(),
-        }
-    }
-}
 
 impl<L, R> Pretreatment for Pair<L, R>
 where
@@ -34,7 +22,7 @@ where
     type Resp = (L::Resp, R::Resp);
 
     type Err = PairErr<L::Err, R::Err>;
-
+    #[inline]
     fn call<'r>(
         req: &'r actix_web::HttpRequest,
         payload: &'r mut actix_http::Payload,

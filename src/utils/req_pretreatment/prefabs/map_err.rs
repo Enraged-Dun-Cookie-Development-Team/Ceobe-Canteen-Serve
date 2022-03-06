@@ -10,14 +10,13 @@ impl<P, E> Pretreatment for MapErr<P, E>
 where
     P: Pretreatment,
     P::Err: Into<E>,
-    E: Into<actix_http::Error>,
 {
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     type Resp = P::Resp;
 
     type Err = E;
-
+    #[inline]
     fn call<'r>(
         req: &'r actix_web::HttpRequest,
         payload: &'r mut actix_http::Payload,

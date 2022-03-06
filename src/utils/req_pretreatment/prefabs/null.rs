@@ -12,7 +12,7 @@ impl Pretreatment for Null {
     type Resp = ();
 
     type Err = Infallible;
-
+    #[inline]
     fn call<'r>(
         _req: &'r actix_web::HttpRequest,
         _payload: &'r mut actix_http::Payload,

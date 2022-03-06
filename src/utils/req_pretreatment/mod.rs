@@ -1,5 +1,5 @@
-pub mod prefabs;
 pub mod db_operate;
+pub mod prefabs;
 use actix_web::{dev::Payload, FromRequest, HttpRequest};
 use futures::Future;
 use std::ops::{Deref, DerefMut};
@@ -8,7 +8,7 @@ use std::ops::{Deref, DerefMut};
 pub trait Pretreatment {
     type Fut: Future<Output = Result<Self::Resp, Self::Err>>;
     type Resp;
-    type Err: Into<actix_http::Error>;
+    type Err;
 
     fn call<'r>(req: &'r HttpRequest, payload: &'r mut Payload) -> Self::Fut;
 }
@@ -23,6 +23,11 @@ where
 {
     #[inline]
     pub fn into_inner(self) -> Pre::Resp {
+        self.0
+    }
+
+    #[inline]
+    pub fn unwrap(self) -> Pre::Resp {
         self.0
     }
 }
@@ -51,6 +56,7 @@ where
 impl<Pre> FromRequest for ReqPretreatment<Pre>
 where
     Pre: Pretreatment,
+    Pre::Err: Into<actix_http::Error>,
 {
     type Error = Pre::Err;
 
@@ -68,12 +74,12 @@ where
     }
 }
 
-impl<R:FromRequest> Pretreatment for R   {
-    type Fut=R::Future;
+impl<R: FromRequest> Pretreatment for R {
+    type Fut = R::Future;
 
-    type Resp=R;
+    type Resp = R;
 
-    type Err=R::Error;
+    type Err = R::Error;
 
     fn call<'r>(req: &'r HttpRequest, payload: &'r mut Payload) -> Self::Fut {
         R::from_request(req, payload)

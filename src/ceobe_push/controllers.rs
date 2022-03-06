@@ -5,7 +5,14 @@ use actix_web::{get, post, web};
 use ceobe_manager::LazyLoad;
 use rresult::{RResult, Wrap};
 
-use crate::{ceobe_push::error::NoUpdateError, generate_controller};
+use crate::{
+    ceobe_push::{error::NoUpdateError, model::DataSourceFilter},
+    generate_controller,
+    utils::req_pretreatment::{
+        prefabs::{Json, MapErr, ToRResult},
+        ReqPretreatment,
+    },
+};
 
 use super::error::CeobeError;
 
@@ -27,11 +34,12 @@ generate_controller!(CeobeController, "/ceobe", update, save_setting, get_settin
 #[post("/update")]
 async fn update(
     updater: web::Data<Arc<ceobe_manager::UpdateLoader>>,
-    filter: Result<web::Json<super::model::DataSourceFilter>, actix_web::error::Error>,
+    filter: ReqPretreatment<ToRResult<MapErr<Json<DataSourceFilter>, CeobeError>>>,
 ) -> RResult<Wrap<LazyLoad>, CeobeError> {
+    let filter = filter.unwrap()?;
     let res = updater
         .as_ref()
-        .lazy_load(filter.map_err(Into::into).into_result()?.as_slice())
+        .lazy_load(&filter)
         .await
         .map_err(CeobeError::from)
         .into_result()?;
