@@ -32,7 +32,7 @@ impl MigrationTrait for Migration {
             .foreign_key(
                 ForeignKey::create()
                     .from_col(MansionInfo::Eid)
-                    .to_col( DailyMansion::Id),
+                    .to(DailyMansion::Table, DailyMansion::Id),
             );
         manager.create_table(table).await?;
 
