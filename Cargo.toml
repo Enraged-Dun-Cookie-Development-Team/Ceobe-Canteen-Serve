@@ -12,7 +12,7 @@ path="./src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-members=["libs/*","migration"]
+members=["libs/*","migration","codegen/*"]
 
 [dependencies]
 url = "2.2.2"

@@ -1,3 +1,4 @@
+pub mod codegen;
 use std::marker::PhantomData;
 
 use futures::Future;
@@ -20,7 +21,9 @@ pub trait DataChecker {
     /// 检查过程可能为异步
     type Fut: Future<Output = Result<Self::Checked, Self::Err>>;
 
+    /// 进行数据检查，可能为异步
     fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut;
+
 }
 
 pub struct CheckRequire<D: DataChecker>(D::Unchecked);
@@ -31,8 +34,8 @@ where
     D::Checked: 'static,
 {
     #[inline]
-    pub fn new(unchecked: D::Unchecked) -> Self {
-        Self(unchecked)
+    pub fn new(_: D, unchecked: D::Unchecked) -> Self {
+        CheckRequire(unchecked)
     }
     #[inline]
     pub async fn checking(self, args: D::Args) -> Result<D::Checked, D::Err> {
@@ -85,14 +88,14 @@ where
         req: &'r actix_web::HttpRequest,
         payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
-        let args_fut=Pargs::call(req, payload);
-        let uncheck_fut=Punchecked::call(req, payload);
+        let args_fut = Pargs::call(req, payload);
+        let uncheck_fut = Punchecked::call(req, payload);
 
-        async move{
-            let args=args_fut.await.map_err(Into::into)?;
-            let uncheck=uncheck_fut.await.map_err(Into::into)?;
+        async move {
+            let args = args_fut.await.map_err(Into::into)?;
+            let uncheck = uncheck_fut.await.map_err(Into::into)?;
 
-            let checked=C::checker(args, uncheck).await?;
+            let checked = C::checker(args, uncheck).await?;
             Ok(checked)
         }
     }
