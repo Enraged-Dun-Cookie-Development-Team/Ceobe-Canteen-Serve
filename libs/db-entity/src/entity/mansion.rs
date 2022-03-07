@@ -9,20 +9,20 @@ pub struct Model {
     pub id: i64,
     pub mid: i32,
     pub sub_mid: i32,
-    pub start_at: Date,
-    pub end_at: Date,
+    pub description: String,
     pub link: String,
+    pub fraction: i16,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::each_mansion::Entity")]
-    EachMansion,
+    #[sea_orm(has_many = "super::daily_mansion::Entity")]
+    DailyMansion,
 }
 
-impl Related<super::each_mansion::Entity> for Entity {
+impl Related<super::daily_mansion::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::EachMansion.def()
+        Relation::DailyMansion.def()
     }
 }
 

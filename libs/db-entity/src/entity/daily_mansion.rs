@@ -3,7 +3,7 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "each_mansion")]
+#[sea_orm(table_name = "daily_mansion")]
 pub struct Model {
     #[sea_orm(primary_key, unique)]
     pub id: i64,
@@ -24,8 +24,8 @@ pub enum Relation {
         on_delete = "NoAction"
     )]
     Mansion,
-    #[sea_orm(has_many = "super::inner_mansion::Entity")]
-    InnerMansion,
+    #[sea_orm(has_many = "super::mansion_info::Entity")]
+    MansionInfo,
 }
 
 impl Related<super::mansion::Entity> for Entity {
@@ -34,9 +34,9 @@ impl Related<super::mansion::Entity> for Entity {
     }
 }
 
-impl Related<super::inner_mansion::Entity> for Entity {
+impl Related<super::mansion_info::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::InnerMansion.def()
+        Relation::MansionInfo.def()
     }
 }
 

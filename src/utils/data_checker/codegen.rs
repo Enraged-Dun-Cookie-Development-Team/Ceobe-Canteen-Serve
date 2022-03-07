@@ -28,7 +28,7 @@ macro_rules! check_obj {
     {
         {$(#[$uc_attr:meta])*}
         {$(#[$c_attr:meta])*}
-        $v:vis struct ($uc_name:ident =($checker:ident)> $c_name:ident){
+        $v:vis struct $uc_name:ident = $checker:ident > $c_name:ident{
             $( $(#[$f_attr:meta])*
                 $fv:vis $f_n:ident : $f_ty:ty
             ),*

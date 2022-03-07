@@ -4,8 +4,8 @@
 pub mod load_mansion;
 
 pub(super) use db_entity::{
-    each_mansion,
+    daily_mansion,
     mansion,
-    inner_mansion,
+    mansion_info,
     sea_orm_active_enums
 };

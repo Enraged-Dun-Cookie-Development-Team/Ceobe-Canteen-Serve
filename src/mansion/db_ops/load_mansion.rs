@@ -42,9 +42,9 @@ impl LoadFromDb for LoadMansion {
             if let Some(rt) = root {
                 let id = rt.id;
 
-                let eachs = super::each_mansion::Entity::find()
-                    .filter(super::each_mansion::Column::Mid.eq(id))
-                    .find_with_related(super::inner_mansion::Entity)
+                let eachs = super::daily_mansion::Entity::find()
+                    .filter(super::daily_mansion::Column::Mid.eq(id))
+                    .find_with_related(super::mansion_info::Entity)
                     .all(db)
                     .await?;
 

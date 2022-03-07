@@ -2,8 +2,8 @@
 
 pub mod prelude;
 
-pub mod each_mansion;
-pub mod inner_mansion;
+pub mod daily_mansion;
 pub mod mansion;
+pub mod mansion_info;
 pub mod sea_orm_active_enums;
 pub mod seaql_migrations;

@@ -1,16 +1,18 @@
 use chrono::NaiveDate;
 
+pub mod checkers;
+
 use crate::mansion::db_ops;
 #[derive(Debug, serde::Serialize)]
 pub struct Mansion {
     id: String,
-    from: NaiveDate,
-    to: NaiveDate,
     link: String,
-    children: Vec<EachMansion>,
+    description: String,
+    fraction: i16,
+    daily: Vec<DailyMansion>,
 }
 #[derive(Debug, serde::Serialize)]
-pub struct EachMansion {
+pub struct DailyMansion {
     at: NaiveDate,
     content: String,
     inners: Vec<Inner>,
@@ -32,8 +34,8 @@ impl
     From<(
         db_ops::mansion::Model,
         Vec<(
-            db_ops::each_mansion::Model,
-            Vec<db_ops::inner_mansion::Model>,
+            db_ops::daily_mansion::Model,
+            Vec<db_ops::mansion_info::Model>,
         )>,
     )> for Mansion
 {
@@ -41,8 +43,8 @@ impl
         (m, e): (
             db_ops::mansion::Model,
             Vec<(
-                db_ops::each_mansion::Model,
-                Vec<db_ops::inner_mansion::Model>,
+                db_ops::daily_mansion::Model,
+                Vec<db_ops::mansion_info::Model>,
             )>,
         ),
     ) -> Self {
@@ -50,35 +52,35 @@ impl
             mid,
             sub_mid,
             link,
-            start_at,
-            end_at,
+            description,
+            fraction,
             ..
         } = m;
 
-        let each: Vec<EachMansion> = e.into_iter().map(Into::into).collect();
+        let daily: Vec<DailyMansion> = e.into_iter().map(Into::into).collect();
         Self {
             id: format!("{}.{}", mid, sub_mid),
-            from: start_at,
-            to: end_at,
             link,
-            children: each,
+            description,
+            daily: daily,
+            fraction,
         }
     }
 }
 
 impl
     From<(
-        db_ops::each_mansion::Model,
-        Vec<db_ops::inner_mansion::Model>,
-    )> for EachMansion
+        db_ops::daily_mansion::Model,
+        Vec<db_ops::mansion_info::Model>,
+    )> for DailyMansion
 {
     fn from(
         (each, inner): (
-            db_ops::each_mansion::Model,
-            Vec<db_ops::inner_mansion::Model>,
+            db_ops::daily_mansion::Model,
+            Vec<db_ops::mansion_info::Model>,
         ),
     ) -> Self {
-        let db_ops::each_mansion::Model { date, content, .. } = each;
+        let db_ops::daily_mansion::Model { date, content, .. } = each;
         let inners = inner.into_iter().map(Into::into).collect();
         Self {
             at: date,
@@ -88,9 +90,9 @@ impl
     }
 }
 
-impl From<db_ops::inner_mansion::Model> for Inner {
-    fn from(model: db_ops::inner_mansion::Model) -> Self {
-        let db_ops::inner_mansion::Model {
+impl From<db_ops::mansion_info::Model> for Inner {
+    fn from(model: db_ops::mansion_info::Model) -> Self {
+        let db_ops::mansion_info::Model {
             predict_level,
             info,
             ..

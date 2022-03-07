@@ -1,3 +1,4 @@
+pub mod collect_checkers;
 pub mod codegen;
 use std::marker::PhantomData;
 

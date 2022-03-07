@@ -4,7 +4,7 @@ use super::sea_orm_active_enums::PredictLevel;
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "inner_mansion")]
+#[sea_orm(table_name = "mansion_info")]
 pub struct Model {
     #[sea_orm(primary_key, unique)]
     pub id: i64,
@@ -17,18 +17,18 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::each_mansion::Entity",
+        belongs_to = "super::daily_mansion::Entity",
         from = "Column::Eid",
-        to = "super::each_mansion::Column::Id",
+        to = "super::daily_mansion::Column::Id",
         on_update = "NoAction",
         on_delete = "NoAction"
     )]
-    EachMansion,
+    DailyMansion,
 }
 
-impl Related<super::each_mansion::Entity> for Entity {
+impl Related<super::daily_mansion::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::EachMansion.def()
+        Relation::DailyMansion.def()
     }
 }
 

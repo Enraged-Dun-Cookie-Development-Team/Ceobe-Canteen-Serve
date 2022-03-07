@@ -1,5 +1,5 @@
 mod error;
-mod measurable;
+pub mod measurable;
 pub mod range_limit;
 
 pub use crate::range_limit::range_limit::RangeBoundLimit;
