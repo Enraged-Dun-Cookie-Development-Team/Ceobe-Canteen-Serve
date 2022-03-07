@@ -4,7 +4,7 @@ use super::mansion::Mansion;
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str {
-        "20220306165019-EachMansion-migration"
+        "20220306165019-DailyMansion-migration"
     }
 }
 #[async_trait::async_trait]
@@ -12,29 +12,29 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = sea_query::Table::create();
         table
-            .table(EachMansion::Table)
+            .table(DailyMansion::Table)
             .if_not_exists()
             .col(
-                ColumnDef::new(EachMansion::Id)
+                ColumnDef::new(DailyMansion::Id)
                     .big_integer()
                     .primary_key()
                     .unique_key()
                     .auto_increment(),
             )
-            .col(ColumnDef::new(EachMansion::Mid).big_integer().not_null())
+            .col(ColumnDef::new(DailyMansion::Mid).big_integer().not_null())
             .foreign_key(
                 ForeignKey::create()
-                    .from(EachMansion::Table, EachMansion::Mid)
-                    .to(Mansion::Table, Mansion::Id),
+                    .from_col(DailyMansion::Mid)
+                    .to_col(Mansion::Id),
             )
             .col(
-                ColumnDef::new(EachMansion::Date)
+                ColumnDef::new(DailyMansion::Date)
                     .date()
                     .not_null()
                     .unique_key(),
             )
             .col(
-                ColumnDef::new(EachMansion::Content)
+                ColumnDef::new(DailyMansion::Content)
                     .text()
                     .default(Value::Date(None)),
             );
@@ -44,14 +44,14 @@ impl MigrationTrait for Migration {
     }
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = sea_query::Table::drop();
-        table.table(EachMansion::Table);
+        table.table(DailyMansion::Table);
         manager.drop_table(table).await?;
 
         Ok(())
     }
 }
 #[derive(Iden)]
-pub enum EachMansion {
+pub enum DailyMansion {
     Table,
     Id,
     Mid,

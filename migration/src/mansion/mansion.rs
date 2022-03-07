@@ -27,9 +27,13 @@ impl MigrationTrait for Migration {
                     .not_null()
                     .default(0i32),
             )
-            .col(ColumnDef::new(Mansion::StartAt).date().not_null())
-            .col(ColumnDef::new(Mansion::EndAt).date().not_null())
+            .col(
+                ColumnDef::new(Mansion::Description)
+                    .string_len(128)
+                    .not_null(),
+            )
             .col(ColumnDef::new(Mansion::Link).string_len(128).not_null())
+            .col(ColumnDef::new(Mansion::Fraction).small_integer().not_null())
             .index(
                 Index::create()
                     .col(Mansion::Mid)
@@ -41,10 +45,9 @@ impl MigrationTrait for Migration {
         Ok(())
     }
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        let mut table=sea_query::Table::drop();
+        let mut table = sea_query::Table::drop();
         table.table(Mansion::Table);
         manager.drop_table(table).await?;
-        
 
         Ok(())
     }
@@ -55,7 +58,7 @@ pub enum Mansion {
     Id,
     Mid,
     SubMid,
-    StartAt,
-    EndAt,
+    Description,
     Link,
+    Fraction,
 }
