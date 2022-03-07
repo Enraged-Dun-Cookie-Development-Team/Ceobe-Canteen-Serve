@@ -3,6 +3,13 @@ name = "ceobe-canteen-serve"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name="migrator"
+
+[[bin]]
+name ="server"
+path="./src/main.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
 members=["libs/*","migration"]
