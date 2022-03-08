@@ -1,7 +1,7 @@
 use std::ops::Deref;
 use std::{pin::Pin, sync::Arc};
 
-use crate::mansion::error::{MansionError, NotFound};
+use crate::mansion::error::{MansionError, MansionNotFound};
 use crate::{database::traits::select::LoadFromDb, mansion::modules::mansion};
 use futures::Future;
 
@@ -50,7 +50,7 @@ impl LoadFromDb for LoadMansion {
 
                 Ok(Into::<mansion::Mansion>::into((rt, eachs)))
             } else {
-                Err(NotFound.into())
+                Err(MansionNotFound.into())
             }
         })
     }

@@ -9,9 +9,9 @@ crate::check_obj! {
     {}
     {}
     pub struct MansionUncheck = MansionChecker > Mansion{
-        id : IdChecker,
-        // link:MaxLimitString<128>
-        fraction:FractionCheck
+        id: IdChecker,
+        link: MaxLimitString<128>,
+        fraction: FractionCheck
     }
     err:MansionError
 }

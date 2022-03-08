@@ -29,17 +29,29 @@ macro_rules! error_generate {
             }
         }
 
-        impl rresult::ErrorCode for $err_name{
-
-                fn code(&self) -> i16 {
-                    match self{
-                        $(
-                            Self::$v_name(err)=>{err.code()}
-                        ),+
-                    }
-                 }
+        impl status_err::StatusErr for $err_name{
+            fn prefix(&self)->status_err::ErrPrefix{
+                match self{
+                    $(
+                        Self::$v_name(err)=>{err.prefix()}
+                    ),+
+                }
+            }
+            fn code(&self) -> u16 {
+                match self{
+                    $(
+                        Self::$v_name(err)=>{err.code()}
+                    ),+
+                }
+            }
+            fn http_code(&self)->http::StatusCode{
+                match self{
+                    $(
+                        Self::$v_name(err)=>{err.http_code()}
+                    ),+
+                }
+            }
         }
-
         $(
             impl From<$inner_err> for $err_name{
                 fn from(src: $inner_err) -> Self {
@@ -88,4 +100,3 @@ error_generate!(
     Db=DatabaseError
 );
 
-error_generate!(pub IoError(std::io::Error));

@@ -3,7 +3,7 @@ use sea_orm::{ConnectOptions, ConnectionTrait, Database, Statement, TransactionT
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
-    error::{DatabaseError, OrmError},
+    error::DatabaseError,
 };
 
 pub mod config;
@@ -33,9 +33,7 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
             .min_connections(config.min_conn())
             .sqlx_logging(config.sql_logger());
 
-        let connect = Database::connect(db_options)
-            .await
-            .map_err(OrmError::from)?;
+        let connect = Database::connect(db_options).await?;
 
         Ok(Self(connect))
     }

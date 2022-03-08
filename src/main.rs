@@ -20,10 +20,9 @@ extern crate serde;
 generate_controller!(
     RootController,
     "/api/v0",
-    CeobeController 
-    
+    CeobeController, 
     // database not add yet
-    // ,MansionController
+    MansionController
 );
 
 #[actix_web::main]
@@ -49,4 +48,3 @@ async fn task() -> Result<(), crate::error::GlobalError> {
     .await?;
     Ok(())
 }
-

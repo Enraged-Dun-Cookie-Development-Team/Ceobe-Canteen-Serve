@@ -38,3 +38,6 @@ features=[
 
 [dependencies.serde_json]
 version="1.0"
+
+[dependencies.status-err]
+path="../status-err"

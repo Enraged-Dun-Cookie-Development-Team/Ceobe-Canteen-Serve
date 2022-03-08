@@ -1,7 +1,8 @@
 use std::{convert::Infallible, marker::PhantomData};
 
 use futures::Future;
-use rresult::{ErrorCode, RResult};
+use rresult::RResult;
+use status_err::StatusErr;
 
 use crate::utils::req_pretreatment::Pretreatment;
 
@@ -10,7 +11,7 @@ pub struct WrapRResult<P>(PhantomData<P>);
 impl<P> Pretreatment for WrapRResult<P>
 where
     P: Pretreatment,
-    P::Err: ErrorCode,
+    P::Err: StatusErr,
 {
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 

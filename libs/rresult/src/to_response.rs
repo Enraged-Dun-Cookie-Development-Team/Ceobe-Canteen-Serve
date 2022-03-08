@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use futures_util::future::{err, ok, Ready};
 
 use crate::{IntoSerde, RResult};
@@ -5,7 +7,7 @@ use crate::{IntoSerde, RResult};
 impl<T, E> actix_web::Responder for RResult<T, E>
 where
     T: for<'s> IntoSerde<'s>,
-    E: crate::ErrorCode,
+    E: status_err::StatusErr,
 {
     type Error = actix_http::error::Error;
 
@@ -24,8 +26,8 @@ where
         };
 
         let head_status = match self {
-            RResult::Success(_) => 2000,
-            RResult::Error(ref e) => e.code(),
+            RResult::Success(_) => Cow::Borrowed("00000"),
+            RResult::Error(ref e) => format!("{}{}",e.prefix(),e.code()).into(),
         };
 
         #[cfg(feature = "logger")]

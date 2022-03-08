@@ -1,15 +1,17 @@
+use crate::utils::req_pretreatment::prefabs::JsonError;
+
 crate::error_generate!(
    pub CeobeError
     MailBox=actix::dev::MailboxError
-    Update=NoUpdateError
     ActixWeb=actix_web::error::Error
+    Json=JsonError
+    Update=NoUpdateError
 );
 
-crate::error_generate!(
-    pub NoUpdateError="Ceobe No Updated"
+status_err::status_error!(
+    pub NoUpdateError[
+    status_err::ErrPrefix::NOT_MODIFIED,
+    0001    
+    ]=>"没有更新的Ceobe"
 );
-
-
-
-rresult::coded_error!(NoUpdateError[4005:http::StatusCode::NOT_MODIFIED]);
 

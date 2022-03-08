@@ -2,10 +2,11 @@ use crate::StatusErr;
 
 
 impl StatusErr for sea_orm::DbErr {
+    #[inline]
     fn prefix(&self)->crate::ErrPrefix {
         crate::ErrPrefix::SEA_ORM
     }
-
+    #[inline]
     fn code(&self)->u16 {
         match self{
             sea_orm::DbErr::Conn(_) => 0001,
@@ -16,7 +17,7 @@ impl StatusErr for sea_orm::DbErr {
             sea_orm::DbErr::Type(_) => 0006,
         }
     }
-
+    #[inline]
     fn http_code(&self)->http::StatusCode {
         http::StatusCode::INTERNAL_SERVER_ERROR
     }
