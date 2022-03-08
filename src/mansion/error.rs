@@ -1,7 +1,8 @@
+
 use http::StatusCode;
 use status_err::{status_error, ErrPrefix};
 
-use crate::error_generate;
+use crate::{error_generate, utils::req_pretreatment::prefabs::PathError};
 
 error_generate!(
     pub MansionError
@@ -10,7 +11,7 @@ error_generate!(
     NotFound=MansionNotFound
     Fraction=BadFraction
     Range=range_limit::Error
-    Actix=actix_web::error::Error
+    Path=PathError
 );
 
 status_error! {

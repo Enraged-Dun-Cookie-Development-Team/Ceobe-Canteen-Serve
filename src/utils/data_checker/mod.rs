@@ -27,6 +27,7 @@ pub trait DataChecker {
 
 }
 
+#[derive(Debug)]
 pub struct CheckRequire<D: DataChecker>(D::Unchecked);
 
 #[allow(dead_code)]

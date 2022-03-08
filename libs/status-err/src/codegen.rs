@@ -23,7 +23,7 @@
 ///             [
 ///                 ErrPrefix::IO,                      // 为已有类型实现时使用的前缀码类型
 ///                 0001:                               // 为已有类型实现时使用的异常标识码(唯一)
-///                 StatusCode::INTERNAL_SERVER_ERROR   // 为已有类型实现时使用的描述内容
+///                 StatusCode::INTERNAL_SERVER_ERROR   // 为已有类型实现时使用的Http状态码(可以省略，如果不提供，将使用前缀码默认http状态码)
 ///             ]
 ///         );
 ///     ```

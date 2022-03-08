@@ -19,7 +19,7 @@ impl LoadFromDb for LoadMansion {
 
     type Err = MansionError;
 
-    type Args = (u32, u32);
+    type Args = (i32, i32);
 
     fn load<'db, Db>(
         (main_id, sub_id): Self::Args,

@@ -1,5 +1,5 @@
 mod sea_orm;
-use std::num::ParseIntError;
+use std::{num::ParseIntError, convert::Infallible};
 
 use http::StatusCode;
 
@@ -11,3 +11,4 @@ status_error!(std::io::Error[ErrPrefix::IO, 0001:StatusCode::INTERNAL_SERVER_ERR
 status_error!(url::ParseError[ErrPrefix::PARSE, 0001:StatusCode::NOT_ACCEPTABLE]);
 status_error!(ParseIntError[ErrPrefix::PARSE ,0002:StatusCode::NOT_ACCEPTABLE]);
 status_error!(range_limit::Error[ErrPrefix::CHECKER ,0001:StatusCode::NOT_ACCEPTABLE]);
+status_error!(Infallible[ErrPrefix::CHECKER,0000]);

@@ -1,21 +1,28 @@
 use futures::future::{err, ok, ready, Ready};
+use sea_orm::Set;
+use serde::Deserialize;
 
 use crate::{
-    mansion::error::{BadFraction, MansionError, UnknownId},
+    mansion::{
+        db_ops,
+        error::{BadFraction, MansionError, UnknownId},
+    },
     utils::{data_checker::DataChecker, data_struct::MaxLimitString},
 };
 
 crate::check_obj! {
-    {}
+    {#[derive(Debug,Deserialize)]}
     {}
     pub struct MansionUncheck = MansionChecker > Mansion{
         id: IdChecker,
         link: MaxLimitString<128>,
+        description:MaxLimitString<128>,
         fraction: FractionCheck
     }
     err:MansionError
 }
 
+#[derive(Debug)]
 pub struct IdChecker;
 
 impl DataChecker for IdChecker {
@@ -44,6 +51,7 @@ impl DataChecker for IdChecker {
     }
 }
 
+#[derive(Debug)]
 pub struct FractionCheck;
 
 impl DataChecker for FractionCheck {
@@ -62,6 +70,26 @@ impl DataChecker for FractionCheck {
             ok(uncheck)
         } else {
             err(BadFraction.into())
+        }
+    }
+}
+
+impl Mansion {
+    pub fn into_active_model_with_daily(self) -> db_ops::mansion::ActiveModel {
+        let Mansion {
+            id: (mid, sub_mid),
+            link,
+            description,
+            fraction,
+        } = self;
+
+        db_ops::mansion::ActiveModel {
+            mid: Set(mid),
+            sub_mid: Set(sub_mid),
+            description: Set(description),
+            link: Set(link),
+            fraction: Set(fraction),
+            ..Default::default()
         }
     }
 }

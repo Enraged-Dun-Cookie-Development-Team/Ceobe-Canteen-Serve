@@ -45,7 +45,7 @@ macro_rules! check_obj {
         {
             $(
                 $(#[$f_attr])*
-                $fv $f_n : <$f_ty as $crate::utils::data_checker::DataChecker>::Unchecked
+                $f_n : $crate::utils::data_checker::CheckRequire<$f_ty>
             ),*
         }
 
@@ -80,7 +80,7 @@ macro_rules! check_obj {
             type Err=$err;
             type Fut=impl futures::Future<Output = Result<Self::Checked,Self::Err>>;
             fn checker(($($f_n),*): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-               $( let $f_n = <$f_ty as $crate::utils::data_checker::DataChecker>::checker($f_n, uncheck.$f_n);)*
+               $( let $f_n = uncheck.$f_n.checking($f_n); )*
 
                async move{
                    Ok(

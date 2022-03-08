@@ -29,6 +29,7 @@ macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
         #[derive(Debug)]
         $v enum $err_name{
+            Infallible,
             $(
                 $v_name($inner_err)
             ),+
@@ -41,6 +42,7 @@ macro_rules! error_generate {
                     $(
                         Self::$v_name(err)=>{write!(f, "{} Error : {}",stringify!($v_name), err)}
                     ),+
+                    Self::Infallible=>unreachable!(),
                 }
             }
         }
@@ -52,6 +54,7 @@ macro_rules! error_generate {
                     $(
                         Self::$v_name(err)=>{err.prefix()}
                     ),+
+                    Self::Infallible=>unreachable!(),
                 }
             }
             #[inline]
@@ -60,6 +63,7 @@ macro_rules! error_generate {
                     $(
                         Self::$v_name(err)=>{err.code()}
                     ),+
+                    Self::Infallible=>unreachable!(),
                 }
             }
             #[inline]
@@ -68,6 +72,7 @@ macro_rules! error_generate {
                     $(
                         Self::$v_name(err)=>{err.http_code()}
                     ),+
+                    Self::Infallible=>unreachable!(),
                 }
             }
         }
@@ -80,6 +85,13 @@ macro_rules! error_generate {
             }
 
         )+
+
+        impl From<std::convert::Infallible> for $err_name{
+            #[inline]
+            fn from(_: std::convert::Infallible) -> Self {
+                Self::Infallible
+            }
+        }
     };
     ($v:vis $err_name:ident = $msg:literal)=>{
         #[derive(Debug)]
