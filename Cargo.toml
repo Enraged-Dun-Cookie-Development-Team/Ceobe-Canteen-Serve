@@ -94,3 +94,6 @@ path="./libs/ceobe-manager"
 
 [dependencies.logger]
 path="./libs/logger"
+
+[dependencies.status-err]
+path="./libs/status-err"

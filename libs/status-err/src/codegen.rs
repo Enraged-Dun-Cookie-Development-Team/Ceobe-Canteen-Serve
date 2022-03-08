@@ -1,6 +1,6 @@
 #[macro_export]
 macro_rules! status_error {
-    ($v:vis $name:ident[$pre:literal $code:literal: $status:expr]=>$des:literal) => {
+    ($v:vis $name:ident[$pre:expr, $code:literal : $status:expr]=>$des:literal) => {
         #[derive(Debug,Clone)]
         $v struct $name;
 
@@ -21,13 +21,13 @@ macro_rules! status_error {
         }
     };
 
-    ($v:vis $name:ident[$pre:literal $code:literal]=>$des:literal)=>{
+    ($v:vis $name:ident[$pre:expr , $code:literal]=>$des:literal)=>{
         $crate::status_error!($v $name[$code:http::StatusCode::INTERNAL_SERVER_ERROR]=>$des);
     };
-    ($t:ty[$pre:literal $code:literal: $status:expr])=>{
+    ($t:ty[$pre:expr , $code:literal: $status:expr])=>{
         impl $crate::StatusErr for $t{
             fn prefix(&self)->$crate::ErrPrefix{
-                $crate::ErrPrefix::new( $pre )
+                 $pre 
             }
             fn code(&self)->u16{
                 $code
@@ -38,7 +38,7 @@ macro_rules! status_error {
         }
     };
 
-    ($t:ty[$pre:literal $code:literal])=>{
+    ($t:ty[$pre:expr , $code:literal])=>{
         $crate::status_error!($t[$pre $code:http::StatusCode::INTERNAL_SERVER_ERROR]);
     };
 }

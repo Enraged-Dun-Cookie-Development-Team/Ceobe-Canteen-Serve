@@ -25,7 +25,7 @@ impl ErrPrefix {
         self.0
     }
     /// actix 框架产生的异常
-    pub const ACTIX:Self=Self('A');
+    pub const ACTIX:Self=Self('F');
     /// 数据库产生的异常
     pub const SEA_ORM:Self=Self('D');
     /// IO 过程中异常
