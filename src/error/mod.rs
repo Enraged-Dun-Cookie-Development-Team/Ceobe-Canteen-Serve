@@ -1,15 +1,30 @@
 use crate::database::error::DatabaseError;
 
 #[macro_export]
-/// 辅助构造枚举形式的Error
-///
-/// ```rust
-/// error_generate!(
-/// pub GolbalError
-/// Io=std::io::Error
-/// );
-/// ```
-///
+/// 1. 辅助构造枚举形式的Error,  
+/// 并提供 [Form](std::form::Form)转换实现，
+/// 和 [StatusErr](status_err::StatusErr)实现
+///     ```rust
+///     error_generate!(
+///             // |------- 构造的枚举型异常的类型名称
+///         pub GolbalError
+///       // |--------------枚举类型的名称
+///       // |     |-------每一枚举类型内部的类型
+///         Io=std::io::Error  // 多个内部类型用空格区分
+///         Db=sea_orm::DbErr
+///     );
+///     ```
+///2. 为现有类型生成包装类型
+///     ```rust
+///         error_generate!(
+///         //   |------------新建包装类型的可见性
+///         //   |     |------新建包装类型的类型名称
+///             pub JsonError
+///             (      
+///                 actix_web::Error  // 内部包装的类型
+///             )"反序列化异常" // 为包装类型添加额外的异常信息
+///         );
+///     ```
 macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
         #[derive(Debug)]
@@ -20,6 +35,7 @@ macro_rules! error_generate {
         }
         impl std::error::Error for $err_name{}
         impl std::fmt::Display for $err_name{
+            #[inline]
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self{
                     $(
@@ -30,6 +46,7 @@ macro_rules! error_generate {
         }
 
         impl status_err::StatusErr for $err_name{
+            #[inline]
             fn prefix(&self)->status_err::ErrPrefix{
                 match self{
                     $(
@@ -37,6 +54,7 @@ macro_rules! error_generate {
                     ),+
                 }
             }
+            #[inline]
             fn code(&self) -> u16 {
                 match self{
                     $(
@@ -44,6 +62,7 @@ macro_rules! error_generate {
                     ),+
                 }
             }
+            #[inline]
             fn http_code(&self)->http::StatusCode{
                 match self{
                     $(
@@ -54,6 +73,7 @@ macro_rules! error_generate {
         }
         $(
             impl From<$inner_err> for $err_name{
+                #[inline]
                 fn from(src: $inner_err) -> Self {
                     Self::$v_name(src)
                 }
@@ -73,19 +93,21 @@ macro_rules! error_generate {
     };
     
     ($v:vis $wrap_name:ident($err_ty:ty))=>{
-        $crate::error_generate!($v $wrap_name($err_ty)="");
+        $crate::error_generate!($v $wrap_name($err_ty)"");
     };
 
-    ($v:vis $wrap_name:ident($err_ty:ty)=$msg:literal)=>{
+    ($v:vis $wrap_name:ident($err_ty:ty)$msg:literal)=>{
         #[derive(Debug)]
         $v struct $wrap_name($err_ty);
         impl std::error::Error for $wrap_name{}
         impl std::fmt::Display for $wrap_name{
+            #[inline]
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                writeln!(f, "{} Error : {}`{}`",stringify!($err_name), $msg, self.0)
             }
         }
         impl From<$err_ty> for $wrap_name{
+            #[inline]
             fn from(src:$err_ty)->Self{
                 Self(src)
             }

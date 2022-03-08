@@ -79,6 +79,14 @@ where
 }
 
 #[macro_export]
+/// 辅助生成 [FromHeaders](crate::utils::data_struct::header_info::FromHeaders)
+/// ```rust
+///                 //    |-------------新建的类型的可见度
+///                 //    |    |--------新建的类型的名称
+///                 //    |    |          |---- 捕获的头类型
+///     header_captures!(pub Referer: "referer");
+/// ```
+/// 
 macro_rules! header_captures {
     ($v:vis $i:ident : $hn:literal) => {
         #[derive(Default)]
@@ -90,3 +98,5 @@ macro_rules! header_captures {
         }
     };
 }
+
+header_captures!(pub Referer: "referer");

@@ -9,7 +9,16 @@ pub trait Controller {
 }
 
 #[macro_export]
-/// 快捷构造Controller
+/// 快捷构造 [Controller](Controller)
+/// ```rust
+///     generate_controller!(
+///         CeobeController, // 新建的 Controller 类型名称
+///         "/ceobe",        // Controller 的根路由
+///         update,          //--|
+///         save_setting,    //  |------ Controller 的路由
+///         get_setting      //--|
+///     );
+/// ```
 macro_rules! generate_controller {
     ($name:ident,$base:literal$(,$routes:path)*) => {
         pub struct $name;

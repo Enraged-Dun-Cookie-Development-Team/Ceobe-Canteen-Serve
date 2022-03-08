@@ -8,7 +8,7 @@ use crate::{r_result::RResult};
 impl<T, E> Serialize for RResult<T, E>
 where
     T: for<'a> IntoSerde<'a>,
-    E: status_err::StatusErr,
+    E: StatusErr,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
