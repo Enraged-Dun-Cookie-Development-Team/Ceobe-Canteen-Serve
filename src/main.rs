@@ -37,7 +37,7 @@ async fn task() -> Result<(), crate::error::GlobalError> {
     let updater = Arc::new(updater);
 
     let timer=MockTimer::new();
-    tokio::spawn(timer.clone().updating());
+    actix_web::rt::spawn(timer.clone().updating());
     HttpServer::new(move || {
         App::new()
             .wrap(actix_web::middleware::Logger::default())

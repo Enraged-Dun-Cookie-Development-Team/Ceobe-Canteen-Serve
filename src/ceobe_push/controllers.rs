@@ -17,7 +17,7 @@ use crate::{
 
 use super::{error::CeobeError, MockTimer};
 
-generate_controller!(CeobeController, "/ceobe", update, save_setting, get_setting);
+generate_controller!(CeobeController, "/ceobe", update, save_setting, get_setting,mock_update);
 
 /// update 获取最新的饼
 ///
