@@ -1,7 +1,8 @@
+use actix_http::Response;
 use rresult::{IntoRResult, IntoRResultWithCodeError};
-use std::sync::Arc;
+use std::{borrow::Cow, sync::Arc};
 
-use actix_web::{get, post, web};
+use actix_web::{get, post, web, Responder};
 use ceobe_manager::LazyLoad;
 use rresult::{RResult, Wrap};
 
@@ -14,7 +15,7 @@ use crate::{
     },
 };
 
-use super::error::CeobeError;
+use super::{error::CeobeError, MockTimer};
 
 generate_controller!(CeobeController, "/ceobe", update, save_setting, get_setting);
 
@@ -71,4 +72,24 @@ async fn save_setting() -> RResult<Wrap<()>, CeobeError> {
 #[get("/setting")]
 async fn get_setting() -> RResult<Wrap<()>, CeobeError> {
     unimplemented!()
+}
+#[get("/mock")]
+async fn mock_update(
+    timer: web::Data<Arc<MockTimer>>,
+    filter: ReqPretreatment<ToRResult<MapErr<Json<DataSourceFilter>, CeobeError>>>,
+) -> RResult<Wrap<Vec<Cow<'static, str>>>, CeobeError> {
+    let inner = filter.into_inner()?;
+    let last_update = timer.load();
+
+    let resp = inner
+        .into_iter()
+        .filter(|(t, _)| t < &last_update)
+        .map(|(t, s)| s)
+        .collect::<Vec<_>>();
+
+    if resp.len() == 0 {
+        RResult::err(NoUpdateError.into())
+    } else {
+        RResult::wrap_ok(resp)
+    }
 }

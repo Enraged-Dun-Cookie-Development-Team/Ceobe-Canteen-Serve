@@ -4,7 +4,7 @@ use std::sync::Arc;
 
 use actix_web::{App, HttpServer};
 
-use ceobe_push::controllers::CeobeController;
+use ceobe_push::{controllers::CeobeController, MockTimer};
 use error::GlobalError;
 use mansion::controllers::MansionController;
 use utils::middleware::benchmark::BenchMarkFactor;
@@ -35,12 +35,17 @@ async fn main() -> Result<(), GlobalError> {
 async fn task() -> Result<(), crate::error::GlobalError> {
     let (_resp, updater) = ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
     let updater = Arc::new(updater);
+
+    let timer=MockTimer::new();
+    tokio::spawn(timer.clone().updating());
     HttpServer::new(move || {
         App::new()
             .wrap(actix_web::middleware::Logger::default())
             .wrap(actix_web::middleware::Logger::new("%a %{User-Agent}i"))
             .wrap(BenchMarkFactor)
             .data(updater.clone())
+            .data(timer.clone())
+
             .service(RootController)
     })
     .bind("127.0.0.1:8000")?
