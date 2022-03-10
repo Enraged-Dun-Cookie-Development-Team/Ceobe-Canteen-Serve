@@ -2,6 +2,67 @@
 
 - [git emoji](https://gitmoji.dev/) 以后提交用这个吧
 
+## 启动配置文件
+
+启动配置文件支持 `*.toml`,`*.json`,`*.yaml` 可以将配置不同部分分布在不同的文件中（不推荐）
+
+- 配置项介绍
+  | 所属分组 | 名称 | 必须 | 类型 | 说明 | 补充 |
+  | :-----: |:--:| :--: | :---:| :--- | :--- |
+  | `database`/`db` | `scheme` |是|`String`| 数据库的 scheme,如 mysql | 无 |
+  | `database`/`db` | `username` |是|`String`| 数据库的 用户名 | 无 |
+  | `database`/`db` | `password` |是|`String`| 数据库的 密码 | 无 |
+  | `database`/`db` | `host` | 否 |`String`| 数据库的 host | 默认为 `localhost` |
+  | `database`/`db` | `port` |否|`u16`| 数据库的 port | 默认为`3306` |
+  | `database`/`db` | `name` |是|`String`| 使用的数据库名称 | 无 |
+  | `database`/`db` | `max_conn` |是|`u32`| 数据库的最大连接数 | 无 |
+  | `database`/`db` | `min_conn` |是|`u32`| 数据库的最小连接数 | 无 |
+  | `database`/`db` | `logger` |否|`bool`| 是否开始数据库操作日志 | 默认关闭 |
+  | `logger`/`log` | `logger_target` |是|`file`或者`stdout`| 日志输出目的 | 无 |
+  | `logger`/`log` | `to_file` |是|`String`| 日志输出的文件 | `logger_target` 为 `file` 时才有效 |
+    | `logger`/`log` | `enable_color` |否|`bool`| 日志输出是否带颜色 | `logger_target` 为 `stdout` 时才有效,默认为 `true` |
+  | `logger`/`log` | `level`|  是|`off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace`| 日志输出过滤等级 | 无 |
+
+- Toml
+
+  ```toml
+  [db]
+  scheme="mysql"
+  username="<db_user>"
+  password="<db_pwd>",
+
+  host="localhost"
+  port=3306
+
+  name="mansion_data"
+  max_conn=16
+  min_conn=2
+
+  logger=true
+
+  [log]
+  logger_target="stdout"
+  ```
+
+-Yaml
+
+  ```yaml
+    log:
+      to_file: ./logout.log
+      level: info
+  ```
+
+- Json
+
+  ```json
+    {
+      "db": {
+        "password": "pwd",
+        "name": "name"
+      }
+    }
+  ```
+
 ## 异常
 
 - 前缀类型说明
@@ -41,9 +102,9 @@
   | :--: | :----: | :------: | :------------------------------- |
   | `C`  |  0001  |   406    | 范围检查未通过                   |
   | `C`  |  0002  |   406    | 饼学大厦 id 格式不是 {int}.{int} |
-  | `C`  |  0003  |   406    | 错误的Fraction值范围(0~5) |
-  | `C`  |  0004  |   406    | `Json` 序列化/反序列化异常 |
-  | `C`  | 0005 | 406 | `Path` 数据加载异常 |
+  | `C`  |  0003  |   406    | 错误的 Fraction 值范围(0~5)      |
+  | `C`  |  0004  |   406    | `Json` 序列化/反序列化异常       |
+  | `C`  |  0005  |   406    | `Path` 数据加载异常              |
 
 - 数据库异常
 
@@ -64,7 +125,7 @@
 
 - 资源查找异常
 
-  | 前缀 | 异常码 | httpCode | 说明           |
-  | :--: | :----: | :------: | :------------- |
+  | 前缀 | 异常码 | httpCode | 说明               |
+  | :--: | :----: | :------: | :----------------- |
   | `S`  |  0001  |   404    | 指定饼学大厦未找到 |
-  | `S`  |  0002  |   404    | 不存在的路由 |
+  | `S`  |  0002  |   404    | 不存在的路由       |

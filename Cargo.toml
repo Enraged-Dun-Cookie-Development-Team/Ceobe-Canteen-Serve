@@ -29,13 +29,14 @@ futures = "0.3"
 dotenv = "0.15"
 lazy_static = "1.4"
 rust-crypto = "0.2"
-figment = "0.10"
+figment = {version="0.10",features=["yaml","json","toml"]}
 chrono = {version="0.4",features=["serde"]}
 
 actix="0.13"
 actix-web="4"
 actix-http="3"
 actix-service="2"
+actix-cors = "0.6.1"
 
 http="0.2"
 urlencoding = "2.1.0"
