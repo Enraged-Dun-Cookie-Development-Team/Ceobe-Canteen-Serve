@@ -61,7 +61,7 @@ impl DataChecker for FractionCheck {
     type Fut = Ready<Result<i16, MansionError>>;
 
     fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        if 0 <= uncheck && uncheck <= 5 {
+        if 1 <= uncheck && uncheck <= 5 {
             ok(uncheck)
         } else {
             err(BadFraction.into())
