@@ -2,7 +2,7 @@ use std::{
     borrow::Cow,
     collections::HashMap,
     ops::{Deref, Index, Range},
-    sync::Mutex,
+    sync::{Mutex, Arc},
 };
 
 use actix::{Addr, MailboxError};
@@ -13,17 +13,15 @@ use tokio::sync::watch;
 use crate::{
     ceobo_actor::{Cached, CachedFilter, CachedWatcherMsg, CheckCachedUpdate, UpdaterReceiver},
     models::{AShareString, DataItem, DataSource},
-    ws_actor::CeoboWebsocket,
 };
 
 pub struct UpdateLoader(
     Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>,
-    Addr<CeoboWebsocket>,
 );
 
 impl UpdateLoader {
-    pub fn new(rec: UpdaterReceiver, ws: Addr<CeoboWebsocket>) -> Self {
-        Self(Mutex::new(rec), ws)
+    pub fn new(rec: UpdaterReceiver, ) -> Arc<Self> {
+        Arc::new(Self(Mutex::new(rec)))
     }
 }
 

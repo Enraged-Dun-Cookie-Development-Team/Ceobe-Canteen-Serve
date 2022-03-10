@@ -1,8 +1,6 @@
 #![feature(type_alias_impl_trait)]
 
-use std::sync::Arc;
-
-use actix_web::{App, HttpServer};
+use actix_web::{web::Data, App, HttpServer};
 
 use ceobe_push::controllers::CeobeController;
 use error::GlobalError;
@@ -20,7 +18,7 @@ extern crate serde;
 generate_controller!(
     RootController,
     "/api/v0",
-    CeobeController, 
+    CeobeController,
     // database not add yet
     MansionController
 );
@@ -33,14 +31,16 @@ async fn main() -> Result<(), GlobalError> {
 }
 
 async fn task() -> Result<(), crate::error::GlobalError> {
-    let (_resp, updater) = ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
-    let updater = Arc::new(updater);
+    let (_resp, (updater, sender)) = ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
+    let updater = Data::from(updater);
+    let sender = Data::from(sender);
     HttpServer::new(move || {
         App::new()
             .wrap(actix_web::middleware::Logger::default())
             .wrap(actix_web::middleware::Logger::new("%a %{User-Agent}i"))
             .wrap(BenchMarkFactor)
-            .data(updater.clone())
+            .app_data(updater.clone())
+            .app_data(sender.clone())
             .service(RootController)
     })
     .bind("127.0.0.1:8000")?

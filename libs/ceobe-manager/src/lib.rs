@@ -1,3 +1,4 @@
+pub mod ws_sender;
 mod ceobo_actor;
 mod fut_utils;
 mod models;
@@ -22,7 +23,7 @@ mod test {
         let sys = System::new();
 
         sys.block_on(async move {
-            let (_res, updater) = ws::start_ws(WS_SERVICE).await;
+            let (_res, (updater,_)) = ws::start_ws(WS_SERVICE).await;
 
             let res = updater.lazy_load(&[]).await.unwrap();
 

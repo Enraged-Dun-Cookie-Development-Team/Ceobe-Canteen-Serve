@@ -1,5 +1,7 @@
 mod continuation;
 mod json_loader;
+use std::sync::Arc;
+
 use awc::ws::Message;
 use awc::ClientResponse;
 
@@ -11,6 +13,7 @@ use futures_util::stream::{SplitSink, SplitStream, StreamExt};
 
 use crate::fut_utils::{do_fut, do_fut_with};
 use crate::updater_loader::UpdateLoader;
+use crate::ws_sender::WsSender;
 
 use self::continuation::Continuation;
 use self::json_loader::JsonLoader;
@@ -25,22 +28,21 @@ pub struct CeoboWebsocket {
 }
 
 impl CeoboWebsocket {
-    pub fn start(sink: WsFramedSink, stream: WsFramedStream) -> UpdateLoader {
+    pub fn start(sink: WsFramedSink, stream: WsFramedStream) -> (Arc<UpdateLoader>,Arc<WsSender>) {
         #[cfg(feature = "log")]
         log_::info!("Init Ws Actor");
 
         let (json_handle, updater) = JsonLoader::start();
-        UpdateLoader::new(
-            updater,
-            Self::create(|ctx| {
-                ctx.add_stream(stream);
-                Self {
-                    slink: SinkWrite::new(sink, ctx),
-                    json_handle,
-                    continue_handle: Continuation::start(),
-                }
-            }),
-        )
+        let ws = Self::create(|ctx| {
+            ctx.add_stream(stream);
+            Self {
+                slink: SinkWrite::new(sink, ctx),
+                json_handle,
+                continue_handle: Continuation::start(),
+            }
+        });
+
+        (UpdateLoader::new(updater), WsSender::new(ws))
     }
 }
 
@@ -102,7 +104,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
 }
 
 /// [ws client](https://stackoverflow.com/questions/70118994/build-a-websocket-client-using-actix)
-pub async fn start_ws(uri: &str) -> (ClientResponse, UpdateLoader) {
+pub async fn start_ws(uri: &str) -> (ClientResponse, (Arc<UpdateLoader>,Arc<WsSender>)) {
     let client = awc::Client::builder().finish();
     #[cfg(feature = "log")]
     log_::info!("Connect Ws Client To {}", uri);
@@ -114,7 +116,6 @@ pub async fn start_ws(uri: &str) -> (ClientResponse, UpdateLoader) {
         .expect("connect Failure");
 
     let (sink, stream) = stream.split();
-    
     (resp, CeoboWebsocket::start(sink, stream))
 }
 

@@ -1,5 +1,4 @@
 use rresult::{IntoRResult, IntoRResultWithCodeError};
-use std::sync::Arc;
 
 use actix_web::{get, post, web};
 use ceobe_manager::LazyLoad;
@@ -33,7 +32,7 @@ generate_controller!(CeobeController, "/ceobe", update, save_setting, get_settin
 ///
 #[post("/update")]
 async fn update(
-    updater: web::Data<Arc<ceobe_manager::UpdateLoader>>,
+    updater: web::Data<ceobe_manager::UpdateLoader>,
     filter: ReqPretreatment<ToRResult<MapErr<Json<DataSourceFilter>, CeobeError>>>,
 ) -> RResult<Wrap<LazyLoad>, CeobeError> {
     let filter = filter.unwrap()?;

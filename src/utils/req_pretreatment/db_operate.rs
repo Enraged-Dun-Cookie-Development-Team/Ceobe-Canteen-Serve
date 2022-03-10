@@ -1,5 +1,6 @@
-use std::{marker::PhantomData, sync::Arc};
+use std::marker::PhantomData;
 
+use actix_web::web::Data;
 use futures::Future;
 
 use crate::database::{traits::select::LoadFromDb, ServeDatabase};
@@ -26,7 +27,7 @@ where
         payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let db = req
-            .app_data::<Arc<ServeDatabase<sea_orm::DatabaseConnection>>>()
+            .app_data::<Data<ServeDatabase<sea_orm::DatabaseConnection>>>()
             .expect("Database Connect Not Found In AppData")
             .clone();
         let p_task = P::call(req, payload);
