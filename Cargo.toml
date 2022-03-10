@@ -12,7 +12,15 @@ path="./src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-members=["libs/*","migration","codegen/*"]
+members=["libs/*","migration"]
+
+[features]
+default=[]
+migrator=[]
+
+actix_framwork=[]
+database=[]
+async_utils=[]
 
 [dependencies]
 url = "2.2.2"
@@ -24,10 +32,10 @@ rust-crypto = "0.2"
 figment = "0.10"
 chrono = {version="0.4",features=["serde"]}
 
-actix="0.10.0"
-actix-web="3"
-actix-http="2"
-actix-service="1"
+actix="0.13"
+actix-web="4"
+actix-http="3"
+actix-service="2"
 
 http="0.2"
 urlencoding = "2.1.0"

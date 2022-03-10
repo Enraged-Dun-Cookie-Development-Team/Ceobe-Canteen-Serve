@@ -1,4 +1,4 @@
-use actix::{fut::wrap_future, Actor, Context, SpawnHandle, ActorFuture};
+use actix::{fut::wrap_future, Actor, Context, SpawnHandle, ActorFutureExt};
 use futures_util::Future;
 
 use actix::AsyncContext;
@@ -22,6 +22,6 @@ where
     H: FnOnce(O, &mut A, &mut Context<A>) + 'static,
 {
     let task = wrap_future(fut);
-    let task = task.map(handle);
+    let task = task.map::<_,()>(handle);
     ctx.spawn(task)
 }

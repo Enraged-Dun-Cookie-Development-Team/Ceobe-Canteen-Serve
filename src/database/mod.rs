@@ -57,21 +57,21 @@ where
         self.0.get_database_backend()
     }
 
-    async fn execute(&self, stmt: Statement) -> Result<sea_orm::ExecResult, orm_migrate::DbErr> {
+    async fn execute(&self, stmt: Statement) -> Result<sea_orm::ExecResult, sea_orm::DbErr> {
         self.0.execute(stmt).await
     }
 
     async fn query_one(
         &self,
         stmt: Statement,
-    ) -> Result<Option<sea_orm::QueryResult>, orm_migrate::DbErr> {
+    ) -> Result<Option<sea_orm::QueryResult>, sea_orm::DbErr> {
         self.0.query_one(stmt).await
     }
 
     async fn query_all(
         &self,
         stmt: Statement,
-    ) -> Result<Vec<sea_orm::QueryResult>, orm_migrate::DbErr> {
+    ) -> Result<Vec<sea_orm::QueryResult>, sea_orm::DbErr> {
         self.0.query_all(stmt).await
     }
 }
@@ -81,7 +81,7 @@ impl<D: TransactionTrait> TransactionTrait for ServeDatabase<D> {
     ) -> core::pin::Pin<
         Box<
             dyn core::future::Future<
-                    Output = Result<sea_orm::DatabaseTransaction, orm_migrate::DbErr>,
+                    Output = Result<sea_orm::DatabaseTransaction, sea_orm::DbErr>,
                 > + core::marker::Send
                 + 'async_trait,
         >,

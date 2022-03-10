@@ -56,13 +56,12 @@ where
 impl<Pre> FromRequest for ReqPretreatment<Pre>
 where
     Pre: Pretreatment,
-    Pre::Err: Into<actix_http::Error>,
+    Pre::Err: Into<actix_web::Error>,
 {
     type Error = Pre::Err;
 
     type Future = impl Future<Output = Result<Self, Self::Error>>;
 
-    type Config = ();
     #[inline]
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
         let task = Pre::call(req, payload);

@@ -8,12 +8,11 @@ pub struct BenchMark<S> {
     service: S,
 }
 
-impl<S> actix_service::Service for BenchMark<S>
+impl<S,Req> actix_service::Service<Req> for BenchMark<S>
 where
-    S: Service,
+    S: Service<Req>,
     S::Future: 'static,
 {
-    type Request = S::Request;
 
     type Response = S::Response;
 
@@ -22,13 +21,13 @@ where
     type Future = impl Future<Output = Result<Self::Response, Self::Error>>;
 
     fn poll_ready(
-        &mut self,
+        & self,
         ctx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Result<(), Self::Error>> {
         self.service.poll_ready(ctx)
     }
 
-    fn call(&mut self, req: Self::Request) -> Self::Future {
+    fn call(& self, req: Req) -> Self::Future {
         let task = self.service.call(req);
         async move {
             let req_income = std::time::SystemTime::now();
@@ -46,12 +45,11 @@ where
 
 pub struct BenchMarkFactor;
 
-impl<S> Transform<S> for BenchMarkFactor
+impl<S,Req> Transform<S,Req> for BenchMarkFactor
 where
-    S: Service,
+    S: Service<Req>,
     S::Future: 'static,
 {
-    type Request = S::Request;
 
     type Response = S::Response;
 

@@ -54,7 +54,6 @@ where
 
     type Future = Ready<Result<Self, actix_http::Error>>;
 
-    type Config = ();
 
     fn from_request(
         req: &actix_web::HttpRequest,

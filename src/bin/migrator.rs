@@ -1,11 +1,11 @@
 use orm_migrate::Migrator;
 use orm_migrate::MigratorTrait;
+use orm_migrate::async_std;
 use std::env;
 use logger;
 
-use tokio;
 
-#[tokio::main]
+#[async_std::main]
 async fn main() {
     logger::init_std(logger::LoggerConfig::default().set_filter(log::LevelFilter::Info))
     .expect("无法启动日志系统");

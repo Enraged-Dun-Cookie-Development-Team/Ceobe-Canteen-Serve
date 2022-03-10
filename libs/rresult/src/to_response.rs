@@ -1,25 +1,18 @@
 use std::borrow::Cow;
 
-use futures_util::future::{err, ok, Ready};
+use actix_http::body::BoxBody;
+use actix_web::HttpResponse;
 
 use crate::{IntoSerde, RResult};
 
 impl<T, E> actix_web::Responder for RResult<T, E>
 where
-    T: for<'s> IntoSerde<'s>,
-    E: status_err::StatusErr,
+T: for<'s> IntoSerde<'s>,
+E: status_err::StatusErr,
 {
-    type Error = actix_http::error::Error;
+    type Body=BoxBody;
 
-    type Future = Ready<Result<actix_web::HttpResponse, <Self as actix_web::Responder>::Error>>;
-
-    fn respond_to(self, _req: &actix_web::HttpRequest) -> Self::Future {
-        let data = serde_json::to_vec(&self);
-        let body = match data {
-            Ok(b) => b,
-            Err(e) => return err(e.into()),
-        };
-
+    fn respond_to(self, _req: &actix_web::HttpRequest) ->HttpResponse<Self::Body>   {      
         let status = match self {
             RResult::Success(_) => http::StatusCode::OK,
             RResult::Error(ref s) => s.http_code(),
@@ -32,15 +25,14 @@ where
 
         #[cfg(feature = "logger")]
         log::info!(
-            "Respond by RRsult | status: {}, head-status: {}, content-size: {}",
+            "Respond by RRsult | status: {}, head-status: {}",
             status,
-            head_status,
-            body.len()
+            head_status
         );
 
-        ok(actix_web::HttpResponse::build(status)
-            .content_type("application/json")
-            .set_header("Status-Code", head_status.to_string())
-            .body(body))
+        actix_web::HttpResponse::build(status)
+            .insert_header(("Status-Code", &*head_status))
+            .json(self)
     }
+
 }
