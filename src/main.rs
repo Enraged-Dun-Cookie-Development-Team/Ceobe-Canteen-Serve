@@ -2,15 +2,13 @@
 
 use actix_web::{web::Data, App, HttpServer};
 
-use ceobe_push::controllers::CeobeController;
 use error::GlobalError;
-use mansion::controllers::MansionController;
+use serves::{CeobeController, MansionController};
 use utils::middleware::benchmark::BenchMarkFactor;
 
-mod ceobe_push;
 mod database;
 mod error;
-mod mansion;
+mod serves;
 mod utils;
 
 extern crate serde;

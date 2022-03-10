@@ -1,8 +1,9 @@
 use chrono::NaiveDate;
 
+use crate::serves::mansion::db_ops;
+
 pub mod checkers;
 
-use crate::mansion::db_ops;
 #[derive(Debug, serde::Serialize)]
 pub struct Mansion {
     id: String,

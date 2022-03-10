@@ -2,13 +2,8 @@ use futures::future::{err, ok, ready, Ready};
 use sea_orm::Set;
 use serde::Deserialize;
 
-use crate::{
-    mansion::{
-        db_ops,
-        error::{BadFraction, MansionError, UnknownId},
-    },
-    utils::{data_checker::DataChecker, data_struct::MaxLimitString},
-};
+use crate::{utils::{data_struct::MaxLimitString, data_checker::DataChecker}, serves::mansion::{error::{MansionError, UnknownId, BadFraction}, db_ops}};
+
 
 crate::check_obj! {
     {#[derive(Debug,Deserialize)]}

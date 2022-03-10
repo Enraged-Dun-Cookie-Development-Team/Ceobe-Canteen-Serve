@@ -1,5 +1,5 @@
 mod model;
-pub mod error;
+mod error;
 pub mod controllers;
 
 
