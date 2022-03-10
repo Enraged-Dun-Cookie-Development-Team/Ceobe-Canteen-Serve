@@ -1,11 +1,9 @@
-use std::net::Ipv4Addr;
-
 /// 用于构造databas的配置文件信息
 pub trait DbConnectConfig: serde::de::DeserializeOwned {
     fn scheme(&self) -> &str;
     fn username(&self) -> &str;
     fn password(&self) -> &str;
-    fn host(&self) -> &Ipv4Addr;
+    fn host(&self) -> &str;
     fn port(&self) -> u16;
     fn name(&self) -> &str;
 }
@@ -25,7 +23,7 @@ pub struct DbConfig {
     pub(crate) username: String,
     pub(crate) password: String,
     #[serde(default = "host_default")]
-    pub(crate) host: Ipv4Addr,
+    pub(crate) host: String,
     #[serde(default = "port_default")]
     pub(crate) port: u16,
     pub(crate) name: String,
@@ -49,7 +47,7 @@ impl DbConnectConfig for DbConfig {
         &self.password
     }
 
-    fn host(&self) -> &Ipv4Addr {
+    fn host(&self) -> &str {
         &self.host
     }
 
@@ -80,9 +78,9 @@ fn logger_default() -> bool {
     false
 }
 
-fn host_default() -> Ipv4Addr {
-    Ipv4Addr::LOCALHOST
+fn host_default() -> String {
+    "localhost".into()
 }
 fn port_default() -> u16 {
-    3360
+    3306
 }

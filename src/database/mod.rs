@@ -27,6 +27,8 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
             name = config.name()
         );
 
+        log::info!("准备连接到数据库: {}",db_url);
+
         let mut db_options = ConnectOptions::new(db_url);
         db_options
             .max_connections(config.max_conn())

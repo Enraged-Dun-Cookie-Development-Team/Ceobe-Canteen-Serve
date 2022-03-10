@@ -1,12 +1,11 @@
 mod config;
 mod logger;
 mod logger_adapter;
-mod logger_info;
+pub mod logger_info;
 
 use std::io::stdout;
 
 pub use config::Config  as LoggerConfig;
-
 pub use logger::Logger;
 pub use logger_adapter::LoggerAdapter;
 
