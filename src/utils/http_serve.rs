@@ -20,7 +20,7 @@ pub trait Controller {
 ///     );
 /// ```
 macro_rules! generate_controller {
-    ($name:ident,$base:literal$(,$routes:path)*) => {
+    ($name:ident,$base:literal$(,$routes:path)*,[$($data:expr),*]) => {
         pub struct $name;
         impl $crate::utils::http_serve::Controller for $name  {
             type Service=actix_web::Scope;
@@ -28,6 +28,9 @@ macro_rules! generate_controller {
                 actix_web::web::scope($base)
                 $(
                     .service($routes)
+                )*
+                $(
+                    .app_data(Data::new($data))
                 )*
             }
 
@@ -42,4 +45,7 @@ macro_rules! generate_controller {
             }
         }
     };
+    ($name:ident,$base:literal$(,$routes:path)*) =>{
+        $crate::generate_controller!($name,$base $(,$routes)*,[]);
+    }
 }

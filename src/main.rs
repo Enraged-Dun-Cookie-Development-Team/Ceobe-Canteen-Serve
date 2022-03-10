@@ -1,8 +1,9 @@
 #![feature(type_alias_impl_trait)]
 
-use actix_web::{web::Data, App, HttpServer};
+use actix_web::{web::{Data, self}, App, HttpServer, HttpRequest};
 
-use error::GlobalError;
+use error::{GlobalError, not_exist};
+use rresult::RResult;
 use serves::{CeobeController, MansionController};
 use utils::middleware::benchmark::BenchMarkFactor;
 
@@ -40,6 +41,7 @@ async fn task() -> Result<(), crate::error::GlobalError> {
             .app_data(updater.clone())
             .app_data(sender.clone())
             .service(RootController)
+            .default_service(web::to(not_exist))
     })
     .bind("127.0.0.1:8000")?
     .run()

@@ -1,3 +1,7 @@
+use actix_web::HttpRequest;
+use rresult::{Wrap, RResult};
+use status_err::ErrPrefix;
+
 use crate::database::error::DatabaseError;
 
 #[macro_export]
@@ -132,5 +136,17 @@ error_generate!(
     pub GlobalError
     Io=std::io::Error
     Db=DatabaseError
+    Route=RouteNotExistError
 );
 
+status_err::status_error!{
+    pub RouteNotExistError[
+        ErrPrefix::NOT_FOUND,
+        0002
+    ]=>"该路由不存在，请检查请求路径"
+}
+
+pub async fn not_exist(req:HttpRequest)->RResult<Wrap<()>,RouteNotExistError>{
+    log::info!("路由未找到 `{}` {}",req.path(),&req.method());
+    RResult::err(RouteNotExistError.into())
+}
