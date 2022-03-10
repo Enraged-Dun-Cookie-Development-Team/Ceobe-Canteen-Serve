@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use chrono::Local;
 
 use crate::{
@@ -46,4 +48,20 @@ impl<A: LoggerAdapter> log::Log for Logger<A> {
     fn flush(&self) {
         self.1.flush()
     }
+}
+
+pub(crate) fn panic_hook(panic_info: &std::panic::PanicInfo) {
+    let (file, line) = panic_info
+        .location()
+        .map(|l| (l.file(), l.column()))
+        .unwrap_or(("<unknown>", 0));
+
+    let cause = panic_info
+        .payload()
+        .downcast_ref::<String>()
+        .map(Deref::deref)
+        .or_else(|| panic_info.payload().downcast_ref::<&str>().map(|s| *s))
+        .unwrap_or("<cause unknown>");
+
+    log::error!("工口发生 [{},{}] 原因 : {}", file, line, cause)
 }

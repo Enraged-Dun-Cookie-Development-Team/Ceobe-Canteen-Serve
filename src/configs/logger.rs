@@ -6,6 +6,8 @@ use serde::Deserialize;
 
 pub struct FileLogger(std::sync::Mutex<std::fs::File>);
 
+
+
 impl LoggerAdapter for FileLogger {
     fn do_log<'a, 'b>(&self, info: LoggerInfo<'a, 'b>) {
         let _r = self
