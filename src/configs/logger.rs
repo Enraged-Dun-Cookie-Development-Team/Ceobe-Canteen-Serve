@@ -1,3 +1,4 @@
+use std::fs::OpenOptions;
 use std::{io::Write, path::Path, sync::Mutex};
 
 use log::LevelFilter;
@@ -56,11 +57,14 @@ impl LoggerConfig {
         match self {
             LoggerConfig::File { to_file, level } => {
                 let path = Path::new(to_file);
-                let file = if path.exists() {
-                    std::fs::File::open(path).expect("打开文件异常")
-                } else {
-                    std::fs::File::create(path).expect("无法新建文件")
-                };
+                let  file = OpenOptions::new()
+                .create(true)
+                .write(true)
+                .truncate(true)
+                .open(path)
+                .expect("无法打开日志文件")
+                ;
+
                 let adapter = FileLogger(Mutex::new(file));
                 let conf = logger::LoggerConfig {
                     level_filter: level.into(),

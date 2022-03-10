@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::{ops::Deref, time::Duration};
 
 use chrono::Local;
 
@@ -63,5 +63,6 @@ pub(crate) fn panic_hook(panic_info: &std::panic::PanicInfo) {
         .or_else(|| panic_info.payload().downcast_ref::<&str>().map(|s| *s))
         .unwrap_or("<cause unknown>");
 
-    log::error!("工口发生 [{},{}] 原因 : {}", file, line, cause)
+    log::error!("工口发生 [{},{}] 原因 : {}", file, line, cause);
+    std::thread::sleep(Duration::from_millis(200));
 }
