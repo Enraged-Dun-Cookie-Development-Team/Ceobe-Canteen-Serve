@@ -37,7 +37,6 @@ impl MigrationTrait for Migration {
             .index(
                 Index::create()
                     .col(Mansion::Mid)
-                    .col(Mansion::SubMid)
                     .name("mansion_id"),
             );
         manager.create_table(table).await?;

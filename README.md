@@ -44,7 +44,7 @@
   logger_target="stdout"
   ```
 
--Yaml
+- Yaml
 
   ```yaml
     log:
