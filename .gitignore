@@ -9,3 +9,6 @@ Cargo.lock
 
 Config.*
 *.log
+
+
+libs/mongo-wrap/*

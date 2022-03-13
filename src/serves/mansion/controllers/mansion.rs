@@ -36,7 +36,7 @@ pub(super) async fn get_mansion(
 
 
 #[post("/")]
-pub(super) async fn save_mansion(SaveMansionId { id }:web::Query<SaveMansionId>)->RResult<Wrap<()>,MansionError>{
-
+pub(super) async fn save_mansion(web::Query(SaveMansionId{id}):web::Query<SaveMansionId>)->RResult<Wrap<()>,MansionError>{
+    log::info!("saving id {:?}",id);
     unimplemented!()
 }
