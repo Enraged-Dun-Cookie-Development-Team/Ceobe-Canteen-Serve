@@ -7,7 +7,7 @@ pub mod checkers;
 #[derive(Debug, serde::Serialize)]
 pub struct Mansion {
     id: String,
-    link: String,
+    cvlink: String,
     description: String,
     fraction: i16,
     daily: Vec<DailyMansion>,
@@ -61,7 +61,7 @@ impl
         let daily: Vec<DailyMansion> = e.into_iter().map(Into::into).collect();
         Self {
             id: format!("{}.{}", mid, sub_mid),
-            link,
+            cvlink:link,
             description,
             daily: daily,
             fraction,
