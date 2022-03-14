@@ -7,8 +7,6 @@ use serde::Deserialize;
 
 pub struct FileLogger(std::sync::Mutex<std::fs::File>);
 
-
-
 impl LoggerAdapter for FileLogger {
     fn do_log<'a, 'b>(&self, info: LoggerInfo<'a, 'b>) {
         let _r = self
@@ -57,13 +55,12 @@ impl LoggerConfig {
         match self {
             LoggerConfig::File { to_file, level } => {
                 let path = Path::new(to_file);
-                let  file = OpenOptions::new()
-                .create(true)
-                .write(true)
-                .truncate(true)
-                .open(path)
-                .expect("无法打开日志文件")
-                ;
+                let file = OpenOptions::new()
+                    .create(true)
+                    .write(true)
+                    .truncate(true)
+                    .open(path)
+                    .expect("无法打开日志文件");
 
                 let adapter = FileLogger(Mutex::new(file));
                 let conf = logger::LoggerConfig {

@@ -4,15 +4,13 @@ use serde::Deserialize;
 
 use super::EncodeError;
 
-pub struct Decoder<S>(pub(crate)S);
+pub struct Decoder<S>(pub(crate) S);
 
 impl<S> Decoder<S> {
-    pub fn new(inner:S)->Self{
+    pub fn new(inner: S) -> Self {
         Self(inner)
     }
 }
-
-
 
 pub struct DecodeReq<Req, T>(Req, PhantomData<T>);
 
@@ -52,4 +50,3 @@ where
         }
     }
 }
-

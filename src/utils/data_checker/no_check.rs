@@ -2,7 +2,7 @@ use std::{convert::Infallible, marker::PhantomData};
 
 use futures::future::ok;
 
-use super::{ DataChecker};
+use super::DataChecker;
 
 pub struct NoCheck<T>(PhantomData<T>);
 
@@ -21,4 +21,3 @@ impl<T> DataChecker for NoCheck<T> {
         ok(uncheck)
     }
 }
-

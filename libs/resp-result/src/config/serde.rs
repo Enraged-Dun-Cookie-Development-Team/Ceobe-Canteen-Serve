@@ -6,11 +6,11 @@ static BODY: &str = "body";
 
 /// 序列化时的配置信息
 pub trait SerdeConfig {
-    fn body_name(&self)->& 'static str{
+    fn body_name(&self) -> &'static str {
         BODY
     }
 
-    fn err_msg_name(&self)->& 'static str{
+    fn err_msg_name(&self) -> &'static str {
         ERROR_MESSAGE
     }
 
@@ -28,7 +28,7 @@ pub trait SerdeConfig {
     ///
     /// Some() 标记，字段为提供的名称
     /// None 不标记
-    fn signed_base_status(&self) -> Option<& 'static str> {
+    fn signed_base_status(&self) -> Option<&'static str> {
         Some(SIGNED_STATUS)
     }
     /// 异常码 位置标记
@@ -38,7 +38,7 @@ pub trait SerdeConfig {
     /// Some() 添加异常码标记
     /// None 不添加异常码标记
     #[cfg(feature = "extra-code")]
-    fn extra_code_local(&self) -> Option<& 'static str> {
+    fn extra_code_local(&self) -> Option<&'static str> {
         Some(EXTRA_ERR_CODE)
     }
 }

@@ -3,7 +3,7 @@ use std::ops::Deref;
 use serde::{ser::SerializeStruct, Serialize};
 use status_err::StatusErr;
 
-use crate::{r_result::RResult};
+use crate::r_result::RResult;
 
 impl<T, E> Serialize for RResult<T, E>
 where
@@ -20,7 +20,7 @@ where
                 stur.serialize_field("data", &data.into_serde())?;
             }
             RResult::Error(msg) => {
-                stur.serialize_field("emsg", &StatusErr::information(msg) )?;
+                stur.serialize_field("emsg", &StatusErr::information(msg))?;
             }
         };
         stur.end()

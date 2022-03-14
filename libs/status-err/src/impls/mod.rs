@@ -1,5 +1,5 @@
 mod sea_orm;
-use std::{num::ParseIntError, convert::Infallible};
+use std::{convert::Infallible, num::ParseIntError};
 
 use http::StatusCode;
 

@@ -1,4 +1,4 @@
-use std::{borrow::Cow, ops::Deref, marker::PhantomData};
+use std::{borrow::Cow, marker::PhantomData, ops::Deref};
 
 use crate::Encoder;
 

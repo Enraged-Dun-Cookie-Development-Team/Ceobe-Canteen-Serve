@@ -34,11 +34,7 @@ impl MigrationTrait for Migration {
             )
             .col(ColumnDef::new(Mansion::Link).string_len(128).not_null())
             .col(ColumnDef::new(Mansion::Fraction).small_integer().not_null())
-            .index(
-                Index::create()
-                    .col(Mansion::Mid)
-                    .name("mansion_id"),
-            );
+            .index(Index::create().col(Mansion::Mid).name("mansion_id"));
         manager.create_table(table).await?;
 
         Ok(())

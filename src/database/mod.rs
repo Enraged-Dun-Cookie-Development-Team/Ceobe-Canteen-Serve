@@ -27,7 +27,7 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
             name = config.name()
         );
 
-        log::info!("准备连接到数据库: {}",db_url);
+        log::info!("准备连接到数据库: {}", db_url);
 
         let mut db_options = ConnectOptions::new(db_url);
         db_options
@@ -82,9 +82,8 @@ impl<D: TransactionTrait> TransactionTrait for ServeDatabase<D> {
         &'life0 self,
     ) -> core::pin::Pin<
         Box<
-            dyn core::future::Future<
-                    Output = Result<sea_orm::DatabaseTransaction, sea_orm::DbErr>,
-                > + core::marker::Send
+            dyn core::future::Future<Output = Result<sea_orm::DatabaseTransaction, sea_orm::DbErr>>
+                + core::marker::Send
                 + 'async_trait,
         >,
     >

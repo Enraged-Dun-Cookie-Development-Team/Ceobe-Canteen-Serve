@@ -1,4 +1,3 @@
-
 pub trait Measurable {
     fn size(&self) -> usize;
 }
@@ -21,10 +20,8 @@ impl<T> Measurable for Vec<T> {
     }
 }
 
-
 impl<'s> Measurable for &'s str {
     fn size(&self) -> usize {
         self.len()
     }
 }
-

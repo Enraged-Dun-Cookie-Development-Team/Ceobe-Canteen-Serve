@@ -1,4 +1,3 @@
-
 use crate::resp_error::RespError;
 
 mod serde;
@@ -48,7 +47,7 @@ impl<T, E> RespResult<T, E> {
     #[inline]
     pub fn and_then<N, F>(self, f: F) -> RespResult<N, E>
     where
-        F: FnOnce(T) -> RespResult<N,E>,
+        F: FnOnce(T) -> RespResult<N, E>,
     {
         match self {
             RespResult::Success(data) => f(data),
@@ -59,7 +58,7 @@ impl<T, E> RespResult<T, E> {
     #[inline]
     pub fn or_else<N, F>(self, f: F) -> RespResult<T, N>
     where
-        F: FnOnce(E) -> RespResult<T,N>,
+        F: FnOnce(E) -> RespResult<T, N>,
     {
         match self {
             RespResult::Success(data) => RespResult::Success(data),

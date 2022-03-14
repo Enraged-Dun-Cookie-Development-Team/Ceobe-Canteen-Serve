@@ -4,8 +4,6 @@ use crate::{get_config, resp_error::RespError};
 
 use super::RespResult;
 
-
-
 impl<T, E> Serialize for RespResult<T, E>
 where
     T: Serialize,
@@ -39,12 +37,12 @@ where
         let resp = match self {
             RespResult::Success(data) => {
                 let mut body = serializer.serialize_struct("RespResult", ok_size)?;
-                if let Some(n)=cfg.signed_base_status() {
+                if let Some(n) = cfg.signed_base_status() {
                     body.serialize_field(n, &true)?;
                 }
                 if cfg.full_field() {
                     #[cfg(feature = "extra-code")]
-                    if let Some(ecl)= cfg.extra_code_local() {
+                    if let Some(ecl) = cfg.extra_code_local() {
                         body.serialize_field(ecl, &Option::<()>::None)?;
                     }
                     body.serialize_field(cfg.err_msg_name(), &Option::<()>::None)?;
@@ -56,11 +54,11 @@ where
             }
             RespResult::Err(err) => {
                 let mut body = serializer.serialize_struct("RespResult", err_size)?;
-                if let Some(n)=cfg.signed_base_status() {
+                if let Some(n) = cfg.signed_base_status() {
                     body.serialize_field(n, &true)?;
                 }
                 #[cfg(feature = "extra-code")]
-                if let Some(ecl)= cfg.extra_code_local(){
+                if let Some(ecl) = cfg.extra_code_local() {
                     body.serialize_field(ecl, &err.extra_code())?;
                 }
                 body.serialize_field(cfg.err_msg_name(), &err.description())?;

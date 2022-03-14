@@ -1,5 +1,3 @@
-mod model;
-mod error;
 pub mod controllers;
-
-
+mod error;
+mod model;

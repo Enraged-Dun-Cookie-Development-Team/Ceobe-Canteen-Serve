@@ -1,4 +1,7 @@
-use std::{sync::atomic::{AtomicU64, Ordering}, collections::HashMap};
+use std::{
+    collections::HashMap,
+    sync::atomic::{AtomicU64, Ordering},
+};
 
 use actix::{Actor, Context, Handler, MessageResult};
 use dashmap::DashMap;

@@ -61,7 +61,7 @@ impl
         let daily: Vec<DailyMansion> = e.into_iter().map(Into::into).collect();
         Self {
             id: format!("{}.{}", mid, sub_mid),
-            cvlink:link,
+            cvlink: link,
             description,
             daily: daily,
             fraction,

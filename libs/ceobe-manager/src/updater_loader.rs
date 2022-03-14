@@ -2,7 +2,7 @@ use std::{
     borrow::Cow,
     collections::HashMap,
     ops::{Deref, Index, Range},
-    sync::{Mutex, Arc},
+    sync::{Arc, Mutex},
 };
 
 use actix::{Addr, MailboxError};
@@ -15,12 +15,10 @@ use crate::{
     models::{AShareString, DataItem, DataSource},
 };
 
-pub struct UpdateLoader(
-    Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>,
-);
+pub struct UpdateLoader(Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>);
 
 impl UpdateLoader {
-    pub fn new(rec: UpdaterReceiver, ) -> Arc<Self> {
+    pub fn new(rec: UpdaterReceiver) -> Arc<Self> {
         Arc::new(Self(Mutex::new(rec)))
     }
 }
@@ -37,7 +35,7 @@ impl UpdateLoader {
         }
 
         #[cfg(feature = "log")]
-        log_::info!("获取的新饼 源数量{} : {:?}", filter.len(),filter);
+        log_::info!("获取的新饼 源数量{} : {:?}", filter.len(), filter);
 
         let updated_msg = rec.deref().borrow();
         let mut vec = Vec::with_capacity(16);

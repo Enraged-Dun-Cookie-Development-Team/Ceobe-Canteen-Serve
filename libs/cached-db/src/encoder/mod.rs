@@ -13,5 +13,5 @@ impl<T> From<bincode::Error> for EncodeError<T> {
     }
 }
 
-pub use decoder::{Decoder,DecodeReq};
+pub use decoder::{DecodeReq, Decoder};
 pub use encoder::Encoder;

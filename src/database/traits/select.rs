@@ -12,5 +12,5 @@ pub trait LoadFromDb {
     type Args;
     fn load<'db, Db>(args: Self::Args, db: &Arc<ServeDatabase<Db>>) -> Self::Fut
     where
-        Db: ConnectionTrait + TransactionTrait + StreamTrait<'db> + Send+'static;
+        Db: ConnectionTrait + TransactionTrait + StreamTrait<'db> + Send + 'static;
 }

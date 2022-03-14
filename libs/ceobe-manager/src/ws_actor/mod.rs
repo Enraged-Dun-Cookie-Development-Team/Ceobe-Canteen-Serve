@@ -1,4 +1,5 @@
 mod continuation;
+mod heartbeats;
 mod income_handle;
 mod json_loader;
 mod retry_limit;
@@ -17,6 +18,7 @@ use futures_util::stream::{SplitSink, SplitStream, StreamExt};
 
 use crate::updater_loader::UpdateLoader;
 
+use crate::ws_actor::heartbeats::HeartBeats;
 use crate::ws_sender::WsSender;
 
 use self::continuation::Continuation;
@@ -46,6 +48,7 @@ impl CeoboWebsocket {
         let (json_handle, updater) = JsonLoader::start();
         let ws = Self::create(|ctx| {
             ctx.add_stream(stream);
+            ctx.add_stream(HeartBeats::new());
             Self {
                 retry: Default::default(),
                 uri,

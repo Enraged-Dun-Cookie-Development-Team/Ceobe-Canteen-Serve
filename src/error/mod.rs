@@ -1,5 +1,5 @@
 use actix_web::HttpRequest;
-use rresult::{Wrap, RResult};
+use rresult::{RResult, Wrap};
 use status_err::ErrPrefix;
 
 use crate::database::error::DatabaseError;
@@ -107,7 +107,7 @@ macro_rules! error_generate {
             }
         }
     };
-    
+
     ($v:vis $wrap_name:ident($err_ty:ty))=>{
         $crate::error_generate!($v $wrap_name($err_ty)"");
     };
@@ -139,14 +139,14 @@ error_generate!(
     Route=RouteNotExistError
 );
 
-status_err::status_error!{
+status_err::status_error! {
     pub RouteNotExistError[
         ErrPrefix::NOT_FOUND,
         0002
     ]=>"该路由不存在，请检查请求路径"
 }
 
-pub async fn not_exist(req:HttpRequest)->RResult<Wrap<()>,RouteNotExistError>{
-    log::info!("路由未找到 `{}` {}",req.path(),&req.method());
+pub async fn not_exist(req: HttpRequest) -> RResult<Wrap<()>, RouteNotExistError> {
+    log::info!("路由未找到 `{}` {}", req.path(), &req.method());
     RResult::err(RouteNotExistError.into())
 }

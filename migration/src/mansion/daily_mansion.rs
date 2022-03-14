@@ -25,7 +25,7 @@ impl MigrationTrait for Migration {
             .foreign_key(
                 ForeignKey::create()
                     .from_col(DailyMansion::Mid)
-                    .to(Mansion::Table,Mansion::Id),
+                    .to(Mansion::Table, Mansion::Id),
             )
             .col(
                 ColumnDef::new(DailyMansion::Date)

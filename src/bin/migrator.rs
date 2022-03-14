@@ -1,18 +1,16 @@
+use logger;
+use orm_migrate::async_std;
 use orm_migrate::Migrator;
 use orm_migrate::MigratorTrait;
-use orm_migrate::async_std;
 use std::env;
-use logger;
-
 
 #[async_std::main]
 async fn main() {
     logger::init_std(logger::LoggerConfig::default().set_filter(log::LevelFilter::Info))
-    .expect("无法启动日志系统");
-    
-    let url = env::args().skip(1).next().expect("请启动时提供数据库URL");
-    log::info!("取得数据库URL {}",url);
+        .expect("无法启动日志系统");
 
+    let url = env::args().skip(1).next().expect("请启动时提供数据库URL");
+    log::info!("取得数据库URL {}", url);
 
     log::info!("开始连接数据库，准备建表");
 

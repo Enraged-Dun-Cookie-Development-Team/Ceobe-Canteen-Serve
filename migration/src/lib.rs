@@ -1,7 +1,5 @@
-
 mod mansion;
 pub use sea_schema::migration::*;
-
 
 pub struct Migrator;
 

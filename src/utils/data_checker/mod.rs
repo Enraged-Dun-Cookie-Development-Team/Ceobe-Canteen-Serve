@@ -1,5 +1,5 @@
-pub mod collect_checkers;
 pub mod codegen;
+pub mod collect_checkers;
 use std::marker::PhantomData;
 
 use futures::Future;
@@ -24,7 +24,6 @@ pub trait DataChecker {
 
     /// 进行数据检查，可能为异步
     fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut;
-
 }
 
 #[derive(Debug)]

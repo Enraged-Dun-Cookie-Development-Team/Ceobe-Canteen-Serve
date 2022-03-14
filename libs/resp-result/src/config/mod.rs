@@ -4,24 +4,17 @@ pub use self::serde::SerdeConfig;
 
 mod serde;
 
-
 pub trait ConfigTrait: Sync + 'static
 where
     Self: SerdeConfig,
-    Self:RespConfig
+    Self: RespConfig,
 {
 }
 
-pub struct  DefaultConfig;
+pub struct DefaultConfig;
 
-impl SerdeConfig for DefaultConfig {
-    
-}
+impl SerdeConfig for DefaultConfig {}
 
-impl RespConfig for DefaultConfig {
-    
-}
+impl RespConfig for DefaultConfig {}
 
-impl ConfigTrait for DefaultConfig {
-    
-}
+impl ConfigTrait for DefaultConfig {}

@@ -11,7 +11,6 @@ crate::error_generate!(
 status_err::status_error!(
     pub NoUpdateError[
     status_err::ErrPrefix::NOT_MODIFIED,
-    0001    
+    0001
     ]=>"没有更新的Ceobe"
 );
-

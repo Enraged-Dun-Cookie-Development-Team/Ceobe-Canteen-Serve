@@ -3,4 +3,3 @@ crate::error_generate!(
     Orm=sea_orm::DbErr
     Url=url::ParseError
 );
-

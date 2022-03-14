@@ -1,7 +1,8 @@
 use logger::LoggerConfig;
 
 fn main() {
-    logger::init_std(LoggerConfig::default().disable_color().enable_color()).expect("start logger Error");
+    logger::init_std(LoggerConfig::default().disable_color().enable_color())
+        .expect("start logger Error");
 
     log::info!("aabb");
     log::debug!("Ok {}", 11);

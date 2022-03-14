@@ -11,7 +11,6 @@ pub enum PairErr<Le, Re> {
     Right(Re),
 }
 
-
 impl<L, R> Pretreatment for Pair<L, R>
 where
     L: Pretreatment,

@@ -28,4 +28,3 @@ where
         ready(f())
     }
 }
-

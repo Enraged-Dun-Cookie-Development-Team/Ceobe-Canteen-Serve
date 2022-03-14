@@ -7,12 +7,12 @@ use crate::{IntoSerde, RResult};
 
 impl<T, E> actix_web::Responder for RResult<T, E>
 where
-T: for<'s> IntoSerde<'s>,
-E: status_err::StatusErr,
+    T: for<'s> IntoSerde<'s>,
+    E: status_err::StatusErr,
 {
-    type Body=BoxBody;
+    type Body = BoxBody;
 
-    fn respond_to(self, _req: &actix_web::HttpRequest) ->HttpResponse<Self::Body>   {      
+    fn respond_to(self, _req: &actix_web::HttpRequest) -> HttpResponse<Self::Body> {
         let status = match self {
             RResult::Success(_) => http::StatusCode::OK,
             RResult::Error(ref s) => s.http_code(),
@@ -20,7 +20,7 @@ E: status_err::StatusErr,
 
         let head_status = match self {
             RResult::Success(_) => Cow::Borrowed("00000"),
-            RResult::Error(ref e) => format!("{}{}",e.prefix(),e.code()).into(),
+            RResult::Error(ref e) => format!("{}{}", e.prefix(), e.code()).into(),
         };
 
         #[cfg(feature = "logger")]
@@ -34,5 +34,4 @@ E: status_err::StatusErr,
             .insert_header(("Status-Code", &*head_status))
             .json(self)
     }
-
 }

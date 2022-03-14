@@ -1,6 +1,6 @@
-pub mod serde;
 pub mod limits;
 pub mod range_limit;
+pub mod serde;
 
 pub trait RangeBound: Default {
     fn match_range(input: usize) -> SizeStatus;

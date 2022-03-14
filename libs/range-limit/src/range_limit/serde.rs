@@ -1,25 +1,23 @@
 use std::ops::Deref;
 
-use serde::{Serialize, de};
+use serde::{de, Serialize};
 
-use crate::{measurable::Measurable, RangeBoundLimit, RangeBound};
+use crate::{measurable::Measurable, RangeBound, RangeBoundLimit};
 
 trait SerdeProc {
-    type ToSerde: Measurable+serde::Serialize;
+    type ToSerde: Measurable + serde::Serialize;
     fn into_serde(&self) -> &Self::ToSerde;
 }
 
 struct Normal<T>(T);
 
-impl<T: Measurable+Serialize> SerdeProc for Normal<T> {
+impl<T: Measurable + Serialize> SerdeProc for Normal<T> {
     type ToSerde = T;
 
     fn into_serde(&self) -> &Self::ToSerde {
         &self.0
     }
 }
-
-
 
 struct SmartPtr<P, T>(P)
 where
@@ -28,7 +26,7 @@ where
 impl<P, T> SerdeProc for SmartPtr<P, T>
 where
     P: Deref<Target = T>,
-    T: Measurable+Serialize,
+    T: Measurable + Serialize,
 {
     type ToSerde = T;
 

@@ -54,7 +54,6 @@ where
 
     type Future = Ready<Result<Self, actix_http::Error>>;
 
-
     fn from_request(
         req: &actix_web::HttpRequest,
         _payload: &mut actix_web::dev::Payload,
@@ -85,7 +84,7 @@ where
 ///                 //    |    |          |---- 捕获的头类型
 ///     header_captures!(pub Referer: "referer");
 /// ```
-/// 
+///
 macro_rules! header_captures {
     ($v:vis $i:ident : $hn:literal) => {
         #[derive(Default)]

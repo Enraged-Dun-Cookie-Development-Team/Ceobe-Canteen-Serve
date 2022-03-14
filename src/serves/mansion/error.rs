@@ -1,4 +1,3 @@
-
 use http::StatusCode;
 use status_err::{status_error, ErrPrefix};
 
@@ -22,18 +21,18 @@ status_error! {
     ]=>"饼学大厦id格式不是 {int}.{int}"
 }
 
-status_error!{
+status_error! {
     pub MansionNotFound
     [
-        ErrPrefix::NOT_FOUND, 
+        ErrPrefix::NOT_FOUND,
         1146: StatusCode::NOT_FOUND
     ]=>"指定饼学大厦ID未找到"
 }
 
-status_error!{
+status_error! {
     pub BadFraction
     [
-        ErrPrefix::CHECKER, 
+        ErrPrefix::CHECKER,
         0003: StatusCode::NOT_FOUND
     ]=>"错误的Fraction值范围(0~5)"
 }

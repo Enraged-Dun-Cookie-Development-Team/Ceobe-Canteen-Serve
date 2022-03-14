@@ -31,6 +31,3 @@ impl<T, E> IntoRResult<T, E> for RResult<T, E> {
         self
     }
 }
-
-
-

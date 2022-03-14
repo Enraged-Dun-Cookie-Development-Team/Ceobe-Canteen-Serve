@@ -1,11 +1,9 @@
-pub mod ws_sender;
 mod ceobo_actor;
 mod fut_utils;
 mod models;
 mod updater_loader;
 mod ws_actor;
-
-
+pub mod ws_sender;
 
 pub const WS_SERVICE: &str = "ws://81.68.101.79:5683/";
 pub use updater_loader::{LazyLoad, UpdateLoader};
@@ -23,7 +21,7 @@ mod test {
         let sys = System::new();
 
         sys.block_on(async move {
-            let (_res, (updater,_)) = ws::start_ws(WS_SERVICE).await;
+            let (_res, (updater, _)) = ws::start_ws(WS_SERVICE).await;
 
             let res = updater.lazy_load(&[]).await.unwrap();
 

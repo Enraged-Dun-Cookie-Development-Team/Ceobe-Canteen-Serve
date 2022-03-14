@@ -26,7 +26,7 @@ impl Display for Error {
             Error::FixSize { require, get } => {
                 write!(f, "require Size == {} but get {}", require, get)
             }
-            Error::Coutom(err) => write!(f,"costom Error: {}",err),
+            Error::Coutom(err) => write!(f, "costom Error: {}", err),
         }
     }
 }

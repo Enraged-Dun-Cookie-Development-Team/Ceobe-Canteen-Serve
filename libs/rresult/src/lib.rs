@@ -10,10 +10,8 @@ pub mod trans;
 mod marco;
 mod into_rresult;
 
-
 pub use crate::serde::IntoSerde;
 pub use crate::serde::Wrap;
 pub use r_result::RResult;
 
-
-pub use crate::into_rresult::{IntoRResult,IntoRResultWithCodeError};
+pub use crate::into_rresult::{IntoRResult, IntoRResultWithCodeError};

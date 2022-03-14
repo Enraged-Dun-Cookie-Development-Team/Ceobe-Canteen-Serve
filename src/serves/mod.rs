@@ -1,4 +1,4 @@
-mod  ceobe_push;
+mod ceobe_push;
 mod mansion;
 
 pub use ceobe_push::controllers::CeobeController;

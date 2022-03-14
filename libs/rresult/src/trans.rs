@@ -1,4 +1,3 @@
-
 use crate::RResult;
 
 impl<T, E> From<Result<T, E>> for RResult<T, E> {
@@ -49,4 +48,3 @@ impl<T, E> Into<Option<T>> for RResult<T, E> {
         }
     }
 }
-

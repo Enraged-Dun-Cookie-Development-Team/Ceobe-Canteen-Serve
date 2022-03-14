@@ -7,12 +7,10 @@ use super::EncodeError;
 pub struct Encoder<S>(pub(crate) S);
 
 impl<S> Encoder<S> {
-    pub fn new(inner:S)->Self{
+    pub fn new(inner: S) -> Self {
         Self(inner)
     }
 }
-
-
 
 impl<S, Req> tower::Service<Req> for Encoder<S>
 where

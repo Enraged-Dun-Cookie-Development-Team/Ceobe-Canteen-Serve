@@ -9,12 +9,12 @@ macro_rules! quick_struct {
             $f:ident:$t:ty
         )*
     }
-}=>{    
+}=>{
         #[derive(Debug,Clone,serde::Serialize,serde::Deserialize)]
         /// 该结构体通过宏快速构造
-        /// 
+        ///
         /// ---
-        /// 
+        ///
         $(#[$sm])*
         $v struct $name{
             $(
@@ -48,5 +48,3 @@ macro_rules! quick_struct {
      )*
     };
 }
-
-

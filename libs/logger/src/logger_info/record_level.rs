@@ -19,25 +19,23 @@ impl RecordLevel {
 
 impl Display for RecordLevel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let st=  format!("[{}]", self.color.paint(self.level));
+        let st = format!("[{}]", self.color.paint(self.level));
         match self.color {
-            Color::Unset =>{
-               write!(f,"{:<7}",st)
-
-            },
-            _=>{
-                write!(f,"{:<16}",st)
+            Color::Unset => {
+                write!(f, "{:<7}", st)
+            }
+            _ => {
+                write!(f, "{:<16}", st)
             }
         }
     }
 }
 
-
 #[test]
 fn etet() {
-    let lv=RecordLevel::from(Level::Debug);
+    let lv = RecordLevel::from(Level::Debug);
 
-    println!("[{:>100}[",lv)
+    println!("[{:>100}[", lv)
 }
 
 impl From<Level> for RecordLevel {

@@ -33,4 +33,3 @@ pub struct DataItem {
 fn default_top() -> bool {
     false
 }
-
