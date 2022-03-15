@@ -47,12 +47,15 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                 }
                 ws::Frame::Ping(p) => {
                     #[cfg(feature = "log")]
-                    log_::info!("Ping!");
+                    log_::info!("收到 Ping 消息： `{}`", String::from_utf8_lossy(&p));
                     self.slink.write(Message::Pong(p)).ok();
                 }
-                ws::Frame::Pong(_) => {
+                ws::Frame::Pong(p) => {
                     #[cfg(feature = "log")]
-                    log_::info!("Pong!")
+                    log_::info!("收到 Pong 消息: `{}`", String::from_utf8_lossy(&p));
+                    if !self.beat_timeout.check_timeout(){
+                        self.slink.close()
+                    }
                 }
                 ws::Frame::Close(c) => {
                     if let Some(reason) = c {

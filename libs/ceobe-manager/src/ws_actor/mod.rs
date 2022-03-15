@@ -22,6 +22,7 @@ use crate::ws_actor::heartbeats::HeartBeats;
 use crate::ws_sender::WsSender;
 
 use self::continuation::Continuation;
+use self::heartbeats::BeatTimeout;
 use self::json_loader::JsonLoader;
 use self::retry_limit::RetryLimit;
 
@@ -29,6 +30,7 @@ type WsFramedSink = SplitSink<Framed<BoxedSocket, ws::Codec>, ws::Message>;
 type WsFramedStream = SplitStream<Framed<BoxedSocket, ws::Codec>>;
 
 pub struct CeoboWebsocket {
+    beat_timeout:BeatTimeout<5>,
     retry: RetryLimit<20>,
     uri: &'static str,
     slink: SinkWrite<ws::Message, WsFramedSink>,
@@ -50,6 +52,7 @@ impl CeoboWebsocket {
             ctx.add_stream(stream);
             ctx.add_stream(HeartBeats::new());
             Self {
+                beat_timeout:Default::default(),
                 retry: Default::default(),
                 uri,
                 slink: SinkWrite::new(sink, ctx),
@@ -64,6 +67,11 @@ impl CeoboWebsocket {
 
 impl Actor for CeoboWebsocket {
     type Context = Context<CeoboWebsocket>;
+
+    fn stopping(&mut self, _ctx: &mut Self::Context) -> actix::Running {
+        self.slink.close();
+        actix::Running::Stop
+    }
 }
 
 async fn conn_ws<U>(
@@ -115,7 +123,6 @@ mod test {
             println!("{:?}", bod);
 
             let (slink, stream) = stream.split();
-
             let _addr = CeoboWebsocket::start("ws://81.68.101.79:5683/", slink, stream);
 
             let _s = actix_rt::signal::ctrl_c().await;
