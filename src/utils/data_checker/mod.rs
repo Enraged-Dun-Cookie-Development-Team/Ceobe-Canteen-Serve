@@ -1,13 +1,15 @@
+mod ref_checker;
 pub mod codegen;
 pub mod collect_checkers;
-use std::marker::PhantomData;
+pub mod no_check;
 
 use futures::Future;
 use serde::Deserialize;
+use std::marker::PhantomData;
 
 use super::req_pretreatment::Pretreatment;
 
-pub mod no_check;
+pub use ref_checker::RefChecker;
 
 pub trait DataChecker {
     /// 未经过检查时的值

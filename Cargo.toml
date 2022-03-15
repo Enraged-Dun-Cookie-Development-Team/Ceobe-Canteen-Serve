@@ -29,10 +29,6 @@ async-trait = "0.1.52"
 dotenv = "0.15"
 figment = { version = "0.10", features = ["yaml", "json", "toml"] }
 lazy_static = "1.4"
-# else
-rust-crypto = "0.2"
-chrono = { version = "0.4", features = ["serde"] }
-pin-project="1"
 # actix
 actix = "0.13"
 actix-web = "4"
@@ -44,6 +40,10 @@ url = "2.2.2"
 http = "0.2"
 urlencoding = "2.1.0"
 log = "0.4.14"
+# else
+rust-crypto = "0.2"
+chrono = { version = "0.4", features = ["serde"] }
+pin-project = "1"
 
 [dependencies.futures-util]
 version = "0.3"
