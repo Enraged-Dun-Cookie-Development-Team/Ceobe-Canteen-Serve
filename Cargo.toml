@@ -4,105 +4,96 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name="migrator"
+name = "migrator"
 
 [[bin]]
-name ="server"
-path="./src/main.rs"
+name = "server"
+path = "./src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-members=["libs/*","migration"]
+members = ["libs/*", "migration"]
 
 [features]
-default=[]
-migrator=[]
-
-actix_framwork=[]
-database=[]
-async_utils=[]
+default = []
+migrator = []
+actix_framwork = []
+database = []
+async_utils = []
 
 [dependencies]
-url = "2.2.2"
-
+# async
 futures = "0.3"
+async-trait = "0.1.52"
+# config
 dotenv = "0.15"
+figment = { version = "0.10", features = ["yaml", "json", "toml"] }
 lazy_static = "1.4"
+# else
 rust-crypto = "0.2"
-figment = {version="0.10",features=["yaml","json","toml"]}
-chrono = {version="0.4",features=["serde"]}
-
-actix="0.13"
-actix-web="4"
-actix-http="3"
-actix-service="2"
+chrono = { version = "0.4", features = ["serde"] }
+pin-project="1"
+# actix
+actix = "0.13"
+actix-web = "4"
+actix-http = "3"
+actix-service = "2"
 actix-cors = "0.6.1"
-
-http="0.2"
+# web
+url = "2.2.2"
+http = "0.2"
 urlencoding = "2.1.0"
-
-async-trait="0.1.52"
-log="0.4.14"
+log = "0.4.14"
 
 [dependencies.futures-util]
 version = "0.3"
-features = [ "std","sink"] 
-
-
+features = ["std", "sink"]
 
 [dependencies.tokio]
-version="1.15.0"
-features =[
-    "sync",
-    "rt",
-    "rt-multi-thread",
-    "time"
-]
+version = "1.15.0"
+features = ["sync", "rt", "rt-multi-thread", "time"]
 
 [dependencies.serde]
-version="1.0.133"
+version = "1.0.133"
 features = ["derive"]
 
 [dependencies.serde_json]
-version="1.0.75"
+version = "1.0.75"
 
 # data base crate
 [dependencies.sea-orm]
-version="0.6"
+version = "0.6"
 default-features = false
-features=[
+features = [
     "sqlx-mysql",
     "runtime-tokio-rustls",
     "macros",
-   # "debug-print"
-]
+    # "debug-print"
 
+]
 
 [dependencies.rresult]
-path="./libs/rresult"
+path = "./libs/rresult"
 
 [dependencies.crypto_str]
-path="./libs/crypto_str"
-features=[
-    "serde",
-    "bcrypt"
-]
-[dependencies.range-limit]
-path="./libs/range-limit"
+path = "./libs/crypto_str"
+features = ["serde", "bcrypt"]
 
+[dependencies.range-limit]
+path = "./libs/range-limit"
 
 [dependencies.db-entity]
-path ="./libs/db-entity"
+path = "./libs/db-entity"
 
 [dependencies.orm-migrate]
-package="migration"
-path="./migration"
+package = "migration"
+path = "./migration"
 
 [dependencies.ceobe-manager]
-path="./libs/ceobe-manager"
+path = "./libs/ceobe-manager"
 
 [dependencies.logger]
-path="./libs/logger"
+path = "./libs/logger"
 
 [dependencies.status-err]
-path="./libs/status-err"
+path = "./libs/status-err"
