@@ -1,7 +1,7 @@
 use http::StatusCode;
 use status_err::{status_error, ErrPrefix};
 
-use crate::{error_generate, utils::req_pretreatment::prefabs::PathError};
+use crate::{error_generate, utils::req_pretreatment::prefabs::{PathError, JsonError}};
 
 error_generate!(
     pub MansionError
@@ -11,6 +11,7 @@ error_generate!(
     Fraction=BadFraction
     Range=range_limit::Error
     Path=PathError
+    Json=JsonError
 );
 
 status_error! {
