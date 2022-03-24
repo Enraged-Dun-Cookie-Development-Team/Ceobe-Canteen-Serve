@@ -1,8 +1,9 @@
 use std::{convert::Infallible, marker::PhantomData};
 
 use futures::Future;
-use rresult::RResult;
-use status_err::StatusErr;
+use resp_result::RespResult;
+// use rresult::RResult;
+// use status_err::StatusErr;
 
 use crate::utils::req_pretreatment::Pretreatment;
 
@@ -11,11 +12,11 @@ pub struct WrapRResult<P>(PhantomData<P>);
 impl<P> Pretreatment for WrapRResult<P>
 where
     P: Pretreatment,
-    P::Err: StatusErr,
+    P::Err: resp_result::RespError,
 {
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
-    type Resp = RResult<P::Resp, P::Err>;
+    type Resp = RespResult<P::Resp, P::Err>;
 
     type Err = Infallible;
     #[inline]
@@ -26,8 +27,8 @@ where
         let task = P::call(req, payload);
         async move {
             Ok(match task.await {
-                Ok(data) => RResult::ok(data),
-                Err(err) => RResult::err(err),
+                Ok(data) => RespResult::ok(data),
+                Err(err) => RespResult::err(err),
             })
         }
     }
