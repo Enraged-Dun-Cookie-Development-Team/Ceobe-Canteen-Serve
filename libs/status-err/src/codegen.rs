@@ -117,7 +117,7 @@ macro_rules! resp_error_impl {
         impl resp_result::RespError for $t {
             #[inline]
             fn description(&self) -> std::borrow::Cow<'static, str> {
-                self.description()
+                status_err::StatusErr::information(self)
             }
 
             type ExtraCode = status_err::status_code::StatusCode;
