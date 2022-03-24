@@ -32,7 +32,7 @@ impl DbBuild {
         // insert
         let data = self
             .db
-            .collection_with_options::<C>(name, opt.unwrap_or_default());
+            .collection_with_options::<C>(name, opt.unwrap_or_default()); 
         let boxed = Box::new(data) as Box<dyn Any>;
         self.inner_collect.insert(id, boxed);
     }
