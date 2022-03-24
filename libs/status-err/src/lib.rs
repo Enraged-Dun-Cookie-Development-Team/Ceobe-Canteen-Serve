@@ -26,7 +26,7 @@ pub struct ErrPrefix(char, http::StatusCode);
 impl std::fmt::Display for ErrPrefix {
     #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:0>4}", self.0)
+        write!(f, "{}", self.0)
     }
 }
 
