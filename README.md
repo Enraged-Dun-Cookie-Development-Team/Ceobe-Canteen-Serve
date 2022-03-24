@@ -20,8 +20,14 @@
   | `database`/`db` | `logger` |否|`bool`| 是否开始数据库操作日志 | 默认关闭 |
   | `logger`/`log` | `logger_target` |是|`file`或者`stdout`| 日志输出目的 | 无 |
   | `logger`/`log` | `to_file` |是|`String`| 日志输出的文件 | `logger_target` 为 `file` 时才有效 |
-    | `logger`/`log` | `enable_color` |否|`bool`| 日志输出是否带颜色 | `logger_target` 为 `stdout` 时才有效,默认为 `true` |
-  | `logger`/`log` | `level`|  是|`off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace`| 日志输出过滤等级 | 无 |
+  | `logger`/`log` | `enable_color` |否|`bool`| 日志输出是否带颜色 | `logger_target` 为 `stdout` 时才有效,默认为 `true` |
+  | `logger`/`log` | `level`| 是|`off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace`| 日志输出过滤等级 | 无 |
+  | `resp_result`/ `rresult`| `body` | 是 | `String` | 响应成功时的响应体字段名称| 无 |
+  | `resp_result`/ `rresult`| `err-msg` | 是 | `String` | 响应失败时异常字段名称 | 无 |
+  | `resp_result`/ `rresult`| `fix-field` | 是 | `bool` | 响应体固定字段 | 如果无需该字段值将为`null` |
+  | `resp_result`/ `rresult`| `bool-status` | 否 | `Option<String>` | 使用一个 `bool` 类型标记响应成功与否 | 该字段缺省表示不使用 |
+  | `resp_result`/ `rresult`| `body-extra-err` | 否 | `Option<String>` | 额外的异常信息在响应体中字段 | 该字段缺省表示不使用 |
+  | `resp_result`/ `rresult`| `header-extra-err` | 否 | `Option<String>` | 额外的异常信息在响应头中的字段名称 | 该字段缺省表示不使用 |
 
 - Toml
 
@@ -47,20 +53,20 @@
 - Yaml
 
   ```yaml
-    log:
-      to_file: ./logout.log
-      level: info
+  log:
+    to_file: ./logout.log
+    level: info
   ```
 
 - Json
 
   ```json
-    {
-      "db": {
-        "password": "pwd",
-        "name": "name"
-      }
+  {
+    "db": {
+      "password": "pwd",
+      "name": "name"
     }
+  }
   ```
 
 ## 异常
