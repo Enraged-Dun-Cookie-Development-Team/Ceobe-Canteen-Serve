@@ -4,7 +4,7 @@ use crate::serves::mansion::db_ops;
 
 pub mod checkers;
 
-#[derive(Debug, serde::Serialize,serde::Deserialize)]
+#[derive(Debug, serde::Serialize)]
 pub struct Mansion {
     id: String,
     cvlink: String,
@@ -12,19 +12,19 @@ pub struct Mansion {
     fraction: i16,
     daily: Vec<DailyMansion>,
 }
-#[derive(Debug, serde::Serialize,serde::Deserialize)]
+#[derive(Debug, serde::Serialize)]
 pub struct DailyMansion {
     at: NaiveDate,
     content: String,
     inners: Vec<Inner>,
 }
-#[derive(Debug, serde::Serialize,serde::Deserialize)]
+#[derive(Debug, serde::Serialize)]
 pub struct Inner {
     predict: Predict,
     info: String,
 }
 
-#[derive(Debug, serde::Serialize,serde::Deserialize)]
+#[derive(Debug, serde::Serialize)]
 pub enum Predict {
     False,
     Unknown,

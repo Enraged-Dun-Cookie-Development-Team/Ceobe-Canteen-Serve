@@ -52,16 +52,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         .await
         .expect("无法连接到数据库");
     let db_data = Data::new(db_conn);
-    // 连接到 mongodb
-    let mongo_manager =
-        crate::utils::mongodb_utils::mongo_build::MongoBuild::new("mongodb://localhost:27017")
-            .await
-            .expect("无法连接到MongoDb")
-            // mansion mod
-            .add_db("mansion", |db| {
-                db.add_collection::<serves::Mansion>();
-            })
-            .build();
+
     // 配置文件打包
     let data_config = Data::new(config);
     HttpServer::new(move || {
@@ -78,7 +69,6 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             .app_data(db_data.clone())
             // 配置信息
             .app_data(data_config.clone())
-            .app_data(mongo_manager.clone())
             // 服务
             .service(RootController)
             .default_service(web::to(not_exist))
