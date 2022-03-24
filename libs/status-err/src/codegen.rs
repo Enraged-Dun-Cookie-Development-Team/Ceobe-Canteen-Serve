@@ -48,12 +48,8 @@ macro_rules! status_error {
 
         impl $crate::StatusErr for $name {
             #[inline]
-            fn prefix(&self)->$crate::ErrPrefix{
-                $pre
-            }
-            #[inline]
-            fn code(&self)->u16{
-                $code
+            fn status(&self) -> $crate::status_code::StatusCode{
+                $crate::status_code::StatusCode::new($pre, $code)
             }
             #[inline]
             fn http_code(&self) -> http::StatusCode {
@@ -61,25 +57,20 @@ macro_rules! status_error {
             }
         }
     };
-
     {
         $v:vis $name:ident
         [
             $pre:expr ,
             $code:literal
-        ]=>$des:literal
-    }=>{
-        $crate::status_error!($v $name[$pre,$code:$pre.get_status()]=>$des);
-    };
-    ($t:ty[$pre:expr, $code:literal: $status:expr])=>{
-        impl $crate::StatusErr for $t{
+            ]=>$des:literal
+        }=>{
+            $crate::status_error!($v $name[$pre,$code:$pre.get_status()]=>$des);
+        };
+        ($t:ty[$pre:expr, $code:literal: $status:expr])=>{
+        impl $crate::StatusErr for $t {
             #[inline]
-            fn prefix(&self)->$crate::ErrPrefix{
-                 $pre
-            }
-            #[inline]
-            fn code(&self)->u16{
-                $code
+            fn status(&self) -> $crate::status_code::StatusCode{
+                $crate::status_code::StatusCode::new($pre, $code)
             }
             #[inline]
             fn http_code(&self) -> http::StatusCode {
@@ -90,5 +81,54 @@ macro_rules! status_error {
 
     ($t:ty[$pre:expr , $code:literal])=>{
         $crate::status_error!($t[$pre , $code:$pre.get_status()]);
+    };
+}
+/// 将外部异常类型进行简单封装的宏
+#[macro_export]
+macro_rules! error_wrapper {
+    ($v:vis $wn:ident($t:ty)) => {
+        $v struct $wn ($t);
+
+        impl std::fmt::Display for $wn{
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                <$t as std::fmt::Display>::fmt(&self.0, f)
+            }
+        }
+
+        impl std::fmt::Debug for $wn {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                <$t as std::fmt::Debug>::fmt(&self.0, f)
+            }
+        }
+        impl std::error::Error for $wn{}
+
+        impl std::convert::Into<$t> for $wn{
+            fn into(self) -> $t{
+                self.0
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! resp_error_impl {
+    ($t:ty) => {
+        /// 实现 Resp -error 可以作为RespResult的异常
+        impl resp_result::RespError for $t {
+            #[inline]
+            fn description(&self) -> std::borrow::Cow<'static, str> {
+                self.description()
+            }
+
+            type ExtraCode = status_err::status_code::StatusCode;
+            #[inline]
+            fn extra_code(&self) -> Self::ExtraCode {
+                status_err::StatusErr::status(self)
+            }
+            #[inline]
+            fn http_code(&self) -> http::StatusCode {
+                status_err::StatusErr::http_code(self)
+            }
+        }
     };
 }
