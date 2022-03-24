@@ -1,8 +1,9 @@
-use crate::serves::mansion::error::MansionError;
-use crate::serves::mansion::modules::mansion::checkers::mansion::IdChecker;
-use crate::serves::mansion::modules::mansion::Mansion;
 use crate::{
-    serves::mansion::db_ops::load_mansion::LoadMansion,
+    serves::mansion::{
+        db_ops::load_mansion::LoadMansion,
+        modules::mansion::{checkers::mansion::IdChecker, Mansion},
+        MansionRResult,
+    },
     utils::{
         data_checker::PretreatChecker,
         req_pretreatment::{
@@ -13,7 +14,6 @@ use crate::{
     },
 };
 use actix_web::{get, post, web};
-use rresult::{RResult, Wrap};
 
 type LoadingTargetMansionFromDb = ReqPretreatment<
     ToRResult<DbOp<LoadMansion, PretreatChecker<Null, PathValue<String>, IdChecker>>>,
@@ -26,17 +26,14 @@ crate::quick_struct! {
 }
 
 #[get("/{id}")]
-pub(super) async fn get_mansion(
-    mansion: LoadingTargetMansionFromDb,
-) -> RResult<Wrap<Mansion>, MansionError> {
-    let m = mansion.unwrap()?;
-    RResult::wrap_ok(m)
+pub(super) async fn get_mansion(mansion: LoadingTargetMansionFromDb) -> MansionRResult<Mansion> {
+    mansion.unwrap()
 }
 
 #[post("/")]
 pub(super) async fn save_mansion(
     web::Query(SaveMansionId { id }): web::Query<SaveMansionId>,
-) -> RResult<Wrap<()>, MansionError> {
+) -> MansionRResult<()> {
     log::info!("saving id {:?}", id);
     unimplemented!()
 }
