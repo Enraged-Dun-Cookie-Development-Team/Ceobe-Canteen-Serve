@@ -1,12 +1,11 @@
-use rresult::{IntoRResult, IntoRResultWithCodeError};
-
 use actix_web::{get, post, web};
 use ceobe_manager::LazyLoad;
-use rresult::{RResult, Wrap};
+use resp_result::RespResult;
 
 use super::{error::NoUpdateError, model::DataSourceFilter};
 use crate::{
     generate_controller,
+    serves::ceobe_push::CeobeRResult,
     utils::req_pretreatment::{
         prefabs::{Json, MapErr, ToRResult},
         ReqPretreatment,
@@ -34,20 +33,17 @@ generate_controller!(CeobeController, "/ceobe", update, save_setting, get_settin
 async fn update(
     updater: web::Data<ceobe_manager::UpdateLoader>,
     filter: ReqPretreatment<ToRResult<MapErr<Json<DataSourceFilter>, CeobeError>>>,
-) -> RResult<Wrap<LazyLoad>, CeobeError> {
+) -> CeobeRResult<LazyLoad> {
     let filter = filter.unwrap()?;
     let res = updater
         .as_ref()
         .lazy_load(&filter)
         .await
-        .map_err(CeobeError::from)
-        .into_result()?;
+        .map_err(CeobeError::from);
 
-    let res = res
-        .into_not_empty()
-        .into_result_status(NoUpdateError.into())?;
+    let res = RespResult::from(res)?;
 
-    RResult::wrap_ok(res)
+    res.into_not_empty().ok_or(NoUpdateError.into()).into()
 }
 
 /// 保存用户信息
@@ -63,11 +59,11 @@ async fn update(
 /// ## Notice
 /// 保存是如果是创建，未提供是值将会为默认值
 #[post("/setting/{id}")]
-async fn save_setting() -> RResult<Wrap<()>, CeobeError> {
+async fn save_setting() -> CeobeRResult<()> {
     unimplemented!()
 }
 
 #[get("/setting")]
-async fn get_setting() -> RResult<Wrap<()>, CeobeError> {
+async fn get_setting() -> CeobeRResult<()> {
     unimplemented!()
 }

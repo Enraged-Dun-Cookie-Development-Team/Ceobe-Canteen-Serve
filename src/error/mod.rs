@@ -1,5 +1,5 @@
 use actix_web::HttpRequest;
-use rresult::{RResult, Wrap};
+use resp_result::RespResult;
 use status_err::ErrPrefix;
 
 use crate::database::error::DatabaseError;
@@ -50,10 +50,10 @@ macro_rules! error_generate {
                 }
             }
         }
-
+        /// 实现 status Error 可供下一级封装使用
         impl status_err::StatusErr for $err_name{
             #[inline]
-            fn prefix(&self)->status_err::ErrPrefix{
+            fn prefix(&self) -> status_err::ErrPrefix{
                 match self{
                     $(
                         Self::$v_name(err)=>{err.prefix()}
@@ -62,7 +62,7 @@ macro_rules! error_generate {
                 }
             }
             #[inline]
-            fn code(&self) -> u16 {
+            fn code(&self) -> u16{
                 match self{
                     $(
                         Self::$v_name(err)=>{err.code()}
@@ -70,6 +70,7 @@ macro_rules! error_generate {
                     Self::Infallible=>unreachable!(),
                 }
             }
+
             #[inline]
             fn http_code(&self)->http::StatusCode{
                 match self{
@@ -80,6 +81,9 @@ macro_rules! error_generate {
                 }
             }
         }
+        // 实现 Resp -error 可以作为RespResult的异常
+        status_err::resp_error_impl!($err_name);
+        // 转换代码
         $(
             impl From<$inner_err> for $err_name{
                 #[inline]
@@ -146,7 +150,9 @@ status_err::status_error! {
     ]=>"该路由不存在，请检查请求路径"
 }
 
-pub async fn not_exist(req: HttpRequest) -> RResult<Wrap<()>, RouteNotExistError> {
+status_err::resp_error_impl!(RouteNotExistError);
+
+pub async fn not_exist(req: HttpRequest) -> RespResult<(), RouteNotExistError> {
     log::info!("路由未找到 `{}` {}", req.path(), &req.method());
-    RResult::err(RouteNotExistError.into())
+    RespResult::err(RouteNotExistError)
 }

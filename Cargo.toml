@@ -75,9 +75,6 @@ features = [
 
 ]
 
-[dependencies.rresult]
-path = "./libs/rresult"
-
 [dependencies.crypto_str]
 path = "./libs/crypto_str"
 features = ["serde", "bcrypt"]
