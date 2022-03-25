@@ -53,10 +53,19 @@ macro_rules! error_generate {
         /// 实现 status Error 可供下一级封装使用
         impl status_err::StatusErr for $err_name{
             #[inline]
-            fn status(&self) -> status_err::status_code::StatusCode {
+            fn prefix(&self) -> status_err::ErrPrefix{
                 match self{
                     $(
-                        Self::$v_name(err)=>{err.status()}
+                        Self::$v_name(err)=>{err.prefix()}
+                    ),+
+                    Self::Infallible=>unreachable!(),
+                }
+            }
+            #[inline]
+            fn code(&self) -> u16{
+                match self{
+                    $(
+                        Self::$v_name(err)=>{err.code()}
                     ),+
                     Self::Infallible=>unreachable!(),
                 }
