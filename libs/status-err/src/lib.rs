@@ -34,7 +34,7 @@ impl std::fmt::Display for ErrPrefix {
 
 impl ErrPrefix {
     #[inline]
-    pub fn new(sign: char, status: http::StatusCode) -> Self {
+    pub const fn new(sign: char, status: http::StatusCode) -> Self {
         ErrPrefix(sign, status)
     }
     #[inline]
@@ -51,6 +51,8 @@ impl ErrPrefix {
     pub const ACTIX: Self = Self('F', StatusCode::INTERNAL_SERVER_ERROR);
     /// 数据库产生的异常
     pub const SEA_ORM: Self = Self('D', StatusCode::INTERNAL_SERVER_ERROR);
+    /// MongoDb 数据库异常
+    pub const MONGO_DB: Self = Self::new('G', StatusCode::INTERNAL_SERVER_ERROR);
     /// IO 过程中异常
     pub const IO: Self = Self('I', StatusCode::INTERNAL_SERVER_ERROR);
     ///  类型钻换时出现的异常
