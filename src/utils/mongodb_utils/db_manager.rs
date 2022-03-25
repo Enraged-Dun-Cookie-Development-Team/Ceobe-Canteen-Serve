@@ -1,6 +1,7 @@
 use std::{
-    any::{type_name, Any, TypeId},
+    any::{type_name, TypeId},
     collections::HashMap,
+    sync::Arc,
 };
 
 use mongodb::{options::CollectionOptions, Collection};
@@ -10,14 +11,19 @@ use super::MongoDb;
 
 pub struct DbBuild {
     db: MongoDb,
-    inner_collect: HashMap<TypeId, Box<dyn std::any::Any>>,
+    inner_collect: HashMap<TypeId, Collection<()>>,
 }
 pub struct DbManager {
-    inner_collect: HashMap<TypeId, Box<dyn std::any::Any>>,
+    inner_collect: Arc<HashMap<TypeId, Collection<()>>>,
 }
 
-unsafe impl Sync for DbManager {}
-unsafe impl Send for DbManager {}
+impl Clone for DbManager {
+    fn clone(&self) -> Self {
+        Self {
+            inner_collect: self.inner_collect.clone(),
+        }
+    }
+}
 
 impl DbBuild {
     pub fn add_collection_option<C>(&mut self, opt: Option<CollectionOptions>)
@@ -32,9 +38,10 @@ impl DbBuild {
         // insert
         let data = self
             .db
-            .collection_with_options::<C>(name, opt.unwrap_or_default()); 
-        let boxed = Box::new(data) as Box<dyn Any>;
-        self.inner_collect.insert(id, boxed);
+            .collection_with_options::<C>(name, opt.unwrap_or_default());
+
+        let data = data.clone_with_type::<()>();
+        self.inner_collect.insert(id, data);
     }
     pub fn add_collection<C>(&mut self)
     where
@@ -56,7 +63,7 @@ impl DbBuild {
 impl Into<DbManager> for DbBuild {
     fn into(self) -> DbManager {
         DbManager {
-            inner_collect: self.inner_collect,
+            inner_collect: Arc::new(self.inner_collect),
         }
     }
 }
@@ -70,11 +77,7 @@ impl DbManager {
     {
         let id = std::any::TypeId::of::<C>();
 
-        let collect = self
-            .inner_collect
-            .get(&id)?
-            .downcast_ref::<Collection<C>>()?
-            .clone();
+        let collect = self.inner_collect.get(&id)?.clone_with_type::<C>();
 
         Some(collect)
     }
