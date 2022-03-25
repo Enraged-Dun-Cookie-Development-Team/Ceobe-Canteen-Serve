@@ -40,10 +40,15 @@ url = "2.2.2"
 http = "0.2"
 urlencoding = "2.1.0"
 log = "0.4.14"
+#encrypt
+jwt = "0.16.0"
+hmac = "0.12.1"
+sha2 = "0.10.2"
 # else
 rust-crypto = "0.2"
 chrono = { version = "0.4", features = ["serde"] }
 pin-project = "1"
+state = "0.5.2"
 
 [dependencies.futures-util]
 version = "0.3"

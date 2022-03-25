@@ -20,6 +20,8 @@ mod serves;
 mod utils;
 
 extern crate serde;
+#[macro_use]
+extern crate lazy_static;
 
 generate_controller!(
     RootController,

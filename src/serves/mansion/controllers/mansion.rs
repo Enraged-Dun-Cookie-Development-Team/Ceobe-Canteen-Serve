@@ -16,7 +16,7 @@ use actix_web::{get, post, web};
 use rresult::{RResult, Wrap};
 
 type LoadingTargetMansionFromDb = ReqPretreatment<
-    ToRResult<DbOp<LoadMansion, PretreatChecker<Null, PathValue<String>, IdChecker>>>,
+    ToRResult<Null>,
 >;
 
 crate::quick_struct! {
@@ -29,8 +29,9 @@ crate::quick_struct! {
 pub(super) async fn get_mansion(
     mansion: LoadingTargetMansionFromDb,
 ) -> RResult<Wrap<Mansion>, MansionError> {
-    let m = mansion.unwrap()?;
-    RResult::wrap_ok(m)
+    // let m = mansion.unwrap()?;
+    // RResult::wrap_ok(m)
+    unimplemented!()
 }
 
 #[post("/")]
