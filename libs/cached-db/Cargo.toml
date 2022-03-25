@@ -15,7 +15,7 @@ features=[
 version="1"
 
 [dependencies.sled]
-version="0"
+version="0.29"
 
 [dependencies.serde]
 version="1"

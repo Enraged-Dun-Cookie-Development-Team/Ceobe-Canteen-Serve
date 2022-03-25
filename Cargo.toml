@@ -22,6 +22,8 @@ database = []
 async_utils = []
 
 [dependencies]
+# db
+mongodb = "2"
 # async
 futures = "0.3"
 async-trait = "0.1.52"
@@ -44,6 +46,7 @@ log = "0.4.14"
 rust-crypto = "0.2"
 chrono = { version = "0.4", features = ["serde"] }
 pin-project = "1"
+dashmap = "5"
 
 [dependencies.futures-util]
 version = "0.3"
@@ -97,4 +100,4 @@ path = "./libs/status-err"
 
 [dependencies.resp-result]
 version = "0.1"
-features=["for-actix","log"]
+features = ["for-actix", "log"]

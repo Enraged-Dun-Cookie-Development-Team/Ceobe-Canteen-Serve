@@ -34,7 +34,7 @@ where
     }
 
     fn call(&mut self, SavePair(k, v): SavePair<K, V>) -> Self::Future {
-        let res = self.0.to_tree().insert(k, v);
+        let res = self.0.to_tree().insert(k, v.into());
         Ready(res)
     }
 }
