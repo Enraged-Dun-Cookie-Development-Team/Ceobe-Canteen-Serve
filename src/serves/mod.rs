@@ -1,3 +1,5 @@
+#[cfg(test)]
+mod mock_mongo;
 mod ceobe_push;
 mod mansion;
 
