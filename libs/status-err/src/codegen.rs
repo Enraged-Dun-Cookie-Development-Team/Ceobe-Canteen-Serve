@@ -48,8 +48,12 @@ macro_rules! status_error {
 
         impl $crate::StatusErr for $name {
             #[inline]
-            fn status(&self) -> $crate::status_code::StatusCode{
-                $crate::status_code::StatusCode::new($pre, $code)
+            fn prefix(&self) -> $crate::ErrPrefix{
+                $pre
+            }
+            #[inline]
+            fn code(&self) -> u16{
+                $code
             }
             #[inline]
             fn http_code(&self) -> http::StatusCode {
@@ -67,19 +71,22 @@ macro_rules! status_error {
             $crate::status_error!($v $name[$pre,$code:$pre.get_status()]=>$des);
         };
         ($t:ty[$pre:expr, $code:literal: $status:expr])=>{
-        impl $crate::StatusErr for $t {
-            #[inline]
-            fn status(&self) -> $crate::status_code::StatusCode{
-                $crate::status_code::StatusCode::new($pre, $code)
+            impl $crate::StatusErr for $t {
+                #[inline]
+                fn prefix(&self) -> $crate::ErrPrefix{
+                    $pre
+                }
+                #[inline]
+                fn code(&self) -> u16{
+                    $code
+                }
+                #[inline]
+                fn http_code(&self) -> http::StatusCode {
+                    $status
+                }
             }
-            #[inline]
-            fn http_code(&self) -> http::StatusCode {
-                $status
-            }
-        }
-    };
-
-    ($t:ty[$pre:expr , $code:literal])=>{
+        };
+        ($t:ty[$pre:expr , $code:literal])=>{
         $crate::status_error!($t[$pre , $code:$pre.get_status()]);
     };
 }
