@@ -53,6 +53,6 @@ impl<S, L> ModuleRegister<S, L> {
 #[macro_export]
 macro_rules! generate_collection_register {
     {$selector:ty => $loader:expr} => {
-        ModuleRegister::<$selector,_>::new($loader)
+        $crate::utils::mongodb_utils::module_register::ModuleRegister::<$selector,_>::new($loader)
     };
 }
