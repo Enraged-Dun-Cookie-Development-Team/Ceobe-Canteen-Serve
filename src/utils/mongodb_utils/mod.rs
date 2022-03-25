@@ -1,6 +1,11 @@
+//! mongodb 辅助性独立封装
+pub mod module_register;
+pub mod error;
+pub mod db_selector;
 pub mod mongo_build;
 pub mod db_manager;
 pub mod mongo_manager;
+
 use mongodb::options::ClientOptions;
 
 
