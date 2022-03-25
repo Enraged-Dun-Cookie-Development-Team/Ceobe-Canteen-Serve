@@ -2,10 +2,12 @@ use actix_web::web::Data;
 
 use super::{
     db_manager::DbBuild,
+    module_register::{self},
     mongo_manager::{MongoManager, MongoManagerBuild},
     MongoErr,
 };
 
+/// Mongo 数据库管理构建器
 pub struct MongoBuild {
     inner: MongoManagerBuild,
 }
@@ -16,19 +18,21 @@ impl MongoBuild {
             inner: MongoManagerBuild::new(url).await?,
         })
     }
-
+    /// 添加一个数据库，并通过 `f` 来配置数据库和内部信息
     pub fn add_db<F>(mut self, name: &'static str, f: F) -> Self
     where
         F: FnOnce(&mut DbBuild),
     {
-        self.inner.add_db(name);
-        let len = self.inner.dbs.len();
-        let (_name, db) = self.inner.dbs.get_mut(len - 1).unwrap();
+        let db = self.inner.add_db(name);
         f(db);
 
         self
     }
-
+    /// 通过数据库注册器注册数据库
+    pub fn register_collections<R: module_register::MongoRegister>(self, register: R) -> Self {
+        self.add_db(register.db_name(), |db| register.register(db))
+    }
+    /// 完成构建，生成数据库管理器
     pub fn build(self) -> Data<MongoManager> {
         let v: MongoManager = self.inner.into();
         v.into_data()
