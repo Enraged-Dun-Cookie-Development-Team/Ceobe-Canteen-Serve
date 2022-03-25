@@ -38,6 +38,7 @@ async fn main() -> Result<(), GlobalError> {
         .extract()
         .expect("配置文件解析失败");
 
+    resp_result::set_config(&config.resp_result);
     config.logger.register_logger();
     task(config).await
 }
