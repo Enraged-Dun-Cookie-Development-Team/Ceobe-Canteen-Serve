@@ -2,9 +2,15 @@ mod set_token;
 mod valid_token;
 mod auth_pretreator;
 
+pub use set_token::GenerateToken;
+pub use auth_pretreator::{AuthError, AuthInfo, AuthLevel, TokenAuth, TokenNotFound, UserNotFound, PasswordWrong};
+
 use hmac::{Hmac, Mac, digest::InvalidLength};
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
+use super::req_pretreatment::{ReqPretreatment, prefabs::MapErr};
+
+pub type Authentication <E> = ReqPretreatment<crate::utils::req_pretreatment::prefabs::ToRResult<MapErr<TokenAuth, E>>>;
 
 #[derive(Serialize, Deserialize, PartialEq, Eq, Debug)]
 pub struct User {
@@ -31,7 +37,7 @@ fn get_key() -> &'static Hmac<Sha256> {
     JWT_KEY.get()
 }
 
-type PasswordEncode = crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
+pub type PasswordEncoder = crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
 
 
 #[cfg(test)]

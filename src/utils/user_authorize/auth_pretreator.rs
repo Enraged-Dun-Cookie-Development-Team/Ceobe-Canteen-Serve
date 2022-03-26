@@ -11,11 +11,11 @@ use crypto_str::Encoder;
 
 use crate::{header_captures, utils::{req_pretreatment::Pretreatment, data_struct::header_info::HeaderInfo}, error_generate, database::ServeDatabase};
 
-use super::{valid_token::decrpyt_token, PasswordEncode};
+use super::{valid_token::decrpyt_token, PasswordEncoder};
 
 header_captures!(pub Token:"token");
 
-struct TokenAuth;
+pub struct TokenAuth;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum AuthLevel {
@@ -63,7 +63,7 @@ impl Pretreatment for TokenAuth {
             let user_info = user::Entity::find_by_id(token.id).one(db.deref().deref()).await?.ok_or(UserNotFound)?;
             let user::Model{id, password, auth, username} = user_info;
 
-            if PasswordEncode::verify(&Cow::Owned(password), &token.password.as_str())? {
+            if PasswordEncoder::verify(&Cow::Owned(password), &token.password.as_str())? {
                 Ok(AuthInfo {
                     id,
                     auth: match auth {
