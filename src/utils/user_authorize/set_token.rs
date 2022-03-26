@@ -1,6 +1,6 @@
 use jwt::SignWithKey;
 
-use super::{User, get_key};
+use super::{get_key, User};
 
 pub trait GenerateToken {
     fn generate(self) -> Result<String, jwt::Error>;

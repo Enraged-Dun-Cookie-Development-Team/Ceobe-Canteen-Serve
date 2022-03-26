@@ -1,15 +1,18 @@
 use std::borrow::Cow;
 
 use actix_web::web::Data;
-use futures::Future;
-use lazy_static::__Deref;
-use serde::{Serialize, Deserialize};
-use http::StatusCode;
-use status_err::ErrPrefix;
 use crypto_str::Encoder;
+use futures::Future;
+use http::StatusCode;
+use lazy_static::__Deref;
+use serde::{Deserialize, Serialize};
+use status_err::ErrPrefix;
 
-
-use crate::{header_captures, utils::{req_pretreatment::Pretreatment, data_struct::header_info::HeaderInfo}, error_generate, database::ServeDatabase};
+use crate::{
+    database::ServeDatabase,
+    error_generate, header_captures,
+    utils::{data_struct::header_info::HeaderInfo, req_pretreatment::Pretreatment},
+};
 
 use super::{valid_token::decrpyt_token, PasswordEncoder};
 
@@ -21,7 +24,7 @@ pub struct TokenAuth;
 pub enum AuthLevel {
     Chef,
     Cooker,
-    Architect
+    Architect,
 }
 
 crate::quick_struct! {
@@ -37,14 +40,17 @@ crate::quick_struct! {
 impl Pretreatment for TokenAuth {
     // 异步返回的fut
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-    
+
     // 返回类型
     type Resp = AuthInfo;
 
     // 异常
     type Err = AuthError;
 
-    fn call<'r>(req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload) -> Self::Fut {
+    fn call<'r>(
+        req: &'r actix_web::HttpRequest,
+        payload: &'r mut actix_http::Payload,
+    ) -> Self::Fut {
         let db = req
             .app_data::<Data<ServeDatabase<sea_orm::DatabaseConnection>>>()
             .expect("Database Connect Not Found In AppData")
@@ -56,12 +62,19 @@ impl Pretreatment for TokenAuth {
             let token = token.get_one().ok_or(TokenNotFound)?;
             let token = decrpyt_token(token)?;
 
-
-            use db_entity::{user, sea_orm_active_enums::Auth};
+            use db_entity::{sea_orm_active_enums::Auth, user};
             use sea_orm::EntityTrait;
 
-            let user_info = user::Entity::find_by_id(token.id).one(db.deref().deref()).await?.ok_or(UserNotFound)?;
-            let user::Model{id, password, auth, username} = user_info;
+            let user_info = user::Entity::find_by_id(token.id)
+                .one(db.deref().deref())
+                .await?
+                .ok_or(UserNotFound)?;
+            let user::Model {
+                id,
+                password,
+                auth,
+                username,
+            } = user_info;
 
             if PasswordEncoder::verify(&Cow::Owned(password), &token.password.as_str())? {
                 Ok(AuthInfo {
@@ -81,15 +94,15 @@ impl Pretreatment for TokenAuth {
 }
 
 status_err::status_error!(pub TokenNotFound [
-                                            ErrPrefix::UNAUTHORIZED, 
+                                            ErrPrefix::UNAUTHORIZED,
                                             0001
                                             ]=>"缺少Token字段");
 status_err::status_error!(pub PasswordWrong [
-                                            ErrPrefix::UNAUTHORIZED, 
+                                            ErrPrefix::UNAUTHORIZED,
                                             0004
                                             ]=>"密码错误");
 status_err::status_error!(pub UserNotFound [
-                                            ErrPrefix::UNAUTHORIZED, 
+                                            ErrPrefix::UNAUTHORIZED,
                                             0003:StatusCode::NOT_FOUND
                                             ]=>"Token对应信息不存在");
 error_generate!(
@@ -103,5 +116,3 @@ error_generate!(
     Db = sea_orm::DbErr
     Bcrypto = bcrypt::BcryptError
 );
-
-    

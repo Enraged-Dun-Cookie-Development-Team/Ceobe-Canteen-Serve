@@ -1,7 +1,6 @@
 mod sea_orm;
 use std::{convert::Infallible, num::ParseIntError};
 
-
 use http::StatusCode;
 
 use crate::{status_error, ErrPrefix};

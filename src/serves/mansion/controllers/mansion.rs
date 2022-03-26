@@ -15,9 +15,7 @@ use crate::{
 use actix_web::{get, post, web};
 use rresult::{RResult, Wrap};
 
-type LoadingTargetMansionFromDb = ReqPretreatment<
-    ToRResult<Null>,
->;
+type LoadingTargetMansionFromDb = ReqPretreatment<ToRResult<Null>>;
 
 crate::quick_struct! {
     pub SaveMansionId{

@@ -61,6 +61,6 @@ impl ErrPrefix {
     pub const NOT_MODIFIED: Self = Self('M', StatusCode::NOT_MODIFIED);
     /// 资源查询异常
     pub const NOT_FOUND: Self = Self('S', StatusCode::NOT_FOUND);
-     /// 权限认证异常
+    /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', StatusCode::UNAUTHORIZED);
 }
