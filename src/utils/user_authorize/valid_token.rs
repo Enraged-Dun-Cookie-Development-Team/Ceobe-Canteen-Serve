@@ -1,8 +1,9 @@
 use jwt::VerifyWithKey;
-use super::set_token;
 
-fn decrpyt_token(token_str: String) -> Result<set_token::User, jwt::Error> {
-    let key = set_token::GLOBAL.get();
+use super::{get_key, User};
+
+pub fn decrpyt_token(token_str: String) -> Result<User, jwt::Error> {
+    let key = get_key();
     let user_info = token_str.verify_with_key(key)?;
     Ok(user_info)
 }
