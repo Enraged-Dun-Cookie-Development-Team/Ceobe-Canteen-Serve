@@ -13,7 +13,7 @@ pub trait Pretreatment {
     fn call<'r>(req: &'r HttpRequest, payload: &'r mut Payload) -> Self::Fut;
 }
 
-pub struct ReqPretreatment<Pre>(Pre::Resp)
+pub struct ReqPretreatment<Pre>(pub Pre::Resp)
 where
     Pre: Pretreatment;
 

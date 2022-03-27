@@ -7,7 +7,11 @@ use resp_result::RespResult;
 
 use crate::utils::req_pretreatment::Pretreatment;
 
-pub struct WrapRResult<P>(PhantomData<P>);
+pub struct WrapRResult<P>(PhantomData<P>)
+where
+    P: Pretreatment,
+    P::Err: resp_result::RespError,
+;
 
 impl<P> Pretreatment for WrapRResult<P>
 where
