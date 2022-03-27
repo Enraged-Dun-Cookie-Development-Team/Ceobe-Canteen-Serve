@@ -36,7 +36,7 @@ macro_rules! quick_struct {
 
  } => {
      $(
-         quick_struct!{
+         $crate::quick_struct!{
             $(#[$sm])*
             $v $name {
             $(
