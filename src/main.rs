@@ -1,6 +1,5 @@
 #![feature(type_alias_impl_trait)]
 
-use actix_web::dev::HttpServiceFactory;
 use actix_web::{
     web::{self, Data},
     App, HttpServer,
@@ -60,11 +59,11 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     // mongo db
     let encoded_pwd = urlencoding::encode("wyq@qq.com020222");
     let mongo_conn = MongoBuild::new(format!(
-        "mongodb://ceobe:{}@localhost/ceobe-canteen",
+        "mongodb://ceobe:{}@localhost/ceobe-canteen?authSource=admin",
         encoded_pwd
     ))
     .await?
-    .register_collections(MansionController::mongo_register())
+    .register_collections(MansionController::mongo_register()).await
     .build();
     // 配置文件打包
     let data_config = Data::new(config);
