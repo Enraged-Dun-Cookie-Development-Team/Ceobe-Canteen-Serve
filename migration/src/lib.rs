@@ -1,3 +1,4 @@
+mod admin;
 mod mansion;
 pub use sea_schema::migration::*;
 
@@ -7,9 +8,10 @@ pub struct Migrator;
 impl MigratorTrait for Migrator {
     fn migrations() -> Vec<Box<dyn MigrationTrait>> {
         crate::migrate_group![
-            mansion::mansion::Migration
-            mansion::daily_mansion::Migration
-            mansion::mansion_info::Migration
+            // mansion::mansion::Migration
+            // mansion::daily_mansion::Migration
+            // mansion::mansion_info::Migration
+            admin::user::Migration
         ]
     }
 }

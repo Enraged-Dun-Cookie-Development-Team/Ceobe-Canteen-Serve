@@ -50,9 +50,9 @@ impl<H> actix_web::FromRequest for HeaderInfo<H>
 where
     H: FromHeaders,
 {
-    type Error = actix_http::Error;
+    type Error = actix_web::Error;
 
-    type Future = Ready<Result<Self, actix_http::Error>>;
+    type Future = Ready<Result<Self, Self::Error>>;
 
     fn from_request(
         req: &actix_web::HttpRequest,

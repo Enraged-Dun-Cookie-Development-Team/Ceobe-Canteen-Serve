@@ -30,7 +30,7 @@ type WsFramedSink = SplitSink<Framed<BoxedSocket, ws::Codec>, ws::Message>;
 type WsFramedStream = SplitStream<Framed<BoxedSocket, ws::Codec>>;
 
 pub struct CeoboWebsocket {
-    beat_timeout:BeatTimeout<5>,
+    beat_timeout: BeatTimeout<5>,
     retry: RetryLimit<20>,
     uri: &'static str,
     slink: SinkWrite<ws::Message, WsFramedSink>,
@@ -52,7 +52,7 @@ impl CeoboWebsocket {
             ctx.add_stream(stream);
             ctx.add_stream(HeartBeats::new());
             Self {
-                beat_timeout:Default::default(),
+                beat_timeout: Default::default(),
                 retry: Default::default(),
                 uri,
                 slink: SinkWrite::new(sink, ctx),

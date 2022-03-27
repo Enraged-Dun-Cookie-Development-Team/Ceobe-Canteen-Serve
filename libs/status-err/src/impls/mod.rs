@@ -13,3 +13,5 @@ status_error!(url::ParseError[ErrPrefix::PARSE, 0001:StatusCode::NOT_ACCEPTABLE]
 status_error!(ParseIntError[ErrPrefix::PARSE ,0002:StatusCode::NOT_ACCEPTABLE]);
 status_error!(range_limit::Error[ErrPrefix::CHECKER ,0001:StatusCode::NOT_ACCEPTABLE]);
 status_error!(Infallible[ErrPrefix::CHECKER,0000]);
+status_error!(jwt::Error[ErrPrefix::PARSE,0003]);
+status_error!(bcrypt::BcryptError[ErrPrefix::UNAUTHORIZED,0005:StatusCode::INTERNAL_SERVER_ERROR]);

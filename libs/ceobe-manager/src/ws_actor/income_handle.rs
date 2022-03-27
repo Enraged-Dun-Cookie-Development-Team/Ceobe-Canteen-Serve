@@ -53,7 +53,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                 ws::Frame::Pong(p) => {
                     #[cfg(feature = "log")]
                     log_::info!("收到 Pong 消息: `{}`", String::from_utf8_lossy(&p));
-                    if !self.beat_timeout.check_timeout(){
+                    if !self.beat_timeout.check_timeout() {
                         self.slink.close()
                     }
                 }

@@ -1,7 +1,7 @@
-mod ref_checker;
 pub mod codegen;
 pub mod collect_checkers;
 pub mod no_check;
+mod ref_checker;
 
 use futures::Future;
 use serde::Deserialize;

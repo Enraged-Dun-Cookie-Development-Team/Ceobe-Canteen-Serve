@@ -1,5 +1,5 @@
 use std::fmt::Display;
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct Location<'re> {
     pub model: &'re str,
     pub file: &'re str,

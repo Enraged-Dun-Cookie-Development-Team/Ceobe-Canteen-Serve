@@ -74,22 +74,22 @@ impl DataChecker for FractionCheck {
     }
 }
 
-impl Mansion {
-    pub fn into_active_model_with_daily(self) -> db_ops::mansion::ActiveModel {
-        let Mansion {
-            id: (mid, sub_mid),
-            link,
-            description,
-            fraction,
-        } = self;
+// impl Mansion {
+//     pub fn into_active_model_with_daily(self) -> db_ops::mansion::ActiveModel {
+//         let Mansion {
+//             id: (mid, sub_mid),
+//             link,
+//             description,
+//             fraction,
+//         } = self;
 
-        db_ops::mansion::ActiveModel {
-            mid: Set(mid),
-            sub_mid: Set(sub_mid),
-            description: Set(description),
-            link: Set(link),
-            fraction: Set(fraction),
-            ..Default::default()
-        }
-    }
-}
+//         db_ops::mansion::ActiveModel {
+//             mid: Set(mid),
+//             sub_mid: Set(sub_mid),
+//             description: Set(description),
+//             link: Set(link),
+//             fraction: Set(fraction),
+//             ..Default::default()
+//         }
+//     }
+// }

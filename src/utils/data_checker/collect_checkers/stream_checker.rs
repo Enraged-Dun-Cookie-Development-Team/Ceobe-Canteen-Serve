@@ -3,7 +3,7 @@ use std::{
     convert::Infallible,
     marker::PhantomData,
     pin::Pin,
-    task::{Context, Poll}, 
+    task::{Context, Poll},
 };
 
 use futures::{future::ok, pin_mut, Future, Stream};
