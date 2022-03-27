@@ -1,7 +1,6 @@
 //! 辅助服务器构建相关工具包
 
 use actix_web::dev::HttpServiceFactory;
-use futures::Future;
 
 use super::mongodb_utils::{self, db_manager::DbBuild};
 
@@ -85,6 +84,8 @@ crate::generate_controller!(Mocker, "/mock");
 
 crate::db_selector!(pub Mansion="mansion_data");
 
-async fn  do_mock(d: DbBuild) ->DbBuild{d}
+async fn do_mock(d: DbBuild) -> DbBuild {
+    d
+}
 
 crate::extra_module!(Mocker=>crate::generate_collection_register!{Mansion=>do_mock});
