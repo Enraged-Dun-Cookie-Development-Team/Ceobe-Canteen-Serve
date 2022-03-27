@@ -1,3 +1,4 @@
+mod option_checker;
 mod query;
 mod json;
 mod map_err;
@@ -13,3 +14,4 @@ pub use pair::Pair;
 pub use path::{PathError, PathValue};
 pub use wrap_rreuslt::WrapRResult as ToRResult;
 pub use query::Query;
+pub use option_checker::OptionChecker;
