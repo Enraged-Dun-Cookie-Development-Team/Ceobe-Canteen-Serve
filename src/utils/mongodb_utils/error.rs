@@ -10,7 +10,7 @@ status_err::status_error! {
 status_err::status_error! {
     pub MongoDatabaseCollectionNotFound[
         status_err::ErrPrefix::MONGO_DB,
-        0018
+        0019
     ]=>"数据库中集合不存在"
 }
 
