@@ -13,7 +13,8 @@ use crate::utils::req_pretreatment::Pretreatment;
 use super::{
     db_manager::DbManager,
     error::{MongoDatabaseCollectionNotFound, MongoDatabaseNotFound, MongoDbError},
-    mongo_manager::MongoManager, MongoErr,
+    mongo_manager::MongoManager,
+    MongoErr,
 };
 
 /// 数据库选择器trait
@@ -58,12 +59,12 @@ impl<S> MongoDbSelector<S> {
     /// 对完成获取的数据库进行数据操作
     /// - handle 为一个异步操作闭包
     /// 形如 `async fn function(&Collection<C>)->Result<O, E>`
-    /// 
+    ///
     /// - 这里要求 E 允许 `MongodbError` 可以转换为E
-    /// 
+    ///
     /// - 函数通过泛型参数自动识别并寻找对应的Collection
     /// 如果Collection 未被创建，就会允许失败
-    pub async fn doing<F, C, Fut,E, O>(&self, handle: F) -> Result<O, E>
+    pub async fn doing<F, C, Fut, E, O>(&self, handle: F) -> Result<O, E>
     where
         C: for<'de> serde::Deserialize<'de> + 'static + Sized + serde::Serialize,
         F: FnOnce(Collection<C>) -> Fut,
@@ -75,7 +76,10 @@ impl<S> MongoDbSelector<S> {
             .collection::<C>()
             .ok_or(MongoDatabaseCollectionNotFound)
             .map_err(MongoDbError::from)?;
-        handle(collection).await.map_err(MongoDbError::from).map_err(E::from)
+        handle(collection)
+            .await
+            .map_err(MongoDbError::from)
+            .map_err(E::from)
     }
 }
 

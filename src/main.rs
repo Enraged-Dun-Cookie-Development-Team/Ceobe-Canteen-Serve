@@ -63,7 +63,8 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         encoded_pwd
     ))
     .await?
-    .register_collections(MansionController::mongo_register()).await
+    .register_collections(MansionController::mongo_register())
+    .await
     .build();
     // 配置文件打包
     let data_config = Data::new(config);

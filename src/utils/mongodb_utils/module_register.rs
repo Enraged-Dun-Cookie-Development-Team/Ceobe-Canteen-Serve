@@ -13,7 +13,7 @@ pub struct ModuleRegister<S, L> {
 pub trait MongoRegister {
     fn db_name(&self) -> &'static str;
     type Fut: Future<Output = DbBuild>;
-    fn register(self, db:DbBuild) -> Self::Fut;
+    fn register(self, db: DbBuild) -> Self::Fut;
 }
 
 /// Collection 加载器，向 DbBuild 中添加Collection

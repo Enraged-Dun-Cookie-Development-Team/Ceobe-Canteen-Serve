@@ -12,11 +12,11 @@ pub trait StatusErr: std::error::Error {
     }
     /// 异常码
     /// 用于唯一标记某一类型异常
-    fn prefix(&self)->ErrPrefix;
+    fn prefix(&self) -> ErrPrefix;
 
-    fn code(&self)->u16;
-    /// 
-    fn status(&self) -> status_code::StatusCode{
+    fn code(&self) -> u16;
+    ///
+    fn status(&self) -> status_code::StatusCode {
         status_code::StatusCode::new(self.prefix(), self.code())
     }
     /// 对应的http状态码

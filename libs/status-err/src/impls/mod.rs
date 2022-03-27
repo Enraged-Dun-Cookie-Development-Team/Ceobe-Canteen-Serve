@@ -1,4 +1,5 @@
- mod mongodb;
+
+mod mongodb;
 mod sea_orm;
 use std::{convert::Infallible, num::ParseIntError};
 

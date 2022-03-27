@@ -2,7 +2,13 @@ use actix_web::error::QueryPayloadError;
 use http::StatusCode;
 use status_err::{status_error, ErrPrefix};
 
-use crate::{error_generate, utils::{req_pretreatment::prefabs::{PathError, JsonError}, mongodb_utils::error::MongoDbError}};
+use crate::{
+    error_generate,
+    utils::{
+        mongodb_utils::error::MongoDbError,
+        req_pretreatment::prefabs::{JsonError, PathError},
+    },
+};
 
 error_generate!(
     pub MansionError
@@ -44,7 +50,6 @@ status_error! {
     ]=>"0008"
 }
 
-
 status_error! {
     pub BadFraction
     [
@@ -53,7 +58,7 @@ status_error! {
     ]=>"错误的Fraction值范围(0~5)"
 }
 
-status_error!{
+status_error! {
     pub UnknownPredictType
     [
         ErrPrefix::CHECKER,

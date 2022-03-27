@@ -1,7 +1,7 @@
 use futures_util::future::Ready;
 use std::{convert::Infallible, marker::PhantomData, task::Poll};
 
-use futures::{pin_mut, Future, Stream, future::ok};
+use futures::{future::ok, pin_mut, Future, Stream};
 
 use crate::utils::data_checker::DataChecker;
 
@@ -56,6 +56,6 @@ where
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
 
     fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        ok(CheckedIter(uncheck,args))
+        ok(CheckedIter(uncheck, args))
     }
 }

@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use log::Level;
 use yansi::Color;
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct RecordLevel {
     pub color: Color,
     pub level: Level,

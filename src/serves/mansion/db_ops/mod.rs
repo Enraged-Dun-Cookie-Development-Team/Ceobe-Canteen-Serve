@@ -2,4 +2,3 @@
 //!
 
 pub mod load_mansion;
-

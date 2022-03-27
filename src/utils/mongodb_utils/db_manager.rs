@@ -45,10 +45,10 @@ impl DbBuild {
     ///
     /// ** Collection ** 只能在启动时配置
     #[inline]
-    pub async fn add_collection_operate<C, Create,Fut>(&mut self, func: Create)
+    pub async fn add_collection_operate<C, Create, Fut>(&mut self, func: Create)
     where
-        Create:  FnOnce(MongoDb, &'static str) -> Fut,
-        Fut:futures::Future<Output = Collection<C>>,
+        Create: FnOnce(MongoDb, &'static str) -> Fut,
+        Fut: futures::Future<Output = Collection<C>>,
         C: for<'de> Deserialize<'de> + Serialize,
         C: 'static,
         C: Sized,
