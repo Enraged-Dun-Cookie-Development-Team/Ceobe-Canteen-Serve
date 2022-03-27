@@ -20,7 +20,7 @@ crate::quick_struct! {
 
 #[post("/upload")]
 pub(super) async fn save_mansion(
-    web::Query(MansionId { id }): web::Query<MansionId>,
+    web::Query(MansionId { id:_ }): web::Query<MansionId>,
     ReqPretreatment(json): ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>,
 ) -> MansionRResult<()> {
     let data = json?;
@@ -30,7 +30,7 @@ pub(super) async fn save_mansion(
 }
 #[get("/getInfo")]
 pub(super) async fn get_mansion(
-    web::Query(MansionId { id }): web::Query<MansionId>,
+    web::Query(MansionId { id:_ }): web::Query<MansionId>,
 ) -> MansionRResult<ViewMansion> {
     todo!("Get the mongodb and read data")
 }
