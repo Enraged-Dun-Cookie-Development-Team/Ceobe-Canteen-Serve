@@ -1,5 +1,7 @@
 use std::marker::PhantomData;
 
+use futures::Future;
+
 use super::{db_manager::DbBuild, db_selector::DbSelector};
 /// 数据库Collection 注册器
 /// 挂载在Controller 中在提供给外部
@@ -8,31 +10,37 @@ pub struct ModuleRegister<S, L> {
     loader: L,
 }
 
-
-pub trait MongoRegister{
+pub trait MongoRegister {
     fn db_name(&self) -> &'static str;
-    fn register(self, db: &mut DbBuild);
+    type Fut: Future<Output = DbBuild>;
+    fn register(self, db:DbBuild) -> Self::Fut;
 }
 
 /// Collection 加载器，向 DbBuild 中添加Collection
 pub trait CollectionLoader {
-    fn loader(self, db: &mut DbBuild);
+    type Fut: Future<Output = DbBuild>;
+    fn loader(self, db: DbBuild) -> Self::Fut;
 }
 
-impl<S:DbSelector, L:CollectionLoader> MongoRegister for ModuleRegister<S, L> {
+impl<S: DbSelector, L: CollectionLoader> MongoRegister for ModuleRegister<S, L> {
     fn db_name(&self) -> &'static str {
         S::db_name()
     }
 
-    fn register(self, db: &mut DbBuild) {
+    fn register(self, db: DbBuild) -> Self::Fut {
         self.loader.loader(db)
     }
+
+    type Fut = L::Fut;
 }
-impl<F> CollectionLoader for F
+impl<F, Fut> CollectionLoader for F
 where
-    F: FnOnce(&mut DbBuild),
+    F: FnOnce(DbBuild) -> Fut,
+    Fut: Future<Output = DbBuild>,
 {
-    fn loader(self, db: &mut DbBuild) {
+    type Fut = Fut;
+
+    fn loader(self, db: DbBuild) -> Self::Fut {
         self(db)
     }
 }

@@ -1,4 +1,5 @@
 use actix_web::web::Data;
+use futures::Future;
 
 use super::{
     db_manager::DbBuild,
@@ -19,18 +20,20 @@ impl MongoBuild {
         })
     }
     /// 添加一个数据库，并通过 `f` 来配置数据库和内部信息
-    pub fn add_db<F>(mut self, name: &'static str, f: F) -> Self
+    pub async fn add_db<F,Fut>(mut self, name: &'static str, f: F) -> Self
     where
-        F: FnOnce(&mut DbBuild),
+        Fut:Future<Output = DbBuild>,
+        F: FnOnce(DbBuild)->Fut,
     {
-        let db = self.inner.add_db(name);
-        f(db);
-
+         self.inner.add_db(name);
+        let db =self.inner.dbs.remove(name).unwrap();
+       let db = f(db).await;
+        self.inner.dbs.insert(name, db);
         self
     }
     /// 通过数据库注册器注册数据库
-    pub fn register_collections<R: module_register::MongoRegister>(self, register: R) -> Self {
-        self.add_db(register.db_name(), |db| register.register(db))
+    pub async fn register_collections<R: module_register::MongoRegister>(self, register: R) -> Self {
+        self.add_db(register.db_name(), |db| register.register(db)).await
     }
     /// 完成构建，生成数据库管理器
     pub fn build(self) -> Data<MongoManager> {

@@ -13,7 +13,7 @@ use crate::utils::req_pretreatment::Pretreatment;
 use super::{
     db_manager::DbManager,
     error::{MongoDatabaseCollectionNotFound, MongoDatabaseNotFound, MongoDbError},
-    mongo_manager::MongoManager,
+    mongo_manager::MongoManager, MongoErr,
 };
 
 /// 数据库选择器trait
@@ -49,7 +49,7 @@ macro_rules! db_selector {
 /// mongo database Selector
 /// mongo 数据库选择器，根据给定的 `S`
 /// 在编译期完成数据库选择
-struct MongoDbSelector<S> {
+pub struct MongoDbSelector<S> {
     db: DbManager,
     _phantom: PhantomData<S>,
 }
@@ -63,11 +63,11 @@ impl<S> MongoDbSelector<S> {
     /// 
     /// - 函数通过泛型参数自动识别并寻找对应的Collection
     /// 如果Collection 未被创建，就会允许失败
-    pub async fn doing<F, C, Fut, E, O>(&self, handle: F) -> Result<O, E>
+    pub async fn doing<F, C, Fut,E, O>(&self, handle: F) -> Result<O, E>
     where
         C: for<'de> serde::Deserialize<'de> + 'static + Sized + serde::Serialize,
-        F: FnOnce(&Collection<C>) -> Fut,
-        Fut: Future<Output = Result<O, E>>,
+        F: FnOnce(Collection<C>) -> Fut,
+        Fut: Future<Output = Result<O, MongoErr>>,
         E: From<MongoDbError>,
     {
         let collection = self
@@ -75,7 +75,7 @@ impl<S> MongoDbSelector<S> {
             .collection::<C>()
             .ok_or(MongoDatabaseCollectionNotFound)
             .map_err(MongoDbError::from)?;
-        handle(&collection).await
+        handle(collection).await.map_err(MongoDbError::from).map_err(E::from)
     }
 }
 
