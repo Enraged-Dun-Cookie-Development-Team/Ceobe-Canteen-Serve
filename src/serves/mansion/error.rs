@@ -47,7 +47,7 @@ status_error! {
     [
         ErrPrefix::CHECKER,
         0008: StatusCode::CONFLICT
-    ]=>"0008"
+    ]=>"指定ID的饼学大厦已经存在"
 }
 
 status_error! {
