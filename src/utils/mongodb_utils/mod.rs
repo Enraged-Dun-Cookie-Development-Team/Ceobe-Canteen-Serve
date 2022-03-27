@@ -1,4 +1,5 @@
 //! mongodb 辅助性独立封装
+pub mod config;
 pub mod db_manager;
 pub mod db_selector;
 pub mod error;

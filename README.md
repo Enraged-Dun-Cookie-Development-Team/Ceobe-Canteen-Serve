@@ -28,6 +28,11 @@
   | `resp_result`/ `rresult`| `bool-status` | 否 | `Option<String>` | 使用一个 `bool` 类型标记响应成功与否 | 该字段缺省表示不使用 |
   | `resp_result`/ `rresult`| `body-extra-err` | 否 | `Option<String>` | 额外的异常信息在响应体中字段 | 该字段缺省表示不使用 |
   | `resp_result`/ `rresult`| `header-extra-err` | 否 | `Option<String>` | 额外的异常信息在响应头中的字段名称 | 该字段缺省表示不使用 |
+  | `mongodb`/ `mongo`| `username` | 是 | `String` | Mongodb 进行数据库连接使用的用户 | 该用户需要完整 Admin 权限 |
+  | `mongodb`/ `mongo`| `password` | 是 | `String` | Mongodb 进行数据库连接使用的用户密码 | 无 |
+  | `mongodb`/ `mongo`| `host` | 否 | `String` | Mongodb 进行数据库连接使用的 host | 默认为`localhost` |
+  | `mongodb`/ `mongo`| `port` | 否 | `String` | Mongodb 进行数据库连接使用的端口 | 默认为`27017` |
+  | `mongodb`/ `mongo`| `db_name` | 是 | `String` | Mongodb 进行数据库连接使用的数据库 | 无 |
 
 - Toml
 
@@ -48,6 +53,19 @@
 
   [log]
   logger_target="stdout"
+
+  [rresult]
+  body = "body"
+  err-msg = "e-msg"
+  fix-field = false
+  bool-status = "is-ok"
+  body-extra-err = "status"
+  
+  [mongo]
+  username = "<db-user>"
+  password = "<db-pwd>"
+  db_name = "ceobe-canteen"
+  host = "localhost"
   ```
 
 - Yaml

@@ -57,15 +57,11 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         .expect("无法连接到数据库");
     let db_data = Data::new(db_conn);
     // mongo db
-    let encoded_pwd = urlencoding::encode("wyq@qq.com020222");
-    let mongo_conn = MongoBuild::new(format!(
-        "mongodb://ceobe:{}@localhost/ceobe-canteen?authSource=admin",
-        encoded_pwd
-    ))
-    .await?
-    .register_collections(MansionController::mongo_register())
-    .await
-    .build();
+    let mongo_conn = MongoBuild::with_config(&config.mongodb)
+        .await.expect("无法连接到MongoDb")
+        .register_collections(MansionController::mongo_register())
+        .await
+        .build();
     // 配置文件打包
     let data_config = Data::new(config);
     HttpServer::new(move || {

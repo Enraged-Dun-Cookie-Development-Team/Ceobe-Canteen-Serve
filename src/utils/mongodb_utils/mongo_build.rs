@@ -1,6 +1,8 @@
 use actix_web::web::Data;
 use futures::Future;
 
+use crate::database::config::DbConnectConfig;
+
 use super::{
     db_manager::DbBuild,
     module_register::{self},
@@ -18,6 +20,14 @@ impl MongoBuild {
         Ok(Self {
             inner: MongoManagerBuild::new(url).await?,
         })
+    }
+
+    pub async fn with_config<C:DbConnectConfig>(cfg:&C)->Result<Self,MongoErr>{
+        let url = format!(
+            "{}://{}:{}@{}:{}/{}?authSource=admin",
+            cfg.scheme(),cfg.username(),urlencoding::encode(cfg.password()),cfg.host(),cfg.port(),cfg.name()
+        );
+        Self::new(url).await
     }
     /// 添加一个数据库，并通过 `f` 来配置数据库和内部信息
     pub async fn add_db<F, Fut>(mut self, name: &'static str, f: F) -> Self
