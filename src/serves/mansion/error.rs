@@ -2,7 +2,7 @@ use actix_web::error::QueryPayloadError;
 use http::StatusCode;
 use status_err::{status_error, ErrPrefix};
 
-use crate::{error_generate, utils::req_pretreatment::prefabs::{PathError, JsonError}};
+use crate::{error_generate, utils::{req_pretreatment::prefabs::{PathError, JsonError}, mongodb_utils::error::MongoDbError}};
 
 error_generate!(
     pub MansionError
@@ -16,6 +16,7 @@ error_generate!(
     Predict=UnknownPredictType
     Json=JsonError
     Query=QueryPayloadError
+    Mongo=MongoDbError
 );
 
 status_error! {

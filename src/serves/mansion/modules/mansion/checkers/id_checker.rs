@@ -6,7 +6,7 @@ use futures_util::future::{ready, Ready};
 
 crate::check_obj! {
     {#[derive(Debug,serde::Deserialize)]}
-    {#[derive(Debug,serde::Serialize)]}
+    {#[derive(Debug,serde::Serialize, serde::Deserialize)]}
     pub struct MIdUncheck = MidChecker > Mid{
         #[serde(alias="idBefore",alias="mansionId")]
         pub id:IdChecker
