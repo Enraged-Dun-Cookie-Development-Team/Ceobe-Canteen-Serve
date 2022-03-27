@@ -1,3 +1,4 @@
+pub mod mongodb_utils;
 pub mod data_checker;
 pub mod data_struct;
 pub mod http_serve;

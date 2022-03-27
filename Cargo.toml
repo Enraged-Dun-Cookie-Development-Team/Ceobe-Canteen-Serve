@@ -22,6 +22,8 @@ database = []
 async_utils = []
 
 [dependencies]
+# db
+mongodb = "2"
 # async
 futures = "0.3"
 async-trait = "0.1.52"
@@ -51,6 +53,7 @@ chrono = { version = "0.4", features = ["serde"] }
 pin-project = "1"
 state = "0.5.2"
 rand = "0.8.5"
+dashmap = "5"
 
 [dependencies.futures-util]
 version = "0.3"
@@ -79,9 +82,6 @@ features = [
 
 ]
 
-[dependencies.rresult]
-path = "./libs/rresult"
-
 [dependencies.crypto_str]
 path = "./libs/crypto_str"
 features = ["serde", "bcrypt"]
@@ -107,4 +107,4 @@ path = "./libs/status-err"
 
 [dependencies.resp-result]
 version = "0.1"
-features=["for-actix","log"]
+features = ["for-actix", "log"]

@@ -1,9 +1,13 @@
-use crate::StatusErr;
+use crate::{ErrPrefix, StatusErr};
 
 impl StatusErr for sea_orm::DbErr {
     #[inline]
-    fn prefix(&self) -> crate::ErrPrefix {
-        crate::ErrPrefix::SEA_ORM
+    fn http_code(&self) -> http::StatusCode {
+        http::StatusCode::INTERNAL_SERVER_ERROR
+    }
+    #[inline]
+    fn prefix(&self) -> ErrPrefix {
+        ErrPrefix::SEA_ORM
     }
     #[inline]
     fn code(&self) -> u16 {
@@ -15,9 +19,5 @@ impl StatusErr for sea_orm::DbErr {
             sea_orm::DbErr::Custom(_) => 0005,
             sea_orm::DbErr::Type(_) => 0006,
         }
-    }
-    #[inline]
-    fn http_code(&self) -> http::StatusCode {
-        http::StatusCode::INTERNAL_SERVER_ERROR
     }
 }

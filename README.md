@@ -7,21 +7,27 @@
 启动配置文件支持 `*.toml`,`*.json`,`*.yaml` 可以将配置不同部分分布在不同的文件中（不推荐）
 
 - 配置项介绍
-  |    所属分组     |      名称       | 必须  |                                          类型                                           | 说明                     | 补充                                               |
-  | :-------------: | :-------------: | :---: | :-------------------------------------------------------------------------------------: | :----------------------- | :------------------------------------------------- |
-  | `database`/`db` |    `scheme`     |  是   |                                        `String`                                         | 数据库的 scheme,如 mysql | 无                                                 |
-  | `database`/`db` |   `username`    |  是   |                                        `String`                                         | 数据库的 用户名          | 无                                                 |
-  | `database`/`db` |   `password`    |  是   |                                        `String`                                         | 数据库的 密码            | 无                                                 |
-  | `database`/`db` |     `host`      |  否   |                                        `String`                                         | 数据库的 host            | 默认为 `localhost`                                 |
-  | `database`/`db` |     `port`      |  否   |                                          `u16`                                          | 数据库的 port            | 默认为`3306`                                       |
-  | `database`/`db` |     `name`      |  是   |                                        `String`                                         | 使用的数据库名称         | 无                                                 |
-  | `database`/`db` |   `max_conn`    |  是   |                                          `u32`                                          | 数据库的最大连接数       | 无                                                 |
-  | `database`/`db` |   `min_conn`    |  是   |                                          `u32`                                          | 数据库的最小连接数       | 无                                                 |
-  | `database`/`db` |    `logger`     |  否   |                                         `bool`                                          | 是否开始数据库操作日志   | 默认关闭                                           |
-  | `logger`/`log`  | `logger_target` |  是   |                                   `file`或者`stdout`                                    | 日志输出目的             | 无                                                 |
-  | `logger`/`log`  |    `to_file`    |  是   |                                        `String`                                         | 日志输出的文件           | `logger_target` 为 `file` 时才有效                 |
-  | `logger`/`log`  | `enable_color`  |  否   |                                         `bool`                                          | 日志输出是否带颜色       | `logger_target` 为 `stdout` 时才有效,默认为 `true` |
-  | `logger`/`log`  |     `level`     |  是   | `off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace` | 日志输出过滤等级         | 无                                                 |
+  | 所属分组 | 名称 | 必须 | 类型 | 说明 | 补充 |
+  | :-----: |:--:| :--: | :---:| :--- | :--- |
+  | `database`/`db` | `scheme` |是|`String`| 数据库的 scheme,如 mysql | 无 |
+  | `database`/`db` | `username` |是|`String`| 数据库的 用户名 | 无 |
+  | `database`/`db` | `password` |是|`String`| 数据库的 密码 | 无 |
+  | `database`/`db` | `host` | 否 |`String`| 数据库的 host | 默认为 `localhost` |
+  | `database`/`db` | `port` |否|`u16`| 数据库的 port | 默认为`3306` |
+  | `database`/`db` | `name` |是|`String`| 使用的数据库名称 | 无 |
+  | `database`/`db` | `max_conn` |是|`u32`| 数据库的最大连接数 | 无 |
+  | `database`/`db` | `min_conn` |是|`u32`| 数据库的最小连接数 | 无 |
+  | `database`/`db` | `logger` |否|`bool`| 是否开始数据库操作日志 | 默认关闭 |
+  | `logger`/`log` | `logger_target` |是|`file`或者`stdout`| 日志输出目的 | 无 |
+  | `logger`/`log` | `to_file` |是|`String`| 日志输出的文件 | `logger_target` 为 `file` 时才有效 |
+  | `logger`/`log` | `enable_color` |否|`bool`| 日志输出是否带颜色 | `logger_target` 为 `stdout` 时才有效,默认为 `true` |
+  | `logger`/`log` | `level`| 是|`off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace`| 日志输出过滤等级 | 无 |
+  | `resp_result`/ `rresult`| `body` | 是 | `String` | 响应成功时的响应体字段名称| 无 |
+  | `resp_result`/ `rresult`| `err-msg` | 是 | `String` | 响应失败时异常字段名称 | 无 |
+  | `resp_result`/ `rresult`| `fix-field` | 是 | `bool` | 响应体固定字段 | 如果无需该字段值将为`null` |
+  | `resp_result`/ `rresult`| `bool-status` | 否 | `Option<String>` | 使用一个 `bool` 类型标记响应成功与否 | 该字段缺省表示不使用 |
+  | `resp_result`/ `rresult`| `body-extra-err` | 否 | `Option<String>` | 额外的异常信息在响应体中字段 | 该字段缺省表示不使用 |
+  | `resp_result`/ `rresult`| `header-extra-err` | 否 | `Option<String>` | 额外的异常信息在响应头中的字段名称 | 该字段缺省表示不使用 |
 
 - Toml
 
@@ -47,20 +53,20 @@
 - Yaml
 
   ```yaml
-    log:
-      to_file: ./logout.log
-      level: info
+  log:
+    to_file: ./logout.log
+    level: info
   ```
 
 - Json
 
   ```json
-    {
-      "db": {
-        "password": "pwd",
-        "name": "name"
-      }
+  {
+    "db": {
+      "password": "pwd",
+      "name": "name"
     }
+  }
   ```
 
 ## 异常
@@ -70,6 +76,7 @@
   | :---: | :------------- |
   |  `F`  | 框架产生的异常 |
   |  `D`  | 数据库异常     |
+  |  `G`  | MongoDb 异常 |
   |  `I`  | IO 过程异常    |
   |  `P`  | 数据转换时异常 |
   |  `C`  | 数据校验异常   |
@@ -108,7 +115,7 @@
   |  `C`  |  0004  |   406    | `Json` 序列化/反序列化异常       |
   |  `C`  |  0005  |   406    | `Path` 数据加载异常              |
 
-- 数据库异常
+- 数据库异常（SeaOrm）
 
   | 前缀  | 异常码 | httpCode | 说明                 |
   | :---: | :----: | :------: | :------------------- |
@@ -118,6 +125,30 @@
   |  `D`  |  0004  |   500    | 数据库记录不存在     |
   |  `D`  |  0005  |   500    | 数据库 `CustomError` |
   |  `D`  |  0006  |   500    | 数据库类型转换失败   |
+
+- 数据库异常（MongoDb）
+
+  | 前缀 | 异常码 | httpCode | 说明                     |
+  | :--: | :----: | :------: | :----------------------- |
+  | `G`  |  0001  |   500    | 非法参数                 |
+  | `G`  |  0002  |   500    | 权限不足                 |
+  | `G`  |  0003  |   500    | `Bson`反序列化失败       |
+  | `G`  |  0004  |   500    | `Bson`序列化失败         |
+  | `G`  |  0005  |   500    | `Bson`序列化失败         |
+  | `G`  |  0006  |   500    | 写冲突                   |
+  | `G`  |  0007  |   500    | 指令错误                 |
+  | `G`  |  0008  |   500    | `DNS`处理异常            |
+  | `G`  |  0009  |   500    | 网络异常                 |
+  | `G`  |  0010  |   500    | Io 异常                  |
+  | `G`  |  0011  |   500    | 非法响应                 |
+  | `G`  |  0012  |   500    | 客户端无法选择数据库服务 |
+  | `G`  |  0013  |   500    | 客户端未提供 Session     |
+  | `G`  |  0014  |   500    | 非法 TLS 配置            |
+  | `G`  |  0015  |   500    | 写入异常                 |
+  | `G`  |  0016  |   500    | 事务异常                 |
+  | `G`  |  0017  |   500    | 服务不可用异常           |
+  | `G`  |  0018  |   500    | 数据库不存在             |
+  | `G`  |  0019  |   500    | 数据库中集合不存在       |
 
 - 数据未变更
 
