@@ -1,27 +1,34 @@
+use crate::utils::data_checker::collect_checkers::iter_checkers::IntoIterChecker;
 use futures::future::{err, ok, ready, Ready};
-use sea_orm::Set;
-use serde::Deserialize;
+
+use serde::{Deserialize, Serialize};
 
 use crate::{
-    serves::mansion::{
-        db_ops,
-        error::{BadFraction, MansionError, UnknownId},
-    },
+    serves::mansion::error::{BadFraction, MansionError, UnknownId},
     utils::{data_checker::DataChecker, data_struct::MaxLimitString},
 };
 
+use super::daily::{Daily, DailyChecker, DailyUncheck};
+
 crate::check_obj! {
     {#[derive(Debug,Deserialize)]}
-    {}
+    {#[derive(Debug,Deserialize,Serialize)]}
     pub struct MansionUncheck = MansionChecker > Mansion{
-        id: IdChecker,
-        link: MaxLimitString<128>,
-        description:MaxLimitString<128>,
-        fraction: FractionCheck
+        pub id: IdChecker,
+        #[serde(alias="cvlink")]
+        pub link: MaxLimitString<128>,
+        pub description:MaxLimitString<128>,
+        pub fraction: FractionCheck,
+        pub daily:IntoIterChecker<Vec<DailyUncheck>,DailyChecker,Vec<Daily>>
     }
     err:MansionError
 }
 
+/// 饼学大厦号的检查器
+/// ## Uncheck
+/// [String](std::string::String)
+/// ## Checked
+/// (i32,i32)
 #[derive(Debug)]
 pub struct IdChecker;
 
@@ -44,6 +51,9 @@ impl DataChecker for IdChecker {
             let n = sp.next().unwrap_or("0");
             let sub_id = n.trim().parse::<i32>().map_err(|_| UnknownId)?;
 
+            if let Some(_)=sp.next(){
+                Err(UnknownId)?;
+            }
             Ok((main_id, sub_id))
         };
 
@@ -70,26 +80,6 @@ impl DataChecker for FractionCheck {
             ok(uncheck)
         } else {
             err(BadFraction.into())
-        }
-    }
-}
-
-impl Mansion {
-    pub fn into_active_model_with_daily(self) -> db_ops::mansion::ActiveModel {
-        let Mansion {
-            id: (mid, sub_mid),
-            link,
-            description,
-            fraction,
-        } = self;
-
-        db_ops::mansion::ActiveModel {
-            mid: Set(mid),
-            sub_mid: Set(sub_mid),
-            description: Set(description),
-            link: Set(link),
-            fraction: Set(fraction),
-            ..Default::default()
         }
     }
 }

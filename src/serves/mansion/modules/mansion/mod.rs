@@ -1,110 +1,74 @@
-use chrono::NaiveDate;
+// use chrono::NaiveDate;
 
-use crate::serves::mansion::db_ops;
+// use crate::serves::mansion::db_ops;
 
-pub mod checkers;
+mod checkers;
 
-#[derive(Debug, serde::Serialize)]
-pub struct Mansion {
-    id: String,
-    cvlink: String,
-    description: String,
-    fraction: i16,
-    daily: Vec<DailyMansion>,
-}
-#[derive(Debug, serde::Serialize)]
-pub struct DailyMansion {
-    at: NaiveDate,
-    content: String,
-    inners: Vec<Inner>,
-}
-#[derive(Debug, serde::Serialize)]
-pub struct Inner {
-    predict: Predict,
-    info: String,
-}
+pub use checkers::*;
 
-#[derive(Debug, serde::Serialize)]
-pub enum Predict {
-    False,
-    Unknown,
-    True,
+crate::quick_struct! {
+    pub ViewMansion{
+        id:String
+        description:String
+        cvlink:String
+        fraction:u8
+        daily:Vec<ViewDaily>
+    }
+
+    pub ViewDaily{
+        datetime:String
+        info:Vec<ViewInfo>
+        content:String
+    }
+
+    pub ViewInfo{
+        #[serde(rename="isTrue")]
+        is_true:Predict
+        forecast:String
+    }
 }
 
-impl
-    From<(
-        db_ops::mansion::Model,
-        Vec<(
-            db_ops::daily_mansion::Model,
-            Vec<db_ops::mansion_info::Model>,
-        )>,
-    )> for Mansion
-{
+impl From<Info> for ViewInfo {
+    fn from(Info { predict, forecast }: Info) -> Self {
+        Self {
+            is_true: predict,
+            forecast,
+        }
+    }
+}
+
+impl From<Daily> for ViewDaily {
     fn from(
-        (m, e): (
-            db_ops::mansion::Model,
-            Vec<(
-                db_ops::daily_mansion::Model,
-                Vec<db_ops::mansion_info::Model>,
-            )>,
-        ),
+        Daily {
+            date_time,
+            content,
+            info,
+        }: Daily,
     ) -> Self {
-        let db_ops::mansion::Model {
-            mid,
-            sub_mid,
+        Self {
+            datetime: date_time.format("%Y-%m-%d").to_string(),
+            info: info.into_iter().map(Into::into).collect(),
+            content,
+        }
+    }
+}
+
+impl From<Mansion> for ViewMansion {
+    fn from(
+        Mansion {
+            id,
             link,
             description,
             fraction,
-            ..
-        } = m;
-
-        let daily: Vec<DailyMansion> = e.into_iter().map(Into::into).collect();
-        Self {
-            id: format!("{}.{}", mid, sub_mid),
-            cvlink: link,
-            description,
-            daily: daily,
-            fraction,
-        }
-    }
-}
-
-impl
-    From<(
-        db_ops::daily_mansion::Model,
-        Vec<db_ops::mansion_info::Model>,
-    )> for DailyMansion
-{
-    fn from(
-        (each, inner): (
-            db_ops::daily_mansion::Model,
-            Vec<db_ops::mansion_info::Model>,
-        ),
+            daily,
+        }: Mansion,
     ) -> Self {
-        let db_ops::daily_mansion::Model { date, content, .. } = each;
-        let inners = inner.into_iter().map(Into::into).collect();
         Self {
-            at: date,
-            content: content.unwrap_or_default(),
-            inners,
-        }
-    }
-}
-
-impl From<db_ops::mansion_info::Model> for Inner {
-    fn from(model: db_ops::mansion_info::Model) -> Self {
-        let db_ops::mansion_info::Model {
-            predict_level,
-            info,
-            ..
-        } = model;
-        Self {
-            predict: match predict_level {
-                db_ops::sea_orm_active_enums::PredictLevel::False => Predict::False,
-                db_ops::sea_orm_active_enums::PredictLevel::Unknown => Predict::Unknown,
-                db_ops::sea_orm_active_enums::PredictLevel::True => Predict::True,
-            },
-            info,
+            id: format!("{}.{}", id.0, id.1),
+            description,
+            cvlink: link,
+            fraction: fraction as u8,
+            daily: daily.into_iter().map(Into::into).collect(),
         }
     }
 }
