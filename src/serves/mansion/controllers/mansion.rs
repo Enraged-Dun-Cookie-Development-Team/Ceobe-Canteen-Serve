@@ -1,7 +1,9 @@
 use crate::{
     serves::mansion::{
         error::MansionError,
-        modules::mansion::{MansionCheckerPretreat, ViewMansion},
+        modules::mansion::{
+            MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat, ViewMansion,
+        },
         MansionRResult,
     },
     utils::req_pretreatment::{
@@ -9,7 +11,7 @@ use crate::{
         ReqPretreatment,
     },
 };
-use actix_web::{get, post, web};
+use actix_web::{get, post};
 
 crate::quick_struct! {
     pub MansionId{
@@ -20,17 +22,20 @@ crate::quick_struct! {
 
 #[post("/upload")]
 pub(super) async fn save_mansion(
-    web::Query(MansionId { id:_ }): web::Query<MansionId>,
+    ReqPretreatment(mid): ReqPretreatment<
+        ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>,
+    >,
     ReqPretreatment(json): ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>,
 ) -> MansionRResult<()> {
+    let _mid = mid?.id;
     let data = json?;
-    
     println!("{:#?}", data);
     Ok(()).into()
 }
 #[get("/getInfo")]
 pub(super) async fn get_mansion(
-    web::Query(MansionId { id:_ }): web::Query<MansionId>,
+    ReqPretreatment(mid): ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>,
 ) -> MansionRResult<ViewMansion> {
+    let _mid = mid?;
     todo!("Get the mongodb and read data")
 }

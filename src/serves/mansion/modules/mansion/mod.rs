@@ -64,7 +64,7 @@ impl From<Mansion> for ViewMansion {
         }: Mansion,
     ) -> Self {
         Self {
-            id: format!("{}.{}", id.0, id.1),
+            id: id.to_string(),
             description,
             cvlink: link,
             fraction: fraction as u8,

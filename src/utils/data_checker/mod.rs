@@ -36,7 +36,14 @@ pub struct PretreatChecker<Pargs, Punchecked, C>(
     PhantomData<Pargs>,
     PhantomData<Punchecked>,
     PhantomData<C>,
-);
+)
+where
+    C: DataChecker,
+    Pargs: Pretreatment<Resp = C::Args>,
+    Pargs::Err: Into<C::Err>,
+    Punchecked: Pretreatment<Resp = C::Unchecked>,
+    Punchecked::Err: Into<C::Err>,
+    C::Checked: 'static;
 
 impl<Pargs, Punchecked, C> Pretreatment for PretreatChecker<Pargs, Punchecked, C>
 where

@@ -1,3 +1,4 @@
+use actix_web::error::QueryPayloadError;
 use http::StatusCode;
 use status_err::{status_error, ErrPrefix};
 
@@ -14,6 +15,7 @@ error_generate!(
     Date=chrono::ParseError
     Predict=UnknownPredictType
     Json=JsonError
+    Query=QueryPayloadError
 );
 
 status_error! {

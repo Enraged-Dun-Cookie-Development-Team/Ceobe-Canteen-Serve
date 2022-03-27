@@ -1,5 +1,6 @@
 #![feature(type_alias_impl_trait)]
 
+use actix_web::dev::HttpServiceFactory;
 use actix_web::{
     web::{self, Data},
     App, HttpServer,
@@ -11,7 +12,10 @@ use error::{not_exist, GlobalError};
 
 use figment::providers::{Format, Json, Toml, Yaml};
 use serves::{CeobeController, MansionController};
-use utils::middleware::benchmark::BenchMarkFactor;
+use utils::{
+    http_serve::MongoRegister, middleware::benchmark::BenchMarkFactor,
+    mongodb_utils::mongo_build::MongoBuild,
+};
 
 mod configs;
 mod database;
@@ -53,7 +57,15 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         .await
         .expect("无法连接到数据库");
     let db_data = Data::new(db_conn);
-
+    // mongo db
+    let encoded_pwd = urlencoding::encode("wyq@qq.com020222");
+    let mongo_conn = MongoBuild::new(format!(
+        "mongodb://ceobe:{}@localhost/ceobe-canteen",
+        encoded_pwd
+    ))
+    .await?
+    .register_collections(MansionController::mongo_register())
+    .build();
     // 配置文件打包
     let data_config = Data::new(config);
     HttpServer::new(move || {
@@ -68,6 +80,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             .app_data(sender.clone())
             // 数据库连接
             .app_data(db_data.clone())
+            .app_data(mongo_conn.clone())
             // 配置信息
             .app_data(data_config.clone())
             // 服务

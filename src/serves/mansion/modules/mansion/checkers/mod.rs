@@ -1,24 +1,32 @@
 mod daily;
 mod each_info;
+mod id_checker;
 mod mansion;
 
 pub use daily::{Daily, DailyChecker, DailyUncheck};
 pub use each_info::{EachInfoUncheck, Info, InfoChecker, Predict};
+use futures_util::future::Ready;
+pub use id_checker::{
+    MIdUncheck, MansionId, Mid, MidChecker, OpMIdUncheck, OpMidChecker, OptionMid,
+};
 pub use mansion::{Mansion, MansionChecker, MansionUncheck};
 
-use futures::future::ok;
 use crate::{
     serves::mansion::error::MansionError,
     utils::{
         data_checker::{DataChecker, PretreatChecker},
-        req_pretreatment::{prefabs::Json, Pretreatment},
+        req_pretreatment::{
+            prefabs::{Json, Null, Query},
+            Pretreatment,
+        },
     },
 };
+use futures::future::ok;
 
 pub type MansionArgs = <MansionChecker as DataChecker>::Args;
 pub struct MansionArgsLoader;
 impl Pretreatment for MansionArgsLoader {
-    type Fut = futures_util::future::Ready<Result<Self::Resp, Self::Err>>;
+    type Fut = Ready<Result<Self::Resp, Self::Err>>;
 
     type Resp = MansionArgs;
 
@@ -32,3 +40,6 @@ impl Pretreatment for MansionArgsLoader {
 
 pub type MansionCheckerPretreat =
     PretreatChecker<MansionArgsLoader, Json<MansionUncheck>, MansionChecker>;
+
+pub type MIdCheckerPretreat = PretreatChecker<Null, Query<MIdUncheck>, MidChecker>;
+pub type OptionMidCheckerPretreat = PretreatChecker<Null, Query<OpMIdUncheck>, OpMidChecker>;

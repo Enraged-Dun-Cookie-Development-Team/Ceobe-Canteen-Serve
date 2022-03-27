@@ -12,7 +12,7 @@ pub trait Controller {
 
 pub trait MongoRegister: Controller {
     type Register: mongodb_utils::module_register::MongoRegister;
-    fn register() -> Self::Register;
+    fn mongo_register() -> Self::Register;
 }
 
 #[macro_export]
@@ -73,7 +73,7 @@ macro_rules! extra_module {
     ($c:ty=>$register:expr) => {
         impl crate::utils::http_serve::MongoRegister for $c {
             type Register = impl $crate::utils::mongodb_utils::module_register::MongoRegister;
-            fn register() -> Self::Register {
+            fn mongo_register() -> Self::Register {
                 $register
             }
         }

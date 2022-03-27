@@ -19,4 +19,5 @@ crate::error_generate!(
         Db=MongoErr
         DbNotFound=MongoDatabaseNotFound
         CollectionNotFound=MongoDatabaseCollectionNotFound
+        
 );
