@@ -5,3 +5,4 @@ pub mod middleware;
 pub mod mongodb_utils;
 pub mod quick_struct;
 pub mod req_pretreatment;
+pub mod user_authorize;
