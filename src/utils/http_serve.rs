@@ -88,4 +88,4 @@ async fn do_mock(d: DbBuild) -> DbBuild {
     d
 }
 
-crate::extra_module!(Mocker=>crate::generate_collection_register!{Mansion=>do_mock});
+crate::extra_module!(Mocker=>crate::generate_collection_register!{do_mock});
