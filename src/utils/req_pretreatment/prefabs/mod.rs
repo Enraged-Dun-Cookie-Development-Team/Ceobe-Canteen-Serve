@@ -1,3 +1,4 @@
+mod query;
 mod json;
 mod map_err;
 mod null;
@@ -11,3 +12,4 @@ pub use null::Null;
 pub use pair::Pair;
 pub use path::{PathError, PathValue};
 pub use wrap_rreuslt::WrapRResult as ToRResult;
+pub use query::Query;
