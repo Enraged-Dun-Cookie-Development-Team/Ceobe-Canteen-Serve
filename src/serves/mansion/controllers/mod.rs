@@ -5,7 +5,7 @@ use crate::utils::req_pretreatment::ReqPretreatment;
 use super::modules::mansion::{MIdCheckerPretreat, MansionCheckerPretreat};
 use super::{
     error::MansionError,
-    modules::{loading_model, mansion::OptionMidCheckerPretreat, MansionDb},
+    modules::{loading_model, mansion::OptionMidCheckerPretreat},
 };
 
 pub mod mansion;
@@ -21,7 +21,7 @@ crate::generate_controller!(
 
 crate::extra_module!(
     MansionController=>crate::generate_collection_register!(
-        MansionDb=>loading_model
+        loading_model
     )
 );
 
@@ -32,5 +32,4 @@ type MidCheckerPretreatment = ReqPretreatment<ToRResult<MapErr<MIdCheckerPretrea
 type MansionBodyCheckerPretreatment =
     ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>;
 
-type MansionMongoDbPretreatment =
-    ReqPretreatment<ToRResult<MapErr<MongoDbSelector<MansionDb>, MansionError>>>;
+type MansionMongoDbPretreatment = ReqPretreatment<ToRResult<MapErr<MongoDbSelector, MansionError>>>;
