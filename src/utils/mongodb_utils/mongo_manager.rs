@@ -27,7 +27,11 @@ impl MongoManagerBuild {
     /// 建立新的 Mongodb 数据库连接
     pub async fn new(url: impl AsRef<str>) -> Result<Self, MongoErr> {
         let db_client = init_mongodb(url.as_ref()).await?;
+
         let db = db_client.default_database().map(DbBuild::new);
+
+        log::info!("默认数据库为 {}",db.is_some());
+
         Ok(Self { db_client, db })
     }
 
