@@ -1,6 +1,6 @@
 use crate::{
     serves::mansion::{
-        error::{MansionError, MansionNotFound},
+        error::{MansionError, MansionIdExist, MansionNotFound},
         modules::{
             mansion::{
                 MIdCheckerPretreat, Mansion, MansionCheckerPretreat, MansionId, Mid,
@@ -56,13 +56,31 @@ pub(super) async fn save_mansion(
             let _ = MansionRResult::from(resp)?;
         }
         None => {
-            let resp = db
-                .doing(|c| async move {
-                    c.insert_one(data, None).await?;
-                    Ok(())
+            let MansionId { main_id, minor_id } = data.id.clone();
+            let filter = doc! {
+                "id" : {
+                    "main_id":main_id,
+                    "minor_id":minor_id as i32
+                }
+            };
+            let check = db
+                .doing::<_, Mansion, _, MansionError, _>(|collection| async move {
+                    collection.count_documents(filter, None).await
                 })
                 .await;
-            let _ = MansionRResult::from(resp)?;
+
+            let check = RespResult::from(check)?;
+            if check == 0 {
+                let resp = db
+                    .doing(|c| async move {
+                        c.insert_one(data, None).await?;
+                        Ok(())
+                    })
+                    .await;
+                let _ = MansionRResult::from(resp)?;
+            } else {
+                MansionRResult::<()>::err(MansionIdExist.into())?;
+            }
         }
     }
     Ok(()).into()
@@ -122,4 +140,31 @@ pub(super) async fn get_all_id(
         .collect();
 
     Ok(resp).into()
+}
+#[post("/delete")]
+pub(super) async fn remove_mansion(
+    ReqPretreatment(db): ReqPretreatment<
+        ToRResult<MapErr<MongoDbSelector<MansionDb>, MansionError>>,
+    >,
+    ReqPretreatment(mid): ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>,
+) -> MansionRResult<()> {
+    let MansionId { main_id, minor_id } = mid?.id;
+    let filter = doc! {
+        "id" : {
+            "main_id":main_id
+            ,
+            "minor_id":minor_id as i32
+        }
+    };
+
+    let resp = db?
+        .doing::<_, Mansion, _, MansionError, ()>(|collect| async move {
+            collect.delete_one(filter, None).await?;
+            Ok(())
+        })
+        .await;
+
+    let _ = RespResult::from(resp)?;
+
+    Ok(()).into()
 }

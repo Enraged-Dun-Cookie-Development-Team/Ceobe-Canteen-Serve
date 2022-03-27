@@ -17,6 +17,7 @@ error_generate!(
     Json=JsonError
     Query=QueryPayloadError
     Mongo=MongoDbError
+    MansionExist=MansionIdExist
 );
 
 status_error! {
@@ -34,6 +35,15 @@ status_error! {
         0001: StatusCode::NOT_FOUND
     ]=>"指定饼学大厦ID未找到"
 }
+
+status_error! {
+    pub MansionIdExist
+    [
+        ErrPrefix::CHECKER,
+        0008: StatusCode::CONFLICT
+    ]=>"0008"
+}
+
 
 status_error! {
     pub BadFraction
