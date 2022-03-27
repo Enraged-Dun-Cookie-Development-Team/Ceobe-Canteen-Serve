@@ -1,22 +1,14 @@
 use crate::{
     serves::mansion::{
-        error::{MansionError, MansionIdExist, MansionNotFound},
-        modules::{
-            mansion::{
-                MIdCheckerPretreat, Mansion, MansionCheckerPretreat, MansionId, Mid,
-                OptionMidCheckerPretreat, ViewMansion,
-            },
-            MansionDb,
+        controllers::{
+            MansionBodyCheckerPretreatment, MansionMongoDbPretreatment, MidCheckerPretreatment,
+            OptionMidCheckerPretreatment,
         },
+        error::{MansionError, MansionIdExist, MansionNotFound},
+        modules::mansion::{Mansion, MansionId, Mid, ViewMansion},
         MansionRResult,
     },
-    utils::{
-        mongodb_utils::db_selector::MongoDbSelector,
-        req_pretreatment::{
-            prefabs::{MapErr, ToRResult},
-            ReqPretreatment,
-        },
-    },
+    utils::req_pretreatment::ReqPretreatment,
 };
 use actix_web::{get, post};
 use futures::StreamExt;
@@ -25,13 +17,9 @@ use resp_result::RespResult;
 
 #[post("/upload")]
 pub(super) async fn save_mansion(
-    ReqPretreatment(mid): ReqPretreatment<
-        ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>,
-    >,
-    ReqPretreatment(json): ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>,
-    ReqPretreatment(db): ReqPretreatment<
-        ToRResult<MapErr<MongoDbSelector<MansionDb>, MansionError>>,
-    >,
+    ReqPretreatment(mid): OptionMidCheckerPretreatment,
+    ReqPretreatment(json): MansionBodyCheckerPretreatment,
+    ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<()> {
     let mid = mid?.id;
     let data = json?;
@@ -85,12 +73,11 @@ pub(super) async fn save_mansion(
     }
     Ok(()).into()
 }
+
 #[get("/getInfo")]
 pub(super) async fn get_mansion(
-    ReqPretreatment(mid): ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>,
-    ReqPretreatment(db): ReqPretreatment<
-        ToRResult<MapErr<MongoDbSelector<MansionDb>, MansionError>>,
-    >,
+    ReqPretreatment(mid): MidCheckerPretreatment,
+    ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<ViewMansion> {
     let MansionId { main_id, minor_id } = mid?.id;
 
@@ -110,11 +97,10 @@ pub(super) async fn get_mansion(
 
     MansionRResult::ok(data.into())
 }
+
 #[get("/getId")]
 pub(super) async fn get_all_id(
-    ReqPretreatment(db): ReqPretreatment<
-        ToRResult<MapErr<MongoDbSelector<MansionDb>, MansionError>>,
-    >,
+    ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<Vec<String>> {
     let resp = db?
         .doing::<_, Mansion, _, MansionError, _>(|collect| async move {
@@ -143,10 +129,8 @@ pub(super) async fn get_all_id(
 }
 #[post("/delete")]
 pub(super) async fn remove_mansion(
-    ReqPretreatment(db): ReqPretreatment<
-        ToRResult<MapErr<MongoDbSelector<MansionDb>, MansionError>>,
-    >,
-    ReqPretreatment(mid): ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>,
+    ReqPretreatment(db): MansionMongoDbPretreatment,
+    ReqPretreatment(mid): MidCheckerPretreatment,
 ) -> MansionRResult<()> {
     let MansionId { main_id, minor_id } = mid?.id;
     let filter = doc! {

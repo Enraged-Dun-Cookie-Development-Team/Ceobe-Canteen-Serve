@@ -1,4 +1,12 @@
-use super::modules::{loading_model, MansionDb};
+use crate::utils::mongodb_utils::db_selector::MongoDbSelector;
+use crate::utils::req_pretreatment::prefabs::{MapErr, ToRResult};
+use crate::utils::req_pretreatment::ReqPretreatment;
+
+use super::modules::mansion::{MIdCheckerPretreat, MansionCheckerPretreat};
+use super::{
+    error::MansionError,
+    modules::{loading_model, mansion::OptionMidCheckerPretreat, MansionDb},
+};
 
 pub mod mansion;
 
@@ -16,3 +24,13 @@ crate::extra_module!(
         MansionDb=>loading_model
     )
 );
+
+type OptionMidCheckerPretreatment =
+    ReqPretreatment<ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>>;
+type MidCheckerPretreatment = ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>;
+
+type MansionBodyCheckerPretreatment =
+    ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>;
+
+type MansionMongoDbPretreatment =
+    ReqPretreatment<ToRResult<MapErr<MongoDbSelector<MansionDb>, MansionError>>>;
