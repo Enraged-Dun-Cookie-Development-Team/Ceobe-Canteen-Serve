@@ -22,23 +22,28 @@ impl MongoBuild {
         })
     }
 
-    pub async fn with_config<C:DbConnectConfig>(cfg:&C)->Result<Self,MongoErr>{
+    pub async fn with_config<C: DbConnectConfig>(cfg: &C) -> Result<Self, MongoErr> {
         let url = format!(
             "{}://{}:{}@{}:{}/{}?authSource=admin",
-            cfg.scheme(),cfg.username(),urlencoding::encode(cfg.password()),cfg.host(),cfg.port(),cfg.name()
+            cfg.scheme(),
+            cfg.username(),
+            urlencoding::encode(cfg.password()),
+            cfg.host(),
+            cfg.port(),
+            cfg.name()
         );
         Self::new(url).await
     }
     /// 添加一个数据库，并通过 `f` 来配置数据库和内部信息
-    pub async fn add_db<F, Fut>(mut self, name: &'static str, f: F) -> Self
+    pub async fn add_db<F, Fut>(mut self,  f: F) -> Self
     where
         Fut: Future<Output = DbBuild>,
         F: FnOnce(DbBuild) -> Fut,
     {
-        self.inner.add_db(name);
-        let db = self.inner.dbs.remove(name).unwrap();
+        // self.inner.add_db(name);
+        let db = self.inner.get_moved_db();
         let db = f(db).await;
-        self.inner.dbs.insert(name, db);
+        self.inner.set_db(db);
         self
     }
     /// 通过数据库注册器注册数据库
@@ -46,7 +51,7 @@ impl MongoBuild {
         self,
         register: R,
     ) -> Self {
-        self.add_db(register.db_name(), |db| register.register(db))
+        self.add_db( |db| register.register(db))
             .await
     }
     /// 完成构建，生成数据库管理器
