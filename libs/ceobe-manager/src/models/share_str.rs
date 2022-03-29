@@ -8,27 +8,19 @@ pub struct AShareString(Arc<String>);
 impl Deref for AShareString {
     type Target = String;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl Borrow<String> for AShareString {
-    fn borrow(&self) -> &String {
-        self.0.deref()
-    }
+    fn borrow(&self) -> &String { self.0.deref() }
 }
 
 impl Borrow<str> for AShareString {
-    fn borrow(&self) -> &str {
-        self.0.deref()
-    }
+    fn borrow(&self) -> &str { self.0.deref() }
 }
 
 impl Clone for AShareString {
-    fn clone(&self) -> Self {
-        Self(Arc::clone(&self.0))
-    }
+    fn clone(&self) -> Self { Self(Arc::clone(&self.0)) }
 }
 
 impl Serialize for AShareString {

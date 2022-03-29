@@ -1,11 +1,8 @@
 mod crypto;
 mod encoders;
-#[cfg(feature = "serde")]
-mod serde;
-#[cfg(feature = "trans")]
-mod trans;
-#[cfg(feature = "wrap")]
-mod wrap;
+#[cfg(feature = "serde")] mod serde;
+#[cfg(feature = "trans")] mod trans;
+#[cfg(feature = "wrap")] mod wrap;
 
 pub use encoders::Encoder;
 pub mod inner_encoders {
@@ -24,6 +21,5 @@ pub mod inner_encoders {
 }
 
 pub use crypto::CryptoString;
-
 #[cfg(feature = "wrap")]
 pub use wrap::{Crypto, CryptoWarp, Raw};

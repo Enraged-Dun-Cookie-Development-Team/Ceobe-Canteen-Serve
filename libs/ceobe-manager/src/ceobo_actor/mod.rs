@@ -1,15 +1,12 @@
 mod cached;
 mod updater;
 
-use std::collections::HashMap;
-
-use crate::models::{DataItem, DataSource};
-
-use std::ops::Range;
+use std::{collections::HashMap, ops::Range};
 
 pub use cached::Cached;
-pub use updater::Updater;
-pub use updater::UpdaterReceiver;
+pub use updater::{Updater, UpdaterReceiver};
+
+use crate::models::{DataItem, DataSource};
 
 #[derive(actix::Message)]
 #[rtype(result = "()")]

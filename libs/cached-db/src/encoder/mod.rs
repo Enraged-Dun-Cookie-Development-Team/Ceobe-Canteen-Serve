@@ -8,9 +8,7 @@ pub enum EncodeError<T> {
 }
 
 impl<T> From<bincode::Error> for EncodeError<T> {
-    fn from(err: bincode::Error) -> Self {
-        Self::Encode(err)
-    }
+    fn from(err: bincode::Error) -> Self { Self::Encode(err) }
 }
 
 pub use decoder::{DecodeReq, Decoder};

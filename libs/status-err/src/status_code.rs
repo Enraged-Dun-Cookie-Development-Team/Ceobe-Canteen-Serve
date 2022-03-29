@@ -29,15 +29,12 @@ impl StatusCode {
         Self { prefix: pre, code }
     }
 
-    pub fn http_code(&self) -> http::StatusCode {
-        self.prefix.get_status()
-    }
+    pub fn http_code(&self) -> http::StatusCode { self.prefix.get_status() }
 
     pub fn get_prefix(&self) -> ErrPrefix {
         let p = self.prefix;
         p
     }
-    pub fn get_code(&self) -> u16 {
-        self.code
-    }
+
+    pub fn get_code(&self) -> u16 { self.code }
 }

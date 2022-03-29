@@ -8,9 +8,7 @@ pub enum OptionError<E> {
 pub struct AndThen<S>(pub(crate) S);
 
 impl<S> AndThen<S> {
-    pub fn new(inner: S) -> Self {
-        Self(inner)
-    }
+    pub fn new(inner: S) -> Self { Self(inner) }
 }
 
 impl<S, Req, T> tower::Service<Req> for AndThen<S>
@@ -18,15 +16,13 @@ where
     S: tower::Service<Req, Response = Option<T>>,
     T: Clone,
 {
-    type Response = T;
-
     type Error = OptionError<S::Error>;
+    type Response = T;
 
     type Future = impl Future<Output = Result<Self::Response, Self::Error>>;
 
     fn poll_ready(
-        &mut self,
-        cx: &mut std::task::Context<'_>,
+        &mut self, cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Result<(), Self::Error>> {
         self.0.poll_ready(cx).map_err(OptionError::Inner)
     }

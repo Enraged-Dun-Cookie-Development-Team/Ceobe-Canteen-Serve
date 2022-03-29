@@ -1,16 +1,18 @@
-use crate::utils::data_checker::collect_checkers::iter_checkers::IntoIterChecker;
 use futures::future::{err, ok, Ready};
-
 use serde::{Deserialize, Serialize};
-
-use crate::{
-    serves::mansion::error::{BadFraction, MansionError},
-    utils::{data_checker::DataChecker, data_struct::MaxLimitString},
-};
 
 use super::{
     daily::{Daily, DailyChecker, DailyUncheck},
     id_checker::IdChecker,
+};
+use crate::{
+    serves::mansion::error::{BadFraction, MansionError},
+    utils::{
+        data_checker::{
+            collect_checkers::iter_checkers::IntoIterChecker, DataChecker,
+        },
+        data_struct::MaxLimitString,
+    },
 };
 
 crate::check_obj! {
@@ -31,20 +33,17 @@ crate::check_obj! {
 pub struct FractionCheck;
 
 impl DataChecker for FractionCheck {
-    type Unchecked = i16;
-
     type Args = ();
-
     type Checked = i16;
-
     type Err = MansionError;
-
     type Fut = Ready<Result<i16, MansionError>>;
+    type Unchecked = i16;
 
     fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         if 1 <= uncheck && uncheck <= 5 {
             ok(uncheck)
-        } else {
+        }
+        else {
             err(BadFraction.into())
         }
     }

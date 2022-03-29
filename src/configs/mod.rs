@@ -3,9 +3,10 @@ pub mod logger;
 pub mod resp_result_config;
 use serde::Deserialize;
 
-use crate::{database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig};
-
 use self::{logger::LoggerConfig, resp_result_config::RespResultConfig};
+use crate::{
+    database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig,
+};
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";
 pub const CONFIG_FILE_JSON: &str = "./Config.json";

@@ -7,13 +7,14 @@ pub struct NoCrypto;
 impl Encoder for NoCrypto {
     type Error = NoErr;
 
-    fn encode<'s>(raw: Cow<'s, str>) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
+    fn encode<'s>(
+        raw: Cow<'s, str>,
+    ) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
         Ok(raw)
     }
 
     fn verify<'s, S: AsRef<str>>(
-        encrypted: &std::borrow::Cow<'s, str>,
-        input: &S,
+        encrypted: &std::borrow::Cow<'s, str>, input: &S,
     ) -> Result<bool, Self::Error> {
         Ok(encrypted == input.as_ref())
     }

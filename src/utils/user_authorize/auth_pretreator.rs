@@ -8,13 +8,14 @@ use lazy_static::__Deref;
 use serde::{Deserialize, Serialize};
 use status_err::ErrPrefix;
 
+use super::{valid_token::decrpyt_token, PasswordEncoder};
 use crate::{
     database::ServeDatabase,
     error_generate, header_captures,
-    utils::{data_struct::header_info::HeaderInfo, req_pretreatment::Pretreatment},
+    utils::{
+        data_struct::header_info::HeaderInfo, req_pretreatment::Pretreatment,
+    },
 };
-
-use super::{valid_token::decrpyt_token, PasswordEncoder};
 
 header_captures!(pub Token:"token");
 
@@ -38,18 +39,16 @@ crate::quick_struct! {
 }
 
 impl Pretreatment for TokenAuth {
-    // 异步返回的fut
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-
+    // 异常
+    type Err = AuthError;
     // 返回类型
     type Resp = AuthInfo;
 
-    // 异常
-    type Err = AuthError;
+    // 异步返回的fut
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     fn call<'r>(
-        req: &'r actix_web::HttpRequest,
-        payload: &'r mut actix_http::Payload,
+        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let db = req
             .app_data::<Data<ServeDatabase<sea_orm::DatabaseConnection>>>()
@@ -76,7 +75,10 @@ impl Pretreatment for TokenAuth {
                 username,
             } = user_info;
 
-            if PasswordEncoder::verify(&Cow::Owned(password), &token.password.as_str())? {
+            if PasswordEncoder::verify(
+                &Cow::Owned(password),
+                &token.password.as_str(),
+            )? {
                 Ok(AuthInfo {
                     id,
                     auth: match auth {
@@ -86,7 +88,8 @@ impl Pretreatment for TokenAuth {
                     },
                     username,
                 })
-            } else {
+            }
+            else {
                 Err(PasswordWrong.into())
             }
         }

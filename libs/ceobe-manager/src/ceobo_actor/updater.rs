@@ -2,18 +2,18 @@ use std::collections::HashMap;
 
 use actix::{Actor, Addr, Context, Handler, MessageResult};
 use chrono::Local;
-
 use tokio::sync::watch;
 
+use super::{cached::Cached, CachedUpdateMsg, NewCeobeIncome};
 use crate::{fut_utils::do_fut, models::DataSource};
 
-use super::{cached::Cached, CachedUpdateMsg, NewCeobeIncome};
-
 pub struct Updater {
-    sender: tokio::sync::watch::Sender<Option<HashMap<DataSource, Addr<Cached>>>>,
+    sender:
+        tokio::sync::watch::Sender<Option<HashMap<DataSource, Addr<Cached>>>>,
 }
 
-pub type UpdaterReceiver = watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>;
+pub type UpdaterReceiver =
+    watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>;
 
 impl Updater {
     pub fn new() -> (Self, UpdaterReceiver) {
@@ -29,7 +29,9 @@ impl Actor for Updater {
 impl Handler<NewCeobeIncome> for Updater {
     type Result = MessageResult<NewCeobeIncome>;
 
-    fn handle(&mut self, msg: NewCeobeIncome, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self, msg: NewCeobeIncome, ctx: &mut Self::Context,
+    ) -> Self::Result {
         match msg {
             NewCeobeIncome::Loaded(map) => {
                 let now_timestamp = Local::now().timestamp() as u64;
@@ -59,7 +61,8 @@ impl Handler<NewCeobeIncome> for Updater {
                             data: v,
                         });
                         do_fut(msg, ctx);
-                    } else {
+                    }
+                    else {
                         #[cfg(feature = "log")]
                         log_::info!("New DataSource `{}` Create", &*k);
                         let cached = Cached::new(now_timestamp, v).start();

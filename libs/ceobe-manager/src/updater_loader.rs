@@ -6,16 +6,20 @@ use std::{
 };
 
 use actix::{Addr, MailboxError};
-
 use serde::{ser::SerializeMap, Serialize};
 use tokio::sync::watch;
 
 use crate::{
-    ceobo_actor::{Cached, CachedFilter, CachedWatcherMsg, CheckCachedUpdate, UpdaterReceiver},
+    ceobo_actor::{
+        Cached, CachedFilter, CachedWatcherMsg, CheckCachedUpdate,
+        UpdaterReceiver,
+    },
     models::{AShareString, DataItem, DataSource},
 };
 
-pub struct UpdateLoader(Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>);
+pub struct UpdateLoader(
+    Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>,
+);
 
 impl UpdateLoader {
     pub fn new(rec: UpdaterReceiver) -> Arc<Self> {
@@ -25,8 +29,7 @@ impl UpdateLoader {
 
 impl UpdateLoader {
     pub async fn lazy_load(
-        &self,
-        filter: &[(u64, Cow<'static, str>)],
+        &self, filter: &[(u64, Cow<'static, str>)],
     ) -> Result<LazyLoad, MailboxError> {
         let mut rec = self.0.lock().unwrap();
 
@@ -41,13 +44,20 @@ impl UpdateLoader {
         let mut vec = Vec::with_capacity(16);
         match updated_msg.deref() {
             Some(map) => {
-                for (timestamp, (k, v)) in filter.into_iter().filter_map(|(t, ds)| {
-                    map.get_key_value(ds.deref().deref())
-                        .and_then(|res| Some((*t, res)))
-                }) {
-                    if let Ok(true) = v.send(CheckCachedUpdate(timestamp)).await {
+                for (timestamp, (k, v)) in
+                    filter.into_iter().filter_map(|(t, ds)| {
+                        map.get_key_value(ds.deref().deref())
+                            .and_then(|res| Some((*t, res)))
+                    })
+                {
+                    if let Ok(true) =
+                        v.send(CheckCachedUpdate(timestamp)).await
+                    {
                         #[cfg(feature = "log")]
-                        log_::info!("获取缓存中“{}”数据源最新数据", k.deref());
+                        log_::info!(
+                            "获取缓存中“{}”数据源最新数据",
+                            k.deref()
+                        );
                         let w = v.send(CachedWatcherMsg).await?;
                         let r = v.send(CachedFilter(timestamp)).await?;
 
@@ -63,7 +73,10 @@ impl UpdateLoader {
     }
 }
 
-pub struct LazyLoad(pub(crate) Vec<(AShareString, watch::Receiver<Vec<DataItem>>, Range<usize>)>);
+pub struct LazyLoad(
+    pub(crate) 
+        Vec<(AShareString, watch::Receiver<Vec<DataItem>>, Range<usize>)>,
+);
 
 impl LazyLoad {
     pub fn into_not_empty(self) -> Option<Self> {
@@ -72,7 +85,8 @@ impl LazyLoad {
 
         if self.0.len() == 0 {
             None
-        } else {
+        }
+        else {
             Some(self)
         }
     }

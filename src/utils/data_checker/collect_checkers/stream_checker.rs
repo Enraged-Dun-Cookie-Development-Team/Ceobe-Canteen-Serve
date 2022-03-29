@@ -1,4 +1,3 @@
-use futures_util::StreamExt;
 use std::{
     convert::Infallible,
     marker::PhantomData,
@@ -7,6 +6,7 @@ use std::{
 };
 
 use futures::{future::ok, pin_mut, Future, Stream};
+use futures_util::StreamExt;
 
 use crate::utils::data_checker::DataChecker;
 
@@ -25,7 +25,9 @@ where
 {
     type Item = Result<C::Checked, C::Err>;
 
-    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Self::Item>> {
+    fn poll_next(
+        self: Pin<&mut Self>, cx: &mut Context<'_>,
+    ) -> Poll<Option<Self::Item>> {
         let mut this = self.project();
 
         let next_task = this.stream.next();
@@ -52,15 +54,11 @@ where
     C: DataChecker<Unchecked = S::Item>,
     C::Args: Clone,
 {
-    type Unchecked = S;
-
     type Args = C::Args;
-
     type Checked = CheckedStream<S, C>;
-
     type Err = Infallible;
-
     type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
+    type Unchecked = S;
 
     fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         ok(CheckedStream {

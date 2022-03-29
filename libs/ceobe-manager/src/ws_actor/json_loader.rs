@@ -35,20 +35,25 @@ impl JsonLoader {
 pub(crate) struct JsonData(Bytes);
 
 impl From<Bytes> for JsonData {
-    fn from(b: Bytes) -> Self {
-        Self(b)
-    }
+    fn from(b: Bytes) -> Self { Self(b) }
 }
 
 impl Handler<JsonData> for JsonLoader {
     type Result = MessageResult<JsonData>;
 
-    fn handle(&mut self, msg: JsonData, ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self, msg: JsonData, ctx: &mut Self::Context,
+    ) -> Self::Result {
         let bytes = msg.0;
-        match serde_json::from_slice::<HashMap<DataSource, Vec<DataItem>>>(&bytes) {
+        match serde_json::from_slice::<HashMap<DataSource, Vec<DataItem>>>(
+            &bytes,
+        ) {
             Ok(data) => {
                 #[cfg(feature = "log")]
-                log_::info!("Loading New Cached From Json String size:[{}]", bytes.len());
+                log_::info!(
+                    "Loading New Cached From Json String size:[{}]",
+                    bytes.len()
+                );
 
                 let req = self.updater.send(NewCeobeIncome::new_loaded(data));
                 do_fut(req, ctx);

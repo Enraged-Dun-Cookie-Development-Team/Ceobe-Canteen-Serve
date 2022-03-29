@@ -11,19 +11,22 @@ use tower::ServiceExt;
 pub use utils::{and_then::AndThen, echo::Echo};
 
 pub mod db {
-    pub use crate::db_io::actor_tree::{ActorTree, SavePair, SavePairError, SavePairSer, ToTree};
-    pub use crate::db_io::db::SledDb;
-    pub use crate::db_io::tree::SledTree;
+    pub use crate::db_io::{
+        actor_tree::{
+            ActorTree, SavePair, SavePairError, SavePairSer, ToTree,
+        },
+        db::SledDb,
+        tree::SledTree,
+    };
 }
 
 pub use sled;
 
 pub mod prefab {
-    use crate::db_io::actor_tree::ToTree;
-    use crate::AndThen;
     use crate::{
         db::{ActorTree, SavePairSer, SledTree},
-        Decoder, Echo, Encoder,
+        db_io::actor_tree::ToTree,
+        AndThen, Decoder, Echo, Encoder,
     };
 
     pub type SavePairGenerator = SavePairSer<Echo, Encoder<Echo>>;
@@ -34,16 +37,16 @@ pub mod prefab {
         SavePairSer(Echo, Encoder(Echo))
     }
 
-    pub fn new_saver<T: ToTree>(tree: T) -> Saver<T> {
-        ActorTree(tree)
-    }
+    pub fn new_saver<T: ToTree>(tree: T) -> Saver<T> { ActorTree(tree) }
 
     pub fn new_loader<T: ToTree>(tree: T) -> Loader<T> {
         Decoder(AndThen(ActorTree(tree)))
     }
 }
 
-pub async fn do_call<S, Req>(service: &mut S, req: Req) -> <S::Future as Future>::Output
+pub async fn do_call<S, Req>(
+    service: &mut S, req: Req,
+) -> <S::Future as Future>::Output
 where
     S: tower::Service<Req>,
 {

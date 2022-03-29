@@ -12,9 +12,7 @@ pub trait DbConnectConfig: serde::de::DeserializeOwned {
 pub trait DbOptionsConfig {
     fn max_conn(&self) -> u32;
     fn min_conn(&self) -> u32;
-    fn sql_logger(&self) -> bool {
-        false
-    }
+    fn sql_logger(&self) -> bool { false }
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -35,52 +33,28 @@ pub struct DbConfig {
 }
 
 impl DbConnectConfig for DbConfig {
-    fn scheme(&self) -> &str {
-        &self.scheme
-    }
+    fn scheme(&self) -> &str { &self.scheme }
 
-    fn username(&self) -> &str {
-        &self.username
-    }
+    fn username(&self) -> &str { &self.username }
 
-    fn password(&self) -> &str {
-        &self.password
-    }
+    fn password(&self) -> &str { &self.password }
 
-    fn host(&self) -> &str {
-        &self.host
-    }
+    fn host(&self) -> &str { &self.host }
 
-    fn port(&self) -> u16 {
-        self.port
-    }
+    fn port(&self) -> u16 { self.port }
 
-    fn name(&self) -> &str {
-        &self.name
-    }
+    fn name(&self) -> &str { &self.name }
 }
 
 impl DbOptionsConfig for DbConfig {
-    fn max_conn(&self) -> u32 {
-        self.max_conn
-    }
+    fn max_conn(&self) -> u32 { self.max_conn }
 
-    fn min_conn(&self) -> u32 {
-        self.min_conn
-    }
+    fn min_conn(&self) -> u32 { self.min_conn }
 
-    fn sql_logger(&self) -> bool {
-        self.logger
-    }
+    fn sql_logger(&self) -> bool { self.logger }
 }
 
-fn logger_default() -> bool {
-    false
-}
+fn logger_default() -> bool { false }
 
-fn host_default() -> String {
-    "localhost".into()
-}
-fn port_default() -> u16 {
-    3306
-}
+fn host_default() -> String { "localhost".into() }
+fn port_default() -> u16 { 3306 }

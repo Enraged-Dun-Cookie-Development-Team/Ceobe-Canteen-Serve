@@ -19,13 +19,10 @@ impl<C> DataChecker for C
 where
     C: RefChecker,
 {
-    type Unchecked = C::Target;
-
     type Args = C::Args;
-
     type Checked = C::Target;
-
     type Err = C::Err;
+    type Unchecked = C::Target;
 
     type Fut = impl Future<Output = Result<Self::Checked, Self::Err>>;
 

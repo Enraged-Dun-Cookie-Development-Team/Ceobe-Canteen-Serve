@@ -5,9 +5,7 @@ use mongodb::error::ErrorKind;
 use crate::{ErrPrefix, StatusErr};
 
 impl StatusErr for mongodb::error::Error {
-    fn prefix(&self) -> crate::ErrPrefix {
-        ErrPrefix::MONGO_DB
-    }
+    fn prefix(&self) -> crate::ErrPrefix { ErrPrefix::MONGO_DB }
 
     fn code(&self) -> u16 {
         match self.kind.deref() {

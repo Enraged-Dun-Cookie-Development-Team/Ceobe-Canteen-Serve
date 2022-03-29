@@ -19,10 +19,12 @@ impl Config {
         self.level_filter = filter;
         self
     }
+
     pub fn enable_color(mut self) -> Self {
         self.enable_color = true;
         self
     }
+
     pub fn disable_color(mut self) -> Self {
         self.enable_color = false;
         self

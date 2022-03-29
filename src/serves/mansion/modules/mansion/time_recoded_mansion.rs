@@ -27,7 +27,9 @@ crate::quick_struct! {
 impl Default for ModifyAt {
     fn default() -> Self {
         Self {
-            create_time: bson::DateTime::from_millis(Local::now().naive_local().timestamp_millis()),
+            create_time: bson::DateTime::from_millis(
+                Local::now().naive_local().timestamp_millis(),
+            ),
             modify_time: None,
         }
     }

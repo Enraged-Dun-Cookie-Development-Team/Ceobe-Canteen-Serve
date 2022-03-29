@@ -1,6 +1,5 @@
 mod time_recoded_mansion;
 
-
 mod checkers;
 
 pub use checkers::*;

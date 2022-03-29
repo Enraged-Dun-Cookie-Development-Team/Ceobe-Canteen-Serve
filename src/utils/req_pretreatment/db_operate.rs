@@ -3,9 +3,8 @@ use std::marker::PhantomData;
 use actix_web::web::Data;
 use futures::Future;
 
-use crate::database::{traits::select::LoadFromDb, ServeDatabase};
-
 use super::Pretreatment;
+use crate::database::{traits::select::LoadFromDb, ServeDatabase};
 
 pub struct DbOp<Select, P>(P, PhantomData<Select>);
 
@@ -16,15 +15,13 @@ where
     Select::Args: From<P::Resp>,
     P::Err: Into<Select::Err>,
 {
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-
+    type Err = Select::Err;
     type Resp = Select::Target;
 
-    type Err = Select::Err;
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     fn call<'r>(
-        req: &'r actix_web::HttpRequest,
-        payload: &'r mut actix_http::Payload,
+        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let db = req
             .app_data::<Data<ServeDatabase<sea_orm::DatabaseConnection>>>()

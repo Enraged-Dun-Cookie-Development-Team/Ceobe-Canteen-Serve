@@ -1,18 +1,18 @@
 #[macro_export]
 /// 辅助生成成对已检查 / 未检查 结构体对
-///```rust
+/// ```rust
 /// check_obj! {
-///{
+/// {
 ///    #[derive(Deserialize)]        // 所有要挂载到 Unchecked 上的Attr
-///}
-///{
+/// }
+/// {
 ///    #[derive(serde::Serialize)]  // 所有要挂载到 Checked 上的Attr
-///}
+/// }
 /// //| --- 标识 Unchecked 和 Checked 和 Checker 的 可见模式
 /// //|         | ---- Unchecked 的标识符   
 /// //|         |     |---- Checker 的标识符
 /// //|         |     |           | ----- Checked 的标识符
-///pub struct (Ac =(AcBChecker)> B){
+/// pub struct (Ac =(AcBChecker)> B){
 ///    #[serde(rename="abb")] //------- Field Attr 同时挂载到Unchecked 和 Check 的同名字段上
 ///    pub b:NoCheck<u32>,
 /// //  |  |   |---------------当前field 使用的 DataChecker ,!! 注意，不是Unchecked 类型
@@ -20,8 +20,8 @@
 /// //  |---------------------当前Field 的可见性，Checked 和 Unchecked 相同
 ///    c:NoCheck<String>
 ///      }
-///err: Infallible
-///}  //    |----------------- 构造的DataChecker 检查时的异常类型 ，要求
+/// err: Infallible
+/// }  //    |----------------- 构造的DataChecker 检查时的异常类型 ，要求
 ///  //所有使用的 DataChecker::Err 实现转换函数Into::into()   
 /// ```
 macro_rules! check_obj {

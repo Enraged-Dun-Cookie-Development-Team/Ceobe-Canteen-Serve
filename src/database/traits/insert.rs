@@ -10,5 +10,9 @@ pub trait SaveToDb {
     type Err;
     fn insert_into<'db, Db>(&self, db: &Arc<ServeDatabase<Db>>) -> Self::Fut
     where
-        Db: ConnectionTrait + TransactionTrait + StreamTrait<'db> + Send + 'static;
+        Db: ConnectionTrait
+            + TransactionTrait
+            + StreamTrait<'db>
+            + Send
+            + 'static;
 }

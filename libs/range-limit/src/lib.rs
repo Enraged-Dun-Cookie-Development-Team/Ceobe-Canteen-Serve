@@ -2,9 +2,7 @@ mod error;
 pub mod measurable;
 pub mod range_limit;
 
-pub use crate::range_limit::range_limit::RangeBoundLimit;
-pub use crate::range_limit::RangeBound;
-
-pub use crate::error::Error;
-
-pub use crate::range_limit::limits;
+pub use crate::{
+    error::Error,
+    range_limit::{limits, range_limit::RangeBoundLimit, RangeBound},
+};

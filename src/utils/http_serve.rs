@@ -62,11 +62,11 @@ macro_rules! generate_controller {
 /// ```rust
 /// crate::generate_controller!(Mocker, "/mock");
 ///
-///crate::db_selector!(pub Mansion="mansion_data");
+/// crate::db_selector!(pub Mansion="mansion_data");
 ///
-///fn do_mock(_: &mut DbBuild) {}
+/// fn do_mock(_: &mut DbBuild) {}
 /// // 为现有Controller 扩展 模型注册器
-///crate::extra_module!(Mocker=>crate::generate_collection_register!{Mansion=>do_mock});
+/// crate::extra_module!(Mocker=>crate::generate_collection_register!{Mansion=>do_mock});
 /// ```
 #[macro_export]
 macro_rules! extra_module {
@@ -84,8 +84,6 @@ crate::generate_controller!(Mocker, "/mock");
 
 crate::db_selector!(pub Mansion="mansion_data");
 
-async fn do_mock(d: DbBuild) -> DbBuild {
-    d
-}
+async fn do_mock(d: DbBuild) -> DbBuild { d }
 
 crate::extra_module!(Mocker=>crate::generate_collection_register!{do_mock});

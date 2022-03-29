@@ -4,9 +4,8 @@ use std::fmt::Arguments;
 
 use chrono::Local;
 
-use crate::LoggerConfig;
-
 pub use self::{location::Location, record_level::RecordLevel, time::Time};
+use crate::LoggerConfig;
 
 mod time;
 
@@ -19,10 +18,13 @@ pub struct LoggerInfo<'re, 'a> {
 }
 
 impl<'re, 'a> LoggerInfo<'re, 'a> {
-    pub fn from_record(record: &'re log::Record<'a>, cfg: &LoggerConfig) -> Self {
+    pub fn from_record(
+        record: &'re log::Record<'a>, cfg: &LoggerConfig,
+    ) -> Self {
         let level = if cfg.enable_color {
             Into::<RecordLevel>::into(record.level())
-        } else {
+        }
+        else {
             RecordLevel::no_color(record.level())
         };
 

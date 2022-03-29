@@ -14,9 +14,7 @@ pub struct Model {
 pub enum Relation {}
 
 impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef {
-        panic!("No RelationDef")
-    }
+    fn def(&self) -> RelationDef { panic!("No RelationDef") }
 }
 
 impl ActiveModelBehavior for ActiveModel {}

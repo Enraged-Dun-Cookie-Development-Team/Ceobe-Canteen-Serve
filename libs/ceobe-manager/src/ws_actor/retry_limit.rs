@@ -3,9 +3,8 @@ use std::{fmt::Display, time::Duration};
 use actix::{io::SinkWrite, Actor, AsyncContext};
 use awc::{error::WsClientError, ClientResponse};
 
-use crate::fut_utils::do_fut_with;
-
 use super::{conn_ws, CeoboWebsocket, WsFramedSink, WsFramedStream};
+use crate::fut_utils::do_fut_with;
 
 pub struct RetryLimit<const LIMIT: usize> {
     try_time: usize,
@@ -24,26 +23,26 @@ impl<const LIMIT: usize> Iterator for RetryLimit<LIMIT> {
         if self.try_time <= LIMIT {
             self.try_time += 1;
             Some(())
-        } else {
+        }
+        else {
             None
         }
     }
 }
 
 impl<const LIMIT: usize> RetryLimit<LIMIT> {
-    pub(crate) fn reset(&mut self) {
-        self.try_time = 0
-    }
+    pub(crate) fn reset(&mut self) { self.try_time = 0 }
 }
 
 impl<const LIMIT: usize> Default for RetryLimit<LIMIT> {
-    fn default() -> Self {
-        Self { try_time: 0 }
-    }
+    fn default() -> Self { Self { try_time: 0 } }
 }
 
 pub(super) fn retry_result_handle(
-    ws_result: Result<(ClientResponse, (WsFramedSink, WsFramedStream)), WsClientError>,
+    ws_result: Result<
+        (ClientResponse, (WsFramedSink, WsFramedStream)),
+        WsClientError,
+    >,
     actor: &mut CeoboWebsocket,
     context: &mut <CeoboWebsocket as Actor>::Context,
 ) {
@@ -58,8 +57,13 @@ pub(super) fn retry_result_handle(
             if let Some(()) = actor.retry.next() {
                 #[cfg(feature = "log")]
                 log_::error!("开始尝试丛连 {}", actor.retry);
-                do_fut_with(do_retry(actor.uri), context, retry_result_handle);
-            } else {
+                do_fut_with(
+                    do_retry(actor.uri),
+                    context,
+                    retry_result_handle,
+                );
+            }
+            else {
                 #[cfg(feature = "log")]
                 log_::warn!("重连次数到达上限，终止尝试");
             }

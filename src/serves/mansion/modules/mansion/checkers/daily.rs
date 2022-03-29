@@ -1,12 +1,15 @@
-use crate::utils::data_checker::collect_checkers::iter_checkers::IntoIterChecker;
 use chrono::NaiveDate;
 
+use super::each_info::{EachInfoUncheck, Info, InfoChecker};
 use crate::{
     serves::mansion::error::MansionError,
-    utils::{data_checker::DataChecker, data_struct::MaxLimitString},
+    utils::{
+        data_checker::{
+            collect_checkers::iter_checkers::IntoIterChecker, DataChecker,
+        },
+        data_struct::MaxLimitString,
+    },
 };
-
-use super::each_info::{EachInfoUncheck, Info, InfoChecker};
 
 crate::check_obj! {
     {#[derive(serde::Deserialize,Debug)]}
@@ -22,18 +25,15 @@ crate::check_obj! {
 pub struct DateFormatChecker;
 
 impl DataChecker for DateFormatChecker {
+    type Args = ();
+    type Checked = NaiveDate;
+    type Err = MansionError;
+    type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
-    type Args = ();
-
-    type Checked = NaiveDate;
-
-    type Err = MansionError;
-
-    type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
-
     fn checker(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        let date = NaiveDate::parse_from_str(&uncheck, "%Y-%m-%d").map_err(MansionError::from);
+        let date = NaiveDate::parse_from_str(&uncheck, "%Y-%m-%d")
+            .map_err(MansionError::from);
 
         futures_util::future::ready(date)
     }

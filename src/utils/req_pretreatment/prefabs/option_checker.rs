@@ -7,13 +7,10 @@ use crate::utils::data_checker::DataChecker;
 pub struct OptionChecker<C: DataChecker>(PhantomData<C>);
 
 impl<C: DataChecker> DataChecker for OptionChecker<C> {
-    type Unchecked = Option<C::Unchecked>;
-
     type Args = C::Args;
-
     type Checked = Option<C::Checked>;
-
     type Err = C::Err;
+    type Unchecked = Option<C::Unchecked>;
 
     type Fut = impl Future<Output = Result<Self::Checked, Self::Err>>;
 

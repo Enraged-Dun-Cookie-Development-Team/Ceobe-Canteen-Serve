@@ -4,7 +4,6 @@ max_width = 78
 # 合并驱动宏
 merge_derives = true
 combine_control_expr = false
-comment_width = 78
 condense_wildcard_suffixes = true
 control_brace_style = "ClosingNextLine"
 edition = "2021"

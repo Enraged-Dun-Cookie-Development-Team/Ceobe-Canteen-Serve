@@ -1,19 +1,17 @@
 use std::{ops::Deref, time::Duration};
 
-use crate::{config::Config, logger_adapter::LoggerAdapter, logger_info::LoggerInfo};
+use crate::{
+    config::Config, logger_adapter::LoggerAdapter, logger_info::LoggerInfo,
+};
 
 pub struct Logger<A>(Config, A);
 
 impl<A: LoggerAdapter> Logger<A> {
-    pub(crate) fn new(cfg: Config, adapter: A) -> Self {
-        Self(cfg, adapter)
-    }
+    pub(crate) fn new(cfg: Config, adapter: A) -> Self { Self(cfg, adapter) }
 }
 
 impl<A: LoggerAdapter> log::Log for Logger<A> {
-    fn enabled(&self, _metadata: &log::Metadata) -> bool {
-        true
-    }
+    fn enabled(&self, _metadata: &log::Metadata) -> bool { true }
 
     fn log(&self, record: &log::Record) {
         if !Self::enabled(&self, record.metadata()) {
@@ -25,9 +23,7 @@ impl<A: LoggerAdapter> log::Log for Logger<A> {
         self.1.do_log(info);
     }
 
-    fn flush(&self) {
-        self.1.flush()
-    }
+    fn flush(&self) { self.1.flush() }
 }
 
 pub(crate) fn panic_hook(panic_info: &std::panic::PanicInfo) {

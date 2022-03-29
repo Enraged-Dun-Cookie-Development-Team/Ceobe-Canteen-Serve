@@ -1,5 +1,4 @@
-use std::fs::OpenOptions;
-use std::{io::Write, path::Path, sync::Mutex};
+use std::{fs::OpenOptions, io::Write, path::Path, sync::Mutex};
 
 use log::LevelFilter;
 use logger::{logger_info::LoggerInfo, LoggerAdapter};
@@ -46,9 +45,7 @@ pub enum LoggerConfig {
     },
 }
 
-fn default_color() -> bool {
-    true
-}
+fn default_color() -> bool { true }
 
 impl LoggerConfig {
     pub fn register_logger(&self) {
@@ -100,9 +97,7 @@ pub enum LogLevel {
 }
 
 impl Default for LogLevel {
-    fn default() -> Self {
-        Self::Info
-    }
+    fn default() -> Self { Self::Info }
 }
 
 impl<'l> Into<LevelFilter> for &'l LogLevel {

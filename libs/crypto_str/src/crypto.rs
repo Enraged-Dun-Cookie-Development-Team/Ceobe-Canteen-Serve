@@ -28,7 +28,9 @@ where
 
     pub fn crypto(self) -> Result<Self, E::Error> {
         match self {
-            CryptoString::Raw(r, _) => E::encode(r).and_then(|e| Ok(Self::Crypto(e))),
+            CryptoString::Raw(r, _) => {
+                E::encode(r).and_then(|e| Ok(Self::Crypto(e)))
+            }
             c => Ok(c),
         }
     }
@@ -54,9 +56,7 @@ impl<E> AsRef<str> for CryptoString<E> {
 impl<E> Deref for CryptoString<E> {
     type Target = str;
 
-    fn deref(&self) -> &Self::Target {
-        self.as_ref()
-    }
+    fn deref(&self) -> &Self::Target { self.as_ref() }
 }
 
 #[cfg(feature = "wrap")]

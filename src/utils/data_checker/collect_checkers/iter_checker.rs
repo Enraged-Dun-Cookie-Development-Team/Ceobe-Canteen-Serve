@@ -1,7 +1,7 @@
-use futures_util::future::Ready;
 use std::{convert::Infallible, marker::PhantomData, task::Poll};
 
 use futures::{future::ok, pin_mut, Future, Stream};
+use futures_util::future::Ready;
 
 use crate::utils::data_checker::DataChecker;
 
@@ -17,8 +17,7 @@ where
     type Item = Result<C::Checked, C::Err>;
 
     fn poll_next(
-        self: std::pin::Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
+        self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>,
     ) -> Poll<Option<Self::Item>> {
         let this = self.project();
 
@@ -45,15 +44,11 @@ where
     C: DataChecker<Unchecked = I::Item>,
     C::Args: Clone,
 {
-    type Unchecked = I;
-
     type Args = C::Args;
-
     type Checked = CheckedIter<I, C>;
-
     type Err = Infallible;
-
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
+    type Unchecked = I;
 
     fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         ok(CheckedIter(uncheck, args))

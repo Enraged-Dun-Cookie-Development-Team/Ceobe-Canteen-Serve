@@ -3,21 +3,26 @@ use std::{
     ops::Deref,
 };
 
+use super::{RangeBound, SizeStatus};
 use crate::{
     error::{self},
     measurable::Measurable,
 };
 
-use super::{RangeBound, SizeStatus};
-
 pub struct RangeBoundLimit<T, Rb>(pub(crate) T, pub(crate) Rb);
 
 impl<T, Rb: Default> RangeBoundLimit<T, Rb> {
-    fn handle_arms(status: SizeStatus, size: usize, value: T) -> Result<Self, error::Error> {
+    fn handle_arms(
+        status: SizeStatus, size: usize, value: T,
+    ) -> Result<Self, error::Error> {
         match status {
             SizeStatus::Ok => Ok(Self(value, Rb::default())),
-            SizeStatus::TooLarge(require) => Err(error::Error::TooLarget { require, get: size }),
-            SizeStatus::TooSmall(require) => Err(error::Error::TooSmall { require, get: size }),
+            SizeStatus::TooLarge(require) => {
+                Err(error::Error::TooLarget { require, get: size })
+            }
+            SizeStatus::TooSmall(require) => {
+                Err(error::Error::TooSmall { require, get: size })
+            }
             SizeStatus::FIxSize(s) => Err(error::Error::FixSize {
                 require: s,
                 get: size,
@@ -46,9 +51,7 @@ impl<T: Display, Rb> Display for RangeBoundLimit<T, Rb> {
 impl<T, Rb> Deref for RangeBoundLimit<T, Rb> {
     type Target = T;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl<P, T, Rb> RangeBoundLimit<P, Rb>
@@ -67,13 +70,9 @@ impl<T: Measurable, Rb: RangeBound> RangeBoundLimit<T, Rb> {
         Self::handle_arms(Rb::match_range(value.size()), value.size(), value)
     }
 
-    pub fn into(self) -> T {
-        self.0
-    }
+    pub fn into(self) -> T { self.0 }
 }
 
 impl<T: Measurable, Rb> Measurable for RangeBoundLimit<T, Rb> {
-    fn size(&self) -> usize {
-        self.0.size()
-    }
+    fn size(&self) -> usize { self.0.size() }
 }

@@ -1,3 +1,13 @@
+use actix_web::{get, post};
+use chrono::Local;
+use futures::StreamExt;
+use mongodb::{bson::doc, options::FindOptions};
+use resp_result::RespResult;
+
+use super::{
+    super::MansionRResult, MansionBodyCheckerPretreatment,
+    MansionMongoDbPretreatment, OptionMidCheckerPretreatment,
+};
 use crate::{
     serves::mansion::{
         controllers::MidCheckerPretreatment,
@@ -6,16 +16,6 @@ use crate::{
         view::ViewMansion,
     },
     utils::req_pretreatment::ReqPretreatment,
-};
-use actix_web::{get, post};
-use chrono::Local;
-use futures::StreamExt;
-use mongodb::{bson::doc, options::FindOptions};
-use resp_result::RespResult;
-
-use super::{
-    super::MansionRResult, MansionBodyCheckerPretreatment, MansionMongoDbPretreatment,
-    OptionMidCheckerPretreatment,
 };
 
 #[post("/upload")]
@@ -40,10 +40,12 @@ pub(super) async fn save_mansion(
             // loading old data modify info
             let o_filter = filter.clone();
             let old_info = db
-                .doing::<_, ModelMansion, _, MansionError, _>(|collect| async move {
-                    let collect = collect.clone_with_type::<ModifyAt>();
-                    collect.find_one(o_filter, None).await
-                })
+                .doing::<_, ModelMansion, _, MansionError, _>(
+                    |collect| async move {
+                        let collect = collect.clone_with_type::<ModifyAt>();
+                        collect.find_one(o_filter, None).await
+                    },
+                )
                 .await;
             let old_info = RespResult::from(old_info)?.unwrap_or_default();
 
@@ -52,7 +54,10 @@ pub(super) async fn save_mansion(
                 .doing(|collect| async move {
                     let task = collect.find_one_and_replace(
                         filter,
-                        ModelMansion::with_modify_time(data, old_info.now_modify()),
+                        ModelMansion::with_modify_time(
+                            data,
+                            old_info.now_modify(),
+                        ),
                         None,
                     );
                     task.await?;
@@ -70,9 +75,11 @@ pub(super) async fn save_mansion(
                 }
             };
             let check = db
-                .doing::<_, ModelMansion, _, MansionError, _>(|collection| async move {
-                    collection.count_documents(filter, None).await
-                })
+                .doing::<_, ModelMansion, _, MansionError, _>(
+                    |collection| async move {
+                        collection.count_documents(filter, None).await
+                    },
+                )
                 .await;
 
             let check = RespResult::from(check)?;
@@ -84,7 +91,8 @@ pub(super) async fn save_mansion(
                     })
                     .await;
                 let _ = MansionRResult::from(resp)?;
-            } else {
+            }
+            else {
                 MansionRResult::<()>::err(MansionIdExist.into())?;
             }
         }
@@ -136,7 +144,9 @@ pub(super) async fn get_all_id(
             let mut vec = collect
                 .find(
                     filter,
-                    FindOptions::builder().projection(doc! {"id":1i32}).build(),
+                    FindOptions::builder()
+                        .projection(doc! {"id":1i32})
+                        .build(),
                 )
                 .await?;
             let mut resp = Vec::new();

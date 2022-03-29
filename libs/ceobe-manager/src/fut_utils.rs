@@ -1,7 +1,8 @@
-use actix::{fut::wrap_future, Actor, ActorFutureExt, Context, SpawnHandle};
+use actix::{
+    fut::wrap_future, Actor, ActorFutureExt, AsyncContext, Context,
+    SpawnHandle,
+};
 use futures_util::Future;
-
-use actix::AsyncContext;
 
 pub(crate) fn do_fut<F, A>(fut: F, ctx: &mut Context<A>) -> SpawnHandle
 where
@@ -15,7 +16,9 @@ where
     ctx.spawn(task)
 }
 
-pub(crate) fn do_fut_with<F, A, O, H>(fut: F, ctx: &mut Context<A>, handle: H) -> SpawnHandle
+pub(crate) fn do_fut_with<F, A, O, H>(
+    fut: F, ctx: &mut Context<A>, handle: H,
+) -> SpawnHandle
 where
     F: Future<Output = O> + 'static,
     A: Actor<Context = Context<A>>,

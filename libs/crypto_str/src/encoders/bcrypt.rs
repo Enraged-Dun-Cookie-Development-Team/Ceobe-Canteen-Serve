@@ -7,13 +7,15 @@ pub struct BcryptEncoder<const COST: u32>;
 impl<const C: u32> Encoder for BcryptEncoder<C> {
     type Error = bcrypt_::BcryptError;
 
-    fn encode<'s>(raw: Cow<'s, str>) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
-        bcrypt_::hash(raw.as_ref().as_bytes(), C).and_then(|s| Ok(Cow::Owned(s)))
+    fn encode<'s>(
+        raw: Cow<'s, str>,
+    ) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
+        bcrypt_::hash(raw.as_ref().as_bytes(), C)
+            .and_then(|s| Ok(Cow::Owned(s)))
     }
 
     fn verify<'s, S: AsRef<str>>(
-        encrypted: &std::borrow::Cow<'s, str>,
-        input: &S,
+        encrypted: &std::borrow::Cow<'s, str>, input: &S,
     ) -> Result<bool, Self::Error> {
         bcrypt_::verify(input.as_ref(), &*encrypted)
     }
@@ -21,7 +23,9 @@ impl<const C: u32> Encoder for BcryptEncoder<C> {
 
 #[cfg(test)]
 mod test_bcrypt {
-    use crate::{encoders::Encoder, inner_encoders::bcrypt::DefaultBcryptEncoder};
+    use crate::{
+        encoders::Encoder, inner_encoders::bcrypt::DefaultBcryptEncoder,
+    };
 
     #[test]
     fn test_match() {
