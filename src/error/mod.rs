@@ -141,6 +141,7 @@ error_generate!(
     Io=std::io::Error
     Db=DatabaseError
     Route=RouteNotExistError
+    Mongo=mongodb::error::Error
 );
 
 status_err::status_error! {

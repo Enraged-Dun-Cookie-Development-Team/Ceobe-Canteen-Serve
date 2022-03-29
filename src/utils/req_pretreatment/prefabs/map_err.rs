@@ -4,7 +4,10 @@ use futures::Future;
 
 use crate::utils::req_pretreatment::Pretreatment;
 
-pub struct MapErr<P, E>(PhantomData<P>, PhantomData<E>);
+pub struct MapErr<P, E>(PhantomData<P>, PhantomData<E>)
+where
+    P: Pretreatment,
+    P::Err: Into<E>;
 
 impl<P, E> Pretreatment for MapErr<P, E>
 where

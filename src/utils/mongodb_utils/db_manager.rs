@@ -9,7 +9,7 @@ use std::{
     sync::Arc,
 };
 
-use mongodb::{options::CollectionOptions, Collection};
+use mongodb::Collection;
 use serde::{Deserialize, Serialize};
 
 use super::MongoDb;
@@ -45,9 +45,10 @@ impl DbBuild {
     ///
     /// ** Collection ** 只能在启动时配置
     #[inline]
-    pub fn add_collection_operate<C, Create>(&mut self, func: Create)
+    pub async fn add_collection_operate<C, Create, Fut>(&mut self, func: Create)
     where
-        Create: for<'n, 'db> FnOnce(&'db MongoDb, &'n str) -> Collection<C>,
+        Create: FnOnce(MongoDb, &'static str) -> Fut,
+        Fut: futures::Future<Output = Collection<C>>,
         C: for<'de> Deserialize<'de> + Serialize,
         C: 'static,
         C: Sized,
@@ -56,7 +57,7 @@ impl DbBuild {
         let id = std::any::TypeId::of::<C>();
         let name = type_name::<C>();
 
-        let collect = func(&self.db, name);
+        let collect = func(self.db.clone(), name).await;
 
         let data = collect.clone_with_type::<()>();
         self.inner_collect.insert(id, data);

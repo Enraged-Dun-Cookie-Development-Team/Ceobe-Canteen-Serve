@@ -2,8 +2,6 @@
 //! 通常情况下，mongodb 可以对不同的子应用使用不同的数据库
 //! 有些情况下，我们希望能在获取参数时直接得到数据库选择器
 
-use std::marker::PhantomData;
-
 use actix_web::web::Data;
 use futures::Future;
 use mongodb::Collection;
@@ -12,8 +10,9 @@ use crate::utils::req_pretreatment::Pretreatment;
 
 use super::{
     db_manager::DbManager,
-    error::{MongoDatabaseCollectionNotFound, MongoDatabaseNotFound, MongoDbError},
+    error::{MongoDatabaseCollectionNotFound, MongoDbError},
     mongo_manager::MongoManager,
+    MongoErr,
 };
 
 /// 数据库选择器trait
@@ -49,25 +48,24 @@ macro_rules! db_selector {
 /// mongo database Selector
 /// mongo 数据库选择器，根据给定的 `S`
 /// 在编译期完成数据库选择
-struct MongoDbSelector<S> {
+pub struct MongoDbSelector {
     db: DbManager,
-    _phantom: PhantomData<S>,
 }
 
-impl<S> MongoDbSelector<S> {
+impl MongoDbSelector {
     /// 对完成获取的数据库进行数据操作
     /// - handle 为一个异步操作闭包
     /// 形如 `async fn function(&Collection<C>)->Result<O, E>`
-    /// 
+    ///
     /// - 这里要求 E 允许 `MongodbError` 可以转换为E
-    /// 
+    ///
     /// - 函数通过泛型参数自动识别并寻找对应的Collection
     /// 如果Collection 未被创建，就会允许失败
     pub async fn doing<F, C, Fut, E, O>(&self, handle: F) -> Result<O, E>
     where
         C: for<'de> serde::Deserialize<'de> + 'static + Sized + serde::Serialize,
-        F: FnOnce(&Collection<C>) -> Fut,
-        Fut: Future<Output = Result<O, E>>,
+        F: FnOnce(Collection<C>) -> Fut,
+        Fut: Future<Output = Result<O, MongoErr>>,
         E: From<MongoDbError>,
     {
         let collection = self
@@ -75,11 +73,14 @@ impl<S> MongoDbSelector<S> {
             .collection::<C>()
             .ok_or(MongoDatabaseCollectionNotFound)
             .map_err(MongoDbError::from)?;
-        handle(&collection).await
+        handle(collection)
+            .await
+            .map_err(MongoDbError::from)
+            .map_err(E::from)
     }
 }
 
-impl<S: DbSelector> Pretreatment for MongoDbSelector<S> {
+impl Pretreatment for MongoDbSelector {
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     type Resp = Self;
@@ -90,15 +91,7 @@ impl<S: DbSelector> Pretreatment for MongoDbSelector<S> {
         let mongo = req
             .app_data::<Data<MongoManager>>()
             .expect("MongoDb 数据库未找到");
-        let db = mongo
-            .get_db(S::db_name())
-            .ok_or(MongoDatabaseNotFound)
-            .cloned();
-        async move {
-            Ok(Self {
-                db: db?,
-                _phantom: Default::default(),
-            })
-        }
+        let db = mongo.get_db().clone();
+        async move { Ok(Self { db }) }
     }
 }

@@ -4,11 +4,18 @@ use futures::Future;
 
 use crate::utils::data_checker::DataChecker;
 
-pub struct SliceChecker<S, C>(PhantomData<(S, C)>);
-
-impl<S, C> DataChecker for SliceChecker<S, C>
+#[derive(Debug)]
+pub struct SliceChecker<S, C, O>(PhantomData<(S, C, O)>)
 where
-    S: IntoIterator + FromIterator<C::Checked>,
+    S: IntoIterator,
+    O: FromIterator<C::Checked>,
+    C: DataChecker<Unchecked = S::Item>,
+    C::Args: Clone;
+
+impl<S, C, O> DataChecker for SliceChecker<S, C, O>
+where
+    S: IntoIterator,
+    O: FromIterator<C::Checked>,
     C: DataChecker<Unchecked = S::Item>,
     C::Args: Clone,
 {
@@ -16,7 +23,7 @@ where
 
     type Args = C::Args;
 
-    type Checked = S;
+    type Checked = O;
 
     type Err = C::Err;
 
@@ -35,7 +42,7 @@ where
                 temp.push(resp);
             }
 
-            Ok(S::from_iter(temp.into_iter()))
+            Ok(O::from_iter(temp.into_iter()))
         }
     }
 }

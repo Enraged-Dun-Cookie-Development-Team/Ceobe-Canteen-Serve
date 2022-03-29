@@ -3,7 +3,7 @@ pub mod logger;
 pub mod resp_result_config;
 use serde::Deserialize;
 
-use crate::database::config::DbConfig;
+use crate::{database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig};
 
 use self::{logger::LoggerConfig, resp_result_config::RespResultConfig};
 
@@ -17,6 +17,8 @@ pub struct GlobalConfig {
     /// 数据库连接相关配置
     #[serde(alias = "db")]
     pub database: DbConfig,
+    #[serde(alias = "mongo")]
+    pub mongodb: MongoDbConfig,
     /// 日志文件相关配置
     #[serde(alias = "log")]
     pub logger: LoggerConfig,

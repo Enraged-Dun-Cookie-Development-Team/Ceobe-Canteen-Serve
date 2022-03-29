@@ -12,7 +12,7 @@ pub trait Controller {
 
 pub trait MongoRegister: Controller {
     type Register: mongodb_utils::module_register::MongoRegister;
-    fn register() -> Self::Register;
+    fn mongo_register() -> Self::Register;
 }
 
 #[macro_export]
@@ -73,7 +73,7 @@ macro_rules! extra_module {
     ($c:ty=>$register:expr) => {
         impl crate::utils::http_serve::MongoRegister for $c {
             type Register = impl $crate::utils::mongodb_utils::module_register::MongoRegister;
-            fn register() -> Self::Register {
+            fn mongo_register() -> Self::Register {
                 $register
             }
         }
@@ -84,6 +84,8 @@ crate::generate_controller!(Mocker, "/mock");
 
 crate::db_selector!(pub Mansion="mansion_data");
 
-fn do_mock(_: &mut DbBuild) {}
+async fn do_mock(d: DbBuild) -> DbBuild {
+    d
+}
 
-crate::extra_module!(Mocker=>crate::generate_collection_register!{Mansion=>do_mock});
+crate::extra_module!(Mocker=>crate::generate_collection_register!{do_mock});
