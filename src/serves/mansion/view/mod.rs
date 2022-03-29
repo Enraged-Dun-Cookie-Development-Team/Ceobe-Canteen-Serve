@@ -1,4 +1,4 @@
-use super::modules::mansion::{Predict, Info, Daily, Mansion};
+use super::modules::mansion::{Predict, Info, Daily, Mansion, ModelMansion};
 
 crate::quick_struct! {
     pub ViewMansion{
@@ -62,6 +62,25 @@ impl From<Mansion> for ViewMansion {
             description,
             cvlink: link,
             fraction: fraction as u8,
+            daily: daily.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+impl Into<ViewMansion> for ModelMansion {
+    fn into(self) -> ViewMansion {
+        let ModelMansion {
+            id,
+            description,
+            cvlink,
+            fraction,
+            daily,
+            ..
+        } = self;
+        ViewMansion {
+            id: id.to_string(),
+            description,
+            cvlink,
+            fraction,
             daily: daily.into_iter().map(Into::into).collect(),
         }
     }

@@ -10,7 +10,7 @@ use super::each_info::{EachInfoUncheck, Info, InfoChecker};
 
 crate::check_obj! {
     {#[derive(serde::Deserialize,Debug)]}
-    {#[derive(serde::Serialize,serde::Deserialize,Debug)]}
+    {#[derive(serde::Serialize,serde::Deserialize,Debug,Clone)]}
     pub struct DailyUncheck = DailyChecker > Daily{
         #[serde(rename="datetime")]
         pub date_time:DateFormatChecker,

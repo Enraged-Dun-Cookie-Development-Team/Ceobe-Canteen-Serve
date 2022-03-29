@@ -5,7 +5,7 @@ use crate::{
 
 crate::check_obj! {
     {#[derive(Debug,serde::Deserialize)]}
-    {#[derive(Debug,serde::Deserialize,serde::Serialize)]}
+    {#[derive(Debug,serde::Deserialize,serde::Serialize,Clone)]}
     pub struct EachInfoUncheck =InfoChecker > Info{
         #[serde(alias="isTrue")]
         pub predict:PredictLevelChecker,
