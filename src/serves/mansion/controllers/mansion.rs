@@ -1,19 +1,13 @@
-use crate::{
-    serves::mansion::{
-        controllers::{
-            MansionBodyCheckerPretreatment, MansionMongoDbPretreatment, MidCheckerPretreatment,
-            OptionMidCheckerPretreatment,
-        },
-        error::{MansionError, MansionIdExist, MansionNotFound},
-        modules::mansion::{Mansion, MansionId, Mid, ViewMansion},
-        MansionRResult,
-    },
-    utils::req_pretreatment::ReqPretreatment,
-};
+use crate::{utils::req_pretreatment::ReqPretreatment, serves::mansion::{modules::mansion::{MansionId, Mansion, Mid}, error::{MansionError, MansionIdExist, MansionNotFound}, controllers::MidCheckerPretreatment, view::ViewMansion}};
 use actix_web::{get, post};
 use futures::StreamExt;
 use mongodb::{bson::doc, options::FindOptions};
 use resp_result::RespResult;
+
+use super::{
+    super::MansionRResult, MansionBodyCheckerPretreatment, MansionMongoDbPretreatment,
+    OptionMidCheckerPretreatment,
+};
 
 #[post("/upload")]
 pub(super) async fn save_mansion(
@@ -24,7 +18,6 @@ pub(super) async fn save_mansion(
     let mid = mid?.id;
     let data = json?;
     let db = db?;
-    println!("{:#?}", data);
     match mid {
         Some(MansionId { main_id, minor_id }) => {
             let filter = doc! {

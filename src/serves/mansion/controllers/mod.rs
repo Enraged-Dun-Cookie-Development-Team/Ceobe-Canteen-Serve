@@ -25,7 +25,7 @@ crate::extra_module!(
     )
 );
 
-type OptionMidCheckerPretreatment =
+ type OptionMidCheckerPretreatment =
     ReqPretreatment<ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>>;
 type MidCheckerPretreatment = ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>;
 
