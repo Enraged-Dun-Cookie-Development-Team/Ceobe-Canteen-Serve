@@ -1,3 +1,6 @@
+#[macro_use]
+mod auth_level_check;
+
 mod auth_pretreator;
 mod set_token;
 mod valid_token;
@@ -46,6 +49,17 @@ fn get_key() -> &'static Hmac<Sha256> {
 
 pub type PasswordEncoder =
     crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
+
+
+/// 权限等级鉴定模块
+pub mod auth_level{
+    pub use super::auth_level_check::AuthLevelVerify;
+    pub use super::auth_level_check::error::UnacceptableAuthorizationLevelError;
+    pub mod prefabs{
+        pub use super::super::auth_level_check::prefabs::*;
+    }
+
+}
 
 #[cfg(test)]
 mod test {

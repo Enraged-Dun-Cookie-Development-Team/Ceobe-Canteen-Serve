@@ -8,7 +8,7 @@ use lazy_static::__Deref;
 use serde::{Deserialize, Serialize};
 use status_err::ErrPrefix;
 
-use super::{valid_token::decrpyt_token, PasswordEncoder};
+use super::{valid_token::decrpyt_token, PasswordEncoder, auth_level};
 use crate::{
     database::ServeDatabase,
     error_generate, header_captures,
@@ -22,6 +22,7 @@ header_captures!(pub Token:"token");
 pub struct TokenAuth;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub enum AuthLevel {
     Chef,
     Cooker,
@@ -35,6 +36,11 @@ crate::quick_struct! {
         /// 权限
         auth: AuthLevel
         username: String
+    }
+
+    pub VerifiedAuthInfo{
+        id:i32
+        username:String
     }
 }
 
@@ -118,4 +124,6 @@ error_generate!(
     Actix = actix_web::Error
     Db = sea_orm::DbErr
     Bcrypto = bcrypt::BcryptError
+    AuthLevel = auth_level::UnacceptableAuthorizationLevelError
+    
 );
