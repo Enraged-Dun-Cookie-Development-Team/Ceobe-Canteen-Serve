@@ -1,5 +1,5 @@
 //! 带有等级鉴定功能的鉴权模块
-mod pretreator;
+pub mod pretreator;
 pub mod prefabs;
 #[macro_use]
 pub mod codegen;

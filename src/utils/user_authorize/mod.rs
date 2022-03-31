@@ -1,3 +1,4 @@
+mod config;
 #[macro_use]
 mod auth_level_check;
 
@@ -6,24 +7,41 @@ mod set_token;
 mod valid_token;
 
 pub use auth_pretreator::{
-    AuthError, AuthInfo, AuthLevel, PasswordWrong, TokenAuth, TokenNotFound,
+    AuthError, AuthLevel, PasswordWrong, TokenAuth, TokenNotFound,
     UserNotFound,
 };
 use hmac::{digest::InvalidLength, Hmac, Mac};
-use serde::{Deserialize, Serialize};
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 
+use self::auth_level::AuthLevelVerify;
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
+use crate::utils::req_pretreatment::prefabs::ToRResult;
 
-pub type Authentication<E> = ReqPretreatment<
-    crate::utils::req_pretreatment::prefabs::ToRResult<MapErr<TokenAuth, E>>,
->;
+pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
+pub type AuthenticationLevel<L: AuthLevelVerify, E> =
+    ReqPretreatment<ToRResult<MapErr<auth_level::AuthLevel<L>, E>>>;
 
-#[derive(Serialize, Deserialize, PartialEq, Eq, Debug)]
-pub struct User {
-    id: i32,
-    password: String,
+crate::quick_struct! {
+
+    #[derive(PartialEq, Eq)]
+    pub User{
+        id:i32
+        password:String
+    }
+
+    /// 用户权限信息
+    pub AuthInfo{
+        id: i32
+        /// 权限
+        auth: AuthLevel
+        username: String
+    }
+
+    pub VerifiedAuthInfo{
+        id:i32
+        username:String
+    }
 }
 
 static JWT_KEY: state::Storage<Hmac<Sha256>> = state::Storage::new();
@@ -50,15 +68,15 @@ fn get_key() -> &'static Hmac<Sha256> {
 pub type PasswordEncoder =
     crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
 
-
 /// 权限等级鉴定模块
-pub mod auth_level{
-    pub use super::auth_level_check::AuthLevelVerify;
-    pub use super::auth_level_check::error::UnacceptableAuthorizationLevelError;
-    pub mod prefabs{
+pub mod auth_level {
+    pub use super::auth_level_check::{
+        error::UnacceptableAuthorizationLevelError, pretreator::AuthLevel,
+        AuthLevelVerify,
+    };
+    pub mod prefabs {
         pub use super::super::auth_level_check::prefabs::*;
     }
-
 }
 
 #[cfg(test)]

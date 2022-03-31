@@ -5,9 +5,7 @@ use futures::Future;
 use super::{error::UnacceptableAuthorizationLevelError, AuthLevelVerify};
 use crate::utils::{
     req_pretreatment::Pretreatment,
-    user_authorize::{
-        auth_pretreator::VerifiedAuthInfo, AuthError, AuthInfo, TokenAuth,
-    },
+    user_authorize::{AuthError, AuthInfo, TokenAuth, VerifiedAuthInfo},
 };
 
 pub struct AuthLevel<L: AuthLevelVerify>(PhantomData<L>);

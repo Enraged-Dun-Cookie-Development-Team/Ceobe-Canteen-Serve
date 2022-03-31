@@ -8,7 +8,7 @@ use lazy_static::__Deref;
 use serde::{Deserialize, Serialize};
 use status_err::ErrPrefix;
 
-use super::{valid_token::decrpyt_token, PasswordEncoder, auth_level};
+use super::{valid_token::decrpyt_token, PasswordEncoder, auth_level, AuthInfo};
 use crate::{
     database::ServeDatabase,
     error_generate, header_captures,
@@ -29,20 +29,6 @@ pub enum AuthLevel {
     Architect,
 }
 
-crate::quick_struct! {
-    /// 用户权限信息
-    pub AuthInfo{
-        id: i32
-        /// 权限
-        auth: AuthLevel
-        username: String
-    }
-
-    pub VerifiedAuthInfo{
-        id:i32
-        username:String
-    }
-}
 
 impl Pretreatment for TokenAuth {
     // 异常
