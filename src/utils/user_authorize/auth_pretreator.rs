@@ -24,8 +24,11 @@ pub struct TokenAuth;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum AuthLevel {
+    #[serde(rename(deserialize = "chef"))]
     Chef,
+    #[serde(rename(deserialize = "cooker"))]
     Cooker,
+    #[serde(rename(deserialize = "architect"))]
     Architect,
 }
 
