@@ -14,6 +14,7 @@ pub use auth_pretreator::{
 use hmac::{digest::InvalidLength, Hmac, Mac};
 pub use set_token::GenerateToken;
 use sha2::Sha256;
+use crate::user_authorize::config::LocalAuthConfig;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
 use crate::utils::req_pretreatment::prefabs::ToRResult;
@@ -44,28 +45,22 @@ crate::quick_struct! {
     }
 }
 
-static JWT_KEY: state::Storage<Hmac<Sha256>> = state::Storage::new();
 
 pub fn set_auth_config<C>(cfg: &C) -> Result<(), InvalidLength>
 where
     C: config::AuthConfig,
 {
-    if JWT_KEY.set(Hmac::new_from_slice(config::AuthConfig::jwt_key(cfg))?) {
+    if config::LOCAL_CONFIG.set(LocalAuthConfig::from_config(cfg)) {
         Ok(())
     }
     else {
-        panic!("jwt密钥重复生成")
+        panic!("UserAuth配置信息重复提供")
     }
 }
 
 /// 获取jwt密钥
 fn get_key() -> &'static Hmac<Sha256> {
-    if let None = JWT_KEY.try_get() {
-        let rand_key: [u8; 32] = rand::random();
-        JWT_KEY
-            .set(Hmac::new_from_slice(&rand_key).expect("jwt密钥生成失败"));
-    }
-    JWT_KEY.get()
+    config::get_jwt_key()
 }
 
 pub type PasswordEncoder =
