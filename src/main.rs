@@ -41,13 +41,12 @@ async fn main() -> Result<(), GlobalError> {
         .extract()
         .expect("配置文件解析失败");
 
-        // 日志配置
-        config.logger.register_logger();
-        // resp 配置
-        resp_result::set_config(&config.resp_result);   
-        // 鉴权配置
-        user_authorize::set_auth_config(&config.user_auth)
-        .expect("无法配置用户鉴权配置");
+    // 日志配置
+    config.logger.register_logger();
+    // resp 配置
+    resp_result::set_config(&config.resp_result);
+    // 鉴权配置
+    user_authorize::set_auth_config(&config.user_auth);
     task(config).await
 }
 

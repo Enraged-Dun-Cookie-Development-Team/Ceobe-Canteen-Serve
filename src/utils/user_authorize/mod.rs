@@ -1,20 +1,16 @@
 pub mod config;
+pub mod error;
 pub mod token_loader;
-#[macro_use]
-mod auth_level_check;
 
+mod auth_level_check;
 mod auth_pretreator;
 mod set_token;
 mod valid_token;
 
-pub use auth_pretreator::{
-    AuthError, AuthLevel, PasswordWrong, TokenAuth, TokenNotFound,
-    UserNotFound,
-};
-use hmac::{digest::InvalidLength, Hmac, Mac};
+pub use auth_pretreator::{TokenAuth, AuthLevel};
+use hmac::Hmac;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
-use crate::user_authorize::config::LocalAuthConfig;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
 use crate::utils::req_pretreatment::prefabs::ToRResult;
@@ -45,23 +41,15 @@ crate::quick_struct! {
     }
 }
 
-
-pub fn set_auth_config<C>(cfg: &C) -> Result<(), InvalidLength>
+pub fn set_auth_config<C>(cfg: &C)
 where
     C: config::AuthConfig,
 {
-    if config::LOCAL_CONFIG.set(LocalAuthConfig::from_config(cfg)) {
-        Ok(())
-    }
-    else {
-        panic!("UserAuth配置信息重复提供")
-    }
+    config::set_auth_config(cfg)
 }
 
 /// 获取jwt密钥
-fn get_key() -> &'static Hmac<Sha256> {
-    config::get_jwt_key()
-}
+fn get_key() -> &'static Hmac<Sha256> { config::get_jwt_key() }
 
 pub type PasswordEncoder =
     crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
@@ -76,6 +64,9 @@ pub mod auth_level {
         pub use super::super::auth_level_check::prefabs::*;
     }
 }
+
+
+
 
 #[cfg(test)]
 mod test {

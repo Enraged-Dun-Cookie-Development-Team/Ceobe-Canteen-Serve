@@ -1,9 +1,6 @@
-use std::collections::HashMap;
-use hmac::digest::KeyInit;
-use hmac::Hmac;
+use hmac::{digest::KeyInit, Hmac};
 use sha2::Sha256;
 use state::Storage;
-
 
 crate::quick_trait! {
     pub AuthConfig{
@@ -12,19 +9,20 @@ crate::quick_trait! {
     }
 }
 
-pub(super) static LOCAL_CONFIG:Storage<LocalAuthConfig>=Storage::new();
+static LOCAL_CONFIG: Storage<LocalAuthConfig> = Storage::new();
 
-pub(super) struct LocalAuthConfig {
+struct LocalAuthConfig {
     jwt_key: Hmac<Sha256>,
     header: &'static str,
 }
 
 impl Default for LocalAuthConfig {
     fn default() -> Self {
-        let rand_key:[u8;32]=rand::random();
-        Self{
-            jwt_key:Hmac::new_from_slice(&rand_key).expect("无法解析JWT KEY"),
-            header:"Token"
+        let rand_key: [u8; 32] = rand::random();
+        Self {
+            jwt_key: Hmac::new_from_slice(&rand_key)
+                .expect("无法解析JWT KEY"),
+            header: "Token",
         }
     }
 }
@@ -32,8 +30,8 @@ impl Default for LocalAuthConfig {
 impl LocalAuthConfig {
     pub(super) fn from_config<C: AuthConfig>(cfg: &C) -> Self {
         // generate jwt
-        let jwt_key = Hmac::new_from_slice(cfg.jwt_key())
-            .expect("无法解析JWT KEY");
+        let jwt_key =
+            Hmac::new_from_slice(cfg.jwt_key()).expect("无法解析JWT KEY");
         // generate static str
         let name = cfg.token_header().into_boxed_str();
         let header = Box::leak(name) as &'static str;
@@ -42,10 +40,19 @@ impl LocalAuthConfig {
     }
 }
 
-pub(super) fn get_local_config() -> &'static LocalAuthConfig {
-    if let Some(config)=LOCAL_CONFIG.try_get(){
+pub(super) fn set_auth_config<C: AuthConfig>(cfg: &C) {
+    if LOCAL_CONFIG.set(LocalAuthConfig::from_config(cfg)) {
+    }
+    else {
+        panic!("UserAuth配置信息重复提供")
+    }
+}
+
+fn get_local_config() -> &'static LocalAuthConfig {
+    if let Some(config) = LOCAL_CONFIG.try_get() {
         config
-    }else{
+    }
+    else {
         log::warn!("Auth模块配置文件未配置，将使用默认配置信息");
         LOCAL_CONFIG.get_or_set(LocalAuthConfig::default)
     }
@@ -64,7 +71,5 @@ fn get_header_name() -> &'static str {
 pub(super) struct TokenHeader;
 
 impl crate::utils::data_struct::header_info::FromHeaders for TokenHeader {
-    fn header_name() -> &'static str {
-        get_header_name()
-    }
+    fn header_name() -> &'static str { get_header_name() }
 }

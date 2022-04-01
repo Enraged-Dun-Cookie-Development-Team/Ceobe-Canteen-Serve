@@ -8,7 +8,13 @@ crate::quick_struct! {
     pub AuthConfig{
         #[serde(default="Default::default",alias="jwt-key")]
         jwt:Jwt
+        #[serde(alias="header",default="default_token")]
+        header_name:String
     }
+}
+
+fn default_token()->String{
+    String::from("Token")
 }
 
 impl config::AuthConfig for AuthConfig {
