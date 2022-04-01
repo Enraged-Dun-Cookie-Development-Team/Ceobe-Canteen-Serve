@@ -1,5 +1,6 @@
 mod ceobe_push;
 mod mansion;
+mod admin_user;
 #[cfg(test)] mod mock_mongo;
 
 pub use ceobe_push::controllers::CeobeController;
