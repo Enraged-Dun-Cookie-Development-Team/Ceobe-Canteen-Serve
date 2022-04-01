@@ -106,5 +106,5 @@ path = "./libs/logger"
 path = "./libs/status-err"
 
 [dependencies.resp-result]
-version = "0.1"
+version = "0.1.7"
 features = ["for-actix", "log"]
