@@ -3,38 +3,41 @@ use std::borrow::Cow;
 use actix_web::web::Data;
 use crypto_str::Encoder;
 use futures::Future;
-use http::StatusCode;
 use lazy_static::__Deref;
 use serde::{Deserialize, Serialize};
-use status_err::ErrPrefix;
 
-use super::{valid_token::decrpyt_token, PasswordEncoder};
+use super::{
+    config::TokenHeader as Token, error::AuthError,
+    valid_token::decrpyt_token, AuthInfo, PasswordEncoder,
+};
 use crate::{
     database::ServeDatabase,
-    error_generate, header_captures,
     utils::{
-        data_struct::header_info::HeaderInfo, req_pretreatment::Pretreatment,
+        data_struct::header_info::HeaderInfo,
+        req_pretreatment::Pretreatment,
+        user_authorize::error::{PasswordWrong, TokenNotFound, UserNotFound},
     },
 };
-
-header_captures!(pub Token:"token");
 
 pub struct TokenAuth;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[non_exhaustive]
 pub enum AuthLevel {
     Chef,
     Cooker,
     Architect,
 }
 
-crate::quick_struct! {
-    /// 用户权限信息
-    pub AuthInfo{
-        id: i32
-        /// 权限
-        auth: AuthLevel
-        username: String
+impl From<db_entity::sea_orm_active_enums::Auth> for AuthLevel {
+    fn from(auth: db_entity::sea_orm_active_enums::Auth) -> Self {
+        match auth {
+            db_entity::sea_orm_active_enums::Auth::Chef => Self::Chef,
+            db_entity::sea_orm_active_enums::Auth::Cooker => Self::Cooker,
+            db_entity::sea_orm_active_enums::Auth::Architect => {
+                Self::Architect
+            }
+        }
     }
 }
 
@@ -57,13 +60,15 @@ impl Pretreatment for TokenAuth {
         let token = HeaderInfo::<Token>::call(req, payload);
 
         async move {
+            // 获取token
             let token = token.await?;
             let token = token.get_one().ok_or(TokenNotFound)?;
             let token = decrpyt_token(token)?;
 
-            use db_entity::{sea_orm_active_enums::Auth, user};
+            use db_entity::user;
             use sea_orm::EntityTrait;
 
+            // 获取用户信息
             let user_info = user::Entity::find_by_id(token.id)
                 .one(db.deref().deref())
                 .await?
@@ -77,15 +82,11 @@ impl Pretreatment for TokenAuth {
 
             if PasswordEncoder::verify(
                 &Cow::Owned(password),
-                &token.password.as_str(),
+                &token.password,
             )? {
                 Ok(AuthInfo {
                     id,
-                    auth: match auth {
-                        Auth::Chef => AuthLevel::Chef,
-                        Auth::Cooker => AuthLevel::Cooker,
-                        Auth::Architect => AuthLevel::Architect,
-                    },
+                    auth: auth.into(),
                     username,
                 })
             }
@@ -95,27 +96,3 @@ impl Pretreatment for TokenAuth {
         }
     }
 }
-
-status_err::status_error!(pub TokenNotFound [
-                                            ErrPrefix::UNAUTHORIZED,
-                                            0001
-                                            ]=>"缺少Token字段");
-status_err::status_error!(pub PasswordWrong [
-                                            ErrPrefix::UNAUTHORIZED,
-                                            0004
-                                            ]=>"密码错误");
-status_err::status_error!(pub UserNotFound [
-                                            ErrPrefix::UNAUTHORIZED,
-                                            0003:StatusCode::NOT_FOUND
-                                            ]=>"Token对应信息不存在");
-error_generate!(
-    pub AuthError
-
-    Jwt=jwt::Error
-    NoToken = TokenNotFound
-    NoUser = UserNotFound
-    Password = PasswordWrong
-    Actix = actix_web::Error
-    Db = sea_orm::DbErr
-    Bcrypto = bcrypt::BcryptError
-);

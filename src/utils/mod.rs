@@ -1,3 +1,4 @@
+pub mod field_with_struct_trait;
 pub mod data_checker;
 pub mod data_struct;
 pub mod http_serve;
