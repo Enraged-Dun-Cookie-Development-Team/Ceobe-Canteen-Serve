@@ -1,4 +1,4 @@
-/// 用于构造databas的配置文件信息
+/// 用于构造database的配置文件信息
 pub trait DbConnectConfig: serde::de::DeserializeOwned {
     fn scheme(&self) -> &str;
     fn username(&self) -> &str;
