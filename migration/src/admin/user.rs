@@ -14,7 +14,7 @@ impl MigrationTrait for Migration {
             .if_not_exists()
             .col(ColumnDef::new(User::Id).integer().primary_key().not_null())
             .col(ColumnDef::new(User::Username).string_len(16).not_null())
-            .col(ColumnDef::new(User::Password).char().not_null())
+            .col(ColumnDef::new(User::Password).char_len(64).not_null())
             .col(
                 ColumnDef::new(User::Auth)
                     .enumeration("auth", ["chef", "cooker", "architect"])
