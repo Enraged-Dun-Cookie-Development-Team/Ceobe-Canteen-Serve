@@ -35,10 +35,14 @@ generate_controller!(
 
 #[post("/create")]
 async fn create_user(
-    _ : AuthenticationLevel<Chef, AdminUserError>,
+    auth : AuthenticationLevel<Chef, AdminUserError>,
     web::Query(NewUserAuthLevel { permission }): web::Query<NewUserAuthLevel>,
     db: Data<ServeDatabase>,
 ) -> AdminUserRResult<CreateUser> {
+    // token鉴权
+    auth.0?;
+
+    // 生成随机用户名密码
     let rand_username: String = thread_rng()
         .sample_iter(&Alphanumeric)
         .take(10)
@@ -51,9 +55,13 @@ async fn create_user(
         .collect();
     let username = rand_username.clone();
     let plaintext_password = rand_password.clone();
+
+    // 加密密码
     let encode_password = PasswordEncoder::encode(rand_password.into());
     let encode_password = encode_password.map_err(AdminUserError::from);
     let encode_password = AdminUserRResult::from(encode_password)?;
+    
+    // 将用户信息写入数据库
     let user = db_entity::user::ActiveModel {
         username: Set(rand_username),
         password: Set(encode_password.to_string()),
@@ -70,6 +78,7 @@ async fn create_user(
         .map_err(AdminUserError::from);
     AdminUserRResult::from(user)?;
 
+    // 返回用户信息
     let user_info = CreateUser {
         username,
         password: plaintext_password,
