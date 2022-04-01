@@ -65,9 +65,6 @@ pub mod auth_level {
     }
 }
 
-
-
-
 #[cfg(test)]
 mod test {
 
