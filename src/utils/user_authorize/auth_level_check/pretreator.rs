@@ -22,7 +22,8 @@ impl<L: AuthLevelVerify> Pretreatment for AuthLevel<L> {
         let task = TokenAuth::call(req, payload);
 
         async move {
-            let AuthInfo { id, auth, username } = task.await?;
+            let info = task.await?;
+            let AuthInfo { id, auth, username } = info;
 
             if L::verify(&auth) {
                 Ok(VerifiedAuthInfo { id, username })
