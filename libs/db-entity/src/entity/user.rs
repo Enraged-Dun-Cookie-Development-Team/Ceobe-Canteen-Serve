@@ -7,7 +7,7 @@ use super::sea_orm_active_enums::Auth;
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "user")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
+    #[sea_orm(primary_key)]
     pub id: i32,
     pub username: String,
     pub password: String,
