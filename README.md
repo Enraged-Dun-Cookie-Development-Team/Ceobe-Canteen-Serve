@@ -33,6 +33,7 @@
   | `mongodb`/ `mongo`| `host` | 否 | `String` | Mongodb 进行数据库连接使用的 host | 默认为`localhost` |
   | `mongodb`/ `mongo`| `port` | 否 | `String` | Mongodb 进行数据库连接使用的端口 | 默认为`27017` |
   | `mongodb`/ `mongo`| `db_name` | 是 | `String` | Mongodb 进行数据库连接使用的数据库 | 无 |
+  | `user_auth`/ `auth`| `jwt`/`jwt-key` | 否 | `String` | 用户鉴权使用的`Jwt`密钥| 最大长度不超过32位。过长部分将会被截断，过短部分将会被随机数填充 |
 
 - Toml
 

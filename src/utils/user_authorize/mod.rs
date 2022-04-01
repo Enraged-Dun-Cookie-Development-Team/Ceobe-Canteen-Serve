@@ -1,4 +1,5 @@
-mod config;
+pub mod config;
+pub mod token_loader;
 #[macro_use]
 mod auth_level_check;
 
@@ -14,12 +15,11 @@ use hmac::{digest::InvalidLength, Hmac, Mac};
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 
-use self::auth_level::AuthLevelVerify;
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
 use crate::utils::req_pretreatment::prefabs::ToRResult;
 
 pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
-pub type AuthenticationLevel<L: AuthLevelVerify, E> =
+pub type AuthenticationLevel<L, E> =
     ReqPretreatment<ToRResult<MapErr<auth_level::AuthLevel<L>, E>>>;
 
 crate::quick_struct! {
@@ -46,8 +46,11 @@ crate::quick_struct! {
 
 static JWT_KEY: state::Storage<Hmac<Sha256>> = state::Storage::new();
 
-pub fn set_key(key: &[u8]) -> Result<(), InvalidLength> {
-    if JWT_KEY.set(Hmac::new_from_slice(key)?) {
+pub fn set_auth_config<C>(cfg: &C) -> Result<(), InvalidLength>
+where
+    C: config::AuthConfig,
+{
+    if JWT_KEY.set(Hmac::new_from_slice(config::AuthConfig::jwt_key(cfg))?) {
         Ok(())
     }
     else {

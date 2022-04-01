@@ -13,7 +13,7 @@ use figment::providers::{Format, Json, Toml, Yaml};
 use serves::{CeobeController, MansionController};
 use utils::{
     http_serve::MongoRegister, middleware::benchmark::BenchMarkFactor,
-    mongodb_utils::mongo_build::MongoBuild,
+    mongodb_utils::mongo_build::MongoBuild, user_authorize,
 };
 
 mod configs;
@@ -41,8 +41,13 @@ async fn main() -> Result<(), GlobalError> {
         .extract()
         .expect("配置文件解析失败");
 
-    resp_result::set_config(&config.resp_result);
-    config.logger.register_logger();
+        // 日志配置
+        config.logger.register_logger();
+        // resp 配置
+        resp_result::set_config(&config.resp_result);   
+        // 鉴权配置
+        user_authorize::set_auth_config(&config.user_auth)
+        .expect("无法配置用户鉴权配置");
     task(config).await
 }
 
