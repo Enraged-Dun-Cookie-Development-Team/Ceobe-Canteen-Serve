@@ -5,3 +5,4 @@ mod admin_user;
 
 pub use ceobe_push::controllers::CeobeController;
 pub use mansion::controllers::MansionController;
+pub use admin_user::controllers::AdminUserController;
