@@ -9,6 +9,7 @@ mod valid_token;
 
 pub use auth_pretreator::{TokenAuth, AuthLevel};
 use hmac::Hmac;
+use sea_orm::{strum::FromRepr, FromQueryResult};
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 
@@ -21,7 +22,7 @@ pub type AuthenticationLevel<L, E> =
 
 crate::quick_struct! {
 
-    #[derive(PartialEq, Eq)]
+    #[derive(PartialEq, Eq, FromQueryResult)]
     pub User{
         id:i32
         password:String

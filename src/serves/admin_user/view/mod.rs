@@ -4,5 +4,9 @@ crate::quick_struct! {
         username: String
         password: String
     }
+
+    pub UserToken {
+        token: String
+    }
 }
 
