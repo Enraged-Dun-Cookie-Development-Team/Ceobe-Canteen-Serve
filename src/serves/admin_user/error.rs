@@ -9,6 +9,7 @@ crate::error_generate!(
     Bcrypt = bcrypt::BcryptError
     Auth = AuthError
     Query = QueryPayloadError
+    Limit = range_limit::Error
 );
 
 
