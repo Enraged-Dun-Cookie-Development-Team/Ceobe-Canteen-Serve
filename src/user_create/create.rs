@@ -1,3 +1,4 @@
+use crypto::digest::Digest;
 use crypto_str::Encoder;
 use db_entity::sea_orm_active_enums::Auth;
 use sea_orm::{
@@ -32,6 +33,11 @@ where
     if user_counts {
         log::debug!("无用户，生成默认用户");
         let password = conf.password();
+        let mut md5 = crypto::md5::Md5::new();
+        md5.input_str(&password);
+        let password = md5.result_str();
+        log::debug!("密码通过MD5加密后是： {:?}", password);
+        
         // 加密密码
         let encode_password = PasswordEncoder::encode(password.into())
             .expect("初始用户密码加密错误！");
