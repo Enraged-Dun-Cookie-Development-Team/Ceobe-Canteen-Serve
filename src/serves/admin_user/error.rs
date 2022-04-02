@@ -1,3 +1,5 @@
+use actix_web::error::QueryPayloadError;
+
 use crate::utils::{req_pretreatment::prefabs::JsonError, user_authorize::error::AuthError};
 
 crate::error_generate!(
@@ -6,6 +8,7 @@ crate::error_generate!(
     OrmDB = sea_orm::DbErr 
     Bcrypt = bcrypt::BcryptError
     Auth = AuthError
+    Query = QueryPayloadError
 );
 
 

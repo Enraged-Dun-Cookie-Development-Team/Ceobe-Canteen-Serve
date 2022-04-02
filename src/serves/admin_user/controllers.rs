@@ -1,14 +1,14 @@
-use std::borrow::Cow;
-
 use actix_web::{
     get, post,
-    web::{self, Data, Json},
+    web::{self, Data},
 };
 use crypto_str::Encoder;
 use db_entity::sea_orm_active_enums::{self, Auth};
 use lazy_static::__Deref;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, Set, QuerySelect};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect, Set,
+};
 
 use crate::{
     database::ServeDatabase,
@@ -18,10 +18,17 @@ use crate::{
         view::{CreateUser, UserToken},
         AdminUserRResult,
     },
-    utils::user_authorize::{
-        auth_level::prefabs::Chef,
-        error::{AuthError, PasswordWrong, UserNotFound},
-        AuthLevel, AuthenticationLevel, GenerateToken, PasswordEncoder, User,
+    utils::{
+        req_pretreatment::{
+            prefabs::{Json, MapErr, Query, ToRResult},
+            ReqPretreatment,
+        },
+        user_authorize::{
+            auth_level::prefabs::Chef,
+            error::{AuthError, PasswordWrong, UserNotFound},
+            AuthLevel, AuthenticationLevel, GenerateToken, PasswordEncoder,
+            User,
+        },
     },
 };
 
@@ -49,9 +56,13 @@ generate_controller!(
 #[post("/create")]
 async fn create_user(
     auth: AuthenticationLevel<Chef, AdminUserError>,
-    web::Query(NewUserAuthLevel { permission }): web::Query<NewUserAuthLevel>,
+    query: ReqPretreatment<
+        ToRResult<MapErr<Query<NewUserAuthLevel>, AdminUserError>>,
+    >,
     db: Data<ServeDatabase>,
 ) -> AdminUserRResult<CreateUser> {
+    let permission = query.0?.permission;
+
     // token鉴权
     auth.0?;
 
@@ -102,15 +113,17 @@ async fn create_user(
 
 #[post("/login")]
 async fn login(
-    db: Data<ServeDatabase>, payload: Json<UserLogin>,
+    ReqPretreatment(body): ReqPretreatment<
+        ToRResult<MapErr<Json<UserLogin>, AdminUserError>>,
+    >,
+    db: Data<ServeDatabase>,
 ) -> AdminUserRResult<UserToken> {
     // 从请求体获取信息
-    let username = payload.0.username;
-    let password = payload.0.password;
+    let body = body?;
 
     // 查询数据库
     let user = db_entity::user::Entity::find()
-        .filter(db_entity::user::Column::Username.eq(username))
+        .filter(db_entity::user::Column::Username.eq(body.username))
         .select_only()
         .column(db_entity::user::Column::Password)
         .column(db_entity::user::Column::Id)
@@ -127,8 +140,9 @@ async fn login(
     let user = AdminUserRResult::from(user)?;
 
     // 密码转换成crypto_str类型
-    let pwd =
-        crypto_str::CryptoString::<PasswordEncoder>::new_raw(password.clone());
+    let pwd = crypto_str::CryptoString::<PasswordEncoder>::new_raw(
+        body.password.clone(),
+    );
     let db_password = crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
         user.password,
     );
@@ -146,7 +160,7 @@ async fn login(
     // 生成用户token
     let generate_token = User {
         id: user.id,
-        password,
+        password: body.password,
     };
     let token = generate_token.generate().unwrap();
 
