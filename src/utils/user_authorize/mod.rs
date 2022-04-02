@@ -31,6 +31,7 @@ crate::quick_struct! {
     /// 用户权限信息
     pub AuthInfo{
         id: i32
+        password: String
         /// 权限
         auth: AuthLevel
         username: String
