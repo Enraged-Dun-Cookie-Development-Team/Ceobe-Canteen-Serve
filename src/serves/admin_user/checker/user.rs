@@ -1,4 +1,7 @@
-use crate::{utils::data_struct::MaxLimitString, serves::admin_user::error::AdminUserError};
+use crate::{
+    serves::admin_user::error::AdminUserError,
+    utils::data_struct::MaxLimitString,
+};
 
 crate::check_obj! {
     {#[derive(serde::Deserialize,Debug)]}

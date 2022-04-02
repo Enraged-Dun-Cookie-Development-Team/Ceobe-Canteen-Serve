@@ -1,16 +1,12 @@
-use actix_web::{
-    get, post,
-    web::{self, Data},
-};
+use actix_web::{get, post, web::Data};
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use db_entity::sea_orm_active_enums::{self, Auth};
+use db_entity::sea_orm_active_enums::Auth;
 use lazy_static::__Deref;
 use orm_migrate::sea_query::Expr;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect,
-    Set, Value,
+    ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect, Set,
 };
 
 use super::view::ChangePassword;

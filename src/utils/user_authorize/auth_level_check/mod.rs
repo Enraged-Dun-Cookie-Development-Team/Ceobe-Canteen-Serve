@@ -1,6 +1,6 @@
 //! 带有等级鉴定功能的鉴权模块
-pub mod pretreator;
 pub mod prefabs;
+pub mod pretreator;
 #[macro_use]
 pub mod codegen;
 pub mod error;
@@ -14,5 +14,3 @@ pub trait AuthLevelVerify {
     /// 进行权限等级鉴定。通过就返回 true 否则 返回 false;
     fn verify(token_auth: &AuthLevel) -> bool;
 }
-
-

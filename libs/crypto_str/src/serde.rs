@@ -41,8 +41,10 @@ where
         S: serde_::Serializer,
     {
         let crypt = match &self.1 {
-            CryptoString::Raw(r, _) => E::encode(Cow::Borrowed(r))
-                .or_else(|e| Err(serde_::ser::Error::custom(e)))?,
+            CryptoString::Raw(r, _) => {
+                E::encode(Cow::Borrowed(r))
+                    .or_else(|e| Err(serde_::ser::Error::custom(e)))?
+            }
             CryptoString::Crypto(r) => Cow::Borrowed(r.deref()),
         };
 

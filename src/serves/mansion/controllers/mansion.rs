@@ -40,28 +40,30 @@ pub(super) async fn save_mansion(
             // loading old data modify info
             let o_filter = filter.clone();
             let old_info = db
-                .doing::<_, ModelMansion, _, MansionError, _>(
-                    |collect| async move {
+                .doing::<_, ModelMansion, _, MansionError, _>(|collect| {
+                    async move {
                         let collect = collect.clone_with_type::<ModifyAt>();
                         collect.find_one(o_filter, None).await
-                    },
-                )
+                    }
+                })
                 .await;
             let old_info = RespResult::from(old_info)?.unwrap_or_default();
 
             // update database
             let resp = db
-                .doing(|collect| async move {
-                    let task = collect.find_one_and_replace(
-                        filter,
-                        ModelMansion::with_modify_time(
-                            data,
-                            old_info.now_modify(),
-                        ),
-                        None,
-                    );
-                    task.await?;
-                    Ok(())
+                .doing(|collect| {
+                    async move {
+                        let task = collect.find_one_and_replace(
+                            filter,
+                            ModelMansion::with_modify_time(
+                                data,
+                                old_info.now_modify(),
+                            ),
+                            None,
+                        );
+                        task.await?;
+                        Ok(())
+                    }
                 })
                 .await;
             let _ = MansionRResult::from(resp)?;
@@ -74,10 +76,12 @@ pub(super) async fn save_mansion(
                     "minor_id":minor_id as i32
                 }
             };
-            let check = db
-                .doing::<_, ModelMansion, _, MansionError, _>(
-                    |collection| async move {
-                        collection.count_documents(filter, None).await
+            let check =
+                db.doing::<_, ModelMansion, _, MansionError, _>(
+                    |collection| {
+                        async move {
+                            collection.count_documents(filter, None).await
+                        }
                     },
                 )
                 .await;
@@ -85,9 +89,12 @@ pub(super) async fn save_mansion(
             let check = RespResult::from(check)?;
             if check == 0 {
                 let resp = db
-                    .doing::<_, ModelMansion, _, _, _>(|c| async move {
-                        c.insert_one(ModelMansion::from(data), None).await?;
-                        Ok(())
+                    .doing::<_, ModelMansion, _, _, _>(|c| {
+                        async move {
+                            c.insert_one(ModelMansion::from(data), None)
+                                .await?;
+                            Ok(())
+                        }
                     })
                     .await;
                 let _ = MansionRResult::from(resp)?;
@@ -139,22 +146,24 @@ pub(super) async fn get_all_id(
     };
 
     let resp = db?
-        .doing::<_, ModelMansion, _, MansionError, _>(|collect| async move {
-            let collect = collect.clone_with_type::<Mid>();
-            let mut vec = collect
-                .find(
-                    filter,
-                    FindOptions::builder()
-                        .projection(doc! {"id":1i32})
-                        .build(),
-                )
-                .await?;
-            let mut resp = Vec::new();
-            while let Some(v) = vec.next().await {
-                let v = v?;
-                resp.push(v);
+        .doing::<_, ModelMansion, _, MansionError, _>(|collect| {
+            async move {
+                let collect = collect.clone_with_type::<Mid>();
+                let mut vec = collect
+                    .find(
+                        filter,
+                        FindOptions::builder()
+                            .projection(doc! {"id":1i32})
+                            .build(),
+                    )
+                    .await?;
+                let mut resp = Vec::new();
+                while let Some(v) = vec.next().await {
+                    let v = v?;
+                    resp.push(v);
+                }
+                Ok(resp)
             }
-            Ok(resp)
         })
         .await;
 
@@ -180,9 +189,11 @@ pub(super) async fn remove_mansion(
     };
 
     let resp = db?
-        .doing::<_, ModelMansion, _, MansionError, ()>(|collect| async move {
-            collect.delete_one(filter, None).await?;
-            Ok(())
+        .doing::<_, ModelMansion, _, MansionError, ()>(|collect| {
+            async move {
+                collect.delete_one(filter, None).await?;
+                Ok(())
+            }
         })
         .await;
 

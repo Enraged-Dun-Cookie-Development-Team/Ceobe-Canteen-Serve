@@ -37,7 +37,7 @@ where
         md5.input_str(&password);
         let password = md5.result_str();
         log::debug!("密码通过MD5加密后是： {:?}", password);
-        
+
         // 加密密码
         let encode_password = PasswordEncoder::encode(password.into())
             .expect("初始用户密码加密错误！");

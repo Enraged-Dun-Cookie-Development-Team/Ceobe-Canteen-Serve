@@ -7,7 +7,7 @@ mod auth_pretreator;
 mod set_token;
 mod valid_token;
 
-pub use auth_pretreator::{TokenAuth, AuthLevel};
+pub use auth_pretreator::{AuthLevel, TokenAuth};
 use hmac::Hmac;
 use sea_orm::{strum::FromRepr, FromQueryResult};
 pub use set_token::GenerateToken;

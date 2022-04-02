@@ -55,10 +55,14 @@ where
         &mut self, cx: &mut std::task::Context<'_>,
     ) -> Poll<Result<(), Self::Error>> {
         match self.0.poll_ready(cx) {
-            Poll::Ready(res) => match res.map_err(SavePairError::Key) {
-                Ok(_) => self.1.poll_ready(cx).map_err(SavePairError::Value),
-                err => Poll::Ready(err),
-            },
+            Poll::Ready(res) => {
+                match res.map_err(SavePairError::Key) {
+                    Ok(_) => {
+                        self.1.poll_ready(cx).map_err(SavePairError::Value)
+                    }
+                    err => Poll::Ready(err),
+                }
+            }
             Poll::Pending => Poll::Pending,
         }
     }

@@ -25,61 +25,67 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
         ctx: &mut Self::Context,
     ) {
         match item {
-            Ok(msg) => match msg {
-                ws::Frame::Text(text) | ws::Frame::Binary(text) => {
-                    #[cfg(feature = "log")]
-                    log_::info!("Handling ws Frame Data");
-                    do_fut(self.json_handle.send(text.into()), ctx);
-                }
-                ws::Frame::Continuation(c) => {
-                    #[cfg(feature = "log")]
-                    log_::info!("Handling ws Split Frame");
-                    let req = self
-                        .continue_handle
-                        .send(continuation::NextIncome(c));
-
-                    do_fut_with(req, ctx, |res, actor, ctx| {
-                        if let Ok(Some(msg)) = res {
-                            #[cfg(feature = "log")]
-                            log_::info!("Split Frame Data clear Handling");
-                            do_fut(
-                                actor.json_handle.send(msg.unwrap().into()),
-                                ctx,
-                            );
-                        }
-                    });
-                }
-                ws::Frame::Ping(p) => {
-                    #[cfg(feature = "log")]
-                    log_::info!(
-                        "收到 Ping 消息： `{}`",
-                        String::from_utf8_lossy(&p)
-                    );
-                    self.slink.write(Message::Pong(p)).ok();
-                }
-                ws::Frame::Pong(p) => {
-                    #[cfg(feature = "log")]
-                    log_::info!(
-                        "收到 Pong 消息: `{}`",
-                        String::from_utf8_lossy(&p)
-                    );
-                    if !self.beat_timeout.check_timeout() {
-                        self.slink.close()
-                    }
-                }
-                ws::Frame::Close(c) => {
-                    if let Some(reason) = c {
+            Ok(msg) => {
+                match msg {
+                    ws::Frame::Text(text) | ws::Frame::Binary(text) => {
                         #[cfg(feature = "log")]
-                        log_::warn!(
-                            "Websocket Service Close Connection. \ncode \
-                             :{:?} `{}`",
-                            reason.code,
-                            reason.description.unwrap_or_default()
+                        log_::info!("Handling ws Frame Data");
+                        do_fut(self.json_handle.send(text.into()), ctx);
+                    }
+                    ws::Frame::Continuation(c) => {
+                        #[cfg(feature = "log")]
+                        log_::info!("Handling ws Split Frame");
+                        let req = self
+                            .continue_handle
+                            .send(continuation::NextIncome(c));
+
+                        do_fut_with(req, ctx, |res, actor, ctx| {
+                            if let Ok(Some(msg)) = res {
+                                #[cfg(feature = "log")]
+                                log_::info!(
+                                    "Split Frame Data clear Handling"
+                                );
+                                do_fut(
+                                    actor
+                                        .json_handle
+                                        .send(msg.unwrap().into()),
+                                    ctx,
+                                );
+                            }
+                        });
+                    }
+                    ws::Frame::Ping(p) => {
+                        #[cfg(feature = "log")]
+                        log_::info!(
+                            "收到 Ping 消息： `{}`",
+                            String::from_utf8_lossy(&p)
                         );
-                        ctx.stop()
+                        self.slink.write(Message::Pong(p)).ok();
+                    }
+                    ws::Frame::Pong(p) => {
+                        #[cfg(feature = "log")]
+                        log_::info!(
+                            "收到 Pong 消息: `{}`",
+                            String::from_utf8_lossy(&p)
+                        );
+                        if !self.beat_timeout.check_timeout() {
+                            self.slink.close()
+                        }
+                    }
+                    ws::Frame::Close(c) => {
+                        if let Some(reason) = c {
+                            #[cfg(feature = "log")]
+                            log_::warn!(
+                                "Websocket Service Close Connection. \ncode \
+                                 :{:?} `{}`",
+                                reason.code,
+                                reason.description.unwrap_or_default()
+                            );
+                            ctx.stop()
+                        }
                     }
                 }
-            },
+            }
             Err(err) => {
                 #[cfg(feature = "log")]
                 log_::error!("Websocket Connect Error: `{}`", err);

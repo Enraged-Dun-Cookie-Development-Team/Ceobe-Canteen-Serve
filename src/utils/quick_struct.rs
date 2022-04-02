@@ -48,4 +48,3 @@ macro_rules! quick_struct {
      )*
     };
 }
-

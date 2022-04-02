@@ -8,12 +8,7 @@ crate::quick_struct! {
 }
 
 impl FUserConfig for FirstUserConfig {
-    fn username(&self) -> String {
-        self.username.clone()
-    }
+    fn username(&self) -> String { self.username.clone() }
 
-    fn password(&self) -> String {
-        self.password.clone()
-    }
+    fn password(&self) -> String { self.password.clone() }
 }
-
