@@ -14,6 +14,10 @@ use crate::utils::{
         prefabs::{MapErr, ToRResult},
         ReqPretreatment,
     },
+    user_authorize::{
+        auth_level::prefabs::{Architect, Chef},
+        AuthenticationLevel,
+    },
 };
 
 pub mod mansion;
@@ -32,6 +36,15 @@ crate::extra_module!(
         loading_model
     )
 );
+
+crate::new_auth_level! {
+    pub(super) MansionAuth=>[
+        Chef
+        Architect
+    ]
+}
+
+type MansionAuthentication = AuthenticationLevel<MansionAuth, MansionError>;
 
 type OptionMidCheckerPretreatment = ReqPretreatment<
     ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>,

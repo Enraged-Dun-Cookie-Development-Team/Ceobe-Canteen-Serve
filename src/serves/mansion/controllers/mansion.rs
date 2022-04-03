@@ -9,7 +9,7 @@ use super::{
 };
 use crate::{
     serves::mansion::{
-        controllers::MidCheckerPretreatment,
+        controllers::{MansionAuthentication, MidCheckerPretreatment},
         error::{MansionIdExist, MansionNotFound},
         modules::mansion::{MansionId, Mid, ModelMansion, ModifyAt},
         view::ViewMansion,
@@ -19,6 +19,7 @@ use crate::{
 
 #[post("/upload")]
 pub(super) async fn save_mansion(
+    _: MansionAuthentication,
     ReqPretreatment(mid): OptionMidCheckerPretreatment,
     ReqPretreatment(json): MansionBodyCheckerPretreatment,
     ReqPretreatment(db): MansionMongoDbPretreatment,
@@ -99,6 +100,7 @@ pub(super) async fn save_mansion(
 
 #[get("/getInfo")]
 pub(super) async fn get_mansion(
+    _: MansionAuthentication,
     ReqPretreatment(mid): MidCheckerPretreatment,
     ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<ViewMansion> {
@@ -124,6 +126,7 @@ pub(super) async fn get_mansion(
 
 #[get("/getId")]
 pub(super) async fn get_all_id(
+    _: MansionAuthentication,
     ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<Vec<String>> {
     // 最近60天
@@ -165,6 +168,7 @@ pub(super) async fn get_all_id(
 }
 #[post("/delete")]
 pub(super) async fn remove_mansion(
+    _: MansionAuthentication,
     ReqPretreatment(db): MansionMongoDbPretreatment,
     ReqPretreatment(mid): MidCheckerPretreatment,
 ) -> MansionRResult<()> {
