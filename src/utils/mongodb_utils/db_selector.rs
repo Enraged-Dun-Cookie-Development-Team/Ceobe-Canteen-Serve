@@ -60,7 +60,7 @@ impl MongoDbSelector {
     ///
     /// - 函数通过泛型参数自动识别并寻找对应的Collection
     /// 如果Collection 未被创建，就会允许失败
-    pub async fn doing<F, C, Fut, E, O>(&self, handle: F) -> Result<O, E>
+    pub async fn doing<F, C, Fut ,O>(&self, handle: F) -> Result<O, MongoDbError>
     where
         C: for<'de> serde::Deserialize<'de>
             + 'static
@@ -68,7 +68,6 @@ impl MongoDbSelector {
             + serde::Serialize,
         F: FnOnce(Collection<C>) -> Fut,
         Fut: Future<Output = Result<O, MongoErr>>,
-        E: From<MongoDbError>,
     {
         let collection = self
             .db
@@ -78,7 +77,6 @@ impl MongoDbSelector {
         handle(collection)
             .await
             .map_err(MongoDbError::from)
-            .map_err(E::from)
     }
 }
 
