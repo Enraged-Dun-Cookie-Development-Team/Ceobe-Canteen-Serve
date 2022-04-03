@@ -29,11 +29,11 @@ impl<L: AuthLevelVerify> Pretreatment for AuthLevel<L> {
                 id,
                 auth,
                 username,
-                password,
+                password: pwd,
             } = info;
 
             if L::verify(&auth) {
-                Ok(VerifiedAuthInfo { id, username })
+                Ok(VerifiedAuthInfo { id, username, pwd })
             }
             else {
                 Err(UnacceptableAuthorizationLevelError::new(L::auth_name())

@@ -9,7 +9,7 @@ mod valid_token;
 
 pub use auth_pretreator::{AuthLevel, TokenAuth};
 use hmac::Hmac;
-use sea_orm::{strum::FromRepr, FromQueryResult};
+use sea_orm::FromQueryResult;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 
@@ -40,6 +40,7 @@ crate::quick_struct! {
     pub VerifiedAuthInfo{
         id:i32
         username:String
+        pwd:String
     }
 }
 
