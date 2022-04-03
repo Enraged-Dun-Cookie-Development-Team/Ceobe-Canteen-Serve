@@ -3,7 +3,6 @@ pub mod config;
 pub mod db_manager;
 pub mod db_selector;
 pub mod error;
-pub mod module_register;
 pub mod mongo_build;
 pub mod mongo_manager;
 

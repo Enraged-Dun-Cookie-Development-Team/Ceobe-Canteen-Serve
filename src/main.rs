@@ -10,10 +10,10 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use serves::{AdminUserController, CeobeController, MansionController};
+use serves::{AdminUserController, CeobeController, MansionController, MansionModel};
 use user_create::create::create_default_user;
 use utils::{
-    http_serve::MongoRegister, middleware::benchmark::BenchMarkFactor,
+    middleware::benchmark::BenchMarkFactor,
     mongodb_utils::mongo_build::MongoBuild, user_authorize,
 };
 
@@ -33,6 +33,11 @@ generate_controller!(
     // database not add yet
     MansionController,
     AdminUserController
+);
+
+generate_model_register!(
+    RootModel,
+    MansionModel
 );
 
 #[actix_web::main]
@@ -69,7 +74,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     let mongo_conn = MongoBuild::with_config(&config.mongodb)
         .await
         .expect("无法连接到MongoDb")
-        .register_collections(MansionController::mongo_register())
+        .register_collections(RootModel)
         .await
         .build();
     // 配置文件打包
