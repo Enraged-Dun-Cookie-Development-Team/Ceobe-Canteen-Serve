@@ -23,9 +23,9 @@ pub(super) async fn save_mansion(
     ReqPretreatment(json): MansionBodyCheckerPretreatment,
     ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<()> {
-    let mid = mid?.id;
-    let data = json?;
-    let db = db?;
+    let mid = mid.id;
+    let data = json;
+    let db = db;
 
     match mid {
         Some(MansionId { main_id, minor_id }) => {
@@ -102,8 +102,8 @@ pub(super) async fn get_mansion(
     ReqPretreatment(mid): MidCheckerPretreatment,
     ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<ViewMansion> {
-    let MansionId { main_id, minor_id } = mid?.id;
-    let db = db?;
+    let MansionId { main_id, minor_id } = mid.id;
+    let db = db;
 
     let filter = doc! {
         "id" : {
@@ -136,7 +136,7 @@ pub(super) async fn get_all_id(
         }
     };
 
-    let resp = db?
+    let resp = db
         .doing::<_, ModelMansion, _, _>(|collect| {
             async move {
                 let collect = collect.clone_with_type::<Mid>();
@@ -168,7 +168,7 @@ pub(super) async fn remove_mansion(
     ReqPretreatment(db): MansionMongoDbPretreatment,
     ReqPretreatment(mid): MidCheckerPretreatment,
 ) -> MansionRResult<()> {
-    let MansionId { main_id, minor_id } = mid?.id;
+    let MansionId { main_id, minor_id } = mid.id;
     let filter = doc! {
         "id" : {
             "main_id":main_id
@@ -176,7 +176,7 @@ pub(super) async fn remove_mansion(
             "minor_id":minor_id as i32
         }
     };
-    db?.doing::<_, ModelMansion, _, ()>(|collect| {
+    db.doing::<_, ModelMansion, _, ()>(|collect| {
         async move {
             collect.delete_one(filter, None).await?;
             Ok(())

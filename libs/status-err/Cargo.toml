@@ -37,3 +37,6 @@ path = "../range-limit"
 [dependencies.resp-result]
 version = "0.1"
 features = ["extra-code", "log"]
+
+[dependencies.request-pretreat]
+version="0.1.1"

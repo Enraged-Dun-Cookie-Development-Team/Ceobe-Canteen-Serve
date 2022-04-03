@@ -86,8 +86,8 @@ impl Pretreatment for MongoDbSelector {
 
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
-    fn call<'db>(
-        req: &'db actix_web::HttpRequest, _: &'db mut actix_http::Payload,
+    fn proc(
+        req: &actix_web::HttpRequest, _: & mut actix_http::Payload,
     ) -> Self::Fut {
         let mongo = req
             .app_data::<Data<MongoManager>>()

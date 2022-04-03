@@ -5,6 +5,7 @@ use db_entity::sea_orm_active_enums::Auth;
 use lazy_static::__Deref;
 use orm_migrate::sea_query::Expr;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
+use request_pretreat::prefabs::DefaultValue;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect, Set,
 };
@@ -20,9 +21,9 @@ use crate::{
         AdminUserRResult,
     },
     utils::{
-        data_checker::PretreatChecker,
+        data_checker::{PretreatChecker, DataChecker},
         req_pretreatment::{
-            prefabs::{Json, MapErr, Null, Query, ToRResult},
+            prefabs::{Json, MapErr, Query, ToRResult},
             ReqPretreatment,
         },
         user_authorize::{
@@ -63,10 +64,10 @@ async fn create_user(
     >,
     db: Data<ServeDatabase>,
 ) -> AdminUserRResult<CreateUser> {
-    let permission = query.0?.permission;
+    let permission = query.0.permission;
 
     // token鉴权
-    auth.0?;
+    auth.0;
 
     // 生成随机用户名密码
     let rand_username: String = thread_rng()
@@ -127,7 +128,7 @@ async fn login(
     db: Data<ServeDatabase>,
 ) -> AdminUserRResult<UserToken> {
     // 从请求体获取信息
-    let body = body?;
+    let body = body;
 
     // 查询数据库
     let user = db_entity::user::Entity::find()
@@ -181,7 +182,7 @@ async fn login(
 async fn get_info(
     user: Authentication<AuthError>,
 ) -> AdminUserRResult<UserInfo> {
-    let AuthInfo { auth, username, .. } = user.0?;
+    let AuthInfo { auth, username, .. } = user.0;
 
     let user_info = UserInfo {
         roles: [auth],
@@ -197,16 +198,16 @@ async fn change_username(
     ReqPretreatment(username): ReqPretreatment<
         ToRResult<
             MapErr<
-                PretreatChecker<Null, Json<UsernameUncheck>, UsernameChecker>,
+                PretreatChecker<DefaultValue<<UsernameChecker as DataChecker>::Args>, Json<UsernameUncheck>, UsernameChecker>,
                 AdminUserError,
             >,
         >,
     >,
     db: Data<ServeDatabase>,
 ) -> AdminUserRResult<UserName> {
-    let id = user.0?.id;
+    let id = user.0.id;
 
-    let username = username?.username;
+    let username = username.username;
 
     let user = db_entity::user::Entity::update_many()
         .col_expr(
@@ -232,10 +233,10 @@ async fn change_password(
     >,
     db: Data<ServeDatabase>,
 ) -> AdminUserRResult<UserToken> {
-    let user = user.0?;
+    let user = user.0;
     let id = user.id;
     let password = user.password;
-    let body = body?;
+    let body = body;
 
     let old_password = body.old_password;
     let new_password = body.new_password;

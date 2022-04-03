@@ -53,14 +53,14 @@ impl Pretreatment for TokenAuth {
     // 异步返回的fut
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
-    fn call<'r>(
-        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
+    fn proc(
+        req: & actix_web::HttpRequest, payload: & mut actix_http::Payload,
     ) -> Self::Fut {
         let db = req
             .app_data::<Data<ServeDatabase<sea_orm::DatabaseConnection>>>()
             .expect("Database Connect Not Found In AppData")
             .clone();
-        let token = HeaderInfo::<Token>::call(req, payload);
+        let token = HeaderInfo::<Token>::proc(req, payload);
 
         async move {
             // 获取token

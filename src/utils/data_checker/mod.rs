@@ -59,11 +59,11 @@ where
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     #[inline]
-    fn call<'r>(
-        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
+    fn proc(
+        req: &actix_web::HttpRequest, payload: & mut actix_http::Payload,
     ) -> Self::Fut {
-        let args_fut = Pargs::call(req, payload);
-        let uncheck_fut = Punchecked::call(req, payload);
+        let args_fut = Pargs::proc(req, payload);
+        let uncheck_fut = Punchecked::proc(req, payload);
 
         async move {
             let args = args_fut.await.map_err(Into::into)?;
@@ -71,6 +71,26 @@ where
 
             let checked = C::checker(args, uncheck).await?;
             Ok(checked)
+        }
+    }
+}
+
+pub struct OptionChecker<C: DataChecker>(PhantomData<C>);
+
+impl<C: DataChecker> DataChecker for OptionChecker<C> {
+    type Args = C::Args;
+    type Checked = Option<C::Checked>;
+    type Err = C::Err;
+    type Unchecked = Option<C::Unchecked>;
+
+    type Fut = impl Future<Output = Result<Self::Checked, Self::Err>>;
+
+    fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+        async move {
+            match uncheck {
+                Some(uc) => C::checker(args, uc).await.map(Some),
+                None => Ok(Self::Checked::None),
+            }
         }
     }
 }
