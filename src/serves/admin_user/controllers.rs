@@ -237,8 +237,8 @@ async fn change_password(
     let password = user.password;
     let body = body?;
 
-    let old_password = body.oldpassword;
-    let new_password = body.newpassword;
+    let old_password = body.old_password;
+    let new_password = body.new_password;
 
     // 密码转换成crypto_str类型
     let old_password =

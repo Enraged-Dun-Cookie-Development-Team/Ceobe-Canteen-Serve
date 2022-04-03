@@ -18,15 +18,7 @@ use crate::{
     utils::req_pretreatment::ReqPretreatment,
 };
 
-use actix_web::{get, post};
-use chrono::Local;
-use futures::StreamExt;
-use mongodb::{bson::doc, options::FindOptions};
 
-use super::{
-    super::MansionRResult, MansionBodyCheckerPretreatment, MansionMongoDbPretreatment,
-    OptionMidCheckerPretreatment,
-};
 
 
 #[post("/upload")]
@@ -155,6 +147,7 @@ pub(super) async fn get_all_id(
                 let v = v?;
                 resp.push(v);
             }
+            Ok(resp)
         })
         .await?
         .into_iter()
