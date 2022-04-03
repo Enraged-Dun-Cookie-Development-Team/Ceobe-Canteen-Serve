@@ -1,4 +1,4 @@
-use std::{marker::PhantomData, vec::IntoIter};
+use std::{convert::Infallible, marker::PhantomData, vec::IntoIter};
 
 use futures::future::ok;
 use futures_util::future::Ready;
@@ -46,16 +46,17 @@ pub trait FromHeaders {
     fn header_name() -> &'static str;
 }
 
-impl<H> actix_web::FromRequest for HeaderInfo<H>
+impl<H> request_pretreat::Treater for HeaderInfo<H>
 where
     H: FromHeaders,
 {
-    type Error = actix_web::Error;
-    type Future = Ready<Result<Self, Self::Error>>;
+    type Err = Infallible;
+    type Fut = Ready<Result<Self::Resp, Self::Err>>;
+    type Resp = Self;
 
-    fn from_request(
-        req: &actix_web::HttpRequest, _payload: &mut actix_web::dev::Payload,
-    ) -> Self::Future {
+    fn proc(
+        req: &actix_web::HttpRequest, payload: &mut actix_web::dev::Payload,
+    ) -> Self::Fut {
         let header = req.headers();
         let res = header
             .get_all(H::header_name())

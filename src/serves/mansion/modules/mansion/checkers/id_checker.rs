@@ -3,7 +3,7 @@ use futures_util::future::{ready, Ready};
 use crate::{
     serves::mansion::error::{MansionError, UnknownId},
     utils::{
-        data_checker::DataChecker, req_pretreatment::prefabs::OptionChecker,
+        data_checker::{DataChecker, OptionChecker},
     },
 };
 

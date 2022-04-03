@@ -18,10 +18,10 @@ impl<L: AuthLevelVerify> Pretreatment for AuthLevel<L> {
 
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
-    fn call<'r>(
-        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
+    fn proc(
+        req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,
     ) -> Self::Fut {
-        let task = TokenAuth::call(req, payload);
+        let task = TokenAuth::proc(req, payload);
 
         async move {
             let info = task.await?;

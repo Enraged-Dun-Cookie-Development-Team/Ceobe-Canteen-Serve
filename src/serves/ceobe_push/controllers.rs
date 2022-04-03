@@ -42,7 +42,7 @@ async fn update(
         ToRResult<MapErr<Json<DataSourceFilter>, CeobeError>>,
     >,
 ) -> CeobeRResult<LazyLoad> {
-    let filter = filter.unwrap()?;
+    let filter = filter.unwrap();
     let res = updater
         .as_ref()
         .lazy_load(&filter)
