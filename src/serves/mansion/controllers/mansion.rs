@@ -11,7 +11,7 @@ use crate::{
     serves::mansion::{
         controllers::{MansionAuthentication, MidCheckerPretreatment},
         error::{MansionIdExist, MansionNotFound},
-        modules::mansion::{MansionId, Mid, ModelMansion, ModifyAt},
+        models::mansion::{MansionId, Mid, ModelMansion, ModifyAt},
         view::ViewMansion,
     },
     utils::req_pretreatment::ReqPretreatment,

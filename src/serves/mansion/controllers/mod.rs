@@ -1,6 +1,6 @@
 use super::{
     error::MansionError,
-    modules::mansion::{
+    models::mansion::{
         MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
     },
 };
@@ -27,11 +27,6 @@ crate::generate_controller!(
     mansion::remove_mansion
 );
 
-crate::extra_module!(
-    MansionController=>crate::generate_collection_register!(
-        loading_model
-    )
-);
 
 crate::new_auth_level! {
     pub(super) MansionAuth=>[

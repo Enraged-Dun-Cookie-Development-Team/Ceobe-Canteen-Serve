@@ -1,7 +1,7 @@
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 use crate::{
-    serves::mansion::modules::mansion::ModelMansion,
+    serves::mansion::models::mansion::ModelMansion,
     utils::mongodb_utils::db_manager::DbBuild,
 };
 

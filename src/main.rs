@@ -10,12 +10,10 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-
-use serves::admin_group::AdminWrapController;
-use serves::admin_group::AdminWrapModel;
-use serves::non_admin_group::CanteenWrapController;
-use serves::non_admin_group::CanteenWrapModel;
-
+use serves::{
+    admin_group::{AdminWrapController, AdminWrapModel},
+    non_admin_group::{CanteenWrapController, CanteenWrapModel},
+};
 use user_create::create::create_default_user;
 use utils::{
     middleware::benchmark::BenchMarkFactor,
@@ -38,11 +36,7 @@ generate_controller!(
     CanteenWrapController
 );
 
-generate_model_register!(
-    RootModel,
-    AdminWrapModel,
-    CanteenWrapModel
-);
+generate_model_register!(RootModel, AdminWrapModel, CanteenWrapModel);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
