@@ -7,22 +7,27 @@ use crate::{
     utils::{
         mongodb_utils::error::MongoDbError,
         req_pretreatment::prefabs::{JsonError, PathError},
+        user_authorize::error::AuthError,
     },
 };
 
 error_generate!(
     pub MansionError
-    Orm=sea_orm::DbErr
+    // request entity error
+    Auth=AuthError
+    Path=PathError
+    Json=JsonError
+    Query=QueryPayloadError
+    //db error
+    Mongo=MongoDbError
+    // data parse error
+    Date=chrono::ParseError
+    // check error
+    Range=range_limit::Error
     Id=UnknownId
     NotFound=MansionNotFound
     Fraction=BadFraction
-    Range=range_limit::Error
-    Path=PathError
-    Date=chrono::ParseError
     Predict=UnknownPredictType
-    Json=JsonError
-    Query=QueryPayloadError
-    Mongo=MongoDbError
     MansionExist=MansionIdExist
 );
 

@@ -10,7 +10,12 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use serves::{AdminUserController, CeobeController, MansionController, MansionModel};
+
+use serves::admin_group::AdminWrapController;
+use serves::admin_group::AdminWrapModel;
+use serves::non_admin_group::CanteenWrapController;
+use serves::non_admin_group::CanteenWrapModel;
+
 use user_create::create::create_default_user;
 use utils::{
     middleware::benchmark::BenchMarkFactor,
@@ -29,15 +34,14 @@ extern crate serde;
 generate_controller!(
     RootController,
     "/api/v0",
-    CeobeController,
-    // database not add yet
-    MansionController,
-    AdminUserController
+    AdminWrapController,
+    CanteenWrapController
 );
 
 generate_model_register!(
     RootModel,
-    MansionModel
+    AdminWrapModel,
+    CanteenWrapModel
 );
 
 #[actix_web::main]
