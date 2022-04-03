@@ -30,7 +30,7 @@ impl MongoManagerBuild {
 
         let db = db_client.default_database().map(DbBuild::new);
 
-        log::info!("默认数据库为 {}",db.is_some());
+        log::info!("默认数据库为 {}", db.is_some());
 
         Ok(Self { db_client, db })
     }
@@ -38,17 +38,12 @@ impl MongoManagerBuild {
     pub fn get_moved_db(&mut self) -> DbBuild {
         self.db.take().expect("DbBuild不存在")
     }
-    pub fn set_db(&mut self, db: DbBuild) {
-        self.db = Some(db)
-    }
+
+    pub fn set_db(&mut self, db: DbBuild) { self.db = Some(db) }
 }
 
 impl MongoManager {
-    pub fn get_db(&self) -> &DbManager {
-        &self.db
-    }
+    pub fn get_db(&self) -> &DbManager { &self.db }
 
-    pub fn into_data(self) -> Data<Self> {
-        Data::new(self)
-    }
+    pub fn into_data(self) -> Data<Self> { Data::new(self) }
 }

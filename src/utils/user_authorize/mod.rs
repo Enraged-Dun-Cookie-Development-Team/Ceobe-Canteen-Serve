@@ -1,46 +1,69 @@
+pub mod config;
+pub mod error;
+pub mod token_loader;
+
+mod auth_level_check;
 mod auth_pretreator;
 mod set_token;
 mod valid_token;
 
-pub use auth_pretreator::{
-    AuthError, AuthInfo, AuthLevel, PasswordWrong, TokenAuth, TokenNotFound, UserNotFound,
-};
+pub use auth_pretreator::{TokenAuth, AuthLevel};
+use hmac::Hmac;
 pub use set_token::GenerateToken;
-
-use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
-use hmac::{digest::InvalidLength, Hmac, Mac};
-use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 
-pub type Authentication<E> =
-    ReqPretreatment<crate::utils::req_pretreatment::prefabs::ToRResult<MapErr<TokenAuth, E>>>;
+use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
+use crate::utils::req_pretreatment::prefabs::ToRResult;
 
-#[derive(Serialize, Deserialize, PartialEq, Eq, Debug)]
-pub struct User {
-    id: i32,
-    password: String,
+pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
+pub type AuthenticationLevel<L, E> =
+    ReqPretreatment<ToRResult<MapErr<auth_level::AuthLevel<L>, E>>>;
+
+crate::quick_struct! {
+
+    #[derive(PartialEq, Eq)]
+    pub User{
+        id:i32
+        password:String
+    }
+
+    /// 用户权限信息
+    pub AuthInfo{
+        id: i32
+        /// 权限
+        auth: AuthLevel
+        username: String
+    }
+
+    pub VerifiedAuthInfo{
+        id:i32
+        username:String
+    }
 }
 
-static JWT_KEY: state::Storage<Hmac<Sha256>> = state::Storage::new();
-
-pub fn set_key(key: &[u8]) -> Result<(), InvalidLength> {
-    if JWT_KEY.set(Hmac::new_from_slice(key)?) {
-        Ok(())
-    } else {
-        panic!("jwt密钥重复生成")
-    }
+pub fn set_auth_config<C>(cfg: &C)
+where
+    C: config::AuthConfig,
+{
+    config::set_auth_config(cfg)
 }
 
 /// 获取jwt密钥
-fn get_key() -> &'static Hmac<Sha256> {
-    if let None = JWT_KEY.try_get() {
-        let rand_key: [u8; 32] = rand::random();
-        JWT_KEY.set(Hmac::new_from_slice(&rand_key).expect("jwt密钥生成失败"));
-    }
-    JWT_KEY.get()
-}
+fn get_key() -> &'static Hmac<Sha256> { config::get_jwt_key() }
 
-pub type PasswordEncoder = crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
+pub type PasswordEncoder =
+    crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
+
+/// 权限等级鉴定模块
+pub mod auth_level {
+    pub use super::auth_level_check::{
+        error::UnacceptableAuthorizationLevelError, pretreator::AuthLevel,
+        AuthLevelVerify,
+    };
+    pub mod prefabs {
+        pub use super::super::auth_level_check::prefabs::*;
+    }
+}
 
 #[cfg(test)]
 mod test {

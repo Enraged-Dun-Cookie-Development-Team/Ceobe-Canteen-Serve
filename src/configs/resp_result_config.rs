@@ -23,17 +23,13 @@ pub struct RespResultConfig {
 impl ConfigTrait for RespResultConfig {}
 
 impl resp_result::SerdeConfig for RespResultConfig {
-    fn body_name(&self) -> Cow<'static, str> {
-        self.body_name.clone().into()
-    }
+    fn body_name(&self) -> Cow<'static, str> { self.body_name.clone().into() }
 
     fn err_msg_name(&self) -> Cow<'static, str> {
         self.err_msg_name.clone().into()
     }
 
-    fn full_field(&self) -> bool {
-        self.full_field
-    }
+    fn full_field(&self) -> bool { self.full_field }
 
     fn signed_base_status(&self) -> Option<Cow<'static, str>> {
         self.signed_status

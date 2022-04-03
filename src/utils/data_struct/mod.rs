@@ -7,4 +7,5 @@ pub mod header_info;
 
 pub type RangeLimitString<const L: usize, const H: usize> =
     RangeBoundLimit<String, DoubleEndLimit<L, H>>;
-pub type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
+pub type MaxLimitString<const H: usize> =
+    RangeBoundLimit<String, MaxLimit<H>>;

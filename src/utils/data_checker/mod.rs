@@ -5,15 +5,13 @@ mod load_from_args;
 pub mod no_check;
 mod ref_checker;
 
-use futures::Future;
-
 use std::marker::PhantomData;
 
-use super::req_pretreatment::Pretreatment;
-
+pub use check_require::*;
+use futures::Future;
 pub use ref_checker::RefChecker;
 
-pub use check_require::*;
+use super::req_pretreatment::Pretreatment;
 
 pub trait DataChecker {
     /// 未经过检查时的值
@@ -45,7 +43,8 @@ where
     Punchecked::Err: Into<C::Err>,
     C::Checked: 'static;
 
-impl<Pargs, Punchecked, C> Pretreatment for PretreatChecker<Pargs, Punchecked, C>
+impl<Pargs, Punchecked, C> Pretreatment
+    for PretreatChecker<Pargs, Punchecked, C>
 where
     C: DataChecker,
     Pargs: Pretreatment<Resp = C::Args>,
@@ -54,16 +53,14 @@ where
     Punchecked::Err: Into<C::Err>,
     C::Checked: 'static,
 {
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-
+    type Err = C::Err;
     type Resp = C::Checked;
 
-    type Err = C::Err;
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     #[inline]
     fn call<'r>(
-        req: &'r actix_web::HttpRequest,
-        payload: &'r mut actix_http::Payload,
+        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let args_fut = Pargs::call(req, payload);
         let uncheck_fut = Punchecked::call(req, payload);

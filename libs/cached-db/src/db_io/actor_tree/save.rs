@@ -2,16 +2,13 @@ use std::{future::Future, task::Poll};
 
 use sled::IVec;
 
-use crate::utils::ready::Ready;
-
 use super::{ActorTree, ToTree};
+use crate::utils::ready::Ready;
 
 pub struct SavePair<K, V>(K, V);
 
 impl<K, V> SavePair<K, V> {
-    pub fn new(key: K, value: V) -> Self {
-        Self(key, value)
-    }
+    pub fn new(key: K, value: V) -> Self { Self(key, value) }
 }
 
 impl<K, V, T> tower::Service<SavePair<K, V>> for ActorTree<T>
@@ -20,15 +17,12 @@ where
     V: Into<sled::IVec>,
     K: AsRef<[u8]>,
 {
+    type Error = sled::Error;
+    type Future = Ready<Result<Self::Response, Self::Error>>;
     type Response = Option<IVec>;
 
-    type Error = sled::Error;
-
-    type Future = Ready<Result<Self::Response, Self::Error>>;
-
     fn poll_ready(
-        &mut self,
-        _cx: &mut std::task::Context<'_>,
+        &mut self, _cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Result<(), Self::Error>> {
         Poll::Ready(Ok(()))
     }
@@ -52,13 +46,14 @@ where
     Ks: tower::Service<Kr, Response = K>,
     Vs: tower::Service<Vr, Response = V>,
 {
-    type Response = SavePair<K, V>;
-
     type Error = SavePairError<Ks::Error, Vs::Error>;
+    type Response = SavePair<K, V>;
 
     type Future = impl Future<Output = Result<Self::Response, Self::Error>>;
 
-    fn poll_ready(&mut self, cx: &mut std::task::Context<'_>) -> Poll<Result<(), Self::Error>> {
+    fn poll_ready(
+        &mut self, cx: &mut std::task::Context<'_>,
+    ) -> Poll<Result<(), Self::Error>> {
         match self.0.poll_ready(cx) {
             Poll::Ready(res) => match res.map_err(SavePairError::Key) {
                 Ok(_) => self.1.poll_ready(cx).map_err(SavePairError::Value),

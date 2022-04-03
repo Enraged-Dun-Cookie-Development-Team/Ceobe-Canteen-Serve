@@ -15,13 +15,13 @@ pub fn init_std(config: LoggerConfig) -> Result<(), log::SetLoggerError> {
 }
 
 pub fn init<A: LoggerAdapter + Sync + Send + 'static>(
-    config: LoggerConfig,
-    adapter: A,
+    config: LoggerConfig, adapter: A,
 ) -> Result<(), log::SetLoggerError> {
     std::panic::set_hook(Box::new(panic_hook));
 
     let filter = config.level_filter.clone();
     let logger = Logger::new(config, adapter);
 
-    log::set_boxed_logger(Box::new(logger)).map(|()| log::set_max_level(filter))
+    log::set_boxed_logger(Box::new(logger))
+        .map(|()| log::set_max_level(filter))
 }

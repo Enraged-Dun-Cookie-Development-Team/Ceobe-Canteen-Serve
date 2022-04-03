@@ -16,15 +16,14 @@ where
     L: Pretreatment,
     R: Pretreatment,
 {
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-
+    type Err = PairErr<L::Err, R::Err>;
     type Resp = (L::Resp, R::Resp);
 
-    type Err = PairErr<L::Err, R::Err>;
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
+
     #[inline]
     fn call<'r>(
-        req: &'r actix_web::HttpRequest,
-        payload: &'r mut actix_http::Payload,
+        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let l_fut = L::call(req, payload);
         let r_fut = R::call(req, payload);

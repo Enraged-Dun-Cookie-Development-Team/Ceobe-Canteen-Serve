@@ -1,4 +1,5 @@
 use core::fmt::Debug;
+
 use serde::Deserialize;
 
 use super::DataChecker;
@@ -14,15 +15,15 @@ where
     pub fn new(_: D, unchecked: D::Unchecked) -> Self {
         CheckRequire(unchecked)
     }
+
     #[inline]
     pub async fn checking(self, args: D::Args) -> Result<D::Checked, D::Err> {
         D::checker(args, self.0).await
     }
+
     /// 直接获取未检查的数据将是不安全的
     #[inline]
-    pub unsafe fn into_inner(self) -> D::Unchecked {
-        self.0
-    }
+    pub unsafe fn into_inner(self) -> D::Unchecked { self.0 }
 }
 
 impl<D: DataChecker> Debug for CheckRequire<D> {

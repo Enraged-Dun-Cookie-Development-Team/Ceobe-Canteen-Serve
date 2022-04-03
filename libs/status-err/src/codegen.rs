@@ -9,9 +9,10 @@
 ///             [
 ///                 ErrPrefix::CHECKER, //  新建类型的前缀码类型
 ///                 0003: StatusCode::NOT_FOUND
-///                 // |        |------新建异常的Http状态码(可以省略，如果不提供，将使用前缀码默认http状态码)
-///                 // |-------------- 新建类型的异常标识码(唯一)
-///             ]=>"错误的Fraction值范围(0~5)"
+///                 // |
+/// |------新建异常的Http状态码(可以省略，如果不提供，
+/// 将使用前缀码默认http状态码)                 // |--------------
+/// 新建类型的异常标识码(唯一)             ]=>"错误的Fraction值范围(0~5)"
 ///                        // |--------新建异常的描述内容
 ///         }
 ///     ```
@@ -21,10 +22,12 @@
 ///               // |-------------已有类型名称
 ///             std::io::Error
 ///             [
-///                 ErrPrefix::IO,                      // 为已有类型实现时使用的前缀码类型
-///                 0001:                               // 为已有类型实现时使用的异常标识码(唯一)
-///                 StatusCode::INTERNAL_SERVER_ERROR   // 为已有类型实现时使用的Http状态码(可以省略，如果不提供，将使用前缀码默认http状态码)
-///             ]
+///                 ErrPrefix::IO,                      //
+/// 为已有类型实现时使用的前缀码类型                 0001:
+/// // 为已有类型实现时使用的异常标识码(唯一)                 
+/// StatusCode::INTERNAL_SERVER_ERROR   //
+/// 为已有类型实现时使用的Http状态码(可以省略，如果不提供，
+/// 将使用前缀码默认http状态码)             ]
 ///         );
 ///     ```
 macro_rules! status_error {
@@ -122,16 +125,18 @@ macro_rules! resp_error_impl {
     ($t:ty) => {
         /// 实现 Resp -error 可以作为RespResult的异常
         impl resp_result::RespError for $t {
+            type ExtraCode = status_err::status_code::StatusCode;
+
             #[inline]
             fn description(&self) -> std::borrow::Cow<'static, str> {
                 status_err::StatusErr::information(self)
             }
 
-            type ExtraCode = status_err::status_code::StatusCode;
             #[inline]
             fn extra_code(&self) -> Self::ExtraCode {
                 status_err::StatusErr::status(self)
             }
+
             #[inline]
             fn http_code(&self) -> http::StatusCode {
                 status_err::StatusErr::http_code(self)

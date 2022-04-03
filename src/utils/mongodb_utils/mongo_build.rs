@@ -1,14 +1,13 @@
 use actix_web::web::Data;
 use futures::Future;
 
-use crate::database::config::DbConnectConfig;
-
 use super::{
     db_manager::DbBuild,
     module_register::{self},
     mongo_manager::{MongoManager, MongoManagerBuild},
     MongoErr,
 };
+use crate::database::config::DbConnectConfig;
 
 /// Mongo 数据库管理构建器
 pub struct MongoBuild {
@@ -22,7 +21,9 @@ impl MongoBuild {
         })
     }
 
-    pub async fn with_config<C: DbConnectConfig>(cfg: &C) -> Result<Self, MongoErr> {
+    pub async fn with_config<C: DbConnectConfig>(
+        cfg: &C,
+    ) -> Result<Self, MongoErr> {
         let url = format!(
             "{}://{}:{}@{}:{}/{}?authSource=admin",
             cfg.scheme(),
@@ -34,8 +35,9 @@ impl MongoBuild {
         );
         Self::new(url).await
     }
+
     /// 添加一个数据库，并通过 `f` 来配置数据库和内部信息
-    pub async fn add_db<F, Fut>(mut self,  f: F) -> Self
+    pub async fn add_db<F, Fut>(mut self, f: F) -> Self
     where
         Fut: Future<Output = DbBuild>,
         F: FnOnce(DbBuild) -> Fut,
@@ -46,14 +48,14 @@ impl MongoBuild {
         self.inner.set_db(db);
         self
     }
+
     /// 通过数据库注册器注册数据库
     pub async fn register_collections<R: module_register::MongoRegister>(
-        self,
-        register: R,
+        self, register: R,
     ) -> Self {
-        self.add_db( |db| register.register(db))
-            .await
+        self.add_db(|db| register.register(db)).await
     }
+
     /// 完成构建，生成数据库管理器
     pub fn build(self) -> Data<MongoManager> {
         let v: MongoManager = self.inner.into();

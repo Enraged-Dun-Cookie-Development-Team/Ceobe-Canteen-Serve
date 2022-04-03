@@ -1,11 +1,13 @@
+pub mod auth_config;
 pub mod actix_logger;
 pub mod logger;
 pub mod resp_result_config;
 use serde::Deserialize;
 
-use crate::{database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig};
-
-use self::{logger::LoggerConfig, resp_result_config::RespResultConfig};
+use self::{logger::LoggerConfig, resp_result_config::RespResultConfig, auth_config::AuthConfig};
+use crate::{
+    database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig,
+};
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";
 pub const CONFIG_FILE_JSON: &str = "./Config.json";
@@ -25,4 +27,6 @@ pub struct GlobalConfig {
     /// resp Result
     #[serde(alias = "rresult")]
     pub resp_result: RespResultConfig,
+    #[serde(alias="auth",default="Default::default")]
+    pub user_auth:AuthConfig
 }

@@ -1,6 +1,5 @@
-use futures_util::future::ready;
-
 use futures::future::Ready;
+use futures_util::future::ready;
 use range_limit::RangeBoundLimit;
 
 use crate::utils::data_checker::DataChecker;
@@ -10,15 +9,11 @@ where
     T: range_limit::measurable::Measurable,
     Rb: range_limit::RangeBound,
 {
-    type Unchecked = T;
-
     type Args = ();
-
     type Checked = T;
-
     type Err = range_limit::Error;
-
     type Fut = Ready<Result<T, Self::Err>>;
+    type Unchecked = T;
 
     fn checker(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let f = || {

@@ -27,15 +27,11 @@ pub enum Predict {
 pub struct PredictLevelChecker;
 
 impl DataChecker for PredictLevelChecker {
-    type Unchecked = String;
-
     type Args = ();
-
     type Checked = Predict;
-
     type Err = MansionError;
-
     type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
+    type Unchecked = String;
 
     fn checker(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let resp = match uncheck.as_str() {

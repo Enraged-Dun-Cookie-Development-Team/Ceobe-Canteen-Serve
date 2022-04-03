@@ -18,24 +18,22 @@ pub(super) struct BeatTimeout<const TIMEOUT_SEC: u64> {
 }
 
 impl<const TIMEOUT_SEC: u64> Default for BeatTimeout<TIMEOUT_SEC> {
-    fn default() -> Self {
-        Self { last: None }
-    }
+    fn default() -> Self { Self { last: None } }
 }
 
 impl<const TIMEOUT_SEC: u64> BeatTimeout<TIMEOUT_SEC> {
     pub(super) fn check_timeout(&mut self) -> bool {
         if let Some(last) = self.last.take() {
             let now = SystemTime::now();
-            now.duration_since(last).unwrap() <= Duration::from_secs(TIMEOUT_SEC)
-        } else {
+            now.duration_since(last).unwrap()
+                <= Duration::from_secs(TIMEOUT_SEC)
+        }
+        else {
             true
         }
     }
 
-    fn reset(&mut self) {
-        self.last = Some(SystemTime::now())
-    }
+    fn reset(&mut self) { self.last = Some(SystemTime::now()) }
 }
 
 pub(super) struct Beating;
@@ -44,8 +42,7 @@ impl Stream for HeartBeats {
     type Item = Beating;
 
     fn poll_next(
-        self: std::pin::Pin<&mut Self>,
-        cx: &mut std::task::Context<'_>,
+        self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>,
     ) -> Poll<Option<Self::Item>> {
         let this = self.project();
         let interval = this.inner;

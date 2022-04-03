@@ -16,10 +16,12 @@ impl<const L: usize> RangeBound for MinLimit<L> {
     fn match_range(input: usize) -> SizeStatus {
         if input > L {
             SizeStatus::Ok
-        } else {
+        }
+        else {
             SizeStatus::TooSmall(L)
         }
     }
 }
 
-pub type MinRangeLimit<T, const MIN: usize> = RangeBoundLimit<T, MinLimit<MIN>>;
+pub type MinRangeLimit<T, const MIN: usize> =
+    RangeBoundLimit<T, MinLimit<MIN>>;

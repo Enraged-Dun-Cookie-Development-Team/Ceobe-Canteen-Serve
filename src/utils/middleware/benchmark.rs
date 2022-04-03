@@ -1,8 +1,8 @@
 use actix_service::{Service, Transform};
-
-use futures::future::{ok, Ready};
-
-use futures::Future;
+use futures::{
+    future::{ok, Ready},
+    Future,
+};
 
 pub struct BenchMark<S> {
     service: S,
@@ -13,15 +13,13 @@ where
     S: Service<Req>,
     S::Future: 'static,
 {
-    type Response = S::Response;
-
     type Error = S::Error;
+    type Response = S::Response;
 
     type Future = impl Future<Output = Result<Self::Response, Self::Error>>;
 
     fn poll_ready(
-        &self,
-        ctx: &mut std::task::Context<'_>,
+        &self, ctx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Result<(), Self::Error>> {
         self.service.poll_ready(ctx)
     }
@@ -35,7 +33,10 @@ where
 
             let using_time = resp_outcome.duration_since(req_income).unwrap();
 
-            log::info!("Handling Request Done Using [{}ms]", using_time.as_millis());
+            log::info!(
+                "Handling Request Done Using [{}ms]",
+                using_time.as_millis()
+            );
 
             res
         }
@@ -49,15 +50,11 @@ where
     S: Service<Req>,
     S::Future: 'static,
 {
-    type Response = S::Response;
-
     type Error = S::Error;
-
-    type Transform = BenchMark<S>;
-
-    type InitError = ();
-
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
+    type InitError = ();
+    type Response = S::Response;
+    type Transform = BenchMark<S>;
 
     fn new_transform(&self, service: S) -> Self::Future {
         ok(BenchMark { service })

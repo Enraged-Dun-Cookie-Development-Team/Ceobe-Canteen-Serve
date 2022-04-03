@@ -10,15 +10,19 @@ impl<const L: usize, const H: usize> RangeBound for DoubleEndLimit<L, H> {
     fn match_range(input: usize) -> crate::range_limit::SizeStatus {
         if input > L && input < H {
             SizeStatus::Ok
-        } else if input < L {
+        }
+        else if input < L {
             SizeStatus::TooSmall(L)
-        } else {
+        }
+        else {
             SizeStatus::TooLarge(H)
         }
     }
 }
 
-impl<const L: usize, const H: usize> std::fmt::Debug for DoubleEndLimit<L, H> {
+impl<const L: usize, const H: usize> std::fmt::Debug
+    for DoubleEndLimit<L, H>
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("DoubleEndLimit")
             .field("max-bound", &H)

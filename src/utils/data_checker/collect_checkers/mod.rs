@@ -4,7 +4,9 @@ mod slice_checker;
 mod stream_checker;
 
 pub mod iter_checkers {
-    pub use super::iter_checker::{CheckedIter, IterChecker};
-    pub use super::slice_checker::SliceChecker as IntoIterChecker;
-    pub use super::stream_checker::{CheckedStream, StreamChecker};
+    pub use super::{
+        iter_checker::{CheckedIter, IterChecker},
+        slice_checker::SliceChecker as IntoIterChecker,
+        stream_checker::{CheckedStream, StreamChecker},
+    };
 }

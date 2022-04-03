@@ -5,10 +5,10 @@ impl StatusErr for sea_orm::DbErr {
     fn http_code(&self) -> http::StatusCode {
         http::StatusCode::INTERNAL_SERVER_ERROR
     }
+
     #[inline]
-    fn prefix(&self) -> ErrPrefix {
-        ErrPrefix::SEA_ORM
-    }
+    fn prefix(&self) -> ErrPrefix { ErrPrefix::SEA_ORM }
+
     #[inline]
     fn code(&self) -> u16 {
         match self {

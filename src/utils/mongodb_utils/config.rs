@@ -12,35 +12,19 @@ pub struct MongoDbConfig {
 }
 
 impl DbConnectConfig for MongoDbConfig {
-    fn scheme(&self) -> &str {
-        "mongodb"
-    }
+    fn scheme(&self) -> &str { "mongodb" }
 
-    fn username(&self) -> &str {
-        &self.username
-    }
+    fn username(&self) -> &str { &self.username }
 
-    fn password(&self) -> &str {
-        &self.password
-    }
+    fn password(&self) -> &str { &self.password }
 
-    fn host(&self) -> &str {
-        &self.host
-    }
+    fn host(&self) -> &str { &self.host }
 
-    fn port(&self) -> u16 {
-        self.port
-    }
+    fn port(&self) -> u16 { self.port }
 
-    fn name(&self) -> &str {
-        &self.db_name
-    }
+    fn name(&self) -> &str { &self.db_name }
 }
 
-fn host_default() -> String {
-    "localhost".into()
-}
+fn host_default() -> String { "localhost".into() }
 
-fn port_default() -> u16 {
-    27017
-}
+fn port_default() -> u16 { 27017 }

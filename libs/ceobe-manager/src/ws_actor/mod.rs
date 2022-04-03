@@ -3,28 +3,21 @@ mod heartbeats;
 mod income_handle;
 mod json_loader;
 mod retry_limit;
-use std::fmt::Display;
-use std::sync::Arc;
-
-use awc::error::WsClientError;
-
-use awc::ClientResponse;
+use std::{fmt::Display, sync::Arc};
 
 use actix::{io::SinkWrite, Actor, Addr, AsyncContext, Context};
 use actix_codec::Framed;
-
-use awc::{ws, BoxedSocket};
+use awc::{error::WsClientError, ws, BoxedSocket, ClientResponse};
 use futures_util::stream::{SplitSink, SplitStream, StreamExt};
 
-use crate::updater_loader::UpdateLoader;
-
-use crate::ws_actor::heartbeats::HeartBeats;
-use crate::ws_sender::WsSender;
-
-use self::continuation::Continuation;
-use self::heartbeats::BeatTimeout;
-use self::json_loader::JsonLoader;
-use self::retry_limit::RetryLimit;
+use self::{
+    continuation::Continuation, heartbeats::BeatTimeout,
+    json_loader::JsonLoader, retry_limit::RetryLimit,
+};
+use crate::{
+    updater_loader::UpdateLoader, ws_actor::heartbeats::HeartBeats,
+    ws_sender::WsSender,
+};
 
 type WsFramedSink = SplitSink<Framed<BoxedSocket, ws::Codec>, ws::Message>;
 type WsFramedStream = SplitStream<Framed<BoxedSocket, ws::Codec>>;
@@ -40,9 +33,7 @@ pub struct CeoboWebsocket {
 
 impl CeoboWebsocket {
     pub fn start(
-        uri: &'static str,
-        sink: WsFramedSink,
-        stream: WsFramedStream,
+        uri: &'static str, sink: WsFramedSink, stream: WsFramedStream,
     ) -> (Arc<UpdateLoader>, Arc<WsSender>) {
         #[cfg(feature = "log")]
         log_::info!("Init Ws Actor");
@@ -79,7 +70,8 @@ async fn conn_ws<U>(
 ) -> Result<(ClientResponse, (WsFramedSink, WsFramedStream)), WsClientError>
 where
     actix_http::Uri: TryFrom<U>,
-    <actix_http::Uri as TryFrom<U>>::Error: Into<actix_http::error::HttpError>,
+    <actix_http::Uri as TryFrom<U>>::Error:
+        Into<actix_http::error::HttpError>,
     U: Display,
 {
     let client = awc::Client::builder().finish();
@@ -96,8 +88,11 @@ where
 }
 
 /// [ws client](https://stackoverflow.com/questions/70118994/build-a-websocket-client-using-actix)
-pub async fn start_ws(uri: &'static str) -> (ClientResponse, (Arc<UpdateLoader>, Arc<WsSender>)) {
-    let (resp, (sink, stream)) = conn_ws(uri).await.expect("无法建立到WebSocket的连接");
+pub async fn start_ws(
+    uri: &'static str,
+) -> (ClientResponse, (Arc<UpdateLoader>, Arc<WsSender>)) {
+    let (resp, (sink, stream)) =
+        conn_ws(uri).await.expect("无法建立到WebSocket的连接");
     (resp, CeoboWebsocket::start(uri, sink, stream))
 }
 
@@ -123,7 +118,11 @@ mod test {
             println!("{:?}", bod);
 
             let (slink, stream) = stream.split();
-            let _addr = CeoboWebsocket::start("ws://81.68.101.79:5683/", slink, stream);
+            let _addr = CeoboWebsocket::start(
+                "ws://81.68.101.79:5683/",
+                slink,
+                stream,
+            );
 
             let _s = actix_rt::signal::ctrl_c().await;
         });

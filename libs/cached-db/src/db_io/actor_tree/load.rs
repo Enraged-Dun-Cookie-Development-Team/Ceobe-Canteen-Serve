@@ -1,21 +1,20 @@
 use std::task::Poll;
 
-use crate::utils::ready::Ready;
-
 use super::{ActorTree, ToTree};
+use crate::utils::ready::Ready;
 
 impl<K, T> tower::Service<K> for ActorTree<T>
 where
     T: ToTree,
     K: AsRef<[u8]>,
 {
+    type Error = sled::Error;
+    type Future = Ready<Result<Self::Response, Self::Error>>;
     type Response = Option<sled::IVec>;
 
-    type Error = sled::Error;
-
-    type Future = Ready<Result<Self::Response, Self::Error>>;
-
-    fn poll_ready(&mut self, _cx: &mut std::task::Context<'_>) -> Poll<Result<(), Self::Error>> {
+    fn poll_ready(
+        &mut self, _cx: &mut std::task::Context<'_>,
+    ) -> Poll<Result<(), Self::Error>> {
         Poll::Ready(Ok(()))
     }
 

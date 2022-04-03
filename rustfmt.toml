@@ -1,0 +1,22 @@
+unstable_features = true
+# 每行最大长度
+max_width = 78
+# 合并驱动宏
+merge_derives = true
+combine_control_expr = false
+condense_wildcard_suffixes = true
+control_brace_style = "ClosingNextLine"
+edition = "2021"
+fn_args_layout = "Compressed"
+fn_single_line = true
+force_multiline_blocks = true
+format_macro_matchers = true
+format_strings = true
+inline_attribute_width = 60
+imports_granularity = "Crate"
+normalize_comments = true
+normalize_doc_attributes = true
+reorder_impl_items = true
+group_imports = "StdExternalCrate"
+use_field_init_shorthand = true
+wrap_comments = true

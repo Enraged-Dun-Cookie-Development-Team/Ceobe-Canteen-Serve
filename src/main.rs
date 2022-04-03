@@ -4,16 +4,16 @@ use actix_web::{
     web::{self, Data},
     App, HttpServer,
 };
-
-use configs::{GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML};
+use configs::{
+    GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
+};
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
-
 use figment::providers::{Format, Json, Toml, Yaml};
 use serves::{CeobeController, MansionController};
 use utils::{
     http_serve::MongoRegister, middleware::benchmark::BenchMarkFactor,
-    mongodb_utils::mongo_build::MongoBuild,
+    mongodb_utils::mongo_build::MongoBuild, user_authorize,
 };
 
 mod configs;
@@ -41,14 +41,19 @@ async fn main() -> Result<(), GlobalError> {
         .extract()
         .expect("配置文件解析失败");
 
-    resp_result::set_config(&config.resp_result);
+    // 日志配置
     config.logger.register_logger();
+    // resp 配置
+    resp_result::set_config(&config.resp_result);
+    // 鉴权配置
+    user_authorize::set_auth_config(&config.user_auth);
     task(config).await
 }
 
 async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     // connect to ceobe websocket
-    let (_resp, (updater, sender)) = ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
+    let (_resp, (updater, sender)) =
+        ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
     let updater = Data::from(updater);
     let sender = Data::from(sender);
     // connect to database 连接到数据库
@@ -58,7 +63,8 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     let db_data = Data::new(db_conn);
     // mongo db
     let mongo_conn = MongoBuild::with_config(&config.mongodb)
-        .await.expect("无法连接到MongoDb")
+        .await
+        .expect("无法连接到MongoDb")
         .register_collections(MansionController::mongo_register())
         .await
         .build();

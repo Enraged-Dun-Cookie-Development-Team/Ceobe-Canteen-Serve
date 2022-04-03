@@ -10,15 +10,12 @@ use crate::utils::req_pretreatment::Pretreatment;
 pub struct PathValue<P>(PhantomData<P>);
 
 impl<P: DeserializeOwned> Pretreatment for PathValue<P> {
+    type Err = PathError;
     type Fut = Ready<Result<Self::Resp, Self::Err>>;
-
     type Resp = P;
 
-    type Err = PathError;
-
     fn call<'r>(
-        req: &'r actix_web::HttpRequest,
-        payload: &'r mut actix_http::Payload,
+        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let fut = web::Path::<P>::from_request(req, payload)
             .into_inner()

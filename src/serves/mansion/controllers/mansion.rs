@@ -1,3 +1,13 @@
+use actix_web::{get, post};
+use chrono::Local;
+use futures::StreamExt;
+use mongodb::{bson::doc, options::FindOptions};
+use resp_result::RespResult;
+
+use super::{
+    super::MansionRResult, MansionBodyCheckerPretreatment,
+    MansionMongoDbPretreatment, OptionMidCheckerPretreatment,
+};
 use crate::{
     serves::mansion::{
         controllers::MidCheckerPretreatment,
@@ -7,6 +17,7 @@ use crate::{
     },
     utils::req_pretreatment::ReqPretreatment,
 };
+
 use actix_web::{get, post};
 use chrono::Local;
 use futures::StreamExt;
@@ -16,6 +27,7 @@ use super::{
     super::MansionRResult, MansionBodyCheckerPretreatment, MansionMongoDbPretreatment,
     OptionMidCheckerPretreatment,
 };
+
 
 #[post("/upload")]
 pub(super) async fn save_mansion(
@@ -57,6 +69,7 @@ pub(super) async fn save_mansion(
                 Ok(())
             })
             .await?;
+
         }
         None => {
             let MansionId { main_id, minor_id } = data.id.clone();
@@ -71,6 +84,7 @@ pub(super) async fn save_mansion(
                     collection.count_documents(filter, None).await
                 })
                 .await?;
+
 
             if check == 0 {
                 db.doing::<_, ModelMansion, _, _>(|c| async move {
@@ -131,7 +145,9 @@ pub(super) async fn get_all_id(
             let mut vec = collect
                 .find(
                     filter,
-                    FindOptions::builder().projection(doc! {"id":1i32}).build(),
+                    FindOptions::builder()
+                        .projection(doc! {"id":1i32})
+                        .build(),
                 )
                 .await?;
             let mut resp = Vec::new();

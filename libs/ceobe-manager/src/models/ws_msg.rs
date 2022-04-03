@@ -30,6 +30,4 @@ pub struct DataItem {
     component_data: Option<serde_json::Value>,
 }
 
-fn default_top() -> bool {
-    false
-}
+fn default_top() -> bool { false }

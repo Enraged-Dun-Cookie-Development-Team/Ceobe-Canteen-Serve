@@ -7,9 +7,10 @@ use actix::{Actor, Context, Handler, MessageResult};
 use dashmap::DashMap;
 use tokio::sync::watch;
 
+use super::{
+    CachedFilter, CachedUpdateMsg, CachedWatcherMsg, CheckCachedUpdate,
+};
 use crate::models::{CachedId, DataItem};
-
-use super::{CachedFilter, CachedUpdateMsg, CachedWatcherMsg, CheckCachedUpdate};
 
 #[derive(Debug)]
 pub struct Cached {
@@ -27,11 +28,15 @@ impl Cached {
     pub fn new(timestamp: u64, data: Vec<DataItem>) -> Self {
         #[cfg(feature = "log")]
         {
-            log_::info!("New DataSource Cached Created at TimeStamp({})", timestamp);
+            log_::info!(
+                "New DataSource Cached Created at TimeStamp({})",
+                timestamp
+            );
         }
 
         let update_time = AtomicU64::new(timestamp);
-        let last_record_time = data.iter().map(|f| (f.id.clone(), timestamp)).collect();
+        let last_record_time =
+            data.iter().map(|f| (f.id.clone(), timestamp)).collect();
         let (sender, recv) = watch::channel(data);
 
         Self {
@@ -50,7 +55,9 @@ impl Actor for Cached {
 impl Handler<CachedUpdateMsg> for Cached {
     type Result = MessageResult<CachedUpdateMsg>;
 
-    fn handle(&mut self, msg: CachedUpdateMsg, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self, msg: CachedUpdateMsg, _ctx: &mut Self::Context,
+    ) -> Self::Result {
         let CachedUpdateMsg {
             res_timestamp,
             data,
@@ -76,7 +83,8 @@ impl Handler<CachedUpdateMsg> for Cached {
             .filter_map(|(id, d)| {
                 if let Some(v) = self.last_record_time.remove(&id) {
                     Some(((id, v), d))
-                } else {
+                }
+                else {
                     Some(((id, res_timestamp), d))
                 }
             })
@@ -91,11 +99,14 @@ impl Handler<CachedUpdateMsg> for Cached {
 impl Handler<CheckCachedUpdate> for Cached {
     type Result = MessageResult<CheckCachedUpdate>;
 
-    fn handle(&mut self, msg: CheckCachedUpdate, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self, msg: CheckCachedUpdate, _ctx: &mut Self::Context,
+    ) -> Self::Result {
         let time = msg.0;
         let res = if time > self.update_time.load(Ordering::Relaxed) {
             false
-        } else {
+        }
+        else {
             self.last_record_time.iter().any(|f| f.1 > &time)
         };
         #[cfg(feature = "log")]
@@ -109,7 +120,9 @@ impl Handler<CheckCachedUpdate> for Cached {
 impl Handler<CachedWatcherMsg> for Cached {
     type Result = MessageResult<CachedWatcherMsg>;
 
-    fn handle(&mut self, _msg: CachedWatcherMsg, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self, _msg: CachedWatcherMsg, _ctx: &mut Self::Context,
+    ) -> Self::Result {
         #[cfg(feature = "log")]
         {
             log_::info!("Prevent Cached Watcher");
@@ -121,7 +134,9 @@ impl Handler<CachedWatcherMsg> for Cached {
 impl Handler<CachedFilter> for Cached {
     type Result = MessageResult<CachedFilter>;
 
-    fn handle(&mut self, msg: CachedFilter, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self, msg: CachedFilter, _ctx: &mut Self::Context,
+    ) -> Self::Result {
         let time = msg.0;
 
         let start_idx = self
@@ -136,7 +151,11 @@ impl Handler<CachedFilter> for Cached {
         let range = start_idx..self.recv.borrow().len();
         #[cfg(feature = "log")]
         {
-            log_::info!("Loading New Cached After {} range {:?}", time, range);
+            log_::info!(
+                "Loading New Cached After {} range {:?}",
+                time,
+                range
+            );
         }
         MessageResult(range)
     }

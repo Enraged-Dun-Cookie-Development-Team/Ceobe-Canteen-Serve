@@ -6,4 +6,3 @@ mod modules;
 mod view;
 
 type MansionRResult<T> = RespResult<T, error::MansionError>;
-

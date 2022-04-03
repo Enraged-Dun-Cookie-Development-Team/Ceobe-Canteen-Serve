@@ -7,9 +7,7 @@ use super::EncodeError;
 pub struct Encoder<S>(pub(crate) S);
 
 impl<S> Encoder<S> {
-    pub fn new(inner: S) -> Self {
-        Self(inner)
-    }
+    pub fn new(inner: S) -> Self { Self(inner) }
 }
 
 impl<S, Req> tower::Service<Req> for Encoder<S>
@@ -17,15 +15,13 @@ where
     S: tower::Service<Req>,
     S::Response: Serialize,
 {
-    type Response = Vec<u8>;
-
     type Error = EncodeError<S::Error>;
+    type Response = Vec<u8>;
 
     type Future = impl Future<Output = Result<Self::Response, Self::Error>>;
 
     fn poll_ready(
-        &mut self,
-        cx: &mut std::task::Context<'_>,
+        &mut self, cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Result<(), Self::Error>> {
         self.0.poll_ready(cx).map_err(EncodeError::Inner)
     }
@@ -36,7 +32,8 @@ where
         async move {
             let resp = fut.await.map_err(EncodeError::Inner)?;
 
-            let res = bincode::serialize(&resp).map_err(EncodeError::Encode)?;
+            let res =
+                bincode::serialize(&resp).map_err(EncodeError::Encode)?;
 
             Ok(res)
         }

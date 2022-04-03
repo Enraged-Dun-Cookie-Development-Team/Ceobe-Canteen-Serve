@@ -1,8 +1,11 @@
+use futures_util::future::{ready, Ready};
+
 use crate::{
     serves::mansion::error::{MansionError, UnknownId},
-    utils::{data_checker::DataChecker, req_pretreatment::prefabs::OptionChecker},
+    utils::{
+        data_checker::DataChecker, req_pretreatment::prefabs::OptionChecker,
+    },
 };
-use futures_util::future::{ready, Ready};
 
 crate::check_obj! {
     {#[derive(Debug,serde::Deserialize)]}
@@ -40,15 +43,11 @@ crate::quick_struct! {
 pub struct IdChecker;
 
 impl DataChecker for IdChecker {
-    type Unchecked = String;
-
     type Args = ();
-
     type Checked = MansionId;
-
     type Err = MansionError;
-
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
+    type Unchecked = String;
 
     fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let task = move || {

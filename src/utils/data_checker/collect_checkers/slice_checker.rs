@@ -19,13 +19,10 @@ where
     C: DataChecker<Unchecked = S::Item>,
     C::Args: Clone,
 {
-    type Unchecked = S;
-
     type Args = C::Args;
-
     type Checked = O;
-
     type Err = C::Err;
+    type Unchecked = S;
 
     type Fut = impl Future<Output = Result<Self::Checked, Self::Err>>;
 

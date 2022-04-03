@@ -1,7 +1,8 @@
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 use crate::{
-    serves::mansion::modules::mansion::ModelMansion, utils::mongodb_utils::db_manager::DbBuild,
+    serves::mansion::modules::mansion::ModelMansion,
+    utils::mongodb_utils::db_manager::DbBuild,
 };
 
 pub mod mansion;
@@ -9,7 +10,9 @@ pub mod mansion;
 const MANSION_IDX_NAME: &str = "mansion_idx";
 const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
 
-pub(in crate::serves::mansion) async fn loading_model(mut db: DbBuild) -> DbBuild {
+pub(in crate::serves::mansion) async fn loading_model(
+    mut db: DbBuild,
+) -> DbBuild {
     db.add_collection_operate(|d, _n| async move {
         let mansion = d.collection::<ModelMansion>("mansion-data");
 
@@ -44,7 +47,9 @@ pub(in crate::serves::mansion) async fn loading_model(mut db: DbBuild) -> DbBuil
                         })
                         .options(
                             IndexOptions::builder()
-                                .name(MANSION_CREATE_TIME_IDX_NAME.to_string())
+                                .name(
+                                    MANSION_CREATE_TIME_IDX_NAME.to_string(),
+                                )
                                 .build(),
                         )
                         .build(),

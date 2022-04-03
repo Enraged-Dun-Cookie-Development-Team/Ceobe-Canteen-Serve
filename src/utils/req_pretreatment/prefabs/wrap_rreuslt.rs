@@ -2,9 +2,9 @@ use std::{convert::Infallible, marker::PhantomData};
 
 use futures::Future;
 use resp_result::RespResult;
+
 // use rresult::RResult;
 // use status_err::StatusErr;
-
 use crate::utils::req_pretreatment::Pretreatment;
 
 pub struct WrapRResult<P>(PhantomData<P>)
@@ -17,15 +17,14 @@ where
     P: Pretreatment,
     P::Err: resp_result::RespError,
 {
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-
+    type Err = Infallible;
     type Resp = RespResult<P::Resp, P::Err>;
 
-    type Err = Infallible;
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
+
     #[inline]
     fn call<'r>(
-        req: &'r actix_web::HttpRequest,
-        payload: &'r mut actix_http::Payload,
+        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let task = P::call(req, payload);
         async move {

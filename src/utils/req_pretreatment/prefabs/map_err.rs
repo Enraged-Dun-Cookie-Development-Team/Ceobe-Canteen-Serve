@@ -14,15 +14,14 @@ where
     P: Pretreatment,
     P::Err: Into<E>,
 {
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-
+    type Err = E;
     type Resp = P::Resp;
 
-    type Err = E;
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
+
     #[inline]
     fn call<'r>(
-        req: &'r actix_web::HttpRequest,
-        payload: &'r mut actix_http::Payload,
+        req: &'r actix_web::HttpRequest, payload: &'r mut actix_http::Payload,
     ) -> Self::Fut {
         let task = P::call(req, payload);
         async move {

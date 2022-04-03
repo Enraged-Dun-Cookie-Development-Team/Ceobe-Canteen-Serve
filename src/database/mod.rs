@@ -1,5 +1,7 @@
 pub mod traits;
-use sea_orm::{ConnectOptions, ConnectionTrait, Database, Statement, TransactionTrait};
+use sea_orm::{
+    ConnectOptions, ConnectionTrait, Database, Statement, TransactionTrait,
+};
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
@@ -45,9 +47,7 @@ impl<D> AsRef<D> for ServeDatabase<D>
 where
     D: sea_orm::ConnectionTrait,
 {
-    fn as_ref(&self) -> &D {
-        &self.0
-    }
+    fn as_ref(&self) -> &D { &self.0 }
 }
 
 #[async_trait::async_trait]
@@ -59,20 +59,20 @@ where
         self.0.get_database_backend()
     }
 
-    async fn execute(&self, stmt: Statement) -> Result<sea_orm::ExecResult, sea_orm::DbErr> {
+    async fn execute(
+        &self, stmt: Statement,
+    ) -> Result<sea_orm::ExecResult, sea_orm::DbErr> {
         self.0.execute(stmt).await
     }
 
     async fn query_one(
-        &self,
-        stmt: Statement,
+        &self, stmt: Statement,
     ) -> Result<Option<sea_orm::QueryResult>, sea_orm::DbErr> {
         self.0.query_one(stmt).await
     }
 
     async fn query_all(
-        &self,
-        stmt: Statement,
+        &self, stmt: Statement,
     ) -> Result<Vec<sea_orm::QueryResult>, sea_orm::DbErr> {
         self.0.query_all(stmt).await
     }
@@ -82,8 +82,12 @@ impl<D: TransactionTrait> TransactionTrait for ServeDatabase<D> {
         &'life0 self,
     ) -> core::pin::Pin<
         Box<
-            dyn core::future::Future<Output = Result<sea_orm::DatabaseTransaction, sea_orm::DbErr>>
-                + core::marker::Send
+            dyn core::future::Future<
+                    Output = Result<
+                        sea_orm::DatabaseTransaction,
+                        sea_orm::DbErr,
+                    >,
+                > + core::marker::Send
                 + 'async_trait,
         >,
     >
@@ -95,12 +99,12 @@ impl<D: TransactionTrait> TransactionTrait for ServeDatabase<D> {
     }
 
     fn transaction<'life0, 'async_trait, F, T, E>(
-        &'life0 self,
-        callback: F,
+        &'life0 self, callback: F,
     ) -> core::pin::Pin<
         Box<
-            dyn core::future::Future<Output = Result<T, sea_orm::TransactionError<E>>>
-                + core::marker::Send
+            dyn core::future::Future<
+                    Output = Result<T, sea_orm::TransactionError<E>>,
+                > + core::marker::Send
                 + 'async_trait,
         >,
     >

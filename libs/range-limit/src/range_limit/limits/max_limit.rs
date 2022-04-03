@@ -10,7 +10,8 @@ impl<const L: usize> RangeBound for MaxLimit<L> {
     fn match_range(input: usize) -> crate::range_limit::SizeStatus {
         if input < L {
             SizeStatus::Ok
-        } else {
+        }
+        else {
             SizeStatus::TooLarge(L)
         }
     }
@@ -22,4 +23,5 @@ impl<const L: usize> std::fmt::Debug for MaxLimit<L> {
     }
 }
 
-pub type MaxRangeLimit<T, const MAX: usize> = RangeBoundLimit<T, MaxLimit<MAX>>;
+pub type MaxRangeLimit<T, const MAX: usize> =
+    RangeBoundLimit<T, MaxLimit<MAX>>;

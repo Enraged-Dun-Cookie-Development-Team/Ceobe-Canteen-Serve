@@ -19,11 +19,9 @@ pub trait CollectionLoader {
 }
 
 impl<L: CollectionLoader> MongoRegister for ModuleRegister<L> {
-    fn register(self, db: DbBuild) -> Self::Fut {
-        self.loader.loader(db)
-    }
-
     type Fut = L::Fut;
+
+    fn register(self, db: DbBuild) -> Self::Fut { self.loader.loader(db) }
 }
 impl<F, Fut> CollectionLoader for F
 where
@@ -32,9 +30,7 @@ where
 {
     type Fut = Fut;
 
-    fn loader(self, db: DbBuild) -> Self::Fut {
-        self(db)
-    }
+    fn loader(self, db: DbBuild) -> Self::Fut { self(db) }
 }
 
 impl<L> ModuleRegister<L> {

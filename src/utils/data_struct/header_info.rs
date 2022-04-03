@@ -1,6 +1,7 @@
+use std::{marker::PhantomData, vec::IntoIter};
+
 use futures::future::ok;
 use futures_util::future::Ready;
-use std::{marker::PhantomData, vec::IntoIter};
 
 pub enum HeaderInfo<H> {
     Exist(Vec<String>, PhantomData<H>),
@@ -11,9 +12,8 @@ impl<H> IntoIterator for HeaderInfo<H>
 where
     H: FromHeaders,
 {
-    type Item = String;
-
     type IntoIter = IntoIter<String>;
+    type Item = String;
 
     fn into_iter(self) -> Self::IntoIter {
         match self {
@@ -51,12 +51,10 @@ where
     H: FromHeaders,
 {
     type Error = actix_web::Error;
-
     type Future = Ready<Result<Self, Self::Error>>;
 
     fn from_request(
-        req: &actix_web::HttpRequest,
-        _payload: &mut actix_web::dev::Payload,
+        req: &actix_web::HttpRequest, _payload: &mut actix_web::dev::Payload,
     ) -> Self::Future {
         let header = req.headers();
         let res = header
@@ -69,7 +67,8 @@ where
 
         let result = if res.len() == 0 {
             Self::None(Default::default())
-        } else {
+        }
+        else {
             Self::Exist(res, Default::default())
         };
         ok(result)
@@ -77,14 +76,13 @@ where
 }
 
 #[macro_export]
-/// 辅助生成 [FromHeaders](crate::utils::data_struct::header_info::FromHeaders)
-/// ```rust
+/// 辅助生成 [FromHeaders](crate::utils::data_struct::header_info::
+/// FromHeaders) ```rust
 ///                 //    |-------------新建的类型的可见度
 ///                 //    |    |--------新建的类型的名称
 ///                 //    |    |          |---- 捕获的头类型
 ///     header_captures!(pub Referer: "referer");
 /// ```
-///
 macro_rules! header_captures {
     ($v:vis $i:ident : $hn:literal) => {
         #[derive(Default)]

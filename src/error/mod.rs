@@ -18,7 +18,7 @@ use crate::database::error::DatabaseError;
 ///         Db=sea_orm::DbErr
 ///     );
 ///     ```
-///2. 为现有类型生成包装类型
+/// 2. 为现有类型生成包装类型
 ///     ```rust
 ///         error_generate!(
 ///         //   |------------新建包装类型的可见性

@@ -9,9 +9,7 @@ impl Actor for Continuation {
 }
 
 impl Continuation {
-    pub fn start() -> Addr<Self> {
-        Self::create(|_ctx| Self(MidData::Nil))
-    }
+    pub fn start() -> Addr<Self> { Self::create(|_ctx| Self(MidData::Nil)) }
 }
 
 #[derive(actix::Message)]
@@ -40,7 +38,9 @@ impl FullData {
 impl Handler<NextIncome> for Continuation {
     type Result = MessageResult<NextIncome>;
 
-    fn handle(&mut self, msg: NextIncome, _ctx: &mut Self::Context) -> Self::Result {
+    fn handle(
+        &mut self, msg: NextIncome, _ctx: &mut Self::Context,
+    ) -> Self::Result {
         let item = msg.0;
 
         let res = match (item, &mut self.0) {
@@ -69,7 +69,8 @@ impl Handler<NextIncome> for Continuation {
                 old.clear();
                 Some(FullData::Bin(data))
             }
-            (Item::Continue(_), MidData::Nil) | (Item::Last(_), MidData::Nil) => {
+            (Item::Continue(_), MidData::Nil)
+            | (Item::Last(_), MidData::Nil) => {
                 self.0 = MidData::Nil;
                 None
             }

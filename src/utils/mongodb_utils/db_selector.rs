@@ -6,14 +6,13 @@ use actix_web::web::Data;
 use futures::Future;
 use mongodb::Collection;
 
-use crate::utils::req_pretreatment::Pretreatment;
-
 use super::{
     db_manager::DbManager,
     error::{MongoDatabaseCollectionNotFound, MongoDbError},
     mongo_manager::MongoManager,
     MongoErr,
 };
+use crate::utils::req_pretreatment::Pretreatment;
 
 /// 数据库选择器trait
 /// 提供数据名称来选择当前使用的数据库
@@ -63,7 +62,10 @@ impl MongoDbSelector {
     /// 如果Collection 未被创建，就会允许失败
     pub async fn doing<F, C, Fut ,O>(&self, handle: F) -> Result<O, MongoDbError>
     where
-        C: for<'de> serde::Deserialize<'de> + 'static + Sized + serde::Serialize,
+        C: for<'de> serde::Deserialize<'de>
+            + 'static
+            + Sized
+            + serde::Serialize,
         F: FnOnce(Collection<C>) -> Fut,
         Fut: Future<Output = Result<O, MongoErr>>,
     {
@@ -79,13 +81,14 @@ impl MongoDbSelector {
 }
 
 impl Pretreatment for MongoDbSelector {
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
-
+    type Err = MongoDbError;
     type Resp = Self;
 
-    type Err = MongoDbError;
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
-    fn call<'db>(req: &'db actix_web::HttpRequest, _: &'db mut actix_http::Payload) -> Self::Fut {
+    fn call<'db>(
+        req: &'db actix_web::HttpRequest, _: &'db mut actix_http::Payload,
+    ) -> Self::Fut {
         let mongo = req
             .app_data::<Data<MongoManager>>()
             .expect("MongoDb 数据库未找到");

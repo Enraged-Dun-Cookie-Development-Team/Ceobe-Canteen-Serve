@@ -9,8 +9,7 @@ where
     type Output = I;
 
     fn poll(
-        self: std::pin::Pin<&mut Self>,
-        _cx: &mut std::task::Context<'_>,
+        self: std::pin::Pin<&mut Self>, _cx: &mut std::task::Context<'_>,
     ) -> std::task::Poll<Self::Output> {
         Poll::Ready(self.0.clone())
     }
