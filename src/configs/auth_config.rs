@@ -13,10 +13,12 @@ crate::quick_struct! {
     }
 }
 
-fn default_token() -> String { String::from("Token") }
+fn default_token() -> String { String::from("token") }
 
 impl config::AuthConfig for AuthConfig {
     fn jwt_key(&self) -> &[u8] { &self.jwt.0 }
+
+    fn token_header(&self) -> String { self.header_name.clone() }
 }
 
 #[derive(serde::Serialize, Clone, Debug)]
