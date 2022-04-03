@@ -1,11 +1,13 @@
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 use crate::{
-    serves::mansion::modules::mansion::ModelMansion,
+    serves::mansion::models::mansion::ModelMansion,
     utils::mongodb_utils::db_manager::DbBuild,
 };
 
 pub mod mansion;
+
+crate::generate_model_register!(MansionModel,loading_model);
 
 const MANSION_IDX_NAME: &str = "mansion_idx";
 const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";

@@ -1,11 +1,7 @@
 use super::{
     error::MansionError,
-    modules::{
-        loading_model,
-        mansion::{
-            MIdCheckerPretreat, MansionCheckerPretreat,
-            OptionMidCheckerPretreat,
-        },
+    models::mansion::{
+        MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
     },
 };
 use crate::utils::{
@@ -31,11 +27,6 @@ crate::generate_controller!(
     mansion::remove_mansion
 );
 
-crate::extra_module!(
-    MansionController=>crate::generate_collection_register!(
-        loading_model
-    )
-);
 
 crate::new_auth_level! {
     pub(super) MansionAuth=>[
@@ -45,6 +36,7 @@ crate::new_auth_level! {
 }
 
 type MansionAuthentication = AuthenticationLevel<MansionAuth, MansionError>;
+
 
 type OptionMidCheckerPretreatment = ReqPretreatment<
     ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>,

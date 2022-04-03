@@ -1,8 +1,12 @@
 use resp_result::RespResult;
 
-pub mod controllers;
+mod controllers;
 mod error;
-mod modules;
+mod models;
 mod view;
 
 type MansionRResult<T> = RespResult<T, error::MansionError>;
+
+
+pub use controllers::MansionController;
+pub use models::MansionModel;

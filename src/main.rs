@@ -11,12 +11,12 @@ use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
 use serves::{
-    admin_group::{AdminWrapController, MansionController},
-    non_admin_group::CeobeController,
+    admin_group::{AdminWrapController, AdminWrapModel},
+    non_admin_group::{CanteenWrapController, CanteenWrapModel},
 };
 use user_create::create::create_default_user;
 use utils::{
-    http_serve::MongoRegister, middleware::benchmark::BenchMarkFactor,
+    middleware::benchmark::BenchMarkFactor,
     mongodb_utils::mongo_build::MongoBuild, user_authorize,
 };
 
@@ -32,10 +32,11 @@ extern crate serde;
 generate_controller!(
     RootController,
     "/api/v0",
-    CeobeController,
-    // database not add yet
-    AdminWrapController
+    AdminWrapController,
+    CanteenWrapController
 );
+
+generate_model_register!(RootModel, AdminWrapModel, CanteenWrapModel);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
@@ -71,7 +72,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     let mongo_conn = MongoBuild::with_config(&config.mongodb)
         .await
         .expect("无法连接到MongoDb")
-        .register_collections(MansionController::mongo_register())
+        .register_collections(RootModel)
         .await
         .build();
     // 配置文件打包

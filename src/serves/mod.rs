@@ -5,8 +5,8 @@ mod mansion;
 
 pub mod admin_group {
     pub use super::{
-        admin_user::controllers::AdminUserController,
-        mansion::controllers::MansionController,
+        admin_user::{AdminUserController,AdminUserModel},
+        mansion::{MansionController, MansionModel},
     };
 
     crate::generate_controller!(
@@ -15,14 +15,21 @@ pub mod admin_group {
         AdminUserController,
         MansionController
     );
+
+    crate::generate_model_register!(
+        AdminWrapModel,
+        MansionModel,
+        AdminUserModel
+    );
 }
 pub mod non_admin_group {
 
-    pub use super::ceobe_push::controllers::CeobeController;
+    pub use super::ceobe_push::{CeobeController,CeobePushModel};
 
-    crate::generate_controller!(
-        CanteenWrapController,
-        "/canteen"
+    crate::generate_controller!(CanteenWrapController, "/canteen");
+
+    crate::generate_model_register!(
+        CanteenWrapModel,
+        CeobePushModel
     );
 }
-
