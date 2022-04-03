@@ -44,7 +44,7 @@ macro_rules! error_generate {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self{
                     $(
-                        Self::$v_name(err)=>{write!(f, "{} Error : {}",stringify!($v_name), err)}
+                        Self::$v_name(err)=>{write!(f, "{}::{} => {}",stringify!($err_name),stringify!($v_name), err)}
                     ),+
                     Self::Infallible=>unreachable!(),
                 }
@@ -107,7 +107,7 @@ macro_rules! error_generate {
         impl std::error::Error for $err_name{}
         impl std::fmt::Display for $err_name{
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-               writeln!(f, "{} Error : {}",stringify!($err_name), $msg)
+               writeln!(f, "{} => {}",stringify!($err_name), $msg)
             }
         }
     };
@@ -123,7 +123,7 @@ macro_rules! error_generate {
         impl std::fmt::Display for $wrap_name{
             #[inline]
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-               writeln!(f, "{} Error : {}`{}`",stringify!($err_name), $msg, self.0)
+               writeln!(f, "{} => {} `{}`",stringify!($wrap_name), $msg, self.0)
             }
         }
         impl From<$err_ty> for $wrap_name{
@@ -153,9 +153,7 @@ status_err::status_error! {
 
 status_err::resp_error_impl!(RouteNotExistError);
 
-pub async fn not_exist(
-    req: HttpRequest,
-) -> RespResult<(), RouteNotExistError> {
-    log::info!("路由未找到 `{}` {}", req.path(), &req.method());
+pub async fn not_exist(req: HttpRequest) -> RespResult<(), RouteNotExistError> {
+    log::error!("路由未找到 `{}` {}", req.path(), &req.method());
     RespResult::err(RouteNotExistError)
 }
