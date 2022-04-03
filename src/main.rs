@@ -10,7 +10,10 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use serves::{AdminUserController, CeobeController, MansionController};
+use serves::{
+    admin_group::{AdminWrapController, MansionController},
+    non_admin_group::CeobeController,
+};
 use user_create::create::create_default_user;
 use utils::{
     http_serve::MongoRegister, middleware::benchmark::BenchMarkFactor,
@@ -31,8 +34,7 @@ generate_controller!(
     "/api/v0",
     CeobeController,
     // database not add yet
-    MansionController,
-    AdminUserController
+    AdminWrapController
 );
 
 #[actix_web::main]
