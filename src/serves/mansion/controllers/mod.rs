@@ -1,11 +1,7 @@
 use super::{
     error::MansionError,
-    modules::{
-        loading_model,
-        mansion::{
-            MIdCheckerPretreat, MansionCheckerPretreat,
-            OptionMidCheckerPretreat,
-        },
+    modules::mansion::{
+        MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
     },
 };
 use crate::utils::{
@@ -25,12 +21,6 @@ crate::generate_controller!(
     mansion::get_mansion,
     mansion::get_all_id,
     mansion::remove_mansion
-);
-
-crate::extra_module!(
-    MansionController=>crate::generate_collection_register!(
-        loading_model
-    )
 );
 
 type OptionMidCheckerPretreatment = ReqPretreatment<

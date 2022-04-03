@@ -7,6 +7,8 @@ use crate::{
 
 pub mod mansion;
 
+crate::generate_model_register!(MansionModel,loading_model);
+
 const MANSION_IDX_NAME: &str = "mansion_idx";
 const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
 
