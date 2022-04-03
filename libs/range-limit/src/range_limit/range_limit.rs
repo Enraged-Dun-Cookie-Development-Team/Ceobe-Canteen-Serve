@@ -23,10 +23,12 @@ impl<T, Rb: Default> RangeBoundLimit<T, Rb> {
             SizeStatus::TooSmall(require) => {
                 Err(error::Error::TooSmall { require, get: size })
             }
-            SizeStatus::FIxSize(s) => Err(error::Error::FixSize {
-                require: s,
-                get: size,
-            }),
+            SizeStatus::FIxSize(s) => {
+                Err(error::Error::FixSize {
+                    require: s,
+                    get: size,
+                })
+            }
             SizeStatus::Costom(err) => Err(error::Error::Coutom(err)),
         }
     }

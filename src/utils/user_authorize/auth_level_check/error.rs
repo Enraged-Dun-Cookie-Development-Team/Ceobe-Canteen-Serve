@@ -6,7 +6,11 @@ pub struct UnacceptableAuthorizationLevelError {
 }
 
 impl UnacceptableAuthorizationLevelError {
-    pub fn new(authorization_level_name: &'static str) -> Self { Self { authorization_level_name } }
+    pub fn new(authorization_level_name: &'static str) -> Self {
+        Self {
+            authorization_level_name,
+        }
+    }
 }
 
 impl std::fmt::Display for UnacceptableAuthorizationLevelError {

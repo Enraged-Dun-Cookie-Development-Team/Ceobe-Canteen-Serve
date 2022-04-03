@@ -1,10 +1,14 @@
-pub mod auth_config;
 pub mod actix_logger;
+pub mod auth_config;
+pub mod first_user;
 pub mod logger;
 pub mod resp_result_config;
 use serde::Deserialize;
 
-use self::{logger::LoggerConfig, resp_result_config::RespResultConfig, auth_config::AuthConfig};
+use self::{
+    auth_config::AuthConfig, first_user::FirstUserConfig,
+    logger::LoggerConfig, resp_result_config::RespResultConfig,
+};
 use crate::{
     database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig,
 };
@@ -27,6 +31,8 @@ pub struct GlobalConfig {
     /// resp Result
     #[serde(alias = "rresult")]
     pub resp_result: RespResultConfig,
-    #[serde(alias="auth",default="Default::default")]
-    pub user_auth:AuthConfig
+    #[serde(alias = "auth", default = "Default::default")]
+    pub user_auth: AuthConfig,
+    #[serde(alias = "user")]
+    pub admin_user: FirstUserConfig,
 }

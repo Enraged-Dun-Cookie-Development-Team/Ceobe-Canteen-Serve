@@ -24,8 +24,11 @@ pub struct TokenAuth;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum AuthLevel {
+    #[serde(rename = "chef")]
     Chef,
+    #[serde(rename = "cooker")]
     Cooker,
+    #[serde(rename = "architect")]
     Architect,
 }
 
@@ -81,11 +84,12 @@ impl Pretreatment for TokenAuth {
             } = user_info;
 
             if PasswordEncoder::verify(
-                &Cow::Owned(password),
+                &Cow::Owned(password.clone()),
                 &token.password,
             )? {
                 Ok(AuthInfo {
                     id,
+                    password,
                     auth: auth.into(),
                     username,
                 })

@@ -10,7 +10,8 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use serves::{CeobeController, MansionController};
+use serves::{AdminUserController, CeobeController, MansionController};
+use user_create::create::create_default_user;
 use utils::{
     http_serve::MongoRegister, middleware::benchmark::BenchMarkFactor,
     mongodb_utils::mongo_build::MongoBuild, user_authorize,
@@ -20,6 +21,7 @@ mod configs;
 mod database;
 mod error;
 mod serves;
+mod user_create;
 mod utils;
 
 extern crate serde;
@@ -29,7 +31,8 @@ generate_controller!(
     "/api/v0",
     CeobeController,
     // database not add yet
-    MansionController
+    MansionController,
+    AdminUserController
 );
 
 #[actix_web::main]
@@ -60,6 +63,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     let db_conn = ServeDatabase::connect(&config.database)
         .await
         .expect("无法连接到数据库");
+    create_default_user(&config.admin_user, &db_conn).await;
     let db_data = Data::new(db_conn);
     // mongo db
     let mongo_conn = MongoBuild::with_config(&config.mongodb)

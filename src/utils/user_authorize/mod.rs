@@ -7,8 +7,9 @@ mod auth_pretreator;
 mod set_token;
 mod valid_token;
 
-pub use auth_pretreator::{TokenAuth, AuthLevel};
+pub use auth_pretreator::{AuthLevel, TokenAuth};
 use hmac::Hmac;
+use sea_orm::{strum::FromRepr, FromQueryResult};
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 
@@ -21,7 +22,7 @@ pub type AuthenticationLevel<L, E> =
 
 crate::quick_struct! {
 
-    #[derive(PartialEq, Eq)]
+    #[derive(PartialEq, Eq, FromQueryResult)]
     pub User{
         id:i32
         password:String
@@ -30,6 +31,7 @@ crate::quick_struct! {
     /// 用户权限信息
     pub AuthInfo{
         id: i32
+        password: String
         /// 权限
         auth: AuthLevel
         username: String

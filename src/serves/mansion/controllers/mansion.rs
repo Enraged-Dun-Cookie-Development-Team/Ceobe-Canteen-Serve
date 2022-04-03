@@ -69,7 +69,6 @@ pub(super) async fn save_mansion(
                 Ok(())
             })
             .await?;
-
         }
         None => {
             let MansionId { main_id, minor_id } = data.id.clone();
@@ -79,14 +78,15 @@ pub(super) async fn save_mansion(
                     "minor_id":minor_id as i32
                 }
             };
+
             let check = db
                 .doing::<_, ModelMansion, _, _>(|collection| async move {
                     collection.count_documents(filter, None).await
                 })
                 .await?;
 
-
             if check == 0 {
+
                 db.doing::<_, ModelMansion, _, _>(|c| async move {
                     c.insert_one(ModelMansion::from(data), None).await?;
                     Ok(())
@@ -155,7 +155,6 @@ pub(super) async fn get_all_id(
                 let v = v?;
                 resp.push(v);
             }
-            Ok(resp)
         })
         .await?
         .into_iter()
@@ -177,7 +176,6 @@ pub(super) async fn remove_mansion(
             "minor_id":minor_id as i32
         }
     };
-
     db?.doing::<_, ModelMansion, _, ()>(|collect| async move {
         collect.delete_one(filter, None).await?;
         Ok(())

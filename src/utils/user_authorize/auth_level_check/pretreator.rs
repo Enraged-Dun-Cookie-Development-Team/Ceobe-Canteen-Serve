@@ -25,7 +25,12 @@ impl<L: AuthLevelVerify> Pretreatment for AuthLevel<L> {
 
         async move {
             let info = task.await?;
-            let AuthInfo { id, auth, username } = info;
+            let AuthInfo {
+                id,
+                auth,
+                username,
+                password,
+            } = info;
 
             if L::verify(&auth) {
                 Ok(VerifiedAuthInfo { id, username })

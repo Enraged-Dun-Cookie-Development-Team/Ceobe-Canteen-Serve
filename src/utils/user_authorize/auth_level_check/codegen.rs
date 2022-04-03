@@ -1,16 +1,16 @@
 /// 生成组合模式的用户权限等级
-/// 
+///
 /// ## example
-/// 
+///
 /// ```rust
-///new_auth_level! {
+/// new_auth_level! {
 ///   //|-------------------可见性
 ///   //|   |---------------权限名称
 ///    pub MansionAuth=>[
 ///        Architect // 内部的具体权限，可以嵌套
 ///        Cooker
 ///    ]
-///}
+/// }
 /// ```
 #[macro_export]
 macro_rules! new_auth_level {

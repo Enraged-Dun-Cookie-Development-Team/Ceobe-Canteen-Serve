@@ -13,9 +13,7 @@ crate::quick_struct! {
     }
 }
 
-fn default_token()->String{
-    String::from("Token")
-}
+fn default_token() -> String { String::from("Token") }
 
 impl config::AuthConfig for AuthConfig {
     fn jwt_key(&self) -> &[u8] { &self.jwt.0 }
