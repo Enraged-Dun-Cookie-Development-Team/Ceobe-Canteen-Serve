@@ -108,3 +108,6 @@ path = "./libs/status-err"
 [dependencies.resp-result]
 version = "0.1.8"
 features = ["for-actix", "log"]
+
+[dependencies.request-pretreat]
+version="0.1.1"
