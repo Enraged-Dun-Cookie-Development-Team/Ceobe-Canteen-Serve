@@ -2,6 +2,7 @@ pub mod traits;
 use sea_orm::{
     ConnectOptions, ConnectionTrait, Database, Statement, TransactionTrait,
 };
+use time_usage::async_time_usage_with_name;
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
@@ -19,27 +20,30 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
     where
         C: DbConnectConfig + DbOptionsConfig,
     {
-        let db_url = format!(
-            "{scheme}://{username}:{password}@{host}:{port}/{name}",
-            scheme = config.scheme(),
-            username = config.username(),
-            password = config.password(),
-            host = config.host(),
-            port = config.port(),
-            name = config.name()
-        );
+        async_time_usage_with_name("连接到SQL数据库", async {
+            let db_url = format!(
+                "{scheme}://{username}:{password}@{host}:{port}/{name}",
+                scheme = config.scheme(),
+                username = config.username(),
+                password = config.password(),
+                host = config.host(),
+                port = config.port(),
+                name = config.name()
+            );
 
-        log::info!("准备连接到数据库: {}", db_url);
+            log::info!("准备连接到数据库: {}", db_url);
 
-        let mut db_options = ConnectOptions::new(db_url);
-        db_options
-            .max_connections(config.max_conn())
-            .min_connections(config.min_conn())
-            .sqlx_logging(config.sql_logger());
+            let mut db_options = ConnectOptions::new(db_url);
+            db_options
+                .max_connections(config.max_conn())
+                .min_connections(config.min_conn())
+                .sqlx_logging(config.sql_logger());
 
-        let connect = Database::connect(db_options).await?;
+            let connect = Database::connect(db_options).await?;
 
-        Ok(Self(connect))
+            Ok(Self(connect))
+        })
+        .await
     }
 }
 
@@ -62,52 +66,36 @@ where
     async fn execute(
         &self, stmt: Statement,
     ) -> Result<sea_orm::ExecResult, sea_orm::DbErr> {
-        self.0.execute(stmt).await
+        async_time_usage_with_name("执行SQL", self.0.execute(stmt)).await
     }
 
     async fn query_one(
         &self, stmt: Statement,
     ) -> Result<Option<sea_orm::QueryResult>, sea_orm::DbErr> {
-        self.0.query_one(stmt).await
+        async_time_usage_with_name("查询SQL<1>个", self.0.query_one(stmt))
+            .await
     }
 
     async fn query_all(
         &self, stmt: Statement,
     ) -> Result<Vec<sea_orm::QueryResult>, sea_orm::DbErr> {
-        self.0.query_all(stmt).await
+        async_time_usage_with_name("查询SQL-多个", self.0.query_all(stmt))
+            .await
     }
 }
-impl<D: TransactionTrait> TransactionTrait for ServeDatabase<D> {
-    fn begin<'life0, 'async_trait>(
-        &'life0 self,
-    ) -> core::pin::Pin<
-        Box<
-            dyn core::future::Future<
-                    Output = Result<
-                        sea_orm::DatabaseTransaction,
-                        sea_orm::DbErr,
-                    >,
-                > + core::marker::Send
-                + 'async_trait,
-        >,
-    >
-    where
-        'life0: 'async_trait,
-        Self: 'async_trait,
-    {
-        self.0.begin()
+#[async_trait::async_trait]
+impl<D: TransactionTrait + Sync + Send> TransactionTrait
+    for ServeDatabase<D>
+{
+    async fn begin(
+        &self,
+    ) -> Result<sea_orm::DatabaseTransaction, sea_orm::DbErr> {
+        async_time_usage_with_name("启动SQL事务", self.0.begin()).await
     }
 
-    fn transaction<'life0, 'async_trait, F, T, E>(
-        &'life0 self, callback: F,
-    ) -> core::pin::Pin<
-        Box<
-            dyn core::future::Future<
-                    Output = Result<T, sea_orm::TransactionError<E>>,
-                > + core::marker::Send
-                + 'async_trait,
-        >,
-    >
+    async fn transaction<F, T, E>(
+        &self, callback: F,
+    ) -> Result<T, sea_orm::TransactionError<E>>
     where
         F: for<'c> FnOnce(
                 &'c sea_orm::DatabaseTransaction,
@@ -116,12 +104,11 @@ impl<D: TransactionTrait> TransactionTrait for ServeDatabase<D> {
             > + Send,
         T: Send,
         E: std::error::Error + Send,
-        F: 'async_trait,
-        T: 'async_trait,
-        E: 'async_trait,
-        'life0: 'async_trait,
-        Self: 'async_trait,
     {
-        self.0.transaction(callback)
+        async_time_usage_with_name(
+            "执行SQL事务",
+            self.0.transaction(callback),
+        )
+        .await
     }
 }

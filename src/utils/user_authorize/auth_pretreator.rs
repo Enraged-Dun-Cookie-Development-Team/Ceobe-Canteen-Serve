@@ -5,6 +5,7 @@ use crypto_str::Encoder;
 use futures::Future;
 use lazy_static::__Deref;
 use serde::{Deserialize, Serialize};
+use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{
     config::TokenHeader as Token, error::AuthError,
@@ -54,7 +55,7 @@ impl Pretreatment for TokenAuth {
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     fn proc(
-        req: & actix_web::HttpRequest, payload: & mut actix_http::Payload,
+        req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,
     ) -> Self::Fut {
         let db = req
             .app_data::<Data<ServeDatabase<sea_orm::DatabaseConnection>>>()
@@ -64,39 +65,46 @@ impl Pretreatment for TokenAuth {
 
         async move {
             // 获取token
-            let token = token.await?;
-            let token = token.get_one().ok_or(TokenNotFound)?;
-            let token = decrpyt_token(token)?;
+            let token =
+                async_time_usage_with_name("获取用户token信息", async {
+                    let token = token.await?;
+                    let token = token.get_one().ok_or(TokenNotFound)?;
+                    decrpyt_token(token).map_err(AuthError::from)
+                })
+                .await?;
 
             use db_entity::user;
             use sea_orm::EntityTrait;
 
             // 获取用户信息
-            let user_info = user::Entity::find_by_id(token.id)
-                .one(db.deref().deref())
-                .await?
-                .ok_or(UserNotFound)?;
+            let user_info = async_time_usage_with_name(
+                "查询用户信息",
+                user::Entity::find_by_id(token.id).one(db.deref().deref()),
+            )
+            .await?
+            .ok_or(UserNotFound)?;
             let user::Model {
                 id,
                 password,
                 auth,
                 username,
             } = user_info;
-
-            if PasswordEncoder::verify(
-                &Cow::Owned(password.clone()),
-                &token.password,
-            )? {
-                Ok(AuthInfo {
-                    id,
-                    password,
-                    auth: auth.into(),
-                    username,
-                })
-            }
-            else {
-                Err(PasswordWrong.into())
-            }
+            sync_time_usage_with_name("校验Token信息", || {
+                if PasswordEncoder::verify(
+                    &Cow::Owned(password.clone()),
+                    &token.password,
+                )? {
+                    Ok(AuthInfo {
+                        id,
+                        password,
+                        auth: auth.into(),
+                        username,
+                    })
+                }
+                else {
+                    Err(PasswordWrong.into())
+                }
+            })
         }
     }
 }

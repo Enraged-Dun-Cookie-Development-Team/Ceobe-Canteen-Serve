@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
 use futures::Future;
+use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{error::UnacceptableAuthorizationLevelError, AuthLevelVerify};
 use crate::utils::{
@@ -24,7 +25,8 @@ impl<L: AuthLevelVerify> Pretreatment for AuthLevel<L> {
         let task = TokenAuth::proc(req, payload);
 
         async move {
-            let info = task.await?;
+            let info =
+                async_time_usage_with_name("解析用户Token", task).await?;
             let AuthInfo {
                 id,
                 auth,
@@ -32,13 +34,20 @@ impl<L: AuthLevelVerify> Pretreatment for AuthLevel<L> {
                 password: pwd,
             } = info;
 
-            if L::verify(&auth) {
-                Ok(VerifiedAuthInfo { id, username, pwd })
-            }
-            else {
-                Err(UnacceptableAuthorizationLevelError::new(L::auth_name())
-                    .into())
-            }
+            sync_time_usage_with_name(
+                "校验用户权限等级是否匹配",
+                || {
+                    if L::verify(&auth) {
+                        Ok(VerifiedAuthInfo { id, username, pwd })
+                    }
+                    else {
+                        Err(UnacceptableAuthorizationLevelError::new(
+                            L::auth_name(),
+                        )
+                        .into())
+                    }
+                },
+            )
         }
     }
 }

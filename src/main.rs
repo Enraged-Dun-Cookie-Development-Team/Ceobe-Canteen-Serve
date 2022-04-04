@@ -14,6 +14,7 @@ use serves::{
     admin_group::{AdminWrapController, AdminWrapModel},
     non_admin_group::{CanteenWrapController, CanteenWrapModel},
 };
+use time_usage::async_time_usage_with_name;
 use user_create::create::create_default_user;
 use utils::{
     middleware::benchmark::BenchMarkFactor,
@@ -58,8 +59,11 @@ async fn main() -> Result<(), GlobalError> {
 
 async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     // connect to ceobe websocket
-    let (_resp, (updater, sender)) =
-        ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE).await;
+    let (_resp, (updater, sender)) = async_time_usage_with_name(
+        "连接到小刻蹲饼",
+        ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE),
+    )
+    .await;
     let updater = Data::from(updater);
     let sender = Data::from(sender);
     // connect to database 连接到数据库
@@ -69,12 +73,15 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     create_default_user(&config.admin_user, &db_conn).await;
     let db_data = Data::new(db_conn);
     // mongo db
-    let mongo_conn = MongoBuild::with_config(&config.mongodb)
-        .await
-        .expect("无法连接到MongoDb")
-        .register_collections(RootModel)
-        .await
-        .build();
+    let mongo_conn = async_time_usage_with_name(
+        "连接到MongoDb数据库",
+        MongoBuild::with_config(&config.mongodb)
+            .await
+            .expect("无法连接到MongoDb")
+            .register_collections(RootModel),
+    )
+    .await
+    .build();
     // 配置文件打包
     let data_config = Data::new(config);
     HttpServer::new(move || {

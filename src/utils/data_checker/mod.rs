@@ -5,11 +5,12 @@ mod load_from_args;
 pub mod no_check;
 mod ref_checker;
 
-use std::marker::PhantomData;
+use std::{marker::PhantomData, any::type_name};
 
 pub use check_require::*;
 use futures::Future;
 pub use ref_checker::RefChecker;
+use time_usage::async_time_usage_with_name;
 
 use super::req_pretreatment::Pretreatment;
 
@@ -60,16 +61,32 @@ where
 
     #[inline]
     fn proc(
-        req: &actix_web::HttpRequest, payload: & mut actix_http::Payload,
+        req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,
     ) -> Self::Fut {
         let args_fut = Pargs::proc(req, payload);
         let uncheck_fut = Punchecked::proc(req, payload);
 
         async move {
-            let args = args_fut.await.map_err(Into::into)?;
-            let uncheck = uncheck_fut.await.map_err(Into::into)?;
+            let args = async_time_usage_with_name(
+                format!("加载检查器参数信息-{}", type_name::<C::Args>())
+                    .as_str(),
+                args_fut,
+            )
+            .await
+            .map_err(Into::into)?;
+            let uncheck = async_time_usage_with_name(
+                format!("获取未检查数据-{}", type_name::<C::Unchecked>())
+                    .as_str(),
+                uncheck_fut,
+            )
+            .await
+            .map_err(Into::into)?;
 
-            let checked = C::checker(args, uncheck).await?;
+            let checked = async_time_usage_with_name(
+                format!("执行检查-{}", type_name::<C>()).as_str(),
+                C::checker(args, uncheck),
+            )
+            .await?;
             Ok(checked)
         }
     }

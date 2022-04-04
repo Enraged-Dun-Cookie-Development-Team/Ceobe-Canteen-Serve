@@ -25,3 +25,6 @@ bcrypt_ = { package = "bcrypt", version = "0.10", optional = true }
 package="serde"
 optional=true
 version="1.0"
+
+[dependencies.time-usage]
+path="../time-usage"

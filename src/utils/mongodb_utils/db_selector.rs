@@ -5,6 +5,7 @@
 use actix_web::web::Data;
 use futures::Future;
 use mongodb::Collection;
+use time_usage::async_time_usage_with_name;
 
 use super::{
     db_manager::DbManager,
@@ -60,7 +61,9 @@ impl MongoDbSelector {
     ///
     /// - 函数通过泛型参数自动识别并寻找对应的Collection
     /// 如果Collection 未被创建，就会允许失败
-    pub async fn doing<F, C, Fut ,O>(&self, handle: F) -> Result<O, MongoDbError>
+    pub async fn doing<F, C, Fut, O>(
+        &self, handle: F,
+    ) -> Result<O, MongoDbError>
     where
         C: for<'de> serde::Deserialize<'de>
             + 'static
@@ -74,7 +77,7 @@ impl MongoDbSelector {
             .collection::<C>()
             .ok_or(MongoDatabaseCollectionNotFound)
             .map_err(MongoDbError::from)?;
-        handle(collection)
+        async_time_usage_with_name("执行MongoDb操作", handle(collection))
             .await
             .map_err(MongoDbError::from)
     }
@@ -87,7 +90,7 @@ impl Pretreatment for MongoDbSelector {
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     fn proc(
-        req: &actix_web::HttpRequest, _: & mut actix_http::Payload,
+        req: &actix_web::HttpRequest, _: &mut actix_http::Payload,
     ) -> Self::Fut {
         let mongo = req
             .app_data::<Data<MongoManager>>()

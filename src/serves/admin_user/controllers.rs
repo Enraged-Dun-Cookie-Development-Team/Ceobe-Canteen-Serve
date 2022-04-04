@@ -9,6 +9,7 @@ use request_pretreat::prefabs::DefaultValue;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect, Set,
 };
+use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::view::ChangePassword;
 use crate::{
@@ -21,7 +22,7 @@ use crate::{
         AdminUserRResult,
     },
     utils::{
-        data_checker::{PretreatChecker, DataChecker},
+        data_checker::{DataChecker, PretreatChecker},
         req_pretreatment::{
             prefabs::{Json, MapErr, Query, ToRResult},
             ReqPretreatment,
@@ -70,29 +71,41 @@ async fn create_user(
     auth.0;
 
     // 生成随机用户名密码
-    let rand_username: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(10)
-        .map(char::from)
-        .collect();
-    let rand_password: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(10)
-        .map(char::from)
-        .collect();
+    let rand_username: String =
+        sync_time_usage_with_name("生成随机用户名", || {
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(10)
+                .map(char::from)
+                .collect()
+        });
+    let rand_password: String =
+        sync_time_usage_with_name("生成随机用户密码", || {
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(10)
+                .map(char::from)
+                .collect()
+        });
+
     let username = rand_username.clone();
     let plaintext_password = rand_password.clone();
 
     // 进行md5加密
-    let mut md5 = crypto::md5::Md5::new();
-    md5.input_str(&rand_password);
-    let rand_password = md5.result_str();
-    log::debug!("新建用户密码通过MD5加密后是： {:?}", rand_password);
+    let rand_password =
+        sync_time_usage_with_name("随机密码MD5加密", || {
+            let mut md5 = crypto::md5::Md5::new();
+            md5.input_str(&rand_password);
+            let rand_password = md5.result_str();
+            log::debug!("新建用户密码通过MD5加密后是： {:?}", rand_password);
+            rand_password
+        });
 
     // 加密密码
-    let encode_password = PasswordEncoder::encode(rand_password.into());
-    let encode_password = encode_password.map_err(AdminUserError::from);
-    let encode_password = AdminUserRResult::from(encode_password)?;
+    let encode_password =
+        sync_time_usage_with_name("随机密码加密", || {
+            PasswordEncoder::encode(rand_password.into())
+        })?;
 
     // 将用户信息写入数据库
     let user = db_entity::user::ActiveModel {
@@ -105,11 +118,13 @@ async fn create_user(
         }),
         ..Default::default()
     };
-    let user = user
-        .save(db.deref().deref())
-        .await
-        .map_err(AdminUserError::from);
-    AdminUserRResult::from(user)?;
+
+    let _ = async_time_usage_with_name(
+        "保存随机生成用户",
+        user.save(db.deref().deref()),
+    )
+    .await
+    .map_err(AdminUserError::from)?;
 
     // 返回用户信息
     let user_info = CreateUser {
@@ -131,37 +146,35 @@ async fn login(
     let body = body;
 
     // 查询数据库
-    let user = db_entity::user::Entity::find()
-        .filter(db_entity::user::Column::Username.eq(body.username))
-        .select_only()
-        .column(db_entity::user::Column::Password)
-        .column(db_entity::user::Column::Id)
-        .into_model::<User>()
-        .one(db.deref().deref())
-        .await
-        .map_err(AdminUserError::from);
-    // 处理查询结果
-    let user = AdminUserRResult::from(user)?;
-    let user = user
-        .ok_or(UserNotFound)
-        .map_err(AuthError::from)
-        .map_err(AdminUserError::from);
-    let user = AdminUserRResult::from(user)?;
+    let user = async_time_usage_with_name(
+        "查询用户信息",
+        db_entity::user::Entity::find()
+            .filter(db_entity::user::Column::Username.eq(body.username))
+            .select_only()
+            .column(db_entity::user::Column::Password)
+            .column(db_entity::user::Column::Id)
+            .into_model::<User>()
+            .one(db.deref().deref()),
+    )
+    .await?
+    .ok_or(UserNotFound)
+    .map_err(AuthError::from)?;
 
-    // 密码转换成crypto_str类型
-    let pwd = crypto_str::CryptoString::<PasswordEncoder>::new_raw(
-        body.password.clone(),
-    );
-    let db_password = crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
-        user.password,
-    );
+    let password_correct =
+        sync_time_usage_with_name("校验密码是否正确", || {
+            // 密码转换成crypto_str类型
+            let pwd = crypto_str::CryptoString::<PasswordEncoder>::new_raw(
+                body.password.clone(),
+            );
+            let db_password =
+                crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
+                    user.password,
+                );
 
-    // 检查密码是否正确
-    let password_correct = pwd
-        .verify(&db_password)
-        .map_err(AuthError::from)
-        .map_err(AdminUserError::from);
-    let password_correct = AdminUserRResult::from(password_correct)?;
+            // 检查密码是否正确
+            pwd.verify(&db_password).map_err(AuthError::from)
+        })?;
+
     if !password_correct {
         AdminUserRResult::<()>::err(AuthError::from(PasswordWrong).into())?;
     }
@@ -198,7 +211,11 @@ async fn change_username(
     ReqPretreatment(username): ReqPretreatment<
         ToRResult<
             MapErr<
-                PretreatChecker<DefaultValue<<UsernameChecker as DataChecker>::Args>, Json<UsernameUncheck>, UsernameChecker>,
+                PretreatChecker<
+                    DefaultValue<<UsernameChecker as DataChecker>::Args>,
+                    Json<UsernameUncheck>,
+                    UsernameChecker,
+                >,
                 AdminUserError,
             >,
         >,
@@ -209,16 +226,17 @@ async fn change_username(
 
     let username = username.username;
 
-    let user = db_entity::user::Entity::update_many()
-        .col_expr(
-            db_entity::user::Column::Username,
-            Expr::value(username.clone()),
-        )
-        .filter(db_entity::user::Column::Id.eq(id))
-        .exec(db.deref().deref())
-        .await
-        .map_err(AdminUserError::from);
-    AdminUserRResult::from(user)?;
+    async_time_usage_with_name(
+        "更新用户名称",
+        db_entity::user::Entity::update_many()
+            .col_expr(
+                db_entity::user::Column::Username,
+                Expr::value(username.clone()),
+            )
+            .filter(db_entity::user::Column::Id.eq(id))
+            .exec(db.deref().deref()),
+    )
+    .await?;
 
     let user_name = UserName { username };
 
@@ -241,39 +259,40 @@ async fn change_password(
     let old_password = body.old_password;
     let new_password = body.new_password;
 
-    // 密码转换成crypto_str类型
-    let old_password =
-        crypto_str::CryptoString::<PasswordEncoder>::new_raw(old_password);
-    let password =
-        crypto_str::CryptoString::<PasswordEncoder>::new_crypto(password);
-
     // 检查密码是否正确
-    let password_correct = password
-        .verify(&old_password)
-        .map_err(AuthError::from)
-        .map_err(AdminUserError::from);
-    let password_correct = AdminUserRResult::from(password_correct)?;
+    let password_correct =
+        sync_time_usage_with_name("校验原密码", || {
+            // 密码转换成crypto_str类型
+            let old_password =
+                crypto_str::CryptoString::<PasswordEncoder>::new_raw(
+                    old_password,
+                );
+            let password =
+                crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
+                    password,
+                );
+            password.verify(&old_password).map_err(AuthError::from)
+        })?;
     if !password_correct {
         AdminUserRResult::<()>::err(AuthError::from(PasswordWrong).into())?;
     }
 
     // 加密密码
     let encode_password =
-        PasswordEncoder::encode(new_password.clone().into());
-    let encode_password = encode_password.map_err(AdminUserError::from);
-    let encode_password = AdminUserRResult::from(encode_password)?;
+        PasswordEncoder::encode(new_password.clone().into())?;
 
     // 在数据库修改密码
-    let user = db_entity::user::Entity::update_many()
-        .col_expr(
-            db_entity::user::Column::Password,
-            Expr::value(encode_password.to_string()),
-        )
-        .filter(db_entity::user::Column::Id.eq(id))
-        .exec(db.deref().deref())
-        .await
-        .map_err(AdminUserError::from);
-    AdminUserRResult::from(user)?;
+    async_time_usage_with_name(
+        "更新用户密码",
+        db_entity::user::Entity::update_many()
+            .col_expr(
+                db_entity::user::Column::Password,
+                Expr::value(encode_password.to_string()),
+            )
+            .filter(db_entity::user::Column::Id.eq(id))
+            .exec(db.deref().deref()),
+    )
+    .await?;
 
     // 生成用户token
     let generate_token = User {
