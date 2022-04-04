@@ -12,11 +12,11 @@ where
     F: FnOnce() -> R,
 {
     let start = SystemTime::now();
-    log::trace!("开始执行同步操作 `{}`", &name);
+    log::debug!("开始执行同步操作 `{}`", &name);
     let r = f();
-    log::trace!("完成执行同步操作 `{}`", name);
+    log::debug!("完成执行同步操作 `{}`", name);
     let end = SystemTime::now();
     let usage = end.duration_since(start).unwrap();
-    log::debug!("执行同步操作 `{}` 用时 {}ms", name, usage.as_millis());
+    log::info!("执行同步操作 `{}` 用时 {}ms", name, usage.as_millis());
     r
 }
