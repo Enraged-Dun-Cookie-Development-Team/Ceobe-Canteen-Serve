@@ -23,6 +23,7 @@ where
     }
 }
 
+#[allow(dead_code)]
 impl<H> HeaderInfo<H>
 where
     H: FromHeaders,
@@ -55,7 +56,7 @@ where
     type Resp = Self;
 
     fn proc(
-        req: &actix_web::HttpRequest, payload: &mut actix_web::dev::Payload,
+        req: &actix_web::HttpRequest, _: &mut actix_web::dev::Payload,
     ) -> Self::Fut {
         let header = req.headers();
         let res = header

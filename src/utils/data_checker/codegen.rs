@@ -64,7 +64,8 @@ macro_rules! check_obj {
         }
 
         $v struct $checker;
-
+        
+        #[allow(unused_parents)]
         impl $crate::utils::data_checker::DataChecker for $checker
         where
         $(
