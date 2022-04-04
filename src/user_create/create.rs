@@ -24,6 +24,7 @@ where
     let user_counts = async_time_usage_with_name(
         "检查是否需要创建基本用户",
         db_entity::user::Entity::find()
+            .select_only()
             .column_as(db_entity::user::Column::Id.count(), "count")
             .into_model::<UserCounts>()
             .one(db),
