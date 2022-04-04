@@ -8,7 +8,7 @@ where
     async_time_usage_with_name(name, fut).await
 }
 pub async fn async_time_usage_with_name<Fut, R>(
-    name: &'static str, fut: Fut,
+    name: & str, fut: Fut,
 ) -> R
 where
     Fut: Future<Output = R>,

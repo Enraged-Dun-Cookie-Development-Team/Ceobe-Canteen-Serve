@@ -7,7 +7,7 @@ where
     let name = type_name::<F>();
     sync_time_usage_with_name(name, f)
 }
-pub fn sync_time_usage_with_name<F, R>(name: &'static str, f: F) -> R
+pub fn sync_time_usage_with_name<F, R>(name: & str, f: F) -> R
 where
     F: FnOnce() -> R,
 {
