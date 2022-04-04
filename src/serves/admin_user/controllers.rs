@@ -168,7 +168,7 @@ async fn login(
             );
             let db_password =
                 crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
-                    user.password,
+                    user.password.clone(),
                 );
 
             // 检查密码是否正确
@@ -182,7 +182,7 @@ async fn login(
     // 生成用户token
     let generate_token = User {
         id: user.id,
-        password: body.password,
+        password: user.password,
     };
     let token = generate_token.generate().unwrap();
 
@@ -299,7 +299,7 @@ async fn change_password(
         id,
         password: encode_password.to_string(),
     };
-    let token = generate_token.generate().unwrap();
+    let token = generate_token.generate().map_err(AuthError::from)?;
 
     // 返回用户token
     let user_token = UserToken { token };
