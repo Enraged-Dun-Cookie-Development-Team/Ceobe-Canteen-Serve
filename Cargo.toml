@@ -89,8 +89,8 @@ features = ["serde", "bcrypt"]
 [dependencies.range-limit]
 path = "./libs/range-limit"
 
-[dependencies.db-entity]
-path = "./libs/db-entity"
+# [dependencies.db-entity]
+# path = "./libs/db-entity"
 
 [dependencies.orm-migrate]
 package = "migration"

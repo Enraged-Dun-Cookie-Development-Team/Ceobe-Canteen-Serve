@@ -2,12 +2,17 @@ use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 use crate::{
     serves::mansion::models::mansion::ModelMansion,
-    utils::mongodb_utils::db_manager::DbBuild,
+    utils::{
+        mongodb_utils::db_manager::DbBuild, mvc_utils::as_mongo_register,
+    },
 };
 
 pub mod mansion;
 
-crate::generate_model_register!(MansionModel,loading_model);
+crate::generate_model_register!(
+    MansionModel,
+    as_mongo_register(loading_model)
+);
 
 const MANSION_IDX_NAME: &str = "mansion_idx";
 const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
