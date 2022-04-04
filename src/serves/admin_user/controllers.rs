@@ -279,7 +279,7 @@ async fn change_password(
 
     // 加密密码
     let encode_password =
-        PasswordEncoder::encode(new_password.clone().into())?;
+        PasswordEncoder::encode(new_password.into())?;
 
     // 在数据库修改密码
     async_time_usage_with_name(
@@ -297,7 +297,7 @@ async fn change_password(
     // 生成用户token
     let generate_token = User {
         id,
-        password: new_password,
+        password: encode_password.to_string(),
     };
     let token = generate_token.generate().unwrap();
 

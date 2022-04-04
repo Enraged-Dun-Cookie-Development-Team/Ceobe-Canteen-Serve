@@ -90,10 +90,7 @@ impl Pretreatment for TokenAuth {
                 username,
             } = user_info;
             sync_time_usage_with_name("校验Token信息", || {
-                if PasswordEncoder::verify(
-                    &Cow::Owned(password.clone()),
-                    &token.password,
-                )? {
+                if password.clone() == token.password {
                     Ok(AuthInfo {
                         id,
                         password,
