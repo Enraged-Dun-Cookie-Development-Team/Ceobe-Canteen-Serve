@@ -1,6 +1,6 @@
 pub mod traits;
 use sea_orm::{
-    ConnectOptions, ConnectionTrait, Database, Statement, TransactionTrait,
+    ConnectOptions, ConnectionTrait, Database, Statement, TransactionTrait, Schema
 };
 use time_usage::async_time_usage_with_name;
 
@@ -11,6 +11,7 @@ use self::{
 
 pub mod config;
 pub mod error;
+mod cake;
 
 #[derive(Debug)]
 pub struct ServeDatabase<D = sea_orm::DatabaseConnection>(D);
@@ -41,6 +42,10 @@ impl ServeDatabase<sea_orm::DatabaseConnection> {
 
             let connect = Database::connect(db_options).await?;
 
+            let builder = connect.get_database_backend();
+            let sql = builder.build(Schema::new(builder).create_table_from_entity(cake::Entity).if_not_exists());
+            log::info!("创建cake: {}", sql.sql);
+            connect.execute(sql).await.expect("cake fail");
             Ok(Self(connect))
         })
         .await
