@@ -77,15 +77,15 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     create_default_user(&config.admin_user, &db_conn).await;
     let db_data = Data::new(db_conn);
     // mongo db
-    let mongo_conn = async_time_usage_with_name(
-        "连接到MongoDb数据库",
-        MongoBuild::with_config(&config.mongodb)
-            .await
-            .expect("无法连接到MongoDb")
-            .register_collections(RootModel),
-    )
-    .await
-    .build();
+    // let mongo_conn = async_time_usage_with_name(
+    //     "连接到MongoDb数据库",
+    //     MongoBuild::with_config(&config.mongodb)
+    //         .await
+    //         .expect("无法连接到MongoDb")
+    //         .register_collections(RootModel),
+    // )
+    // .await
+    // .build();
     // 配置文件打包
     let data_config = Data::new(config);
     HttpServer::new(move || {
@@ -100,7 +100,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             .app_data(sender.clone())
             // 数据库连接
             .app_data(db_data.clone())
-            .app_data(mongo_conn.clone())
+            //.app_data(mongo_conn.clone())
             // 配置信息
             .app_data(data_config.clone())
             // 服务
