@@ -3,6 +3,10 @@ mod ceobe_push;
 mod mansion;
 #[cfg(test)] mod mock_mongo;
 
+pub mod extra{
+    pub use super::admin_user::sql_entities;
+}
+
 pub mod admin_group {
     pub use super::{
         admin_user::{AdminUserController,AdminUserModel},

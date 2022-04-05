@@ -1,6 +1,5 @@
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use db_entity::sea_orm_active_enums::Auth;
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityTrait, FromQueryResult, QuerySelect,
     Set,
@@ -9,7 +8,9 @@ use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::default_user::FUserConfig;
 use crate::{
-    database::ServeDatabase, utils::user_authorize::PasswordEncoder,
+    database::ServeDatabase,
+    serves::extra::sql_entities::{auth::Auth, user},
+    utils::user_authorize::PasswordEncoder,
 };
 
 #[derive(FromQueryResult)]
@@ -23,8 +24,8 @@ where
 {
     let user_counts = async_time_usage_with_name(
         "检查是否需要创建基本用户",
-        db_entity::user::Entity::find()
-            .column_as(db_entity::user::Column::Id.count(), "count")
+        user::Entity::find()
+            .column_as(user::Column::Id.count(), "count")
             .into_model::<UserCounts>()
             .one(db),
     )
@@ -49,7 +50,7 @@ where
                     PasswordEncoder::encode(password.into())
                         .expect("初始用户密码加密错误！");
 
-                db_entity::user::ActiveModel {
+                user::ActiveModel {
                     username: Set(conf.username()),
                     password: Set(encode_password.to_string()),
                     auth: Set(Auth::Chef),

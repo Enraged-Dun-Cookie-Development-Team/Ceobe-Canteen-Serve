@@ -17,7 +17,7 @@ use crate::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,
         user_authorize::error::{PasswordWrong, TokenNotFound, UserNotFound},
-    },
+    }, serves::extra::sql_entities::{auth::Auth, user},
 };
 
 pub struct TokenAuth;
@@ -33,12 +33,12 @@ pub enum AuthLevel {
     Architect,
 }
 
-impl From<db_entity::sea_orm_active_enums::Auth> for AuthLevel {
-    fn from(auth: db_entity::sea_orm_active_enums::Auth) -> Self {
+impl From<Auth> for AuthLevel {
+    fn from(auth: Auth) -> Self {
         match auth {
-            db_entity::sea_orm_active_enums::Auth::Chef => Self::Chef,
-            db_entity::sea_orm_active_enums::Auth::Cooker => Self::Cooker,
-            db_entity::sea_orm_active_enums::Auth::Architect => {
+            Auth::Chef => Self::Chef,
+            Auth::Cooker => Self::Cooker,
+            Auth::Architect => {
                 Self::Architect
             }
         }
@@ -73,7 +73,6 @@ impl Pretreatment for TokenAuth {
                 })
                 .await?;
 
-            use db_entity::user;
             use sea_orm::EntityTrait;
 
             // 获取用户信息
