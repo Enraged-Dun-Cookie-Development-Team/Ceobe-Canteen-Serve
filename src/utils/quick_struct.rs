@@ -10,7 +10,7 @@ macro_rules! quick_struct {
         )*
     }
 }=>{
-        #[derive(Debug,Clone,serde::Serialize,serde::Deserialize)]
+        #[derive(Debug,Clone,serde::Serialize,serde::Deserialize,typed_builder::TypedBuilder)]
         /// 该结构体通过宏快速构造
         ///
         /// ---

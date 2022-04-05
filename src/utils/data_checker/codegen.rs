@@ -25,16 +25,83 @@
 ///  //所有使用的 DataChecker::Err 实现转换函数Into::into()   
 /// ```
 macro_rules! check_obj {
+    // {
+    //     {$(#[$uc_attr:meta])*}
+    //     {$(#[$c_attr:meta])*}
+    //     $v:vis struct $uc_name:ident = $checker:ident > $c_name:ident{
+    //         $( $(#[$f_attr:meta])*
+    //             $fv:vis $f_n:ident : $f_ty:ty
+    //         ),*
+    //     }
+    //     err: $err:ty
+    // } => {
+    //     /// 这是未检查的struct
+    //     $(#[$uc_attr])*
+    //     $v struct $uc_name
+    //     where
+    //     $(
+    //         $f_ty : $crate::utils::data_checker::DataChecker
+    //     ),*
+    //     {
+    //         $(
+    //             $(#[$f_attr])*
+    //             $f_n : $crate::utils::data_checker::CheckRequire<$f_ty>
+    //         ),*
+    //     }
+
+    //     /// 这是通过检查的struct
+    //     $(#[$c_attr])*
+    //     #[derive(typed_builder::TypedBuilder)]
+    //     $v struct $c_name
+    //     where
+    //     $(
+    //         $f_ty : $crate::utils::data_checker::DataChecker
+    //     ),*
+    //     {
+    //         $(
+    //             $(#[$f_attr])*
+    //             $fv $f_n : <$f_ty as $crate::utils::data_checker::DataChecker>::Checked
+    //         ),*
+    //     }
+
+    //     $v struct $checker;
+
+    //     #[allow(unused_parents)]
+    //     impl $crate::utils::data_checker::DataChecker for $checker
+    //     where
+    //     $(
+    //         $f_ty : $crate::utils::data_checker::DataChecker,
+    //         <$f_ty as $crate::utils::data_checker::DataChecker>::Err: Into<$err>
+    //     ),*
+    //     {
+    //         type Unchecked =$uc_name;
+    //         type Args=(
+    //             $(<$f_ty as $crate::utils::data_checker::DataChecker>::Args),*,
+    //         );
+    //         type Checked=$c_name ;
+    //         type Err=$err;
+    //         type Fut=impl futures::Future<Output = Result<Self::Checked,Self::Err>>;
+    //         fn checker(($($f_n),*,): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    //            $( let $f_n = uncheck.$f_n.checking($f_n); )*
+
+    //            async move{
+    //                Ok(
+    //                 <$c_name>::builder()$(.$f_n($f_n.await.map_err(Into::<$err>::into)?)),*
+    //                 .build()
+    //                )
+    //            }
+    //         }
+    //     }
+    // };
     {
-        {$(#[$uc_attr:meta])*}
-        {$(#[$c_attr:meta])*}
-        $v:vis struct $uc_name:ident = $checker:ident > $c_name:ident{
+        $(#[$uc_attr:meta])*
+        $v:vis struct $uc_name:ident : $checker:ident > $c_name:ty{
             $( $(#[$f_attr:meta])*
-                $fv:vis $f_n:ident : $f_ty:ty
-            ),*
-        }
-        err: $err:ty
-    } => {
+            $fv:vis $f_n:ident : $f_ty:ty
+        ),*
+    }
+    err: $err:ty
+    }=>{
         /// 这是未检查的struct
         $(#[$uc_attr])*
         $v struct $uc_name
@@ -49,50 +116,50 @@ macro_rules! check_obj {
             ),*
         }
 
-        /// 这是通过检查的struct
-        $(#[$c_attr])*
-        $v struct $c_name
-        where
-        $(
-            $f_ty : $crate::utils::data_checker::DataChecker
-        ),*
-        {
-            $(
-                $(#[$f_attr])*
-                $fv $f_n : <$f_ty as $crate::utils::data_checker::DataChecker>::Checked
-            ),*
-        }
-
         $v struct $checker;
-        
+
         #[allow(unused_parents)]
         impl $crate::utils::data_checker::DataChecker for $checker
         where
         $(
             $f_ty : $crate::utils::data_checker::DataChecker,
-            <$f_ty as $crate::utils::data_checker::DataChecker>::Err: Into<$err>
-        ),*
+            <$f_ty as $crate::utils::data_checker::DataChecker>::Err: Into<$err>,
+        )*
         {
-            type Unchecked =$uc_name;
-            type Args=(
-                $(<$f_ty as $crate::utils::data_checker::DataChecker>::Args),*
+            type Unchecked = $uc_name;
+            type Args = (
+                $(<$f_ty as $crate::utils::data_checker::DataChecker>::Args),*,
             );
             type Checked=$c_name ;
             type Err=$err;
             type Fut=impl futures::Future<Output = Result<Self::Checked,Self::Err>>;
-            fn checker(($($f_n),*): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+            fn checker(($($f_n),*,): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
                $( let $f_n = uncheck.$f_n.checking($f_n); )*
 
                async move{
-                   Ok(
-                       $c_name{
-                           $(
-                            $f_n:$f_n.await.map_err(Into::<$err>::into)?
-                           ),*
-                       }
+                    let __resp = <$c_name>::builder();
+                   $(
+                      let __resp = __resp.$f_n($f_n.await.map_err(Into::<$err>::into)?);
+                    )*
+                    let __resp =__resp.build();
+                    Ok(
+                        __resp
                    )
                }
             }
         }
-    };
+    }
+}
+
+crate::quick_struct! {
+    pub Mock{
+        name:String
+    }
+}
+
+check_obj! {
+    pub struct MockUncheck : MockChecker > Mock{
+        pub name:crate::utils::data_struct::MaxLimitString<11>
+    }
+    err:range_limit::Error
 }
