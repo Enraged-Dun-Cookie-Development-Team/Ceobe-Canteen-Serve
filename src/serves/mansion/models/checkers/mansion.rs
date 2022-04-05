@@ -18,7 +18,7 @@ use crate::{
 
 crate::check_obj! {
     #[derive(Debug,Deserialize)]
-    pub struct MansionUncheck : MansionChecker > Mansion{
+    pub struct MansionUncheck = MansionChecker > Mansion{
         pub id: IdChecker,
         #[serde(alias="cvlink")]
         pub link: MaxLimitString<128>,

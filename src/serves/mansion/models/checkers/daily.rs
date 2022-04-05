@@ -13,7 +13,7 @@ use crate::{
 
 crate::check_obj! {
     #[derive(serde::Deserialize,Debug)]
-    pub struct DailyUncheck : DailyChecker > Daily{
+    pub struct DailyUncheck = DailyChecker > Daily{
         #[serde(rename="datetime")]
         pub date_time:DateFormatChecker,
         pub content: MaxLimitString<2048>,
