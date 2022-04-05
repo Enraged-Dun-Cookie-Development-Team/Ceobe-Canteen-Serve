@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-use super::each_info::{EachInfoUncheck, Info, InfoChecker};
+use super::{each_info::{EachInfoUncheck, InfoChecker}};
 use crate::{
     serves::mansion::error::MansionError,
     utils::{
@@ -8,13 +8,12 @@ use crate::{
             collect_checkers::iter_checkers::IntoIterChecker, DataChecker,
         },
         data_struct::MaxLimitString,
-    },
+    }, models::mansion::check::{Daily, Info},
 };
 
 crate::check_obj! {
-    {#[derive(serde::Deserialize,Debug)]}
-    {#[derive(serde::Serialize,serde::Deserialize,Debug,Clone)]}
-    pub struct DailyUncheck = DailyChecker > Daily{
+    #[derive(serde::Deserialize,Debug)]
+    pub struct DailyUncheck : DailyChecker > Daily{
         #[serde(rename="datetime")]
         pub date_time:DateFormatChecker,
         pub content: MaxLimitString<2048>,
