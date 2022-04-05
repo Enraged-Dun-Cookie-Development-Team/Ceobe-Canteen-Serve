@@ -19,7 +19,7 @@ use crate::{
         checker::user::{UsernameChecker, UsernameUncheck},
         error::AdminUserError,
         view::{CreateUser, UserInfo, UserName, UserToken},
-        AdminUserRResult, models::sql_models::{auth::Auth, user},
+        AdminUserRResult, 
     },
     utils::{
         data_checker::{DataChecker, PretreatChecker},
@@ -33,7 +33,7 @@ use crate::{
             AuthInfo, AuthLevel, Authentication, AuthenticationLevel,
             GenerateToken, PasswordEncoder, User,
         },
-    },
+    }, models::{ admin_user::sql::{user, auth::Auth}},
 };
 
 crate::quick_struct! {

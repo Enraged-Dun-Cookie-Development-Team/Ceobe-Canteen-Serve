@@ -1,4 +1,5 @@
-use super::models::mansion::{Daily, Info, Mansion, ModelMansion, Predict};
+use crate::models::mansion::preludes::*;
+
 
 crate::quick_struct! {
     pub ViewMansion{

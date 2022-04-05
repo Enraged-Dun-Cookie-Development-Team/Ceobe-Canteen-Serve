@@ -1,9 +1,14 @@
 use chrono::Local;
 use mongodb::bson;
 
-use super::{Daily, Mansion, MansionId};
+use super::check::{Daily, Mansion};
 
 crate::quick_struct! {
+    pub MansionId{
+        main_id:u32
+        minor_id:u8
+    }
+
     pub ModelMansion{
         /// create record
         create_time:bson::DateTime
@@ -22,17 +27,17 @@ crate::quick_struct! {
         create_time:bson::DateTime
         modify_time:Option<bson::DateTime>
     }
+
 }
 
-impl Default for ModifyAt {
-    fn default() -> Self {
-        Self {
-            create_time: bson::DateTime::from_millis(
-                Local::now().naive_local().timestamp_millis(),
-            ),
-            modify_time: None,
-        }
-    }
+#[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
+pub enum Predict {
+    #[serde(rename = "false")]
+    False,
+    #[serde(rename = "unknown")]
+    Unknown,
+    #[serde(rename = "true")]
+    True,
 }
 
 impl From<Mansion> for ModelMansion {
@@ -67,8 +72,17 @@ impl ModelMansion {
     }
 }
 
+impl Default for ModifyAt {
+    fn default() -> Self {
+        let now = bson::DateTime::from_millis(
+            Local::now().naive_local().timestamp_millis(),
+        );
+        Self::builder().create_time(now).modify_time(None).build()
+    }
+}
+
 impl ModifyAt {
-    pub(in crate::serves::mansion) fn now_modify(mut self) -> Self {
+    pub fn now_modify(mut self) -> Self {
         self.modify_time = Some(bson::DateTime::from_millis(
             Local::now().naive_local().timestamp_millis(),
         ));

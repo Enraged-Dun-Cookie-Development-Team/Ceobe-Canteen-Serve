@@ -4,12 +4,11 @@ use crate::{
     serves::mansion::error::{MansionError, UnknownId},
     utils::{
         data_checker::{DataChecker, OptionChecker},
-    },
+    }, models::mansion::{mongo_db::MansionId, check::{Mid, OptionMid}},
 };
 
 crate::check_obj! {
-    {#[derive(Debug,serde::Deserialize)]}
-    {#[derive(Debug,serde::Serialize, serde::Deserialize)]}
+    #[derive(Debug,serde::Deserialize)]
     pub struct MIdUncheck = MidChecker > Mid{
         #[serde(alias="idBefore",alias="mansionId")]
         pub id:IdChecker
@@ -18,8 +17,7 @@ crate::check_obj! {
 }
 
 crate::check_obj! {
-    {#[derive(Debug,serde::Deserialize)]}
-    {#[derive(Debug,serde::Serialize)]}
+    #[derive(Debug,serde::Deserialize)]
     pub struct OpMIdUncheck = OpMidChecker > OptionMid{
         #[serde(alias="idBefore",alias="mansionId")]
        pub  id:OptionChecker<IdChecker>
@@ -27,12 +25,7 @@ crate::check_obj! {
     err:MansionError
 }
 
-crate::quick_struct! {
-    pub MansionId{
-        main_id:u32
-        minor_id:u8
-    }
-}
+
 
 /// 饼学大厦号的检查器
 /// ## Uncheck

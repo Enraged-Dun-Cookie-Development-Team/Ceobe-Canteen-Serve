@@ -1,6 +1,6 @@
 use super::{
     error::MansionError,
-    models::mansion::{
+    models::checkers::{
         MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
     },
 };
@@ -27,7 +27,6 @@ crate::generate_controller!(
     mansion::remove_mansion
 );
 
-
 crate::new_auth_level! {
     pub(super) MansionAuth=>[
         Chef
@@ -36,7 +35,6 @@ crate::new_auth_level! {
 }
 
 type MansionAuthentication = AuthenticationLevel<MansionAuth, MansionError>;
-
 
 type OptionMidCheckerPretreatment = ReqPretreatment<
     ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>,

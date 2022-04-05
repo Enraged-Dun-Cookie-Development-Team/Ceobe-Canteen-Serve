@@ -54,6 +54,7 @@ pin-project = "1"
 state = "0.5.2"
 rand = "0.8.5"
 dashmap = "5"
+typed-builder = "0.10"
 
 [dependencies.futures-util]
 version = "0.3"
