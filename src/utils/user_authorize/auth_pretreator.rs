@@ -13,37 +13,17 @@ use super::{
 };
 use crate::{
     database::ServeDatabase,
+    models::admin_user::sql::{user, auth::Auth},
     utils::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,
         user_authorize::error::{PasswordWrong, TokenNotFound, UserNotFound},
-    }, serves::extra::sql_entities::{auth::Auth, user},
+    },
 };
 
 pub struct TokenAuth;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum AuthLevel {
-    #[serde(rename = "chef")]
-    Chef,
-    #[serde(rename = "cooker")]
-    Cooker,
-    #[serde(rename = "architect")]
-    Architect,
-}
-
-impl From<Auth> for AuthLevel {
-    fn from(auth: Auth) -> Self {
-        match auth {
-            Auth::Chef => Self::Chef,
-            Auth::Cooker => Self::Cooker,
-            Auth::Architect => {
-                Self::Architect
-            }
-        }
-    }
-}
+pub type AuthLevel = Auth;
 
 impl Pretreatment for TokenAuth {
     // 异常

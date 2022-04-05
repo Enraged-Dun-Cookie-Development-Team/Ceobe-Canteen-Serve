@@ -27,6 +27,7 @@ mod error;
 mod serves;
 mod user_create;
 mod utils;
+mod models;
 
 extern crate serde;
 

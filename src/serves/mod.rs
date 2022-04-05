@@ -3,13 +3,10 @@ mod ceobe_push;
 mod mansion;
 #[cfg(test)] mod mock_mongo;
 
-pub mod extra{
-    pub use super::admin_user::sql_entities;
-}
 
 pub mod admin_group {
     pub use super::{
-        admin_user::{AdminUserController,AdminUserModel},
+        admin_user::{AdminUserController},
         mansion::{MansionController, MansionModel},
     };
 
@@ -22,18 +19,16 @@ pub mod admin_group {
 
     crate::generate_model_register!(
         AdminWrapModel,
-        MansionModel,
-        AdminUserModel
+        MansionModel
     );
 }
 pub mod non_admin_group {
 
-    pub use super::ceobe_push::{CeobeController,CeobePushModel};
+    pub use super::ceobe_push::{CeobeController};
 
     crate::generate_controller!(CanteenWrapController, "/canteen");
 
     crate::generate_model_register!(
-        CanteenWrapModel,
-        CeobePushModel
+        CanteenWrapModel
     );
 }

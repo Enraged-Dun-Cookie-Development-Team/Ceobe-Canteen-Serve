@@ -16,11 +16,11 @@ pub struct Model {
     pub auth: Auth,
 }
 
-#[derive(Debug, Clone, Copy, EnumIter)]
+#[derive(Debug, Clone, Copy, EnumIter,DeriveRelation)]
 pub enum Relation {}
 
-impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef { panic!("No Relation") }
-}
+// impl RelationTrait for Relation {
+//     fn def(&self) -> RelationDef { panic!("No Relation") }
+// }
 
 impl ActiveModelBehavior for ActiveModel {}
