@@ -4,7 +4,6 @@ use actix_web::web::Data;
 use crypto_str::Encoder;
 use futures::Future;
 use lazy_static::__Deref;
-use serde::{Deserialize, Serialize};
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{
@@ -13,7 +12,7 @@ use super::{
 };
 use crate::{
     database::ServeDatabase,
-    models::admin_user::sql::{user, auth::Auth},
+    models::admin_user::sql::{auth::Auth, user},
     utils::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,

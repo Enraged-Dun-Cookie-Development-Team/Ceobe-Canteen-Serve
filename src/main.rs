@@ -10,9 +10,9 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
+use models::RootModels;
 use serves::{
-    admin_group::{AdminWrapController, AdminWrapModel},
-    non_admin_group::{CanteenWrapController, CanteenWrapModel},
+    admin_group::AdminWrapController, non_admin_group::CanteenWrapController,
 };
 use time_usage::async_time_usage_with_name;
 use user_create::create::create_default_user;
@@ -24,10 +24,10 @@ use utils::{
 mod configs;
 mod database;
 mod error;
+mod models;
 mod serves;
 mod user_create;
 mod utils;
-mod models;
 
 extern crate serde;
 
@@ -37,8 +37,6 @@ generate_controller!(
     AdminWrapController,
     CanteenWrapController
 );
-
-generate_model_register!(RootModel, AdminWrapModel, CanteenWrapModel);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
@@ -71,10 +69,9 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     let db_conn = ServeDatabase::connect(&config.database)
         .await
         .expect("无法连接到数据库")
-        .register_models(RootModel)
+        .register_models(RootModels)
         .await
-        .expect("无法在数据库中创建实体")
-        ;
+        .expect("无法在数据库中创建实体");
     create_default_user(&config.admin_user, &db_conn).await;
     let db_data = Data::new(db_conn);
     // mongo db
@@ -83,7 +80,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         MongoBuild::with_config(&config.mongodb)
             .await
             .expect("无法连接到MongoDb")
-            .register_collections(RootModel),
+            .register_collections(RootModels),
     )
     .await
     .build();
