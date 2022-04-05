@@ -12,7 +12,7 @@ use super::{
 };
 use crate::{
     database::ServeDatabase,
-    models::admin_user::sql::{auth::Auth, user},
+    models::common::sql::{auth::Auth, user},
     utils::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,
@@ -75,7 +75,7 @@ impl Pretreatment for TokenAuth {
                     Ok(AuthInfo {
                         id,
                         password,
-                        auth: auth.into(),
+                        auth,
                         username,
                     })
                 }

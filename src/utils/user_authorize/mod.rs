@@ -14,7 +14,7 @@ pub use set_token::GenerateToken;
 use sha2::Sha256;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
-use crate::utils::req_pretreatment::prefabs::ToRResult;
+use crate::{utils::req_pretreatment::prefabs::ToRResult, models::common};
 
 pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
 pub type AuthenticationLevel<L, E> =
@@ -28,21 +28,16 @@ crate::quick_struct! {
         password:String
     }
 
-    /// 用户权限信息
-    pub AuthInfo{
-        id: i32
-        password: String
-        /// 权限
-        auth: AuthLevel
-        username: String
-    }
-
+    
     pub VerifiedAuthInfo{
         id:i32
         username:String
         pwd:String
     }
 }
+
+/// 用户权限信息
+pub type AuthInfo = common::sql::user::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where
