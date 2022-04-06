@@ -14,7 +14,7 @@ pub use set_token::GenerateToken;
 use sha2::Sha256;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
-use crate::{utils::req_pretreatment::prefabs::ToRResult, models::common};
+use crate::{models, utils::req_pretreatment::prefabs::ToRResult};
 
 pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
 pub type AuthenticationLevel<L, E> =
@@ -37,7 +37,7 @@ crate::quick_struct! {
 }
 
 /// 用户权限信息
-pub type AuthInfo = common::sql::user::Model;
+pub type AuthInfo = models::common::sql::user::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where
@@ -55,8 +55,8 @@ pub type PasswordEncoder =
 /// 权限等级鉴定模块
 pub mod auth_level {
     pub use super::auth_level_check::{
-        error::UnacceptableAuthorizationLevelError, pretreator::AuthLevel,
-        AuthLevelVerify,
+        AuthLevelVerify, error::UnacceptableAuthorizationLevelError,
+        pretreator::AuthLevel,
     };
     pub mod prefabs {
         pub use super::super::auth_level_check::prefabs::*;
@@ -66,7 +66,7 @@ pub mod auth_level {
 #[cfg(test)]
 mod test {
 
-    use super::{set_token::GenerateToken, valid_token::decrpyt_token, User};
+    use super::{set_token::GenerateToken, User, valid_token::decrpyt_token};
 
     #[test]
     fn generate_key() {

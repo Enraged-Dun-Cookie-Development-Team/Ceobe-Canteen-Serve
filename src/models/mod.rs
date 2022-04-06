@@ -3,6 +3,5 @@ pub mod common;
 
 
 crate::generate_model_register!(
-    RootModels,
-    common::AdminUserModel
+    RootModels
 );

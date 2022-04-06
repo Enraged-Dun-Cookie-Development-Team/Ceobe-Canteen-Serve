@@ -1,7 +1,9 @@
 use sea_orm::entity::prelude::*;
+use helper_macro::entity;
 
 use super::auth::Auth;
 
+#[entity]
 #[derive(Debug, Clone, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "user")]
 pub struct Model {
