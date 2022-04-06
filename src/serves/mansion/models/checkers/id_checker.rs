@@ -4,12 +4,11 @@ use crate::{
     serves::mansion::error::{MansionError, UnknownId},
     utils::{
         data_checker::{DataChecker, OptionChecker},
-    },
+    }, models::mansion::{mongo_db::MansionId, check::{Mid, OptionMid}},
 };
 
 crate::check_obj! {
-    {#[derive(Debug,serde::Deserialize)]}
-    {#[derive(Debug,serde::Serialize, serde::Deserialize)]}
+    #[derive(Debug,serde::Deserialize)]
     pub struct MIdUncheck = MidChecker > Mid{
         #[serde(alias="idBefore",alias="mansionId")]
         pub id:IdChecker
@@ -18,8 +17,7 @@ crate::check_obj! {
 }
 
 crate::check_obj! {
-    {#[derive(Debug,serde::Deserialize)]}
-    {#[derive(Debug,serde::Serialize)]}
+    #[derive(Debug,serde::Deserialize)]
     pub struct OpMIdUncheck = OpMidChecker > OptionMid{
         #[serde(alias="idBefore",alias="mansionId")]
        pub  id:OptionChecker<IdChecker>
@@ -27,12 +25,7 @@ crate::check_obj! {
     err:MansionError
 }
 
-crate::quick_struct! {
-    pub MansionId{
-        main_id:u32
-        minor_id:u8
-    }
-}
+
 
 /// 饼学大厦号的检查器
 /// ## Uncheck
@@ -51,13 +44,13 @@ impl DataChecker for IdChecker {
 
     fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let task = move || {
-            let mut sp = uncheck.split(".");
+            let mut sp = uncheck.split('.');
             let f = sp.next().ok_or(UnknownId)?;
             let main_id = f.trim().parse::<u32>().map_err(|_| UnknownId)?;
             let n = sp.next().unwrap_or("0");
             let minor_id = n.trim().parse::<u8>().map_err(|_| UnknownId)?;
             // Next 还有东西，不行
-            if let Some(_) = sp.next() {
+            if sp.next().is_some() {
                 Err(UnknownId)?;
             }
             Ok(MansionId { main_id, minor_id })

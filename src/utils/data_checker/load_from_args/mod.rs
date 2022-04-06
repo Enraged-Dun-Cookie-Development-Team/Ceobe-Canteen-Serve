@@ -3,9 +3,9 @@ pub trait LoadFromArgs<'s, Arg: Sized> {
 }
 
 impl<'t, T> LoadFromArgs<'t, &'t T> for T {
-    fn load(&'t self) -> &'t T { &self }
+    fn load(&'t self) -> &'t T { self }
 }
 
 impl<T> LoadFromArgs<'_, ()> for T {
-    fn load(&'_ self) -> () { () }
+    fn load(&'_ self) {  }
 }

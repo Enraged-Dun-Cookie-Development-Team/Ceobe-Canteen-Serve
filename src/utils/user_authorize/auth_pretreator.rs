@@ -4,7 +4,6 @@ use actix_web::web::Data;
 use crypto_str::Encoder;
 use futures::Future;
 use lazy_static::__Deref;
-use serde::{Deserialize, Serialize};
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{
@@ -13,6 +12,7 @@ use super::{
 };
 use crate::{
     database::ServeDatabase,
+    models::common::sql::{auth::Auth, user},
     utils::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,
@@ -22,28 +22,7 @@ use crate::{
 
 pub struct TokenAuth;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[non_exhaustive]
-pub enum AuthLevel {
-    #[serde(rename = "chef")]
-    Chef,
-    #[serde(rename = "cooker")]
-    Cooker,
-    #[serde(rename = "architect")]
-    Architect,
-}
-
-impl From<db_entity::sea_orm_active_enums::Auth> for AuthLevel {
-    fn from(auth: db_entity::sea_orm_active_enums::Auth) -> Self {
-        match auth {
-            db_entity::sea_orm_active_enums::Auth::Chef => Self::Chef,
-            db_entity::sea_orm_active_enums::Auth::Cooker => Self::Cooker,
-            db_entity::sea_orm_active_enums::Auth::Architect => {
-                Self::Architect
-            }
-        }
-    }
-}
+pub type AuthLevel = Auth;
 
 impl Pretreatment for TokenAuth {
     // 异常
@@ -73,7 +52,6 @@ impl Pretreatment for TokenAuth {
                 })
                 .await?;
 
-            use db_entity::user;
             use sea_orm::EntityTrait;
 
             // 获取用户信息
@@ -97,7 +75,7 @@ impl Pretreatment for TokenAuth {
                     Ok(AuthInfo {
                         id,
                         password,
-                        auth: auth.into(),
+                        auth,
                         username,
                     })
                 }

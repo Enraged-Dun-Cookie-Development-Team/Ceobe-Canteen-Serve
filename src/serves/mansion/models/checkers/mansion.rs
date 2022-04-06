@@ -1,11 +1,12 @@
 use futures::future::{err, ok, Ready};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 use super::{
-    daily::{Daily, DailyChecker, DailyUncheck},
+    daily::{DailyChecker, DailyUncheck},
     id_checker::IdChecker,
 };
 use crate::{
+    models::mansion::check::{Daily, Mansion},
     serves::mansion::error::{BadFraction, MansionError},
     utils::{
         data_checker::{
@@ -16,8 +17,7 @@ use crate::{
 };
 
 crate::check_obj! {
-    {#[derive(Debug,Deserialize)]}
-    {#[derive(Debug,Deserialize,Serialize)]}
+    #[derive(Debug,Deserialize)]
     pub struct MansionUncheck = MansionChecker > Mansion{
         pub id: IdChecker,
         #[serde(alias="cvlink")]
@@ -40,7 +40,7 @@ impl DataChecker for FractionCheck {
     type Unchecked = i16;
 
     fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        if 1 <= uncheck && uncheck <= 5 {
+        if (1..=5).contains(&uncheck) {
             ok(uncheck)
         }
         else {

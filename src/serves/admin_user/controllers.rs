@@ -1,7 +1,7 @@
 use actix_web::{get, post, web::Data};
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use db_entity::sea_orm_active_enums::Auth;
+
 use lazy_static::__Deref;
 use orm_migrate::sea_query::Expr;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -19,7 +19,7 @@ use crate::{
         checker::user::{UsernameChecker, UsernameUncheck},
         error::AdminUserError,
         view::{CreateUser, UserInfo, UserName, UserToken},
-        AdminUserRResult,
+        AdminUserRResult, 
     },
     utils::{
         data_checker::{DataChecker, PretreatChecker},
@@ -33,7 +33,7 @@ use crate::{
             AuthInfo, AuthLevel, Authentication, AuthenticationLevel,
             GenerateToken, PasswordEncoder, User,
         },
-    },
+    }, models::{ common::sql::{user, auth::Auth}},
 };
 
 crate::quick_struct! {
@@ -108,7 +108,7 @@ async fn create_user(
         })?;
 
     // 将用户信息写入数据库
-    let user = db_entity::user::ActiveModel {
+    let user = user::ActiveModel {
         username: Set(rand_username),
         password: Set(encode_password.to_string()),
         auth: Set(match permission {
@@ -119,7 +119,7 @@ async fn create_user(
         ..Default::default()
     };
 
-    let _ = async_time_usage_with_name(
+    async_time_usage_with_name(
         "保存随机生成用户",
         user.save(db.deref().deref()),
     )
@@ -148,11 +148,11 @@ async fn login(
     // 查询数据库
     let user = async_time_usage_with_name(
         "查询用户信息",
-        db_entity::user::Entity::find()
-            .filter(db_entity::user::Column::Username.eq(body.username))
+        user::Entity::find()
+            .filter(user::Column::Username.eq(body.username))
             .select_only()
-            .column(db_entity::user::Column::Password)
-            .column(db_entity::user::Column::Id)
+            .column(user::Column::Password)
+            .column(user::Column::Id)
             .into_model::<User>()
             .one(db.deref().deref()),
     )
@@ -228,12 +228,12 @@ async fn change_username(
 
     async_time_usage_with_name(
         "更新用户名称",
-        db_entity::user::Entity::update_many()
+        user::Entity::update_many()
             .col_expr(
-                db_entity::user::Column::Username,
+                user::Column::Username,
                 Expr::value(username.clone()),
             )
-            .filter(db_entity::user::Column::Id.eq(id))
+            .filter(user::Column::Id.eq(id))
             .exec(db.deref().deref()),
     )
     .await?;
@@ -284,12 +284,12 @@ async fn change_password(
     // 在数据库修改密码
     async_time_usage_with_name(
         "更新用户密码",
-        db_entity::user::Entity::update_many()
+        user::Entity::update_many()
             .col_expr(
-                db_entity::user::Column::Password,
+                user::Column::Password,
                 Expr::value(encode_password.to_string()),
             )
-            .filter(db_entity::user::Column::Id.eq(id))
+            .filter(user::Column::Id.eq(id))
             .exec(db.deref().deref()),
     )
     .await?;

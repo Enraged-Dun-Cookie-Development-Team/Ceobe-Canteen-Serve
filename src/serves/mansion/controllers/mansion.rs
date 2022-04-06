@@ -9,10 +9,10 @@ use super::{
     MansionMongoDbPretreatment, OptionMidCheckerPretreatment,
 };
 use crate::{
+    models::mansion::preludes::*,
     serves::mansion::{
         controllers::{MansionAuthentication, MidCheckerPretreatment},
         error::{MansionIdExist, MansionNotFound},
-        models::mansion::{MansionId, Mid, ModelMansion, ModifyAt},
         view::ViewMansion,
     },
     utils::req_pretreatment::ReqPretreatment,
@@ -169,7 +169,7 @@ pub(super) async fn get_all_id(
                         filter,
                         FindOptions::builder()
                             .projection(doc! {"id":1i32})
-                            .sort(doc!{"id.main_id":1,"id.minor_id":1})
+                            .sort(doc! {"id.main_id":1,"id.minor_id":1})
                             .build(),
                     )
                     .await?;

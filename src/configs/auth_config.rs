@@ -40,9 +40,9 @@ impl<'de> Deserialize<'de> for Jwt {
         let mut idx = 0;
         let mut inner_key = [0u8; 32];
         let inner = String::deserialize(deserializer)?;
-        let mut key = inner.bytes();
+        let key = inner.bytes();
 
-        while let Some(c) = key.next() {
+        for c in key {
             inner_key[idx] = c;
             idx += 1;
             if idx == 32 {
