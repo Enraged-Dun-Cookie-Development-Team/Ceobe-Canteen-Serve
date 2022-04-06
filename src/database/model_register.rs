@@ -16,7 +16,6 @@ pub(super) fn get_model_list() -> Vec<EntityRegisterFn> {
     STATIC_MODEL_LIST.try_lock().expect("why you call this async?")
         .take()
         .expect("you can only call get_model_list once!")
-        .clone()
 }
 
 pub struct SqlModelRegister {
