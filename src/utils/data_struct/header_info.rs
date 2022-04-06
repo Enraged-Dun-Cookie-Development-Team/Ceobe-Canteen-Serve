@@ -67,7 +67,7 @@ where
             .map(|s| s.into_owned())
             .collect::<Vec<_>>();
 
-        let result = if res.len() == 0 {
+        let result = if res.is_empty() {
             Self::None(Default::default())
         }
         else {

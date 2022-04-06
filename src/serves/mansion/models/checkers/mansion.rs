@@ -40,7 +40,7 @@ impl DataChecker for FractionCheck {
     type Unchecked = i16;
 
     fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        if 1 <= uncheck && uncheck <= 5 {
+        if (1..=5).contains(&uncheck) {
             ok(uncheck)
         }
         else {

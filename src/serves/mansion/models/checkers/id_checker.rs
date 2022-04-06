@@ -44,13 +44,13 @@ impl DataChecker for IdChecker {
 
     fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let task = move || {
-            let mut sp = uncheck.split(".");
+            let mut sp = uncheck.split('.');
             let f = sp.next().ok_or(UnknownId)?;
             let main_id = f.trim().parse::<u32>().map_err(|_| UnknownId)?;
             let n = sp.next().unwrap_or("0");
             let minor_id = n.trim().parse::<u8>().map_err(|_| UnknownId)?;
             // Next 还有东西，不行
-            if let Some(_) = sp.next() {
+            if sp.next().is_some() {
                 Err(UnknownId)?;
             }
             Ok(MansionId { main_id, minor_id })
