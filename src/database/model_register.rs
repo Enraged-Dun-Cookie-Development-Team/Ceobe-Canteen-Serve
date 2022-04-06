@@ -1,4 +1,3 @@
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 
 pub type EntityRegisterFn = fn (SqlModelRegister) -> SqlModelRegister;
@@ -8,22 +7,16 @@ lazy_static::lazy_static! {
 }
 
 pub(crate) fn static_register_model(func: EntityRegisterFn) {
-    let mut guard = STATIC_MODEL_LIST.try_lock().unwrap();
-    match &mut *guard {
-        Some(list) => {
-            list.push(func);
-        },
-        None => panic!("should not call static_register_model after startup!")
-    }
+    Option::<&mut Vec<_>>::from(&mut *STATIC_MODEL_LIST.try_lock().expect("why you call this async?"))
+        .expect("should not call static_register_model after startup!")
+        .push(func);
 }
 
 pub(super) fn get_model_list() -> Vec<EntityRegisterFn> {
-    let mut list = STATIC_MODEL_LIST.try_lock().unwrap();
-    if list.is_none() {
-        panic!("you can only call get_model_list once!");
-    }
-    let new_vec = list.take().unwrap().clone();
-    new_vec
+    STATIC_MODEL_LIST.try_lock().expect("why you call this async?")
+        .take()
+        .expect("you can only call get_model_list once!")
+        .clone()
 }
 
 pub struct SqlModelRegister {
