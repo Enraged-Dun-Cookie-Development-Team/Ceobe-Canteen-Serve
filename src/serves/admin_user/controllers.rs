@@ -33,7 +33,7 @@ use crate::{
             AuthInfo, AuthLevel, Authentication, AuthenticationLevel,
             GenerateToken, PasswordEncoder, User,
         },
-    }, models::{ common::{user, auth::Auth}},
+    }, models::{ common::sql::{user, auth::Auth}},
 };
 
 crate::quick_struct! {

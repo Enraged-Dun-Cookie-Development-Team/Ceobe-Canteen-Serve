@@ -37,7 +37,7 @@ crate::quick_struct! {
 }
 
 /// 用户权限信息
-pub type AuthInfo = models::common::user::Model;
+pub type AuthInfo = models::common::sql::user::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where
