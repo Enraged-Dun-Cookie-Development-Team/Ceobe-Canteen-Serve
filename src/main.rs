@@ -69,7 +69,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     let db_conn = ServeDatabase::connect(&config.database)
         .await
         .expect("无法连接到数据库")
-        .register_models(RootModels)
+        .register_models()
         .await
         .expect("无法在数据库中创建实体");
     create_default_user(&config.admin_user, &db_conn).await;

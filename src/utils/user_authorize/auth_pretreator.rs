@@ -12,7 +12,7 @@ use super::{
 };
 use crate::{
     database::ServeDatabase,
-    models::common::sql::{auth::Auth, user},
+    models::common::{auth::Auth, user},
     utils::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,

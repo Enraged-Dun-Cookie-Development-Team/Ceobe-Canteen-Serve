@@ -10,7 +10,6 @@ use self::{
     error::DatabaseError,
     model_register::SqlModelRegister,
 };
-use crate::utils::mvc_utils::ModelRegister;
 
 pub mod config;
 pub mod error;
@@ -19,14 +18,16 @@ pub mod error;
 pub struct ServeDatabase<D = sea_orm::DatabaseConnection>(D);
 
 impl<D: sea_orm::ConnectionTrait> ServeDatabase<D> {
-    pub async fn register_models<M: ModelRegister>(
-        self, models: M,
+    pub async fn register_models(
+        self
     ) -> Result<Self, DatabaseError>
     where
         D: Send,
     {
-        let register = SqlModelRegister::new(&self);
-        let register = models.register_sql(register);
+        let mut register = SqlModelRegister::new(&self);
+        for f in model_register::get_model_list() {
+            register = f(register);
+        }
         register.register(&self).await?;
         Ok(self)
     }
