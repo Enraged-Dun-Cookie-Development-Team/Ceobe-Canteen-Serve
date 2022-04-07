@@ -16,6 +16,8 @@ pub struct Model {
     pub password: String,
 
     pub auth: Auth,
+    #[sea_orm(default_value = 0)]
+    pub num_change: u32,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter,DeriveRelation)]

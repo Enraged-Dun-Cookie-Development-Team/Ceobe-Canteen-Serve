@@ -66,21 +66,20 @@ impl Pretreatment for TokenAuth {
                 password,
                 auth,
                 username,
+                num_change,
             } = user_info;
             sync_time_usage_with_name("校验Token信息", || {
-                if PasswordEncoder::verify(
-                    &Cow::Owned(password.clone()),
-                    &token.password,
-                )? {
+                if num_change == token.num_change {
                     Ok(AuthInfo {
                         id,
                         password,
                         auth,
                         username,
+                        num_change,
                     })
                 }
                 else {
-                    Err(PasswordWrong.into())
+                    Err(UserNotFound.into())
                 }
             })
         }
