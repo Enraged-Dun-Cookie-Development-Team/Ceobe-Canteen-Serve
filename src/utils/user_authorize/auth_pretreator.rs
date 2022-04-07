@@ -1,14 +1,11 @@
-use std::borrow::Cow;
-
 use actix_web::web::Data;
-use crypto_str::Encoder;
 use futures::Future;
 use lazy_static::__Deref;
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{
     config::TokenHeader as Token, error::AuthError,
-    valid_token::decrpyt_token, AuthInfo, PasswordEncoder,
+    valid_token::decrpyt_token, AuthInfo,
 };
 use crate::{
     database::ServeDatabase,
@@ -16,7 +13,7 @@ use crate::{
     utils::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,
-        user_authorize::error::{PasswordWrong, TokenNotFound, UserNotFound},
+        user_authorize::error::{TokenInvalid, TokenNotFound, UserNotFound},
     },
 };
 
@@ -66,20 +63,20 @@ impl Pretreatment for TokenAuth {
                 password,
                 auth,
                 username,
-                num_change,
+                num_pwd_change,
             } = user_info;
             sync_time_usage_with_name("校验Token信息", || {
-                if num_change == token.num_change {
+                if num_pwd_change == token.num_pwd_change {
                     Ok(AuthInfo {
                         id,
                         password,
                         auth,
                         username,
-                        num_change,
+                        num_pwd_change,
                     })
                 }
                 else {
-                    Err(UserNotFound.into())
+                    Err(TokenInvalid.into())
                 }
             })
         }

@@ -158,7 +158,7 @@ async fn login(
     let user::Model {
         id,
         password,
-        num_change,
+        num_pwd_change,
         ..
     } = user_info;
 
@@ -182,7 +182,7 @@ async fn login(
     }
 
     // 生成用户token
-    let generate_token = User { id, num_change };
+    let generate_token = User { id, num_pwd_change };
     let token = generate_token.generate().unwrap();
 
     // 返回用户token
@@ -250,7 +250,7 @@ async fn change_password(
     let user = user.0;
     let id = user.id;
     let password = user.password;
-    let num_change = user.num_change;
+    let num_pwd_change = user.num_pwd_change;
     let body = body;
 
     let old_password = body.old_password;
@@ -286,7 +286,7 @@ async fn change_password(
                 user::Column::Password,
                 Expr::value(encode_password.to_string()),
             )
-            .col_expr(user::Column::NumChange, Expr::value(num_change + 1))
+            .col_expr(user::Column::NumPwdChange, Expr::value(num_pwd_change + 1))
             .filter(user::Column::Id.eq(id))
             .exec(db.deref().deref()),
     )
@@ -295,7 +295,7 @@ async fn change_password(
     // 生成用户token
     let generate_token = User {
         id,
-        num_change: num_change + 1,
+        num_pwd_change: num_pwd_change + 1,
     };
     let token = generate_token.generate().unwrap();
 

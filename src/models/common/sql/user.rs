@@ -17,7 +17,7 @@ pub struct Model {
 
     pub auth: Auth,
     #[sea_orm(default_value = 0)]
-    pub num_change: u32,
+    pub num_pwd_change: u32,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter,DeriveRelation)]
