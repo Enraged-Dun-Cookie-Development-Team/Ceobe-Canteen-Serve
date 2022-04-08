@@ -1,5 +1,6 @@
 use chrono::Local;
 use mongodb::bson;
+use sub_model_derive::SubModel;
 
 use super::check::{Daily, Mansion};
 
@@ -8,11 +9,24 @@ crate::quick_struct! {
         main_id:u32
         minor_id:u8
     }
-
+    #[derive(SubModel)]
+    #[sub_model(
+        none("ModifyAt"),
+    )]
     pub ModelMansion{
         /// create record
+        #[sub_model(
+            field(
+                want(name = "ModifyAt")
+            )
+        )]
         create_time:bson::DateTime
         /// modify time
+        #[sub_model(
+            field(
+                want(name = "ModifyAt")
+            )
+         )]
         modify_time:Option<bson::DateTime>
 
         //old fields
@@ -23,10 +37,10 @@ crate::quick_struct! {
         daily:Vec<Daily>
     }
 
-    pub ModifyAt{
-        create_time:bson::DateTime
-        modify_time:Option<bson::DateTime>
-    }
+    // pub ModifyAt{
+    //     create_time:bson::DateTime
+    //     modify_time:Option<bson::DateTime>
+    // }
 
 }
 
@@ -88,4 +102,32 @@ impl ModifyAt {
         ));
         self
     }
+}
+#[allow(dead_code)]
+#[derive(SubModel)]
+#[sub_model(none("AOnly"), all("Copy"))]
+pub struct Value {
+    #[sub_model(field(
+        want(name = "AOnly", to = "good"),
+        ignore(name = "Copy")
+    ))]
+    a: u32,
+    b: String,
+}
+
+#[allow(dead_code)]
+fn A() {
+    let v = Value {
+        a: 11,
+        b: String::from("1123"),
+    };
+
+    let AOnly { good } = v.into();
+
+    let v = Value {
+        a: 11,
+        b: String::from("1123"),
+    };
+
+    let Copy { b } = v.into();
 }
