@@ -13,7 +13,7 @@ crate::quick_struct! {
         /// create record
         create_time:bson::DateTime
         /// modify time
-        modify_time:Option<bson::DateTime>
+        modify_time:bson::DateTime
 
         //old fields
         id:MansionId
@@ -25,7 +25,7 @@ crate::quick_struct! {
 
     pub ModifyAt{
         create_time:bson::DateTime
-        modify_time:Option<bson::DateTime>
+        modify_time:bson::DateTime
     }
 
 }
@@ -77,15 +77,15 @@ impl Default for ModifyAt {
         let now = bson::DateTime::from_millis(
             Local::now().naive_local().timestamp_millis(),
         );
-        Self::builder().create_time(now).modify_time(None).build()
+        Self::builder().create_time(now).modify_time(now).build()
     }
 }
 
 impl ModifyAt {
     pub fn now_modify(mut self) -> Self {
-        self.modify_time = Some(bson::DateTime::from_millis(
+        self.modify_time = bson::DateTime::from_millis(
             Local::now().naive_local().timestamp_millis(),
-        ));
+        );
         self
     }
 }
