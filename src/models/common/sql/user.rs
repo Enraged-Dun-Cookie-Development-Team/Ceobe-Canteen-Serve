@@ -16,7 +16,7 @@ pub struct Model {
     pub username: String,
     #[sea_orm(column_type = "Char(Some(64))")]
     pub password: String,
-    #[sub_model(ignore(name = "VerifiedUser"))]
+    #[sub_model(ignore(for = "VerifiedUser"))]
     pub auth: Auth,
 }
 

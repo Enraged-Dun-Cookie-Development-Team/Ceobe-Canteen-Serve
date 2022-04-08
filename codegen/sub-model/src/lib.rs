@@ -165,8 +165,8 @@ mod test {
         #[derive(SubModel)]
         #[sub_model(all("Verified","Basic"),none("Empty"))]
         struct Model{
-            #[sub_model(ignore(name="Verified"))]
-            #[sub_model(want(name="Empty"))]
+            #[sub_model(ignore(for="Verified"))]
+            #[sub_model(want(for="Empty"))]
             a:u32,
             b:String
 

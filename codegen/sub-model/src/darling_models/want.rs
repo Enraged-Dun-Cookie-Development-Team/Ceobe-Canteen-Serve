@@ -21,12 +21,15 @@ impl FromMeta for SubModelsName {
 
 #[derive(Debug, FromMeta)]
 pub struct WantField {
+    #[darling(rename="for")]
     pub name: syn::Ident,
     #[darling(default)]
+    #[darling(rename="rename")]
     pub to: Option<syn::Ident>,
 }
 #[derive(Debug, FromMeta)]
 pub struct IgnoreField {
+    #[darling(rename="for")]
     pub name: syn::Ident,
 }
 
@@ -97,3 +100,9 @@ impl FromMeta for WantFieldInfo {
         Ok(Self { inner })
     }
 }
+
+
+pub struct ExtraAttrs{
+    inner:Vec<NestedMeta>
+}
+
