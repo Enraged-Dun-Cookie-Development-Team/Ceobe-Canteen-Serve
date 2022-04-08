@@ -91,7 +91,10 @@ impl Default for ModifyAt {
         let now = bson::DateTime::from_millis(
             Local::now().naive_local().timestamp_millis(),
         );
-        Self::builder().create_time(now).modify_time(None).build()
+        Self {
+            create_time: now,
+            modify_time: None,
+        }
     }
 }
 
@@ -107,24 +110,38 @@ impl ModifyAt {
 #[derive(SubModel)]
 #[sub_model(none("AOnly"), all("Copy"))]
 pub struct Value {
-    #[sub_model(want(for = "AOnly", rename = "good"), ignore(for = "Copy"))]
+    #[sub_model(
+        want(
+            for = "AOnly",
+            rename = "good",
+            extra(doc = "yes", doc = "CCC")
+        ),
+        ignore(for = "Copy")
+    )]
     a: u32,
+    #[sub_model(having(
+        for = "Copy",
+        rename = "cca",
+        extra(doc = "只有b\n  ", doc = "也许不错")
+    ))]
     b: String,
 }
 
-#[allow(dead_code)]
-fn A() {
+fn _a() {
     let v = Value {
         a: 11,
         b: String::from("1123"),
     };
 
-    let AOnly { good } = v.into();
+    let acc: AOnly = v.into();
+
+    let _c = &acc.good;
 
     let v = Value {
         a: 11,
         b: String::from("1123"),
     };
 
-    let Copy { b } = v.into();
+    let t: Copy = v.into();
+    let _e = &t.cca;
 }

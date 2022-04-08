@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use darling::{FromDeriveInput, FromField};
-use darling_models::DeriveAttrInfo;
+use darling_models::{DeriveAttrInfo, HaveFiled};
 use proc_macro::TokenStream;
 use syn::{
     parse_macro_input, Data, DataStruct, DeriveInput, Fields, FieldsNamed,
@@ -36,6 +36,7 @@ pub fn derive_sub_model(input: TokenStream) -> TokenStream {
             let all = WantAll {
                 name: v.clone(),
                 ignores: Vec::new(),
+                having_change: Vec::new(),
             };
             map.insert(v, SubModel::DefaultAll(all));
         }
@@ -77,21 +78,45 @@ pub fn derive_sub_model(input: TokenStream) -> TokenStream {
                 (
                     SubModel::DefaultAll(WantAll { ignores, .. }),
                     FieldInfo::Ignore(IgnoreField { .. }),
-                ) => ignores.push(FieldMapper::Raw(field_ident.clone())),
+                ) => {
+                    ignores
+                        .push(FieldMapper::Raw(field_ident.clone(), vec![]))
+                }
                 (
                     SubModel::DefaultEmpty(DefaultEmpty { wants, .. }),
-                    FieldInfo::Want(WantField { to, .. }),
+                    FieldInfo::Want(WantField { to, extra, .. }),
                 ) => {
+                    let extra = extra.map(|e| e.inner).unwrap_or_default();
                     let mapper = match to {
                         Some(map_to) => {
                             FieldMapper::Mapping {
                                 from: field_ident.clone(),
                                 to: map_to,
+                                extra,
                             }
                         }
-                        None => FieldMapper::Raw(field_ident.clone()),
+                        None => FieldMapper::Raw(field_ident.clone(), extra),
                     };
                     wants.push(mapper);
+                }
+                (
+                    SubModel::DefaultAll(WantAll { having_change, .. }),
+                    FieldInfo::Having(HaveFiled { to, extra, .. }),
+                ) => {
+                    let extra = extra.map(|e| e.inner).unwrap_or_default();
+                    let mapper = match to {
+
+                        Some(to) => {
+                            FieldMapper::Mapping {
+                                from: field_ident.clone(),
+                                to,
+                                extra,
+                            }
+                        }
+                        None => FieldMapper::Raw(field_ident.clone(), extra),
+                    };
+
+                    having_change.push(mapper)
                 }
                 (SubModel::DefaultEmpty(_), FieldInfo::Ignore(_)) => {
                     panic!("Default Empty Can not In None Block")
@@ -99,14 +124,14 @@ pub fn derive_sub_model(input: TokenStream) -> TokenStream {
                 (SubModel::DefaultAll(_), FieldInfo::Want(_)) => {
                     panic!("Default All SubModel Can not In Want block")
                 }
+                (SubModel::DefaultEmpty(_), FieldInfo::Having(_)) => {
+                    panic!("`having` is for Want All")
+                }
             }
         }
     }
 
-    let fields = fields
-        .into_iter()
-        .map(|f| (f.ident.unwrap(), f.ty))
-        .collect::<Vec<_>>();
+    let fields = fields.into_iter().map(|f| (f.ident.unwrap(), f.ty));
 
     let sub_models = map
         .into_iter()
@@ -165,9 +190,25 @@ mod test {
         #[derive(SubModel)]
         #[sub_model(all("Verified","Basic"),none("Empty"))]
         struct Model{
-            #[sub_model(ignore(for="Verified"))]
-            #[sub_model(want(for="Empty"))]
+            // #[sub_model(
+            //     want(
+            //         for="Empty",
+            //         rename="c",
+            //         extra(
+            //             serde(rename="abab"),
+            //             serde(alias="ccc")
+            //         )
+            //     )
+            // )]
             a:u32,
+            #[sub_model(having(
+                for="Verified",
+                rename="cca",
+                extra(
+                    doc="只有b\n  ",
+                    doc="也许不错"
+                )
+            ))]
             b:String
 
         }
@@ -184,7 +225,7 @@ mod test {
         for f in v {
             let info = <DeriveField as FromField>::from_field(&f).unwrap();
 
-            println!("{:?}", info);
+            println!("value {:#?}", info);
         }
     }
 }
