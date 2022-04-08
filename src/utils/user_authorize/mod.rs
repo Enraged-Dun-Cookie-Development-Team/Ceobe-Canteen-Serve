@@ -25,7 +25,7 @@ crate::quick_struct! {
     #[derive(PartialEq, Eq, FromQueryResult)]
     pub User{
         id:i32
-        password:String
+        num_pwd_change:u32
     }
 
     
@@ -72,16 +72,11 @@ mod test {
     fn generate_key() {
         let user = User {
             id: 5,
-            password: "1234asdf!@".into(),
+            num_pwd_change: 3,
         };
 
-        let token = user.generate().unwrap();
+        let token = user.clone().generate().unwrap();
         let valid_user = decrpyt_token(token).unwrap();
-
-        let user = User {
-            id: 5,
-            password: "1234asdf!@".into(),
-        };
 
         assert_eq!(user, valid_user);
     }

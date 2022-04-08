@@ -25,6 +25,13 @@ status_err::status_error!(
     ]=>"Token对应信息不存在"
 );
 
+status_err::status_error!(
+    pub TokenInvalid [
+        ErrPrefix::UNAUTHORIZED,
+        0006
+    ]=>"Token失效"
+);
+
 error_generate!(
     pub AuthError
 
@@ -36,4 +43,5 @@ error_generate!(
     Db = sea_orm::DbErr
     Bcrypto = bcrypt::BcryptError
     AuthLevel = auth_level::UnacceptableAuthorizationLevelError
+    TokenInvalid = TokenInvalid
 );

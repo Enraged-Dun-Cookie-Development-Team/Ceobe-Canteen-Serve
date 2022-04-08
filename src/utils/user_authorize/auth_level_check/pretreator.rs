@@ -32,6 +32,7 @@ impl<L: AuthLevelVerify> Pretreatment for AuthLevel<L> {
                 auth,
                 username,
                 password: pwd,
+                ..
             } = info;
 
             sync_time_usage_with_name(

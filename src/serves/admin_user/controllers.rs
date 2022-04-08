@@ -1,7 +1,6 @@
 use actix_web::{get, post, web::Data};
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-
 use lazy_static::__Deref;
 use orm_migrate::sea_query::Expr;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -15,11 +14,12 @@ use super::view::ChangePassword;
 use crate::{
     database::ServeDatabase,
     generate_controller,
+    models::common::sql::{auth::Auth, user},
     serves::admin_user::{
         checker::user::{UsernameChecker, UsernameUncheck},
         error::AdminUserError,
         view::{CreateUser, UserInfo, UserName, UserToken},
-        AdminUserRResult, 
+        AdminUserRResult,
     },
     utils::{
         data_checker::{DataChecker, PretreatChecker},
@@ -33,7 +33,7 @@ use crate::{
             AuthInfo, AuthLevel, Authentication, AuthenticationLevel,
             GenerateToken, PasswordEncoder, User,
         },
-    }, models::{ common::sql::{user, auth::Auth}},
+    },
 };
 
 crate::quick_struct! {
@@ -145,20 +145,22 @@ async fn login(
     // 从请求体获取信息
     let body = body;
 
-    // 查询数据库
-    let user = async_time_usage_with_name(
+    // 查询数据库获得user信息
+    let user_info = async_time_usage_with_name(
         "查询用户信息",
         user::Entity::find()
             .filter(user::Column::Username.eq(body.username))
-            .select_only()
-            .column(user::Column::Password)
-            .column(user::Column::Id)
-            .into_model::<User>()
             .one(db.deref().deref()),
     )
     .await?
     .ok_or(UserNotFound)
     .map_err(AuthError::from)?;
+    let user::Model {
+        id,
+        password,
+        num_pwd_change,
+        ..
+    } = user_info;
 
     let password_correct =
         sync_time_usage_with_name("校验密码是否正确", || {
@@ -168,7 +170,7 @@ async fn login(
             );
             let db_password =
                 crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
-                    user.password,
+                    password,
                 );
 
             // 检查密码是否正确
@@ -180,10 +182,7 @@ async fn login(
     }
 
     // 生成用户token
-    let generate_token = User {
-        id: user.id,
-        password: body.password,
-    };
+    let generate_token = User { id, num_pwd_change };
     let token = generate_token.generate().unwrap();
 
     // 返回用户token
@@ -229,10 +228,7 @@ async fn change_username(
     async_time_usage_with_name(
         "更新用户名称",
         user::Entity::update_many()
-            .col_expr(
-                user::Column::Username,
-                Expr::value(username.clone()),
-            )
+            .col_expr(user::Column::Username, Expr::value(username.clone()))
             .filter(user::Column::Id.eq(id))
             .exec(db.deref().deref()),
     )
@@ -254,6 +250,7 @@ async fn change_password(
     let user = user.0;
     let id = user.id;
     let password = user.password;
+    let num_pwd_change = user.num_pwd_change;
     let body = body;
 
     let old_password = body.old_password;
@@ -289,6 +286,7 @@ async fn change_password(
                 user::Column::Password,
                 Expr::value(encode_password.to_string()),
             )
+            .col_expr(user::Column::NumPwdChange, Expr::value(num_pwd_change + 1))
             .filter(user::Column::Id.eq(id))
             .exec(db.deref().deref()),
     )
@@ -297,7 +295,7 @@ async fn change_password(
     // 生成用户token
     let generate_token = User {
         id,
-        password: new_password,
+        num_pwd_change: num_pwd_change + 1,
     };
     let token = generate_token.generate().unwrap();
 
