@@ -1,11 +1,11 @@
-use sea_orm::entity::prelude::*;
 use helper_macro::entity;
+use sea_orm::entity::prelude::*;
 use sub_model_derive::SubModel;
 
 use super::auth::Auth;
 
 #[entity]
-#[derive(Debug, Clone, PartialEq, DeriveEntityModel,SubModel)]
+#[derive(Debug, Clone, PartialEq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "user")]
 #[sub_model(all("VerifiedUser"))]
 pub struct Model {
@@ -16,11 +16,11 @@ pub struct Model {
     pub username: String,
     #[sea_orm(column_type = "Char(Some(64))")]
     pub password: String,
-    #[sub_model(field(ignore(name="VerifiedUser")))]
+    #[sub_model(ignore(name = "VerifiedUser"))]
     pub auth: Auth,
 }
 
-#[derive(Debug, Clone, Copy, EnumIter,DeriveRelation)]
+#[derive(Debug, Clone, Copy, EnumIter, DeriveRelation)]
 pub enum Relation {}
 
 // impl RelationTrait for Relation {

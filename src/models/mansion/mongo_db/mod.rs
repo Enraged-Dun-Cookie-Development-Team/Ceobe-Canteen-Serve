@@ -16,16 +16,16 @@ crate::quick_struct! {
     pub ModelMansion{
         /// create record
         #[sub_model(
-            field(
+
                 want(name = "ModifyAt")
-            )
+
         )]
         create_time:bson::DateTime
         /// modify time
         #[sub_model(
-            field(
+
                 want(name = "ModifyAt")
-            )
+
          )]
         modify_time:Option<bson::DateTime>
 
@@ -107,10 +107,7 @@ impl ModifyAt {
 #[derive(SubModel)]
 #[sub_model(none("AOnly"), all("Copy"))]
 pub struct Value {
-    #[sub_model(field(
-        want(name = "AOnly", to = "good"),
-        ignore(name = "Copy")
-    ))]
+    #[sub_model(want(name = "AOnly", to = "good"), ignore(name = "Copy"))]
     a: u32,
     b: String,
 }
