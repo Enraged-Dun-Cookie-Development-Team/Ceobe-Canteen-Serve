@@ -23,8 +23,15 @@ crate::generate_controller!(
     "/mansion",
     mansion::save_mansion,
     mansion::get_mansion,
-    mansion::get_all_id,
+    mansion::get_recent_id,
     mansion::remove_mansion
+);
+
+crate::generate_controller!(
+    MansionFrontController,
+    "/bakery",
+    mansion::get_mansion_with_time,
+    mansion::get_all_id
 );
 
 crate::new_auth_level! {

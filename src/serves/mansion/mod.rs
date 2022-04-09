@@ -9,3 +9,4 @@ type MansionRResult<T> = RespResult<T, error::MansionError>;
 
 
 pub use controllers::MansionController;
+pub use controllers::MansionFrontController;

@@ -18,6 +18,7 @@ pub mod admin_group {
 pub mod non_admin_group {
 
     pub use super::ceobe_push::CeobeController;
+    pub use super::mansion::MansionFrontController;
 
-    crate::generate_controller!(CanteenWrapController, "/canteen");
+    crate::generate_controller!(CanteenWrapController, "/canteen", MansionFrontController);
 }
