@@ -1,6 +1,6 @@
 use darling::FromMeta;
 use proc_macro2::Ident;
-use syn::{token::Pub, Meta, NestedMeta, VisPublic, Visibility};
+use syn::{Meta, NestedMeta, Visibility};
 
 use super::{pub_vis, utils::load_from_meta_list, ExtraAttrs, FromIdent};
 use crate::models::{FieldMapper, FieldMeta};

@@ -1,27 +1,17 @@
-use std::collections::HashMap;
-
 use darling::{FromDeriveInput, FromField};
-use darling_models::{DeriveAttrInfo, HaveFiled};
+use darling_models::DeriveAttrInfo;
 use proc_macro::TokenStream;
 use syn::{
     parse_macro_input, Data, DataStruct, DeriveInput, Fields, FieldsNamed,
 };
 
 use crate::{
-    darling_models::{DeriveField, FieldInfo, IgnoreField, WantField},
-    models::{DefaultEmpty, FieldMapper, SubModel, WantAll},
+    darling_models::{DeriveField, FieldInfo},
+    models::{DefaultEmpty, SubModel, WantAll},
 };
 
 mod darling_models;
 mod models;
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
 
 #[proc_macro_derive(SubModel, attributes(sub_model))]
 pub fn derive_sub_model(input: TokenStream) -> TokenStream {
@@ -30,26 +20,7 @@ pub fn derive_sub_model(input: TokenStream) -> TokenStream {
         <DeriveAttrInfo as FromDeriveInput>::from_derive_input(&derive)
             .expect("Derive Info Cannot Load");
 
-    let mut map = {
-        let mut map = HashMap::new();
-        for v in derive_info.all.inner {
-            let all = WantAll {
-                name: v.clone(),
-                ignores: Vec::new(),
-                having_change: Vec::new(),
-            };
-            map.insert(v, SubModel::DefaultAll(all));
-        }
-        for v in derive_info.none.inner {
-            let empty = DefaultEmpty {
-                name: v.clone(),
-                wants: Vec::new(),
-            };
-            map.insert(v, SubModel::DefaultEmpty(empty));
-        }
-
-        map
-    };
+    let mut map = derive_info.inner.to_models_map();
 
     let fields = if let Data::Struct(DataStruct {
         fields: Fields::Named(FieldsNamed { named, .. }),
@@ -65,7 +36,6 @@ pub fn derive_sub_model(input: TokenStream) -> TokenStream {
     for field in fields.clone() {
         let extra = <DeriveField as FromField>::from_field(&field)
             .expect("Cannot Load Field Info");
-        // println!("field extra {:?}, field Info {:?}", extra, field);
 
         let v = extra.field.inner;
 
@@ -73,50 +43,27 @@ pub fn derive_sub_model(input: TokenStream) -> TokenStream {
 
         for field_info in v {
             let ident = field_info.get_ident();
-            match (map.get_mut(ident).expect("Unknown SubModel"), field_info)
+            match (map.get_mut(ident).expect("Unknown SubModel"), &field_info)
             {
                 (
                     SubModel::DefaultAll(WantAll { ignores, .. }),
-                    FieldInfo::Ignore(IgnoreField { .. }),
+                    FieldInfo::Ignore(_),
                 ) => {
                     ignores
-                        .push(FieldMapper::Raw(field_ident.clone(), vec![]))
+                        .push(field_info.to_field_meta(field_ident.clone()))
                 }
                 (
                     SubModel::DefaultEmpty(DefaultEmpty { wants, .. }),
-                    FieldInfo::Want(WantField { to, extra, .. }),
+                    FieldInfo::Want(_),
                 ) => {
-                    let extra = extra.map(|e| e.inner).unwrap_or_default();
-                    let mapper = match to {
-                        Some(map_to) => {
-                            FieldMapper::Mapping {
-                                from: field_ident.clone(),
-                                to: map_to,
-                                extra,
-                            }
-                        }
-                        None => FieldMapper::Raw(field_ident.clone(), extra),
-                    };
-                    wants.push(mapper);
+                    wants.push(field_info.to_field_meta(field_ident.clone()));
                 }
                 (
                     SubModel::DefaultAll(WantAll { having_change, .. }),
-                    FieldInfo::Having(HaveFiled { to, extra, .. }),
+                    FieldInfo::Having(_),
                 ) => {
-                    let extra = extra.map(|e| e.inner).unwrap_or_default();
-                    let mapper = match to {
-
-                        Some(to) => {
-                            FieldMapper::Mapping {
-                                from: field_ident.clone(),
-                                to,
-                                extra,
-                            }
-                        }
-                        None => FieldMapper::Raw(field_ident.clone(), extra),
-                    };
-
-                    having_change.push(mapper)
+                    having_change
+                        .push(field_info.to_field_meta(field_ident.clone()))
                 }
                 (SubModel::DefaultEmpty(_), FieldInfo::Ignore(_)) => {
                     panic!("Default Empty Can not In None Block")
@@ -166,13 +113,15 @@ mod test {
         let v = syn::parse_str(code).expect("Bad Code");
         let _v = <DeriveAttrInfo as FromDeriveInput>::from_derive_input(&v)
             .unwrap();
+
+            println!("{:?}",&_v)
     }
 
     #[test]
     fn test_all_only() {
         let code = r#"
             #[derive(SubModel)]
-            #[sub_model(all("Verified","Basic"))]
+            #[sub_model(all(name="Verified"),all("Basic"))]
             struct Model{
                 a:u32,
                 b:u8
@@ -182,13 +131,15 @@ mod test {
         let v = syn::parse_str(code).expect("Bad Code");
         let _v = <DeriveAttrInfo as FromDeriveInput>::from_derive_input(&v)
             .unwrap();
+
+        println!("{:?}", &_v)
     }
 
     #[test]
     fn test_field() {
         let code = r#"
         #[derive(SubModel)]
-        #[sub_model(all("Verified","Basic"),none("Empty"))]
+        #[sub_model(all(name="Verified",vis=""),all("Basic"),none("Empty"))]
         struct Model{
             #[sub_model(
                 want(
