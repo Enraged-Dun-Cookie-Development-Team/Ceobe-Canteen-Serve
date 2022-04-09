@@ -17,6 +17,7 @@ use crate::utils::{
 };
 
 pub mod mansion;
+pub mod mansion_front;
 
 crate::generate_controller!(
     MansionController,
@@ -30,8 +31,8 @@ crate::generate_controller!(
 crate::generate_controller!(
     MansionFrontController,
     "/bakery",
-    mansion::get_mansion_with_time,
-    mansion::get_all_id
+    mansion_front::get_mansion_with_time,
+    mansion_front::get_all_id
 );
 
 crate::new_auth_level! {

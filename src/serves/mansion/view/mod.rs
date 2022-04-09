@@ -1,9 +1,6 @@
-use std::fmt::Debug;
-
-use chrono::FixedOffset;
-
 use crate::models::mansion::preludes::*;
 
+pub const TIME_FORMAT: &str = "%Y-%m-%d %T";
 
 crate::quick_struct! {
     pub ViewMansion{
@@ -120,8 +117,8 @@ impl Into<ViewMansionWithTime> for ModelMansion {
             cvlink,
             fraction,
             daily: daily.into_iter().map(Into::into).collect(),
-            create_time: create_time.to_chrono().format("%Y-%m-%d %T").to_string(),
-            modify_time: modify_time.unwrap().to_chrono().format("%Y-%m-%d %T").to_string()
+            create_time: create_time.to_chrono().format(TIME_FORMAT).to_string(),
+            modify_time: modify_time.unwrap().to_chrono().format(TIME_FORMAT).to_string()
         }
     }
 }
