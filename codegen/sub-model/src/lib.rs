@@ -190,16 +190,17 @@ mod test {
         #[derive(SubModel)]
         #[sub_model(all("Verified","Basic"),none("Empty"))]
         struct Model{
-            // #[sub_model(
-            //     want(
-            //         for="Empty",
-            //         rename="c",
-            //         extra(
-            //             serde(rename="abab"),
-            //             serde(alias="ccc")
-            //         )
-            //     )
-            // )]
+            #[sub_model(
+                want(
+                    for="Empty",
+                    rename="c",
+                    extra(
+                        serde(rename="abab"),
+                        serde(alias="ccc")
+                    )
+                ),
+                ignore("Verified")
+            )]
             a:u32,
             #[sub_model(having(
                 for="Verified",

@@ -2,6 +2,8 @@ use darling::FromMeta;
 use proc_macro2::Ident;
 use syn::{Meta, NestedMeta};
 
+use super::FromIdent;
+
 #[derive(Debug, Default)]
 pub struct SubModelsName {
     pub inner: Vec<Ident>,
@@ -29,11 +31,27 @@ pub struct WantField {
     #[darling(default)]
     pub extra: Option<ExtraAttrs>,
 }
+
+impl FromIdent for WantField {
+    fn form_ident(ident: syn::Ident) -> Self {
+        Self {
+            name: ident,
+            to: None,
+            extra: None,
+        }
+    }
+}
+
 #[derive(Debug, FromMeta)]
 pub struct IgnoreField {
     #[darling(rename = "for")]
     pub name: syn::Ident,
 }
+
+impl FromIdent for IgnoreField {
+    fn form_ident(ident: syn::Ident) -> Self { Self { name: ident } }
+}
+
 #[derive(Debug, FromMeta)]
 pub struct HaveFiled {
     #[darling(rename = "for")]
@@ -42,6 +60,35 @@ pub struct HaveFiled {
     pub to: Option<syn::Ident>,
     #[darling(default)]
     pub extra: Option<ExtraAttrs>,
+}
+
+impl FromIdent for HaveFiled {
+    fn form_ident(ident: syn::Ident) -> Self {
+        Self {
+            name: ident,
+            to: None,
+            extra: None,
+        }
+    }
+}
+
+fn load_from_meta_list<T: FromIdent>(
+    meta_list: &impl AsRef<[NestedMeta]>,
+) -> darling::Result<T> {
+    // try load direct
+    <T as FromMeta>::from_list(meta_list.as_ref()).or_else(|err| {
+        meta_list
+            .as_ref()
+            .first()
+            // if len of vec nest meta is 0,no try
+            .ok_or(err)
+            .and_then(|meta| {
+                // try load ident only
+                <syn::Ident as FromMeta>::from_nested_meta(meta)
+                    // mapping to T
+                    .map(<T as FromIdent>::form_ident)
+            })
+    })
 }
 
 #[derive(Debug)]
@@ -55,27 +102,20 @@ impl FromMeta for FieldInfo {
     fn from_nested_meta(item: &NestedMeta) -> darling::Result<Self> {
         match item {
             NestedMeta::Meta(Meta::List(meta_list)) => {
+                let nest_meta_list =
+                    meta_list.nested.iter().cloned().collect::<Vec<_>>();
+
                 if meta_list.path.is_ident("want") {
-                    Ok(FieldInfo::Want(<WantField as FromMeta>::from_list(
-                        &meta_list.nested.iter().cloned().collect::<Vec<_>>()
-                            [..],
-                    )?))
+                    Ok(FieldInfo::Want(load_from_meta_list(&nest_meta_list)?))
                 }
                 else if meta_list.path.is_ident("ignore") {
-                    Ok(FieldInfo::Ignore(
-                        <IgnoreField as FromMeta>::from_list(
-                            &meta_list
-                                .nested
-                                .iter()
-                                .cloned()
-                                .collect::<Vec<_>>()[..],
-                        )?,
-                    ))
+                    Ok(FieldInfo::Ignore(load_from_meta_list(
+                        &nest_meta_list,
+                    )?))
                 }
                 else if meta_list.path.is_ident("having") {
-                    Ok(FieldInfo::Having(HaveFiled::from_list(
-                        &meta_list.nested.iter().cloned().collect::<Vec<_>>()
-                            [..],
+                    Ok(FieldInfo::Having(load_from_meta_list(
+                        &nest_meta_list,
                     )?))
                 }
                 else {
@@ -85,10 +125,10 @@ impl FromMeta for FieldInfo {
                 }
             }
             NestedMeta::Lit(_) => {
-                Err(darling::Error::unsupported_format("Lit"))
+                Err(darling::Error::unsupported_format("lit"))
             }
             NestedMeta::Meta(_) => {
-                Err(darling::Error::unsupported_format("Not MetaList"))
+                Err(darling::Error::unsupported_format("meta"))
             }
         }
     }
