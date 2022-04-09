@@ -13,6 +13,75 @@ use crate::{
 mod darling_models;
 mod models;
 
+
+/// a help Derive Marco for Generate Sub Models 
+/// 
+/// ## Example
+/// ```rust
+/// #[derive(SubModel)]
+/// #[sub_model(
+///     none(
+///         // SubModel 可见性
+///         vis = "",
+///         // SubModel 名称
+///         name = "AOnly", 
+///         // SubModel 额外挂载
+///         extra(
+///             doc = "只有A的类型",
+///             derive(Copy)
+///         )
+///     ),
+///     // 只有名称可以这样
+///     all("Copy")
+/// )]
+/// pub struct Value {
+///     #[sub_model(
+///         want(
+///             // 目标SubModel
+///             for = "AOnly",
+///             // 字段名称映射
+///             rename = "good",
+///             // 指端可见性
+///             vis = "pub(super)",
+///             // 字段挂载
+///             extra(doc = "yes", doc = "CCC")
+///         ),
+///         // 只提供目标SubModel 可以这样
+///         ignore("Copy")
+///     )]
+///     a: u32,
+///     #[sub_model(having(
+///         for = "Copy",
+///         rename = "cca",
+///         extra(doc = "只有b\n  ", doc = "也许不错")
+///     ))]
+///     b: String,
+///}
+/// ```
+/// 
+/// 以上代码等价于
+/// 
+/// ```rust
+/// pub struct Value {
+///     a:u32,
+///     b:String
+/// }
+/// 
+/// #[derive(Copy,Clone,Debug...)]
+/// #[doc = "只有A的类型"]
+/// struct AOnly{
+///     #[doc ="yes"]
+///     #[doc ="CCC"]
+///     pub(super) good: u32
+/// }
+/// #[derive(Clone,Debug...)]
+/// // default vis is pub
+/// pub struct Copy{
+///      #[doc ="只有b\n  "]
+///     #[doc ="也许不错"]
+///     pub cca:String
+/// }
+/// ```
 #[proc_macro_derive(SubModel, attributes(sub_model))]
 pub fn derive_sub_model(input: TokenStream) -> TokenStream {
     let derive = parse_macro_input!(input as DeriveInput);
