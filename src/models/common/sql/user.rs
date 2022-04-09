@@ -7,7 +7,10 @@ use super::auth::Auth;
 #[entity]
 #[derive(Debug, Clone, PartialEq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "user")]
-#[sub_model(all("VerifiedUser"))]
+#[sub_model(all(
+    name = "VerifiedUser",
+    extra(derive(sea_orm::FromQueryResult))
+))]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
@@ -16,7 +19,7 @@ pub struct Model {
     pub username: String,
     #[sea_orm(column_type = "Char(Some(64))")]
     pub password: String,
-    #[sub_model(ignore(for = "VerifiedUser"))]
+    #[sub_model(ignore("VerifiedUser"))]
     pub auth: Auth,
 }
 

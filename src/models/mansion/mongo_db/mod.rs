@@ -16,16 +16,12 @@ crate::quick_struct! {
     pub ModelMansion{
         /// create record
         #[sub_model(
-
-                want(for = "ModifyAt")
-
+                want( "ModifyAt")
         )]
         create_time:bson::DateTime
         /// modify time
         #[sub_model(
-
-                want(for = "ModifyAt")
-
+                want( "ModifyAt")
          )]
         modify_time:Option<bson::DateTime>
 
@@ -36,11 +32,6 @@ crate::quick_struct! {
         fraction:u8
         daily:Vec<Daily>
     }
-
-    // pub ModifyAt{
-    //     create_time:bson::DateTime
-    //     modify_time:Option<bson::DateTime>
-    // }
 
 }
 
@@ -108,15 +99,35 @@ impl ModifyAt {
 }
 #[allow(dead_code)]
 #[derive(SubModel)]
-#[sub_model(none("AOnly"), all("Copy"))]
+#[sub_model(
+    none(
+        // SubModel 可见性
+        vis = "",
+        // SubModel 名称
+        name = "AOnly", 
+        // SubModel 额外挂载
+        extra(
+            doc = "只有A的类型",
+            derive(Copy)
+        )
+    ),
+    // 只有名称可以这样
+    all("Copy")
+)]
 pub struct Value {
     #[sub_model(
         want(
+            // 目标SubModel
             for = "AOnly",
+            // 字段名称映射
             rename = "good",
+            // 指端可见性
+            vis = "pub(super)",
+            // 字段挂载
             extra(doc = "yes", doc = "CCC")
         ),
-        ignore(for = "Copy")
+        // 只提供目标SubModel 可以这样
+        ignore("Copy")
     )]
     a: u32,
     #[sub_model(having(
