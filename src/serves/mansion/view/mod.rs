@@ -1,3 +1,7 @@
+use std::fmt::Debug;
+
+use chrono::FixedOffset;
+
 use crate::models::mansion::preludes::*;
 
 
@@ -6,6 +10,18 @@ crate::quick_struct! {
         id:String
         description:String
         cvlink:String
+        fraction:u8
+        daily:Vec<ViewDaily>
+    }
+
+    pub ViewMansionWithTime {
+        id:String
+        description:String
+        cvlink:String
+        #[serde(rename = "createTime")]
+        create_time: String
+        #[serde(rename = "modifyTime")]
+        modify_time: String
         fraction:u8
         daily:Vec<ViewDaily>
     }
@@ -83,6 +99,29 @@ impl Into<ViewMansion> for ModelMansion {
             cvlink,
             fraction,
             daily: daily.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+impl Into<ViewMansionWithTime> for ModelMansion {
+    fn into(self) -> ViewMansionWithTime {
+        let ModelMansion {
+            id,
+            description,
+            cvlink,
+            fraction,
+            daily,
+            create_time,
+            modify_time
+        } = self;
+        ViewMansionWithTime {
+            id: id.to_string(),
+            description,
+            cvlink,
+            fraction,
+            daily: daily.into_iter().map(Into::into).collect(),
+            create_time: create_time.to_chrono().format("%Y-%m-%d %T").to_string(),
+            modify_time: modify_time.unwrap().to_chrono().format("%Y-%m-%d %T").to_string()
         }
     }
 }
