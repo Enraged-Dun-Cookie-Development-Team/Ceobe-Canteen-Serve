@@ -43,8 +43,11 @@ pub fn derive_sub_model(input: TokenStream) -> TokenStream {
 
         for field_info in v {
             let ident = field_info.get_ident();
-            match (map.get_mut(ident).expect("Unknown SubModel"), &field_info)
-            {
+            match (
+                map.get_mut(ident)
+                    .expect(&format!("Unknown SubModel: {}", ident)),
+                &field_info,
+            ) {
                 (
                     SubModel::DefaultAll(WantAll { ignores, .. }),
                     FieldInfo::Ignore(_),
@@ -112,9 +115,11 @@ mod test {
 
         let v = syn::parse_str(code).expect("Bad Code");
         let _v = <DeriveAttrInfo as FromDeriveInput>::from_derive_input(&v)
-            .unwrap();
+            .unwrap()
+            .inner
+            .to_models_map();
 
-            println!("{:?}",&_v)
+        println!("{:?}", _v.keys())
     }
 
     #[test]
@@ -130,16 +135,28 @@ mod test {
 
         let v = syn::parse_str(code).expect("Bad Code");
         let _v = <DeriveAttrInfo as FromDeriveInput>::from_derive_input(&v)
-            .unwrap();
+            .unwrap()
+            .inner
+            .to_models_map();
 
-        println!("{:?}", &_v)
+        println!("{:?}", &_v.keys())
     }
 
     #[test]
     fn test_field() {
         let code = r#"
+        #[allow(dead_code)]
         #[derive(SubModel)]
-        #[sub_model(all(name="Verified",vis=""),all("Basic"),none("Empty"))]
+        #[sub_model(
+            all(
+                // SubModel 可见性
+                vis = ""
+                // SubModel 名称
+                name = "AOnly", 
+                // SubModel 额外挂载
+                extra(doc = "只有A的类型")
+            ),
+            all("Basic"),none("Empty"))]
         struct Model{
             #[sub_model(
                 want(
@@ -179,5 +196,59 @@ mod test {
 
             println!("value {:#?}", info);
         }
+    }
+
+    #[test]
+    fn complex_check() {
+        let code = r#"
+#[allow(dead_code)]
+#[derive(SubModel)]
+#[sub_model(
+    none(
+        // SubModel 可见性
+        vis = "",
+        // SubModel 名称
+        name = "AOnly", 
+        // SubModel 额外挂载
+        extra(doc = "只有A的类型")
+    ),
+    // 只有名称可以这样
+    all("Copy")
+)]
+pub struct Value {
+    #[sub_model(
+        want(
+            // 目标SubModel
+            for = "AOnly",
+            // 字段名称映射
+            rename = "good",
+            // 指端可见性
+            vis = "pub(super)",
+            // 字段挂载
+            extra(doc = "yes", doc = "CCC")
+        ),
+        // 只提供目标SubModel 可以这样
+        ignore("Copy")
+    )]
+    a: u32,
+    #[sub_model(
+        having(
+            for = "Copy",
+            rename = "cca",
+            extra(doc = "只有b\n  ", doc = "也许不错")
+        ),
+        want("AOnly")
+    )]
+    b: String,
+}
+"#;
+
+        let v: DeriveInput = syn::parse_str(code).expect("Bad Code");
+        let _v = <DeriveAttrInfo as FromDeriveInput>::from_derive_input(&v)
+            .unwrap();
+        println!("size {}", _v.inner.inner.len());
+        let v = _v.inner.to_models_map();
+
+        println!("{:?}", &v.keys())
     }
 }

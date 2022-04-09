@@ -29,7 +29,7 @@ impl FieldMapper {
         }
     }
 }
-
+#[derive(Debug)]
 pub struct FieldMeta {
     pub vis: Option<Visibility>,
     pub name: FieldMapper,

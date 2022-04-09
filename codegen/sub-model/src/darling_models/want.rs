@@ -17,14 +17,14 @@ impl FromIdent for IgnoreField {
 
 #[derive(Debug, FromMeta)]
 pub struct HaveFiled {
+    #[darling(default)]
+    pub vis: Option<Visibility>,
     #[darling(rename = "for")]
     pub name: syn::Ident,
     #[darling(rename = "rename")]
     pub to: Option<syn::Ident>,
     #[darling(default)]
     pub extra: Option<ExtraAttrs>,
-    #[darling(default)]
-    pub vis: Option<Visibility>,
 }
 
 impl FromIdent for HaveFiled {

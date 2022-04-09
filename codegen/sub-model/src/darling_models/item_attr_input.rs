@@ -14,9 +14,9 @@ pub enum GroupIn {
 
 #[derive(Debug, darling::FromMeta)]
 pub struct SubModelMetaInfo {
-    pub name: Ident,
     #[darling(default)]
     pub vis: Option<syn::Visibility>,
+    pub name: Ident,
     #[darling(default)]
     pub extra: Option<ExtraAttrs>,
 }

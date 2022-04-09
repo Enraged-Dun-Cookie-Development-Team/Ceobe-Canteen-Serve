@@ -52,7 +52,7 @@ pub(super) fn load_meta_list_from_attrs(
     attrs
         .as_ref()
         .into_iter()
-        .filter_map(|attr| attr.parse_meta().ok())
+        .map(|attr| attr.parse_meta().expect("Loading Attr Error"))
         .filter(|meta| meta.path().is_ident(attr_name))
         .filter_map(|meta| {
             match meta {

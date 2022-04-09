@@ -6,7 +6,7 @@ use syn::{NestedMeta, Type, Visibility};
 
 use super::FieldMeta;
 use crate::darling_models::pub_vis;
-
+#[derive(Debug)]
 /// ## sub model type
 /// Default Want All Field
 /// with A list To Ignore Fields
@@ -17,7 +17,7 @@ pub struct WantAll {
     pub extra: Vec<NestedMeta>,
     pub vis: Visibility,
 }
-
+#[derive(Debug)]
 /// ## Sub Model Type
 /// Default Is Empty
 /// whit a List to declare Want Fields
@@ -28,6 +28,7 @@ pub struct DefaultEmpty {
     pub vis: Visibility,
 }
 
+#[derive(Debug)]
 pub enum SubModel {
     DefaultAll(WantAll),
     DefaultEmpty(DefaultEmpty),
