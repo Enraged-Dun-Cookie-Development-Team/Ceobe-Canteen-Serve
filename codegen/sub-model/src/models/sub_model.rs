@@ -2,17 +2,20 @@ use std::collections::{HashMap, HashSet};
 
 use darling::ToTokens;
 use proc_macro2::Ident;
-use syn::{NestedMeta, Type};
+use syn::{NestedMeta, Type, Visibility};
 
-use super::field_filter::FieldMapper;
+use super::FieldMeta;
+use crate::darling_models::pub_vis;
 
 /// ## sub model type
 /// Default Want All Field
 /// with A list To Ignore Fields
 pub struct WantAll {
     pub name: syn::Ident,
-    pub ignores: Vec<FieldMapper>,
-    pub having_change: Vec<FieldMapper>,
+    pub ignores: Vec<FieldMeta>,
+    pub having_change: Vec<FieldMeta>,
+    pub extra: Vec<NestedMeta>,
+    pub vis: Visibility,
 }
 
 /// ## Sub Model Type
@@ -20,7 +23,9 @@ pub struct WantAll {
 /// whit a List to declare Want Fields
 pub struct DefaultEmpty {
     pub name: syn::Ident,
-    pub wants: Vec<FieldMapper>,
+    pub wants: Vec<FieldMeta>,
+    pub extra: Vec<NestedMeta>,
+    pub vis: Visibility,
 }
 
 pub enum SubModel {
@@ -42,26 +47,48 @@ impl SubModel {
 
 pub struct SubModelDef {
     inner: SubModel,
+
     parent: Ident,
     field: HashMap<Ident, Type>,
 }
 
 impl SubModelDef {
-    fn get_extra_map(&self) -> HashMap<Ident, Vec<NestedMeta>> {
-        let attrs = {
-            match &self.inner {
-                SubModel::DefaultAll(WantAll { having_change, .. }) => {
-                    having_change
-                }
-                SubModel::DefaultEmpty(DefaultEmpty { wants, .. }) => wants,
-            }
-        };
+    fn get_self_extra(&self) -> Vec<NestedMeta> {
+        match &self.inner {
+            SubModel::DefaultAll(WantAll { extra, .. }) => extra,
+            SubModel::DefaultEmpty(DefaultEmpty { extra, .. }) => extra,
+        }
+        .to_owned()
+    }
 
-        attrs
-            .clone()
-            .into_iter()
-            .map(|fm| (fm.get_parent_ident().clone(), fm.get_extra()))
-            .collect()
+    fn get_self_vis(&self) -> Visibility {
+        match &self.inner {
+            SubModel::DefaultAll(w) => &w.vis,
+            SubModel::DefaultEmpty(e) => &e.vis,
+        }
+        .to_owned()
+    }
+
+    fn get_map_vis(&self) -> HashMap<Ident, Visibility> {
+        match &self.inner {
+            SubModel::DefaultAll(w) => &w.having_change,
+            SubModel::DefaultEmpty(e) => &e.wants,
+        }
+        .into_iter()
+        .map(|v| (v.src_ident(), v.vis.clone().unwrap_or(pub_vis())))
+        .collect()
+    }
+
+    fn get_extra_map(&self) -> HashMap<Ident, Vec<NestedMeta>> {
+        (match &self.inner {
+            SubModel::DefaultAll(WantAll { having_change, .. }) => {
+                having_change
+            }
+            SubModel::DefaultEmpty(DefaultEmpty { wants, .. }) => wants,
+        })
+        .into_iter()
+        .map(|fm| (fm.src_ident().clone(), fm.extra.clone()))
+        .collect()
     }
 
     fn get_field_mapping(&self) -> HashMap<Ident, Ident> {
@@ -75,9 +102,7 @@ impl SubModelDef {
 
         attrs
             .into_iter()
-            .map(|fm| {
-                (fm.get_parent_ident().clone(), fm.get_sub_ident().clone())
-            })
+            .map(|fm| (fm.src_ident(), fm.dst_ident()))
             .collect()
     }
 
@@ -90,7 +115,7 @@ impl SubModelDef {
                     .filter(|(f, _ty)| {
                         !ignores
                             .into_iter()
-                            .map(|f| f.get_parent_ident())
+                            .map(|f| f.src_ident())
                             .collect::<HashSet<_>>()
                             .contains(f)
                     })
@@ -103,7 +128,7 @@ impl SubModelDef {
                     .filter(|(f, _ty)| {
                         wants
                             .into_iter()
-                            .map(|f| f.get_parent_ident())
+                            .map(|f| f.src_ident())
                             .collect::<HashSet<_>>()
                             .contains(f)
                     })
@@ -128,9 +153,13 @@ impl ToTokens for SubModelDef {
         let super_name = self.parent.clone();
         let self_name = self.get_name();
 
+        let self_vis = self.get_self_vis();
+        let self_extra = self.get_self_extra().into_iter();
+
         let need_field = self.get_need_fields();
 
         let field_map = self.get_field_mapping();
+        let mut vis_map = self.get_map_vis();
 
         let mut field_extra = self.get_extra_map();
 
@@ -151,22 +180,25 @@ impl ToTokens for SubModelDef {
             // 附加挂载载这里被消耗
             let field_extra_iter =
                 field_extra.remove(src).unwrap_or_default().into_iter();
-
+            let vis = vis_map.remove(src).unwrap_or(pub_vis());
             // 构造一个域
 
             quote::quote! {
                 #(
                     #[#field_extra_iter]
                 )*
-                pub #tgt : #ty
+                #vis #tgt : #ty
             }
         });
 
         let struct_body = quote::quote! {
             #[derive(Debug,Clone,serde::Serialize,serde::Deserialize,typed_builder::TypedBuilder)]
-            #[doc = "通过`SubModel` 构造"]
+            #[doc = "> 通过`SubModel` 构造"]
             #[doc = "---"]
-            pub struct #self_name{
+            #(
+                #[#self_extra]
+            )*
+            #self_vis struct #self_name{
                 #(
                     #create_fields
                 ),*
@@ -200,105 +232,5 @@ impl ToTokens for SubModelDef {
         };
 
         tokens.extend(from_impl);
-
-        // let token = match &self.inner {
-        //     SubModel::DefaultAll(WantAll {
-        //         name,
-        //         ignores,
-        //         having_change,
-        //     }) => {
-
-        //         let change_map = having_change.iter().map(|f| {
-        //             (f.get_parent_ident().clone(),
-        // f.get_sub_ident().clone())         });
-
-        //         let ignore = ignores
-        //             .iter()
-        //             .map(|f| f.get_parent_ident())
-        //             .cloned()
-        //             .collect::<Vec<_>>();
-        //         let (f, ty): (Vec<_>, Vec<_>) = self
-        //             .field
-        //             .iter()
-        //             .filter(|(f, _)| !ignore.contains(f))
-        //             .cloned()
-        //             .unzip();
-
-        //         let from_f = f.clone().into_iter();
-        //         let f = f.into_iter();
-        //         let ty = ty.into_iter();
-
-        //         let parent_name = self.parent.clone();
-
-        //         quote::quote! {
-        //
-        // #[derive(Debug,Clone,serde::Serialize,serde::Deserialize,
-        // typed_builder::TypedBuilder)]             #[doc = "SubModel
-        // 生成结构"]             pub struct #name {
-        //                 #(pub #f:#ty),*
-        //             }
-
-        //             impl From<#parent_name> for #name {
-        //                 fn from(__parent:#parent_name )->Self{
-        //                     Self{
-        //                         #(
-        //                             #from_f : __parent.#from_f
-        //                         ),*
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     SubModel::DefaultEmpty(DefaultEmpty { name, wants }) => {
-        //         let want_src = wants
-        //             .iter()
-        //             .map(|f| {
-        //                 (
-        //                     f.get_parent_ident().clone(),
-        //                     f.get_sub_ident().clone(),
-        //                 )
-        //             })
-        //             .collect::<HashMap<_, _>>();
-        //         let (fs, tys): (Vec<_>, Vec<_>) = self
-        //             .field
-        //             .iter()
-        //             .filter_map(|(f, ty)| {
-        //                 want_src
-        //                     .get(f)
-        //                     .map(|i| ((f.clone(), i.clone()), ty.clone()))
-        //             })
-        //             .unzip();
-
-        //         let (fs_parent, fs_sub): (Vec<_>, Vec<_>) =
-        //             fs.into_iter().unzip();
-
-        //         let fs_parent = fs_parent.into_iter();
-        //         let fs_from = fs_sub.clone().into_iter();
-        //         let fs_sub = fs_sub.into_iter();
-        //         let tys = tys.into_iter();
-
-        //         let parent_name = self.parent.clone();
-        //         quote::quote! {
-        //
-        // #[derive(Debug,Clone,serde::Serialize,serde::Deserialize,
-        // typed_builder::TypedBuilder)]             #[doc = "SubModel
-        // 生成结构"]             pub struct #name{
-        //                 #(
-        //                     #fs_sub : #tys
-        //                 ),*
-        //             }
-
-        //             impl From<#parent_name> for #name{
-        //                 fn from(__parent:#parent_name)->Self{
-        //                     Self{
-        //                         #(
-        //                             #fs_from:__parent.#fs_parent
-        //                         ),*
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // };
     }
 }
