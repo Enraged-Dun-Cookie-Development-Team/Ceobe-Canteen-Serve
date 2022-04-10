@@ -13,7 +13,7 @@ use crate::{
     serves::mansion::{
         controllers::{MansionAuthentication, MidCheckerPretreatment},
         error::{MansionIdExist, MansionNotFound},
-        view::ViewMansion,
+        view::ViewMansion
     },
     utils::req_pretreatment::ReqPretreatment,
 };
@@ -146,7 +146,7 @@ pub(super) async fn get_mansion(
 }
 
 #[get("/getId")]
-pub(super) async fn get_all_id(
+pub(super) async fn get_recent_id(
     _: MansionAuthentication, ReqPretreatment(db): MansionMongoDbPretreatment,
 ) -> MansionRResult<Vec<String>> {
     // 最近60天
@@ -175,8 +175,7 @@ pub(super) async fn get_all_id(
                     .await?;
                 let mut resp = Vec::new();
                 while let Some(v) = vec.next().await {
-                    let v = v?;
-                    resp.push(v);
+                    resp.push(v?);
                 }
                 Ok(resp)
             }

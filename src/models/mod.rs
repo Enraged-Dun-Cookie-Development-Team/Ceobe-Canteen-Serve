@@ -3,5 +3,6 @@ pub mod common;
 
 
 crate::generate_model_register!(
-    RootModels
+    RootModels,
+    mansion::MansionModel
 );
