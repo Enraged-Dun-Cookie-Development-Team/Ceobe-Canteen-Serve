@@ -118,7 +118,7 @@ impl Into<ViewMansionWithTime> for ModelMansion {
             fraction,
             daily: daily.into_iter().map(Into::into).collect(),
             create_time: create_time.to_chrono().format(TIME_FORMAT).to_string(),
-            modify_time: modify_time.unwrap().to_chrono().format(TIME_FORMAT).to_string()
+            modify_time: modify_time.to_chrono().format(TIME_FORMAT).to_string()
         }
     }
 }
