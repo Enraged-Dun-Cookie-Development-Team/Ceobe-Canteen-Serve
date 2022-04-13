@@ -1,34 +1,64 @@
 use chrono::Local;
 use mongodb::bson;
 use sub_model_derive::SubModel;
-use typed_builder::TypedBuilder;
 
-use super::check::{Daily, Mansion};
+use super::check::{Daily, Mansion, ViewDaily};
 
 crate::quick_struct! {
     pub MansionId{
         main_id:u32
         minor_id:u8
     }
+
     #[derive(SubModel)]
     #[sub_model(
-        none(name = "ModifyAt",extra(
-            derive(serde::Serialize,serde::Deserialize,TypedBuilder)
-        )),
+        none("ModifyAt"),
+        all("ViewMansionWithTime"),
+        all("ViewMansion")
     )]
     pub ModelMansion{
         /// create record
-        #[sub_model(want("ModifyAt"))]
-        create_time:bson::DateTime
+        #[sub_model(
+            want("ModifyAt"),
+            ignore("ViewMansion"),
+            having(
+                for = "ViewMansionWithTime",
+                extra(
+                    serde(rename = "createTime")
+                ),
+                to_type(ty = "String", by = "time_mapping")
+            )
+        )]
+        create_time: bson::DateTime
         /// modify time
-        #[sub_model(want("ModifyAt"))]
-        modify_time:bson::DateTime
-        //old fields
-        id:MansionId
-        description:String
-        cvlink:String
-        fraction:u8
-        daily:Vec<Daily>
+        #[sub_model(
+            want("ModifyAt"),
+            ignore("ViewMansion"),
+            having(
+                for = "ViewMansionWithTime",
+                extra(
+                    serde(rename = "modifyTime")
+                ),
+                to_type(ty = "String", by = "time_mapping")
+        ),
+        )]
+        modify_time: bson::DateTime
+
+        id: MansionId
+        description: String
+        cvlink: String
+        fraction: u8
+        #[sub_model(
+            having(
+                for = "ViewMansion",
+                to_type(ty = "Vec<ViewDaily>", by = "daily_mapping")
+            ),
+            having(
+                for = "ViewMansionWithTime",
+                to_type(ty = "Vec<ViewDaily>", by = "daily_mapping")
+            )
+        )]
+        daily: Vec<Daily>
     }
 
 }
@@ -95,62 +125,12 @@ impl ModifyAt {
         self
     }
 }
-#[allow(dead_code)]
-#[derive(SubModel)]
-#[sub_model(
-    none(
-        // SubModel 可见性
-        vis = "",
-        // SubModel 名称
-        name = "AOnly", 
-        // SubModel 额外挂载
-        extra(
-            doc = "只有A的类型",
-            derive(Clone, Copy)
-        )
-    ),
-    // 只有名称可以这样
-    all("Copy")
-)]
-pub struct Value {
-    #[sub_model(
-        want(
-            // 目标SubModel
-            for = "AOnly",
-            // 字段名称映射
-            rename = "good",
-            // 指端可见性
-            vis = "pub(super)",
-            // 字段挂载
-            extra(doc = "yes", doc = "CCC")
-        ),
-        // 只提供目标SubModel 可以这样
-        ignore("Copy")
-    )]
-    a: u32,
-    #[sub_model(having(
-        for = "Copy",
-        rename = "cca",
-        extra(doc = "只有b\n  ", doc = "也许不错")
-    ))]
-    b: String,
+
+pub const TIME_FORMAT: &str = "%Y-%m-%d %T";
+fn time_mapping(time: bson::DateTime) -> String {
+    time.to_chrono().format(TIME_FORMAT).to_string()
 }
 
-fn _a() {
-    let v = Value {
-        a: 11,
-        b: String::from("1123"),
-    };
-
-    let acc: AOnly = v.into();
-
-    let _c = &acc.good;
-
-    let v = Value {
-        a: 11,
-        b: String::from("1123"),
-    };
-
-    let t: Copy = v.into();
-    let _e = &t.cca;
+fn daily_mapping(daily: Vec<Daily>) -> Vec<ViewDaily> {
+    daily.into_iter().map(Into::into).collect()
 }
