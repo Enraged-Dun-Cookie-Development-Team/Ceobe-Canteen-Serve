@@ -5,6 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "migrator"
+required-features=["migrator"]
 
 [[bin]]
 name = "server"
@@ -12,11 +13,11 @@ path = "./src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-members = ["libs/*", "migration","codegen/*"]
+members = ["libs/*", "migration"]
 
 [features]
 default = []
-migrator = []
+migrator = ["orm-migrate"]
 actix_framwork = []
 database = []
 async_utils = []
@@ -96,6 +97,7 @@ path = "./libs/range-limit"
 
 [dependencies.orm-migrate]
 package = "migration"
+optional=true
 path = "./migration"
 
 [dependencies.ceobe-manager]
@@ -121,5 +123,5 @@ path="./libs/time-usage"
 path= "libs/helper_macro"
 
 [dependencies.sub-model-derive]
+version="0.1"
 package="sub-model"
-path="./codegen/sub-model"

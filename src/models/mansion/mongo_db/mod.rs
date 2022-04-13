@@ -11,7 +11,9 @@ crate::quick_struct! {
     }
     #[derive(SubModel)]
     #[sub_model(
-        none("ModifyAt"),
+        none(name = "ModifyAt",extra(
+            derive(serde::Serialize,serde::Deserialize)
+        )),
     )]
     pub ModelMansion{
         /// create record
@@ -108,7 +110,7 @@ impl ModifyAt {
         // SubModel 额外挂载
         extra(
             doc = "只有A的类型",
-            derive(Copy)
+            derive(Clone, Copy)
         )
     ),
     // 只有名称可以这样

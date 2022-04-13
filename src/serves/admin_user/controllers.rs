@@ -3,11 +3,10 @@ use crypto::digest::Digest;
 use crypto_str::Encoder;
 
 use lazy_static::__Deref;
-use orm_migrate::sea_query::Expr;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use request_pretreat::prefabs::DefaultValue;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect, Set,
+    ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect, Set, sea_query::Expr,
 };
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
