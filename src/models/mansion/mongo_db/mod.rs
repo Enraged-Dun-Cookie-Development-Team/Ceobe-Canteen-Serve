@@ -1,6 +1,7 @@
 use chrono::Local;
 use mongodb::bson;
 use sub_model_derive::SubModel;
+use typed_builder::TypedBuilder;
 
 use super::check::{Daily, Mansion};
 
@@ -12,19 +13,15 @@ crate::quick_struct! {
     #[derive(SubModel)]
     #[sub_model(
         none(name = "ModifyAt",extra(
-            derive(serde::Serialize,serde::Deserialize)
+            derive(serde::Serialize,serde::Deserialize,TypedBuilder)
         )),
     )]
     pub ModelMansion{
         /// create record
-        #[sub_model(
-                want( "ModifyAt")
-        )]
+        #[sub_model(want("ModifyAt"))]
         create_time:bson::DateTime
         /// modify time
-        #[sub_model(
-            want( "ModifyAt")
-        )]
+        #[sub_model(want("ModifyAt"))]
         modify_time:bson::DateTime
         //old fields
         id:MansionId
