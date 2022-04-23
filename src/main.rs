@@ -84,7 +84,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     )
     .await
     .build();
-    let http_url = config.http_listen.url().clone();
+    let http_url = config.http_listen.url();
     // 配置文件打包
     let data_config = Data::new(config);
     HttpServer::new(move || {
