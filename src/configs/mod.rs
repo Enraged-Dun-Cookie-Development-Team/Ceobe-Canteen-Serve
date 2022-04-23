@@ -3,11 +3,12 @@ pub mod auth_config;
 pub mod first_user;
 pub mod logger;
 pub mod resp_result_config;
+pub mod http_listen_config;
 use serde::Deserialize;
 
 use self::{
     auth_config::AuthConfig, first_user::FirstUserConfig,
-    logger::LoggerConfig, resp_result_config::RespResultConfig,
+    logger::LoggerConfig, resp_result_config::RespResultConfig, http_listen_config::HttpListenConfig,
 };
 use crate::{
     database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig,
@@ -35,4 +36,6 @@ pub struct GlobalConfig {
     pub user_auth: AuthConfig,
     #[serde(alias = "user")]
     pub admin_user: FirstUserConfig,
+    #[serde(alias = "http")]
+    pub http_listen: HttpListenConfig,
 }

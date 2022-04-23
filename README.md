@@ -37,6 +37,8 @@
   |   `user_auth`/ `auth`    | `header`/`header_name` |  否   |                                        `String`                                         | 获取 token 的 Header                 | 默认为`Token`                                                      |
   |   `admin_user`/ `user`   |       `username`       |  是   |                                        `String`                                         | 默认后台第一个最高权限用户名         |                                                                    |
   |   `admin_user`/ `user`   |       `password`       |  是   |                                        `String`                                         | 默认后台第一个最高权限密码           |                                                                    |
+  |  `http_listen`/ `http`   |         `host`         |  否   |                                        `String`                                         | http监听的host                       | 默认为127.0.0.1                                                    |
+  |  `http_listen`/ `http`   |         `port`         |  否   |                                          `u16`                                          | http监听的port                       | 默认为8000                                                         |
 
 - Toml
 
