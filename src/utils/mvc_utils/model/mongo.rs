@@ -1,9 +1,8 @@
 use async_trait::async_trait;
 use futures::Future;
 
-use crate::utils::mongodb_utils::db_manager::DbBuild;
-
 use super::ModelRegister;
+use crate::utils::mongodb_utils::db_manager::DbBuild;
 
 pub struct MongoRegister<F, Fut>(F)
 where

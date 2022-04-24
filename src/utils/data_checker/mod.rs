@@ -5,7 +5,7 @@ mod load_from_args;
 pub mod no_check;
 mod ref_checker;
 
-use std::{marker::PhantomData, any::type_name};
+use std::{any::type_name, marker::PhantomData};
 
 pub use check_require::*;
 use futures::Future;

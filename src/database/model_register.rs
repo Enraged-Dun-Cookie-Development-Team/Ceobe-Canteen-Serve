@@ -1,19 +1,25 @@
 use std::sync::Mutex;
 
-pub type EntityRegisterFn = fn (SqlModelRegister) -> SqlModelRegister;
+pub type EntityRegisterFn = fn(SqlModelRegister) -> SqlModelRegister;
 
 lazy_static::lazy_static! {
     static ref STATIC_MODEL_LIST: Mutex<Option<Vec<EntityRegisterFn>>> = Mutex::new(Some(Vec::new()));
 }
 
 pub(crate) fn static_register_model(func: EntityRegisterFn) {
-    Option::<&mut Vec<_>>::from(&mut *STATIC_MODEL_LIST.try_lock().expect("why you call this async?"))
-        .expect("should not call static_register_model after startup!")
-        .push(func);
+    Option::<&mut Vec<_>>::from(
+        &mut *STATIC_MODEL_LIST
+            .try_lock()
+            .expect("why you call this async?"),
+    )
+    .expect("should not call static_register_model after startup!")
+    .push(func);
 }
 
 pub(super) fn get_model_list() -> Vec<EntityRegisterFn> {
-    STATIC_MODEL_LIST.try_lock().expect("why you call this async?")
+    STATIC_MODEL_LIST
+        .try_lock()
+        .expect("why you call this async?")
         .take()
         .expect("you can only call get_model_list once!")
 }

@@ -1,19 +1,15 @@
-use mongodb::{IndexModel, options::IndexOptions, bson::doc};
+use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
-use crate::utils::mongodb_utils::db_manager::DbBuild;
 use super::preludes::*;
+use crate::utils::mongodb_utils::db_manager::DbBuild;
 
 const MANSION_IDX_NAME: &str = "mansion_idx";
 const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
 
-pub(super) async fn loading_model(
-    mut db: DbBuild,
-) -> DbBuild {
+pub(super) async fn loading_model(mut db: DbBuild) -> DbBuild {
     db.add_collection_operate(|d, _n| {
         async move {
-            let mansion = d.collection::<ModelMansion>(
-                "mansion-data",
-            );
+            let mansion = d.collection::<ModelMansion>("mansion-data");
 
             let all_idx =
                 mansion.list_index_names().await.unwrap_or_default();

@@ -3,20 +3,15 @@ use futures::StreamExt;
 use mongodb::{bson::doc, options::FindOptions};
 use time_usage::async_time_usage_with_name;
 
-use super::{
-    super::MansionRResult, 
-    MansionMongoDbPretreatment
-};
+use super::{super::MansionRResult, MansionMongoDbPretreatment};
 use crate::{
     models::mansion::preludes::*,
     serves::mansion::{
-        controllers::MidCheckerPretreatment,
-        error::MansionNotFound,
-        view::ViewMansionWithTime
+        controllers::MidCheckerPretreatment, error::MansionNotFound,
+        view::ViewMansionWithTime,
     },
     utils::req_pretreatment::ReqPretreatment,
 };
-
 
 #[get("/mansionInfo")]
 pub(super) async fn get_mansion_with_time(

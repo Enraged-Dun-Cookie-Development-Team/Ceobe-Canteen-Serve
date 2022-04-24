@@ -1,6 +1,4 @@
-use crate::{
-    utils::mongodb_utils::db_manager::DbBuild,
-};
+use crate::utils::mongodb_utils::db_manager::DbBuild;
 
 mod mongo;
 
@@ -31,7 +29,4 @@ macro_rules! generate_model_register {
 
 async fn temp(db: DbBuild) -> DbBuild { db }
 
-generate_model_register!(
-    MockModel,
-    as_mongo_register(temp)
-);
+generate_model_register!(MockModel, as_mongo_register(temp));

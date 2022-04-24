@@ -13,7 +13,7 @@ use crate::{
     serves::mansion::{
         controllers::{MansionAuthentication, MidCheckerPretreatment},
         error::{MansionIdExist, MansionNotFound},
-        view::ViewMansion
+        view::ViewMansion,
     },
     utils::req_pretreatment::ReqPretreatment,
 };

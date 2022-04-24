@@ -43,7 +43,6 @@ crate::quick_struct! {
         ),
         )]
         modify_time: bson::DateTime
-
         id: MansionId
         description: String
         cvlink: String
@@ -60,7 +59,6 @@ crate::quick_struct! {
         )]
         daily: Vec<Daily>
     }
-
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]

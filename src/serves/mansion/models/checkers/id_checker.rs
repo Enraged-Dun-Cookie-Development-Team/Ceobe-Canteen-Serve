@@ -1,10 +1,12 @@
 use futures_util::future::{ready, Ready};
 
 use crate::{
+    models::mansion::{
+        check::{Mid, OptionMid},
+        mongo_db::MansionId,
+    },
     serves::mansion::error::{MansionError, UnknownId},
-    utils::{
-        data_checker::{DataChecker, OptionChecker},
-    }, models::mansion::{mongo_db::MansionId, check::{Mid, OptionMid}},
+    utils::data_checker::{DataChecker, OptionChecker},
 };
 
 crate::check_obj! {
@@ -24,8 +26,6 @@ crate::check_obj! {
     }
     err:MansionError
 }
-
-
 
 /// 饼学大厦号的检查器
 /// ## Uncheck

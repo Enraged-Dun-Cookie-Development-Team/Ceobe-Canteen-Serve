@@ -11,8 +11,7 @@ crate::check_obj! {
     err:AdminUserError
 }
 
-
-crate::quick_struct!{
+crate::quick_struct! {
     pub Username{
         username:String
     }

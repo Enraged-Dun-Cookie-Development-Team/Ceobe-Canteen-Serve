@@ -1,6 +1,5 @@
 use std::env;
 
-
 use orm_migrate::{async_std, Migrator, MigratorTrait};
 
 #[async_std::main]

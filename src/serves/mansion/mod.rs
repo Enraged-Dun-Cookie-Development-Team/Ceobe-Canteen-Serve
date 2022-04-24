@@ -7,6 +7,4 @@ mod view;
 
 type MansionRResult<T> = RespResult<T, error::MansionError>;
 
-
-pub use controllers::MansionController;
-pub use controllers::MansionFrontController;
+pub use controllers::{MansionController, MansionFrontController};

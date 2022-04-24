@@ -11,7 +11,7 @@ status_error!(actix::dev::MailboxError[ErrPrefix::ACTIX , 0001: StatusCode::INTE
 status_error!(actix_web::error::Error[ErrPrefix::ACTIX, 0002:StatusCode::INTERNAL_SERVER_ERROR]);
 // io prefix
 status_error!(std::io::Error[ErrPrefix::IO, 0001:StatusCode::INTERNAL_SERVER_ERROR]);
-// parse prefix 
+// parse prefix
 status_error!(url::ParseError[ErrPrefix::PARSE, 0001:StatusCode::NOT_ACCEPTABLE]);
 status_error!(ParseIntError[ErrPrefix::PARSE ,0002:StatusCode::NOT_ACCEPTABLE]);
 status_error!(jwt::Error[ErrPrefix::PARSE,0003]);

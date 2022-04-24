@@ -18,9 +18,7 @@ pub mod error;
 pub struct ServeDatabase<D = sea_orm::DatabaseConnection>(D);
 
 impl<D: sea_orm::ConnectionTrait> ServeDatabase<D> {
-    pub async fn register_models(
-        self
-    ) -> Result<Self, DatabaseError>
+    pub async fn register_models(self) -> Result<Self, DatabaseError>
     where
         D: Send,
     {

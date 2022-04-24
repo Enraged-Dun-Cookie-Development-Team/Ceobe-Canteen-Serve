@@ -153,7 +153,9 @@ status_err::status_error! {
 
 status_err::resp_error_impl!(RouteNotExistError);
 
-pub async fn not_exist(req: HttpRequest) -> RespResult<(), RouteNotExistError> {
+pub async fn not_exist(
+    req: HttpRequest,
+) -> RespResult<(), RouteNotExistError> {
     log::error!("路由未找到 `{}` {}", req.path(), &req.method());
     RespResult::err(RouteNotExistError)
 }

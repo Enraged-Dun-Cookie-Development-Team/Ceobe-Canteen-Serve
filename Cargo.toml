@@ -126,3 +126,4 @@ path= "libs/helper_macro"
 [dependencies.sub-model-derive]
 version="0.1"
 package="sub-model"
+features=["auto_derive_all"]

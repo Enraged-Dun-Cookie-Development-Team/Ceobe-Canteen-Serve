@@ -7,5 +7,5 @@ impl<'t, T> LoadFromArgs<'t, &'t T> for T {
 }
 
 impl<T> LoadFromArgs<'_, ()> for T {
-    fn load(&'_ self) {  }
+    fn load(&'_ self) {}
 }
