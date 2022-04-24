@@ -1,10 +1,12 @@
-use std::net::{IpAddr, SocketAddr, Ipv4Addr};
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
 /// 用于构造http监听的配置文件信息
 pub trait HttpConfig {
     fn host(&self) -> IpAddr;
     fn port(&self) -> u16;
-    fn url(&self) -> SocketAddr;
+    fn socket(&self) -> SocketAddr {
+        SocketAddr::new(HttpConfig::host(self), HttpConfig::port(self))
+    }
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -15,14 +17,19 @@ pub struct HttpListenConfig {
     pub(crate) port: u16,
 }
 
+impl Default for HttpListenConfig {
+    fn default() -> Self {
+        Self {
+            host: host_default(),
+            port: port_default(),
+        }
+    }
+}
+
 impl HttpConfig for HttpListenConfig {
     fn host(&self) -> IpAddr { self.host }
 
     fn port(&self) -> u16 { self.port }
-
-    fn url(&self) -> SocketAddr {
-        SocketAddr::new(self.host, self.port)
-    }
 }
 
 fn host_default() -> IpAddr { IpAddr::V4(Ipv4Addr::LOCALHOST) }

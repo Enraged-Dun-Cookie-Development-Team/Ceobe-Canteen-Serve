@@ -5,7 +5,8 @@ use actix_web::{
     App, HttpServer,
 };
 use configs::{
-    GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML, http_listen_config::HttpConfig,
+    http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
+    CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
@@ -84,7 +85,9 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     )
     .await
     .build();
-    let http_url = config.http_listen.url();
+
+    // load server socket config
+    let http_socket = HttpConfig::socket(&config.http_listen);
     // 配置文件打包
     let data_config = Data::new(config);
     HttpServer::new(move || {
@@ -106,7 +109,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             .service(RootController)
             .default_service(web::to(not_exist))
     })
-    .bind(http_url)?
+    .bind(http_socket)?
     .run()
     .await?;
     Ok(())
