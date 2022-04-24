@@ -1,4 +1,4 @@
-use std::net::{IpAddr, SocketAddr};
+use std::net::{IpAddr, SocketAddr, Ipv4Addr};
 
 /// 用于构造http监听的配置文件信息
 pub trait HttpConfig {
@@ -21,10 +21,9 @@ impl HttpConfig for HttpListenConfig {
     fn port(&self) -> u16 { self.port }
 
     fn url(&self) -> SocketAddr {
-        let url = SocketAddr::new(self.host, self.port);
-        url
+        SocketAddr::new(self.host, self.port)
     }
 }
 
-fn host_default() -> IpAddr { "127.0.0.1".parse().unwrap() }
+fn host_default() -> IpAddr { IpAddr::V4(Ipv4Addr::LOCALHOST) }
 fn port_default() -> u16 { 8000 }
