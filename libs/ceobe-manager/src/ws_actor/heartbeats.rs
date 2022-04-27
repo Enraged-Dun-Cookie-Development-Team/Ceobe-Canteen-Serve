@@ -74,7 +74,7 @@ impl StreamHandler<Beating> for CeoboWebsocket {
         }
 
         #[cfg(feature = "log")]
-        log_::info!("发送心跳包");
+        log_::debug! ("发送心跳包");
         match self
             .slink
             .write(actix_http::ws::Message::Ping("heart beating!".into()))
