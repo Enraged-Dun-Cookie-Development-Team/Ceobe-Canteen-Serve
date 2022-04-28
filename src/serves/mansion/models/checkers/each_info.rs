@@ -8,7 +8,7 @@ crate::check_obj! {
     #[derive(Debug,serde::Deserialize)]
     // {#[derive(Debug,serde::Deserialize,serde::Serialize,Clone)]}
     pub struct EachInfoUncheck = InfoChecker > Info{
-        #[serde(alias="isTrue")]
+        #[serde(alias="forecast_status")]
         pub predict:PredictLevelChecker,
         pub forecast:MaxLimitString<2048>
     }

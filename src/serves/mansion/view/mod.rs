@@ -6,6 +6,7 @@ crate::quick_struct! {
     pub ViewMansion{
         id:String
         description:String
+        #[serde(rename="cv_link")]
         cvlink:String
         fraction:u8
         daily:Vec<ViewDaily>
@@ -14,10 +15,9 @@ crate::quick_struct! {
     pub ViewMansionWithTime {
         id:String
         description:String
+        #[serde(rename="cv_link")]
         cvlink:String
-        #[serde(rename = "createTime")]
         create_time: String
-        #[serde(rename = "modifyTime")]
         modify_time: String
         fraction:u8
         daily:Vec<ViewDaily>
@@ -30,8 +30,7 @@ crate::quick_struct! {
     }
 
     pub ViewInfo{
-        #[serde(rename="isTrue")]
-        is_true:Predict
+        forecast_status:Predict
         forecast:String
     }
 }
@@ -39,7 +38,7 @@ crate::quick_struct! {
 impl From<Info> for ViewInfo {
     fn from(Info { predict, forecast }: Info) -> Self {
         Self {
-            is_true: predict,
+            forecast_status: predict,
             forecast,
         }
     }

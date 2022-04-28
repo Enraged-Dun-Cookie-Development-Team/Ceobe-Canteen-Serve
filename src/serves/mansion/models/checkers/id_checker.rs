@@ -10,7 +10,7 @@ use crate::{
 crate::check_obj! {
     #[derive(Debug,serde::Deserialize)]
     pub struct MIdUncheck = MidChecker > Mid{
-        #[serde(alias="idBefore",alias="mansionId")]
+        #[serde(alias="idBefore",alias="mansionId",alias="mansion_id")]
         pub id:IdChecker
     }
     err:MansionError
@@ -19,7 +19,7 @@ crate::check_obj! {
 crate::check_obj! {
     #[derive(Debug,serde::Deserialize)]
     pub struct OpMIdUncheck = OpMidChecker > OptionMid{
-        #[serde(alias="idBefore",alias="mansionId")]
+        #[serde(alias="idBefore",alias="mansionId",alias="mansion_id")]
        pub  id:OptionChecker<IdChecker>
     }
     err:MansionError

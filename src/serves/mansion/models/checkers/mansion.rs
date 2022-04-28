@@ -20,7 +20,7 @@ crate::check_obj! {
     #[derive(Debug,Deserialize)]
     pub struct MansionUncheck = MansionChecker > Mansion{
         pub id: IdChecker,
-        #[serde(alias="cvlink")]
+        #[serde(alias="cv_link")]
         pub link: MaxLimitString<128>,
         pub description:MaxLimitString<128>,
         pub fraction: FractionCheck,
