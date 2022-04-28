@@ -1,13 +1,5 @@
-FROM rustlang/rust:nightly AS chef
-RUN cargo install cargo-chef
+FROM rustlang/rust:nightly AS build
 WORKDIR /usr/src/app
-
-FROM chef AS planner
-COPY . .
-RUN cargo chef prepare --recipe-path recipe.json
-
-FROM chef AS build
-COPY --from=planner usr/src/app/recipe.json recipe.json
 COPY . .
 RUN cargo build --release --bins --features migrator
 
