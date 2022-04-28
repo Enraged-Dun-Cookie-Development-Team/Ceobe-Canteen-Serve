@@ -6,7 +6,7 @@ FROM chef AS planner
 COPY . .
 RUN cargo chef prepare --recipe-path recipe.json
 
-FROM chef AS builder
+FROM chef AS build
 COPY --from=planner usr/src/app/recipe.json recipe.json
 COPY . .
 RUN cargo build --release --bins --features migrator
