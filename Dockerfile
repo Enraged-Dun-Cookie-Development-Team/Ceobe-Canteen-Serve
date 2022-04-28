@@ -7,4 +7,4 @@ FROM debian
 WORKDIR /var/canteen-server
 COPY --from=build /usr/src/app/target/release/server /usr/local/bin/canteen-server
 COPY --from=build /usr/src/app/target/release/migrator /usr/local/bin/canteen-migrator
-CMD ["canteen-migrator", "';", "canteen-server"]
+CMD ["sh", "-c", "canteen-migrator && canteen-server"]
