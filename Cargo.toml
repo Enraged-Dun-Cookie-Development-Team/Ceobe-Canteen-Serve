@@ -4,10 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "migrator"
-required-features=["migrator"]
-
-[[bin]]
 name = "server"
 path = "./src/main.rs"
 
@@ -16,7 +12,7 @@ path = "./src/main.rs"
 members = ["libs/*", "migration"]
 
 [features]
-default = ["migrator"]
+default = []
 migrator = []
 actix_framwork = []
 database = []
