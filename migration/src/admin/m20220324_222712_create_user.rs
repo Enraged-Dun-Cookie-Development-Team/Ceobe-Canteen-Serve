@@ -1,7 +1,7 @@
 use sea_schema::migration::prelude::*;
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str { "20220324222712-User-migration" }
+    fn name(&self) -> &str { "m20220324_222712_create_user" }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -28,8 +28,7 @@ impl MigrationTrait for Migration {
                 ColumnDef::new(User::Auth)
                     .enumeration("auth", ["chef", "cooker", "architect"])
                     .not_null(),
-            )
-            .col(ColumnDef::new(User::NumPwdChange).unsigned().default(0));
+            );
         manager.create_table(table).await?;
 
         Ok(())
@@ -50,5 +49,4 @@ pub enum User {
     Username,
     Password,
     Auth,
-    NumPwdChange,
 }

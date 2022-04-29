@@ -7,7 +7,7 @@ edition = "2021"
 
 # data base crate
 [dependencies.sea-orm]
-version="0.6"
+version="0.7"
 default-features = false
 features=[
     "sqlx-mysql",
