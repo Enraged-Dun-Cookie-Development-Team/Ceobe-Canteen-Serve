@@ -1,5 +1,6 @@
 pub mod model_register;
 pub mod traits;
+use orm_migrate::{Migrator, MigratorTrait};
 use sea_orm::{
     ConnectOptions, ConnectionTrait, Database, Statement, TransactionTrait,
 };
@@ -7,8 +8,7 @@ use time_usage::async_time_usage_with_name;
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
-    error::DatabaseError,
-    model_register::SqlModelRegister,
+    error::DatabaseError
 };
 
 pub mod config;
@@ -17,18 +17,12 @@ pub mod error;
 #[derive(Debug)]
 pub struct ServeDatabase<D = sea_orm::DatabaseConnection>(D);
 
-impl<D: sea_orm::ConnectionTrait> ServeDatabase<D> {
+impl ServeDatabase {
     pub async fn register_models(
         self
     ) -> Result<Self, DatabaseError>
-    where
-        D: Send,
     {
-        let mut register = SqlModelRegister::new(&self);
-        for f in model_register::get_model_list() {
-            register = f(register);
-        }
-        register.register(&self).await?;
+        Migrator::up(self.as_ref(), None).await?;
         Ok(self)
     }
 }

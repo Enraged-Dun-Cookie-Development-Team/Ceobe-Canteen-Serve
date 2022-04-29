@@ -16,8 +16,8 @@ path = "./src/main.rs"
 members = ["libs/*", "migration"]
 
 [features]
-default = []
-migrator = ["orm-migrate"]
+default = ["migrator"]
+migrator = []
 actix_framwork = []
 database = []
 async_utils = []
@@ -98,7 +98,6 @@ path = "./libs/range-limit"
 
 [dependencies.orm-migrate]
 package = "migration"
-optional=true
 path = "./migration"
 
 [dependencies.ceobe-manager]
