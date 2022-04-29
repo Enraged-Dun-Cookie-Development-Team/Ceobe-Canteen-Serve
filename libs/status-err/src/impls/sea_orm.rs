@@ -18,6 +18,7 @@ impl StatusErr for sea_orm::DbErr {
             sea_orm::DbErr::RecordNotFound(_) => 0004,
             sea_orm::DbErr::Custom(_) => 0005,
             sea_orm::DbErr::Type(_) => 0006,
+            sea_orm::DbErr::Json(_) => 0007,
         }
     }
 }

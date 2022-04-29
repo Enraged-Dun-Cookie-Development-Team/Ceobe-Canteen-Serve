@@ -15,7 +15,7 @@ crate::quick_struct!{
 
     pub Mansion{
         id:MansionId
-        #[serde(alias="cvlink")]
+        #[serde(alias="cv_link")]
         link:String
         description:String
         fraction:i16
