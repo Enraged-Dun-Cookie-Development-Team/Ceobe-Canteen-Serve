@@ -28,8 +28,7 @@ impl MigrationTrait for Migration {
                 ColumnDef::new(User::Auth)
                     .enumeration("auth", ["chef", "cooker", "architect"])
                     .not_null(),
-            )
-            .col(ColumnDef::new(User::NumPwdChange).unsigned().default(0));
+            );
         manager.create_table(table).await?;
 
         Ok(())
@@ -50,5 +49,4 @@ pub enum User {
     Username,
     Password,
     Auth,
-    NumPwdChange,
 }
