@@ -10,6 +10,7 @@ impl MigratorTrait for Migrator {
         crate::migrate_group![
             admin::m20220324_222712_create_user::Migration
             admin::m20220429_142528_alter_user::Migration
+            admin::m20220429_230336_alter_user::Migration
         ]
     }
 }
