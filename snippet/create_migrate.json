@@ -8,19 +8,19 @@
 
       "impl MigrationName for Migration {",
       "    fn name(&self) -> &str {",
-      "        \"${CURRENT_YEAR}${CURRENT_MONTH}${CURRENT_DATE}${CURRENT_HOUR}${CURRENT_MINUTE}${CURRENT_SECOND}-${1}-migration\"",
+      "        \"m${CURRENT_YEAR}${CURRENT_MONTH}${CURRENT_DATE}$_{CURRENT_HOUR}${CURRENT_MINUTE}${CURRENT_SECOND}_${2}_${1}\"",
       "    }",
       "}",
 
       "#[async_trait::async_trait]",
       "impl MigrationTrait for Migration {",
       "    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {",
-      "      ${3}",
+      "      ${4}",
       "      Ok(())",
       "    }",
 
       "    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {",
-      "      ${4}",
+      "      ${5}",
       "      Ok(())",
       "    }",
       "}",
@@ -28,7 +28,7 @@
       "pub enum ${1} {",
       "    Table,",
       "    Id,",
-      "    ${2} ",
+      "    ${3} ",
       "}"
     ],
     "description": "新建Sea Orm Migration"
