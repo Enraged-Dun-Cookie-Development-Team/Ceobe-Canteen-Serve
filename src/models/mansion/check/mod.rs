@@ -31,6 +31,7 @@ crate::quick_struct!{
     }
     /// Mansion Info Checked Model
     pub Info{
+        #[serde(alias="forecast_status")]
         predict:Predict
         forecast:String
     }
