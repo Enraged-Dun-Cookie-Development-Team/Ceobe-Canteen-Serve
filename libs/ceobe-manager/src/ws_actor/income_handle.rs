@@ -56,7 +56,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                     }
                     ws::Frame::Ping(p) => {
                         #[cfg(feature = "log")]
-                        log_::info!(
+                        log_::debug!(
                             "收到 Ping 消息： `{}`",
                             String::from_utf8_lossy(&p)
                         );
@@ -64,7 +64,7 @@ impl StreamHandler<Result<ws::Frame, WsProtocolError>> for CeoboWebsocket {
                     }
                     ws::Frame::Pong(p) => {
                         #[cfg(feature = "log")]
-                        log_::info!(
+                        log_::debug!(
                             "收到 Pong 消息: `{}`",
                             String::from_utf8_lossy(&p)
                         );
