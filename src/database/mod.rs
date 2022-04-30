@@ -1,4 +1,3 @@
-pub mod model_register;
 pub mod traits;
 use orm_migrate::{Migrator, MigratorTrait};
 use sea_orm::{
