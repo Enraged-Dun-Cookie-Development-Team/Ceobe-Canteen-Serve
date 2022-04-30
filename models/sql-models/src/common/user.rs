@@ -1,10 +1,8 @@
-use helper_macro::entity;
 use sea_orm::entity::prelude::*;
-use sub_model_derive::SubModel;
+use sub_model::SubModel;
 
 use super::auth::Auth;
 
-#[entity]
 #[derive(Debug, Clone, PartialEq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "user")]
 #[sub_model(all(
