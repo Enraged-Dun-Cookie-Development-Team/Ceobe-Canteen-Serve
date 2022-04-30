@@ -1,4 +1,3 @@
-crate::generate_model_register!(RootModels);
 
 pub mod common {
     pub mod sql {

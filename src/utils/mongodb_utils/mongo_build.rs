@@ -1,13 +1,11 @@
 use actix_web::web::Data;
-use futures::Future;
 use mongo_migration::utils::migrator::MigratorTrait;
 
 use super::{
-    db_manager::DbBuild,
     mongo_manager::{MongoManager, MongoManagerBuild},
     MongoErr,
 };
-use crate::{database::config::DbConnectConfig, utils::mvc_utils};
+use crate::database::config::DbConnectConfig;
 
 /// Mongo 数据库管理构建器
 pub struct MongoBuild {
@@ -34,26 +32,6 @@ impl MongoBuild {
             cfg.name()
         );
         Self::new(url).await
-    }
-    #[deprecated]
-    /// 添加一个数据库，并通过 `f` 来配置数据库和内部信息
-    pub async fn add_db<F, Fut>(mut self, f: F) -> Self
-    where
-        Fut: Future<Output = DbBuild>,
-        F: FnOnce(DbBuild) -> Fut,
-    {
-        // self.inner.add_db(name);
-        let db = self.inner.get_moved_db();
-        let db = f(db).await;
-        self.inner.set_db(db);
-        self
-    }
-    #[deprecated]
-    /// 通过数据库注册器注册数据库
-    pub async fn register_collections<R: mvc_utils::ModelRegister + Send>(
-        self, register: R,
-    ) -> Self {
-        self.add_db(|db| register.register_mongo(db)).await
     }
 
     pub async fn collect_migration<M: MigratorTrait + Sync>(
