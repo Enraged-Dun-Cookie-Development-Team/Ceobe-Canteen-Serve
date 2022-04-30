@@ -1,8 +1,14 @@
 mod admin;
 
+#[cfg(not(feature = "lite-export"))]
 pub use sea_schema::migration::*;
+use sea_schema::migration::{async_trait, MigrationTrait};
 
+#[cfg(feature = "lite-export")]
 pub struct Migrator;
+
+#[cfg(feature = "lite-export")]
+pub use {sea_schema::migration::MigratorTrait, sql_models};
 
 #[async_trait::async_trait]
 impl MigratorTrait for Migrator {
