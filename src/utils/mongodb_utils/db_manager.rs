@@ -72,6 +72,21 @@ impl DbBuild {
     }
 }
 
+impl mongo_migration::utils::migrator::DbManager for DbBuild {
+    fn get_db(self) -> mongodb::Database { self.db }
+
+    fn from_collects<
+        I: IntoIterator<Item = (std::any::TypeId, mongodb::Collection<()>)>,
+    >(
+        db: mongodb::Database, iter: I,
+    ) -> Self {
+        Self {
+            db,
+            inner_collect: iter.into_iter().collect(),
+        }
+    }
+}
+
 impl Into<DbManager> for DbBuild {
     fn into(self) -> DbManager {
         DbManager {

@@ -1,5 +1,6 @@
 use actix_web::web::Data;
 use futures::Future;
+use mongo_migration::utils::migrator::MigratorTrait;
 
 use super::{
     db_manager::DbBuild,
@@ -53,6 +54,15 @@ impl MongoBuild {
         self, register: R,
     ) -> Self {
         self.add_db(|db| register.register_mongo(db)).await
+    }
+
+    pub async fn collect_migration<M: MigratorTrait + Sync>(
+        mut self, migrate: M,
+    ) -> Result<Self, mongodb::error::Error> {
+        let db = self.inner.get_moved_db();
+        let db = migrate.register(db).await?;
+        self.inner.set_db(db);
+        Ok(self)
     }
 
     /// 完成构建，生成数据库管理器
