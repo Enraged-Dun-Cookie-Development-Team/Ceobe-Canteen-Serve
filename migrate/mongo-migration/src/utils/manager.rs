@@ -30,6 +30,7 @@ impl Manager {
 
         collect
     }
+
     #[allow(dead_code)]
     pub(crate) fn get_collection<C>(&self) -> Option<Collection<C>>
     where
