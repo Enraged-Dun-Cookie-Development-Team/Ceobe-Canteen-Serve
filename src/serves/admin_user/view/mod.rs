@@ -20,9 +20,7 @@ crate::quick_struct! {
     }
 
     pub ChangePassword {
-        #[serde(rename="oldpassword")]
         old_password: String
-        #[serde(rename="newpassword")]
         new_password: String
     }
 }

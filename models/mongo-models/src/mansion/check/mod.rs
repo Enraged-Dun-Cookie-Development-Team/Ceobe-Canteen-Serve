@@ -37,6 +37,7 @@ pub struct Daily {
     Debug, Clone, Serialize, Deserialize, typed_builder::TypedBuilder,
 )]
 pub struct Info {
+    #[serde(alias="forecast_status")]
     pub predict: Predict,
     pub forecast: String,
 }

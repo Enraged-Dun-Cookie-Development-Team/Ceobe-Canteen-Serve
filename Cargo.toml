@@ -4,10 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-name = "migrator"
-required-features = ["migrator"]
-
-[[bin]]
 name = "server"
 path = "./src/main.rs"
 
