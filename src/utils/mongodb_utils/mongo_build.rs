@@ -35,7 +35,7 @@ impl MongoBuild {
         );
         Self::new(url).await
     }
-
+    #[deprecated]
     /// 添加一个数据库，并通过 `f` 来配置数据库和内部信息
     pub async fn add_db<F, Fut>(mut self, f: F) -> Self
     where
@@ -48,7 +48,7 @@ impl MongoBuild {
         self.inner.set_db(db);
         self
     }
-
+    #[deprecated]
     /// 通过数据库注册器注册数据库
     pub async fn register_collections<R: mvc_utils::ModelRegister + Send>(
         self, register: R,

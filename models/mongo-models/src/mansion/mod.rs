@@ -1,5 +1,4 @@
 
-mod register;
 pub mod check;
 pub mod mongo_db;
 

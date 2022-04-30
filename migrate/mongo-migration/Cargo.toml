@@ -12,5 +12,7 @@ serde="1"
 dashmap="5"
 typed-builder="0.10"
 
+log="0.4"
+
 [dependencies.mongo-models]
 path = "../../models/mongo-models"

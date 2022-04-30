@@ -6,25 +6,26 @@ lazy_static::lazy_static! {
     static ref STATIC_MODEL_LIST: Mutex<Option<Vec<EntityRegisterFn>>> = Mutex::new(Some(Vec::new()));
 }
 
+#[deprecated]
 pub(crate) fn static_register_model(func: EntityRegisterFn) {
     Option::<&mut Vec<_>>::from(&mut *STATIC_MODEL_LIST.try_lock().expect("why you call this async?"))
         .expect("should not call static_register_model after startup!")
         .push(func);
 }
-
+#[deprecated]
 pub(super) fn get_model_list() -> Vec<EntityRegisterFn> {
     STATIC_MODEL_LIST.try_lock().expect("why you call this async?")
         .take()
         .expect("you can only call get_model_list once!")
 }
-
+#[deprecated]
 pub struct SqlModelRegister {
     db_backend: sea_orm::DatabaseBackend,
     schema: sea_orm::Schema,
 
     register_stmt: Vec<sea_orm::Statement>,
 }
-
+#[deprecated]
 impl SqlModelRegister {
     pub(in crate::database) fn new<C: sea_orm::ConnectionTrait>(
         conn: &C,

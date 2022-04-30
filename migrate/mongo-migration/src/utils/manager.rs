@@ -1,6 +1,4 @@
-use std::{
-    any::{type_name, TypeId},
-};
+use std::any::{type_name, TypeId};
 
 use dashmap::DashMap;
 use mongodb::{Collection, Database};
@@ -14,15 +12,15 @@ pub struct Manager {
 }
 
 impl Manager {
-    pub(crate) fn collection<C>(
-        &self, name: Option<&'static str>,
+    pub(crate) fn collection<C, N: Into<Option<&'static str>>>(
+        &self, name: N,
     ) -> Collection<C>
     where
         C: Serialize + for<'de> Deserialize<'de>,
         C: 'static,
         C: Sized + Send,
     {
-        let name = name.unwrap_or(type_name::<C>());
+        let name = name.into().unwrap_or(type_name::<C>());
         let id = TypeId::of::<C>();
 
         let collect = self.db.collection::<C>(name);
@@ -32,7 +30,7 @@ impl Manager {
 
         collect
     }
-
+    #[allow(dead_code)]
     pub(crate) fn get_collection<C>(&self) -> Option<Collection<C>>
     where
         C: Serialize + for<'de> Deserialize<'de>,
@@ -44,5 +42,4 @@ impl Manager {
             .get(&id)
             .map(|v| v.value().clone_with_type::<C>())
     }
-
 }

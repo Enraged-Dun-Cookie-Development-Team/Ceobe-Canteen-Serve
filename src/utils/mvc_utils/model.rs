@@ -7,6 +7,7 @@ mod mongo;
 pub use mongo::{as_mongo_register, MongoRegister};
 
 #[async_trait::async_trait]
+#[deprecated]
 pub trait ModelRegister: Sized {
     /// 注册 Mongo db 模型
     async fn register_mongo(self, db: DbBuild) -> DbBuild { db }

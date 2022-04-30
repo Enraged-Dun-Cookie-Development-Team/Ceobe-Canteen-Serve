@@ -44,6 +44,7 @@ impl DbBuild {
     /// 可以自由配置Collection信息
     ///
     /// ** Collection ** 只能在启动时配置
+    #[deprecated]
     #[inline]
     pub async fn add_collection_operate<C, Create, Fut>(
         &mut self, func: Create,
