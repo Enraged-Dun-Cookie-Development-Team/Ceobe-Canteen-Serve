@@ -11,7 +11,6 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use models::RootModels;
 use serves::{
     admin_group::AdminWrapController, non_admin_group::CanteenWrapController,
 };
@@ -81,9 +80,10 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         MongoBuild::with_config(&config.mongodb)
             .await
             .expect("无法连接到MongoDb")
-            .register_collections(RootModels),
+            .collect_migration(mongo_migration::Migrator),
     )
     .await
+    .expect("Mongo Db 模型建立失败")
     .build();
 
     // load server socket config

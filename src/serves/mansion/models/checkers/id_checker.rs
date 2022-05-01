@@ -60,8 +60,3 @@ impl DataChecker for IdChecker {
     }
 }
 
-impl std::fmt::Display for MansionId {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}.{}", self.main_id, self.minor_id)
-    }
-}

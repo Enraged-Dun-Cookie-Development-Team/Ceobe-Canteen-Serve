@@ -1,0 +1,20 @@
+[package]
+name = "migration"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "migration"
+path = "src/lib.rs"
+
+[features]
+default = []
+lite-export = []
+
+[dependencies]
+sea-schema = { version = "0.7.1", default-features = false, features = [
+    "migration",
+    "debug-print"
+] }
+sql-models = { path = "../../models/sql-models" }

@@ -5,7 +5,8 @@ use lazy_static::__Deref;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use request_pretreat::prefabs::DefaultValue;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QuerySelect, Set, sea_query::Expr,
+    sea_query::Expr, ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter,
+    Set,
 };
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
@@ -285,7 +286,10 @@ async fn change_password(
                 user::Column::Password,
                 Expr::value(encode_password.to_string()),
             )
-            .col_expr(user::Column::NumPwdChange, Expr::value(num_pwd_change + 1))
+            .col_expr(
+                user::Column::NumPwdChange,
+                Expr::value(num_pwd_change + 1),
+            )
             .filter(user::Column::Id.eq(id))
             .exec(db.deref().deref()),
     )

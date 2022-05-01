@@ -1,8 +1,10 @@
-pub mod mansion;
-pub mod common;
 
+pub mod common {
+    pub mod sql {
+        pub use orm_migrate::sql_models::common::*;
+    }
+}
 
-crate::generate_model_register!(
-    RootModels,
-    mansion::MansionModel
-);
+pub mod mansion {
+    pub use mongo_migration::mongo_models::mansion::*;
+}
