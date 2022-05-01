@@ -1,6 +1,5 @@
 use sea_schema::migration::prelude::*;
-
-use super::m20220429_142528_alter_user::User;
+use sql_models::common::user::{self, Column::NumPwdChange};
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -10,10 +9,10 @@ impl MigrationName for Migration {
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut al = sea_query::Table::alter();
-        al.table(User::Table).modify_column(
-            ColumnDef::new(User::NumPwdChange)
-                .not_null()
+        al.table(user::Entity).modify_column(
+            ColumnDef::new(NumPwdChange)
                 .unsigned()
+                .not_null()
                 .default(0),
         );
         manager.alter_table(al).await?;
@@ -23,8 +22,10 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut al = sea_query::Table::alter();
-        al.table(User::Table).modify_column(
-            ColumnDef::new(User::NumPwdChange).unsigned().default(0),
+        al.table(user::Entity).modify_column(
+            ColumnDef::new(NumPwdChange)
+                .unsigned()
+                .default(0),
         );
         manager.alter_table(al).await?;
 
