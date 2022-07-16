@@ -10,11 +10,11 @@ pub(super) fn user_auth_router() -> Scope {
         )
         .service(
             web::resource("/login")
-                .route(web::get().to(UserAuthBackend::login)),
+                .route(web::post().to(UserAuthBackend::login)),
         )
         .service(
             web::resource("/info")
-                .route(web::post().to(UserAuthBackend::get_info)),
+                .route(web::get().to(UserAuthBackend::get_info)),
         )
         .service(
             web::resource("/changeUsername")
