@@ -4,14 +4,13 @@ use mongodb::{bson::doc, options::FindOptions};
 use time_usage::async_time_usage_with_name;
 
 use super::{
-    super::MansionRResult, MansionBodyCheckerPretreatment,
-    MansionMongoDbPretreatment, OptionMidCheckerPretreatment,
+    MansionRResult, MansionBodyCheckerPretreatment,
+    MansionMongoDbPretreatment, OptionMidCheckerPretreatment, MansionAuthentication, MidCheckerPretreatment,
 };
 use crate::{
     models::mansion::preludes::*,
     router::BakeryMansionBackend,
-    serves::mansion::{
-        controllers::{MansionAuthentication, MidCheckerPretreatment},
+    serves::backend::bakery_mansion::{
         error::{MansionIdExist, MansionNotFound},
         view::ViewMansion,
     },

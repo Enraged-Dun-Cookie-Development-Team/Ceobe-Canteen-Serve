@@ -15,7 +15,7 @@ use crate::{
     router::UserAuthBackend,
     database::ServeDatabase,
     models::common::sql::{auth::Auth, user},
-    serves::admin_user::{
+    serves::backend::user_auth::{
         checker::user::{UsernameChecker, UsernameUncheck},
         error::AdminUserError,
         view::{CreateUser, UserInfo, UserName, UserToken},

@@ -1,12 +1,11 @@
-use crate::{
-    serves::admin_user::error::AdminUserError,
-    utils::data_struct::MaxLimitString,
-};
+use crate::{utils::data_struct::MaxLimitString, serves::backend::user_auth::error::AdminUserError};
+
+
 
 crate::check_obj! {
     #[derive(serde::Deserialize,Debug)]
     pub struct UsernameUncheck = UsernameChecker > Username{
-        pub username: MaxLimitString<16>
+        pub username : MaxLimitString<16>
     }
     err:AdminUserError
 }

@@ -2,7 +2,7 @@ use chrono::NaiveDate;
 
 use super::{each_info::{EachInfoUncheck, InfoChecker}};
 use crate::{
-    serves::mansion::error::MansionError,
+    serves::frontend::bakery_mansion::error::MansionError,
     utils::{
         data_checker::{
             collect_checkers::iter_checkers::IntoIterChecker, DataChecker,

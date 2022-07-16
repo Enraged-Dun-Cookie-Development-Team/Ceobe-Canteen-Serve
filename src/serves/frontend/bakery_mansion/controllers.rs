@@ -2,12 +2,11 @@ use futures::StreamExt;
 use mongodb::{bson::doc, options::FindOptions};
 use time_usage::async_time_usage_with_name;
 
-use super::{super::MansionRResult, MansionMongoDbPretreatment};
+use super::{MansionMongoDbPretreatment, MidCheckerPretreatment, MansionRResult};
 use crate::{
     models::mansion::preludes::*,
     router::BakeryMansionFrontend,
-    serves::mansion::{
-        controllers::MidCheckerPretreatment, error::MansionNotFound,
+    serves::frontend::bakery_mansion::{ error::MansionNotFound,
         view::ViewMansionWithTime,
     },
     utils::req_pretreatment::ReqPretreatment,

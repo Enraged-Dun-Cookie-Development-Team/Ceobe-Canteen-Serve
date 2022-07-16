@@ -7,7 +7,7 @@ use super::{
 };
 use crate::{
     models::mansion::check::{Daily, Mansion},
-    serves::mansion::error::{BadFraction, MansionError},
+    serves::backend::bakery_mansion::error::{BadFraction, MansionError},
     utils::{
         data_checker::{
             collect_checkers::iter_checkers::IntoIterChecker, DataChecker,

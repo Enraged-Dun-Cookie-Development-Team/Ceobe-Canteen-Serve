@@ -1,9 +1,12 @@
-use super::{
-    error::MansionError,
-    models::checkers::{
-        MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
-    },
-};
+use resp_result::RespResult;
+
+pub mod controllers;
+pub(crate) mod error;
+mod models;
+mod view;
+
+type MansionRResult<T> = RespResult<T, error::MansionError>;
+
 use crate::utils::{
     mongodb_utils::db_selector::MongoDbSelector,
     req_pretreatment::{
@@ -16,8 +19,7 @@ use crate::utils::{
     },
 };
 
-pub mod mansion;
-pub mod mansion_front;
+use self::{error::MansionError, models::checkers::{OptionMidCheckerPretreat, MIdCheckerPretreat, MansionCheckerPretreat}};
 
 crate::new_auth_level! {
     pub MansionAuth=>[
@@ -26,7 +28,8 @@ crate::new_auth_level! {
     ]
 }
 
-pub type MansionAuthentication = AuthenticationLevel<MansionAuth, MansionError>;
+pub type MansionAuthentication =
+    AuthenticationLevel<MansionAuth, MansionError>;
 
 pub type OptionMidCheckerPretreatment = ReqPretreatment<
     ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>,
