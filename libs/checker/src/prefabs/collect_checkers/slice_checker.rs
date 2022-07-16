@@ -26,7 +26,7 @@ where
     type Fut = SliceCheckerFut<S, O, C>;
     type Unchecked = S;
 
-    fn async_checker(
+    fn checker(
         args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         SliceCheckerFut {
@@ -73,7 +73,7 @@ where
                 return Poll::Ready(Ok(O::from_iter(buf.into_iter())));
             }
         };
-        let fut = C::async_checker(this.args.clone(), uncheck);
+        let fut = C::checker(this.args.clone(), uncheck);
 
         pin_mut!(fut);
 

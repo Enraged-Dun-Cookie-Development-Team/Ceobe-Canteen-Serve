@@ -13,12 +13,12 @@ impl<C: AsyncChecker> AsyncChecker for OptionChecker<C> {
     type Fut = OptionCheckerFut<C>;
     type Unchecked = Option<C::Unchecked>;
 
-    fn async_checker(
+    fn checker(
         args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         match uncheck {
             Some(uncheck) => {
-                OptionCheckerFut::Some(C::async_checker(args, uncheck))
+                OptionCheckerFut::Some(C::checker(args, uncheck))
             }
             None => OptionCheckerFut::None,
         }

@@ -14,7 +14,7 @@ pub trait AsyncChecker {
     type Fut: Future<Output = Result<Self::Checked, Self::Err>>;
 
     /// 进行数据检查，可能为异步
-    fn async_checker(args: Self::Args, uncheck: Self::Unchecked)
+    fn checker(args: Self::Args, uncheck: Self::Unchecked)
         -> Self::Fut;
 }
 

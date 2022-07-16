@@ -86,7 +86,7 @@ where
 
             let checked = async_time_usage_with_name(
                 format!("执行检查-{}", type_name::<C>()).as_str(),
-                C::async_checker(args, uncheck),
+                C::checker(args, uncheck),
             )
             .await?;
             Ok(checked)

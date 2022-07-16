@@ -25,7 +25,7 @@ where
 
         match this.0.next() {
             Some(uncheck) => {
-                let fut = C::async_checker(this.1.clone(), uncheck);
+                let fut = C::checker(this.1.clone(), uncheck);
                 pin_mut!(fut);
                 let resp = fut.poll(cx);
                 match resp {
@@ -52,7 +52,7 @@ where
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = I;
 
-    fn async_checker(
+    fn checker(
         args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         ok(LazyCheckedIter(uncheck, args))

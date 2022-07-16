@@ -18,7 +18,7 @@ where
 
     #[inline]
     pub async fn checking(self, args: D::Args) -> Result<D::Checked, D::Err> {
-        D::async_checker(args, self.0).await
+        D::checker(args, self.0).await
     }
 
     /// 直接获取未检查的数据将是不安全的

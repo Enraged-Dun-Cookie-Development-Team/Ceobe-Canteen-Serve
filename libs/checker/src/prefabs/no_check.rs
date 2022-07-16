@@ -13,7 +13,7 @@ impl<T> AsyncChecker for NoCheck<T> {
     type Fut = futures::future::Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = T;
 
-    fn async_checker(
+    fn checker(
         _args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         ok(uncheck)

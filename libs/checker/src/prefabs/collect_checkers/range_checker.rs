@@ -14,7 +14,7 @@ where
     type Fut = Ready<Result<T, Self::Err>>;
     type Unchecked = T;
 
-    fn async_checker(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    fn checker(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let f = || {
             let v = Self::try_from(uncheck)?;
             Ok(v.into())

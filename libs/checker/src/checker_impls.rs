@@ -16,7 +16,7 @@ where
     type Fut = CheckRef<S>;
     type Unchecked = S::Target;
 
-    fn async_checker(
+    fn checker(
         args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         let ptr = Box::into_raw(Box::new(uncheck)) as *const S::Target;
