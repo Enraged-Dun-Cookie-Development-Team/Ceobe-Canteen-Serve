@@ -1,4 +1,4 @@
-use actix_web::{get, post, web::Data};
+use actix_web::{web::Data};
 use crypto::digest::Digest;
 use crypto_str::Encoder;
 use lazy_static::__Deref;
