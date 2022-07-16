@@ -28,6 +28,7 @@ mod models;
 mod serves;
 mod user_create;
 mod utils;
+mod router;
 
 extern crate serde;
 
@@ -106,7 +107,8 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             // 配置信息
             .app_data(data_config.clone())
             // 服务
-            .service(RootController)
+            // .service(RootController)
+            .service(router::root_route())
             .default_service(web::to(not_exist))
     })
     .bind(http_socket)?
