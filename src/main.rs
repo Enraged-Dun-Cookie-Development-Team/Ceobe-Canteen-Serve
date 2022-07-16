@@ -12,7 +12,7 @@ use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
 use time_usage::async_time_usage_with_name;
-use user_create::create::create_default_user;
+use bootstrap::create::create_default_user;
 use utils::{
     middleware::benchmark::BenchMarkFactor,
     mongodb_utils::mongo_build::MongoBuild, user_authorize,
@@ -24,7 +24,7 @@ mod error;
 mod models;
 mod router;
 mod serves;
-mod user_create;
+mod bootstrap;
 mod utils;
 
 extern crate serde;
