@@ -8,7 +8,7 @@ use super::{
 };
 use crate::{
     generate_controller,
-    serves::ceobe_push::CeobeRResult,
+    serves::frontend::ceobe_push::CeobeRResult,
     utils::req_pretreatment::{
         prefabs::{Json, MapErr, ToRResult},
         ReqPretreatment,

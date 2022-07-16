@@ -11,11 +11,8 @@ use configs::{
 use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use serves::{
-    admin_group::AdminWrapController, non_admin_group::CanteenWrapController,
-};
 use time_usage::async_time_usage_with_name;
-use user_create::create::create_default_user;
+use bootstrap::create::create_default_user;
 use utils::{
     middleware::benchmark::BenchMarkFactor,
     mongodb_utils::mongo_build::MongoBuild, user_authorize,
@@ -25,18 +22,12 @@ mod configs;
 mod database;
 mod error;
 mod models;
+mod router;
 mod serves;
-mod user_create;
+mod bootstrap;
 mod utils;
 
 extern crate serde;
-
-generate_controller!(
-    RootController,
-    "/api/v0",
-    AdminWrapController,
-    CanteenWrapController
-);
 
 #[actix_web::main]
 async fn main() -> Result<(), GlobalError> {
@@ -106,7 +97,8 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             // 配置信息
             .app_data(data_config.clone())
             // 服务
-            .service(RootController)
+            // .service(RootController)
+            .service(router::root_route())
             .default_service(web::to(not_exist))
     })
     .bind(http_socket)?
