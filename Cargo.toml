@@ -111,6 +111,9 @@ features = ["for-actix", "log"]
 [dependencies.request-pretreat]
 version = "0.1.1"
 
+[dependencies.checker]
+path ="./libs/checker"
+
 [dependencies.time-usage]
 path = "./libs/time-usage"
 
