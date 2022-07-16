@@ -50,6 +50,6 @@ where
         D: serde::Deserializer<'de>,
     {
         let tmp = T::deserialize(deserializer)?;
-        Self::try_from(tmp).or_else(|e| Err(de::Error::custom(e)))
+        Self::try_from(tmp).map_err(de::Error::custom)
     }
 }
