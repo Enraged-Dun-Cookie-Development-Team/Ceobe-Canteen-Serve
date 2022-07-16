@@ -1,4 +1,4 @@
-use crate::user_create::default_user::FUserConfig;
+use crate::bootstrap::default_user::FUserConfig;
 
 crate::quick_struct! {
     pub FirstUserConfig {
