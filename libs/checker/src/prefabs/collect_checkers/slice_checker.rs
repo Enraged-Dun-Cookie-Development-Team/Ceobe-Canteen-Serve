@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::{marker::PhantomData, task::Poll};
 
 use futures::{pin_mut, Future};
