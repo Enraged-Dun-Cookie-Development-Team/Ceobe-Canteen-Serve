@@ -1,17 +1,21 @@
+#![allow(dead_code)]
+
 use std::{convert::Infallible, marker::PhantomData, task::Poll};
 
-use futures::{future::ok, pin_mut, Future, Stream};
-use futures_util::future::Ready;
+use futures::{
+    future::{ok, Ready},
+    pin_mut, Future, Stream,
+};
 
-use crate::utils::data_checker::DataChecker;
+use crate::AsyncChecker;
 
 #[pin_project::pin_project]
-pub struct CheckedIter<I, C: DataChecker>(I, C::Args);
+pub struct LazyCheckedIter<I, C: AsyncChecker>(I, C::Args);
 
-impl<I, C> Stream for CheckedIter<I, C>
+impl<I, C> Stream for LazyCheckedIter<I, C>
 where
     I: Iterator,
-    C: DataChecker<Unchecked = I::Item>,
+    C: AsyncChecker<Unchecked = I::Item>,
     C::Args: Clone,
 {
     type Item = Result<C::Checked, C::Err>;
@@ -36,21 +40,23 @@ where
     }
 }
 
-pub struct IterChecker<I, C>(PhantomData<I>, PhantomData<C>);
+pub struct LazyIterChecker<I: 'static, C>(PhantomData<I>, PhantomData<C>);
 
-impl<I, C> DataChecker for IterChecker<I, C>
+impl<I, C> AsyncChecker for LazyIterChecker<I, C>
 where
-    I: Iterator,
-    C: DataChecker<Unchecked = I::Item>,
+    I: Iterator + 'static,
+    C: AsyncChecker<Unchecked = I::Item>,
     C::Args: Clone,
 {
     type Args = C::Args;
-    type Checked = CheckedIter<I, C>;
+    type Checked = LazyCheckedIter<I, C>;
     type Err = Infallible;
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = I;
 
-    fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        ok(CheckedIter(uncheck, args))
+    fn checker(
+        args: Self::Args, uncheck: Self::Unchecked,
+    ) -> Self::Fut {
+        ok(LazyCheckedIter(uncheck, args))
     }
 }

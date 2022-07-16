@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::{
     convert::Infallible,
     marker::PhantomData,
@@ -5,13 +6,15 @@ use std::{
     task::{Context, Poll},
 };
 
-use futures::{future::ok, pin_mut, Future, Stream};
-use futures_util::StreamExt;
+use futures::{
+    future::{ok, Ready},
+    pin_mut, Future, Stream, StreamExt,
+};
 
-use crate::utils::data_checker::DataChecker;
+use crate::AsyncChecker;
 
 #[pin_project::pin_project]
-pub struct CheckedStream<S, C: DataChecker> {
+pub struct CheckedStream<S, C: AsyncChecker> {
     #[pin]
     stream: S,
     args: C::Args,
@@ -20,7 +23,7 @@ pub struct CheckedStream<S, C: DataChecker> {
 impl<S, C> Stream for CheckedStream<S, C>
 where
     S: Stream,
-    C: DataChecker<Unchecked = S::Item>,
+    C: AsyncChecker<Unchecked = S::Item>,
     C::Args: Clone,
 {
     type Item = Result<C::Checked, C::Err>;
@@ -34,7 +37,8 @@ where
         let task = async move {
             match next_task.await {
                 Some(uncheck) => {
-                    let resp = C::checker(this.args.clone(), uncheck).await;
+                    let resp =
+                        C::checker(this.args.clone(), uncheck).await;
                     Some(resp)
                 }
                 None => None,
@@ -48,19 +52,21 @@ where
 
 pub struct StreamChecker<S, C>(PhantomData<S>, PhantomData<C>);
 
-impl<S, C> DataChecker for StreamChecker<S, C>
+impl<S, C> AsyncChecker for StreamChecker<S, C>
 where
     S: Stream,
-    C: DataChecker<Unchecked = S::Item>,
+    C: AsyncChecker<Unchecked = S::Item> + 'static,
     C::Args: Clone,
 {
     type Args = C::Args;
     type Checked = CheckedStream<S, C>;
     type Err = Infallible;
-    type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
+    type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = S;
 
-    fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    fn checker(
+        args: Self::Args, uncheck: Self::Unchecked,
+    ) -> Self::Fut {
         ok(CheckedStream {
             stream: uncheck,
             args,

@@ -1,11 +1,30 @@
-mod check_require;
-pub mod codegen;
-pub mod collect_checkers;
 mod load_from_args;
-pub mod no_check;
-mod ref_checker;
 
-use std::{marker::PhantomData, any::type_name};
+pub use checker::{
+    prefabs::option_checker::OptionChecker, AsyncChecker as DataChecker,
+};
+
+pub mod no_check {
+    pub use checker::prefabs::no_check::NoCheck;
+}
+
+mod ref_checker {
+    pub use checker::AsyncRefCheck as RefChecker;
+}
+
+pub mod collect_checkers {
+    pub use checker::prefabs::collect_checkers::*;
+}
+
+pub mod codegen {
+    pub use checker::check_obj;
+}
+
+mod check_require {
+    pub use checker::CheckRequire;
+}
+
+use std::{any::type_name, marker::PhantomData};
 
 pub use check_require::*;
 use futures::Future;
@@ -13,23 +32,6 @@ pub use ref_checker::RefChecker;
 use time_usage::async_time_usage_with_name;
 
 use super::req_pretreatment::Pretreatment;
-
-pub trait DataChecker {
-    /// 未经过检查时的值
-    type Unchecked;
-    /// 检查时需要的外部信息
-    type Args;
-    /// 通过检查的值
-    type Checked;
-    /// 检查过程中出现的异常
-    type Err;
-
-    /// 检查过程可能为异步
-    type Fut: Future<Output = Result<Self::Checked, Self::Err>>;
-
-    /// 进行数据检查，可能为异步
-    fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut;
-}
 
 pub struct PretreatChecker<Pargs, Punchecked, C>(
     PhantomData<Pargs>,
@@ -88,26 +90,6 @@ where
             )
             .await?;
             Ok(checked)
-        }
-    }
-}
-
-pub struct OptionChecker<C: DataChecker>(PhantomData<C>);
-
-impl<C: DataChecker> DataChecker for OptionChecker<C> {
-    type Args = C::Args;
-    type Checked = Option<C::Checked>;
-    type Err = C::Err;
-    type Unchecked = Option<C::Unchecked>;
-
-    type Fut = impl Future<Output = Result<Self::Checked, Self::Err>>;
-
-    fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        async move {
-            match uncheck {
-                Some(uc) => C::checker(args, uc).await.map(Some),
-                None => Ok(Self::Checked::None),
-            }
         }
     }
 }

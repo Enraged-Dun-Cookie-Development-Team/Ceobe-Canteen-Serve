@@ -1,5 +1,7 @@
 #![feature(type_alias_impl_trait)]
 
+use checker::check_obj;
+
 use actix_web::{
     web::{self, Data},
     App, HttpServer,

@@ -35,7 +35,7 @@ macro_rules! check_obj {
         }
         err: $err:ty
     } => {
-        crate::__check_struct!{
+        $crate::__check_struct!{
             $(#[$c_attr])*
             $v $c_name[
                 $(
@@ -45,7 +45,7 @@ macro_rules! check_obj {
             ]
         }
 
-        crate::__uncheck_struct!{
+        $crate::__uncheck_struct!{
             $(#[$uc_attr])*
             $v $uc_name[
                 $(
@@ -55,7 +55,7 @@ macro_rules! check_obj {
             ]
         }
 
-        crate::__checker_generate!($uc_name => $v $checker[$($f_n:$f_ty),*]=>$c_name | $err);
+        $crate::__checker_generate!($uc_name => $v $checker[$($f_n:$f_ty),*]=>$c_name | $err);
     };
     {
         $(#[$uc_attr:meta])*
@@ -67,7 +67,7 @@ macro_rules! check_obj {
     }
     err: $err:ty
     }=>{
-        crate::__uncheck_struct!{
+        $crate::__uncheck_struct!{
             $(#[$uc_attr])*
             $v $uc_name[
                 $(
@@ -77,7 +77,7 @@ macro_rules! check_obj {
             ]
         }
 
-        crate::__checker_generate!($uc_name => $v $checker[$($f_n:$f_ty),*] => $c_name | $err);
+        $crate::__checker_generate!($uc_name => $v $checker[$($f_n:$f_ty),*] => $c_name | $err);
     }
 }
 
@@ -98,12 +98,12 @@ macro_rules! __uncheck_struct {
         $v struct $name
         where
         $(
-            $f_ty : $crate::utils::data_checker::DataChecker
+            $f_ty : $crate::AsyncChecker
         ),*
         {
             $(
                 $(#[$f_m])*
-                $f_n : $crate::utils::data_checker::CheckRequire<$f_ty>
+                $f_n : $crate::CheckRequire<$f_ty>
             ),*
         }
     };
@@ -126,12 +126,12 @@ macro_rules! __check_struct {
         $v struct $name
         where
         $(
-            $f_ty : $crate::utils::data_checker::DataChecker
+            $f_ty : $crate::AsyncChecker
         ),*
         {
             $(
                 $(#[$fm])*
-                $fv $f_n : <$f_ty as $crate::utils::data_checker::DataChecker>::Checked
+                $fv $f_n : <$f_ty as $crate::AsyncChecker>::Checked
             ),*
         }
     };
@@ -144,20 +144,20 @@ macro_rules! __checker_generate {
         $v struct $name;
 
         #[allow(unused_parents)]
-        impl $crate::utils::data_checker::DataChecker for $name
+        impl $crate::AsyncChecker for $name
         where
         $(
-            $f_ty : $crate::utils::data_checker::DataChecker,
-            <$f_ty as $crate::utils::data_checker::DataChecker>::Err: Into<$err>,
+            $f_ty : $crate::AsyncChecker,
+            <$f_ty as $crate::AsyncChecker>::Err: Into<$err>,
         )*
         {
             type Unchecked = $uc;
             type Args = (
-                $(<$f_ty as $crate::utils::data_checker::DataChecker>::Args),*,
+                $(<$f_ty as $crate::AsyncChecker>::Args),*,
             );
             type Checked= $cd ;
             type Err= $err;
-            type Fut=impl futures::Future<Output = Result<Self::Checked,Self::Err>>;
+            type Fut=impl std::future::Future<Output = Result<Self::Checked,Self::Err>>;
             fn checker(($($f_n),*,): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
                $( let $f_n = uncheck.$f_n.checking($f_n); )*
 

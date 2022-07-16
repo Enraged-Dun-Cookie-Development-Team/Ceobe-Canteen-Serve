@@ -1,10 +1,9 @@
-use futures::future::Ready;
-use futures_util::future::ready;
+use futures::future::{ready, Ready};
 use range_limit::RangeBoundLimit;
 
-use crate::utils::data_checker::DataChecker;
+use crate::AsyncChecker;
 
-impl<T, Rb> DataChecker for RangeBoundLimit<T, Rb>
+impl<T, Rb> AsyncChecker for RangeBoundLimit<T, Rb>
 where
     T: range_limit::measurable::Measurable,
     Rb: range_limit::RangeBound,

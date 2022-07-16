@@ -1,12 +1,12 @@
-mod iter_checker;
+mod lazy_iter_checker;
 mod range_checker;
 mod slice_checker;
 mod stream_checker;
 
 pub mod iter_checkers {
     pub use super::{
-        iter_checker::{CheckedIter, IterChecker},
-        slice_checker::SliceChecker as IntoIterChecker,
+        lazy_iter_checker::{LazyCheckedIter, LazyIterChecker},
+        slice_checker::{SliceChecker as IntoIterChecker, SliceCheckerFut},
         stream_checker::{CheckedStream, StreamChecker},
     };
 }
