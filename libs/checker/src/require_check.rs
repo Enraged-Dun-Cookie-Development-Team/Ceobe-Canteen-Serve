@@ -2,9 +2,15 @@ use core::fmt::Debug;
 
 use serde::Deserialize;
 
-use crate::Checker;
+use crate::{checker::LiteChecker, Checker};
 
 pub struct CheckRequire<D: Checker>(D::Unchecked);
+
+impl<D: LiteChecker> CheckRequire<D> {
+    pub async fn lite_checking(self)->Result<D::Checked,D::Err>{
+        D::lite_check(self.0).await
+    }
+}
 
 #[allow(dead_code)]
 impl<D: Checker> CheckRequire<D>

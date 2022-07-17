@@ -1,6 +1,7 @@
 #[macro_export]
 /// 辅助生成成对已检查 / 未检查 结构体对
-/// ```rust
+/// ```rust, ignore
+/// use checker::check_obj;
 /// check_obj! {
 /// {
 ///    #[derive(Deserialize)]        // 所有要挂载到 Unchecked 上的Attr

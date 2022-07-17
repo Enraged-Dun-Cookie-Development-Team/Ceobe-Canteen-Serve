@@ -61,13 +61,57 @@ impl<C> LiteChecker for C
 where
     C: Checker<Args = ()>,
 {
-    type Checked = C::Checked;
-    type Unchecked = C::Unchecked;
-    
-    type Err = C::Err;
-    type Fut = C::Fut;
-
-    fn checker(uncheck: Self::Unchecked) -> Self::Fut {
+    fn lite_check(uncheck: Self::Unchecked) -> Self::Fut {
         <C as Checker>::check((), uncheck)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use futures::future::{ready, Ready};
+
+    use crate::{CheckRequire, RefChecker};
+
+    struct CanSafeIntoU32Checker;
+    #[derive(Debug, PartialEq, Eq)]
+    struct OutOfRangeError;
+
+    impl RefChecker for CanSafeIntoU32Checker {
+        type Args = ();
+        type Err = OutOfRangeError;
+        type Fut = Ready<Result<(), Self::Err>>;
+        type Target = i32;
+
+        fn ref_checker(_: Self::Args, target: &Self::Target) -> Self::Fut {
+            let res = if target >= &0 {
+                Ok(())
+            }
+            else {
+                Err(OutOfRangeError)
+            };
+            ready(res)
+        }
+    }
+
+    #[tokio::test]
+    async fn test_ref_checker() {
+        let init_data = 12345i32;
+        let resp = CanSafeIntoU32Checker::ref_checker((), &init_data).await;
+
+        assert_eq!(Ok(()), resp)
+    }
+    #[tokio::test]
+    async fn test_checker() {
+        let init_data = CheckRequire::new(CanSafeIntoU32Checker, 114514i32);
+        let resp = init_data.checking(()).await;
+
+        assert_eq!(Ok(114514), resp);
+    }
+    #[tokio::test]
+    async fn test_lite_checker() {
+        let init = CheckRequire::new(CanSafeIntoU32Checker, 123456);
+        let resp = init.lite_checking().await;
+
+        assert_eq!(Ok(123456), resp)
     }
 }

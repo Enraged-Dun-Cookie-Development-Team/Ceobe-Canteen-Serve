@@ -11,3 +11,6 @@ serde = "1"
 
 [dependencies.range-limit]
 path = "../range-limit"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util", "macros"] }
