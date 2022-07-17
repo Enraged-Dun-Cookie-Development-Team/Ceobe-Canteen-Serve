@@ -1,5 +1,7 @@
 use std::future::Future;
 
+use crate::LiteArgs;
+
 pub trait Checker {
     /// 未经过检查时的值
     type Unchecked;
@@ -30,7 +32,10 @@ pub trait RefChecker: 'static {
 }
 
 /// 轻量级的checker，即不需要任何输入参数的checker
-pub trait LiteChecker: Checker<Args = ()> {
+pub trait LiteChecker: Checker
+where
+    <Self as Checker>::Args: LiteArgs,
+{
     /// 进行数据检查，可能为异步
     fn lite_check(uncheck: Self::Unchecked) -> Self::Fut;
 }

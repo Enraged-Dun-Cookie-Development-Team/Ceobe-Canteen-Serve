@@ -2,12 +2,16 @@ use core::fmt::Debug;
 
 use serde::Deserialize;
 
-use crate::{checker::LiteChecker, Checker};
+use crate::{checker::LiteChecker, lite_args::LiteArgs, Checker};
 
 pub struct CheckRequire<D: Checker>(D::Unchecked);
 
-impl<D: LiteChecker> CheckRequire<D> {
-    pub async fn lite_checking(self)->Result<D::Checked,D::Err>{
+impl<D> CheckRequire<D>
+where
+    D: LiteChecker,
+    <D as Checker>::Args: LiteArgs,
+{
+    pub async fn lite_checking(self) -> Result<D::Checked, D::Err> {
         D::lite_check(self.0).await
     }
 }

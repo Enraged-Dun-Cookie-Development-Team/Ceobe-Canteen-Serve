@@ -4,7 +4,10 @@ use std::task::Poll;
 
 use futures::{pin_mut, Future};
 
-use crate::checker::{Checker, LiteChecker, RefChecker};
+use crate::{
+    checker::{Checker, LiteChecker, RefChecker},
+    lite_args::LiteArgs,
+};
 
 impl<S> Checker for S
 where
@@ -59,10 +62,14 @@ impl<S: RefChecker> Future for CheckRef<S> {
 
 impl<C> LiteChecker for C
 where
-    C: Checker<Args = ()>,
+    C: Checker,
+    <C as Checker>::Args: LiteArgs,
 {
     fn lite_check(uncheck: Self::Unchecked) -> Self::Fut {
-        <C as Checker>::check((), uncheck)
+        <C as Checker>::check(
+            <<C as Checker>::Args as LiteArgs>::get_arg(),
+            uncheck,
+        )
     }
 }
 
