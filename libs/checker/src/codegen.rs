@@ -158,7 +158,7 @@ macro_rules! __checker_generate {
             type Checked= $cd ;
             type Err= $err;
             type Fut=impl std::future::Future<Output = Result<Self::Checked,Self::Err>>;
-            fn checker(($($f_n),*,): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+            fn check(($($f_n),*,): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
                $( let $f_n = uncheck.$f_n.checking($f_n); )*
 
                async move{

@@ -13,12 +13,12 @@ impl<C: Checker> Checker for OptionChecker<C> {
     type Fut = OptionCheckerFut<C>;
     type Unchecked = Option<C::Unchecked>;
 
-    fn checker(
+    fn check(
         args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         match uncheck {
             Some(uncheck) => {
-                OptionCheckerFut::Some(C::checker(args, uncheck))
+                OptionCheckerFut::Some(C::check(args, uncheck))
             }
             None => OptionCheckerFut::None,
         }

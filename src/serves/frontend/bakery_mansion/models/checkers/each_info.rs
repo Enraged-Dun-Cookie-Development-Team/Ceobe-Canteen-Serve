@@ -24,7 +24,7 @@ impl DataChecker for PredictLevelChecker {
     type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
-    fn checker(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let resp = match uncheck.as_str() {
             "false" => Ok(Predict::False),
             "unknown" => Ok(Predict::Unknown),

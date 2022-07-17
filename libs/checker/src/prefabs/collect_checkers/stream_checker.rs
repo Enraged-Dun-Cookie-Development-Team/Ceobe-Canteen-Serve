@@ -38,7 +38,7 @@ where
             match next_task.await {
                 Some(uncheck) => {
                     let resp =
-                        C::checker(this.args.clone(), uncheck).await;
+                        C::check(this.args.clone(), uncheck).await;
                     Some(resp)
                 }
                 None => None,
@@ -64,7 +64,7 @@ where
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = S;
 
-    fn checker(
+    fn check(
         args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         ok(CheckedStream {

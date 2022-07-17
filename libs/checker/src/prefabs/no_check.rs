@@ -13,7 +13,7 @@ impl<T> Checker for NoCheck<T> {
     type Fut = futures::future::Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = T;
 
-    fn checker(
+    fn check(
         _args: Self::Args, uncheck: Self::Unchecked,
     ) -> Self::Fut {
         ok(uncheck)

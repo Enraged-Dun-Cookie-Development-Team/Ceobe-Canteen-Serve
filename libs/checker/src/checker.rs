@@ -14,7 +14,7 @@ pub trait Checker {
     type Fut: Future<Output = Result<Self::Checked, Self::Err>>;
 
     /// 进行数据检查，可能为异步
-    fn checker(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut;
+    fn check(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut;
 }
 
 pub trait RefChecker: 'static {
@@ -29,6 +29,7 @@ pub trait RefChecker: 'static {
     fn ref_checker(args: Self::Args, target: &Self::Target) -> Self::Fut;
 }
 
+/// 轻量级的checker，即不需要任何输入参数的checker
 pub trait LiteChecker {
     /// 未经过检查时的值
     type Unchecked;
@@ -42,14 +43,4 @@ pub trait LiteChecker {
 
     /// 进行数据检查，可能为异步
     fn checker(uncheck: Self::Unchecked) -> Self::Fut;
-}
-
-pub trait LiteRefChecker {
-    type Target;
-
-    type Err;
-
-    type Fut: Future<Output = Result<(), Self::Err>>;
-
-    fn ref_checker(target: &Self::Target) -> Self::Fut;
 }
