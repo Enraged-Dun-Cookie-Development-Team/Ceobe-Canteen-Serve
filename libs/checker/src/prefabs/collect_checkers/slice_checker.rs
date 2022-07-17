@@ -37,8 +37,6 @@ where
     O: FromIterator<C::Checked>,
     C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
-    C::Checked: Debug,
-    C::Unchecked: Debug,
 {
     type Args = C::Args;
     type Checked = O;
@@ -87,8 +85,6 @@ where
     O: FromIterator<C::Checked>,
     C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
-    C::Checked: Debug,
-    C::Unchecked: Debug,
 {
     type Output = Result<O, C::Err>;
 
@@ -96,7 +92,6 @@ where
         self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>,
     ) -> Poll<Self::Output> {
         let this = self.project();
-        println!("polling  now results {:?}", this.result);
 
         loop {
             // if has pending data
