@@ -1,24 +1,41 @@
 #![allow(dead_code)]
-use std::{marker::PhantomData, task::Poll};
+use std::{fmt::Debug, marker::PhantomData, pin::Pin, task::Poll};
 
-use futures::{pin_mut, Future};
+use futures::Future;
 
-use crate::AsyncChecker;
+use crate::Checker;
 
 /// 对 Slice 全部元素进行检查，一个错误就全部退出
-#[derive(Debug)]
-pub struct SliceChecker<S, C, O>(PhantomData<(S, C, O)>)
+#[derive(Debug, Default)]
+pub struct SliceChecker<S, C, O>
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
-    C::Args: Clone;
+    C: Checker<Unchecked = S::Item>,
+    C::Args: Clone,
+{
+    _phantom: PhantomData<(S, C, O)>,
+}
 
-impl<S, C, O> AsyncChecker for SliceChecker<S, C, O>
+impl<S, C, O> SliceChecker<S, C, O>
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
+    C::Args: Clone,
+{
+    pub fn new() -> Self {
+        Self {
+            _phantom: PhantomData,
+        }
+    }
+}
+
+impl<S, C, O> Checker for SliceChecker<S, C, O>
+where
+    S: IntoIterator,
+    O: FromIterator<C::Checked>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
 {
     type Args = C::Args;
@@ -27,14 +44,13 @@ where
     type Fut = SliceCheckerFut<S, O, C>;
     type Unchecked = S;
 
-    fn checker(
-        args: Self::Args, uncheck: Self::Unchecked,
-    ) -> Self::Fut {
+    fn check(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         SliceCheckerFut {
             args,
             iter: uncheck.into_iter(),
             result: Vec::new(),
             _phantom: PhantomData,
+            pending: None,
         }
     }
 }
@@ -44,20 +60,30 @@ pub struct SliceCheckerFut<S, O, C>
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
 {
-    args: <C as AsyncChecker>::Args,
+    args: <C as Checker>::Args,
     iter: <S as IntoIterator>::IntoIter,
     result: Vec<C::Checked>,
+    pending: Option<<C as Checker>::Fut>,
     _phantom: PhantomData<O>,
+}
+
+impl<S, O, C> SliceCheckerFut<S, O, C>
+where
+    S: IntoIterator,
+    O: FromIterator<C::Checked>,
+    C: Checker<Unchecked = S::Item>,
+    C::Args: Clone,
+{
 }
 
 impl<S, O, C> Future for SliceCheckerFut<S, O, C>
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
 {
     type Output = Result<O, C::Err>;
@@ -67,28 +93,105 @@ where
     ) -> Poll<Self::Output> {
         let this = self.project();
 
-        let uncheck = match this.iter.next() {
-            Some(uncheck) => uncheck,
-            None => {
-                let buf = std::mem::take(this.result);
-                return Poll::Ready(Ok(O::from_iter(buf.into_iter())));
-            }
-        };
-        let fut = C::checker(this.args.clone(), uncheck);
+        loop {
+            // if has pending data
+            // poll it
+            if let Some(fut) = this.pending {
+                let pin_fut = unsafe { Pin::new_unchecked(fut) };
 
-        pin_mut!(fut);
-
-        match fut.poll(cx) {
-            Poll::Ready(resp) => {
-                match resp {
-                    Ok(resp) => {
+                match pin_fut.poll(cx) {
+                    Poll::Ready(Ok(resp)) => {
+                        // ok,go ahead
                         this.result.push(resp);
-                        Poll::Pending
                     }
-                    Err(err) => Poll::Ready(Err(err)),
+                    // error occur return
+                    Poll::Ready(Err(err)) => break Poll::Ready(Err(err)),
+                    // still pending ,break and waiting next call
+                    Poll::Pending => break Poll::Pending,
                 }
             }
-            Poll::Pending => Poll::Pending,
+
+            // clear pending
+            this.pending.take();
+            // go ahead
+            if let Some(uncheck) = this.iter.next() {
+                let mut fut = C::check(this.args.clone(), uncheck);
+                let pin_fut = unsafe { Pin::new_unchecked(&mut fut) };
+
+                match pin_fut.poll(cx) {
+                    Poll::Ready(Ok(resp)) => {
+                        this.result.push(resp);
+                        continue;
+                    }
+                    Poll::Ready(Err(err)) => break Poll::Ready(Err(err)),
+                    Poll::Pending => {
+                        this.pending.replace(fut);
+
+                        break Poll::Pending;
+                    }
+                }
+            }
+            else {
+                let buf = std::mem::take(this.result);
+                break Poll::Ready(Ok(O::from_iter(buf.into_iter())));
+            }
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use std::{convert::Infallible, pin::Pin, time::Duration};
+
+    use futures::{pin_mut, Future};
+
+    use super::SliceChecker;
+    use crate::{prefabs::no_check::NoCheck, CheckRequire, RefChecker};
+
+    #[tokio::test]
+    async fn test_slice_checker() {
+        let init = CheckRequire::new(
+            SliceChecker::<_, NoCheck<_>, Vec<_>>::new(),
+            vec![1i32, 23, 4, 4, 34, 44],
+        );
+
+        let resp = init.lite_checking();
+
+        pin_mut!(resp);
+
+        let task = tokio::time::timeout(Duration::from_secs(5), resp);
+
+        let resp = task.await;
+
+        assert_eq!(Ok(Ok(vec![1i32, 23, 4, 4, 34, 44])), resp)
+    }
+
+    struct DelayNoChecker;
+
+    impl RefChecker for DelayNoChecker {
+        type Args = ();
+        type Err = Infallible;
+        type Fut = Pin<Box<dyn Future<Output = Result<(), Self::Err>>>>;
+        type Target = i32;
+
+        fn ref_checker(_: Self::Args, _: &Self::Target) -> Self::Fut {
+            Box::pin(async {
+                tokio::time::sleep(Duration::from_secs(2)).await;
+                tokio::time::sleep(Duration::from_secs(2)).await;
+                Ok(())
+            })
+        }
+    }
+
+    #[tokio::test]
+    async fn test_wait_checker() {
+        let resp = CheckRequire::new(
+            SliceChecker::<_, DelayNoChecker, Vec<_>>::new(),
+            vec![1, 2, 3, 4, 5, 6, 7, 8, 0],
+        );
+
+        let checking = resp.lite_checking().await;
+
+        println!("{:?}", checking);
     }
 }

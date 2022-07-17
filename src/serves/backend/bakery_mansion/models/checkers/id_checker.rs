@@ -42,7 +42,7 @@ impl DataChecker for IdChecker {
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
-    fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let task = move || {
             let mut sp = uncheck.split('.');
             let f = sp.next().ok_or(UnknownId)?;

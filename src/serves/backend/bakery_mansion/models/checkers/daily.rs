@@ -30,7 +30,7 @@ impl DataChecker for DateFormatChecker {
     type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
-    fn checker(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let date = NaiveDate::parse_from_str(&uncheck, "%Y-%m-%d")
             .map_err(MansionError::from);
 

@@ -39,7 +39,7 @@ impl DataChecker for FractionCheck {
     type Fut = Ready<Result<i16, MansionError>>;
     type Unchecked = i16;
 
-    fn checker(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         if (1..=5).contains(&uncheck) {
             ok(uncheck)
         }
