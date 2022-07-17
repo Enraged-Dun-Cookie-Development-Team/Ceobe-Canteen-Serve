@@ -98,7 +98,7 @@ macro_rules! __uncheck_struct {
         $v struct $name
         where
         $(
-            $f_ty : $crate::AsyncChecker
+            $f_ty : $crate::Checker
         ),*
         {
             $(
@@ -144,16 +144,16 @@ macro_rules! __checker_generate {
         $v struct $name;
 
         #[allow(unused_parents)]
-        impl $crate::AsyncChecker for $name
+        impl $crate::Checker for $name
         where
         $(
-            $f_ty : $crate::AsyncChecker,
-            <$f_ty as $crate::AsyncChecker>::Err: Into<$err>,
+            $f_ty : $crate::Checker,
+            <$f_ty as $crate::Checker>::Err: Into<$err>,
         )*
         {
             type Unchecked = $uc;
             type Args = (
-                $(<$f_ty as $crate::AsyncChecker>::Args),*,
+                $(<$f_ty as $crate::Checker>::Args),*,
             );
             type Checked= $cd ;
             type Err= $err;

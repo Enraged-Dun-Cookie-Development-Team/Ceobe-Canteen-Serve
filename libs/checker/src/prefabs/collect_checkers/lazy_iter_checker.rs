@@ -7,15 +7,15 @@ use futures::{
     pin_mut, Future, Stream,
 };
 
-use crate::AsyncChecker;
+use crate::Checker;
 
 #[pin_project::pin_project]
-pub struct LazyCheckedIter<I, C: AsyncChecker>(I, C::Args);
+pub struct LazyCheckedIter<I, C: Checker>(I, C::Args);
 
 impl<I, C> Stream for LazyCheckedIter<I, C>
 where
     I: Iterator,
-    C: AsyncChecker<Unchecked = I::Item>,
+    C: Checker<Unchecked = I::Item>,
     C::Args: Clone,
 {
     type Item = Result<C::Checked, C::Err>;
@@ -42,10 +42,10 @@ where
 
 pub struct LazyIterChecker<I: 'static, C>(PhantomData<I>, PhantomData<C>);
 
-impl<I, C> AsyncChecker for LazyIterChecker<I, C>
+impl<I, C> Checker for LazyIterChecker<I, C>
 where
     I: Iterator + 'static,
-    C: AsyncChecker<Unchecked = I::Item>,
+    C: Checker<Unchecked = I::Item>,
     C::Args: Clone,
 {
     type Args = C::Args;

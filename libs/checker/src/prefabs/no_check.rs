@@ -2,11 +2,11 @@ use std::{convert::Infallible, marker::PhantomData};
 
 use futures::future::ok;
 
-use crate::AsyncChecker;
+use crate::Checker;
 
 pub struct NoCheck<T: 'static>(PhantomData<T>);
 
-impl<T> AsyncChecker for NoCheck<T> {
+impl<T> Checker for NoCheck<T> {
     type Args = ();
     type Checked = T;
     type Err = Infallible;

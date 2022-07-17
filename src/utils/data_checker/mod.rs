@@ -1,7 +1,7 @@
 mod load_from_args;
 
 pub use checker::{
-    prefabs::option_checker::OptionChecker, AsyncChecker as DataChecker,
+    prefabs::option_checker::OptionChecker, Checker as DataChecker,
 };
 
 pub mod no_check {
@@ -9,7 +9,7 @@ pub mod no_check {
 }
 
 mod ref_checker {
-    pub use checker::AsyncRefCheck as RefChecker;
+    pub use checker::RefChecker as RefChecker;
 }
 
 pub mod collect_checkers {

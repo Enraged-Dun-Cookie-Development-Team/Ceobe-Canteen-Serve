@@ -3,7 +3,7 @@ use std::{marker::PhantomData, task::Poll};
 
 use futures::{pin_mut, Future};
 
-use crate::AsyncChecker;
+use crate::Checker;
 
 /// 对 Slice 全部元素进行检查，一个错误就全部退出
 #[derive(Debug)]
@@ -11,14 +11,14 @@ pub struct SliceChecker<S, C, O>(PhantomData<(S, C, O)>)
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone;
 
-impl<S, C, O> AsyncChecker for SliceChecker<S, C, O>
+impl<S, C, O> Checker for SliceChecker<S, C, O>
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
 {
     type Args = C::Args;
@@ -44,10 +44,10 @@ pub struct SliceCheckerFut<S, O, C>
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
 {
-    args: <C as AsyncChecker>::Args,
+    args: <C as Checker>::Args,
     iter: <S as IntoIterator>::IntoIter,
     result: Vec<C::Checked>,
     _phantom: PhantomData<O>,
@@ -57,7 +57,7 @@ impl<S, O, C> Future for SliceCheckerFut<S, O, C>
 where
     S: IntoIterator,
     O: FromIterator<C::Checked>,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
 {
     type Output = Result<O, C::Err>;

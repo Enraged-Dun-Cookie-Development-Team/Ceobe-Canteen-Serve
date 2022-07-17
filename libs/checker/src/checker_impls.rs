@@ -4,11 +4,11 @@ use std::task::Poll;
 
 use futures::{pin_mut, Future};
 
-use crate::checker::{AsyncChecker, AsyncRefCheck};
+use crate::checker::{Checker, RefChecker};
 
-impl<S> AsyncChecker for S
+impl<S> Checker for S
 where
-    S: AsyncRefCheck,
+    S: RefChecker,
 {
     type Args = S::Args;
     type Checked = S::Target;
@@ -21,20 +21,20 @@ where
     ) -> Self::Fut {
         let ptr = Box::into_raw(Box::new(uncheck)) as *const S::Target;
         let ref_target = unsafe { ptr.as_ref() }.unwrap();
-        let fut = S::async_ref_checker(args, ref_target);
+        let fut = S::ref_checker(args, ref_target);
 
         CheckRef { fut, data: ptr }
     }
 }
 
 #[pin_project::pin_project]
-pub struct CheckRef<S: AsyncRefCheck> {
+pub struct CheckRef<S: RefChecker> {
     #[pin]
     fut: S::Fut,
     data: *const S::Target,
 }
 
-impl<S: AsyncRefCheck> Future for CheckRef<S> {
+impl<S: RefChecker> Future for CheckRef<S> {
     type Output = Result<S::Target, S::Err>;
 
     fn poll(

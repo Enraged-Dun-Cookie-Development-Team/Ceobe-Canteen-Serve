@@ -2,11 +2,11 @@ use std::{marker::PhantomData, task::Poll};
 
 use futures::Future;
 
-use crate::AsyncChecker;
+use crate::Checker;
 
-pub struct OptionChecker<C: AsyncChecker>(PhantomData<C>);
+pub struct OptionChecker<C: Checker>(PhantomData<C>);
 
-impl<C: AsyncChecker> AsyncChecker for OptionChecker<C> {
+impl<C: Checker> Checker for OptionChecker<C> {
     type Args = C::Args;
     type Checked = Option<C::Checked>;
     type Err = C::Err;
@@ -26,12 +26,12 @@ impl<C: AsyncChecker> AsyncChecker for OptionChecker<C> {
 }
 
 #[pin_project::pin_project(project=EnumProj)]
-pub enum OptionCheckerFut<C: AsyncChecker> {
+pub enum OptionCheckerFut<C: Checker> {
     None,
-    Some(#[pin] <C as AsyncChecker>::Fut),
+    Some(#[pin] <C as Checker>::Fut),
 }
 
-impl<C: AsyncChecker> Future for OptionCheckerFut<C> {
+impl<C: Checker> Future for OptionCheckerFut<C> {
     type Output = Result<Option<C::Checked>, C::Err>;
 
     fn poll(

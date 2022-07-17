@@ -4,6 +4,6 @@ mod codegen;
 pub mod prefabs;
 mod require_check;
 
-pub use checker::{AsyncChecker,AsyncRefCheck};
+pub use checker::{Checker,RefChecker};
 pub use checker_impls::CheckRef;
 pub use require_check::CheckRequire;

@@ -11,10 +11,10 @@ use futures::{
     pin_mut, Future, Stream, StreamExt,
 };
 
-use crate::AsyncChecker;
+use crate::Checker;
 
 #[pin_project::pin_project]
-pub struct CheckedStream<S, C: AsyncChecker> {
+pub struct CheckedStream<S, C: Checker> {
     #[pin]
     stream: S,
     args: C::Args,
@@ -23,7 +23,7 @@ pub struct CheckedStream<S, C: AsyncChecker> {
 impl<S, C> Stream for CheckedStream<S, C>
 where
     S: Stream,
-    C: AsyncChecker<Unchecked = S::Item>,
+    C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
 {
     type Item = Result<C::Checked, C::Err>;
@@ -52,10 +52,10 @@ where
 
 pub struct StreamChecker<S, C>(PhantomData<S>, PhantomData<C>);
 
-impl<S, C> AsyncChecker for StreamChecker<S, C>
+impl<S, C> Checker for StreamChecker<S, C>
 where
     S: Stream,
-    C: AsyncChecker<Unchecked = S::Item> + 'static,
+    C: Checker<Unchecked = S::Item> + 'static,
     C::Args: Clone,
 {
     type Args = C::Args;
