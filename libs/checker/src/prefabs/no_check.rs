@@ -6,6 +6,10 @@ use crate::Checker;
 
 pub struct NoCheck<T: 'static>(PhantomData<T>);
 
+impl<T: 'static> NoCheck<T> {
+    pub fn new() -> Self { Self(PhantomData) }
+}
+
 impl<T> Checker for NoCheck<T> {
     type Args = ();
     type Checked = T;
@@ -13,9 +17,7 @@ impl<T> Checker for NoCheck<T> {
     type Fut = futures::future::Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = T;
 
-    fn check(
-        _args: Self::Args, uncheck: Self::Unchecked,
-    ) -> Self::Fut {
+    fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         ok(uncheck)
     }
 }

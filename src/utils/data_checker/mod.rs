@@ -1,5 +1,6 @@
 mod load_from_args;
 
+use checker::LiteArgs;
 pub use checker::{
     prefabs::option_checker::OptionChecker, Checker as DataChecker,
 };
@@ -9,7 +10,7 @@ pub mod no_check {
 }
 
 mod ref_checker {
-    pub use checker::RefChecker as RefChecker;
+    pub use checker::RefChecker;
 }
 
 pub mod collect_checkers {
@@ -93,3 +94,50 @@ where
         }
     }
 }
+
+pub struct PreLiteChecker<Punchecked, C>(PhantomData<(Punchecked, C)>)
+where
+    C: DataChecker,
+    <C as DataChecker>::Args: LiteArgs,
+    Punchecked: Pretreatment<Resp = C::Unchecked>,
+    Punchecked::Err: Into<C::Err>,
+    C::Checked: 'static;
+
+impl<Punchecked, C> Pretreatment for PreLiteChecker<Punchecked, C>
+where
+    C: DataChecker,
+    <C as DataChecker>::Args: LiteArgs,
+    Punchecked: Pretreatment<Resp = C::Unchecked>,
+    Punchecked::Err: Into<C::Err>,
+    C::Checked: 'static,
+{
+    type Err = C::Err;
+    type Resp = C::Checked;
+
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
+
+    fn proc(
+        req: &actix_web::HttpRequest, payload: &mut actix_web::dev::Payload,
+    ) -> Self::Fut {
+        let args = <<C as DataChecker>::Args as LiteArgs>::get_arg();
+        let uncheck_fut = Punchecked::proc(req, payload);
+
+        async move {
+            let uncheck = async_time_usage_with_name(
+                format!("获取未检查数据-{}", type_name::<C::Unchecked>())
+                    .as_str(),
+                uncheck_fut,
+            )
+            .await
+            .map_err(Into::into)?;
+
+            let checked = async_time_usage_with_name(
+                format!("执行检查-{}", type_name::<C>()).as_str(),
+                C::check(args, uncheck),
+            )
+            .await?;
+            Ok(checked)
+        }
+    }
+}
+

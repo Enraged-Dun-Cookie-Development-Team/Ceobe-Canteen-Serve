@@ -14,3 +14,4 @@ path = "../range-limit"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }
+typed-builder = "0.10"
