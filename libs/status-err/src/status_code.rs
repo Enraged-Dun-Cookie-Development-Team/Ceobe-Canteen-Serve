@@ -31,9 +31,7 @@ impl StatusCode {
 
     pub fn http_code(&self) -> http::StatusCode { self.prefix.get_status() }
 
-    pub fn get_prefix(&self) -> ErrPrefix {
-        self.prefix
-    }
+    pub fn get_prefix(&self) -> ErrPrefix { self.prefix }
 
     pub fn get_code(&self) -> u16 { self.code }
 }

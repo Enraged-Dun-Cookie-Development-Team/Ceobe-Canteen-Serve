@@ -13,7 +13,7 @@ impl Encoder for NoCrypto {
         Ok(raw)
     }
 
-    fn verify< S: AsRef<str>>(
+    fn verify<S: AsRef<str>>(
         encrypted: &str, input: &S,
     ) -> Result<bool, Self::Error> {
         Ok(encrypted == input.as_ref())

@@ -10,7 +10,7 @@ pub trait Encoder {
     /// 将原文编码成密码，编码失败时返回`Err(Self::Error)`
     fn encode(raw: Cow<'_, str>) -> Result<Cow<'_, str>, Self::Error>;
     /// 判定密码是否匹配，如果无法判断返回 `Err(Self::Error)`
-    fn verify< S: AsRef<str>>(
+    fn verify<S: AsRef<str>>(
         encrypted: &str, input: &S,
     ) -> Result<bool, Self::Error>;
 }

@@ -10,11 +10,10 @@ impl<const C: u32> Encoder for BcryptEncoder<C> {
     fn encode(
         raw: Cow<'_, str>,
     ) -> Result<std::borrow::Cow<'_, str>, Self::Error> {
-        bcrypt_::hash(raw.as_ref().as_bytes(), C)
-            .map(Cow::Owned)
+        bcrypt_::hash(raw.as_ref().as_bytes(), C).map(Cow::Owned)
     }
 
-    fn verify< S: AsRef<str>>(
+    fn verify<S: AsRef<str>>(
         encrypted: &str, input: &S,
     ) -> Result<bool, Self::Error> {
         bcrypt_::verify(input.as_ref(), encrypted)
