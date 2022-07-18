@@ -43,7 +43,7 @@ where
         let crypt = match &self.1 {
             CryptoString::Raw(r, _) => {
                 E::encode(Cow::Borrowed(r))
-                    .or_else(|e| Err(serde_::ser::Error::custom(e)))?
+                    .map_err (serde_::ser::Error::custom)?
             }
             CryptoString::Crypto(r) => Cow::Borrowed(r.deref()),
         };

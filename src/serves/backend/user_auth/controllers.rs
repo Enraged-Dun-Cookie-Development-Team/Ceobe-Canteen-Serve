@@ -3,26 +3,23 @@ use crypto::digest::Digest;
 use crypto_str::Encoder;
 use lazy_static::__Deref;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use request_pretreat::prefabs::DefaultValue;
 use sea_orm::{
     sea_query::Expr, ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter,
     Set,
 };
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
-use super::view::ChangePassword;
+use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
     database::ServeDatabase,
     models::common::sql::{auth::Auth, user},
     router::UserAuthBackend,
     serves::backend::user_auth::{
-        checker::user::{UsernameChecker, UsernameUncheck},
         error::AdminUserError,
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
     utils::{
-        data_checker::{DataChecker, PretreatChecker},
         req_pretreatment::{
             prefabs::{Json, MapErr, Query, ToRResult},
             ReqPretreatment,
@@ -58,7 +55,7 @@ impl UserAuthBackend {
         let permission = query.0.permission;
 
         // token鉴权
-        auth.0;
+        let _ = auth.0;
 
         // 生成随机用户名密码
         let rand_username: String =
@@ -200,18 +197,7 @@ impl UserAuthBackend {
 
     pub async fn change_username(
         user: Authentication<AuthError>,
-        ReqPretreatment(username): ReqPretreatment<
-            ToRResult<
-                MapErr<
-                    PretreatChecker<
-                        DefaultValue<<UsernameChecker as DataChecker>::Args>,
-                        Json<UsernameUncheck>,
-                        UsernameChecker,
-                    >,
-                    AdminUserError,
-                >,
-            >,
-        >,
+        ReqPretreatment(username): UsernamePretreatment,
         db: Data<ServeDatabase>,
     ) -> AdminUserRResult<UserName> {
         let id = user.0.id;

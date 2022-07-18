@@ -57,6 +57,7 @@ macro_rules! status_error {
                 $pre
             }
             #[inline]
+            #[allow(clippy::zero_prefixed_literal)]
             fn code(&self) -> u16{
                 $code
             }

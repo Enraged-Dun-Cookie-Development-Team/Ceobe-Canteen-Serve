@@ -79,8 +79,8 @@ impl From<Mansion> for ViewMansion {
         }
     }
 }
-impl Into<ViewMansion> for ModelMansion {
-    fn into(self) -> ViewMansion {
+impl From<ModelMansion> for ViewMansion {
+    fn from(val: ModelMansion) -> Self {
         let ModelMansion {
             id,
             description,
@@ -88,7 +88,7 @@ impl Into<ViewMansion> for ModelMansion {
             fraction,
             daily,
             ..
-        } = self;
+        } = val;
         ViewMansion {
             id: id.to_string(),
             description,
@@ -99,8 +99,8 @@ impl Into<ViewMansion> for ModelMansion {
     }
 }
 
-impl Into<ViewMansionWithTime> for ModelMansion {
-    fn into(self) -> ViewMansionWithTime {
+impl From<ModelMansion> for ViewMansionWithTime {
+    fn from(val: ModelMansion) -> Self {
         let ModelMansion {
             id,
             description,
@@ -109,7 +109,7 @@ impl Into<ViewMansionWithTime> for ModelMansion {
             daily,
             create_time,
             modify_time,
-        } = self;
+        } = val;
         ViewMansionWithTime {
             id: id.to_string(),
             description,

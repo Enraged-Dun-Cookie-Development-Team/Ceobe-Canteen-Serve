@@ -3,12 +3,12 @@ use std::io::Stdout;
 use crate::logger_info::LoggerInfo;
 
 pub trait LoggerAdapter: Sync + Send {
-    fn do_log<'a, 'b>(&self, info: LoggerInfo<'a, 'b>);
+    fn do_log(&self, info: LoggerInfo<'_, '_>);
     fn flush(&self);
 }
 
 impl LoggerAdapter for Stdout {
-    fn do_log<'a, 'b>(&self, info: LoggerInfo<'a, 'b>) {
+    fn do_log(&self, info: LoggerInfo<'_, '_>) {
         println!(
             "{} | {:<16} - {} => {}",
             // time

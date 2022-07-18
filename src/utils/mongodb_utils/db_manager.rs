@@ -56,10 +56,10 @@ impl mongo_migration::utils::migrator::DbManager for DbBuild {
     }
 }
 
-impl Into<DbManager> for DbBuild {
-    fn into(self) -> DbManager {
+impl From<DbBuild> for DbManager {
+    fn from(val: DbBuild) -> Self {
         DbManager {
-            inner_collect: Arc::new(self.inner_collect),
+            inner_collect: Arc::new(val.inner_collect),
         }
     }
 }

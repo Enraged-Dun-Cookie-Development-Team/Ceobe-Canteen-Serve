@@ -2,12 +2,12 @@ use std::{
     borrow::Cow,
     collections::HashMap,
     ops::{Deref, Index, Range},
-    sync::{Arc, Mutex},
+    sync::Arc,
 };
 
 use actix::{Addr, MailboxError};
 use serde::{ser::SerializeMap, Serialize};
-use tokio::sync::watch;
+use tokio::sync::{watch, Mutex};
 
 use crate::{
     ceobo_actor::{
@@ -17,9 +17,10 @@ use crate::{
     models::{AShareString, DataItem, DataSource},
 };
 
-pub struct UpdateLoader(
-    Mutex<watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>>,
-);
+type UpdateLoaderInner =
+    watch::Receiver<Option<HashMap<DataSource, Addr<Cached>>>>;
+
+pub struct UpdateLoader(Mutex<UpdateLoaderInner>);
 
 impl UpdateLoader {
     pub fn new(rec: UpdaterReceiver) -> Arc<Self> {
@@ -31,7 +32,7 @@ impl UpdateLoader {
     pub async fn lazy_load(
         &self, filter: &[(u64, Cow<'static, str>)],
     ) -> Result<LazyLoad, MailboxError> {
-        let mut rec = self.0.lock().unwrap();
+        let mut rec = self.0.lock().await;
 
         while rec.deref().borrow().is_none() {
             rec.changed().await.ok();
@@ -41,13 +42,14 @@ impl UpdateLoader {
         log_::info!("获取的新饼 源数量{} : {:?}", filter.len(), filter);
 
         let updated_msg = rec.deref().borrow();
+        let updated_msg = updated_msg.deref();
         let mut vec = Vec::with_capacity(16);
-        match updated_msg.deref() {
+        match updated_msg {
             Some(map) => {
                 for (timestamp, (k, v)) in
-                    filter.into_iter().filter_map(|(t, ds)| {
+                    filter.iter().filter_map(|(t, ds)| {
                         map.get_key_value(ds.deref().deref())
-                            .and_then(|res| Some((*t, res)))
+                            .map(|res| (*t, res))
                     })
                 {
                     if let Ok(true) =
@@ -83,7 +85,7 @@ impl LazyLoad {
         #[cfg(feature = "log")]
         log_::info!("Checking LazyLoad Is Empty size[{}]", self.0.len());
 
-        if self.0.len() == 0 {
+        if self.0.is_empty() {
             None
         }
         else {

@@ -7,28 +7,28 @@ use crate::error_generate;
 status_err::status_error!(
     pub TokenNotFound [
         ErrPrefix::UNAUTHORIZED,
-        0001
+        1
     ]=>"缺少Token字段"
 );
 
 status_err::status_error!(
     pub PasswordWrong [
         ErrPrefix::UNAUTHORIZED,
-        0004
+        4
     ]=>"密码错误"
 );
 
 status_err::status_error!(
     pub UserNotFound [
         ErrPrefix::UNAUTHORIZED,
-        0003:StatusCode::NOT_FOUND
+        3: StatusCode::NOT_FOUND
     ]=>"Token对应信息不存在"
 );
 
 status_err::status_error!(
     pub TokenInvalid [
         ErrPrefix::UNAUTHORIZED,
-        0006
+        6
     ]=>"Token失效"
 );
 

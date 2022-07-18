@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
     Debug,
     Clone,
     PartialEq,
+    Eq,
     EnumIter,
     DeriveActiveEnum,
     Deserialize,

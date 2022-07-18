@@ -1,5 +1,5 @@
 pub mod limits;
-pub mod range_limit;
+pub mod range_limit_core;
 pub mod serde;
 
 pub trait RangeBound: Default {

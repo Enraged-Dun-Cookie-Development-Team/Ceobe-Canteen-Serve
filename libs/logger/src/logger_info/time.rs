@@ -27,10 +27,10 @@ impl Display for Time {
     }
 }
 
-impl Into<chrono::NaiveDateTime> for Time {
-    fn into(self) -> chrono::NaiveDateTime {
-        let date = NaiveDate::from_ymd(self.year, self.month, self.day);
-        let time = NaiveTime::from_hms(self.hour, self.minute, self.second);
+impl From<Time> for chrono::NaiveDateTime {
+    fn from(val: Time) -> Self {
+        let date = NaiveDate::from_ymd(val.year, val.month, val.day);
+        let time = NaiveTime::from_hms(val.hour, val.minute, val.second);
         chrono::NaiveDateTime::new(date, time)
     }
 }

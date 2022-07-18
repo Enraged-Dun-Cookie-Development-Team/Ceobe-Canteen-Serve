@@ -25,4 +25,9 @@ impl std::fmt::Display for UnacceptableAuthorizationLevelError {
 
 impl std::error::Error for UnacceptableAuthorizationLevelError {}
 
-status_err::status_error!(UnacceptableAuthorizationLevelError[ErrPrefix::UNAUTHORIZED,0002]);
+status_err::status_error!(
+    UnacceptableAuthorizationLevelError[
+        ErrPrefix::UNAUTHORIZED,
+        2
+    ]
+);

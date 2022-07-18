@@ -30,10 +30,6 @@ where
     pub async fn checking(self, args: D::Args) -> Result<D::Checked, D::Err> {
         D::check(args, self.0).await
     }
-
-    /// 直接获取未检查的数据将是不安全的
-    #[inline]
-    pub unsafe fn into_inner(self) -> D::Unchecked { self.0 }
 }
 
 impl<D: Checker> Debug for CheckRequire<D> {

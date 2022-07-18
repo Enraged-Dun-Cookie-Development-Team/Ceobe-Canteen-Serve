@@ -6,7 +6,7 @@ use crate::{measurable::Measurable, RangeBound, RangeBoundLimit};
 
 trait SerdeProc {
     type ToSerde: Measurable + serde::Serialize;
-    fn into_serde(&self) -> &Self::ToSerde;
+    fn to_serde(&self) -> &Self::ToSerde;
 }
 
 struct Normal<T>(T);
@@ -14,7 +14,7 @@ struct Normal<T>(T);
 impl<T: Measurable + Serialize> SerdeProc for Normal<T> {
     type ToSerde = T;
 
-    fn into_serde(&self) -> &Self::ToSerde { &self.0 }
+    fn to_serde(&self) -> &Self::ToSerde { &self.0 }
 }
 
 struct SmartPtr<P, T>(P)
@@ -28,7 +28,7 @@ where
 {
     type ToSerde = T;
 
-    fn into_serde(&self) -> &Self::ToSerde { self.0.deref() }
+    fn to_serde(&self) -> &Self::ToSerde { self.0.deref() }
 }
 
 impl<T: serde::Serialize, Rb> serde::Serialize for RangeBoundLimit<T, Rb> {

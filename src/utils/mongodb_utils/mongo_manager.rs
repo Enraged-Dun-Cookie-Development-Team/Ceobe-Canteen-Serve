@@ -14,11 +14,11 @@ pub struct MongoManagerBuild {
     pub(super) db: Option<DbBuild>,
 }
 
-impl Into<MongoManager> for MongoManagerBuild {
-    fn into(self) -> MongoManager {
+impl From<MongoManagerBuild> for MongoManager {
+    fn from(val: MongoManagerBuild) -> Self {
         MongoManager {
-            _db_client: self.db_client,
-            db: self.db.expect("默认数据库未找到").into(),
+            _db_client: val.db_client,
+            db: val.db.expect("默认数据库未找到").into(),
         }
     }
 }

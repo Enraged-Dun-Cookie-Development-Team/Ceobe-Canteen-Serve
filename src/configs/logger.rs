@@ -7,7 +7,7 @@ use serde::Deserialize;
 pub struct FileLogger(std::sync::Mutex<std::fs::File>);
 
 impl LoggerAdapter for FileLogger {
-    fn do_log<'a, 'b>(&self, info: LoggerInfo<'a, 'b>) {
+    fn do_log<'a, 'b>(&self, info: LoggerInfo<'_, '_>) {
         let _r = self
             .0
             .lock()
@@ -100,9 +100,9 @@ impl Default for LogLevel {
     fn default() -> Self { Self::Info }
 }
 
-impl<'l> Into<LevelFilter> for &'l LogLevel {
-    fn into(self) -> LevelFilter {
-        match self {
+impl<'l> From<&'l LogLevel> for LevelFilter {
+    fn from(val: &'l LogLevel) -> Self {
+        match val {
             LogLevel::Off => LevelFilter::Off,
             LogLevel::Error => LevelFilter::Error,
             LogLevel::Warn => LevelFilter::Warn,

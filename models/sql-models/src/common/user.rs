@@ -3,7 +3,7 @@ use sub_model::SubModel;
 
 use super::auth::Auth;
 
-#[derive(Debug, Clone, PartialEq, DeriveEntityModel, SubModel)]
+#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "user")]
 #[sub_model(all(
     name = "VerifiedUser",

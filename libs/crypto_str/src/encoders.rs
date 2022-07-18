@@ -8,9 +8,9 @@ pub trait Encoder {
     /// 当无法使用对应算法编码时使用这种加密算法时的异常内容
     type Error: std::error::Error;
     /// 将原文编码成密码，编码失败时返回`Err(Self::Error)`
-    fn encode<'s>(raw: Cow<'s, str>) -> Result<Cow<'s, str>, Self::Error>;
+    fn encode(raw: Cow<'_, str>) -> Result<Cow<'_, str>, Self::Error>;
     /// 判定密码是否匹配，如果无法判断返回 `Err(Self::Error)`
-    fn verify<'s, S: AsRef<str>>(
-        encrypted: &Cow<'s, str>, input: &S,
+    fn verify< S: AsRef<str>>(
+        encrypted: &str, input: &S,
     ) -> Result<bool, Self::Error>;
 }

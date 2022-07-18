@@ -11,7 +11,6 @@ where
 {
     let task = wrap_future(async move {
         fut.await;
-        ()
     });
     ctx.spawn(task)
 }
