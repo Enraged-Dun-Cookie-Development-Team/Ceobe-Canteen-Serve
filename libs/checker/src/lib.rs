@@ -5,7 +5,7 @@ mod lite_args;
 pub mod prefabs;
 mod require_check;
 
-pub use checker_impls::CheckRef;
+pub use checker_impls::CheckRefFut;
 pub use lite_args::LiteArgs;
 pub use require_check::CheckRequire;
 

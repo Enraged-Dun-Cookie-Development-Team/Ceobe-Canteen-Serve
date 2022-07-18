@@ -1,4 +1,3 @@
-
 pub trait LiteArgs: Clone + Sized {
     fn get_arg() -> Self;
 }

@@ -16,7 +16,7 @@ where
     type Args = S::Args;
     type Checked = S::Target;
     type Err = S::Err;
-    type Fut = CheckRef<S>;
+    type Fut = CheckRefFut<S>;
     type Unchecked = S::Target;
 
     fn check(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
@@ -24,18 +24,18 @@ where
         let ref_target = unsafe { ptr.as_ref() }.unwrap();
         let fut = S::ref_checker(args, ref_target);
 
-        CheckRef { fut, data: ptr }
+        CheckRefFut { fut, data: ptr }
     }
 }
 
 #[pin_project::pin_project]
-pub struct CheckRef<S: RefChecker> {
+pub struct CheckRefFut<S: RefChecker> {
     #[pin]
     fut: S::Fut,
     data: *const S::Target,
 }
 
-impl<S: RefChecker> Future for CheckRef<S> {
+impl<S: RefChecker> Future for CheckRefFut<S> {
     type Output = Result<S::Target, S::Err>;
 
     fn poll(
