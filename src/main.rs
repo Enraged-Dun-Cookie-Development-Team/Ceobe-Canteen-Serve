@@ -10,9 +10,9 @@ use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
+use sql_connection::connect_to_sql_database;
 use time_usage::async_time_usage_with_name;
 use utils::{
     middleware::benchmark::BenchMarkFactor,
@@ -21,7 +21,6 @@ use utils::{
 
 mod bootstrap;
 mod configs;
-mod database;
 mod error;
 mod models;
 mod router;
@@ -58,14 +57,12 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     let updater = Data::from(updater);
     let sender = Data::from(sender);
     // connect to database 连接到数据库
-    let db_conn = ServeDatabase::connect(&config.database)
+
+    connect_to_sql_database(&config.database)
         .await
-        .expect("无法连接到数据库")
-        .register_models()
-        .await
-        .expect("无法在数据库中创建实体");
-    create_default_user(&config.admin_user, &db_conn).await;
-    let db_data = Data::new(db_conn);
+        .expect("无法连接到数据库");
+
+    create_default_user(&config.admin_user).await;
     // mongo db
     let mongo_conn = async_time_usage_with_name(
         "连接到MongoDb数据库",
@@ -93,7 +90,6 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             .app_data(updater.clone())
             .app_data(sender.clone())
             // 数据库连接
-            .app_data(db_data.clone())
             .app_data(mongo_conn.clone())
             // 配置信息
             .app_data(data_config.clone())

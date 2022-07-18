@@ -1,4 +1,3 @@
-use actix_web::web::Data;
 use crypto::digest::Digest;
 use crypto_str::Encoder;
 use lazy_static::__Deref;
@@ -7,11 +6,11 @@ use sea_orm::{
     sea_query::Expr, ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter,
     Set,
 };
+use sql_connection::get_sql_database;
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
-    database::ServeDatabase,
     models::common::sql::{auth::Auth, user},
     router::UserAuthBackend,
     serves::backend::user_auth::{
@@ -50,8 +49,8 @@ impl UserAuthBackend {
         query: ReqPretreatment<
             ToRResult<MapErr<Query<NewUserAuthLevel>, AdminUserError>>,
         >,
-        db: Data<ServeDatabase>,
     ) -> AdminUserRResult<CreateUser> {
+        let db = get_sql_database();
         let permission = query.0.permission;
 
         // token鉴权
@@ -111,7 +110,7 @@ impl UserAuthBackend {
 
         async_time_usage_with_name(
             "保存随机生成用户",
-            user.save(db.deref().deref()),
+            user.save(db),
         )
         .await
         .map_err(AdminUserError::from)?;
@@ -129,8 +128,8 @@ impl UserAuthBackend {
         ReqPretreatment(body): ReqPretreatment<
             ToRResult<MapErr<Json<UserLogin>, AdminUserError>>,
         >,
-        db: Data<ServeDatabase>,
     ) -> AdminUserRResult<UserToken> {
+        let db =get_sql_database();
         // 从请求体获取信息
         let body = body;
 
@@ -198,8 +197,8 @@ impl UserAuthBackend {
     pub async fn change_username(
         user: Authentication<AuthError>,
         ReqPretreatment(username): UsernamePretreatment,
-        db: Data<ServeDatabase>,
     ) -> AdminUserRResult<UserName> {
+        let db = get_sql_database();
         let id = user.0.id;
 
         let username = username.username;
@@ -226,8 +225,8 @@ impl UserAuthBackend {
         ReqPretreatment(body): ReqPretreatment<
             ToRResult<MapErr<Json<ChangePassword>, AdminUserError>>,
         >,
-        db: Data<ServeDatabase>,
     ) -> AdminUserRResult<UserToken> {
+        let db = get_sql_database();
         let user = user.0;
         let id = user.id;
         let password = user.password;

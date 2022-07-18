@@ -82,6 +82,9 @@ features = [
     # "debug-print"
 ]
 
+[dependencies.sql_connection]
+path = "./database/sql_connection"
+
 [dependencies.crypto_str]
 path = "./libs/crypto_str"
 features = ["serde", "bcrypt"]

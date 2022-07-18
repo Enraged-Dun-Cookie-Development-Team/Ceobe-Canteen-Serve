@@ -5,6 +5,7 @@ pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
 use serde::Deserialize;
+use sql_connection::DbConfig;
 
 use self::{
     auth_config::AuthConfig, first_user::FirstUserConfig,
@@ -12,7 +13,7 @@ use self::{
     resp_result_config::RespResultConfig,
 };
 use crate::{
-    database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig,
+    utils::mongodb_utils::config::MongoDbConfig,
 };
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";

@@ -1,4 +1,4 @@
-use crate::database::config::DbConnectConfig;
+use sql_connection::DbConnectConfig;
 
 #[derive(Debug, serde::Deserialize)]
 pub struct MongoDbConfig {

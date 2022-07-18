@@ -1,6 +1,7 @@
-use actix_web::web::Data;
+
 use futures::Future;
 use lazy_static::__Deref;
+use sql_connection::get_sql_database;
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{
@@ -8,7 +9,6 @@ use super::{
     valid_token::decrpyt_token, AuthInfo,
 };
 use crate::{
-    database::ServeDatabase,
     models::common::sql::{auth::Auth, user},
     utils::{
         data_struct::header_info::HeaderInfo,
@@ -33,10 +33,7 @@ impl Pretreatment for TokenAuth {
     fn proc(
         req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,
     ) -> Self::Fut {
-        let db = req
-            .app_data::<Data<ServeDatabase<sea_orm::DatabaseConnection>>>()
-            .expect("Database Connect Not Found In AppData")
-            .clone();
+        let db = get_sql_database();
         let token = HeaderInfo::<Token>::proc(req, payload);
 
         async move {
