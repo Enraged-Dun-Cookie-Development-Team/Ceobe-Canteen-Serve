@@ -1,4 +1,3 @@
-
 use futures::Future;
 use lazy_static::__Deref;
 use sql_connection::get_sql_database;

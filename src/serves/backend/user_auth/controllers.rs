@@ -108,12 +108,9 @@ impl UserAuthBackend {
             ..Default::default()
         };
 
-        async_time_usage_with_name(
-            "保存随机生成用户",
-            user.save(db),
-        )
-        .await
-        .map_err(AdminUserError::from)?;
+        async_time_usage_with_name("保存随机生成用户", user.save(db))
+            .await
+            .map_err(AdminUserError::from)?;
 
         // 返回用户信息
         let user_info = CreateUser {
@@ -129,7 +126,7 @@ impl UserAuthBackend {
             ToRResult<MapErr<Json<UserLogin>, AdminUserError>>,
         >,
     ) -> AdminUserRResult<UserToken> {
-        let db =get_sql_database();
+        let db = get_sql_database();
         // 从请求体获取信息
         let body = body;
 

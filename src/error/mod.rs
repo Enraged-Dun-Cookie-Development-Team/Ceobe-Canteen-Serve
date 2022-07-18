@@ -2,7 +2,6 @@ use actix_web::HttpRequest;
 use resp_result::RespResult;
 use status_err::ErrPrefix;
 
-
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
 /// 并提供 [Form](std::form::Form)转换实现，

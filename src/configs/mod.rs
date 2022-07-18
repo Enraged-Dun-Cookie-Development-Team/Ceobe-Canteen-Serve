@@ -12,9 +12,7 @@ use self::{
     http_listen_config::HttpListenConfig, logger::LoggerConfig,
     resp_result_config::RespResultConfig,
 };
-use crate::{
-    utils::mongodb_utils::config::MongoDbConfig,
-};
+use crate::utils::mongodb_utils::config::MongoDbConfig;
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";
 pub const CONFIG_FILE_JSON: &str = "./Config.json";

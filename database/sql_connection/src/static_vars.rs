@@ -6,9 +6,7 @@ use crate::config::{DbConnectConfig, DbOptionsConfig};
 static SQL_DATABASE_CONNECTION: OnceCell<DatabaseConnection> =
     OnceCell::new();
 
-pub async fn connect_to_sql_database<C>(
-    config: &C,
-) -> Result<(), DbErr>
+pub async fn connect_to_sql_database<C>(config: &C) -> Result<(), DbErr>
 where
     C: DbConnectConfig + DbOptionsConfig,
 {
