@@ -10,7 +10,7 @@ path = "./src/main.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-members = ["libs/*", "./models/*", "./migrate/*"]
+members = ["libs/*", "./models/*", "./migrate/*", "./database/*"]
 
 [features]
 default = []
@@ -80,7 +80,6 @@ features = [
     "runtime-tokio-rustls",
     "macros",
     # "debug-print"
-
 ]
 
 [dependencies.crypto_str]
