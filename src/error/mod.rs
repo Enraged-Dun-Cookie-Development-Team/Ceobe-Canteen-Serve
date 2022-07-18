@@ -2,8 +2,6 @@ use actix_web::HttpRequest;
 use resp_result::RespResult;
 use status_err::ErrPrefix;
 
-use crate::database::error::DatabaseError;
-
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
 /// 并提供 [Form](std::form::Form)转换实现，
@@ -139,7 +137,7 @@ macro_rules! error_generate {
 error_generate!(
     pub GlobalError
     Io=std::io::Error
-    Db=DatabaseError
+    Db= sea_orm::DbErr
     Route=RouteNotExistError
     Mongo=mongodb::error::Error
 );

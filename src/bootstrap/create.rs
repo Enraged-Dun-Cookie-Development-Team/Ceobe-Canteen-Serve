@@ -4,11 +4,11 @@ use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityTrait, FromQueryResult, QuerySelect,
     Set,
 };
+use sql_connection::get_sql_database;
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::default_user::FUserConfig;
 use crate::{
-    database::ServeDatabase,
     models::common::sql::{auth::Auth, user},
     utils::user_authorize::PasswordEncoder,
 };
@@ -18,10 +18,11 @@ struct UserCounts {
     count: i64,
 }
 
-pub async fn create_default_user<C>(conf: &C, db: &ServeDatabase)
+pub async fn create_default_user<C>(conf: &C)
 where
     C: FUserConfig,
 {
+    let db = get_sql_database();
     let user_counts = async_time_usage_with_name(
         "检查是否需要创建基本用户",
         user::Entity::find()

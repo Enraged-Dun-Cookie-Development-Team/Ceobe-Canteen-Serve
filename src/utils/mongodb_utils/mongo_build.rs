@@ -1,11 +1,11 @@
 use actix_web::web::Data;
 use mongo_migration::utils::migrator::MigratorTrait;
+use sql_connection::DbConnectConfig;
 
 use super::{
     mongo_manager::{MongoManager, MongoManagerBuild},
     MongoErr,
 };
-use crate::database::config::DbConnectConfig;
 
 /// Mongo 数据库管理构建器
 pub struct MongoBuild {

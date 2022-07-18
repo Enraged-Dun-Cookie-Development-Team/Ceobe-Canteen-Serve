@@ -10,8 +10,8 @@ pub trait DbConnectConfig: serde::de::DeserializeOwned {
 
 /// 配置数据库连接池数据
 pub trait DbOptionsConfig {
-    fn max_conn(&self) -> u32;
-    fn min_conn(&self) -> u32;
+    fn max_conn(&self) -> Option<u32> { None }
+    fn min_conn(&self) -> Option<u32> { None }
     fn sql_logger(&self) -> bool { false }
 }
 
@@ -26,8 +26,8 @@ pub struct DbConfig {
     pub(crate) port: u16,
     pub(crate) name: String,
 
-    pub(crate) max_conn: u32,
-    pub(crate) min_conn: u32,
+    pub(crate) max_conn: Option<u32>,
+    pub(crate) min_conn: Option<u32>,
     #[serde(default = "logger_default")]
     pub(crate) logger: bool,
 }
@@ -47,9 +47,9 @@ impl DbConnectConfig for DbConfig {
 }
 
 impl DbOptionsConfig for DbConfig {
-    fn max_conn(&self) -> u32 { self.max_conn }
+    fn max_conn(&self) -> Option<u32> { self.max_conn }
 
-    fn min_conn(&self) -> u32 { self.min_conn }
+    fn min_conn(&self) -> Option<u32> { self.min_conn }
 
     fn sql_logger(&self) -> bool { self.logger }
 }
