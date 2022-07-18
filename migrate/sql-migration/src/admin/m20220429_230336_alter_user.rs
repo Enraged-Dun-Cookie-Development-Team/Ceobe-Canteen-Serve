@@ -23,9 +23,7 @@ impl MigrationTrait for Migration {
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut al = sea_query::Table::alter();
         al.table(user::Entity).modify_column(
-            ColumnDef::new(NumPwdChange)
-                .unsigned()
-                .default(0),
+            ColumnDef::new(NumPwdChange).unsigned().default(0),
         );
         manager.alter_table(al).await?;
 

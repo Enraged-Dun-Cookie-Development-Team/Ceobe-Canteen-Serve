@@ -1,6 +1,8 @@
 use crate::{
     models::mansion::{check::Info, mongo_db::Predict},
-    serves::frontend::bakery_mansion::error::{MansionError, UnknownPredictType},
+    serves::frontend::bakery_mansion::error::{
+        MansionError, UnknownPredictType,
+    },
     utils::{data_checker::DataChecker, data_struct::MaxLimitString},
 };
 

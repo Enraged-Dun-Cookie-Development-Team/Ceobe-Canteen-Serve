@@ -73,10 +73,10 @@ impl UpdateLoader {
     }
 }
 
-pub struct LazyLoad(
-    pub(crate) 
-        Vec<(AShareString, watch::Receiver<Vec<DataItem>>, Range<usize>)>,
-);
+type LazyLoadInner =
+    (AShareString, watch::Receiver<Vec<DataItem>>, Range<usize>);
+
+pub struct LazyLoad(pub(crate) Vec<LazyLoadInner>);
 
 impl LazyLoad {
     pub fn into_not_empty(self) -> Option<Self> {

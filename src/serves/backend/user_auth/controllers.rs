@@ -1,4 +1,4 @@
-use actix_web::{web::Data};
+use actix_web::web::Data;
 use crypto::digest::Digest;
 use crypto_str::Encoder;
 use lazy_static::__Deref;
@@ -12,9 +12,9 @@ use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::view::ChangePassword;
 use crate::{
-    router::UserAuthBackend,
     database::ServeDatabase,
     models::common::sql::{auth::Auth, user},
+    router::UserAuthBackend,
     serves::backend::user_auth::{
         checker::user::{UsernameChecker, UsernameUncheck},
         error::AdminUserError,
@@ -46,7 +46,6 @@ crate::quick_struct! {
         password: String
     }
 }
-
 
 impl UserAuthBackend {
     pub async fn create_user(

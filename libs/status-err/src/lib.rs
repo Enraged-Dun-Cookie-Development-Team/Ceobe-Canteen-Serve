@@ -7,9 +7,7 @@ use http::StatusCode;
 
 pub trait StatusErr: std::error::Error {
     #[inline]
-    fn information(&self) -> Cow<'static, str> {
-        format!("{}", self).into()
-    }
+    fn information(&self) -> Cow<'static, str> { format!("{}", self).into() }
     /// 异常码
     /// 用于唯一标记某一类型异常
     fn prefix(&self) -> ErrPrefix;

@@ -108,7 +108,7 @@ impl Into<ViewMansionWithTime> for ModelMansion {
             fraction,
             daily,
             create_time,
-            modify_time
+            modify_time,
         } = self;
         ViewMansionWithTime {
             id: id.to_string(),
@@ -116,8 +116,14 @@ impl Into<ViewMansionWithTime> for ModelMansion {
             cvlink,
             fraction,
             daily: daily.into_iter().map(Into::into).collect(),
-            create_time: create_time.to_chrono().format(TIME_FORMAT).to_string(),
-            modify_time: modify_time.to_chrono().format(TIME_FORMAT).to_string()
+            create_time: create_time
+                .to_chrono()
+                .format(TIME_FORMAT)
+                .to_string(),
+            modify_time: modify_time
+                .to_chrono()
+                .format(TIME_FORMAT)
+                .to_string(),
         }
     }
 }

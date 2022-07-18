@@ -7,6 +7,12 @@ mod view;
 
 type MansionRResult<T> = RespResult<T, error::MansionError>;
 
+use self::{
+    error::MansionError,
+    models::checkers::{
+        MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
+    },
+};
 use crate::utils::{
     mongodb_utils::db_selector::MongoDbSelector,
     req_pretreatment::{
@@ -18,8 +24,6 @@ use crate::utils::{
         AuthenticationLevel,
     },
 };
-
-use self::{error::MansionError, models::checkers::{OptionMidCheckerPretreat, MIdCheckerPretreat, MansionCheckerPretreat}};
 
 crate::new_auth_level! {
     pub MansionAuth=>[

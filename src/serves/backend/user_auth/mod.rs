@@ -6,6 +6,3 @@ mod error;
 mod view;
 
 type AdminUserRResult<T> = RespResult<T, error::AdminUserError>;
-
-
-

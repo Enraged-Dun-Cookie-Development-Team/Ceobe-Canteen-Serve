@@ -30,4 +30,3 @@ pub type OptionMidCheckerPretreat = PretreatChecker<
     Query<OpMIdUncheck>,
     OpMidChecker,
 >;
-

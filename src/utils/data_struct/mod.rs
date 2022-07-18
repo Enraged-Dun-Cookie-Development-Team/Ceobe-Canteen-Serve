@@ -1,7 +1,4 @@
-use range_limit::{
-    limits::max_limit::MaxLimit,
-    RangeBoundLimit,
-};
+use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 
 pub mod header_info;
 

@@ -1,11 +1,11 @@
 #![feature(type_alias_impl_trait)]
 
-use checker::check_obj;
-
 use actix_web::{
     web::{self, Data},
     App, HttpServer,
 };
+use bootstrap::create::create_default_user;
+use checker::check_obj;
 use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
@@ -14,19 +14,18 @@ use database::ServeDatabase;
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
 use time_usage::async_time_usage_with_name;
-use bootstrap::create::create_default_user;
 use utils::{
     middleware::benchmark::BenchMarkFactor,
     mongodb_utils::mongo_build::MongoBuild, user_authorize,
 };
 
+mod bootstrap;
 mod configs;
 mod database;
 mod error;
 mod models;
 mod router;
 mod serves;
-mod bootstrap;
 mod utils;
 
 extern crate serde;

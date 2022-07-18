@@ -29,7 +29,7 @@ pub struct ModelMansion {
     pub description: String,
     pub cvlink: String,
     pub fraction: u8,
-    pub  daily: Vec<Daily>,
+    pub daily: Vec<Daily>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
