@@ -1,10 +1,9 @@
-
 pub trait LiteArgs: Clone + Sized {
     fn get_arg() -> Self;
 }
 
 impl LiteArgs for () {
-    fn get_arg() -> Self { () }
+    fn get_arg() -> Self {}
 }
 
 macro_rules! lite_args {

@@ -44,9 +44,9 @@ macro_rules! error_generate {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self{
                     $(
-                        Self::$v_name(err)=>{write!(f, "{}::{} => {}",stringify!($err_name),stringify!($v_name), err)}
+                        Self::$v_name(err)=>{write!(f, "{}::{} => {}",stringify!($err_name), stringify!($v_name), err)}
                     ),+
-                    Self::Infallible=>unreachable!(),
+                    Self::Infallible => unreachable!(),
                 }
             }
         }
@@ -56,28 +56,28 @@ macro_rules! error_generate {
             fn prefix(&self) -> status_err::ErrPrefix{
                 match self{
                     $(
-                        Self::$v_name(err)=>{err.prefix()}
+                        Self::$v_name(err) => {err.prefix()}
                     ),+
-                    Self::Infallible=>unreachable!(),
+                    Self::Infallible => unreachable!(),
                 }
             }
             #[inline]
             fn code(&self) -> u16{
                 match self{
                     $(
-                        Self::$v_name(err)=>{err.code()}
+                        Self::$v_name(err) => {err.code()}
                     ),+
-                    Self::Infallible=>unreachable!(),
+                    Self::Infallible => unreachable!(),
                 }
             }
 
             #[inline]
-            fn http_code(&self)->http::StatusCode{
+            fn http_code(&self) -> http::StatusCode{
                 match self{
                     $(
-                        Self::$v_name(err)=>{err.http_code()}
+                        Self::$v_name(err) => {err.http_code()}
                     ),+
-                    Self::Infallible=>unreachable!(),
+                    Self::Infallible => unreachable!(),
                 }
             }
         }
@@ -107,7 +107,7 @@ macro_rules! error_generate {
         impl std::error::Error for $err_name{}
         impl std::fmt::Display for $err_name{
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-               writeln!(f, "{} => {}",stringify!($err_name), $msg)
+                writeln!(f, "{} => {}",stringify!($err_name), $msg)
             }
         }
     };
@@ -123,7 +123,7 @@ macro_rules! error_generate {
         impl std::fmt::Display for $wrap_name{
             #[inline]
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-               writeln!(f, "{} => {} `{}`",stringify!($wrap_name), $msg, self.0)
+                writeln!(f, "{} => {} `{}`",stringify!($wrap_name), $msg, self.0)
             }
         }
         impl From<$err_ty> for $wrap_name{
@@ -153,7 +153,9 @@ status_err::status_error! {
 
 status_err::resp_error_impl!(RouteNotExistError);
 
-pub async fn not_exist(req: HttpRequest) -> RespResult<(), RouteNotExistError> {
+pub async fn not_exist(
+    req: HttpRequest,
+) -> RespResult<(), RouteNotExistError> {
     log::error!("路由未找到 `{}` {}", req.path(), &req.method());
     RespResult::err(RouteNotExistError)
 }

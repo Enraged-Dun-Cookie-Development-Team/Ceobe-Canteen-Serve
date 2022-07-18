@@ -1,6 +1,7 @@
-use crate::{utils::data_struct::MaxLimitString, serves::backend::user_auth::error::AdminUserError};
-
-
+use crate::{
+    serves::backend::user_auth::error::AdminUserError,
+    utils::data_struct::MaxLimitString,
+};
 
 crate::check_obj! {
     #[derive(serde::Deserialize,Debug)]
@@ -10,8 +11,7 @@ crate::check_obj! {
     err:AdminUserError
 }
 
-
-crate::quick_struct!{
+crate::quick_struct! {
     pub Username{
         username:String
     }

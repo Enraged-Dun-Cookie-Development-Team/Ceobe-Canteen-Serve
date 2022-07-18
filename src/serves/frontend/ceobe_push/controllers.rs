@@ -51,7 +51,9 @@ async fn update(
 
     let res = RespResult::from(res)?;
 
-    res.into_not_empty().ok_or(NoUpdateError.into()).into()
+    res.into_not_empty()
+        .ok_or_else(|| NoUpdateError.into())
+        .into()
 }
 
 /// 保存用户信息

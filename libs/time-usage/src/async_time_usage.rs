@@ -7,9 +7,7 @@ where
     let name = type_name::<Fut>();
     async_time_usage_with_name(name, fut).await
 }
-pub async fn async_time_usage_with_name<Fut, R>(
-    name: & str, fut: Fut,
-) -> R
+pub async fn async_time_usage_with_name<Fut, R>(name: &str, fut: Fut) -> R
 where
     Fut: Future<Output = R>,
 {

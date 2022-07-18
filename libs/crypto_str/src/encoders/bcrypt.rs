@@ -7,17 +7,16 @@ pub struct BcryptEncoder<const COST: u32>;
 impl<const C: u32> Encoder for BcryptEncoder<C> {
     type Error = bcrypt_::BcryptError;
 
-    fn encode<'s>(
-        raw: Cow<'s, str>,
-    ) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
-        bcrypt_::hash(raw.as_ref().as_bytes(), C)
-            .and_then(|s| Ok(Cow::Owned(s)))
+    fn encode(
+        raw: Cow<'_, str>,
+    ) -> Result<std::borrow::Cow<'_, str>, Self::Error> {
+        bcrypt_::hash(raw.as_ref().as_bytes(), C).map(Cow::Owned)
     }
 
-    fn verify<'s, S: AsRef<str>>(
-        encrypted: &std::borrow::Cow<'s, str>, input: &S,
+    fn verify<S: AsRef<str>>(
+        encrypted: &str, input: &S,
     ) -> Result<bool, Self::Error> {
-        bcrypt_::verify(input.as_ref(), &*encrypted)
+        bcrypt_::verify(input.as_ref(), encrypted)
     }
 }
 

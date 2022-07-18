@@ -19,7 +19,7 @@ awc = "3"
 actix-http = "3"
 futures-util = "0"
 bytes = "1"
-pin-project="1"
+pin-project = "1"
 
 [dependencies.actix-web]
 version = "4"
@@ -39,6 +39,3 @@ features = ["full"]
 package = "log"
 version = "0.4"
 optional = true
-
-[dependencies.cached-db]
-path = "../cached-db"

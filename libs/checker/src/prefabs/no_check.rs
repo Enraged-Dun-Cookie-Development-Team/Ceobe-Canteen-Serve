@@ -10,6 +10,10 @@ impl<T: 'static> NoCheck<T> {
     pub fn new() -> Self { Self(PhantomData) }
 }
 
+impl<T: 'static> Default for NoCheck<T> {
+    fn default() -> Self { Self::new() }
+}
+
 impl<T> Checker for NoCheck<T> {
     type Args = ();
     type Checked = T;

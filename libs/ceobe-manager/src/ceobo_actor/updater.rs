@@ -45,7 +45,7 @@ impl Handler<NewCeobeIncome> for Updater {
                 let mut record = self
                     .sender
                     .send_replace(None)
-                    .unwrap_or(HashMap::with_capacity(16));
+                    .unwrap_or_else(|| HashMap::with_capacity(16));
                 map.into_iter().for_each(|(k, v)| {
                     if let Some(addr) = record.get(&k) {
                         #[cfg(feature = "log")]

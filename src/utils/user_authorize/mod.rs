@@ -28,7 +28,7 @@ crate::quick_struct! {
         num_pwd_change:u32
     }
 
-    
+
     pub VerifiedAuthInfo{
         id:i32
         username:String
@@ -55,8 +55,8 @@ pub type PasswordEncoder =
 /// 权限等级鉴定模块
 pub mod auth_level {
     pub use super::auth_level_check::{
-        AuthLevelVerify, error::UnacceptableAuthorizationLevelError,
-        pretreator::AuthLevel,
+        error::UnacceptableAuthorizationLevelError, pretreator::AuthLevel,
+        AuthLevelVerify,
     };
     pub mod prefabs {
         pub use super::super::auth_level_check::prefabs::*;
@@ -66,7 +66,7 @@ pub mod auth_level {
 #[cfg(test)]
 mod test {
 
-    use super::{set_token::GenerateToken, User, valid_token::decrpyt_token};
+    use super::{set_token::GenerateToken, valid_token::decrpyt_token, User};
 
     #[test]
     fn generate_key() {

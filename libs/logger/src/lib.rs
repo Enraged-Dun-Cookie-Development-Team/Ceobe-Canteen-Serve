@@ -19,7 +19,7 @@ pub fn init<A: LoggerAdapter + Sync + Send + 'static>(
 ) -> Result<(), log::SetLoggerError> {
     std::panic::set_hook(Box::new(panic_hook));
 
-    let filter = config.level_filter.clone();
+    let filter = config.level_filter;
     let logger = Logger::new(config, adapter);
 
     log::set_boxed_logger(Box::new(logger))

@@ -7,7 +7,7 @@ use time_usage::async_time_usage_with_name;
 
 use self::{
     config::{DbConnectConfig, DbOptionsConfig},
-    error::DatabaseError
+    error::DatabaseError,
 };
 
 pub mod config;
@@ -17,10 +17,7 @@ pub mod error;
 pub struct ServeDatabase<D = sea_orm::DatabaseConnection>(D);
 
 impl ServeDatabase {
-    pub async fn register_models(
-        self
-    ) -> Result<Self, DatabaseError>
-    {
+    pub async fn register_models(self) -> Result<Self, DatabaseError> {
         Migrator::up(self.as_ref(), None).await?;
         Ok(self)
     }

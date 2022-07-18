@@ -14,7 +14,7 @@ impl<A: LoggerAdapter> log::Log for Logger<A> {
     fn enabled(&self, _metadata: &log::Metadata) -> bool { true }
 
     fn log(&self, record: &log::Record) {
-        if !Self::enabled(&self, record.metadata()) {
+        if !Self::enabled(self, record.metadata()) {
             return;
         }
 
@@ -36,7 +36,7 @@ pub(crate) fn panic_hook(panic_info: &std::panic::PanicInfo) {
         .payload()
         .downcast_ref::<String>()
         .map(Deref::deref)
-        .or_else(|| panic_info.payload().downcast_ref::<&str>().map(|s| *s))
+        .or_else(|| panic_info.payload().downcast_ref::<&str>().copied())
         .unwrap_or("<cause unknown>");
 
     log::error!("工口发生 [{},{}] 原因 : {}", file, line, cause);

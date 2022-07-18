@@ -1,4 +1,3 @@
-
 pub mod common {
     pub mod sql {
         pub use orm_migrate::sql_models::common::*;

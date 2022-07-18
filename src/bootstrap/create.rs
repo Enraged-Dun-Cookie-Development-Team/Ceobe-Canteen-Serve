@@ -9,7 +9,8 @@ use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 use super::default_user::FUserConfig;
 use crate::{
     database::ServeDatabase,
-    utils::user_authorize::PasswordEncoder, models::common::sql::{user, auth::Auth},
+    models::common::sql::{auth::Auth, user},
+    utils::user_authorize::PasswordEncoder,
 };
 
 #[derive(FromQueryResult)]

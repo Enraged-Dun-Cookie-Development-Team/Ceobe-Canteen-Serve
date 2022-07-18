@@ -80,12 +80,12 @@ impl Handler<CachedUpdateMsg> for Cached {
         let (map, records): (DashMap<_, _>, Vec<_>) = data
             .into_iter()
             .map(|d| (d.id.clone(), d))
-            .filter_map(|(id, d)| {
+            .map(|(id, d)| {
                 if let Some(v) = self.last_record_time.remove(&id) {
-                    Some(((id, v), d))
+                    ((id, v), d)
                 }
                 else {
-                    Some(((id, res_timestamp), d))
+                    ((id, res_timestamp), d)
                 }
             })
             .unzip();
@@ -146,7 +146,7 @@ impl Handler<CachedFilter> for Cached {
             .map(|k| *self.last_record_time.get(&k.id).unwrap())
             .enumerate()
             .find(|(_u, v)| v > &time)
-            .and_then(|f| Some(f.0))
+            .map(|f| f.0)
             .unwrap_or_default();
         let range = start_idx..self.recv.borrow().len();
         #[cfg(feature = "log")]

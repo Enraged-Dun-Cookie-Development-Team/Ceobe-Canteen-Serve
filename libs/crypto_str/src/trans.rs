@@ -29,7 +29,7 @@ where
     fn try_into(self) -> Result<Cow<'s, str>, Self::Error> {
         match &self.1 {
             CryptoString::Raw(r, _) => E::encode(Cow::Borrowed(r)),
-            CryptoString::Crypto(c) => Ok(Cow::Borrowed(&c)),
+            CryptoString::Crypto(c) => Ok(Cow::Borrowed(c)),
         }
     }
 }
