@@ -25,5 +25,3 @@ crate::new_auth_level! {
 
 pub type MidCheckerPretreatment =
     ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>;
-
-

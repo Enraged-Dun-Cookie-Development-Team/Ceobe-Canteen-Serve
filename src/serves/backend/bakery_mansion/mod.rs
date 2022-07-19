@@ -42,5 +42,3 @@ pub type MidCheckerPretreatment =
 
 pub type MansionBodyCheckerPretreatment =
     ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>;
-
-

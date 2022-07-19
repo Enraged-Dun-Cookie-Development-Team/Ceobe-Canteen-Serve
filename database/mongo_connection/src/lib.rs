@@ -11,6 +11,6 @@ pub type MongoClientOptions = mongodb::options::ClientOptions;
 
 pub use config::{DbConnectConfig, MongoDbConfig};
 pub use database::manager::DatabaseManage;
+pub use error::MongoDbError;
 pub use mongo_connect::MongoConnectBuilder;
 pub use static_vars::get_mongo_database;
-pub use error::MongoDbError;
