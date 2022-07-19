@@ -1,3 +1,4 @@
+
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
     EntityTrait, QueryFilter,
@@ -60,7 +61,7 @@ impl CommonSqlOperate {
 
         let user = Self::find_user_by_name_raw(&name, &ctx).await?;
 
-        match verify(&pwd, &user.password) {
+        match verify(&user.password, &pwd) {
             Ok(true) => {
                 let resp = mapping(user);
                 Ok(Ok(resp))

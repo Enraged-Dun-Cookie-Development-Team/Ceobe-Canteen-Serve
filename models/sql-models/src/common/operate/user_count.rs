@@ -33,7 +33,7 @@ impl CommonSqlOperate {
         let db = get_sql_database();
         let ctx = db.begin().await?;
 
-        if Self::user_exist_raw(None, &ctx).await? {
+        if !Self::user_exist_raw(None, &ctx).await? {
             Self::add_user_with_encoded_password_db(
                 admin,
                 encoded_pwd,
