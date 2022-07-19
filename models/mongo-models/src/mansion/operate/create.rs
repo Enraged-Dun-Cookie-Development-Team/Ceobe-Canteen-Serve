@@ -23,7 +23,14 @@ impl MansionDataMongoOperate {
             .await?
             == 0;
 
-        if check {}
+        if check {
+            db.doing::<_, ModelMansion, _, _>(|collection| {
+                async move {
+                    collection.insert_one(ModelMansion::from(mansion), None).await?;
+                    Ok(())
+                }
+            }).await?;
+        }
         return Ok(());
     }
 }
