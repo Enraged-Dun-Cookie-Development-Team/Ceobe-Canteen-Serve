@@ -8,25 +8,24 @@ use super::{
     valid_token::decrpyt_token, AuthInfo,
 };
 use crate::{
+    models::common::sql::sql_models::user,
     utils::{
         data_struct::header_info::HeaderInfo,
         req_pretreatment::Pretreatment,
         user_authorize::error::{TokenInvalid, TokenNotFound, UserNotFound},
     },
 };
-use crate::models::common::sql::sql_models::user;
 
 pub struct TokenAuth;
 
-
 impl Pretreatment for TokenAuth {
-    // 异步返回的fut
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
+    // 异常
+    type Err = AuthError;
     // 返回类型
     type Resp = AuthInfo;
 
-    // 异常
-    type Err = AuthError;
+    // 异步返回的fut
+    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
 
     fn proc(
         req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,

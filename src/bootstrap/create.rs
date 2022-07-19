@@ -2,7 +2,6 @@ use crypto::{digest::Digest, md5::Md5};
 use crypto_str::Encoder;
 use orm_migrate::sql_models::common::operate::CommonSqlOperate;
 
-
 use super::default_user::FUserConfig;
 use crate::utils::user_authorize::PasswordEncoder;
 

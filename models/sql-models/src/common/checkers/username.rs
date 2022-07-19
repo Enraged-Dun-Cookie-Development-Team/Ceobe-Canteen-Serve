@@ -1,12 +1,10 @@
 use checker::check_obj;
-use range_limit::{RangeBoundLimit, limits::max_limit::MaxLimit};
+use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use typed_builder::TypedBuilder;
 
 use crate::common::CommonError;
 
-type MaxLimitString<const H: usize> =
-    RangeBoundLimit<String, MaxLimit<H>>;
-
+type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
 check_obj! {
     #[derive(serde::Deserialize,Debug)]
@@ -16,7 +14,7 @@ check_obj! {
     err:CommonError
 }
 
-#[derive(Debug,Clone,TypedBuilder)]
-pub struct Username{
-    pub username : String
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct Username {
+    pub username: String,
 }

@@ -9,6 +9,5 @@ pub struct CommonSqlOperate;
 
 #[derive(FromQueryResult)]
 struct UserCounts {
-   pub(crate) count: i64,
+    pub(crate) count: i64,
 }
-

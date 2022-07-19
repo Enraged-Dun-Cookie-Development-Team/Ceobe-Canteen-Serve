@@ -3,7 +3,6 @@ pub mod impls;
 pub mod status_code;
 use std::borrow::Cow;
 
-
 pub trait StatusErr: std::error::Error {
     #[inline]
     fn information(&self) -> Cow<'static, str> { format!("{}", self).into() }
