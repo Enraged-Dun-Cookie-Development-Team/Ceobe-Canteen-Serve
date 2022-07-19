@@ -1,16 +1,15 @@
+use std::borrow::Cow;
+
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use lazy_static::__Deref;
+use orm_migrate::sql_models::common::operate::CommonSqlOperate;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use sea_orm::{
-    sea_query::Expr, ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter,
-    Set,
-};
-use sql_connection::get_sql_database;
-use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
+use request_pretreat::Pretreatment;
+use time_usage::sync_time_usage_with_name;
 
 use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
+    models::common::sql::sql_models::auth_level::AuthLevel,
     router::UserAuthBackend,
     serves::backend::user_auth::{
         error::AdminUserError,
@@ -23,15 +22,12 @@ use crate::{
             ReqPretreatment,
         },
         user_authorize::{
-            auth_level::prefabs::Chef,
-            error::{AuthError, PasswordWrong, UserNotFound},
-            AuthInfo, Authentication, AuthenticationLevel,
-            GenerateToken, PasswordEncoder, User,
+            auth_level::prefabs::Chef, error::AuthError, AuthInfo,
+            Authentication, AuthenticationLevel, GenerateToken,
+            PasswordEncoder, User,
         },
     },
 };
-use crate::models::common::sql::sql_models::auth_level::AuthLevel;
-use crate::models::common::sql::sql_models::user;
 
 crate::quick_struct! {
     pub NewUserAuthLevel {
@@ -51,7 +47,6 @@ impl UserAuthBackend {
             ToRResult<MapErr<Query<NewUserAuthLevel>, AdminUserError>>,
         >,
     ) -> AdminUserRResult<CreateUser> {
-        let db = get_sql_database();
         let permission = query.0.permission;
 
         // token鉴权
@@ -98,20 +93,12 @@ impl UserAuthBackend {
             })?;
 
         // 将用户信息写入数据库
-        let user = user::ActiveModel {
-            username: Set(rand_username),
-            password: Set(encode_password.to_string()),
-            auth: Set(match permission {
-                AuthLevel::Chef => AuthLevel::Chef,
-                AuthLevel::Cooker => AuthLevel::Cooker,
-                AuthLevel::Architect => AuthLevel::Architect,
-            }),
-            ..Default::default()
-        };
-
-        async_time_usage_with_name("保存随机生成用户", user.save(db))
-            .await
-            .map_err(AdminUserError::from)?;
+        CommonSqlOperate::add_user_with_encoded_password(
+            rand_username,
+            encode_password.to_string(),
+            permission,
+        )
+        .await?;
 
         // 返回用户信息
         let user_info = CreateUser {
@@ -127,52 +114,21 @@ impl UserAuthBackend {
             ToRResult<MapErr<Json<UserLogin>, AdminUserError>>,
         >,
     ) -> AdminUserRResult<UserToken> {
-        let db = get_sql_database();
-        // 从请求体获取信息
-        let body = body;
-
-        // 查询数据库获得user信息
-        let user_info = async_time_usage_with_name(
-            "查询用户信息",
-            user::Entity::find()
-                .filter(user::Column::Username.eq(body.username))
-                .one(db.deref().deref()),
+        let token_info = CommonSqlOperate::find_user_and_verify_pwd(
+            &body.username,
+            &body.password,
+            |src, dst| PasswordEncoder::verify(src, &dst),
+            |user| {
+                User {
+                    id: user.id,
+                    num_pwd_change: user.num_pwd_change,
+                }
+            },
         )
-        .await?
-        .ok_or(UserNotFound)
-        .map_err(AuthError::from)?;
-        let user::Model {
-            id,
-            password,
-            num_pwd_change,
-            ..
-        } = user_info;
-
-        let password_correct =
-            sync_time_usage_with_name("校验密码是否正确", || {
-                // 密码转换成crypto_str类型
-                let pwd =
-                    crypto_str::CryptoString::<PasswordEncoder>::new_raw(
-                        body.password.clone(),
-                    );
-                let db_password =
-                    crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
-                        password,
-                    );
-
-                // 检查密码是否正确
-                pwd.verify(&db_password).map_err(AuthError::from)
-            })?;
-
-        if !password_correct {
-            AdminUserRResult::<()>::err(
-                AuthError::from(PasswordWrong).into(),
-            )?;
-        }
+        .await??;
 
         // 生成用户token
-        let generate_token = User { id, num_pwd_change };
-        let token = generate_token.generate().unwrap();
+        let token = token_info.generate().unwrap();
 
         // 返回用户token
         let user_token = UserToken { token };
@@ -196,90 +152,45 @@ impl UserAuthBackend {
         user: Authentication<AuthError>,
         ReqPretreatment(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
-        let db = get_sql_database();
         let id = user.0.id;
 
         let username = username.username;
 
-        async_time_usage_with_name(
-            "更新用户名称",
-            user::Entity::update_many()
-                .col_expr(
-                    user::Column::Username,
-                    Expr::value(username.clone()),
-                )
-                .filter(user::Column::Id.eq(id))
-                .exec(db.deref().deref()),
-        )
-        .await?;
+        CommonSqlOperate::update_user_name(id as i64, username.clone())
+            .await?;
 
-        let user_name = UserName { username };
-
-        Ok(user_name).into()
+        Ok(UserName { username }).into()
     }
 
     pub async fn change_password(
-        user: Authentication<AuthError>,
+        Pretreatment(user): Authentication<AuthError>,
         ReqPretreatment(body): ReqPretreatment<
             ToRResult<MapErr<Json<ChangePassword>, AdminUserError>>,
         >,
     ) -> AdminUserRResult<UserToken> {
-        let db = get_sql_database();
-        let user = user.0;
         let id = user.id;
-        let password = user.password;
-        let num_pwd_change = user.num_pwd_change;
-        let body = body;
 
         let old_password = body.old_password;
         let new_password = body.new_password;
 
-        // 检查密码是否正确
-        let password_correct =
-            sync_time_usage_with_name("校验原密码", || {
-                // 密码转换成crypto_str类型
-                let old_password =
-                    crypto_str::CryptoString::<PasswordEncoder>::new_raw(
-                        old_password,
-                    );
-                let password =
-                    crypto_str::CryptoString::<PasswordEncoder>::new_crypto(
-                        password,
-                    );
-                password.verify(&old_password).map_err(AuthError::from)
-            })?;
-        if !password_correct {
-            AdminUserRResult::<()>::err(
-                AuthError::from(PasswordWrong).into(),
-            )?;
-        }
-
-        // 加密密码
-        let encode_password =
-            PasswordEncoder::encode(new_password.clone().into())?;
-
-        // 在数据库修改密码
-        async_time_usage_with_name(
-            "更新用户密码",
-            user::Entity::update_many()
-                .col_expr(
-                    user::Column::Password,
-                    Expr::value(encode_password.to_string()),
-                )
-                .col_expr(
-                    user::Column::NumPwdChange,
-                    Expr::value(num_pwd_change + 1),
-                )
-                .filter(user::Column::Id.eq(id))
-                .exec(db.deref().deref()),
+        let generate_token = CommonSqlOperate::update_user_password(
+            id as i64,
+            new_password,
+            old_password,
+            |old, new| PasswordEncoder::verify(old, &new),
+            |pwd| {
+                PasswordEncoder::encode(Cow::Borrowed(pwd))
+                    .map(|pwd| pwd.to_string())
+            },
+            |user| {
+                User {
+                    id: user.id,
+                    num_pwd_change: user.num_pwd_change,
+                }
+            },
         )
-        .await?;
+        .await??;
 
-        // 生成用户token
-        let generate_token = User {
-            id,
-            num_pwd_change: num_pwd_change + 1,
-        };
         let token = generate_token.generate().unwrap();
 
         // 返回用户token
