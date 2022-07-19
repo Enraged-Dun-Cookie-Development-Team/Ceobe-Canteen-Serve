@@ -14,7 +14,7 @@ impl CommonSqlOperate {
     pub async fn user_exist_raw(
         filter: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
     ) -> Result<bool, CommonError> {
-        let condition = filter.into().unwrap_or_else(|| Condition::all());
+        let condition = filter.into().unwrap_or_else(Condition::all);
         let resp = user::Entity::find()
             .filter(condition)
             .select_only()

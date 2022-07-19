@@ -13,11 +13,11 @@ impl CommonSqlOperate {
     ) -> Result<user::Model, CommonError> {
         let condition = condition.into().unwrap_or_else(Condition::all);
 
-        Ok(user::Entity::find()
+        user::Entity::find()
             .filter(condition)
             .one(db)
             .await?
-            .ok_or(CommonError::UserNotExist)?)
+            .ok_or(CommonError::UserNotExist)
     }
 
     pub async fn query_all_user_raw(
@@ -58,9 +58,9 @@ impl CommonSqlOperate {
     {
         let ctx = get_sql_transaction().await?;
 
-        let user = Self::find_user_by_name_raw(&name, &ctx).await?;
+        let user = Self::find_user_by_name_raw(name, &ctx).await?;
 
-        match verify(&user.password, &pwd) {
+        match verify(&user.password, pwd) {
             Ok(true) => {
                 let resp = mapping(user);
                 Ok(Ok(resp))
