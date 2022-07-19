@@ -80,6 +80,7 @@ features = [
     "runtime-tokio-rustls",
     "macros",
     # "debug-print"
+
 ]
 
 [dependencies.sql_connection]
@@ -125,3 +126,6 @@ package = "sub-model"
 
 [dependencies.mongo-migration]
 path = "./migrate/mongo-migration"
+
+[dependencies.mongo_connection]
+path = "./database/mongo_connection"

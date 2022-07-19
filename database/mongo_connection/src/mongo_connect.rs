@@ -3,7 +3,7 @@ use mongodb::{options::ClientOptions, Database};
 
 use crate::{
     database::builder::DatabaseBuilder, static_vars::set_mongo_database,
-    MongoClient, MongoErr,
+    DbConnectConfig, MongoClient, MongoErr,
 };
 
 pub struct MongoConnectBuilder {
@@ -12,8 +12,10 @@ pub struct MongoConnectBuilder {
 }
 
 impl MongoConnectBuilder {
-    pub async fn new(url: impl AsRef<str>) -> Result<Self, MongoErr> {
-        let client = init_mongodb(url.as_ref()).await?;
+    pub async fn new(
+        cfg: &impl crate::DbConnectConfig,
+    ) -> Result<Self, MongoErr> {
+        let client = init_mongodb(format_url(cfg).as_str()).await?;
 
         let default_db = client.default_database();
         log::info!(
@@ -50,4 +52,16 @@ async fn init_mongodb(url: &str) -> Result<MongoClient, MongoErr> {
 
     let client = MongoClient::with_options(copts)?;
     Ok(client)
+}
+
+fn format_url(cfg: &impl DbConnectConfig) -> String {
+    format!(
+        "{}://{}:{}@{}:{}/{}?authSource=admin",
+        cfg.scheme(),
+        cfg.username(),
+        urlencoding::encode(cfg.password()),
+        cfg.host(),
+        cfg.port(),
+        cfg.name()
+    )
 }

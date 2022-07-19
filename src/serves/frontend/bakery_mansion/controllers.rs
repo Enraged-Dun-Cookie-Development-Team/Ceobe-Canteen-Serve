@@ -1,10 +1,9 @@
 use futures::StreamExt;
+use mongo_connection::get_mongo_database;
 use mongodb::{bson::doc, options::FindOptions};
 use time_usage::async_time_usage_with_name;
 
-use super::{
-    MansionMongoDbPretreatment, MansionRResult, MidCheckerPretreatment,
-};
+use super::{MansionRResult, MidCheckerPretreatment};
 use crate::{
     models::mansion::preludes::*,
     router::BakeryMansionFrontend,
@@ -17,10 +16,9 @@ use crate::{
 impl BakeryMansionFrontend {
     pub async fn get_mansion_with_time(
         ReqPretreatment(mid): MidCheckerPretreatment,
-        ReqPretreatment(db): MansionMongoDbPretreatment,
     ) -> MansionRResult<ViewMansionWithTime> {
         let MansionId { main_id, minor_id } = mid.id;
-        let db = db;
+        let db = get_mongo_database();
 
         let filter = doc! {
             "id" : {
@@ -41,9 +39,8 @@ impl BakeryMansionFrontend {
         MansionRResult::ok(data.into())
     }
 
-    pub async fn get_all_id(
-        ReqPretreatment(db): MansionMongoDbPretreatment,
-    ) -> MansionRResult<Vec<String>> {
+    pub async fn get_all_id() -> MansionRResult<Vec<String>> {
+        let db = get_mongo_database();
         let resp = async_time_usage_with_name(
             "前台：获取全部的MansionID列表",
             db.doing::<_, ModelMansion, _, _>(|collect| {

@@ -1,11 +1,11 @@
 use actix_web::error::QueryPayloadError;
 use http::StatusCode;
+use mongo_connection::MongoDbError;
 use status_err::{status_error, ErrPrefix};
 
 use crate::{
     error_generate,
     utils::{
-        mongodb_utils::error::MongoDbError,
         req_pretreatment::prefabs::{JsonError, PathError},
         user_authorize::error::AuthError,
     },

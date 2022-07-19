@@ -12,12 +12,10 @@ use configs::{
 };
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
+use mongo_connection::MongoConnectBuilder;
 use sql_connection::connect_to_sql_database;
 use time_usage::async_time_usage_with_name;
-use utils::{
-    middleware::benchmark::BenchMarkFactor,
-    mongodb_utils::mongo_build::MongoBuild, user_authorize,
-};
+use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
 
 mod bootstrap;
 mod configs;
@@ -64,16 +62,25 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
 
     create_default_user(&config.admin_user).await;
     // mongo db
-    let mongo_conn = async_time_usage_with_name(
-        "连接到MongoDb数据库",
-        MongoBuild::with_config(&config.mongodb)
-            .await
-            .expect("无法连接到MongoDb")
-            .collect_migration(mongo_migration::Migrator),
-    )
-    .await
-    .expect("Mongo Db 模型建立失败")
-    .build();
+
+    MongoConnectBuilder::new(&config.mongodb)
+        .await
+        .expect("连接到MongoDb数据库异常")
+        .apply_mongo_migration(mongo_migration::Migrator)
+        .await
+        .expect("注册Collection错误")
+        .build();
+
+    // let mongo_conn = async_time_usage_with_name(
+    //     "连接到MongoDb数据库",
+    //     MongoBuild::with_config(&config.mongodb)
+    //         .await
+    //         .expect("无法连接到MongoDb")
+    //         .collect_migration(mongo_migration::Migrator),
+    // )
+    // .await
+    // .expect("Mongo Db 模型建立失败")
+    // .build();
 
     // load server socket config
     let http_socket = HttpConfig::socket(&config.http_listen);
@@ -90,7 +97,7 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             .app_data(updater.clone())
             .app_data(sender.clone())
             // 数据库连接
-            .app_data(mongo_conn.clone())
+            // .app_data(mongo_conn.clone())
             // 配置信息
             .app_data(data_config.clone())
             // 服务

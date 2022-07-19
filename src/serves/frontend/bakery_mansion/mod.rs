@@ -9,7 +9,6 @@ type MansionRResult<T> = RespResult<T, error::MansionError>;
 
 use self::{error::MansionError, models::checkers::MIdCheckerPretreat};
 use crate::utils::{
-    mongodb_utils::db_selector::MongoDbSelector,
     req_pretreatment::{
         prefabs::{MapErr, ToRResult},
         ReqPretreatment,
@@ -27,5 +26,4 @@ crate::new_auth_level! {
 pub type MidCheckerPretreatment =
     ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>;
 
-pub type MansionMongoDbPretreatment =
-    ReqPretreatment<ToRResult<MapErr<MongoDbSelector, MansionError>>>;
+

@@ -14,7 +14,6 @@ use self::{
     },
 };
 use crate::utils::{
-    mongodb_utils::db_selector::MongoDbSelector,
     req_pretreatment::{
         prefabs::{MapErr, ToRResult},
         ReqPretreatment,
@@ -44,5 +43,4 @@ pub type MidCheckerPretreatment =
 pub type MansionBodyCheckerPretreatment =
     ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>;
 
-pub type MansionMongoDbPretreatment =
-    ReqPretreatment<ToRResult<MapErr<MongoDbSelector, MansionError>>>;
+

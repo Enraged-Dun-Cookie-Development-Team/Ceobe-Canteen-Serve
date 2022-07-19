@@ -1,12 +1,12 @@
 use chrono::Local;
 use futures::StreamExt;
+use mongo_connection::get_mongo_database;
 use mongodb::{bson::doc, options::FindOptions};
 use time_usage::async_time_usage_with_name;
 
 use super::{
-    MansionAuthentication, MansionBodyCheckerPretreatment,
-    MansionMongoDbPretreatment, MansionRResult, MidCheckerPretreatment,
-    OptionMidCheckerPretreatment,
+    MansionAuthentication, MansionBodyCheckerPretreatment, MansionRResult,
+    MidCheckerPretreatment, OptionMidCheckerPretreatment,
 };
 use crate::{
     models::mansion::preludes::*,
@@ -23,11 +23,10 @@ impl BakeryMansionBackend {
         _: MansionAuthentication,
         ReqPretreatment(mid): OptionMidCheckerPretreatment,
         ReqPretreatment(json): MansionBodyCheckerPretreatment,
-        ReqPretreatment(db): MansionMongoDbPretreatment,
     ) -> MansionRResult<()> {
         let mid = mid.id;
         let data = json;
-        let db = db;
+        let db = get_mongo_database();
 
         match mid {
             Some(MansionId { main_id, minor_id }) => {
@@ -121,10 +120,9 @@ impl BakeryMansionBackend {
     pub async fn get_mansion(
         _: MansionAuthentication,
         ReqPretreatment(mid): MidCheckerPretreatment,
-        ReqPretreatment(db): MansionMongoDbPretreatment,
     ) -> MansionRResult<ViewMansion> {
         let MansionId { main_id, minor_id } = mid.id;
-        let db = db;
+        let db = get_mongo_database();
 
         let filter = doc! {
             "id" : {
@@ -146,8 +144,8 @@ impl BakeryMansionBackend {
 
     pub async fn get_recent_id(
         _: MansionAuthentication,
-        ReqPretreatment(db): MansionMongoDbPretreatment,
     ) -> MansionRResult<Vec<String>> {
+        let db = get_mongo_database();
         // 最近60天
         let now = Local::now().naive_local() - (chrono::Duration::days(60));
         let now =
@@ -191,9 +189,9 @@ impl BakeryMansionBackend {
 
     pub async fn remove_mansion(
         _: MansionAuthentication,
-        ReqPretreatment(db): MansionMongoDbPretreatment,
         ReqPretreatment(mid): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
+        let db = get_mongo_database();
         let MansionId { main_id, minor_id } = mid.id;
         let filter = doc! {
             "id" : {
