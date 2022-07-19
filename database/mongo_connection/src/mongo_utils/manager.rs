@@ -12,7 +12,7 @@ pub struct Manager {
 }
 
 impl Manager {
-    pub(crate) fn collection<C, N: Into<Option<&'static str>>>(
+    pub fn collection<C, N: Into<Option<&'static str>>>(
         &self, name: N,
     ) -> Collection<C>
     where
