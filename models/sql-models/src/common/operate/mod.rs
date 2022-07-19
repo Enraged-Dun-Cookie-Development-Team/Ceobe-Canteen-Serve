@@ -1,3 +1,5 @@
+mod modify_user;
+mod query_user;
 mod user_count;
 use sea_orm::FromQueryResult;
 

@@ -12,4 +12,10 @@ pub enum CommonError {
     UsernameLength(#[from] range_limit::Error),
     #[error("指定用户不存在")]
     UserNotExist,
+    #[error("用户名冲突，[{username:?}]已经被使用")]
+    ConflictUsername { username: String },
+    #[error("密码未更改")]
+    PasswordNoChange,
+    #[error("密码校验错误")]
+    PasswordWrong,
 }
