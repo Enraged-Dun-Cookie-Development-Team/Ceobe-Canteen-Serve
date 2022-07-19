@@ -1,3 +1,4 @@
+use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
 
 pub mod checkers;
@@ -18,4 +19,43 @@ pub enum CommonError {
     PasswordNoChange,
     #[error("密码校验错误")]
     PasswordWrong,
+}
+
+impl status_err::StatusErr for CommonError {
+    fn prefix(&self) -> ErrPrefix {
+        match self {
+            CommonError::Db(db) => db.prefix(),
+            CommonError::UsernameLength(rang) => rang.prefix(),
+            CommonError::UserNotExist => ErrPrefix::UNAUTHORIZED,
+            CommonError::ConflictUsername { username: _ } => {
+                ErrPrefix::UNAUTHORIZED
+            }
+            CommonError::PasswordNoChange => ErrPrefix::UNAUTHORIZED,
+            CommonError::PasswordWrong => ErrPrefix::UNAUTHORIZED,
+        }
+    }
+
+    fn code(&self) -> u16 {
+        match self {
+            CommonError::Db(db) => db.code(),
+            CommonError::UsernameLength(l) => l.code(),
+            CommonError::UserNotExist => 0x0007,
+            CommonError::ConflictUsername { username: _ } => 0x0008,
+            CommonError::PasswordNoChange => 0x0009,
+            CommonError::PasswordWrong => 0x0004,
+        }
+    }
+
+    fn http_code(&self) -> HttpCode {
+        match self {
+            CommonError::Db(db) => db.http_code(),
+            CommonError::UsernameLength(l) => l.http_code(),
+            CommonError::UserNotExist => HttpCode::NOT_FOUND,
+            CommonError::ConflictUsername { username: _ } => {
+                HttpCode::BAD_REQUEST
+            }
+            CommonError::PasswordNoChange => HttpCode::BAD_REQUEST,
+            CommonError::PasswordWrong => HttpCode::UNAUTHORIZED,
+        }
+    }
 }

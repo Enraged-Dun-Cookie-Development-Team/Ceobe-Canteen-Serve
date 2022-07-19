@@ -34,3 +34,6 @@ path = "../../libs/range-limit"
 
 [dependencies.sql_connection]
 path = "../../database/sql_connection"
+
+[dependencies.status-err]
+path = "../../libs/status-err"
