@@ -1,4 +1,4 @@
-use mongo_migration::utils::migrator::MigratorTrait;
+use crate::mongo_utils::migrator::MigratorTrait;
 use mongodb::{options::ClientOptions, Database};
 
 use crate::{

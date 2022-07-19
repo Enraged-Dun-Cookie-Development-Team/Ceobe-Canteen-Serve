@@ -13,9 +13,9 @@ futures = "0.3"
 actix-web = "4"
 urlencoding = "2.1.0"
 thiserror = "1"
-
-[dependencies.mongo-migration]
-path = "../../migrate/mongo-migration"
+async-trait = "0.1"
+dashmap = "5"
+typed-builder = "0.10"
 
 [dependencies.status-err]
 path = "../../libs/status-err"
