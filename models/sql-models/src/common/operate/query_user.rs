@@ -2,7 +2,7 @@ use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
     EntityTrait, QueryFilter,
 };
-use sql_connection::get_sql_transaction;
+use sql_connection::{get_sql_database, get_sql_transaction};
 
 use super::CommonSqlOperate;
 use crate::common::{sql_models::user, CommonError};
@@ -67,6 +67,24 @@ impl CommonSqlOperate {
             }
             Ok(false) => Err(CommonError::PasswordWrong),
             Err(err) => Ok(Err(err)),
+        }
+    }
+
+    pub async fn find_user_with_version_verify<M, E, T>(
+        uid: i64, token_version: u32, ok_mapper: M, error: E,
+    ) -> Result<Result<T, E>, CommonError>
+    where
+        M: Fn(user::Model) -> T,
+    {
+        let db = get_sql_database();
+
+        let user = Self::find_user_by_id_raw(uid, db).await?;
+
+        if user.num_pwd_change == token_version {
+            Ok(Ok(ok_mapper(user)))
+        }
+        else {
+            Ok(Err(error))
         }
     }
 }

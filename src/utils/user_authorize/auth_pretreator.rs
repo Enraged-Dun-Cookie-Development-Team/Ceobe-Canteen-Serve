@@ -1,19 +1,15 @@
 use futures::Future;
-use lazy_static::__Deref;
-use sql_connection::get_sql_database;
-use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
+use orm_migrate::sql_models::common::operate::CommonSqlOperate;
+use time_usage::async_time_usage_with_name;
 
 use super::{
     config::TokenHeader as Token, error::AuthError,
     valid_token::decrpyt_token, AuthInfo,
 };
-use crate::{
-    models::common::sql::sql_models::user,
-    utils::{
-        data_struct::header_info::HeaderInfo,
-        req_pretreatment::Pretreatment,
-        user_authorize::error::{TokenInvalid, TokenNotFound, UserNotFound},
-    },
+use crate::utils::{
+    data_struct::header_info::HeaderInfo,
+    req_pretreatment::Pretreatment,
+    user_authorize::error::{TokenInvalid, TokenNotFound},
 };
 
 pub struct TokenAuth;
@@ -30,7 +26,6 @@ impl Pretreatment for TokenAuth {
     fn proc(
         req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,
     ) -> Self::Fut {
-        let db = get_sql_database();
         let token = HeaderInfo::<Token>::proc(req, payload);
 
         async move {
@@ -43,36 +38,15 @@ impl Pretreatment for TokenAuth {
                 })
                 .await?;
 
-            use sea_orm::EntityTrait;
-
-            // 获取用户信息
-            let user_info = async_time_usage_with_name(
-                "查询用户信息",
-                user::Entity::find_by_id(token.id).one(db.deref().deref()),
+            let user_info = CommonSqlOperate::find_user_with_version_verify(
+                token.id as i64,
+                token.num_pwd_change,
+                |user| user,
+                TokenInvalid,
             )
-            .await?
-            .ok_or(UserNotFound)?;
-            let user::Model {
-                id,
-                password,
-                auth,
-                username,
-                num_pwd_change,
-            } = user_info;
-            sync_time_usage_with_name("校验Token信息", || {
-                if num_pwd_change == token.num_pwd_change {
-                    Ok(AuthInfo {
-                        id,
-                        password,
-                        auth,
-                        username,
-                        num_pwd_change,
-                    })
-                }
-                else {
-                    Err(TokenInvalid.into())
-                }
-            })
+            .await??;
+
+            Ok(user_info)
         }
     }
 }

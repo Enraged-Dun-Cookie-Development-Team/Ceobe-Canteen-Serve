@@ -40,7 +40,7 @@ error_generate!(
     NoUser = UserNotFound
     Password = PasswordWrong
     Actix = actix_web::Error
-    Db = sea_orm::DbErr
+    Db = orm_migrate::sql_models::common::CommonError
     Bcrypto = bcrypt::BcryptError
     AuthLevel = auth_level::UnacceptableAuthorizationLevelError
     TokenInvalid = TokenInvalid
