@@ -1,38 +1,16 @@
-use mongodb::Database;
 use once_cell::sync::OnceCell;
 
-use crate::{
-    config::DbConnectConfig, MongoClient, MongoClientOptions, MongoErr,
-};
+use crate::database::manager::DatabaseManage;
 
-static MONGO_DATABASE_CONNECTION: OnceCell<Database> = OnceCell::new();
+static MONGO_DATABASE_CONNECTION: OnceCell<DatabaseManage> = OnceCell::new();
 
-pub async fn connect_to_mongo_database<C>(config: &C) -> Result<(), MongoErr>
-where
-    C: DbConnectConfig,
-{
-    let url = format!(
-        "{}://{}:{}@{}:{}/{}?authSource=admin",
-        config.scheme(),
-        config.username(),
-        urlencoding::encode(config.password()),
-        config.host(),
-        config.port(),
-        config.name()
-    );
-    let client_options = MongoClientOptions::parse(url).await?;
-    // Get a handle to the deployment.
-    let client = MongoClient::with_options(client_options)?;
-
-    let db = client.database("admin");
-
+pub(crate) fn set_mongo_database(db: DatabaseManage) {
     if MONGO_DATABASE_CONNECTION.set(db).is_err() {
         panic!("Mongo数据库连接已经建立")
     }
-    Ok(())
 }
 
-pub fn get_mongo_database() -> &'static Database {
+pub fn get_mongo_database() -> &'static DatabaseManage {
     MONGO_DATABASE_CONNECTION
         .get()
         .expect("Mongo数据库连接未建立")
