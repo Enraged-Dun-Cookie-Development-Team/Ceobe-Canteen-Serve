@@ -11,7 +11,6 @@ use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
 use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
-    models::common::sql::{auth::Auth, user},
     router::UserAuthBackend,
     serves::backend::user_auth::{
         error::AdminUserError,
@@ -26,11 +25,13 @@ use crate::{
         user_authorize::{
             auth_level::prefabs::Chef,
             error::{AuthError, PasswordWrong, UserNotFound},
-            AuthInfo, AuthLevel, Authentication, AuthenticationLevel,
+            AuthInfo, Authentication, AuthenticationLevel,
             GenerateToken, PasswordEncoder, User,
         },
     },
 };
+use crate::models::common::sql::sql_models::auth_level::AuthLevel;
+use crate::models::common::sql::sql_models::user;
 
 crate::quick_struct! {
     pub NewUserAuthLevel {
@@ -101,9 +102,9 @@ impl UserAuthBackend {
             username: Set(rand_username),
             password: Set(encode_password.to_string()),
             auth: Set(match permission {
-                AuthLevel::Chef => Auth::Chef,
-                AuthLevel::Cooker => Auth::Cooker,
-                AuthLevel::Architect => Auth::Architect,
+                AuthLevel::Chef => AuthLevel::Chef,
+                AuthLevel::Cooker => AuthLevel::Cooker,
+                AuthLevel::Architect => AuthLevel::Architect,
             }),
             ..Default::default()
         };

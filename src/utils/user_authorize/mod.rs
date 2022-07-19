@@ -7,14 +7,17 @@ mod auth_pretreator;
 mod set_token;
 mod valid_token;
 
-pub use auth_pretreator::{AuthLevel, TokenAuth};
+pub use auth_pretreator::TokenAuth;
 use hmac::Hmac;
 use sea_orm::FromQueryResult;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
-use crate::{models, utils::req_pretreatment::prefabs::ToRResult};
+use crate::{
+    models, models::common::sql::sql_models::user,
+    utils::req_pretreatment::prefabs::ToRResult,
+};
 
 pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
 pub type AuthenticationLevel<L, E> =
@@ -36,8 +39,10 @@ crate::quick_struct! {
     }
 }
 
+pub use orm_migrate::sql_models::common::sql_models::auth_level::AuthLevel;
+
 /// 用户权限信息
-pub type AuthInfo = models::common::sql::user::Model;
+pub type AuthInfo = user::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where

@@ -1,5 +1,5 @@
 use sea_schema::migration::prelude::*;
-use sql_models::common::user::{self, Column::NumPwdChange};
+use sql_models::common::sql_models::user::{self, Column::NumPwdChange};
 
 pub struct Migration;
 impl MigrationName for Migration {
