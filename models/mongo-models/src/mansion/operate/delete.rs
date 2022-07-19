@@ -1,0 +1,6 @@
+
+
+
+impl MansionDataMongoOperate {
+    
+}

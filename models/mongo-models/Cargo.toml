@@ -15,3 +15,15 @@ version = "0.1"
 [dependencies.serde]
 version = "1"
 features = ["derive"]
+
+[dependencies.checker]
+path = "../../libs/checker"
+
+[dependencies.range-limit]
+path = "../../libs/range-limit"
+
+[dependencies.mongo_connection]
+path = "../../database/mongo_connection"
+
+[dependencies.status-err]
+path = "../../libs/status-err"
