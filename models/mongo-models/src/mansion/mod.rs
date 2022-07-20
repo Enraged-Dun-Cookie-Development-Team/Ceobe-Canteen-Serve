@@ -5,13 +5,14 @@ pub mod operate;
 pub mod preludes {
     pub use super::{check::*, mongo_db::*};
 }
+use mongo_connection::MongoDbError;
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum MansionDataError {
     #[error("Mongo数据库异常")]
-    Db(#[from] mongodb::error::Error),
+    Db(#[from] MongoDbError),
     #[error("饼学大厦id格式不正确")]
     UnknownMansionId,
     #[error("指定饼学大厦ID未找到")]

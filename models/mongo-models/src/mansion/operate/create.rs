@@ -1,36 +1,34 @@
-use mongo_connection::{get_mongo_database, MongoDbError};
-use mongodb::bson::doc;
+use mongo_connection::get_mongo_database;
 
 use super::MansionDataMongoOperate;
-use crate::mansion::preludes::{MansionId, ModelMansion};
+use crate::mansion::{preludes::ModelMansion, MansionDataError, check::Mansion};
 
 impl MansionDataMongoOperate {
+    /// 新建饼学大厦
+    /// params：mansion 大厦信息
     pub async fn create_mansion_data(
-        mansion: ModelMansion,
-    ) -> Result<(), MongoDbError> {
+        mansion: Mansion,
+    ) -> Result<(), MansionDataError> {
         let db = get_mongo_database();
-        let MansionId { main_id, minor_id } = mansion.id;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
-        let check = db
-            .doing::<_, ModelMansion, _, _>(|collection| {
-                async move { collection.count_documents(filter, None).await }
-            })
-            .await?
-            == 0;
 
-        if check {
+        // 判断mansion id是否已经存在
+        let check = Self::is_exist_mansion_id(mansion.id.clone()).await?;
+        if !check {
             db.doing::<_, ModelMansion, _, _>(|collection| {
                 async move {
-                    collection.insert_one(ModelMansion::from(mansion), None).await?;
+                    collection
+                        .insert_one(ModelMansion::from(mansion), None)
+                        .await?;
                     Ok(())
                 }
-            }).await?;
+            })
+            .await?;
         }
-        return Ok(());
+        else {
+            return Err(MansionDataError::MansionIdExist {
+                mansion_id: mansion.id.to_string(),
+            });
+        }
+        Ok(())
     }
 }

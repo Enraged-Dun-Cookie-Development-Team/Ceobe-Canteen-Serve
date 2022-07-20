@@ -8,28 +8,25 @@ use crate::mansion::{
 };
 
 impl MansionDataMongoOperate {
-    /// 删除大厦
-    /// params：mid 大厦id
-    pub async fn delete_mansion(
+    /// 查询id是否存在
+    /// params：mansion_id 大厦id
+    pub async fn is_exist_mansion_id(
         mid: MansionId,
-    ) -> Result<(), MansionDataError> {
+    ) -> Result<bool, MansionDataError> {
         let db = get_mongo_database();
         let MansionId { main_id, minor_id } = mid;
         let filter = doc! {
             "id" : {
-                "main_id":main_id
-                ,
+                "main_id":main_id,
                 "minor_id":minor_id as i32
             }
         };
-        db.doing::<_, ModelMansion, _, ()>(|collect| {
-            async move {
-                collect.delete_one(filter, None).await?;
-                Ok(())
-            }
-        })
-        .await?;
-
-        Ok(())
+        let check = db
+            .doing::<_, ModelMansion, _, _>(|collection| {
+                async move { collection.count_documents(filter, None).await }
+            })
+            .await?
+            > 0;
+        Ok(check)
     }
 }
