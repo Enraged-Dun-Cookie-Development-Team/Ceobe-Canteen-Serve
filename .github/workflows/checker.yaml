@@ -1,0 +1,30 @@
+name: check CI
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - "**.py"
+      - "**.json"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - "**.py"
+      - "**.json"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          components: clippy, rustfmt
+          default: true
+      - run: cargo fmt --check
+      - run: cargo clippy
