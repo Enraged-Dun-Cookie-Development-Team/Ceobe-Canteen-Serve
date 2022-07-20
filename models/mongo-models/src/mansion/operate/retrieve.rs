@@ -16,19 +16,12 @@ use crate::mansion::{
 };
 
 impl MansionDataMongoOperate {
-    /// 获取单一大厦创建和更新时间
+    /// 根据条件获取单一大厦创建和更新时间
     /// params：mid 大厦id
-    pub async fn get_mansion_time_by_id(
-        mid: MansionId,
+    pub async fn get_mansion_time_by_filter(
+        filter: impl Into<Option<Document>>,
     ) -> Result<ModifyAt, MansionDataError> {
         let db = get_mongo_database();
-        let MansionId { main_id, minor_id } = mid;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
         let res = db
             .doing::<_, ModelMansion, _, _>(|collection| {
                 async move {
@@ -38,6 +31,22 @@ impl MansionDataMongoOperate {
             })
             .await?
             .ok_or(MansionDataError::MansionNotFound)?;
+        Ok(res)
+    }
+
+    /// 获取单一大厦创建和更新时间
+    /// params：mid 大厦id
+    pub async fn get_mansion_time_by_id(
+        mid: MansionId,
+    ) -> Result<ModifyAt, MansionDataError> {
+        let MansionId { main_id, minor_id } = mid;
+        let filter = doc! {
+            "id" : {
+                "main_id":main_id,
+                "minor_id":minor_id as i32
+            }
+        };
+        let res = Self::get_mansion_time_by_filter(filter).await?;
         Ok(res)
     }
 
@@ -66,15 +75,15 @@ impl MansionDataMongoOperate {
     /// 获取大厦id列表（最底层）
     /// params：filter 过滤器
     pub async fn get_mansion_id_list_by_filter(
-        filter: Option<Document>,
+        filter:  impl Into<Option<Document>>,
     ) -> Result<Vec<String>, MansionDataError> {
         let db = get_mongo_database();
 
         let res = db
-            .doing::<_, ModelMansion, _, _>(|collect| {
+            .doing::<_, ModelMansion, _, _>(|collection| {
                 async move {
-                    let collect = collect.clone_with_type::<Mid>();
-                    let mut vec = collect
+                    let collection = collection.clone_with_type::<Mid>();
+                    let mut vec = collection
                         .find(
                             filter,
                             FindOptions::builder()
@@ -99,7 +108,7 @@ impl MansionDataMongoOperate {
     }
 
     /// 无条件获取大厦id列表
-    pub async fn get_mansion_id_list() -> Result<Vec<String>, MansionDataError>
+    pub async fn get_all_mansion_id_list() -> Result<Vec<String>, MansionDataError>
     {
         let res = Self::get_mansion_id_list_by_filter(None).await?;
         Ok(res)
@@ -119,7 +128,7 @@ impl MansionDataMongoOperate {
             }
         };
 
-        let res = Self::get_mansion_id_list_by_filter(Some(filter)).await?;
+        let res = Self::get_mansion_id_list_by_filter(filter).await?;
         Ok(res)
     }
 }

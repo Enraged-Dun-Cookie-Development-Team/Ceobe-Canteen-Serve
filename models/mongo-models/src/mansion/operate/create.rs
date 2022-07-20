@@ -1,7 +1,8 @@
 use mongo_connection::get_mongo_database;
+use mongodb::bson::doc;
 
 use super::MansionDataMongoOperate;
-use crate::mansion::{preludes::ModelMansion, MansionDataError, check::Mansion};
+use crate::mansion::{preludes::{ModelMansion, MansionId}, MansionDataError, check::Mansion};
 
 impl MansionDataMongoOperate {
     /// 新建饼学大厦
@@ -10,25 +11,31 @@ impl MansionDataMongoOperate {
         mansion: Mansion,
     ) -> Result<(), MansionDataError> {
         let db = get_mongo_database();
+        let MansionId { main_id, minor_id } = mansion.id;
+        let filter = doc! {
+            "id" : {
+                "main_id":main_id,
+                "minor_id":minor_id as i32
+            }
+        };
 
         // 判断mansion id是否已经存在
-        let check = Self::is_exist_mansion_id(mansion.id.clone()).await?;
-        if !check {
+        if !Self::is_exist_mansion_by_filter(filter.clone()).await? {
             db.doing::<_, ModelMansion, _, _>(|collection| {
                 async move {
                     collection
                         .insert_one(ModelMansion::from(mansion), None)
-                        .await?;
-                    Ok(())
+                        .await
+                        .map(|_| ())
                 }
             })
-            .await?;
+            .await
+            .map_err(Into::into)
         }
         else {
-            return Err(MansionDataError::MansionIdExist {
+            Err(MansionDataError::MansionIdExist {
                 mansion_id: mansion.id.to_string(),
-            });
+            })
         }
-        Ok(())
     }
 }

@@ -17,7 +17,7 @@ pub enum MansionDataError {
     UnknownMansionId,
     #[error("指定饼学大厦ID未找到")]
     MansionNotFound,
-    #[error("指定ID的饼学大厦已经存在")]
+    #[error("指定ID:[{mansion_id:?}] 的饼学大厦已经存在")]
     MansionIdExist { mansion_id: String },
 }
 

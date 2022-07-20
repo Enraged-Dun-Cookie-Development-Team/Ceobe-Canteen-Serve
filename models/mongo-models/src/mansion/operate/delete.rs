@@ -22,10 +22,9 @@ impl MansionDataMongoOperate {
                 "minor_id":minor_id as i32
             }
         };
-        db.doing::<_, ModelMansion, _, ()>(|collect| {
+        db.doing::<_, ModelMansion, _, _>(|collect| {
             async move {
-                collect.delete_one(filter, None).await?;
-                Ok(())
+                collect.delete_one(filter, None).await
             }
         })
         .await?;
