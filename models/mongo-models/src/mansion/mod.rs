@@ -1,6 +1,7 @@
 pub mod check;
 pub mod mongo_db;
 pub mod operate;
+pub mod checkers;
 
 pub mod preludes {
     pub use super::{check::*, mongo_db::*};
@@ -19,6 +20,10 @@ pub enum MansionDataError {
     MansionNotFound,
     #[error("指定ID:[{mansion_id:?}] 的饼学大厦已经存在")]
     MansionIdExist { mansion_id: String },
+    #[error("未知的预期确信度等级")]
+    UnknownPredictType,
+    #[error("错误的Fraction值范围(0~5)")]
+    BadFraction
 }
 
 impl status_err::StatusErr for MansionDataError {
@@ -30,7 +35,9 @@ impl status_err::StatusErr for MansionDataError {
             MansionDataError::MansionNotFound => ErrPrefix::NOT_FOUND,
             MansionDataError::MansionIdExist { mansion_id: _ } => {
                 ErrPrefix::CHECKER
-            }
+            },
+            MansionDataError::UnknownPredictType => ErrPrefix::CHECKER,
+            MansionDataError::BadFraction => ErrPrefix::CHECKER,
         }
     }
 
@@ -41,6 +48,8 @@ impl status_err::StatusErr for MansionDataError {
             MansionDataError::UnknownMansionId => 0x0002,
             MansionDataError::MansionNotFound => 0x0001,
             MansionDataError::MansionIdExist { mansion_id: _ } => 0x0008,
+            MansionDataError::UnknownPredictType => 0x0006,
+            MansionDataError::BadFraction => 0x0003,
         }
     }
 
@@ -52,7 +61,9 @@ impl status_err::StatusErr for MansionDataError {
             MansionDataError::MansionNotFound => HttpCode::NOT_FOUND,
             MansionDataError::MansionIdExist { mansion_id: _ } => {
                 HttpCode::CONFLICT
-            }
+            },
+            MansionDataError::UnknownPredictType => HttpCode::NOT_ACCEPTABLE,
+            MansionDataError::BadFraction => HttpCode::NOT_FOUND,
         }
     }
 }

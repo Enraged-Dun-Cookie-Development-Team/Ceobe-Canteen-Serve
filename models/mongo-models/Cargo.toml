@@ -29,3 +29,7 @@ path = "../../database/mongo_connection"
 
 [dependencies.status-err]
 path = "../../libs/status-err"
+
+[dependencies.futures-util]
+version = "0.3"
+features = ["std", "sink"]
