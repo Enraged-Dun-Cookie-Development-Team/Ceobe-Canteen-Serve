@@ -1,10 +1,6 @@
-use mongodb::bson::doc;
-
 use super::{get_mansion_collection, MansionDataMongoOperate};
 use crate::mansion::{
-    checked::Mansion,
-    preludes::{MansionId, ModelMansion},
-    MansionDataError,
+    checked::Mansion, preludes::ModelMansion, MansionDataError,
 };
 
 impl MansionDataMongoOperate {
@@ -14,17 +10,13 @@ impl MansionDataMongoOperate {
         mansion: Mansion,
     ) -> Result<(), MansionDataError> {
         let collection = get_mansion_collection()?;
-        let MansionId { main_id, minor_id } = mansion.id;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
 
         // 判断mansion id是否已经存在
-        if !Self::is_exist_mansion_by_filter(filter.clone(), &collection)
-            .await?
+        if !Self::is_exist_mansion_by_filter(
+            mansion.id.into_id_filter(),
+            &collection,
+        )
+        .await?
         {
             collection
                 .doing(|collection| {

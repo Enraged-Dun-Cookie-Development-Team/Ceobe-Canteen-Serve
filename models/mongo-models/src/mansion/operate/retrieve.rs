@@ -2,7 +2,7 @@ use std::iter::Iterator;
 
 use chrono::{Duration, Local};
 use futures::StreamExt;
-use mongo_connection::{get_mongo_collection, CollectionGuard};
+use mongo_connection::CollectionGuard;
 use mongodb::{
     bson::{doc, DateTime, Document},
     options::FindOptions,
@@ -31,33 +31,20 @@ impl MansionDataMongoOperate {
     /// 获取单一大厦创建和更新时间
     /// params：mid 大厦id
     pub async fn get_mansion_time_by_id(
-        mid: MansionId, collection: &CollectionGuard<ModifyAt>,
+        mid: &MansionId, collection: &CollectionGuard<ModifyAt>,
     ) -> Result<ModifyAt, MansionDataError> {
-        let MansionId { main_id, minor_id } = mid;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
-        Ok(Self::get_mansion_time_by_filter(filter, collection).await?)
+        Ok(Self::get_mansion_time_by_filter(mid.into_id_filter(), collection)
+            .await?)
     }
 
     /// 获取单一大厦信息
     /// params：mid 大厦id
     pub async fn get_mansion_by_id(
-        mid: MansionId,
+        mid: &MansionId,
     ) -> Result<ModelMansion, MansionDataError> {
         let collection = get_mansion_collection()?;
-        let MansionId { main_id, minor_id } = mid;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
         Ok(collection
-            .doing(|collection| collection.find_one(filter, None))
+            .doing(|collection| collection.find_one(mid.into_id_filter(), None))
             .await?
             .ok_or(MansionDataError::MansionNotFound)?)
     }
@@ -109,7 +96,7 @@ impl MansionDataMongoOperate {
     pub async fn get_mansion_id_list_by_time(
         time: Duration,
     ) -> Result<Vec<String>, MansionDataError> {
-        let collection = get_mongo_collection::<ModelMansion>()?;
+        let collection = get_mansion_collection()?;
 
         let now = Local::now().naive_local() - time;
         let now = DateTime::from_millis(now.timestamp_millis());

@@ -65,25 +65,7 @@ where
     C: Serialize + for<'de> Deserialize<'de> + 'static,
     M: Serialize + for<'de> Deserialize<'de> + 'static,
 {
-    type Target=CollectionGuard<M>;
+    type Target = CollectionGuard<M>;
 
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
-}
-
-impl<'s, C, M> CollectionMapping<'s, C, M>
-where
-    C: Serialize + for<'de> Deserialize<'de> + 'static,
-    M: Serialize + for<'de> Deserialize<'de> + 'static,
-{
-    pub async fn doing<F, Fut, O>(
-        &'s self, handle: F,
-    ) -> Result<O, MongoDbError>
-    where
-        F: FnOnce(&'s Collection<M>) -> Fut + 's,
-        Fut: Future<Output = Result<O, MongoErr>> + 's,
-    {
-        handle(&self.inner).await.map_err(Into::into)
-    }
+    fn deref(&self) -> &Self::Target { &self.inner }
 }
