@@ -8,7 +8,10 @@ use sea_schema::migration::{async_trait, MigrationTrait};
 pub struct Migrator;
 
 #[cfg(feature = "lite-export")]
-pub use {sea_schema::migration::MigratorTrait, sql_models};
+pub use {
+    sea_schema::migration::MigratorTrait,
+    sql_models::{self, sql_connection},
+};
 
 #[async_trait::async_trait]
 impl MigratorTrait for Migrator {
@@ -20,7 +23,7 @@ impl MigratorTrait for Migrator {
         ]
     }
 }
-#[macro_export]
+#[macro_export(crate)]
 macro_rules! migrate_group {
     [$($t:expr)*] => {
         vec![

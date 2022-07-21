@@ -1,6 +1,6 @@
 use actix_web::web::Data;
 use mongo_migration::utils::migrator::MigratorTrait;
-use sql_connection::DbConnectConfig;
+use orm_migrate::sql_connection::DbConnectConfig;
 
 use super::{
     mongo_manager::{MongoManager, MongoManagerBuild},
