@@ -1,8 +1,9 @@
 use std::{any::TypeId, collections::HashMap};
 
+use mongo_migrate_util::DbManager;
 use mongodb::Collection;
 
-use crate::{mongo_utils::migrator::DbManager, MongoDb};
+use crate::MongoDb;
 
 /// 启动时构造数据库信息的类型
 /// 可以添加并进行Collection的配置

@@ -1,8 +1,9 @@
+use mongo_migrate_util::MigratorTrait;
 use mongodb::{options::ClientOptions, Database};
 
 use crate::{
-    database::builder::DatabaseBuilder, mongo_utils::migrator::MigratorTrait,
-    static_vars::set_mongo_database, DbConnectConfig, MongoClient, MongoErr,
+    database::builder::DatabaseBuilder, static_vars::set_mongo_database,
+    DbConnectConfig, MongoClient, MongoErr,
 };
 
 pub struct MongoConnectBuilder {
