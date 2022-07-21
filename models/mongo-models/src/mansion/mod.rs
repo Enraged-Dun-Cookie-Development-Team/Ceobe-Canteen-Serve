@@ -4,7 +4,7 @@ pub mod mongo_db;
 pub mod operate;
 
 pub mod preludes {
-    pub use super::{checked::*, mongo_db::*};
+    pub use super::{checked::*, checkers::*, mongo_db::*};
 }
 use mongo_connection::MongoDbError;
 use status_err::{ErrPrefix, HttpCode};

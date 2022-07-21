@@ -2,11 +2,24 @@ use checker::{check_obj, prefabs::option_checker::OptionChecker, Checker};
 use futures_util::future::{ready, Ready};
 
 use super::MansionDataCheckerError;
-use crate::mansion::{checked::OptionMid, preludes::MansionId};
+use crate::mansion::{checked::OptionMid, preludes::{MansionId, Mid}};
 
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
-    pub struct OpMIdUncheck = OpMidChecker > OptionMid{
+    pub struct MidUncheck = MidChecker > Mid{
+        #[serde(
+            alias="idBefore",
+            alias="id_before",
+            alias="mansionId",
+            alias="mansion_id"
+        )]
+        pub id: IdChecker
+    }
+    err:MansionDataCheckerError
+}
+check_obj! {
+    #[derive(Debug,serde::Deserialize)]
+    pub struct OpMidUncheck = OpMidChecker > OptionMid{
         #[serde(
             alias="idBefore",
             alias="id_before",
