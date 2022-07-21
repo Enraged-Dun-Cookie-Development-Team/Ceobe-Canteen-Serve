@@ -26,13 +26,13 @@ impl Pretreatment for TokenAuth {
     fn proc(
         req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,
     ) -> Self::Fut {
-        let token = HeaderInfo::<Token>::proc(req, payload);
+        let token = HeaderInfo::<Token>::proc(req, payload).into_inner();
 
         async move {
             // 获取token
             let token =
                 async_time_usage_with_name("获取用户token信息", async {
-                    let token = token.await?;
+                    let token = token?;
                     let token = token.get_one().ok_or(TokenNotFound)?;
                     decrpyt_token(token).map_err(AuthError::from)
                 })
