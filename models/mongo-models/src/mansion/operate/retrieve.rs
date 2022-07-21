@@ -2,13 +2,13 @@ use std::iter::Iterator;
 
 use chrono::{Duration, Local};
 use futures::StreamExt;
-use mongo_connection::get_mongo_database;
+use mongo_connection::CollectionGuard;
 use mongodb::{
-    bson::{doc, Document},
+    bson::{doc, DateTime, Document},
     options::FindOptions,
 };
 
-use super::MansionDataMongoOperate;
+use super::{get_mansion_collection, MansionDataMongoOperate};
 use crate::mansion::{
     checked::Mid,
     preludes::{MansionId, ModelMansion, ModifyAt},
@@ -20,69 +20,46 @@ impl MansionDataMongoOperate {
     /// params：mid 大厦id
     pub async fn get_mansion_time_by_filter(
         filter: impl Into<Option<Document>>,
+        collection: &CollectionGuard<ModifyAt>,
     ) -> Result<ModifyAt, MansionDataError> {
-        let db = get_mongo_database();
-        let res = db
-            .doing::<_, ModelMansion, _, _>(|collection| {
-                async move {
-                    let collection = collection.clone_with_type::<ModifyAt>();
-                    collection.find_one(filter, None).await
-                }
-            })
+        collection
+            .doing(|collection| collection.find_one(filter, None))
             .await?
-            .ok_or(MansionDataError::MansionNotFound)?;
-        Ok(res)
+            .ok_or(MansionDataError::MansionNotFound)
     }
 
     /// 获取单一大厦创建和更新时间
     /// params：mid 大厦id
     pub async fn get_mansion_time_by_id(
-        mid: MansionId,
+        mid: &MansionId, collection: &CollectionGuard<ModifyAt>,
     ) -> Result<ModifyAt, MansionDataError> {
-        let MansionId { main_id, minor_id } = mid;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
-        let res = Self::get_mansion_time_by_filter(filter).await?;
-        Ok(res)
+        Self::get_mansion_time_by_filter(mid.into_id_filter(), collection)
+            .await
     }
 
     /// 获取单一大厦信息
     /// params：mid 大厦id
     pub async fn get_mansion_by_id(
-        mid: MansionId,
+        mid: &MansionId,
     ) -> Result<ModelMansion, MansionDataError> {
-        let db = get_mongo_database();
-        let MansionId { main_id, minor_id } = mid;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
-        let res = db
-            .doing::<_, ModelMansion, _, _>(|collection| {
-                async move { collection.find_one(filter, None).await }
+        let collection = get_mansion_collection()?;
+        collection
+            .doing(|collection| {
+                collection.find_one(mid.into_id_filter(), None)
             })
             .await?
-            .ok_or(MansionDataError::MansionNotFound)?;
-        Ok(res)
+            .ok_or(MansionDataError::MansionNotFound)
     }
 
     /// 获取大厦id列表（最底层）
     /// params：filter 过滤器
     pub async fn get_mansion_id_list_by_filter(
         filter: impl Into<Option<Document>>,
+        collection: &CollectionGuard<Mid>,
     ) -> Result<Vec<String>, MansionDataError> {
-        let db = get_mongo_database();
-
-        let res = db
-            .doing::<_, ModelMansion, _, _>(|collection| {
+        Ok(collection
+            .doing(|collection| {
                 async move {
-                    let collection = collection.clone_with_type::<Mid>();
                     let mut vec = collection
                         .find(
                             filter,
@@ -102,16 +79,15 @@ impl MansionDataMongoOperate {
             .await?
             .into_iter()
             .map(|id| id.id.to_string())
-            .collect();
-
-        Ok(res)
+            .collect())
     }
 
     /// 无条件获取大厦id列表
     pub async fn get_all_mansion_id_list(
     ) -> Result<Vec<String>, MansionDataError> {
-        let res = Self::get_mansion_id_list_by_filter(None).await?;
-        Ok(res)
+        let collection = get_mansion_collection()?;
+        Self::get_mansion_id_list_by_filter(None, &collection.with_mapping())
+            .await
     }
 
     /// 根据时间获取以来的大厦id列表
@@ -119,16 +95,20 @@ impl MansionDataMongoOperate {
     pub async fn get_mansion_id_list_by_time(
         time: Duration,
     ) -> Result<Vec<String>, MansionDataError> {
+        let collection = get_mansion_collection()?;
+
         let now = Local::now().naive_local() - time;
-        let now =
-            mongodb::bson::DateTime::from_millis(now.timestamp_millis());
+        let now = DateTime::from_millis(now.timestamp_millis());
         let filter = doc! {
             "create_time":{
                 "$gte":now
             }
         };
 
-        let res = Self::get_mansion_id_list_by_filter(filter).await?;
-        Ok(res)
+        Self::get_mansion_id_list_by_filter(
+            filter,
+            &collection.with_mapping(),
+        )
+        .await
     }
 }

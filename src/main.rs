@@ -12,7 +12,7 @@ use configs::{
 };
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use mongo_connection::MongoConnectBuilder;
+use mongo_migration::mongo_connection::MongoConnectBuilder;
 use sql_connection::connect_to_sql_database;
 use time_usage::async_time_usage_with_name;
 use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
@@ -70,17 +70,6 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         .await
         .expect("注册Collection错误")
         .build();
-
-    // let mongo_conn = async_time_usage_with_name(
-    //     "连接到MongoDb数据库",
-    //     MongoBuild::with_config(&config.mongodb)
-    //         .await
-    //         .expect("无法连接到MongoDb")
-    //         .collect_migration(mongo_migration::Migrator),
-    // )
-    // .await
-    // .expect("Mongo Db 模型建立失败")
-    // .build();
 
     // load server socket config
     let http_socket = HttpConfig::socket(&config.http_listen);

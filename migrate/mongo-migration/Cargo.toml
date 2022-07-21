@@ -16,5 +16,5 @@ log = "0.4"
 [dependencies.mongo-models]
 path = "../../models/mongo-models"
 
-[dependencies.mongo_connection]
-path = "../../database/mongo_connection"
+[dependencies.mongo-migrate-util]
+path = "../../libs/mongo-migrate-util"

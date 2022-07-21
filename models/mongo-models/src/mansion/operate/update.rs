@@ -1,7 +1,4 @@
-use mongo_connection::get_mongo_database;
-use mongodb::bson::doc;
-
-use super::MansionDataMongoOperate;
+use super::{get_mansion_collection, MansionDataMongoOperate};
 use crate::mansion::{
     checked::Mansion,
     preludes::{MansionId, ModelMansion},
@@ -15,40 +12,32 @@ impl MansionDataMongoOperate {
     pub async fn update_mansion(
         mid: MansionId, mansion: Mansion,
     ) -> Result<(), MansionDataError> {
-        let db = get_mongo_database();
+        let collection = get_mansion_collection()?;
         // 获取原先数据新增时间和修改时间
-        let old_mansion_time = Self::get_mansion_time_by_id(mid).await?;
-        let MansionId { main_id, minor_id } = mansion.id;
-        let filter = doc! {
-            "id" : {
-                "main_id":main_id,
-                "minor_id":minor_id as i32
-            }
-        };
+        let old_mansion_time =
+            Self::get_mansion_time_by_id(&mid, &collection.with_mapping())
+                .await?;
+
         // 检查id，确保id不重复
-        if Self::is_exist_mansion_by_filter(filter.clone()).await? {
-            db.doing::<_, ModelMansion, _, _>(|collection| {
-                async move {
-                    collection
-                        .find_one_and_replace(
-                            filter,
-                            ModelMansion::with_modify_time(
-                                mansion,
-                                old_mansion_time.now_modify(),
-                            ),
-                            None,
-                        )
-                        .await
-                        .map(|_| ())
-                }
-            })
-            .await?;
+        if Self::is_exist_mansion_by_filter(mid.into_id_filter(), &collection)
+            .await?
+        {
+            collection
+                .doing(|collection| {
+                    collection.find_one_and_replace(
+                        mid.into_id_filter(),
+                        ModelMansion::with_modify_time(
+                            mansion,
+                            old_mansion_time.now_modify(),
+                        ),
+                        None,
+                    )
+                })
+                .await?;
+            Ok(())
         }
         else {
-            return Err(MansionDataError::MansionIdExist(
-                mansion.id.to_string(),
-            ));
+            Err(MansionDataError::MansionIdExist(mansion.id.to_string()))
         }
-        Ok(())
     }
 }

@@ -4,7 +4,7 @@ pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
-use mongo_connection::MongoDbConfig;
+use mongo_migration::mongo_connection::MongoDbConfig;
 use serde::Deserialize;
 use sql_connection::DbConfig;
 
