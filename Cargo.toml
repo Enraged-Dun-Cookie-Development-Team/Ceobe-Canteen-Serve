@@ -52,9 +52,7 @@ chrono = { version = "0.4", features = ["serde"] }
 pin-project = "1"
 state = "0.5.2"
 rand = "0.8.5"
-dashmap = "5"
 typed-builder = "0.10"
-startup = "0.1.1"
 
 [dependencies.futures-util]
 version = "0.3"
@@ -77,10 +75,6 @@ features = ["serde", "bcrypt"]
 
 [dependencies.range-limit]
 path = "./libs/range-limit"
-
-[dependencies.orm-migrate]
-package = "migration"
-path = "./migrate/sql-migration"
 
 [dependencies.ceobe-manager]
 path = "./libs/ceobe-manager"
@@ -107,6 +101,13 @@ path = "./libs/time-usage"
 [dependencies.sub-model-derive]
 version = "0.1"
 package = "sub-model"
+
+[dependencies.sql_connection]
+path = "./database/sql_connection"
+
+[dependencies.orm-migrate]
+package = "migration"
+path = "./migrate/sql-migration"
 
 [dependencies.mongo-migration]
 path = "./migrate/mongo-migration"

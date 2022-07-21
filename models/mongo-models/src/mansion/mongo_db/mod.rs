@@ -1,10 +1,10 @@
 use chrono::Local;
-use mongodb::bson;
+use mongodb::bson::{self, doc, Document};
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
-use super::check::{Daily, Mansion};
+use super::checked::{Daily, Mansion};
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct MansionId {
@@ -98,5 +98,16 @@ impl ModifyAt {
 impl std::fmt::Display for MansionId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}.{}", self.main_id, self.minor_id)
+    }
+}
+
+impl MansionId {
+    pub fn into_id_filter(&self) -> Document {
+        doc! {
+            "id" : {
+                "main_id":self.main_id,
+                "minor_id":self.minor_id as i32
+            }
+        }
     }
 }

@@ -1,72 +1,15 @@
 use actix_web::error::QueryPayloadError;
-use http::StatusCode;
-use status_err::{status_error, ErrPrefix};
-
-use crate::{
-    error_generate,
-    utils::{
-        mongodb_utils::error::MongoDbError,
-        req_pretreatment::prefabs::{JsonError, PathError},
-        user_authorize::error::AuthError,
-    },
+use mongo_migration::mongo_models::mansion::{
+    checkers::MansionDataCheckerError, MansionDataError,
 };
+
+use crate::error_generate;
 
 error_generate!(
     pub MansionError
     // request entity error
-    Auth=AuthError
-    Path=PathError
-    Json=JsonError
-    Query=QueryPayloadError
+    Query = QueryPayloadError
     //db error
-    Mongo=MongoDbError
-    // data parse error
-    Date=chrono::ParseError
-    // check error
-    Range=range_limit::Error
-    Id=UnknownId
-    NotFound=MansionNotFound
-    Fraction=BadFraction
-    Predict=UnknownPredictType
-    MansionExist=MansionIdExist
+    Mongo = MansionDataError
+    Checker = MansionDataCheckerError
 );
-
-status_error! {
-    pub UnknownId
-    [
-        ErrPrefix::CHECKER,
-        2: StatusCode::NOT_ACCEPTABLE
-    ]=>"饼学大厦id格式不是 {int}.{int}"
-}
-
-status_error! {
-    pub MansionNotFound
-    [
-        ErrPrefix::NOT_FOUND,
-        1: StatusCode::NOT_FOUND
-    ]=>"指定饼学大厦ID未找到"
-}
-
-status_error! {
-    pub MansionIdExist
-    [
-        ErrPrefix::CHECKER,
-        8: StatusCode::CONFLICT
-    ]=>"指定ID的饼学大厦已经存在"
-}
-
-status_error! {
-    pub BadFraction
-    [
-        ErrPrefix::CHECKER,
-        3: StatusCode::NOT_FOUND
-    ]=>"错误的Fraction值范围(0~5)"
-}
-
-status_error! {
-    pub UnknownPredictType
-    [
-        ErrPrefix::CHECKER,
-    6
-    ]=>"未知的预期确信度等级"
-}

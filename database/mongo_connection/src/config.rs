@@ -1,4 +1,11 @@
-use orm_migrate::sql_connection::DbConnectConfig;
+pub trait DbConnectConfig: serde::de::DeserializeOwned {
+    fn scheme(&self) -> &str;
+    fn username(&self) -> &str;
+    fn password(&self) -> &str;
+    fn host(&self) -> &str;
+    fn port(&self) -> u16;
+    fn name(&self) -> &str;
+}
 
 #[derive(Debug, serde::Deserialize)]
 pub struct MongoDbConfig {

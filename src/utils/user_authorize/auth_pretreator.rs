@@ -7,7 +7,7 @@ use time_usage::async_time_usage_with_name;
 use super::{
     config::TokenHeader as Token,
     error::{AuthError, TokenInfoNotFound},
-    valid_token::decrpyt_token,
+    valid_token::decrypt_token,
     AuthInfo,
 };
 use crate::utils::{
@@ -38,7 +38,7 @@ impl Pretreatment for TokenAuth {
                 async_time_usage_with_name("获取用户token信息", async {
                     let token = token?;
                     let token = token.get_one().ok_or(TokenNotFound)?;
-                    decrpyt_token(token).map_err(AuthError::from)
+                    decrypt_token(token).map_err(AuthError::from)
                 })
                 .await?;
 

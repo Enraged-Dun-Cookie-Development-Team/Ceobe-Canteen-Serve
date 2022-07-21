@@ -5,6 +5,7 @@ pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
 use orm_migrate::sql_connection::DbConfig;
+use mongo_migration::mongo_connection::MongoDbConfig;
 use serde::Deserialize;
 
 use self::{
@@ -12,7 +13,6 @@ use self::{
     http_listen_config::HttpListenConfig, logger::LoggerConfig,
     resp_result_config::RespResultConfig,
 };
-use crate::utils::mongodb_utils::config::MongoDbConfig;
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";
 pub const CONFIG_FILE_JSON: &str = "./Config.json";

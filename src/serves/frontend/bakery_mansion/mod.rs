@@ -7,25 +7,8 @@ mod view;
 
 type MansionRResult<T> = RespResult<T, error::MansionError>;
 
-use self::{error::MansionError, models::checkers::MIdCheckerPretreat};
-use crate::utils::{
-    mongodb_utils::db_selector::MongoDbSelector,
-    req_pretreatment::{
-        prefabs::{MapErr, ToRResult},
-        ReqPretreatment,
-    },
-    user_authorize::auth_level::prefabs::{Architect, Chef},
-};
-
-crate::new_auth_level! {
-    pub MansionAuth=>[
-        Chef
-        Architect
-    ]
-}
+use self::models::MidCheckerPretreat;
+use crate::utils::req_pretreatment::{prefabs::ToRResult, ReqPretreatment};
 
 pub type MidCheckerPretreatment =
-    ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>;
-
-pub type MansionMongoDbPretreatment =
-    ReqPretreatment<ToRResult<MapErr<MongoDbSelector, MansionError>>>;
+    ReqPretreatment<ToRResult<MidCheckerPretreat>>;

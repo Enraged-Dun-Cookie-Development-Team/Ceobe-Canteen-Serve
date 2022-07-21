@@ -95,23 +95,23 @@ where
     }
 }
 
-pub struct PreLiteChecker<Punchecked, C>(PhantomData<(Punchecked, C)>)
+pub struct PreLiteChecker<Punchecked, C, E>(PhantomData<(Punchecked, C, E)>)
 where
     C: DataChecker,
     <C as DataChecker>::Args: LiteArgs,
     Punchecked: Pretreatment<Resp = C::Unchecked>,
-    Punchecked::Err: Into<C::Err>,
+    E: 'static + From<C::Err> + From<Punchecked::Err>,
     C::Checked: 'static;
 
-impl<Punchecked, C> Pretreatment for PreLiteChecker<Punchecked, C>
+impl<Punchecked, C, E> Pretreatment for PreLiteChecker<Punchecked, C, E>
 where
     C: DataChecker,
     <C as DataChecker>::Args: LiteArgs,
     Punchecked: Pretreatment<Resp = C::Unchecked>,
-    Punchecked::Err: Into<C::Err>,
+    E: 'static + From<C::Err> + From<Punchecked::Err>,
     C::Checked: 'static,
 {
-    type Err = C::Err;
+    type Err = E;
     type Resp = C::Checked;
 
     type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
@@ -128,8 +128,7 @@ where
                     .as_str(),
                 uncheck_fut,
             )
-            .await
-            .map_err(Into::into)?;
+            .await?;
 
             let checked = async_time_usage_with_name(
                 format!("执行检查-{}", type_name::<C>()).as_str(),
