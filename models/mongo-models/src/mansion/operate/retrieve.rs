@@ -22,10 +22,10 @@ impl MansionDataMongoOperate {
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<ModifyAt>,
     ) -> Result<ModifyAt, MansionDataError> {
-        Ok(collection
+        collection
             .doing(|collection| collection.find_one(filter, None))
             .await?
-            .ok_or(MansionDataError::MansionNotFound)?)
+            .ok_or(MansionDataError::MansionNotFound)
     }
 
     /// 获取单一大厦创建和更新时间
@@ -33,8 +33,8 @@ impl MansionDataMongoOperate {
     pub async fn get_mansion_time_by_id(
         mid: &MansionId, collection: &CollectionGuard<ModifyAt>,
     ) -> Result<ModifyAt, MansionDataError> {
-        Ok(Self::get_mansion_time_by_filter(mid.into_id_filter(), collection)
-            .await?)
+        Self::get_mansion_time_by_filter(mid.into_id_filter(), collection)
+            .await
     }
 
     /// 获取单一大厦信息
@@ -43,10 +43,12 @@ impl MansionDataMongoOperate {
         mid: &MansionId,
     ) -> Result<ModelMansion, MansionDataError> {
         let collection = get_mansion_collection()?;
-        Ok(collection
-            .doing(|collection| collection.find_one(mid.into_id_filter(), None))
+        collection
+            .doing(|collection| {
+                collection.find_one(mid.into_id_filter(), None)
+            })
             .await?
-            .ok_or(MansionDataError::MansionNotFound)?)
+            .ok_or(MansionDataError::MansionNotFound)
     }
 
     /// 获取大厦id列表（最底层）
@@ -84,11 +86,8 @@ impl MansionDataMongoOperate {
     pub async fn get_all_mansion_id_list(
     ) -> Result<Vec<String>, MansionDataError> {
         let collection = get_mansion_collection()?;
-        Ok(Self::get_mansion_id_list_by_filter(
-            None,
-            &collection.with_mapping(),
-        )
-        .await?)
+        Self::get_mansion_id_list_by_filter(None, &collection.with_mapping())
+            .await
     }
 
     /// 根据时间获取以来的大厦id列表
@@ -106,10 +105,10 @@ impl MansionDataMongoOperate {
             }
         };
 
-        Ok(Self::get_mansion_id_list_by_filter(
+        Self::get_mansion_id_list_by_filter(
             filter,
             &collection.with_mapping(),
         )
-        .await?)
+        .await
     }
 }

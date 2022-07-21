@@ -1,5 +1,5 @@
 use chrono::Local;
-use mongodb::bson::{self, Document, doc};
+use mongodb::bson::{self, doc, Document};
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
@@ -101,7 +101,7 @@ impl std::fmt::Display for MansionId {
     }
 }
 
-impl  MansionId{
+impl MansionId {
     pub fn into_id_filter(&self) -> Document {
         doc! {
             "id" : {

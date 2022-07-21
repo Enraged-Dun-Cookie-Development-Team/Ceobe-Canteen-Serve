@@ -38,7 +38,8 @@ impl BakeryMansionBackend {
         _: MansionAuthentication,
         ReqPretreatment(mid): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
-        let data = MansionDataMongoOperate::get_mansion_by_id(&mid.id).await?;
+        let data =
+            MansionDataMongoOperate::get_mansion_by_id(&mid.id).await?;
         MansionRResult::ok(data.into())
     }
 
