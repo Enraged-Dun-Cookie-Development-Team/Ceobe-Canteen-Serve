@@ -1,3 +1,4 @@
+use chrono::Duration;
 use mongo_migration::mongo_models::mansion::operate::MansionDataMongoOperate;
 
 use super::{
@@ -46,7 +47,7 @@ impl BakeryMansionBackend {
     ) -> MansionRResult<Vec<String>> {
         let mansion_ids =
             MansionDataMongoOperate::get_mansion_id_list_by_time(
-                chrono::Duration::days(60),
+                Duration::days(60),
             )
             .await?;
 

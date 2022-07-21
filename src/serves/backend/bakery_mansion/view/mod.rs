@@ -1,24 +1,11 @@
 use crate::models::mansion::preludes::*;
 
-pub const TIME_FORMAT: &str = "%Y-%m-%d %T";
-
 crate::quick_struct! {
     pub ViewMansion{
         id:String
         description:String
         #[serde(rename="cv_link")]
         cvlink:String
-        fraction:u8
-        daily:Vec<ViewDaily>
-    }
-
-    pub ViewMansionWithTime {
-        id:String
-        description:String
-        #[serde(rename="cv_link")]
-        cvlink:String
-        create_time: String
-        modify_time: String
         fraction:u8
         daily:Vec<ViewDaily>
     }
@@ -95,35 +82,6 @@ impl From<ModelMansion> for ViewMansion {
             cvlink,
             fraction,
             daily: daily.into_iter().map(Into::into).collect(),
-        }
-    }
-}
-
-impl From<ModelMansion> for ViewMansionWithTime {
-    fn from(val: ModelMansion) -> Self {
-        let ModelMansion {
-            id,
-            description,
-            cvlink,
-            fraction,
-            daily,
-            create_time,
-            modify_time,
-        } = val;
-        ViewMansionWithTime {
-            id: id.to_string(),
-            description,
-            cvlink,
-            fraction,
-            daily: daily.into_iter().map(Into::into).collect(),
-            create_time: create_time
-                .to_chrono()
-                .format(TIME_FORMAT)
-                .to_string(),
-            modify_time: modify_time
-                .to_chrono()
-                .format(TIME_FORMAT)
-                .to_string(),
         }
     }
 }

@@ -27,7 +27,7 @@ impl StatusErr for MansionDataCheckerError {
     fn prefix(&self) -> status_err::ErrPrefix {
         use MansionDataCheckerError::*;
         match self {
-            Size(ra) => ra.prefix(),
+            Size(rl) => rl.prefix(),
             MansionDataFormat(_) => ErrPrefix::PARSE,
             UnknownPredictType(_)
             | BadFraction(_)
@@ -38,7 +38,7 @@ impl StatusErr for MansionDataCheckerError {
     fn code(&self) -> u16 {
         use MansionDataCheckerError::*;
         match self {
-            Size(ra) => ra.code(),
+            Size(rl) => rl.code(),
             UnknownMansionIdFormat(_) => 0x_00_02,
             UnknownPredictType(_) => 0x_00_06,
             BadFraction(_) => 0x_00_03,
