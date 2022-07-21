@@ -32,7 +32,7 @@ where
         M: Serialize + for<'de> Deserialize<'de> + 'static,
     >(
         &'s self,
-    ) -> CollectionMapping<'s, C, M> {
+    ) -> CollectionMapping<'s, M> {
         CollectionMapping {
             _pha: PhantomData,
             inner: CollectionGuard {
@@ -51,18 +51,16 @@ where
     fn deref(&self) -> &Self::Target { &self.inner }
 }
 
-pub struct CollectionMapping<'s, C, M>
+pub struct CollectionMapping<'s, M>
 where
-    C: Serialize + for<'de> Deserialize<'de> + 'static,
     M: Serialize + for<'de> Deserialize<'de> + 'static,
 {
-    _pha: PhantomData<&'s C>,
+    _pha: PhantomData<&'s ()>,
     inner: CollectionGuard<M>,
 }
 
-impl<'s, C, M> Deref for CollectionMapping<'s, C, M>
+impl<'s, M> Deref for CollectionMapping<'s, M>
 where
-    C: Serialize + for<'de> Deserialize<'de> + 'static,
     M: Serialize + for<'de> Deserialize<'de> + 'static,
 {
     type Target = CollectionGuard<M>;
