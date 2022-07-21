@@ -12,7 +12,7 @@ use configs::{
 };
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use mongo_connection::MongoConnectBuilder;
+use mongo_migration::mongo_connection::MongoConnectBuilder;
 use orm_migrate::sql_connection::connect_to_sql_database;
 use time_usage::async_time_usage_with_name;
 use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
@@ -85,12 +85,9 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             // ceobe ws 通讯
             .app_data(updater.clone())
             .app_data(sender.clone())
-            // 数据库连接
-            // .app_data(mongo_conn.clone())
             // 配置信息
             .app_data(data_config.clone())
             // 服务
-            // .service(RootController)
             .service(router::root_route())
             .default_service(web::to(not_exist))
     })

@@ -70,7 +70,7 @@ pub mod auth_level {
 #[cfg(test)]
 mod test {
 
-    use super::{set_token::GenerateToken, valid_token::decrpyt_token, User};
+    use super::{set_token::GenerateToken, valid_token::decrypt_token, User};
 
     #[test]
     fn generate_key() {
@@ -80,7 +80,7 @@ mod test {
         };
 
         let token = user.clone().generate().unwrap();
-        let valid_user = decrpyt_token(token).unwrap();
+        let valid_user = decrypt_token(token).unwrap();
 
         assert_eq!(user, valid_user);
     }
