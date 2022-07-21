@@ -7,7 +7,7 @@ use crate::utils::{
 crate::error_generate!(
     pub AdminUserError
     Json = JsonError
-    OrmDB = sea_orm::DbErr
+    OrmDB = orm_migrate::sql_models::common::CommonError
     Bcrypt = bcrypt::BcryptError
     Auth = AuthError
     Query = QueryPayloadError

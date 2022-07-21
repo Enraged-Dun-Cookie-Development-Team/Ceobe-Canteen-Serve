@@ -1,4 +1,5 @@
 use http::StatusCode;
+use orm_migrate::sql_models::common::CommonError;
 use status_err::ErrPrefix;
 
 use super::auth_level;
@@ -12,14 +13,7 @@ status_err::status_error!(
 );
 
 status_err::status_error!(
-    pub PasswordWrong [
-        ErrPrefix::UNAUTHORIZED,
-        4
-    ]=>"密码错误"
-);
-
-status_err::status_error!(
-    pub UserNotFound [
+    pub TokenInfoNotFound [
         ErrPrefix::UNAUTHORIZED,
         3: StatusCode::NOT_FOUND
     ]=>"Token对应信息不存在"
@@ -35,13 +29,13 @@ status_err::status_error!(
 error_generate!(
     pub AuthError
 
-    Jwt=jwt::Error
-    NoToken = TokenNotFound
-    NoUser = UserNotFound
-    Password = PasswordWrong
-    Actix = actix_web::Error
-    Db = sea_orm::DbErr
-    Bcrypto = bcrypt::BcryptError
+    Jwt = jwt::Error
+    Bcrypt = bcrypt::BcryptError
+
+    UserDbOperate = CommonError
+
     AuthLevel = auth_level::UnacceptableAuthorizationLevelError
+    NoToken = TokenNotFound
     TokenInvalid = TokenInvalid
+    TokenInfoNotFound = TokenInfoNotFound
 );

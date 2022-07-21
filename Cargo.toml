@@ -71,21 +71,6 @@ features = ["derive"]
 [dependencies.serde_json]
 version = "1.0.75"
 
-# data base crate
-[dependencies.sea-orm]
-version = "0.7"
-default-features = false
-features = [
-    "sqlx-mysql",
-    "runtime-tokio-rustls",
-    "macros",
-    # "debug-print"
-
-]
-
-[dependencies.sql_connection]
-path = "./database/sql_connection"
-
 [dependencies.crypto_str]
 path = "./libs/crypto_str"
 features = ["serde", "bcrypt"]
@@ -96,7 +81,6 @@ path = "./libs/range-limit"
 [dependencies.orm-migrate]
 package = "migration"
 path = "./migrate/sql-migration"
-features = ["lite-export"]
 
 [dependencies.ceobe-manager]
 path = "./libs/ceobe-manager"

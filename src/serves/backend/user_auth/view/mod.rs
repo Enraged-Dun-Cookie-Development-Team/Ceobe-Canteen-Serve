@@ -1,4 +1,4 @@
-use crate::utils::user_authorize::AuthLevel;
+use orm_migrate::sql_models::common::sql_models::auth_level::AuthLevel;
 
 crate::quick_struct! {
     pub CreateUser {

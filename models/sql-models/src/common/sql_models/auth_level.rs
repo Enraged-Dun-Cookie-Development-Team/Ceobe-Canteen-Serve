@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
     Serialize,
 )]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "auth")]
-pub enum Auth {
+pub enum AuthLevel {
     #[serde(rename = "chef")]
     #[sea_orm(string_value = "chef")]
     Chef,

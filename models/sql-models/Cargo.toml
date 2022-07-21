@@ -4,20 +4,30 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+thiserror = "1"
+typed-builder = "0.10"
+
 [dependencies.serde]
 version = "1"
 features = ["derive"]
 
 [dependencies.sea-orm]
-version="0.7"
+version = "0.9"
 default-features = false
-features=[
-    "sqlx-mysql",
-    "runtime-tokio-rustls",
-    "macros",
-    # "debug-print"
-]
+features = ["sqlx-mysql", "runtime-tokio-rustls", "macros"]
 
 [dependencies.sub-model]
-version="0.1"
+version = "0.1"
 
+[dependencies.checker]
+path = "../../libs/checker"
+
+[dependencies.range-limit]
+path = "../../libs/range-limit"
+
+[dependencies.sql_connection]
+path = "../../database/sql_connection"
+
+[dependencies.status-err]
+path = "../../libs/status-err"

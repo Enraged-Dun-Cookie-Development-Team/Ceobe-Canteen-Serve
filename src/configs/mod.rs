@@ -6,7 +6,6 @@ pub mod logger;
 pub mod resp_result_config;
 use mongo_connection::MongoDbConfig;
 use serde::Deserialize;
-use sql_connection::DbConfig;
 
 use self::{
     auth_config::AuthConfig, first_user::FirstUserConfig,
