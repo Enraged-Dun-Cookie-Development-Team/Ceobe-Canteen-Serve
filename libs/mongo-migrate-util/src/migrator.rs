@@ -9,20 +9,21 @@ pub trait MigratorTrait {
     fn migrators(&self) -> Vec<Box<dyn MigrationTrait>>;
 
     async fn register<D: DbManager + Send + 'static>(
-        &self, db: D,
+        &self, mut db_manage: D,
     ) -> Result<D, mongodb::error::Error> {
-        let manager = Manager::builder().db(db.get_db()).build();
+        let manager = Manager::builder().db(db_manage.get_db()).build();
         for migrate in self.migrators() {
             let _ = migrate.migrate(&manager).await?;
         }
         let Manager { db, collections } = manager;
-        Ok(<D as DbManager>::from_collects(db, collections))
+        db_manage.extent_collections(db, collections);
+        Ok(db_manage)
     }
 }
 
 pub trait DbManager {
-    fn get_db(self) -> Database;
-    fn from_collects<I: IntoIterator<Item = (TypeId, Collection<()>)>>(
-        db: Database, iter: I,
-    ) -> Self;
+    fn get_db(&mut self) -> Database;
+    fn extent_collections<I: IntoIterator<Item = (TypeId, Collection<()>)>>(
+        &mut self, db: Database, iter: I,
+    );
 }
