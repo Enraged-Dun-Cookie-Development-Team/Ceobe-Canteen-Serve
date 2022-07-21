@@ -11,15 +11,16 @@ mod controllers;
 mod error;
 mod view;
 use request_pretreat::{
-    prefabs::{JsonPayload, MapError, ToRespResult},
+    prefabs::{JsonPayload, ToRespResult},
     Pretreatment,
 };
 type AdminUserRResult<T> = RespResult<T, error::AdminUserError>;
 
 type UsernamePretreatment = Pretreatment<
     ToRespResult<
-        MapError<
-            PreLiteChecker<JsonPayload<UsernameUncheck>, UsernameChecker>,
+        PreLiteChecker<
+            JsonPayload<UsernameUncheck>,
+            UsernameChecker,
             AdminUserError,
         >,
     >,

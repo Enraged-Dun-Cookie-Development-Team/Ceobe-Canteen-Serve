@@ -9,15 +9,12 @@ type MansionRResult<T> = RespResult<T, error::MansionError>;
 
 use self::{
     error::MansionError,
-    models::checkers::{
+    models::{
         MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
     },
 };
 use crate::utils::{
-    req_pretreatment::{
-        prefabs::{MapErr, ToRResult},
-        ReqPretreatment,
-    },
+    req_pretreatment::{prefabs::ToRResult, ReqPretreatment},
     user_authorize::{
         auth_level::prefabs::{Architect, Chef},
         AuthenticationLevel,
@@ -34,11 +31,10 @@ crate::new_auth_level! {
 pub type MansionAuthentication =
     AuthenticationLevel<MansionAuth, MansionError>;
 
-pub type OptionMidCheckerPretreatment = ReqPretreatment<
-    ToRResult<MapErr<OptionMidCheckerPretreat, MansionError>>,
->;
+pub type OptionMidCheckerPretreatment =
+    ReqPretreatment<ToRResult<OptionMidCheckerPretreat>>;
 pub type MidCheckerPretreatment =
-    ReqPretreatment<ToRResult<MapErr<MIdCheckerPretreat, MansionError>>>;
+    ReqPretreatment<ToRResult<MIdCheckerPretreat>>;
 
 pub type MansionBodyCheckerPretreatment =
-    ReqPretreatment<ToRResult<MapErr<MansionCheckerPretreat, MansionError>>>;
+    ReqPretreatment<ToRResult<MansionCheckerPretreat>>;
