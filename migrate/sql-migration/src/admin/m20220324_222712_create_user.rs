@@ -1,6 +1,6 @@
-use sea_schema::migration::prelude::*;
-use sql_models::common::{
-    auth::Auth,
+use sea_orm_migration::prelude::*;
+use sql_models::common::sql_models::{
+    auth_level::AuthLevel,
     user::{self, Column::*},
 };
 pub struct Migration;
@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
             )
             .col(ColumnDef::new(Password).char_len(64).not_null())
             .col(
-                ColumnDef::new_with_type(Auth, Auth::column_type())
+                ColumnDef::new_with_type(Auth, AuthLevel::column_type())
                     .not_null(),
             );
         manager.create_table(table).await?;

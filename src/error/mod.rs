@@ -137,7 +137,6 @@ macro_rules! error_generate {
 error_generate!(
     pub GlobalError
     Io=std::io::Error
-    Db= sea_orm::DbErr
     Route=RouteNotExistError
     Mongo=mongodb::error::Error
 );

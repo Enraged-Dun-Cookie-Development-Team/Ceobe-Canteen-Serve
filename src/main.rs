@@ -12,7 +12,7 @@ use configs::{
 };
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use sql_connection::connect_to_sql_database;
+use orm_migrate::sql_connection::connect_to_sql_database;
 use time_usage::async_time_usage_with_name;
 use utils::{
     middleware::benchmark::BenchMarkFactor,

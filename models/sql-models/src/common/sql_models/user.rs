@@ -1,7 +1,7 @@
 use sea_orm::entity::prelude::*;
 use sub_model::SubModel;
 
-use super::auth::Auth;
+use super::auth_level::AuthLevel;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "user")]
@@ -18,16 +18,12 @@ pub struct Model {
     #[sea_orm(column_type = "Char(Some(64))")]
     pub password: String,
     #[sub_model(ignore("VerifiedUser"))]
-    pub auth: Auth,
+    pub auth: AuthLevel,
     #[sea_orm(default_value = 0)]
     pub num_pwd_change: u32,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter, DeriveRelation)]
 pub enum Relation {}
-
-// impl RelationTrait for Relation {
-//     fn def(&self) -> RelationDef { panic!("No Relation") }
-// }
 
 impl ActiveModelBehavior for ActiveModel {}

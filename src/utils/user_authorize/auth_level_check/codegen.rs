@@ -69,12 +69,12 @@ mod test {
 
         let resp = MansionAuth::verify(&l);
 
-        assert_eq!(resp, false);
+        assert!(!resp);
         let resp = MansionAuth::verify(&AuthLevel::Cooker);
 
-        assert_eq!(resp, true);
+        assert!(resp);
         let resp = MansionAuth::verify(&AuthLevel::Architect);
 
-        assert_eq!(resp, true);
+        assert!(resp);
     }
 }

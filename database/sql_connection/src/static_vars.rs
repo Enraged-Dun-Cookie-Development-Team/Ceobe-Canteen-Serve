@@ -1,5 +1,8 @@
 use once_cell::sync::OnceCell;
-use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbErr};
+use sea_orm::{
+    ConnectOptions, Database, DatabaseConnection, DatabaseTransaction, DbErr,
+    TransactionTrait,
+};
 
 use crate::config::{DbConnectConfig, DbOptionsConfig};
 
@@ -42,4 +45,8 @@ where
 
 pub fn get_sql_database() -> &'static DatabaseConnection {
     SQL_DATABASE_CONNECTION.get().expect("Sql 数据库连接未建立")
+}
+
+pub async fn get_sql_transaction() -> Result<DatabaseTransaction, DbErr> {
+    get_sql_database().begin().await
 }

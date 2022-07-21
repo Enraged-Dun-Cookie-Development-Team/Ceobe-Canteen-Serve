@@ -4,8 +4,8 @@ pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
+use orm_migrate::sql_connection::DbConfig;
 use serde::Deserialize;
-use sql_connection::DbConfig;
 
 use self::{
     auth_config::AuthConfig, first_user::FirstUserConfig,

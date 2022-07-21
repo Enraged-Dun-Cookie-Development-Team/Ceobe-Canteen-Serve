@@ -1,14 +1,9 @@
 mod admin;
 
-#[cfg(not(feature = "lite-export"))]
-pub use sea_schema::migration::*;
-use sea_schema::migration::{async_trait, MigrationTrait};
-
-#[cfg(feature = "lite-export")]
+pub use sea_orm_migration::MigratorTrait;
+use sea_orm_migration::{async_trait, MigrationTrait};
+pub use sql_models::{self, sql_connection};
 pub struct Migrator;
-
-#[cfg(feature = "lite-export")]
-pub use {sea_schema::migration::MigratorTrait, sql_models};
 
 #[async_trait::async_trait]
 impl MigratorTrait for Migrator {
@@ -20,7 +15,7 @@ impl MigratorTrait for Migrator {
         ]
     }
 }
-#[macro_export]
+#[macro_export(crate)]
 macro_rules! migrate_group {
     [$($t:expr)*] => {
         vec![
