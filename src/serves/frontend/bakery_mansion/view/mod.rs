@@ -1,8 +1,6 @@
 mod convert;
 use crate::models::mansion::preludes::*;
 
-
-
 crate::quick_struct! {
     pub ViewMansionWithTime {
         id:String
@@ -26,4 +24,3 @@ crate::quick_struct! {
         forecast:String
     }
 }
-

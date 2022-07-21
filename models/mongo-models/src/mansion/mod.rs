@@ -26,9 +26,7 @@ impl status_err::StatusErr for MansionDataError {
         match self {
             MansionDataError::Db(db) => db.prefix(),
             MansionDataError::MansionNotFound => ErrPrefix::NOT_FOUND,
-            MansionDataError::MansionIdExist (_)=> {
-                ErrPrefix::CHECKER
-            }
+            MansionDataError::MansionIdExist(_) => ErrPrefix::CHECKER,
         }
     }
 
@@ -44,9 +42,7 @@ impl status_err::StatusErr for MansionDataError {
         match self {
             MansionDataError::Db(db) => db.http_code(),
             MansionDataError::MansionNotFound => HttpCode::NOT_FOUND,
-            MansionDataError::MansionIdExist (_) => {
-                HttpCode::CONFLICT
-            }
+            MansionDataError::MansionIdExist(_) => HttpCode::CONFLICT,
         }
     }
 }

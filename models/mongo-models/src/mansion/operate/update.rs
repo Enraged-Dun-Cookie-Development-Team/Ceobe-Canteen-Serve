@@ -45,7 +45,7 @@ impl MansionDataMongoOperate {
             .await?;
         }
         else {
-            return Err(MansionDataError::MansionIdExist (
+            return Err(MansionDataError::MansionIdExist(
                 mansion.id.to_string(),
             ));
         }
