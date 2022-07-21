@@ -11,15 +11,15 @@ type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
 #[derive(Debug, Error)]
 pub enum MansionDataCheckerError {
-    #[error("数据长度校验异常 {0}")]
+    #[error("数据长度校验异常: {0}")]
     Size(#[from] range_limit::Error),
-    #[error("未知饼学大厦格式：{0:?}")]
+    #[error("未知饼学大厦ID格式: {0:?}")]
     UnknownMansionIdFormat(String),
-    #[error("未知的预期确信度等级：{0:?}")]
+    #[error("未知的预期确信度等级: {0:?}")]
     UnknownPredictType(String),
-    #[error("错误的Fraction值:[{0}]范围(0~5)")]
+    #[error("错误的Fraction值: [{0}] 范围(0~5)")]
     BadFraction(i16),
-    #[error("饼学大厦日期格式异常 {0}")]
+    #[error("饼学大厦日期格式异常: {0}")]
     MansionDataFormat(#[from] chrono::ParseError),
 }
 

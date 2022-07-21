@@ -37,9 +37,7 @@ impl MansionDataMongoOperate {
             .map_err(Into::into)
         }
         else {
-            Err(MansionDataError::MansionIdExist {
-                mansion_id: mansion.id.to_string(),
-            })
+            Err(MansionDataError::MansionIdExist(mansion.id.to_string()))
         }
     }
 }
