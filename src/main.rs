@@ -12,7 +12,7 @@ use configs::{
 };
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
-use mongo_migration::mongo_models::mongo_connection::MongoConnectBuilder;
+use mongo_migration::mongo_connection::MongoConnectBuilder;
 use sql_connection::connect_to_sql_database;
 use time_usage::async_time_usage_with_name;
 use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
