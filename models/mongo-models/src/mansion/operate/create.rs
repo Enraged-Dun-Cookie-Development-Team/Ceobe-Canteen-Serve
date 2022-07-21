@@ -2,7 +2,7 @@ use mongo_connection::get_mongo_database;
 use mongodb::bson::doc;
 
 use super::MansionDataMongoOperate;
-use crate::mansion::{preludes::{ModelMansion, MansionId}, MansionDataError, check::Mansion};
+use crate::mansion::{preludes::{ModelMansion, MansionId}, MansionDataError, checked::Mansion};
 
 impl MansionDataMongoOperate {
     /// 新建饼学大厦

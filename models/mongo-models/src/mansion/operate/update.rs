@@ -3,7 +3,7 @@ use mongodb::bson::doc;
 
 use super::MansionDataMongoOperate;
 use crate::mansion::{
-    check::Mansion,
+    checked::Mansion,
     preludes::{MansionId, ModelMansion},
     MansionDataError,
 };

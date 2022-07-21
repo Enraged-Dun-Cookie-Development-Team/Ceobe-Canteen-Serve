@@ -1,5 +1,5 @@
 use crate::{
-    models::mansion::{check::Info, mongo_db::Predict},
+    models::mansion::{checked::Info, mongo_db::Predict},
     serves::frontend::bakery_mansion::error::{
         MansionError, UnknownPredictType,
     },

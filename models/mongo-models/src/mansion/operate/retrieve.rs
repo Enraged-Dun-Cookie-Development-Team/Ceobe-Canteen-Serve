@@ -10,7 +10,7 @@ use mongodb::{
 
 use super::MansionDataMongoOperate;
 use crate::mansion::{
-    check::Mid,
+    checked::Mid,
     preludes::{MansionId, ModelMansion, ModifyAt},
     MansionDataError,
 };

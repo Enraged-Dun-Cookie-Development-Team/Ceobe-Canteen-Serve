@@ -2,7 +2,7 @@ use chrono::NaiveDate;
 
 use super::each_info::{EachInfoUncheck, InfoChecker};
 use crate::{
-    models::mansion::check::{Daily, Info},
+    models::mansion::checked::{Daily, Info},
     serves::backend::bakery_mansion::error::MansionError,
     utils::{
         data_checker::{

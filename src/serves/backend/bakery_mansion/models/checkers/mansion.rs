@@ -6,7 +6,7 @@ use super::{
     id_checker::IdChecker,
 };
 use crate::{
-    models::mansion::check::{Daily, Mansion},
+    models::mansion::checked::{Daily, Mansion},
     serves::backend::bakery_mansion::error::{BadFraction, MansionError},
     utils::{
         data_checker::{

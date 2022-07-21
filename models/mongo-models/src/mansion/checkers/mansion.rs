@@ -1,15 +1,17 @@
-use checker::{Checker, check_obj, prefabs::collect_checkers::iter_checkers::IntoIterChecker};
+use checker::{
+    check_obj, prefabs::collect_checkers::iter_checkers::IntoIterChecker,
+    Checker,
+};
 use futures::future::{err, ok, Ready};
-use range_limit::{RangeBoundLimit, limits::max_limit::MaxLimit};
+use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use serde::Deserialize;
-use crate::mansion::MansionDataError;
-
-use crate::mansion::check::{Mansion, Daily};
 
 use super::{
     daily::{DailyChecker, DailyUncheck},
     id_checker::IdChecker,
+    MansionDataCheckerError,
 };
+use crate::mansion::checked::{Daily, Mansion};
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 check_obj! {
     #[derive(Debug,Deserialize)]
@@ -21,7 +23,7 @@ check_obj! {
         pub fraction: FractionCheck,
         pub daily:IntoIterChecker<Vec<DailyUncheck>,DailyChecker,Vec<Daily>>
     }
-    err:MansionDataError
+    err:MansionDataCheckerError
 }
 
 #[derive(Debug)]
@@ -30,8 +32,8 @@ pub struct FractionCheck;
 impl Checker for FractionCheck {
     type Args = ();
     type Checked = i16;
-    type Err = MansionDataError;
-    type Fut = Ready<Result<i16, MansionDataError>>;
+    type Err = MansionDataCheckerError;
+    type Fut = Ready<Result<i16, Self::Err>>;
     type Unchecked = i16;
 
     fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
@@ -39,7 +41,7 @@ impl Checker for FractionCheck {
             ok(uncheck)
         }
         else {
-            err(MansionDataError::BadFraction.into())
+            err(MansionDataCheckerError::BadFraction(uncheck))
         }
     }
 }
