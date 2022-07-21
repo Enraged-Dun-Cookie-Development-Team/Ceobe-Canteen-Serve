@@ -1,10 +1,14 @@
 use futures::Future;
-use orm_migrate::sql_models::common::operate::CommonSqlOperate;
+use orm_migrate::sql_models::common::{
+    operate::CommonSqlOperate, CommonError,
+};
 use time_usage::async_time_usage_with_name;
 
 use super::{
-    config::TokenHeader as Token, error::AuthError,
-    valid_token::decrpyt_token, AuthInfo,
+    config::TokenHeader as Token,
+    error::{AuthError, TokenInfoNotFound},
+    valid_token::decrpyt_token,
+    AuthInfo,
 };
 use crate::utils::{
     data_struct::header_info::HeaderInfo,
@@ -44,7 +48,15 @@ impl Pretreatment for TokenAuth {
                 |user| user,
                 TokenInvalid,
             )
-            .await??;
+            .await
+            .map_err(|err| {
+                match err {
+                    CommonError::UserNotExist => {
+                        AuthError::TokenInfoNotFound(TokenInfoNotFound)
+                    }
+                    err => AuthError::UserDbOperate(err),
+                }
+            })??;
 
             Ok(user_info)
         }

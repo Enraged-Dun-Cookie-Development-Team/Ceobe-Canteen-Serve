@@ -1,6 +1,6 @@
 use orm_migrate::sql_models::common::CommonError;
 use status_err::ErrPrefix;
-
+use http::StatusCode;
 use super::auth_level;
 use crate::error_generate;
 
@@ -9,6 +9,13 @@ status_err::status_error!(
         ErrPrefix::UNAUTHORIZED,
         1
     ]=>"缺少Token字段"
+);
+
+status_err::status_error!(
+    pub TokenInfoNotFound [
+        ErrPrefix::UNAUTHORIZED,
+        3: StatusCode::NOT_FOUND
+    ]=>"Token对应信息不存在"
 );
 
 status_err::status_error!(
@@ -22,9 +29,12 @@ error_generate!(
     pub AuthError
 
     Jwt = jwt::Error
-    NoToken = TokenNotFound
-    UserDbOperate = CommonError
     Bcrypt = bcrypt::BcryptError
+    
+    UserDbOperate = CommonError
+    
     AuthLevel = auth_level::UnacceptableAuthorizationLevelError
+    NoToken = TokenNotFound
     TokenInvalid = TokenInvalid
+    TokenInfoNotFound = TokenInfoNotFound
 );
