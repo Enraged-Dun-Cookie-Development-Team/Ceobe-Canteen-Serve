@@ -1,6 +1,5 @@
 use orm_migrate::sql_connection::DbConnectConfig;
 
-
 #[derive(Debug, serde::Deserialize)]
 pub struct MongoDbConfig {
     username: String,
