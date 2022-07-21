@@ -1,7 +1,7 @@
 const MANSION_IDX_NAME: &str = "mansion_idx";
 const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
 
-use mongo_connection::{Manager, MigrationTrait};
+use mongo_migrate_util::{Manager, MigrationTrait};
 use mongo_models::mansion::preludes::*;
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 

@@ -1,12 +1,12 @@
+use mongo_migrate_util::MigratorTrait;
 use mongodb::{options::ClientOptions, Database};
 
 use crate::{
-    database::builder::DatabaseBuilder, mongo_utils::migrator::MigratorTrait,
-    static_vars::set_mongo_database, DbConnectConfig, MongoClient, MongoErr,
+    database::builder::DatabaseBuilder, static_vars::set_mongo_database,
+    DbConnectConfig, MongoClient, MongoErr,
 };
 
 pub struct MongoConnectBuilder {
-    _db_client: MongoClient,
     db: Option<DatabaseBuilder>,
 }
 
@@ -22,11 +22,8 @@ impl MongoConnectBuilder {
             Into::<Option<&Database>>::into(&default_db).map(|db| db.name())
         );
 
-        let db = default_db.map(DatabaseBuilder::new);
-        Ok(Self {
-            _db_client: client,
-            db,
-        })
+        let db = default_db.map(|db| DatabaseBuilder::new(db, client));
+        Ok(Self { db })
     }
 
     pub async fn apply_mongo_migration<M: MigratorTrait + Sync>(

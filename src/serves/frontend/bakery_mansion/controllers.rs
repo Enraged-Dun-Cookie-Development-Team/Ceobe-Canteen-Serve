@@ -11,7 +11,7 @@ impl BakeryMansionFrontend {
     pub async fn get_mansion_with_time(
         ReqPretreatment(mid): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansionWithTime> {
-        Ok(MansionDataMongoOperate::get_mansion_by_id(mid.id)
+        Ok(MansionDataMongoOperate::get_mansion_by_id(&mid.id)
             .await?
             .into())
         .into()

@@ -19,3 +19,6 @@ typed-builder = "0.10"
 
 [dependencies.status-err]
 path = "../../libs/status-err"
+
+[dependencies.mongo-migrate-util]
+path = "../../libs/mongo-migrate-util"

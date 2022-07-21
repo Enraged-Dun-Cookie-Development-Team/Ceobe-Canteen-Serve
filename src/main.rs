@@ -71,17 +71,6 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         .expect("注册Collection错误")
         .build();
 
-    // let mongo_conn = async_time_usage_with_name(
-    //     "连接到MongoDb数据库",
-    //     MongoBuild::with_config(&config.mongodb)
-    //         .await
-    //         .expect("无法连接到MongoDb")
-    //         .collect_migration(mongo_migration::Migrator),
-    // )
-    // .await
-    // .expect("Mongo Db 模型建立失败")
-    // .build();
-
     // load server socket config
     let http_socket = HttpConfig::socket(&config.http_listen);
     // 配置文件打包
