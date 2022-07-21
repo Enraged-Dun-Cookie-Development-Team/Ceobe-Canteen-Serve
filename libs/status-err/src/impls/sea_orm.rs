@@ -12,13 +12,14 @@ impl StatusErr for sea_orm::DbErr {
     #[inline]
     fn code(&self) -> u16 {
         match self {
-            sea_orm::DbErr::Conn(_) => 1,
-            sea_orm::DbErr::Exec(_) => 2,
-            sea_orm::DbErr::Query(_) => 3,
-            sea_orm::DbErr::RecordNotFound(_) => 4,
-            sea_orm::DbErr::Custom(_) => 5,
-            sea_orm::DbErr::Type(_) => 6,
-            sea_orm::DbErr::Json(_) => 7,
+            sea_orm::DbErr::Conn(_) => 0x00_01,
+            sea_orm::DbErr::Exec(_) => 0x00_02,
+            sea_orm::DbErr::Query(_) => 0x00_03,
+            sea_orm::DbErr::RecordNotFound(_) => 0x00_04,
+            sea_orm::DbErr::Custom(_) => 0x00_05,
+            sea_orm::DbErr::Type(_) => 0x00_06,
+            sea_orm::DbErr::Json(_) => 0x00_07,
+            sea_orm::DbErr::Migration(_) => 0x00_08,
         }
     }
 }

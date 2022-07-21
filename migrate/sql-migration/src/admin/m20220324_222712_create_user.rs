@@ -1,4 +1,4 @@
-use sea_schema::migration::prelude::*;
+use sea_orm_migration::prelude::*;
 use sql_models::common::sql_models::{
     auth_level::AuthLevel,
     user::{self, Column::*},

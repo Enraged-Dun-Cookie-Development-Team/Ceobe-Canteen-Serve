@@ -81,7 +81,6 @@ path = "./libs/range-limit"
 [dependencies.orm-migrate]
 package = "migration"
 path = "./migrate/sql-migration"
-features = ["lite-export"]
 
 [dependencies.ceobe-manager]
 path = "./libs/ceobe-manager"
