@@ -1,6 +1,7 @@
+use http::StatusCode;
 use orm_migrate::sql_models::common::CommonError;
 use status_err::ErrPrefix;
-use http::StatusCode;
+
 use super::auth_level;
 use crate::error_generate;
 
@@ -30,9 +31,9 @@ error_generate!(
 
     Jwt = jwt::Error
     Bcrypt = bcrypt::BcryptError
-    
+
     UserDbOperate = CommonError
-    
+
     AuthLevel = auth_level::UnacceptableAuthorizationLevelError
     NoToken = TokenNotFound
     TokenInvalid = TokenInvalid
