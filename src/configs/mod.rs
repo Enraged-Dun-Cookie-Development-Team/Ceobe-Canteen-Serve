@@ -5,6 +5,7 @@ pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
 use mongo_connection::MongoDbConfig;
+use orm_migrate::sql_connection::DbConfig;
 use serde::Deserialize;
 
 use self::{
