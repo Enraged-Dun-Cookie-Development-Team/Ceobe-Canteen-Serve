@@ -71,7 +71,7 @@ impl DatabaseManage {
         handle(collection).await.map_err(MongoDbError::from)
     }
 
-    pub async fn get_collection<C>(
+    pub  fn get_collection<C>(
         &self,
     ) -> Result<CollectionGuard<C>, MongoDbError>
     where
