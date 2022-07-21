@@ -75,7 +75,7 @@ impl MansionDataMongoOperate {
     /// 获取大厦id列表（最底层）
     /// params：filter 过滤器
     pub async fn get_mansion_id_list_by_filter(
-        filter:  impl Into<Option<Document>>,
+        filter: impl Into<Option<Document>>,
     ) -> Result<Vec<String>, MansionDataError> {
         let db = get_mongo_database();
 
@@ -108,8 +108,8 @@ impl MansionDataMongoOperate {
     }
 
     /// 无条件获取大厦id列表
-    pub async fn get_all_mansion_id_list() -> Result<Vec<String>, MansionDataError>
-    {
+    pub async fn get_all_mansion_id_list(
+    ) -> Result<Vec<String>, MansionDataError> {
         let res = Self::get_mansion_id_list_by_filter(None).await?;
         Ok(res)
     }

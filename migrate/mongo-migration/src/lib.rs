@@ -1,7 +1,7 @@
 mod migrations;
 
+use mongo_connection::{MigrationTrait, MigratorTrait};
 pub use mongo_models;
-use mongo_connection::{MigratorTrait, MigrationTrait};
 pub struct Migrator;
 
 impl MigratorTrait for Migrator {

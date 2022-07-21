@@ -2,7 +2,10 @@ use checker::{check_obj, prefabs::option_checker::OptionChecker, Checker};
 use futures_util::future::{ready, Ready};
 
 use super::MansionDataCheckerError;
-use crate::mansion::{checked::OptionMid, preludes::{MansionId, Mid}};
+use crate::mansion::{
+    checked::OptionMid,
+    preludes::{MansionId, Mid},
+};
 
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
@@ -48,11 +51,11 @@ impl Checker for IdChecker {
 
     fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         use MansionDataCheckerError::UnknownMansionIdFormat;
-        let mut sp = uncheck.split(".");
+        let mut sp = uncheck.split('.');
 
         ready(
             sp.next()
-                .zip(sp.next().or("0".into()))
+                .zip(sp.next().or(Some("0")))
                 // 检查是否只有一个小数点
                 .zip(if sp.next().is_none() { Some(()) } else { None })
                 .map(|(core, _)| core)
@@ -69,7 +72,7 @@ impl Checker for IdChecker {
                         .minor_id(minor_id)
                         .build()
                 })
-                .ok_or_else(|| UnknownMansionIdFormat(uncheck)),
+                .ok_or(UnknownMansionIdFormat(uncheck)),
         )
     }
 }

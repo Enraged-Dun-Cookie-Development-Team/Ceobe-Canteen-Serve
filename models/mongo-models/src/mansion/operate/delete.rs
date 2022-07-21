@@ -23,9 +23,7 @@ impl MansionDataMongoOperate {
             }
         };
         db.doing::<_, ModelMansion, _, _>(|collect| {
-            async move {
-                collect.delete_one(filter, None).await
-            }
+            async move { collect.delete_one(filter, None).await }
         })
         .await?;
 
