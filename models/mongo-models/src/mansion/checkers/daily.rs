@@ -1,36 +1,39 @@
-use chrono::NaiveDate;
-use checker::{check_obj, Checker, prefabs::collect_checkers::iter_checkers::IntoIterChecker};
-use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
-use crate::{ mansion::{check::{Daily, Info}, MansionDataError},
+use checker::{
+    check_obj, prefabs::collect_checkers::iter_checkers::IntoIterChecker,
+    Checker,
 };
-use futures_util;
+use chrono::NaiveDate;
+use futures_util::{self, future::ready};
 
-use super::each_info::{EachInfoUncheck, InfoChecker};
+use super::{
+    each_info::{EachInfoUncheck, InfoChecker},
+    MansionDataCheckerError, MaxLimitString,
+};
+use crate::mansion::checked::{Daily, Info};
 
-type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 check_obj! {
     #[derive(serde::Deserialize,Debug)]
     pub struct DailyUncheck = DailyChecker > Daily{
         #[serde(rename="datetime")]
-        pub date_time:DateFormatChecker,
+        pub date_time: DateFormatChecker,
         pub content: MaxLimitString<2048>,
-        pub info:IntoIterChecker<Vec<EachInfoUncheck>,InfoChecker,Vec<Info>>
+        pub info: IntoIterChecker<Vec<EachInfoUncheck>,InfoChecker,Vec<Info>>
     }
-    err:MansionDataError
+    err:MansionDataCheckerError
 }
 pub struct DateFormatChecker;
 
 impl Checker for DateFormatChecker {
     type Args = ();
     type Checked = NaiveDate;
-    type Err = MansionDataError;
+    type Err = MansionDataCheckerError;
     type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        let date = NaiveDate::parse_from_str(&uncheck, "%Y-%m-%d")
-            .map_err(MansionDataError::from);
-
-        futures_util::future::ready(date)
+        ready(
+            NaiveDate::parse_from_str(&uncheck, "%Y-%m-%d")
+                .map_err(Into::into),
+        )
     }
 }

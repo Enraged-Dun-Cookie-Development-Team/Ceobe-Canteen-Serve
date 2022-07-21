@@ -3,7 +3,7 @@ use mongodb::bson::doc;
 
 use super::MansionDataMongoOperate;
 use crate::mansion::{
-    check::Mansion,
+    checked::Mansion,
     preludes::{MansionId, ModelMansion},
     MansionDataError,
 };
@@ -33,7 +33,7 @@ impl MansionDataMongoOperate {
                         .find_one_and_replace(
                             filter,
                             ModelMansion::with_modify_time(
-                                mansion.into(),
+                                mansion,
                                 old_mansion_time.now_modify(),
                             ),
                             None,

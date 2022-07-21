@@ -1,7 +1,7 @@
 mod create;
-mod update;
-mod retrieve;
 mod delete;
+mod retrieve;
+mod update;
 mod verify;
 
 pub struct MansionDataMongoOperate;

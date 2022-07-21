@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
-use super::check::{Daily, Mansion};
+use super::checked::{Daily, Mansion};
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct MansionId {

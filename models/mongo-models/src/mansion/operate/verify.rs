@@ -1,5 +1,5 @@
 use mongo_connection::get_mongo_database;
-use mongodb::bson::{Document};
+use mongodb::bson::Document;
 
 use super::MansionDataMongoOperate;
 use crate::mansion::{preludes::ModelMansion, MansionDataError};

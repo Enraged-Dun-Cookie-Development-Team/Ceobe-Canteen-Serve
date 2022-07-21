@@ -2,7 +2,7 @@ use futures_util::future::{ready, Ready};
 
 use crate::{
     models::mansion::{
-        check::{Mid, OptionMid},
+        checked::{Mid, OptionMid},
         mongo_db::MansionId,
     },
     serves::frontend::bakery_mansion::error::{MansionError, UnknownId},
