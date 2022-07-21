@@ -14,7 +14,7 @@ use sha2::Sha256;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
 use crate::{
-    models::common::sql::sql_models::user,
+    models::common::sql::models::user,
     utils::req_pretreatment::prefabs::ToRResult,
 };
 
@@ -38,7 +38,7 @@ crate::quick_struct! {
     }
 }
 
-pub use orm_migrate::sql_models::common::sql_models::auth_level::AuthLevel;
+pub use orm_migrate::sql_models::user::models::auth_level::AuthLevel;
 
 /// 用户权限信息
 pub type AuthInfo = user::Model;

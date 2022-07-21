@@ -5,8 +5,8 @@ use sea_orm::{
 use sql_connection::get_sql_database;
 
 use super::{CommonSqlOperate, UserCounts};
-use crate::common::{
-    sql_models::{auth_level::AuthLevel, user},
+use crate::user::{
+    models::{auth_level::AuthLevel, user},
     CommonError,
 };
 

@@ -3,7 +3,7 @@ use thiserror::Error;
 
 pub mod checkers;
 pub mod operate;
-pub mod sql_models;
+pub mod models;
 
 #[derive(Debug, Error)]
 pub enum CommonError {

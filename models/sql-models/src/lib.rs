@@ -1,3 +1,3 @@
-pub mod common;
+pub mod user;
 
 pub use sql_connection;

@@ -1,5 +1,5 @@
 use super::{get_mansion_collection, MansionDataMongoOperate};
-use crate::mansion::{
+use crate::mansion_data::{
     checked::Mansion, preludes::ModelMansion, MansionDataError,
 };
 

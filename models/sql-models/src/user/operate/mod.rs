@@ -1,9 +1,9 @@
-mod modify_user;
-mod query_user;
-mod user_count;
+mod update;
+mod retrieve;
+mod verify;
 use sea_orm::FromQueryResult;
 
-mod add_user;
+mod create;
 
 pub struct CommonSqlOperate;
 

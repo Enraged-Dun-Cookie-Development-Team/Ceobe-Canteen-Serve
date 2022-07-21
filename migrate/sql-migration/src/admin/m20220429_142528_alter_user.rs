@@ -1,5 +1,5 @@
 use sea_orm_migration::prelude::*;
-use sql_models::common::sql_models::user::{self, Column::NumPwdChange};
+use sql_models::user::models::user::{self, Column::NumPwdChange};
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str { "m20220429_142528_alter_user" }

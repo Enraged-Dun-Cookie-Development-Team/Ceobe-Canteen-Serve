@@ -5,7 +5,7 @@ use sea_orm::{
 use sql_connection::{get_sql_database, get_sql_transaction};
 
 use super::CommonSqlOperate;
-use crate::common::{sql_models::user, CommonError};
+use crate::user::{models::user, CommonError};
 
 impl CommonSqlOperate {
     pub async fn query_one_user_raw(

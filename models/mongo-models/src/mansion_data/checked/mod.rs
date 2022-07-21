@@ -2,7 +2,7 @@ use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-use super::mongo_db::{MansionId, Predict};
+use super::models::{MansionId, Predict};
 
 /// 反序列化器，必须有mansion Id
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]

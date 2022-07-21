@@ -2,14 +2,14 @@ use std::borrow::Cow;
 
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use orm_migrate::sql_models::common::operate::CommonSqlOperate;
+use orm_migrate::sql_models::user::operate::CommonSqlOperate;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use request_pretreat::Pretreatment;
 use time_usage::sync_time_usage_with_name;
 
 use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
-    models::common::sql::sql_models::auth_level::AuthLevel,
+    models::common::sql::models::auth_level::AuthLevel,
     router::UserAuthBackend,
     serves::backend::user_auth::{
         error::AdminUserError,

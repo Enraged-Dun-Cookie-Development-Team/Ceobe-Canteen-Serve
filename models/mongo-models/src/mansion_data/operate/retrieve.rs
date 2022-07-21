@@ -9,7 +9,7 @@ use mongodb::{
 };
 
 use super::{get_mansion_collection, MansionDataMongoOperate};
-use crate::mansion::{
+use crate::mansion_data::{
     checked::Mid,
     preludes::{MansionId, ModelMansion, ModifyAt},
     MansionDataError,

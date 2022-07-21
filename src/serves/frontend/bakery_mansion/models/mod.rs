@@ -1,4 +1,4 @@
-use mongo_migration::mongo_models::mansion::checkers::id_checker::{
+use mongo_migration::mongo_models::mansion_data::checkers::id_checker::{
     MidChecker, MidUncheck,
 };
 use request_pretreat::prefabs::QueryArgs;

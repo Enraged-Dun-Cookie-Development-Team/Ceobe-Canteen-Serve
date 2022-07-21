@@ -1,5 +1,5 @@
 use http::StatusCode;
-use orm_migrate::sql_models::common::CommonError;
+use orm_migrate::sql_models::user::CommonError;
 use status_err::ErrPrefix;
 
 use super::auth_level;

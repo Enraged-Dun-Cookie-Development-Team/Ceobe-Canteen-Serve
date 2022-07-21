@@ -2,8 +2,8 @@ use sea_orm::{ActiveModelTrait, ConnectionTrait, TransactionTrait};
 use sql_connection::{get_sql_database, sea_orm::Set};
 
 use super::CommonSqlOperate;
-use crate::common::{
-    sql_models::{auth_level::AuthLevel, user},
+use crate::user::{
+    models::{auth_level::AuthLevel, user},
     CommonError,
 };
 
