@@ -12,6 +12,7 @@ impl MigratorTrait for Migrator {
             admin::m20220324_222712_create_user::Migration
             admin::m20220429_142528_alter_user::Migration
             admin::m20220429_230336_alter_user::Migration
+            admin::m20220722_082735_change_user_table_name::Migration
         ]
     }
 }
