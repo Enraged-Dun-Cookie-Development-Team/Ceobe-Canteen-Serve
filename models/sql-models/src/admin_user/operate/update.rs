@@ -5,7 +5,7 @@ use sea_orm::{
 use sql_connection::get_sql_transaction;
 
 use super::UserSqlOperate;
-use crate::user::{models::user, UserError};
+use crate::admin_user::{models::user, UserError};
 
 impl UserSqlOperate {
     pub async fn update_user_name(

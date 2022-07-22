@@ -2,7 +2,7 @@ use checker::check_obj;
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use typed_builder::TypedBuilder;
 
-use crate::user::UserError;
+use crate::admin_user::UserError;
 
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 

@@ -12,7 +12,7 @@ impl MigrationTrait for Migration {
     async fn migrate(
         &self, manager: &Manager,
     ) -> Result<(), mongodb::error::Error> {
-        let mansion = manager.collection::<ModelMansion, _>("mansion-data");
+        let mansion = manager.collection::<ModelMansion, _>("bakery_mansion");
         let all_idx = mansion.list_index_names().await.unwrap_or_default();
         log::info!(" all idx {:?}", all_idx);
 

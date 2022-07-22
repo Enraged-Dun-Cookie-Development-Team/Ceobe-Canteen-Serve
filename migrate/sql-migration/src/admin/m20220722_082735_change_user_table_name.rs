@@ -10,7 +10,7 @@ impl MigrationName for Migration {
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut rename = sea_query::Table::rename();
-        rename.table(User::Table, Users::Table);
+        rename.table(User::Table, AdminUser::Table);
 
         manager.exec_stmt(rename).await?;
         Ok(())
@@ -18,7 +18,7 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut rename = sea_query::Table::rename();
-        rename.table(Users::Table, User::Table);
+        rename.table(AdminUser::Table, User::Table);
 
         manager.exec_stmt(rename).await?;
         Ok(())
@@ -26,6 +26,6 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(Debug, Iden)]
-pub enum Users {
+pub enum AdminUser {
     Table,
 }

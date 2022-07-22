@@ -5,7 +5,7 @@ use sea_orm::{
 use sql_connection::get_sql_database;
 
 use super::{UserSqlOperate, UserCounts};
-use crate::user::{
+use crate::admin_user::{
     models::{auth_level::AuthLevel, user},
     UserError,
 };

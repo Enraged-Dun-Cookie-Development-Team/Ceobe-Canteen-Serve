@@ -2,7 +2,7 @@ use sea_orm::{ActiveModelTrait, ConnectionTrait, TransactionTrait};
 use sql_connection::{get_sql_database, sea_orm::Set};
 
 use super::UserSqlOperate;
-use crate::user::{
+use crate::admin_user::{
     models::{auth_level::AuthLevel, user},
     UserError,
 };

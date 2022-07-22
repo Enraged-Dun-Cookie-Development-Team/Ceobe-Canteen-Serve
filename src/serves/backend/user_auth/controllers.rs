@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use orm_migrate::sql_models::user::operate::UserSqlOperate;
+use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use request_pretreat::Pretreatment;
 use time_usage::sync_time_usage_with_name;

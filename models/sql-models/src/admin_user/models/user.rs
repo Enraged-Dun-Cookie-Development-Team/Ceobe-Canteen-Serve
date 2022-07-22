@@ -4,7 +4,7 @@ use sub_model::SubModel;
 use super::auth_level::AuthLevel;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
-#[sea_orm(table_name = "users")]
+#[sea_orm(table_name = "admin_user")]
 #[sub_model(all(
     name = "VerifiedUser",
     extra(derive(sea_orm::FromQueryResult))

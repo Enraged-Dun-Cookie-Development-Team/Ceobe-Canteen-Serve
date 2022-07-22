@@ -1,6 +1,6 @@
 
 pub mod sql {
-    pub use orm_migrate::sql_models::user::*;
+    pub use orm_migrate::sql_models::admin_user::*;
 }
 
 

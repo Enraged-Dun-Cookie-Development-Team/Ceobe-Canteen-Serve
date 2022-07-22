@@ -1,5 +1,5 @@
 use futures::Future;
-use orm_migrate::sql_models::user::{
+use orm_migrate::sql_models::admin_user::{
     operate::UserSqlOperate, UserError,
 };
 use time_usage::async_time_usage_with_name;

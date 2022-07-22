@@ -38,7 +38,7 @@ crate::quick_struct! {
     }
 }
 
-pub use orm_migrate::sql_models::user::models::auth_level::AuthLevel;
+pub use orm_migrate::sql_models::admin_user::models::auth_level::AuthLevel;
 
 /// 用户权限信息
 pub type AuthInfo = user::Model;
