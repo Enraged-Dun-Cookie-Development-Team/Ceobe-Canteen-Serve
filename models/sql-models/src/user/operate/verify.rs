@@ -11,7 +11,7 @@ use crate::user::{
 };
 
 impl UserSqlOperate {
-    pub async fn user_exist_raw(
+    pub async fn is_user_exist_raw(
         filter: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
     ) -> Result<bool, UserError> {
         let condition = filter.into().unwrap_or_else(Condition::all);
@@ -33,7 +33,7 @@ impl UserSqlOperate {
         let db = get_sql_database();
         let ctx = db.begin().await?;
 
-        if !Self::user_exist_raw(None, &ctx).await? {
+        if !Self::is_user_exist_raw(None, &ctx).await? {
             Self::add_user_with_encoded_password_db(
                 admin,
                 encoded_pwd,

@@ -14,7 +14,7 @@ impl UserSqlOperate {
         let ctx = get_sql_transaction().await?;
 
         // check user name exist
-        if Self::user_exist_raw(
+        if Self::is_user_exist_raw(
             user::Column::Username.eq(&*new_name).into_condition(),
             &ctx,
         )
