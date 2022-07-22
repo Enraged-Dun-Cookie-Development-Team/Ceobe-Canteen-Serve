@@ -2,8 +2,8 @@ use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
 
 pub mod checkers;
-pub mod operate;
 pub mod models;
+pub mod operate;
 
 #[derive(Debug, Error)]
 pub enum UserError {

@@ -13,7 +13,9 @@ use configs::{
 use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
 use mongo_migration::mongo_connection::MongoConnectBuilder;
-use orm_migrate::{sql_connection::connect_to_sql_database, Migrator, MigratorTrait};
+use orm_migrate::{
+    sql_connection::connect_to_sql_database, Migrator, MigratorTrait,
+};
 use sql_connection::get_sql_database;
 use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
 

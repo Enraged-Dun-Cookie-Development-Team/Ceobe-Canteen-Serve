@@ -1,5 +1,5 @@
-mod update;
 mod retrieve;
+mod update;
 mod verify;
 use sea_orm::FromQueryResult;
 

@@ -156,8 +156,7 @@ impl UserAuthBackend {
 
         let username = username.username;
 
-        UserSqlOperate::update_user_name(id as i64, username.clone())
-            .await?;
+        UserSqlOperate::update_user_name(id as i64, username.clone()).await?;
 
         Ok(UserName { username }).into()
     }

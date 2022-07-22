@@ -14,8 +14,7 @@ use sha2::Sha256;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
 use crate::{
-    models::sql::models::user,
-    utils::req_pretreatment::prefabs::ToRResult,
+    models::sql::models::user, utils::req_pretreatment::prefabs::ToRResult,
 };
 
 pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
