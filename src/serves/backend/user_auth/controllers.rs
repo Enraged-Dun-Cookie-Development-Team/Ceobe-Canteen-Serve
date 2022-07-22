@@ -9,7 +9,7 @@ use time_usage::sync_time_usage_with_name;
 
 use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
-    models::common::sql::models::auth_level::AuthLevel,
+    models::sql::models::auth_level::AuthLevel,
     router::UserAuthBackend,
     serves::backend::user_auth::{
         error::AdminUserError,

@@ -14,7 +14,7 @@ use sha2::Sha256;
 
 use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
 use crate::{
-    models::common::sql::models::user,
+    models::sql::models::user,
     utils::req_pretreatment::prefabs::ToRResult,
 };
 

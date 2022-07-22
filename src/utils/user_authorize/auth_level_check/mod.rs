@@ -5,7 +5,7 @@ pub mod pretreator;
 pub mod codegen;
 pub mod error;
 
-use crate::models::common::sql::models::auth_level::AuthLevel;
+use crate::models::sql::models::auth_level::AuthLevel;
 
 /// 权限等级判别特征
 /// 用于判决是否允许这种类型权限通过
