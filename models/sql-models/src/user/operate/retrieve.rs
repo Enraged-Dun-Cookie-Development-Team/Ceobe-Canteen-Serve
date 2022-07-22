@@ -4,25 +4,25 @@ use sea_orm::{
 };
 use sql_connection::{get_sql_database, get_sql_transaction};
 
-use super::CommonSqlOperate;
-use crate::user::{models::user, CommonError};
+use super::UserSqlOperate;
+use crate::user::{models::user, UserError};
 
-impl CommonSqlOperate {
+impl UserSqlOperate {
     pub async fn query_one_user_raw(
         condition: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
-    ) -> Result<user::Model, CommonError> {
+    ) -> Result<user::Model, UserError> {
         let condition = condition.into().unwrap_or_else(Condition::all);
 
         user::Entity::find()
             .filter(condition)
             .one(db)
             .await?
-            .ok_or(CommonError::UserNotExist)
+            .ok_or(UserError::UserNotExist)
     }
 
     pub async fn query_all_user_raw(
         condition: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
-    ) -> Result<Vec<user::Model>, CommonError> {
+    ) -> Result<Vec<user::Model>, UserError> {
         Ok(user::Entity::find()
             .filter(condition.into().unwrap_or_else(Condition::all))
             .all(db)
@@ -31,7 +31,7 @@ impl CommonSqlOperate {
 
     pub async fn find_user_by_name_raw(
         username: &str, db: &impl ConnectionTrait,
-    ) -> Result<user::Model, CommonError> {
+    ) -> Result<user::Model, UserError> {
         Self::query_one_user_raw(
             user::Column::Username.eq(username).into_condition(),
             db,
@@ -41,7 +41,7 @@ impl CommonSqlOperate {
 
     pub async fn find_user_by_id_raw(
         uid: i64, db: &impl ConnectionTrait,
-    ) -> Result<user::Model, CommonError> {
+    ) -> Result<user::Model, UserError> {
         Self::query_one_user_raw(
             user::Column::Id.eq(uid).into_condition(),
             db,
@@ -51,7 +51,7 @@ impl CommonSqlOperate {
 
     pub async fn find_user_and_verify_pwd<V, M, E, T>(
         name: &str, pwd: &str, verify: V, mapping: M,
-    ) -> Result<Result<T, E>, CommonError>
+    ) -> Result<Result<T, E>, UserError>
     where
         V: Fn(&str, &str) -> Result<bool, E>,
         M: Fn(user::Model) -> T,
@@ -65,14 +65,14 @@ impl CommonSqlOperate {
                 let resp = mapping(user);
                 Ok(Ok(resp))
             }
-            Ok(false) => Err(CommonError::PasswordWrong),
+            Ok(false) => Err(UserError::PasswordWrong),
             Err(err) => Ok(Err(err)),
         }
     }
 
     pub async fn find_user_with_version_verify<M, E, T>(
         uid: i64, token_version: u32, ok_mapper: M, error: E,
-    ) -> Result<Result<T, E>, CommonError>
+    ) -> Result<Result<T, E>, UserError>
     where
         M: Fn(user::Model) -> T,
     {

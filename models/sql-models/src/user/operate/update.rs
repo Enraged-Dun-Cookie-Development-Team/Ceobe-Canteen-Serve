@@ -4,13 +4,13 @@ use sea_orm::{
 };
 use sql_connection::get_sql_transaction;
 
-use super::CommonSqlOperate;
-use crate::user::{models::user, CommonError};
+use super::UserSqlOperate;
+use crate::user::{models::user, UserError};
 
-impl CommonSqlOperate {
+impl UserSqlOperate {
     pub async fn update_user_name(
         uid: i64, new_name: String,
-    ) -> Result<(), CommonError> {
+    ) -> Result<(), UserError> {
         let ctx = get_sql_transaction().await?;
 
         // check user name exist
@@ -20,7 +20,7 @@ impl CommonSqlOperate {
         )
         .await?
         {
-            return Err(CommonError::ConflictUsername { username: new_name });
+            return Err(UserError::ConflictUsername { username: new_name });
         }
 
         let mut user = Self::find_user_by_id_raw(uid, &ctx)
@@ -38,7 +38,7 @@ impl CommonSqlOperate {
     pub async fn update_user_password<Verify, Encode, Map, Err, T>(
         uid: i64, new_pwd: String, old_pwd: String, verify: Verify,
         encode: Encode, mapping: Map,
-    ) -> Result<Result<T, Err>, CommonError>
+    ) -> Result<Result<T, Err>, UserError>
     where
         Verify: Fn(&str, &str) -> Result<bool, Err>,
         Encode: Fn(&str) -> Result<String, Err>,
@@ -62,7 +62,7 @@ impl CommonSqlOperate {
         let encoded = match verifying() {
             // ok can update
             Ok(true) => encode(&new_pwd),
-            Ok(false) => Err(CommonError::PasswordNoChange)?,
+            Ok(false) => Err(UserError::PasswordNoChange)?,
             Err(err) => return Ok(Err(err)),
         };
 

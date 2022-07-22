@@ -5,7 +5,7 @@ use sea_orm::FromQueryResult;
 
 mod create;
 
-pub struct CommonSqlOperate;
+pub struct UserSqlOperate;
 
 #[derive(FromQueryResult)]
 struct UserCounts {

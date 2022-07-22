@@ -2,7 +2,7 @@ use checker::check_obj;
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use typed_builder::TypedBuilder;
 
-use crate::user::CommonError;
+use crate::user::UserError;
 
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
@@ -11,7 +11,7 @@ check_obj! {
     pub struct UsernameUncheck = UsernameChecker > Username{
         pub username : MaxLimitString<16>
     }
-    err:CommonError
+    err:UserError
 }
 
 #[derive(Debug, Clone, TypedBuilder)]

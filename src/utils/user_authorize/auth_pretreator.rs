@@ -1,6 +1,6 @@
 use futures::Future;
 use orm_migrate::sql_models::user::{
-    operate::CommonSqlOperate, CommonError,
+    operate::UserSqlOperate, UserError,
 };
 use time_usage::async_time_usage_with_name;
 
@@ -42,7 +42,7 @@ impl Pretreatment for TokenAuth {
                 })
                 .await?;
 
-            let user_info = CommonSqlOperate::find_user_with_version_verify(
+            let user_info = UserSqlOperate::find_user_with_version_verify(
                 token.id as i64,
                 token.num_pwd_change,
                 |user| user,
@@ -51,7 +51,7 @@ impl Pretreatment for TokenAuth {
             .await
             .map_err(|err| {
                 match err {
-                    CommonError::UserNotExist => {
+                    UserError::UserNotExist => {
                         AuthError::TokenInfoNotFound(TokenInfoNotFound)
                     }
                     err => AuthError::UserDbOperate(err),

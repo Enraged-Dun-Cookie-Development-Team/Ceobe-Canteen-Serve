@@ -4,16 +4,16 @@ use sea_orm::{
 };
 use sql_connection::get_sql_database;
 
-use super::{CommonSqlOperate, UserCounts};
+use super::{UserSqlOperate, UserCounts};
 use crate::user::{
     models::{auth_level::AuthLevel, user},
-    CommonError,
+    UserError,
 };
 
-impl CommonSqlOperate {
+impl UserSqlOperate {
     pub async fn user_exist_raw(
         filter: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
-    ) -> Result<bool, CommonError> {
+    ) -> Result<bool, UserError> {
         let condition = filter.into().unwrap_or_else(Condition::all);
         let resp = user::Entity::find()
             .filter(condition)
@@ -29,7 +29,7 @@ impl CommonSqlOperate {
 
     pub async fn not_exist_then_create_admin(
         admin: String, encoded_pwd: String,
-    ) -> Result<(), CommonError> {
+    ) -> Result<(), UserError> {
         let db = get_sql_database();
         let ctx = db.begin().await?;
 
