@@ -14,7 +14,6 @@ use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
 use mongo_migration::mongo_connection::MongoConnectBuilder;
 use orm_migrate::sql_connection::connect_to_sql_database;
-use time_usage::async_time_usage_with_name;
 use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
 
 mod bootstrap;
@@ -46,16 +45,7 @@ async fn main() -> Result<(), GlobalError> {
 }
 
 async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
-    // connect to ceobe websocket
-    let (_resp, (updater, sender)) = async_time_usage_with_name(
-        "连接到小刻蹲饼",
-        ceobe_manager::ws::start_ws(ceobe_manager::WS_SERVICE),
-    )
-    .await;
-    let updater = Data::from(updater);
-    let sender = Data::from(sender);
     // connect to database 连接到数据库
-
     connect_to_sql_database(&config.database)
         .await
         .expect("无法连接到数据库");
@@ -81,10 +71,6 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
             .wrap(actix_web::middleware::Logger::default())
             .wrap(actix_web::middleware::Logger::new("%a %{User-Agent}i"))
             .wrap(BenchMarkFactor)
-            // 管理的全局事务
-            // ceobe ws 通讯
-            .app_data(updater.clone())
-            .app_data(sender.clone())
             // 配置信息
             .app_data(data_config.clone())
             // 服务

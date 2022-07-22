@@ -76,9 +76,6 @@ features = ["serde", "bcrypt"]
 [dependencies.range-limit]
 path = "./libs/range-limit"
 
-[dependencies.ceobe-manager]
-path = "./libs/ceobe-manager"
-
 [dependencies.logger]
 path = "./libs/logger"
 
