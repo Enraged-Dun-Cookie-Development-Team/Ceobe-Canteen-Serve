@@ -7,6 +7,7 @@ use mongodb::{
     bson::{doc, DateTime, Document},
     options::FindOptions,
 };
+use tap::Tap;
 
 use super::{get_mansion_collection, MansionDataMongoOperate};
 use crate::mansion_data::{
@@ -42,12 +43,22 @@ impl MansionDataMongoOperate {
     pub async fn get_mansion_by_id(
         mid: &MansionId,
     ) -> Result<ModelMansion, MansionDataError> {
-        let collection = get_mansion_collection()?;
+        let collection = get_mansion_collection()?.tap(|c| {
+            log::info!("Get MongoDb Collection {:?}", c.namespace())
+        });
         collection
+            .tap(|c| {
+                log::info!(
+                    "Start find Mansion Data {:?}, mid = {}",
+                    c.namespace(),
+                    mid
+                )
+            })
             .doing(|collection| {
                 collection.find_one(mid.into_id_filter(), None)
             })
-            .await?
+            .await
+            .tap(|re| log::info!("Task  Done is ok :{}", re.is_ok()))?
             .ok_or(MansionDataError::MansionNotFound)
     }
 

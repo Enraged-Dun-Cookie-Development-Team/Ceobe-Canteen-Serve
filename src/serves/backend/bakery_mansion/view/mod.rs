@@ -1,4 +1,6 @@
-use crate::models::mansion::preludes::*;
+use crate::{
+    models::mansion::preludes::*, utils::time_format::naive_data_format,
+};
 
 crate::quick_struct! {
     pub ViewMansion{
@@ -40,7 +42,7 @@ impl From<Daily> for ViewDaily {
         }: Daily,
     ) -> Self {
         Self {
-            datetime: date_time.format("%Y-%m-%d").to_string(),
+            datetime: naive_data_format(date_time),
             info: info.into_iter().map(Into::into).collect(),
             content,
         }
