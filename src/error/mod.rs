@@ -1,4 +1,9 @@
-use axum::body::Body;
+use std::any::Any;
+
+use axum::{
+    body::{Body, BoxBody},
+    response::IntoResponse,
+};
 use http::Request;
 use resp_result::RespResult;
 use serde::Serialize;
@@ -174,12 +179,10 @@ macro_rules! error_generate {
 
 }
 
-// error_generate!(pub RouteNotExistError = "该路由不存在，请检查请求路径");
-
 status_err::status_error! {
     pub RouteNotExistError[
         ErrPrefix::NOT_FOUND,
-        0002
+        0x_00_02
     ]=>"该路由不存在，请检查请求路径"
 }
 
@@ -194,9 +197,63 @@ impl Serialize for RouteNotExistError {
 
 status_err::resp_error_impl!(RouteNotExistError);
 
+status_err::status_error! {
+    pub ServicePanic[
+        ErrPrefix::SERVE,
+        0x00_01
+    ]=>"服务器发生未预期的异常"
+}
+
+impl Serialize for ServicePanic {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str("服务器发生未预期的异常")
+    }
+}
+
+status_err::resp_error_impl!(ServicePanic);
+
+status_err::status_error! {
+    pub NotAnError[
+        ErrPrefix::NO_ERR,
+        0x00_00
+    ]=>""
+}
+
+impl Serialize for NotAnError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str("这异常不应该发生")
+    }
+}
+
+status_err::resp_error_impl!(NotAnError);
+
 pub async fn not_exist(
     req: Request<Body>,
 ) -> RespResult<(), RouteNotExistError> {
     log::error!("路由未找到 `{}` {}", req.uri(), &req.method());
     RespResult::err(RouteNotExistError)
+}
+
+pub fn serve_panic(
+    error: Box<dyn Any + Send + 'static>,
+) -> http::Response<BoxBody> {
+    let detail = if let Some(msg) = error.downcast_ref::<String>() {
+        msg.as_str()
+    }
+    else if let Some(msg) = error.downcast_ref::<&str>() {
+        *msg
+    }
+    else {
+        "Unknown panic message"
+    };
+
+    log::error!("服务器发生未预期panic : {}", detail);
+    let resp = RespResult::<(), _>::err(ServicePanic).into_response();
+    resp
 }

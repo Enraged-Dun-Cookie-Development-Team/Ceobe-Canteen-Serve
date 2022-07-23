@@ -33,7 +33,7 @@ impl std::fmt::Display for ErrPrefix {
 
 impl ErrPrefix {
     /// actix 框架产生的异常
-    pub const ACTIX: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
+    pub const SERVE: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
     /// 数据检查时产生的异常
     pub const CHECKER: Self = Self('C', HttpCode::NOT_ACCEPTABLE);
     /// IO 过程中异常

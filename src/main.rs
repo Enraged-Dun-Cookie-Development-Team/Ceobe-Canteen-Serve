@@ -20,7 +20,7 @@ use tower::ServiceBuilder;
 use tower_http::{catch_panic::CatchPanicLayer, trace::TraceLayer};
 use utils::user_authorize;
 
-use crate::error::not_exist;
+use crate::error::{not_exist, serve_panic};
 
 mod bootstrap;
 mod configs;
@@ -79,9 +79,9 @@ async fn task(config: GlobalConfig) {
         .fallback(not_exist.into_service())
         .layer(
             ServiceBuilder::new()
+                .layer(CatchPanicLayer::custom(serve_panic))
                 .layer(Extension(Arc::new(config)))
-                .layer(TraceLayer::new_for_http())
-                .layer(CatchPanicLayer::new()),
+                .layer(TraceLayer::new_for_http()),
         );
 
     let (tx, rx) = oneshot::channel();
