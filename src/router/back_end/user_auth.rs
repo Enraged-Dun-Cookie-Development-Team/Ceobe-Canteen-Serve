@@ -1,27 +1,16 @@
-use actix_web::{web, Scope};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 
 pub struct UserAuthBackend;
 
-pub(super) fn user_auth_router() -> Scope {
-    web::scope("/user")
-        .service(
-            web::resource("/create")
-                .route(web::post().to(UserAuthBackend::create_user)),
-        )
-        .service(
-            web::resource("/login")
-                .route(web::post().to(UserAuthBackend::login)),
-        )
-        .service(
-            web::resource("/info")
-                .route(web::get().to(UserAuthBackend::get_info)),
-        )
-        .service(
-            web::resource("/changeUsername")
-                .route(web::post().to(UserAuthBackend::change_username)),
-        )
-        .service(
-            web::resource("/changePassword")
-                .route(web::post().to(UserAuthBackend::change_password)),
-        )
+pub(super) fn user_auth_router() -> Router {
+    // web::scope("/user")
+    Router::new()
+        .route("/create", post(UserAuthBackend::create_user))
+        .route("/login", post(UserAuthBackend::login))
+        .route("/info", get(UserAuthBackend::get_info))
+        .route("/changeUsername", post(UserAuthBackend::change_username))
+        .route("/changePassword", post(UserAuthBackend::change_password))
 }

@@ -1,23 +1,14 @@
-use actix_web::{web, Scope};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 
 pub struct BakeryMansionBackend;
 
-pub(super) fn bakery_mansion_router() -> Scope {
-    web::scope("/mansion")
-        .service(
-            web::resource("/upload")
-                .route(web::post().to(BakeryMansionBackend::save_mansion)),
-        )
-        .service(
-            web::resource("/getInfo")
-                .route(web::get().to(BakeryMansionBackend::get_mansion)),
-        )
-        .service(
-            web::resource("/getId")
-                .route(web::get().to(BakeryMansionBackend::get_recent_id)),
-        )
-        .service(
-            web::resource("/delete")
-                .route(web::post().to(BakeryMansionBackend::remove_mansion)),
-        )
+pub(super) fn bakery_mansion_router() -> Router {
+    Router::new()
+        .route("/upload", post(BakeryMansionBackend::save_mansion))
+        .route("/getInfo", get(BakeryMansionBackend::get_mansion))
+        .route("/getId", get(BakeryMansionBackend::get_recent_id))
+        .route("/delete", post(BakeryMansionBackend::remove_mansion))
 }
