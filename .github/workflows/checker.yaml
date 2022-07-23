@@ -1,12 +1,8 @@
 name: check CI
 
 on:
-  push:
-    paths-ignore:
-      - "**.md"
-      - "**.py"
-      - "**.json"
   pull_request:
+    branches: [ master, deploy ]
     paths-ignore:
       - "**.md"
       - "**.py"
@@ -26,5 +22,6 @@ jobs:
           toolchain: nightly
           components: clippy, rustfmt
           default: true
+      - run: cargo check
       - run: cargo fmt --check
       - run: cargo clippy
