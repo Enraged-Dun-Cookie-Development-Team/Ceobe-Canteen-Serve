@@ -1,5 +1,5 @@
 use chrono::Duration;
-use mongo_migration::mongo_models::mansion::operate::MansionDataMongoOperate;
+use mongo_migration::mongo_models::mansion_data::operate::MansionDataMongoOperate;
 
 use super::{
     MansionAuthentication, MansionBodyCheckerPretreatment, MansionRResult,

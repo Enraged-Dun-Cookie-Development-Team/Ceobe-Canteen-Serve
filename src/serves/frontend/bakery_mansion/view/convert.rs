@@ -1,4 +1,4 @@
-use mongo_migration::mongo_models::mansion::preludes::{
+use mongo_migration::mongo_models::mansion_data::preludes::{
     Daily, Info, ModelMansion,
 };
 

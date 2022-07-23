@@ -138,7 +138,6 @@ error_generate!(
     pub GlobalError
     Io=std::io::Error
     Route=RouteNotExistError
-    Mongo=mongodb::error::Error
 );
 
 status_err::status_error! {

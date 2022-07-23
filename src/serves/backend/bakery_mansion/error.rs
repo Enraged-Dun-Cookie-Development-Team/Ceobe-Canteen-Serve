@@ -1,5 +1,5 @@
 use actix_web::error::QueryPayloadError;
-use mongo_migration::mongo_models::mansion::{
+use mongo_migration::mongo_models::mansion_data::{
     checkers::MansionDataCheckerError, MansionDataError,
 };
 

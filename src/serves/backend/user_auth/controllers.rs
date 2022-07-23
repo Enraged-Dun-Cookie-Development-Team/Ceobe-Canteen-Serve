@@ -2,14 +2,14 @@ use std::borrow::Cow;
 
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use orm_migrate::sql_models::common::operate::CommonSqlOperate;
+use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use request_pretreat::Pretreatment;
 use time_usage::sync_time_usage_with_name;
 
 use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
-    models::common::sql::sql_models::auth_level::AuthLevel,
+    models::sql::models::auth_level::AuthLevel,
     router::UserAuthBackend,
     serves::backend::user_auth::{
         error::AdminUserError,
@@ -93,7 +93,7 @@ impl UserAuthBackend {
             })?;
 
         // 将用户信息写入数据库
-        CommonSqlOperate::add_user_with_encoded_password(
+        UserSqlOperate::add_user_with_encoded_password(
             rand_username,
             encode_password.to_string(),
             permission,
@@ -114,7 +114,7 @@ impl UserAuthBackend {
             ToRResult<MapErr<Json<UserLogin>, AdminUserError>>,
         >,
     ) -> AdminUserRResult<UserToken> {
-        let token_info = CommonSqlOperate::find_user_and_verify_pwd(
+        let token_info = UserSqlOperate::find_user_and_verify_pwd(
             &body.username,
             &body.password,
             |src, dst| PasswordEncoder::verify(src, &dst),
@@ -156,8 +156,7 @@ impl UserAuthBackend {
 
         let username = username.username;
 
-        CommonSqlOperate::update_user_name(id as i64, username.clone())
-            .await?;
+        UserSqlOperate::update_user_name(id as i64, username.clone()).await?;
 
         Ok(UserName { username }).into()
     }
@@ -173,7 +172,7 @@ impl UserAuthBackend {
         let old_password = body.old_password;
         let new_password = body.new_password;
 
-        let generate_token = CommonSqlOperate::update_user_password(
+        let generate_token = UserSqlOperate::update_user_password(
             id as i64,
             new_password,
             old_password,

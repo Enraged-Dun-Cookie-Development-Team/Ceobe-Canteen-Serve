@@ -1,4 +1,4 @@
-use mongo_migration::mongo_models::mansion::checkers::{
+use mongo_migration::mongo_models::mansion_data::checkers::{
     id_checker::{MidChecker, MidUncheck, OpMidChecker, OpMidUncheck},
     mansion::{MansionChecker, MansionUncheck},
 };

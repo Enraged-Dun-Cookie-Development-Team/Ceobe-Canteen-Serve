@@ -21,21 +21,16 @@ async_utils = []
 
 [dependencies]
 # db
-mongodb = "2"
 bson = { version = "2.1.0", features = ["chrono-0_4"] }
 # async
 futures = "0.3"
-async-trait = "0.1.52"
 # config
-dotenv = "0.15"
 figment = { version = "0.10", features = ["yaml", "json", "toml"] }
-lazy_static = "1.4"
 # actix
 actix = "0.13"
 actix-web = "4"
 actix-http = "3"
 actix-service = "2"
-actix-cors = "0.6.1"
 # web
 url = "2.2.2"
 http = "0.2"
@@ -49,14 +44,9 @@ bcrypt = "0.10"
 # else
 rust-crypto = "0.2"
 chrono = { version = "0.4", features = ["serde"] }
-pin-project = "1"
-state = "0.5.2"
 rand = "0.8.5"
 typed-builder = "0.10"
-
-[dependencies.futures-util]
-version = "0.3"
-features = ["std", "sink"]
+once_cell = "1"
 
 [dependencies.tokio]
 version = "1.15.0"
@@ -76,9 +66,6 @@ features = ["serde", "bcrypt"]
 [dependencies.range-limit]
 path = "./libs/range-limit"
 
-[dependencies.ceobe-manager]
-path = "./libs/ceobe-manager"
-
 [dependencies.logger]
 path = "./libs/logger"
 
@@ -97,13 +84,6 @@ path = "./libs/checker"
 
 [dependencies.time-usage]
 path = "./libs/time-usage"
-
-[dependencies.sub-model-derive]
-version = "0.1"
-package = "sub-model"
-
-[dependencies.sql_connection]
-path = "./database/sql_connection"
 
 [dependencies.orm-migrate]
 package = "migration"

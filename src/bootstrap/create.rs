@@ -1,6 +1,6 @@
 use crypto::{digest::Digest, md5::Md5};
 use crypto_str::Encoder;
-use orm_migrate::sql_models::common::operate::CommonSqlOperate;
+use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
 
 use super::default_user::FUserConfig;
 use crate::utils::user_authorize::PasswordEncoder;
@@ -19,7 +19,7 @@ where
     let encode_password = PasswordEncoder::encode(password.into())
         .expect("初始用户密码加密错误！");
 
-    CommonSqlOperate::not_exist_then_create_admin(
+    UserSqlOperate::not_exist_then_create_admin(
         conf.username(),
         encode_password.to_string(),
     )

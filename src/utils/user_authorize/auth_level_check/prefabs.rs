@@ -1,5 +1,5 @@
 use super::AuthLevelVerify;
-use crate::models::common::sql::sql_models::auth_level::AuthLevel;
+use crate::models::sql::models::auth_level::AuthLevel;
 
 pub struct Chef;
 

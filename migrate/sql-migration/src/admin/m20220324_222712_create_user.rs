@@ -1,7 +1,6 @@
 use sea_orm_migration::prelude::*;
-use sql_models::common::sql_models::{
-    auth_level::AuthLevel,
-    user::{self, Column::*},
+use sql_models::admin_user::models::{
+    auth_level::AuthLevel, user::Column::*,
 };
 pub struct Migration;
 impl MigrationName for Migration {
@@ -12,7 +11,7 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = sea_query::Table::create();
         table
-            .table(user::Entity)
+            .table(User::Table)
             .if_not_exists()
             .col(
                 ColumnDef::new(Id)
@@ -39,9 +38,14 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = sea_query::Table::drop();
-        table.table(user::Entity);
+        table.table(User::Table);
         manager.drop_table(table).await?;
 
         Ok(())
     }
+}
+
+#[derive(Debug, Iden)]
+pub(super) enum User {
+    Table,
 }
