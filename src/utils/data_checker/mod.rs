@@ -25,10 +25,9 @@ mod check_require {
     pub use checker::CheckRequire;
 }
 
-use std::{any::type_name, marker::PhantomData};
+use std::{any::type_name, marker::PhantomData, future::Future};
 
 pub use check_require::*;
-use futures::Future;
 pub use ref_checker::RefChecker;
 use time_usage::async_time_usage_with_name;
 
