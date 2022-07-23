@@ -157,12 +157,11 @@ macro_rules! __checker_generate {
             );
             type Checked = $cd ;
             type Err = $err;
-            type Fut = std::pin::Pin<std::boxed::Box<dyn std::future::Future<Output = Result<Self::Checked,Self::Err>>>>;
+            type Fut = std::pin::Pin<std::boxed::Box<dyn std::future::Future<Output = Result<Self::Checked,Self::Err>> + std::marker::Send>>;
             fn check(($($f_n),*,): Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-                $( let $f_n = uncheck.$f_n.checking($f_n); )*
-
                 std::boxed::Box::pin(
                     async move{
+                        $( let $f_n = uncheck.$f_n.checking($f_n); )*
                         let __resp = <$cd>::builder();
                         $(
                             let __resp = __resp.$f_n($f_n.await.map_err(Into::<$err>::into)?);
