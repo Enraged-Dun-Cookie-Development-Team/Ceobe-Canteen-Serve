@@ -1,6 +1,5 @@
 pub mod config;
 pub mod error;
-pub mod token_loader;
 
 mod auth_level_check;
 mod auth_pretreator;
@@ -8,18 +7,16 @@ mod set_token;
 mod valid_token;
 
 pub use auth_pretreator::TokenAuth;
+use axum_prehandle::PreRespMapErrorHandling;
 use hmac::Hmac;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 
-use super::req_pretreatment::{prefabs::MapErr, ReqPretreatment};
-use crate::{
-    models::sql::models::user, utils::req_pretreatment::prefabs::ToRResult,
-};
+use crate::models::sql::models::user;
 
-pub type Authentication<E> = ReqPretreatment<ToRResult<MapErr<TokenAuth, E>>>;
+pub type Authentication<E> = PreRespMapErrorHandling<TokenAuth, E>;
 pub type AuthenticationLevel<L, E> =
-    ReqPretreatment<ToRResult<MapErr<auth_level::AuthLevel<L>, E>>>;
+    PreRespMapErrorHandling<auth_level::AuthLevel<L>, E>;
 
 crate::quick_struct! {
 

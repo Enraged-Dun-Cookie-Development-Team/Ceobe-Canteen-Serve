@@ -1,5 +1,5 @@
-use std::future::Future;
-
+use async_trait::async_trait;
+use axum_prehandle::PreHandler;
 use orm_migrate::sql_models::admin_user::{
     operate::UserSqlOperate, AdminUserError,
 };
@@ -13,53 +13,44 @@ use super::{
 };
 use crate::utils::{
     data_struct::header_info::HeaderInfo,
-    req_pretreatment::Pretreatment,
     user_authorize::error::{TokenInvalid, TokenNotFound},
 };
 
 pub struct TokenAuth;
 
-impl Pretreatment for TokenAuth {
-    // 异常
-    type Err = AuthError;
-    // 返回类型
-    type Resp = AuthInfo;
+#[async_trait]
+impl<B: Send> PreHandler<B> for TokenAuth {
+    type Output = AuthInfo;
+    type Rejection = AuthError;
 
-    // 异步返回的fut
-    type Fut = impl Future<Output = Result<Self::Resp, Self::Err>>;
+    async fn handling(
+        request: &mut axum::extract::RequestParts<B>,
+    ) -> Result<Self::Output, Self::Rejection> {
+        let token = async_time_usage_with_name("获取用户token信息", async {
+            let token = HeaderInfo::<Token>::handling(request)
+                .await?
+                .get_one()
+                .ok_or(TokenNotFound)?;
+            decrypt_token(token).map_err(AuthError::from)
+        })
+        .await?;
 
-    fn proc(
-        req: &actix_web::HttpRequest, payload: &mut actix_http::Payload,
-    ) -> Self::Fut {
-        let token = HeaderInfo::<Token>::proc(req, payload).into_inner();
-
-        async move {
-            // 获取token
-            let token =
-                async_time_usage_with_name("获取用户token信息", async {
-                    let token = token?;
-                    let token = token.get_one().ok_or(TokenNotFound)?;
-                    decrypt_token(token).map_err(AuthError::from)
-                })
-                .await?;
-
-            let user_info = UserSqlOperate::find_user_with_version_verify(
-                token.id as i64,
-                token.num_pwd_change,
-                |user| user,
-                TokenInvalid,
-            )
-            .await
-            .map_err(|err| {
-                match err {
-                    AdminUserError::UserNotExist => {
-                        AuthError::TokenInfoNotFound(TokenInfoNotFound)
-                    }
-                    err => AuthError::UserDbOperate(err),
+        let user_info = UserSqlOperate::find_user_with_version_verify(
+            token.id as i64,
+            token.num_pwd_change,
+            |user| user,
+            TokenInvalid,
+        )
+        .await
+        .map_err(|err| {
+            match err {
+                AdminUserError::UserNotExist => {
+                    AuthError::TokenInfoNotFound(TokenInfoNotFound)
                 }
-            })??;
+                err => AuthError::UserDbOperate(err),
+            }
+        })??;
 
-            Ok(user_info)
-        }
+        Ok(user_info)
     }
 }
