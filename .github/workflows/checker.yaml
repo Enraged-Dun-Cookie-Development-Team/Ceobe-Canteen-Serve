@@ -22,6 +22,5 @@ jobs:
           toolchain: nightly
           components: clippy, rustfmt
           default: true
-      - run: cargo check
       - run: cargo fmt --check
       - run: cargo clippy
