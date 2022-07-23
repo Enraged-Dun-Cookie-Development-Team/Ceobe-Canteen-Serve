@@ -25,7 +25,7 @@ mod check_require {
     pub use checker::CheckRequire;
 }
 
-use std::{any::type_name, marker::PhantomData, future::Future};
+use std::{any::type_name, future::Future, marker::PhantomData};
 
 pub use check_require::*;
 pub use ref_checker::RefChecker;
