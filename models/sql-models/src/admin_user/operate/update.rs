@@ -20,7 +20,9 @@ impl UserSqlOperate {
         )
         .await?
         {
-            return Err(AdminUserError::ConflictUsername { username: new_name });
+            return Err(AdminUserError::ConflictUsername {
+                username: new_name,
+            });
         }
 
         let mut user = Self::find_user_by_id_raw(uid, &ctx)
