@@ -52,10 +52,8 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     connect_to_sql_database(&config.database)
         .await
         .expect("无法连接到数据库");
-
-    Migrator::up(get_sql_database(), None)
-        .await
-        .expect("执行 Sql 数据库 Migration 失败");
+    let db = get_sql_database();
+    Migrator::up(db, None).await.except("Migration Sql 数据库失败");
     log::info!("完成对Mysql数据库进行migration操作");
 
     create_default_user(&config.admin_user).await;
