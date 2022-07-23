@@ -1,5 +1,5 @@
 use http::StatusCode;
-use orm_migrate::sql_models::admin_user::UserError;
+use orm_migrate::sql_models::admin_user::AdminUserError;
 use status_err::ErrPrefix;
 
 use super::auth_level;
@@ -32,7 +32,7 @@ error_generate!(
     Jwt = jwt::Error
     Bcrypt = bcrypt::BcryptError
 
-    UserDbOperate = UserError
+    UserDbOperate = AdminUserError
 
     AuthLevel = auth_level::UnacceptableAuthorizationLevelError
     NoToken = TokenNotFound

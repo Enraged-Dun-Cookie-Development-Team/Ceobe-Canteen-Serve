@@ -1,6 +1,6 @@
 use futures::Future;
 use orm_migrate::sql_models::admin_user::{
-    operate::UserSqlOperate, UserError,
+    operate::UserSqlOperate, AdminUserError,
 };
 use time_usage::async_time_usage_with_name;
 
@@ -51,7 +51,7 @@ impl Pretreatment for TokenAuth {
             .await
             .map_err(|err| {
                 match err {
-                    UserError::UserNotExist => {
+                    AdminUserError::UserNotExist => {
                         AuthError::TokenInfoNotFound(TokenInfoNotFound)
                     }
                     err => AuthError::UserDbOperate(err),
