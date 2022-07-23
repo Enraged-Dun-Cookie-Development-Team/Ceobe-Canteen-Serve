@@ -1,8 +1,8 @@
 use std::ops::Deref;
-use crate::HttpCode;
+
 use mongodb::error::ErrorKind;
 
-use crate::{ErrPrefix, StatusErr};
+use crate::{ErrPrefix, HttpCode, StatusErr};
 
 impl StatusErr for mongodb::error::Error {
     fn prefix(&self) -> crate::ErrPrefix { ErrPrefix::MONGO_DB }
@@ -34,7 +34,5 @@ impl StatusErr for mongodb::error::Error {
         format!("{} : {}", std::any::type_name::<Self>(), self).into()
     }
 
-    fn http_code(&self) -> HttpCode {
-        self.prefix().get_status()
-    }
+    fn http_code(&self) -> HttpCode { self.prefix().get_status() }
 }

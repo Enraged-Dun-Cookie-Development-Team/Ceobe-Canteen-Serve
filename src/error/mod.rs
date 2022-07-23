@@ -194,7 +194,9 @@ impl Serialize for RouteNotExistError {
 
 status_err::resp_error_impl!(RouteNotExistError);
 
-pub async fn not_exist(req: Request<Body>) -> RespResult<(), RouteNotExistError> {
+pub async fn not_exist(
+    req: Request<Body>,
+) -> RespResult<(), RouteNotExistError> {
     log::error!("路由未找到 `{}` {}", req.uri(), &req.method());
     RespResult::err(RouteNotExistError)
 }

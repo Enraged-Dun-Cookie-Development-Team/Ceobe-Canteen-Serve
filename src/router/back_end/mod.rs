@@ -9,8 +9,7 @@ use self::{
 };
 
 pub(super) fn back_end_router() -> Router {
-    // actix_web::web::scope("/admin")
     Router::new()
-    .nest("/user",user_auth_router())
-    .nest("/mansion",bakery_mansion_router())
+        .nest("/user", user_auth_router())
+        .nest("/mansion", bakery_mansion_router())
 }

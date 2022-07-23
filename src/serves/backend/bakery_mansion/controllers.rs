@@ -1,3 +1,4 @@
+use axum_prehandle::PreHandling as ReqPretreatment;
 use chrono::Duration;
 use mongo_migration::mongo_models::mansion_data::operate::MansionDataMongoOperate;
 
@@ -9,7 +10,6 @@ use crate::{
     router::BakeryMansionBackend,
     serves::backend::bakery_mansion::view::ViewMansion,
 };
-use axum_prehandle::PreHandling as ReqPretreatment;
 
 impl BakeryMansionBackend {
     pub async fn save_mansion(

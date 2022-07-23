@@ -44,9 +44,9 @@ where
 impl<Punchecked, C, E> PreHandler<Body> for PreLiteChecker<Punchecked, C, E>
 where
     C: DataChecker,
-    C::Unchecked:Send,
-    C::Fut:Send,
-    <C as DataChecker>::Args: LiteArgs+Send,
+    C::Unchecked: Send,
+    C::Fut: Send,
+    <C as DataChecker>::Args: LiteArgs + Send,
     Punchecked: PreHandler<Body, Output = C::Unchecked>,
     E: 'static + From<C::Err> + From<Punchecked::Rejection>,
     C::Checked: 'static,
