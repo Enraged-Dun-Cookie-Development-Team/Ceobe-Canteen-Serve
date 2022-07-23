@@ -1,4 +1,5 @@
-use futures::Future;
+use std::future::Future;
+
 use orm_migrate::sql_models::admin_user::{
     operate::UserSqlOperate, AdminUserError,
 };

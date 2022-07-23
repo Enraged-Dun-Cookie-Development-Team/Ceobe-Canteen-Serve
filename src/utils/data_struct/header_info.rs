@@ -1,8 +1,6 @@
 use std::{convert::Infallible, marker::PhantomData, vec::IntoIter};
 
-use futures::future::ok;
-use futures_util::future::Ready;
-
+use futures::future::{ok, Ready};
 pub enum HeaderInfo<H> {
     Exist(Vec<String>, PhantomData<H>),
     None(PhantomData<H>),
