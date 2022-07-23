@@ -1,6 +1,8 @@
 use std::{convert::Infallible, marker::PhantomData, vec::IntoIter};
 
-use futures::future::{ok, Ready};
+use async_trait::async_trait;
+use axum::extract::RequestParts;
+use axum_prehandle::PreHandler;
 pub enum HeaderInfo<H> {
     Exist(Vec<String>, PhantomData<H>),
     None(PhantomData<H>),
@@ -44,19 +46,19 @@ where
 pub trait FromHeaders {
     fn header_name() -> &'static str;
 }
-
-impl<H> request_pretreat::Treater for HeaderInfo<H>
+#[async_trait]
+impl<B, H> PreHandler<B> for HeaderInfo<H>
 where
+    B: Send,
     H: FromHeaders,
 {
-    type Err = Infallible;
-    type Fut = Ready<Result<Self::Resp, Self::Err>>;
-    type Resp = Self;
+    type Output = Self;
+    type Rejection = Infallible;
 
-    fn proc(
-        req: &actix_web::HttpRequest, _: &mut actix_web::dev::Payload,
-    ) -> Self::Fut {
-        let header = req.headers();
+    async fn handling(
+        request: &mut RequestParts<B>,
+    ) -> Result<Self::Output, Self::Rejection> {
+        let header = request.headers();
         let res = header
             .get_all(H::header_name())
             .into_iter()
@@ -65,13 +67,12 @@ where
             .map(|s| s.into_owned())
             .collect::<Vec<_>>();
 
-        let result = if res.is_empty() {
+        Ok(if res.is_empty() {
             Self::None(Default::default())
         }
         else {
             Self::Exist(res, Default::default())
-        };
-        ok(result)
+        })
     }
 }
 

@@ -1,3 +1,4 @@
+use axum_prehandle::{prefabs::json::JsonPayload, PreRespHandling};
 use resp_result::RespResult;
 
 use self::{
@@ -10,18 +11,13 @@ mod checker;
 mod controllers;
 mod error;
 mod view;
-use request_pretreat::{
-    prefabs::{JsonPayload, ToRespResult},
-    Pretreatment,
-};
+
 type AdminUserRResult<T> = RespResult<T, error::AdminUserError>;
 
-type UsernamePretreatment = Pretreatment<
-    ToRespResult<
-        PreLiteChecker<
-            JsonPayload<UsernameUncheck>,
-            UsernameChecker,
-            AdminUserError,
-        >,
+type UsernamePretreatment = PreRespHandling<
+    PreLiteChecker<
+        JsonPayload<UsernameUncheck>,
+        UsernameChecker,
+        AdminUserError,
     >,
 >;

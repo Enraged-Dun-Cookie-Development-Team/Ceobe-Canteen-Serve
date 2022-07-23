@@ -3,8 +3,7 @@ use mongo_migration::mongo_models::mansion_data::preludes::{
 };
 
 use super::{ViewDaily, ViewInfo, ViewMansionWithTime};
-
-const TIME_FORMAT: &str = "%Y-%m-%d %T";
+use crate::utils::time_format::{bson_date_time_format, naive_data_format};
 
 impl From<Info> for ViewInfo {
     fn from(Info { predict, forecast }: Info) -> Self {
@@ -24,7 +23,7 @@ impl From<Daily> for ViewDaily {
         }: Daily,
     ) -> Self {
         Self {
-            datetime: date_time.format(TIME_FORMAT).to_string(),
+            datetime: naive_data_format(date_time),
             info: info.into_iter().map(Into::into).collect(),
             content,
         }
@@ -48,14 +47,8 @@ impl From<ModelMansion> for ViewMansionWithTime {
             cvlink,
             fraction,
             daily: daily.into_iter().map(Into::into).collect(),
-            create_time: create_time
-                .to_chrono()
-                .format(TIME_FORMAT)
-                .to_string(),
-            modify_time: modify_time
-                .to_chrono()
-                .format(TIME_FORMAT)
-                .to_string(),
+            create_time: bson_date_time_format(create_time),
+            modify_time: bson_date_time_format(modify_time),
         }
     }
 }

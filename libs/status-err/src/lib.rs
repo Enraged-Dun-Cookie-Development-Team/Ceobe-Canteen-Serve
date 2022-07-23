@@ -32,8 +32,6 @@ impl std::fmt::Display for ErrPrefix {
 }
 
 impl ErrPrefix {
-    /// actix 框架产生的异常
-    pub const ACTIX: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
     /// 数据检查时产生的异常
     pub const CHECKER: Self = Self('C', HttpCode::NOT_ACCEPTABLE);
     /// IO 过程中异常
@@ -50,6 +48,8 @@ impl ErrPrefix {
     pub const PARSE: Self = Self('P', HttpCode::NOT_ACCEPTABLE);
     /// 数据库产生的异常
     pub const SEA_ORM: Self = Self('D', HttpCode::INTERNAL_SERVER_ERROR);
+    /// actix 框架产生的异常
+    pub const SERVE: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
     /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', HttpCode::UNAUTHORIZED);
 

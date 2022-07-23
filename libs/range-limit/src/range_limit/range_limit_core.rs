@@ -29,7 +29,6 @@ impl<T, Rb: Default> RangeBoundLimit<T, Rb> {
                     get: size,
                 })
             }
-            SizeStatus::Costom(err) => Err(error::Error::Coutom(err)),
         }
     }
 }

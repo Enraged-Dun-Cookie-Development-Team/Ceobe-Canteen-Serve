@@ -1,3 +1,4 @@
+use axum_prehandle::PreRespHandling;
 use resp_result::RespResult;
 
 pub mod controllers;
@@ -13,12 +14,9 @@ use self::{
         MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
     },
 };
-use crate::utils::{
-    req_pretreatment::{prefabs::ToRResult, ReqPretreatment},
-    user_authorize::{
-        auth_level::prefabs::{Architect, Chef},
-        AuthenticationLevel,
-    },
+use crate::utils::user_authorize::{
+    auth_level::prefabs::{Architect, Chef},
+    AuthenticationLevel,
 };
 
 crate::new_auth_level! {
@@ -32,9 +30,8 @@ pub type MansionAuthentication =
     AuthenticationLevel<MansionAuth, MansionError>;
 
 pub type OptionMidCheckerPretreatment =
-    ReqPretreatment<ToRResult<OptionMidCheckerPretreat>>;
-pub type MidCheckerPretreatment =
-    ReqPretreatment<ToRResult<MIdCheckerPretreat>>;
+    PreRespHandling<OptionMidCheckerPretreat>;
+pub type MidCheckerPretreatment = PreRespHandling<MIdCheckerPretreat>;
 
 pub type MansionBodyCheckerPretreatment =
-    ReqPretreatment<ToRResult<MansionCheckerPretreat>>;
+    PreRespHandling<MansionCheckerPretreat>;
