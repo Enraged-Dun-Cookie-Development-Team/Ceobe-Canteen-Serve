@@ -1,23 +1,26 @@
 #![feature(type_alias_impl_trait)]
 
-use actix_web::{
-    web::{self, Data},
-    App, HttpServer,
-};
+use std::sync::Arc;
+
+use axum::{handler::Handler, Extension, Router};
 use bootstrap::create::create_default_user;
 use checker::check_obj;
 use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
 use mongo_migration::mongo_connection::MongoConnectBuilder;
 use orm_migrate::{
     sql_connection::{connect_to_sql_database, get_sql_database},
     Migrator, MigratorTrait,
 };
-use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
+use tokio::sync::oneshot;
+use tower::ServiceBuilder;
+use tower_http::{catch_panic::CatchPanicLayer, trace::TraceLayer};
+use utils::user_authorize;
+
+use crate::error::not_exist;
 
 mod bootstrap;
 mod configs;
@@ -29,8 +32,8 @@ mod utils;
 
 extern crate serde;
 
-#[actix_web::main]
-async fn main() -> Result<(), GlobalError> {
+#[tokio::main]
+async fn main() {
     let config: GlobalConfig = figment::Figment::new()
         .merge(Toml::file(CONFIG_FILE_TOML))
         .merge(Json::file(CONFIG_FILE_JSON))
@@ -47,7 +50,7 @@ async fn main() -> Result<(), GlobalError> {
     task(config).await
 }
 
-async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
+async fn task(config: GlobalConfig) {
     // connect to database 连接到数据库
     connect_to_sql_database(&config.database)
         .await
@@ -57,7 +60,6 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
         .await
         .expect("Migration Sql 数据库失败");
     log::info!("完成对Mysql数据库进行migration操作");
-
     create_default_user(&config.admin_user).await;
 
     // mongo db
@@ -71,22 +73,36 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
 
     // load server socket config
     let http_socket = HttpConfig::socket(&config.http_listen);
-    // 配置文件打包
-    let data_config = Data::new(config);
-    HttpServer::new(move || {
-        App::new()
-            // mid ware 中间件
-            .wrap(actix_web::middleware::Logger::default())
-            .wrap(actix_web::middleware::Logger::new("%a %{User-Agent}i"))
-            .wrap(BenchMarkFactor)
-            // 配置信息
-            .app_data(data_config.clone())
-            // 服务
-            .service(router::root_route())
-            .default_service(web::to(not_exist))
-    })
-    .bind(http_socket)?
-    .run()
-    .await?;
-    Ok(())
+
+    let router = Router::new()
+        .nest("/api/v1", router::root_route())
+        .fallback(not_exist.into_service())
+        .layer(
+            ServiceBuilder::new()
+                .layer(Extension(Arc::new(config)))
+                .layer(TraceLayer::new_for_http())
+                .layer(CatchPanicLayer::new()),
+        );
+
+    let (tx, rx) = oneshot::channel();
+    tokio::spawn(async move {
+        match tokio::signal::ctrl_c().await {
+            Ok(_) => {
+                log::info!("收到退出信号");
+                tx.send(())
+            }
+            Err(err) => {
+                log::error!("等待退出信号异常 {err}");
+                tx.send(())
+            }
+        }
+    });
+
+    axum::Server::bind(&http_socket)
+        .serve(router.into_make_service())
+        .with_graceful_shutdown(async {
+            rx.await.ok();
+        })
+        .await
+        .expect("服务出现异常");
 }

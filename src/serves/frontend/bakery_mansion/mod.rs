@@ -1,3 +1,4 @@
+use axum_prehandle::PreRespHandling;
 use resp_result::RespResult;
 
 pub mod controllers;
@@ -8,7 +9,5 @@ mod view;
 type MansionRResult<T> = RespResult<T, error::MansionError>;
 
 use self::models::MidCheckerPretreat;
-use crate::utils::req_pretreatment::{prefabs::ToRResult, ReqPretreatment};
 
-pub type MidCheckerPretreatment =
-    ReqPretreatment<ToRResult<MidCheckerPretreat>>;
+pub type MidCheckerPretreatment = PreRespHandling<MidCheckerPretreat>;

@@ -1,10 +1,13 @@
 use std::borrow::Cow;
 
+use axum_prehandle::{
+    prefabs::{json::JsonPayload, query::QueryParams},
+    PreHandling, PreRespMapErrorHandling,
+};
 use crypto::digest::Digest;
 use crypto_str::Encoder;
 use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use request_pretreat::Pretreatment;
 use time_usage::sync_time_usage_with_name;
 
 use super::{view::ChangePassword, UsernamePretreatment};
@@ -16,16 +19,10 @@ use crate::{
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
-    utils::{
-        req_pretreatment::{
-            prefabs::{Json, MapErr, Query, ToRResult},
-            ReqPretreatment,
-        },
-        user_authorize::{
-            auth_level::prefabs::Chef, error::AuthError, AuthInfo,
-            Authentication, AuthenticationLevel, GenerateToken,
-            PasswordEncoder, User,
-        },
+    utils::user_authorize::{
+        auth_level::prefabs::Chef, error::AuthError, AuthInfo,
+        Authentication, AuthenticationLevel, GenerateToken, PasswordEncoder,
+        User,
     },
 };
 
@@ -43,8 +40,9 @@ crate::quick_struct! {
 impl UserAuthBackend {
     pub async fn create_user(
         auth: AuthenticationLevel<Chef, AdminUserError>,
-        query: ReqPretreatment<
-            ToRResult<MapErr<Query<NewUserAuthLevel>, AdminUserError>>,
+        query: PreRespMapErrorHandling<
+            QueryParams<NewUserAuthLevel>,
+            AdminUserError,
         >,
     ) -> AdminUserRResult<CreateUser> {
         let permission = query.0.permission;
@@ -110,8 +108,9 @@ impl UserAuthBackend {
     }
 
     pub async fn login(
-        ReqPretreatment(body): ReqPretreatment<
-            ToRResult<MapErr<Json<UserLogin>, AdminUserError>>,
+        PreHandling(body): PreRespMapErrorHandling<
+            JsonPayload<UserLogin>,
+            AdminUserError,
         >,
     ) -> AdminUserRResult<UserToken> {
         let token_info = UserSqlOperate::find_user_and_verify_pwd(
@@ -150,7 +149,7 @@ impl UserAuthBackend {
 
     pub async fn change_username(
         user: Authentication<AuthError>,
-        ReqPretreatment(username): UsernamePretreatment,
+        PreHandling(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         let id = user.0.id;
 
@@ -162,9 +161,10 @@ impl UserAuthBackend {
     }
 
     pub async fn change_password(
-        Pretreatment(user): Authentication<AuthError>,
-        ReqPretreatment(body): ReqPretreatment<
-            ToRResult<MapErr<Json<ChangePassword>, AdminUserError>>,
+        PreHandling(user): Authentication<AuthError>,
+        PreHandling(body): PreRespMapErrorHandling<
+            JsonPayload<ChangePassword>,
+            AdminUserError,
         >,
     ) -> AdminUserRResult<UserToken> {
         let id = user.id;

@@ -1,6 +1,18 @@
-use actix_web::HttpRequest;
+use axum::body::Body;
+use http::Request;
 use resp_result::RespResult;
+use serde::Serialize;
 use status_err::ErrPrefix;
+
+struct T;
+impl Serialize for T {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str("12313")
+    }
+}
 
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
@@ -23,7 +35,7 @@ use status_err::ErrPrefix;
 ///         //   |     |------新建包装类型的类型名称
 ///             pub JsonError
 ///             (      
-///                 actix_web::Error  // 内部包装的类型
+///                 Error  // 内部包装的类型
 ///             )"反序列化异常" // 为包装类型添加额外的异常信息
 ///         );
 ///     ```
@@ -79,6 +91,21 @@ macro_rules! error_generate {
                 }
             }
         }
+        impl serde::Serialize for $err_name{
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer {
+                    match self{
+                        $(
+                            Self::$v_name(err) => {
+                                serializer.serialize_str(&format!("{}",err))
+                            }
+                        ),+
+                        Self::Infallible => unreachable!(),
+                    }
+            }
+        }
+
         // 实现 Resp -error 可以作为RespResult的异常
         status_err::resp_error_impl!($err_name);
         // 转换代码
@@ -108,6 +135,14 @@ macro_rules! error_generate {
                 writeln!(f, "{} => {}",stringify!($err_name), $msg)
             }
         }
+
+        impl serde::Serialize for $err_name{
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer {
+                serializer.serialize_str($msg)
+            }
+        }
     };
 
     ($v:vis $wrap_name:ident($err_ty:ty))=>{
@@ -118,27 +153,28 @@ macro_rules! error_generate {
         #[derive(Debug)]
         $v struct $wrap_name($err_ty);
         impl std::error::Error for $wrap_name{}
+
         impl std::fmt::Display for $wrap_name{
             #[inline]
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 writeln!(f, "{} => {} `{}`",stringify!($wrap_name), $msg, self.0)
             }
         }
+
+
         impl From<$err_ty> for $wrap_name{
             #[inline]
             fn from(src:$err_ty)->Self{
                 Self(src)
             }
         }
+
+
     };
 
 }
 
-error_generate!(
-    pub GlobalError
-    Io=std::io::Error
-    Route=RouteNotExistError
-);
+// error_generate!(pub RouteNotExistError = "该路由不存在，请检查请求路径");
 
 status_err::status_error! {
     pub RouteNotExistError[
@@ -147,11 +183,18 @@ status_err::status_error! {
     ]=>"该路由不存在，请检查请求路径"
 }
 
+impl Serialize for RouteNotExistError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str("该路由不存在，请检查请求路径")
+    }
+}
+
 status_err::resp_error_impl!(RouteNotExistError);
 
-pub async fn not_exist(
-    req: HttpRequest,
-) -> RespResult<(), RouteNotExistError> {
-    log::error!("路由未找到 `{}` {}", req.path(), &req.method());
+pub async fn not_exist(req: Request<Body>) -> RespResult<(), RouteNotExistError> {
+    log::error!("路由未找到 `{}` {}", req.uri(), &req.method());
     RespResult::err(RouteNotExistError)
 }

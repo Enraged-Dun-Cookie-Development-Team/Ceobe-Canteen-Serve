@@ -8,8 +8,8 @@ use super::{
 use crate::{
     router::BakeryMansionBackend,
     serves::backend::bakery_mansion::view::ViewMansion,
-    utils::req_pretreatment::ReqPretreatment,
 };
+use axum_prehandle::PreHandling as ReqPretreatment;
 
 impl BakeryMansionBackend {
     pub async fn save_mansion(

@@ -1,15 +1,13 @@
-use actix_web::error::QueryPayloadError;
+use axum::extract::rejection::{JsonRejection, QueryRejection};
 
-use crate::utils::{
-    req_pretreatment::prefabs::JsonError, user_authorize::error::AuthError,
-};
+use crate::utils::user_authorize::error::AuthError;
 
 crate::error_generate!(
     pub AdminUserError
-    Json = JsonError
+    Json = JsonRejection
     OrmDB = orm_migrate::sql_models::admin_user::AdminUserError
     Bcrypt = bcrypt::BcryptError
     Auth = AuthError
-    Query = QueryPayloadError
+    Query = QueryRejection
     Limit = range_limit::Error
 );
