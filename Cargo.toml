@@ -21,7 +21,6 @@ async_utils = []
 
 [dependencies]
 # db
-mongodb = "2"
 bson = { version = "2.1.0", features = ["chrono-0_4"] }
 # async
 futures = "0.3"
@@ -98,9 +97,6 @@ path = "./libs/time-usage"
 [dependencies.sub-model-derive]
 version = "0.1"
 package = "sub-model"
-
-[dependencies.sql_connection]
-path = "./database/sql_connection"
 
 [dependencies.orm-migrate]
 package = "migration"

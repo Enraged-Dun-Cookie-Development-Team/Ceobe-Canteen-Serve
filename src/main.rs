@@ -14,9 +14,9 @@ use error::{not_exist, GlobalError};
 use figment::providers::{Format, Json, Toml, Yaml};
 use mongo_migration::mongo_connection::MongoConnectBuilder;
 use orm_migrate::{
-    sql_connection::connect_to_sql_database, Migrator, MigratorTrait,
+    sql_connection::{connect_to_sql_database, get_sql_database},
+    Migrator, MigratorTrait,
 };
-use sql_connection::get_sql_database;
 use utils::{middleware::benchmark::BenchMarkFactor, user_authorize};
 
 mod bootstrap;
@@ -52,8 +52,10 @@ async fn task(config: GlobalConfig) -> Result<(), crate::error::GlobalError> {
     connect_to_sql_database(&config.database)
         .await
         .expect("无法连接到数据库");
-    let db = get_sql_database();
-    Migrator::up(db, None).await?;
+
+    Migrator::up(get_sql_database(), None)
+        .await
+        .expect("执行 Sql 数据库 Migration 失败");
     log::info!("完成对Mysql数据库进行migration操作");
 
     create_default_user(&config.admin_user).await;
