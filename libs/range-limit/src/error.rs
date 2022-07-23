@@ -5,7 +5,6 @@ pub enum Error {
     TooLarget { require: usize, get: usize },
     TooSmall { require: usize, get: usize },
     FixSize { require: usize, get: usize },
-    Coutom(Box<dyn std::error::Error>),
 }
 
 impl std::error::Error for Error {}
@@ -30,7 +29,6 @@ impl Display for Error {
             Error::FixSize { require, get } => {
                 write!(f, "require Size == {} but get {}", require, get)
             }
-            Error::Coutom(err) => write!(f, "costom Error: {}", err),
         }
     }
 }
