@@ -5,26 +5,24 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
-default=["none","trans","bcrypt","serde"]
+default = ["none", "trans", "bcrypt", "serde"]
 # 内置的加密算法
-bcrypt=["bcrypt_"]
-none=[]
-
+bcrypt = ["bcrypt_"]
+none = []
 # serde 支持
-serde= ["serde_","wrap"]
+serde = ["serde_", "wrap"]
 # 钻换string支持
-trans=["wrap"]
-
+trans = ["wrap"]
 # 封装支持
-wrap=[]
+wrap = []
 
 [dependencies]
 bcrypt_ = { package = "bcrypt", version = "0.10", optional = true }
 
 [dependencies.serde_]
-package="serde"
-optional=true
-version="1.0"
+package = "serde"
+optional = true
+version = "1.0"
 
 [dependencies.time-usage]
-path="../time-usage"
+path = "../time-usage"

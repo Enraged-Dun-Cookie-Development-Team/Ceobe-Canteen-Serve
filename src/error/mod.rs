@@ -254,6 +254,5 @@ pub fn serve_panic(
     };
 
     log::error!("服务器发生未预期panic : {}", detail);
-    let resp = RespResult::<(), _>::err(ServicePanic).into_response();
-    resp
+    RespResult::<(), _>::err(ServicePanic).into_response()
 }

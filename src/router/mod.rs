@@ -20,7 +20,7 @@ pub fn root_route() -> Router {
                         panic!("测试 Panic");
                     }
                     #[cfg(not(debug_assertions))]
-                    resp_result::RespResult::<_,crate::error::NotAnError>::ok("不可以Panic")
+                    resp_result::RespResult::<_, crate::error::NotAnError>::ok("不可以Panic")
                 }
             }),
         )

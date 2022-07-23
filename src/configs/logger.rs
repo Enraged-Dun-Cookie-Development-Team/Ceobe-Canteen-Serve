@@ -1,34 +1,29 @@
-use std::{fs::OpenOptions, io::Write, path::Path, sync::Mutex};
+use std::{
+    fs::{File, OpenOptions},
+    io::Write,
+    path::Path,
+};
 
 use log::LevelFilter;
 use logger::{logger_info::LoggerInfo, LoggerAdapter};
 use serde::Deserialize;
 
-pub struct FileLogger(std::sync::Mutex<std::fs::File>);
+pub struct FileLogger(File);
 
 impl LoggerAdapter for FileLogger {
     fn do_log<'a, 'b>(&self, info: LoggerInfo<'_, '_>) {
-        let _r = self
-            .0
-            .lock()
-            .map(|mut f| {
-                writeln!(
-                    f,
-                    "{} | {:<16} - {} => {}",
-                    info.time, info.level, info.location, info.msg
-                )
-            })
-            .ok();
+        let f = &mut &self.0;
+        writeln!(
+            f,
+            "{} | {:<16} - {} => {}",
+            info.time, info.level, info.location, info.msg
+        )
+        .ok();
     }
 
     fn flush(&self) {
-        let _r = self
-            .0
-            .lock()
-            .map(|mut f| {
-                f.flush().ok();
-            })
-            .ok();
+        let file = &mut &self.0;
+        file.flush().ok();
     }
 }
 
@@ -59,7 +54,7 @@ impl LoggerConfig {
                     .open(path)
                     .expect("无法打开日志文件");
 
-                let adapter = FileLogger(Mutex::new(file));
+                let adapter = FileLogger(file);
                 let conf = logger::LoggerConfig {
                     level_filter: level.into(),
                     enable_color: false,

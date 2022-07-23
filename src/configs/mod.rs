@@ -1,4 +1,3 @@
-pub mod actix_logger;
 pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
