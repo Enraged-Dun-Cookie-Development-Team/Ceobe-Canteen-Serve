@@ -8,27 +8,19 @@ edition = "2021"
 thiserror = "1"
 typed-builder = "0.10"
 chrono = "0.4"
+futures = "0.3"
+sub-model = "0.1"
+serde = { version = "1", features = ["derive"] }
+sea-orm = { version = "0.9", default-features = false, features = [
+    "sqlx-mysql",
+    "runtime-tokio-rustls",
+    "macros",
+    "with-chrono"
+] }
+checker = { path = "../../libs/checker" }
+range-limit = { path = "../../libs/range-limit" }
+sql_connection = { path = "../../database/sql_connection" }
+status-err = { path = "../../libs/status-err" }
 
-[dependencies.serde]
-version = "1"
-features = ["derive"]
-
-[dependencies.sea-orm]
-version = "0.9"
-default-features = false
-features = ["sqlx-mysql", "runtime-tokio-rustls", "macros", "with-chrono"]
-
-[dependencies.sub-model]
-version = "0.1"
-
-[dependencies.checker]
-path = "../../libs/checker"
-
-[dependencies.range-limit]
-path = "../../libs/range-limit"
-
-[dependencies.sql_connection]
-path = "../../database/sql_connection"
-
-[dependencies.status-err]
-path = "../../libs/status-err"
+[dev-dependencies]
+tokio = { version = "1", features = ["test-util", "macros"] }

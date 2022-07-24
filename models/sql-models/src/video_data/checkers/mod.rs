@@ -1,7 +1,8 @@
+pub mod bv;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum VideoDataCheckError {
     #[error("范围超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),
