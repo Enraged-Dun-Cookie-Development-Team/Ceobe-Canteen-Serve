@@ -11,7 +11,7 @@ pub enum CheckError {
     #[error("范围超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),
 
-    #[error("Bv号错误: {0}")]
+    #[error("Bv号错误: {0:?}")]
     WrongBv(String),
 
     #[error("不可能失败")]

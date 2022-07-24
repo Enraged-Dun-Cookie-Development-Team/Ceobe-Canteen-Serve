@@ -4,8 +4,15 @@ use std::{
 };
 
 use futures::future::{ready, Ready};
+use once_cell::sync::Lazy;
+use regex::Regex;
 
 use super::CheckError;
+
+static BV_PATTEN: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r#"^BV1[A-Za-z0-9]{2}4(?:1|y)1[A-Za-z0-9]7[A-Za-z0-9]{2}$"#)
+        .expect("正则表达式格式错误")
+});
 
 #[derive(PartialEq, Eq)]
 pub struct Bv([u8; 12]);
@@ -35,25 +42,19 @@ impl checker::Checker for BvChecker {
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let task = || {
-            if uncheck.len() == 12 {
+            if BV_PATTEN.is_match(&uncheck) {
                 let chars = uncheck.chars().take(12);
+                let mut bv = Cursor::new([0u8; 12]);
+                bv.write_all(
+                    &chars.map(|c| c as u8).collect::<Vec<_>>()[0..12],
+                )
+                .ok();
 
-                if chars
-                    .clone()
-                    .all(|c| c.is_ascii_alphabetic() || c.is_ascii_digit())
-                    && uncheck.to_lowercase().starts_with("bv")
-                {
-                    let mut bv = Cursor::new([0u8; 12]);
-                    bv.write_all(
-                        &chars.map(|c| c as u8).collect::<Vec<_>>()[0..12],
-                    )
-                    .ok();
-
-                    return Ok(Bv(bv.into_inner()));
-                }
+                Ok(Bv(bv.into_inner()))
             }
-
-            Err(CheckError::WrongBv(uncheck))
+            else {
+                Err(CheckError::WrongBv(uncheck))
+            }
         };
 
         ready(task())
@@ -64,15 +65,15 @@ impl checker::Checker for BvChecker {
 mod test {
     use checker::CheckRequire;
 
-    use crate::ceobe_operation::video::checkers::CheckError;
-
     use super::BvChecker;
+    use crate::ceobe_operation::video::checkers::CheckError;
     #[tokio::test]
     async fn test_bv_succeed() {
         let uncheck = CheckRequire::new(BvChecker, "BV1ZB4y1Y7Hm".into());
 
         let checked = uncheck.lite_checking().await.unwrap();
 
+        println!("{}", checked);
         assert_eq!(checked.to_string(), "BV1ZB4y1Y7Hm")
     }
     #[tokio::test]
@@ -81,9 +82,13 @@ mod test {
 
         let checked = uncheck.lite_checking().await;
 
-        assert_eq!(
-            Err(CheckError::WrongBv("Av170001".into())),
-            checked
+        println!(
+            "{}",
+            match &checked {
+                Ok(_) => unreachable!(),
+                Err(err) => err,
+            }
         );
+        assert_eq!(Err(CheckError::WrongBv("Av170001".into())), checked);
     }
 }
