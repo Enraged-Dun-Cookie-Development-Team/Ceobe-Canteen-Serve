@@ -8,5 +8,5 @@ pub use video::CeoboOperationVideo;
 
 pub(super) fn ceobo_operation_router()->Router{
     Router::new()
-    .merge(video_router())
+    .nest("/video",video_router())
 }

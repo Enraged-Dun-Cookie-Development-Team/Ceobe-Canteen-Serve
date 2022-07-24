@@ -14,6 +14,7 @@ pub struct BvQuery {
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
     pub struct BvQueryUncheck = BvQueryChecker > BvQuery{
+        #[serde(alias = "bv_number")]
         bv :BvChecker
     }
     err : CheckError
