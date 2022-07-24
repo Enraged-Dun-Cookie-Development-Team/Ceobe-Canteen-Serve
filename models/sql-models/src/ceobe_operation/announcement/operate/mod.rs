@@ -1,5 +1,6 @@
-mod create;
+mod update;
 mod retrieve;
+mod delete;
 
 use status_err::HttpCode;
 use thiserror::Error;

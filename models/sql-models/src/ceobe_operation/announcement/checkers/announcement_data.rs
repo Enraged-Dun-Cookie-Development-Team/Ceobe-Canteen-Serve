@@ -1,7 +1,10 @@
 use checker::{check_obj, prefabs::no_check::NoCheck};
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
+use sea_orm::Set;
 use typed_builder::TypedBuilder;
+
+use crate::ceobe_operation::announcement::models::model_announcement;
 
 use super::{
     CheckError,
@@ -26,4 +29,28 @@ check_obj! {
         pub notice: NoCheck<bool>
     }
     err : CheckError
+}
+
+
+impl model_announcement::ActiveModel {
+    pub(in crate::ceobe_operation::announcement) fn from_announcement_data_with_order(
+        CeobeOperationAnnouncement {
+            start_time,
+            over_time,
+            content,
+            img_url,
+            notice,
+        }: CeobeOperationAnnouncement,
+        order: i32,
+    ) -> Self {
+        Self {
+            start_time: Set(start_time),
+            over_time :Set(over_time),
+            content: Set(content),
+            img_url: Set(img_url),
+            order: Set(order),
+            notice: Set(notice),
+            ..Default::default()
+        }
+    }
 }
