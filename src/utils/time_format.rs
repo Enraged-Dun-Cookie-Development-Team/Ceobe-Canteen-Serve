@@ -1,10 +1,14 @@
-use chrono::NaiveDate;
+use chrono::{NaiveDate, NaiveDateTime};
 
 const TIME_FORMAT: &str = "%Y-%m-%d %T";
 const DATE_FORMAT: &str = "%Y-%m-%d";
 
-pub fn naive_data_format(date: NaiveDate) -> String {
+pub fn naive_date_format(date: NaiveDate) -> String {
     date.format(DATE_FORMAT).to_string()
+}
+
+pub fn naive_date_time_format(date_time :NaiveDateTime)->String{
+    date_time.format(TIME_FORMAT).to_string()
 }
 
 pub fn bson_date_time_format(date: bson::DateTime) -> String {

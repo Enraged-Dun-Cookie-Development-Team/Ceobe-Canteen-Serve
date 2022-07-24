@@ -28,8 +28,8 @@ futures = "0.3"
 figment = { version = "0.10", features = ["yaml", "json", "toml"] }
 # axum
 axum = { version = "0.5", features = ["headers"] }
-tower = "0.4"
-tower-http = {version =  "0.3",features=["trace","catch-panic"]}
+tower = { version = "0.4", features = ["limit"] }
+tower-http = { version = "0.3", features = ["trace", "catch-panic"] }
 # web
 url = "2.2.2"
 http = "0.2"
@@ -47,10 +47,12 @@ rand = "0.8.5"
 typed-builder = "0.10"
 once_cell = "1"
 thiserror = "1"
+# request
+reqwest = "0.11"
 
 [dependencies.tokio]
 version = "1.15.0"
-features = ["sync", "rt", "rt-multi-thread", "time","signal"]
+features = ["sync", "rt", "rt-multi-thread", "time", "signal"]
 
 [dependencies.serde]
 version = "1.0.133"
