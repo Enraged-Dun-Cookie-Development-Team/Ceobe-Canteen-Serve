@@ -18,7 +18,7 @@ impl<T, Rb: Default> RangeBoundLimit<T, Rb> {
         match status {
             SizeStatus::Ok => Ok(Self(value, Rb::default())),
             SizeStatus::TooLarge(require) => {
-                Err(error::Error::TooLarget { require, get: size })
+                Err(error::Error::TooLarge { require, get: size })
             }
             SizeStatus::TooSmall(require) => {
                 Err(error::Error::TooSmall { require, get: size })

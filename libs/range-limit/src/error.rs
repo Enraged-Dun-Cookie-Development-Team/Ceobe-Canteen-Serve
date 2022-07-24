@@ -1,8 +1,8 @@
 use std::fmt::Display;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Error {
-    TooLarget { require: usize, get: usize },
+    TooLarge { require: usize, get: usize },
     TooSmall { require: usize, get: usize },
     FixSize { require: usize, get: usize },
 }
@@ -12,7 +12,7 @@ impl std::error::Error for Error {}
 impl Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Error::TooLarget { require, get } => {
+            Error::TooLarge { require, get } => {
                 write!(
                     f,
                     "Out of Length Limit: require < {} but get {}",
