@@ -28,7 +28,7 @@ futures = "0.3"
 figment = { version = "0.10", features = ["yaml", "json", "toml"] }
 # axum
 axum = { version = "0.5", features = ["headers"] }
-tower = "0.4"
+tower = { version = "0.4", features = ["limit"] }
 tower-http = {version =  "0.3",features=["trace","catch-panic"]}
 # web
 url = "2.2.2"
