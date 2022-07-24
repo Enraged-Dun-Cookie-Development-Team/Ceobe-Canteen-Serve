@@ -1,4 +1,4 @@
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 use futures::future::{ready, Ready};
 
 use crate::Checker;
@@ -41,12 +41,12 @@ pub struct TimeFormatChecker;
 
 impl Checker for TimeFormatChecker {
     type Args = ();
-    type Checked = NaiveDate;
+    type Checked = NaiveTime;
     type Err = chrono::ParseError;
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        ready(NaiveDate::parse_from_str(&uncheck, TIME_FORMAT))
+        ready(NaiveTime::parse_from_str(&uncheck, TIME_FORMAT))
     }
 }
