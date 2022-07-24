@@ -10,7 +10,10 @@ use sql_connection::get_sql_transaction;
 use super::{CeoboOperationVideoSqlOperate, OperateResult};
 use crate::ceobe_operation::video::{
     checkers::video_data::CeobeOperationVideo,
-    models::{get_now_naive_date_time, get_zero_data_time, model_video},
+    models::{
+        get_now_naive_date_time, get_zero_data_time,
+        model_video::{self, ActiveModel},
+    },
 };
 
 impl CeoboOperationVideoSqlOperate {
@@ -38,7 +41,7 @@ impl CeoboOperationVideoSqlOperate {
         // 通过BV获取当前已经存在的数据
         let mut exist_data = Self::find_by_filter_raw(
             model_video::Column::Bv
-                .is_in(videos.iter().map(|v| v.bv.to_string())),
+                .is_in(videos.iter().map(|v| v.bv.as_str())),
             &db,
         )
         .await?
@@ -56,16 +59,13 @@ impl CeoboOperationVideoSqlOperate {
 
         // 更新或者插入视频信息
         for active in videos.into_iter().enumerate().map(|(order, video)| {
-            if let Some(model) = exist_data.remove(&video.bv.to_string()) {
+            if let Some(model) = exist_data.remove(video.bv.as_str()) {
                 let mut active = model.into_active_model();
                 active.update_with_video_and_order(video, order as i32);
                 active
             }
             else {
-                model_video::ActiveModel::from_video_data_with_order(
-                    video,
-                    order as i32,
-                )
+                ActiveModel::from_video_data_with_order(video, order as i32)
             }
         }) {
             active.save(&db).await?;

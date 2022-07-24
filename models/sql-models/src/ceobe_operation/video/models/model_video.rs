@@ -1,5 +1,7 @@
-use chrono::{Local, NaiveDateTime};
+use chrono::Local;
 use sea_orm::{entity::prelude::*, Set};
+
+use super::get_zero_data_time;
 
 #[derive(Debug, Clone, Eq, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "ceobe_operation_video")]
@@ -34,7 +36,6 @@ impl ActiveModel {
     }
 
     pub fn soft_recover(&mut self) {
-        let date_time = NaiveDateTime::from_timestamp(0, 0);
-        self.delete_at = Set(date_time)
+        self.delete_at = Set(get_zero_data_time())
     }
 }

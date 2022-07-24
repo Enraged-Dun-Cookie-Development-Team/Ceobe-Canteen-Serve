@@ -17,17 +17,23 @@ static BV_PATTEN: Lazy<Regex> = Lazy::new(|| {
 #[derive(PartialEq, Eq)]
 pub struct Bv([u8; 12]);
 
+impl Bv {
+    /// # Safety
+    /// 使用的 [Bv] 来自 [BvChecker] , 将保证这个过程是安全的
+    pub fn as_str(&self) -> &str {
+        unsafe { std::str::from_utf8_unchecked(&self.0) }
+    }
+}
+
 impl Debug for Bv {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s = String::from_utf8_lossy(&self.0).to_string();
-        f.debug_tuple("Bv").field(&s).finish()
+        f.debug_tuple("Bv").field(&self.as_str()).finish()
     }
 }
 
 impl Display for Bv {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s = String::from_utf8_lossy(&self.0);
-        write!(f, "{}", s)
+        write!(f, "{}", self.as_str())
     }
 }
 

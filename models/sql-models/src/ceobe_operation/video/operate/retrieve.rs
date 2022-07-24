@@ -36,7 +36,7 @@ impl CeoboOperationVideoSqlOperate {
     {
         let filter = Condition::all()
             .add(filter.into_condition())
-            .add(model_video::Column::DeleteAt.ne(get_zero_data_time()));
+            .add(model_video::Column::DeleteAt.eq(get_zero_data_time()));
         Self::find_by_filter_raw(filter, db).await
     }
 
