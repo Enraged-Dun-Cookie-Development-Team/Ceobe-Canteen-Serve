@@ -1,6 +1,5 @@
 use chrono::NaiveDateTime;
-use sea_orm_migration::{prelude::*, sea_query::Table};
-
+use sea_orm_migration::prelude::*;
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str { "m20220724_090218_new_video_model" }
@@ -8,64 +7,28 @@ impl MigrationName for Migration {
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        let mut table = Table::create();
+        let mut table = sea_query::Table::create();
         table
-            .table(CeobeOperationVideo::Table)
+            .table(DbTable)
             .if_not_exists()
-            .col(
-                ColumnDef::new(CeobeOperationVideo::Id)
-                    .integer()
-                    .primary_key()
-                    .auto_increment(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::Bv)
-                    .char_len(12)
-                    .not_null(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::StartTime)
-                    .date_time()
-                    .not_null(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::OverTime)
-                    .date_time()
-                    .not_null(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::Title)
-                    .string_len(256)
-                    .not_null(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::Author)
-                    .string_len(128)
-                    .not_null(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::VideoLink)
-                    .string_len(256)
-                    .not_null(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::CoverImage)
-                    .string_len(256)
-                    .not_null(),
-            )
-            .col(
-                ColumnDef::new(CeobeOperationVideo::DeleteAt)
-                    .date_time()
-                    .not_null()
-                    .default(Value::ChronoDateTime(
-                        Box::new(NaiveDateTime::from_timestamp(0, 0)).into(),
-                    )),
-            );
+            .col(ColumnDef::new(Id).integer().primary_key().auto_increment())
+            .col(ColumnDef::new(Bv).char_len(12).not_null())
+            .col(ColumnDef::new(StartTime).date_time().not_null())
+            .col(ColumnDef::new(OverTime).date_time().not_null())
+            .col(ColumnDef::new(Title).string_len(256).not_null())
+            .col(ColumnDef::new(Author).string_len(128).not_null())
+            .col(ColumnDef::new(VideoLink).string_len(256).not_null())
+            .col(ColumnDef::new(CoverImage).string_len(256).not_null())
+            .col(ColumnDef::new(DeleteAt).date_time().not_null().default(
+                Value::ChronoDateTime(
+                    Box::new(NaiveDateTime::from_timestamp(0, 0)).into(),
+                ),
+            ));
         // 添加唯一索引，用于软删除
         table.index(
             Index::create()
-                .col(CeobeOperationVideo::Bv)
-                .col(CeobeOperationVideo::DeleteAt)
+                .col(Bv)
+                .col(DeleteAt)
                 .name("mark-delete-id")
                 .unique(),
         );
@@ -75,12 +38,13 @@ impl MigrationTrait for Migration {
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        let mut table = Table::drop();
-        table.table(CeobeOperationVideo::Table);
+        let mut table = sea_query::Table::drop();
+        table.table(DbTable);
         manager.drop_table(table).await?;
         Ok(())
     }
 }
+pub use CeobeOperationVideo::{Table as DbTable, *};
 
 #[derive(Iden)]
 pub enum CeobeOperationVideo {
