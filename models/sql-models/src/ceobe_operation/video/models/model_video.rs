@@ -1,7 +1,8 @@
 use chrono::Local;
 use sea_orm::{entity::prelude::*, Set};
 
-use super::get_zero_data_time;
+use crate::get_zero_data_time;
+
 
 #[derive(Debug, Clone, Eq, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "ceobe_operation_video")]

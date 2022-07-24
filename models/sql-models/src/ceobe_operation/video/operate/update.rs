@@ -3,17 +3,17 @@ use std::collections::HashMap;
 use futures::{future::ready, StreamExt};
 use sea_orm::{
     sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait,
-    EntityTrait, IntoActiveModel, QueryFilter, Value,
+    EntityTrait, IntoActiveModel, QueryFilter,
 };
 use sql_connection::get_sql_transaction;
 
 use super::{CeoboOperationVideoSqlOperate, OperateResult};
-use crate::ceobe_operation::video::{
-    checkers::video_data::CeoboOpVideo,
-    models::{
-        get_now_naive_date_time, get_zero_data_time,
-        model_video::{self, ActiveModel},
+use crate::{
+    ceobe_operation::video::{
+        checkers::video_data::CeoboOpVideo,
+        models::model_video::{self, ActiveModel},
     },
+    get_now_naive_date_time, get_zero_data_time,
 };
 
 impl CeoboOperationVideoSqlOperate {
@@ -24,7 +24,7 @@ impl CeoboOperationVideoSqlOperate {
             .filter(model_video::Column::DeleteAt.ne(get_zero_data_time()))
             .col_expr(
                 model_video::Column::DeleteAt,
-                Expr::value(Value::ChronoDateTime(get_now_naive_date_time())),
+                Expr::value(get_now_naive_date_time()),
             )
             .exec(db)
             .await?;

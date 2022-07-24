@@ -6,10 +6,7 @@ use sea_orm::{
 use sql_connection::get_sql_database;
 
 use super::{CeoboOperationVideoSqlOperate, OperateResult};
-use crate::{
-    ceobe_operation::video::models::{get_zero_data_time, model_video},
-    StreamResult,
-};
+use crate::{ceobe_operation::video::models::model_video, StreamResult, get_zero_data_time};
 
 impl CeoboOperationVideoSqlOperate {
     pub async fn find_by_filter_raw<'r, 'db, C>(
