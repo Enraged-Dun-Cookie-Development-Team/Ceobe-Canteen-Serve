@@ -6,7 +6,6 @@ mod video;
 
 pub use video::CeoboOperationVideo;
 
-pub(super) fn ceobo_operation_router()->Router{
-    Router::new()
-    .nest("/video",video_router())
+pub(super) fn ceobo_operation_router() -> Router {
+    Router::new().nest("/video", video_router())
 }

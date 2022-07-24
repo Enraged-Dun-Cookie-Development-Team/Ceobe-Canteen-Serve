@@ -7,7 +7,7 @@ pub fn naive_date_format(date: NaiveDate) -> String {
     date.format(DATE_FORMAT).to_string()
 }
 
-pub fn naive_date_time_format(date_time :NaiveDateTime)->String{
+pub fn naive_date_time_format(date_time: NaiveDateTime) -> String {
     date_time.format(TIME_FORMAT).to_string()
 }
 

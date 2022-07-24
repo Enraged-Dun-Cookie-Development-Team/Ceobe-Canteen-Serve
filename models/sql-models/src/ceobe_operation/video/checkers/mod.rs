@@ -1,5 +1,5 @@
-pub mod bv_arg_checker;
 pub mod bv;
+pub mod bv_arg_checker;
 pub mod video_data;
 use std::convert::Infallible;
 

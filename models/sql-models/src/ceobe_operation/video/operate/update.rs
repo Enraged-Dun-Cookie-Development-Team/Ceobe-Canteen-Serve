@@ -31,9 +31,7 @@ impl CeoboOperationVideoSqlOperate {
         Ok(resp.rows_affected)
     }
 
-    pub async fn update_all(
-        videos: Vec<CeoboOpVideo>,
-    ) -> OperateResult<()> {
+    pub async fn update_all(videos: Vec<CeoboOpVideo>) -> OperateResult<()> {
         let db = get_sql_transaction().await?;
         // 所有先前的数据都设置为删除
         Self::all_soft_remove(&db).await?;
