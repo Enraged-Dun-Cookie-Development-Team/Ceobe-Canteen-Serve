@@ -1,4 +1,7 @@
 pub mod bv;
+pub mod video_data;
+use std::convert::Infallible;
+
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
@@ -9,6 +12,9 @@ pub enum VideoDataCheckError {
 
     #[error("Bv号错误: {0}")]
     WrongBv(String),
+
+    #[error("不可能失败")]
+    Infallible(#[from] Infallible),
 }
 
 impl StatusErr for VideoDataCheckError {
@@ -16,6 +22,7 @@ impl StatusErr for VideoDataCheckError {
         match self {
             VideoDataCheckError::LengthExceed(inner) => inner.prefix(),
             VideoDataCheckError::WrongBv(_) => ErrPrefix::CHECKER,
+            VideoDataCheckError::Infallible(_) => unreachable!(),
         }
     }
 
@@ -23,6 +30,7 @@ impl StatusErr for VideoDataCheckError {
         match self {
             VideoDataCheckError::LengthExceed(inner) => inner.code(),
             VideoDataCheckError::WrongBv(_) => 0x00_09,
+            VideoDataCheckError::Infallible(_) => unreachable!(),
         }
     }
 }
