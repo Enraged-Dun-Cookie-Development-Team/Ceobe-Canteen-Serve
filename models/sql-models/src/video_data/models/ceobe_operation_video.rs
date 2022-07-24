@@ -1,8 +1,8 @@
 use chrono::Local;
 use sea_orm::{entity::prelude::*, Set};
 
-#[derive(Debug, Clone, PartialEq, DeriveEntityModel)]
-#[sea_orm(table_name = "video_data")]
+#[derive(Debug, Clone, Eq, PartialEq, DeriveEntityModel)]
+#[sea_orm(table_name = "ceobe_operation_video")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,

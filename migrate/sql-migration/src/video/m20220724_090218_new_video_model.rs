@@ -10,31 +10,31 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = Table::create();
         table
-            .table(VideoData::Table)
+            .table(CeobeOperationVideo::Table)
             .if_not_exists()
             .col(
-                ColumnDef::new(VideoData::Id)
+                ColumnDef::new(CeobeOperationVideo::Id)
                     .integer()
                     .primary_key()
                     .auto_increment(),
             )
-            .col(ColumnDef::new(VideoData::Bv).char_len(12).not_null())
-            .col(ColumnDef::new(VideoData::StartTime).date_time().not_null())
-            .col(ColumnDef::new(VideoData::OverTime).date_time().not_null())
-            .col(ColumnDef::new(VideoData::Title).string_len(256).not_null())
-            .col(ColumnDef::new(VideoData::Author).string_len(128).not_null())
+            .col(ColumnDef::new(CeobeOperationVideo::Bv).char_len(12).not_null())
+            .col(ColumnDef::new(CeobeOperationVideo::StartTime).date_time().not_null())
+            .col(ColumnDef::new(CeobeOperationVideo::OverTime).date_time().not_null())
+            .col(ColumnDef::new(CeobeOperationVideo::Title).string_len(256).not_null())
+            .col(ColumnDef::new(CeobeOperationVideo::Author).string_len(128).not_null())
             .col(
-                ColumnDef::new(VideoData::VideoLink)
+                ColumnDef::new(CeobeOperationVideo::VideoLink)
                     .string_len(256)
                     .not_null(),
             )
             .col(
-                ColumnDef::new(VideoData::CoverImage)
+                ColumnDef::new(CeobeOperationVideo::CoverImage)
                     .string_len(256)
                     .not_null(),
             )
             .col(
-                ColumnDef::new(VideoData::DeleteAt)
+                ColumnDef::new(CeobeOperationVideo::DeleteAt)
                     .date_time()
                     .not_null()
                     .default(Value::ChronoDateTime(
@@ -44,8 +44,8 @@ impl MigrationTrait for Migration {
         // 添加唯一索引，用于软删除
         table.index(
             Index::create()
-                .col(VideoData::Bv)
-                .col(VideoData::DeleteAt)
+                .col(CeobeOperationVideo::Bv)
+                .col(CeobeOperationVideo::DeleteAt)
                 .name("mark-delete-id")
                 .unique(),
         );
@@ -56,14 +56,14 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = Table::drop();
-        table.table(VideoData::Table);
+        table.table(CeobeOperationVideo::Table);
         manager.drop_table(table).await?;
         Ok(())
     }
 }
 
 #[derive(Iden)]
-pub enum VideoData {
+pub enum CeobeOperationVideo {
     Table,
     Id,
     // BV1Rg411Z7LV

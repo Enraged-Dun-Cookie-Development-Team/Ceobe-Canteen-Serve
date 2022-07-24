@@ -5,11 +5,11 @@ use typed_builder::TypedBuilder;
 
 use super::{
     bv::{Bv, BvChecker},
-    VideoDataCheckError,
+    CeobeOperationVideoCheckError,
 };
 
 #[derive(Debug, TypedBuilder)]
-pub struct VideoData {
+pub struct CeobeOperationVideo {
     pub bv: Bv,
     pub start_time: NaiveDateTime,
     pub over_time: NaiveDateTime,
@@ -21,7 +21,7 @@ pub struct VideoData {
 
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
-    pub struct VideoDataUncheck = VideoDataChecker > VideoData{
+    pub struct CeobeOperationVideoUncheck = CeobeOperationVideoChecker > CeobeOperationVideo{
         pub bv: BvChecker,
         pub start_time: NoCheck<NaiveDateTime>,
         pub over_time: NoCheck<NaiveDateTime>,
@@ -30,5 +30,5 @@ check_obj! {
         pub video_link: MaxRangeLimit<String, 256>,
         pub cover_image: MaxRangeLimit<String, 256>
     }
-    err : VideoDataCheckError
+    err : CeobeOperationVideoCheckError
 }

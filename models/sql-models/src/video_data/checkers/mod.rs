@@ -6,7 +6,7 @@ use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
 #[derive(Debug, Error, PartialEq, Eq)]
-pub enum VideoDataCheckError {
+pub enum CeobeOperationVideoCheckError {
     #[error("范围超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),
 
@@ -17,20 +17,20 @@ pub enum VideoDataCheckError {
     Infallible(#[from] Infallible),
 }
 
-impl StatusErr for VideoDataCheckError {
+impl StatusErr for CeobeOperationVideoCheckError {
     fn prefix(&self) -> status_err::ErrPrefix {
         match self {
-            VideoDataCheckError::LengthExceed(inner) => inner.prefix(),
-            VideoDataCheckError::WrongBv(_) => ErrPrefix::CHECKER,
-            VideoDataCheckError::Infallible(_) => unreachable!(),
+            CeobeOperationVideoCheckError::LengthExceed(inner) => inner.prefix(),
+            CeobeOperationVideoCheckError::WrongBv(_) => ErrPrefix::CHECKER,
+            CeobeOperationVideoCheckError::Infallible(_) => unreachable!(),
         }
     }
 
     fn code(&self) -> u16 {
         match self {
-            VideoDataCheckError::LengthExceed(inner) => inner.code(),
-            VideoDataCheckError::WrongBv(_) => 0x00_09,
-            VideoDataCheckError::Infallible(_) => unreachable!(),
+            CeobeOperationVideoCheckError::LengthExceed(inner) => inner.code(),
+            CeobeOperationVideoCheckError::WrongBv(_) => 0x00_09,
+            CeobeOperationVideoCheckError::Infallible(_) => unreachable!(),
         }
     }
 }

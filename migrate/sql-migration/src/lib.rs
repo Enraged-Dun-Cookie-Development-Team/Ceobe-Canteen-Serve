@@ -1,5 +1,5 @@
-mod video;
 mod admin;
+mod video;
 
 pub use sea_orm_migration::MigratorTrait;
 use sea_orm_migration::{async_trait, MigrationTrait};
