@@ -12,5 +12,6 @@ path = "src/lib.rs"
 
 [dependencies]
 tokio = { version = "1", features = ["macros"] }
-sea-orm-migration = { version = "0.9.0" }
+sea-orm-migration = { version = "0.9" }
 sql-models = { path = "../../models/sql-models" }
+chrono = "0.4"
