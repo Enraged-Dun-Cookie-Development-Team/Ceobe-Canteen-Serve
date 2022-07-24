@@ -1,4 +1,4 @@
-use checker::{check_obj, prefabs::no_check::NoCheck};
+use checker::{check_obj, prefabs::date_time_format::DateTimeFormatChecker};
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
@@ -25,8 +25,8 @@ check_obj! {
     #[derive(Debug,serde::Deserialize)]
     pub struct CeobeOperationVideoUncheck = CeobeOperationVideoChecker > CeobeOperationVideo{
         pub bv: BvChecker,
-        pub start_time: NoCheck<NaiveDateTime>,
-        pub over_time: NoCheck<NaiveDateTime>,
+        pub start_time: DateTimeFormatChecker,
+        pub over_time: DateTimeFormatChecker,
         pub title: MaxRangeLimit<String, 256>,
         pub author: MaxRangeLimit<String, 128>,
         pub video_link: MaxRangeLimit<String, 256>,

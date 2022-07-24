@@ -14,6 +14,9 @@ pub enum CheckError {
     #[error("Bv号错误: {0:?}")]
     WrongBv(String),
 
+    #[error("日期格式错误: {0}")]
+    WrongDateTimeFormat(#[from] chrono::ParseError),
+
     #[error("不可能失败")]
     Infallible(#[from] Infallible),
 }
@@ -23,6 +26,7 @@ impl StatusErr for CheckError {
         match self {
             LengthExceed(inner) => inner.prefix(),
             WrongBv(_) => ErrPrefix::CHECKER,
+            WrongDateTimeFormat(inner) => inner.prefix(),
             Infallible(_) => unreachable!(),
         }
     }
@@ -31,6 +35,7 @@ impl StatusErr for CheckError {
         match self {
             LengthExceed(inner) => inner.code(),
             WrongBv(_) => 0x00_09,
+            WrongDateTimeFormat(inner) => inner.code(),
             Infallible(_) => unreachable!(),
         }
     }
