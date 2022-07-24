@@ -47,7 +47,7 @@ impl CeoboOperationVideo {
     ) -> VideoRespResult<String> {
         let url = Url::parse_with_params(
             "https://api.bilibili.com/x/web-interface/view",
-            &[("aid", bv.to_av().to_string().as_str())],
+            &[("bvid", bv)],
         )?;
 
         let body = REQUEST_CLIENT.get(url).send().await?.bytes().await?;

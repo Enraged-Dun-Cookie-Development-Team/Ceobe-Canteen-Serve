@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     fmt::{Debug, Display},
     io::{Cursor, Write},
 };
@@ -15,18 +14,6 @@ static BV_PATTEN: Lazy<Regex> = Lazy::new(|| {
         .expect("正则表达式格式错误")
 });
 
-static BV_TABLE: Lazy<HashMap<u8, u64>> = Lazy::new(|| {
-    "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF"
-        .chars()
-        .enumerate()
-        .map(|(idx, c)| (c as u8, idx as u64))
-        .collect()
-});
-
-const BV_IDX: [usize; 6] = [11, 10, 3, 8, 4, 6];
-const BV_XOR: u64 = 177451812;
-const BV_ADD: u64 = 8728348608;
-
 #[derive(PartialEq, Eq)]
 pub struct Bv([u8; 12]);
 
@@ -36,18 +23,11 @@ impl Bv {
     pub fn as_str(&self) -> &str {
         unsafe { std::str::from_utf8_unchecked(&self.0) }
     }
+}
 
-    /// 将当前bv号转换为Av号
-    /// 算法来自 https://www.zhihu.com/question/381784377/answer/1099438784
-    pub fn to_av(self) -> u64 {
-        ((0..6)
-            .map(|idx| (BV_IDX[idx], idx))
-            .map(|(idx, i)| (self.0[idx], i))
-            .map(|(key, i)| (*BV_TABLE.get(&key).unwrap(), i as u32))
-            .map(|(v, i)| v * 58u64.pow(i))
-            .sum::<u64>()
-            - BV_ADD)
-            ^ BV_XOR
+impl AsRef<str> for Bv{
+    fn as_ref(&self) -> &str {
+        self.as_str()
     }
 }
 
@@ -97,7 +77,7 @@ impl checker::Checker for BvChecker {
 mod test {
     use checker::CheckRequire;
 
-    use super::{Bv, BvChecker};
+    use super::BvChecker;
     use crate::ceobe_operation::video::checkers::CheckError;
     #[tokio::test]
     async fn test_bv_succeed() {
@@ -122,13 +102,5 @@ mod test {
             }
         );
         assert_eq!(Err(CheckError::WrongBv("Av170001".into())), checked);
-    }
-
-    #[test]
-    fn test_bv2av() {
-        let bv = Bv(*b"BV1Wa411D74Q");
-        let av = bv.to_av();
-        println!("av {}", av);
-        assert_eq!(av, 258699057);
     }
 }
