@@ -12,11 +12,9 @@ impl CeoboOperationAnnouncementSqlOperate {
         Self::all_soft_remove(&db).await?;
 
         // 处理数据，添加order
-        let mut announcement_list = Vec::new();
-        for (order, announcement) in announcements.into_iter().enumerate() {
-            let active =  ActiveModel::from_announcement_data_with_order(announcement, order as i32);
-            announcement_list.push(active);
-        };
+        let announcement_list =  announcements.into_iter().enumerate()
+        .map(|(order, announcement)|ActiveModel::from_announcement_data_with_order(announcement, order as i32))
+        .collect::<Vec<_>>();
         // 新建数据
         model_announcement::Entity::insert_many(announcement_list).exec(&db).await?;
 
