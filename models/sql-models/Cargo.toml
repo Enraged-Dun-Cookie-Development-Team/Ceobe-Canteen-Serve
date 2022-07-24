@@ -8,6 +8,7 @@ edition = "2021"
 thiserror = "1"
 typed-builder = "0.10"
 chrono = "0.4"
+futures = "0.3"
 
 [dependencies.serde]
 version = "1"
