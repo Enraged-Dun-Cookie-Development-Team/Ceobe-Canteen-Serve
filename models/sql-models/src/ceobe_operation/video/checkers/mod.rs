@@ -1,7 +1,6 @@
 pub mod bv;
 pub mod bv_arg_checker;
 pub mod video_data;
-use std::convert::Infallible;
 
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
@@ -17,9 +16,6 @@ pub enum CheckError {
 
     #[error("日期格式错误: {0}")]
     WrongDateTimeFormat(#[from] chrono::ParseError),
-
-    #[error("不可能失败")]
-    Infallible(#[from] Infallible),
 }
 
 impl StatusErr for CheckError {
@@ -28,7 +24,6 @@ impl StatusErr for CheckError {
             LengthExceed(inner) => inner.prefix(),
             WrongBv(_) => ErrPrefix::CHECKER,
             WrongDateTimeFormat(inner) => inner.prefix(),
-            Infallible(_) => unreachable!(),
         }
     }
 
@@ -37,7 +32,6 @@ impl StatusErr for CheckError {
             LengthExceed(inner) => inner.code(),
             WrongBv(_) => 0x00_09,
             WrongDateTimeFormat(inner) => inner.code(),
-            Infallible(_) => unreachable!(),
         }
     }
 }
