@@ -11,7 +11,7 @@ use super::{
 use crate::ceobe_operation::video::models::model_video;
 
 #[derive(Debug, TypedBuilder)]
-pub struct CeobeOperationVideo {
+pub struct CeoboOpVideo {
     pub bv: Bv,
     pub start_time: NaiveDateTime,
     pub over_time: NaiveDateTime,
@@ -23,13 +23,14 @@ pub struct CeobeOperationVideo {
 
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
-    pub struct CeobeOperationVideoUncheck = CeobeOperationVideoChecker > CeobeOperationVideo{
+    pub struct CeobeOpVideoUncheck = CeobeOpVideoChecker > CeoboOpVideo{
         pub bv: BvChecker,
         pub start_time: DateTimeFormatChecker,
         pub over_time: DateTimeFormatChecker,
         pub title: MaxRangeLimit<String, 256>,
         pub author: MaxRangeLimit<String, 128>,
         pub video_link: MaxRangeLimit<String, 256>,
+        #[serde(alias = "cover_img")]
         pub cover_image: MaxRangeLimit<String, 256>
     }
     err : CheckError
@@ -37,7 +38,7 @@ check_obj! {
 
 impl model_video::ActiveModel {
     pub(in crate::ceobe_operation::video) fn from_video_data_with_order(
-        CeobeOperationVideo {
+        CeoboOpVideo {
             bv,
             start_time,
             over_time,
@@ -45,7 +46,7 @@ impl model_video::ActiveModel {
             author,
             video_link,
             cover_image,
-        }: CeobeOperationVideo,
+        }: CeoboOpVideo,
         order: i32,
     ) -> Self {
         Self {
@@ -63,7 +64,7 @@ impl model_video::ActiveModel {
 
     pub(in crate::ceobe_operation::video) fn update_with_video_and_order(
         &mut self,
-        CeobeOperationVideo {
+        CeoboOpVideo {
             bv: _,
             start_time,
             over_time,
@@ -71,7 +72,7 @@ impl model_video::ActiveModel {
             author,
             video_link,
             cover_image,
-        }: CeobeOperationVideo,
+        }: CeoboOpVideo,
         order: i32,
     ) {
         self.order = Set(order);

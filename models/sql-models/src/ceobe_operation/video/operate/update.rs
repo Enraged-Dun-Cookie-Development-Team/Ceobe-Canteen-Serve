@@ -9,7 +9,7 @@ use sql_connection::get_sql_transaction;
 
 use super::{CeoboOperationVideoSqlOperate, OperateResult};
 use crate::ceobe_operation::video::{
-    checkers::video_data::CeobeOperationVideo,
+    checkers::video_data::CeoboOpVideo,
     models::{
         get_now_naive_date_time, get_zero_data_time,
         model_video::{self, ActiveModel},
@@ -32,7 +32,7 @@ impl CeoboOperationVideoSqlOperate {
     }
 
     pub async fn update_all(
-        videos: Vec<CeobeOperationVideo>,
+        videos: Vec<CeoboOpVideo>,
     ) -> OperateResult<()> {
         let db = get_sql_transaction().await?;
         // 所有先前的数据都设置为删除
