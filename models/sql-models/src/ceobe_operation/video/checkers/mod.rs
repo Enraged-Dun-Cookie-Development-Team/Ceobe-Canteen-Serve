@@ -4,6 +4,7 @@ use std::convert::Infallible;
 
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
+pub use CeobeOperationVideoCheckError::*;
 
 #[derive(Debug, Error, PartialEq, Eq)]
 pub enum CeobeOperationVideoCheckError {
@@ -20,21 +21,17 @@ pub enum CeobeOperationVideoCheckError {
 impl StatusErr for CeobeOperationVideoCheckError {
     fn prefix(&self) -> status_err::ErrPrefix {
         match self {
-            CeobeOperationVideoCheckError::LengthExceed(inner) => {
-                inner.prefix()
-            }
-            CeobeOperationVideoCheckError::WrongBv(_) => ErrPrefix::CHECKER,
-            CeobeOperationVideoCheckError::Infallible(_) => unreachable!(),
+            LengthExceed(inner) => inner.prefix(),
+            WrongBv(_) => ErrPrefix::CHECKER,
+            Infallible(_) => unreachable!(),
         }
     }
 
     fn code(&self) -> u16 {
         match self {
-            CeobeOperationVideoCheckError::LengthExceed(inner) => {
-                inner.code()
-            }
-            CeobeOperationVideoCheckError::WrongBv(_) => 0x00_09,
-            CeobeOperationVideoCheckError::Infallible(_) => unreachable!(),
+            LengthExceed(inner) => inner.code(),
+            WrongBv(_) => 0x00_09,
+            Infallible(_) => unreachable!(),
         }
     }
 }

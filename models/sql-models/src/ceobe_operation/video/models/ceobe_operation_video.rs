@@ -1,4 +1,4 @@
-use chrono::Local;
+use chrono::{Local, NaiveDateTime};
 use sea_orm::{entity::prelude::*, Set};
 
 #[derive(Debug, Clone, Eq, PartialEq, DeriveEntityModel)]
@@ -14,7 +14,7 @@ pub struct Model {
     pub video_link: String,
     pub cover_image: String,
     /// field for soft delete
-    pub(in crate::video_data) delete_at: DateTime,
+    pub(in crate::ceobe_operation::video) delete_at: DateTime,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -33,7 +33,7 @@ impl ActiveModel {
     }
 
     pub fn soft_recover(&mut self) {
-        let date_time = chrono::NaiveDateTime::from_timestamp(0, 0);
+        let date_time = NaiveDateTime::from_timestamp(0, 0);
         self.delete_at = Set(date_time)
     }
 }
