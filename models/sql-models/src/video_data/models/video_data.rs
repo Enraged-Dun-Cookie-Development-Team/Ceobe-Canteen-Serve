@@ -1,4 +1,5 @@
-use sea_orm::entity::prelude::*;
+use chrono::Local;
+use sea_orm::{entity::prelude::*, Set};
 
 #[derive(Debug, Clone, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "video_data")]
@@ -24,3 +25,15 @@ impl RelationTrait for Relation {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl ActiveModel {
+    pub fn soft_remove(&mut self) {
+        let now = Local::now().naive_local();
+        self.delete_at = Set(now);
+    }
+
+    pub fn soft_recover(&mut self) {
+        let date_time = chrono::NaiveDateTime::from_timestamp(0, 0);
+        self.delete_at = Set(date_time)
+    }
+}
