@@ -20,7 +20,9 @@ pub enum CeobeOperationVideoCheckError {
 impl StatusErr for CeobeOperationVideoCheckError {
     fn prefix(&self) -> status_err::ErrPrefix {
         match self {
-            CeobeOperationVideoCheckError::LengthExceed(inner) => inner.prefix(),
+            CeobeOperationVideoCheckError::LengthExceed(inner) => {
+                inner.prefix()
+            }
             CeobeOperationVideoCheckError::WrongBv(_) => ErrPrefix::CHECKER,
             CeobeOperationVideoCheckError::Infallible(_) => unreachable!(),
         }
@@ -28,7 +30,9 @@ impl StatusErr for CeobeOperationVideoCheckError {
 
     fn code(&self) -> u16 {
         match self {
-            CeobeOperationVideoCheckError::LengthExceed(inner) => inner.code(),
+            CeobeOperationVideoCheckError::LengthExceed(inner) => {
+                inner.code()
+            }
             CeobeOperationVideoCheckError::WrongBv(_) => 0x00_09,
             CeobeOperationVideoCheckError::Infallible(_) => unreachable!(),
         }

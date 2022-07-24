@@ -18,11 +18,31 @@ impl MigrationTrait for Migration {
                     .primary_key()
                     .auto_increment(),
             )
-            .col(ColumnDef::new(CeobeOperationVideo::Bv).char_len(12).not_null())
-            .col(ColumnDef::new(CeobeOperationVideo::StartTime).date_time().not_null())
-            .col(ColumnDef::new(CeobeOperationVideo::OverTime).date_time().not_null())
-            .col(ColumnDef::new(CeobeOperationVideo::Title).string_len(256).not_null())
-            .col(ColumnDef::new(CeobeOperationVideo::Author).string_len(128).not_null())
+            .col(
+                ColumnDef::new(CeobeOperationVideo::Bv)
+                    .char_len(12)
+                    .not_null(),
+            )
+            .col(
+                ColumnDef::new(CeobeOperationVideo::StartTime)
+                    .date_time()
+                    .not_null(),
+            )
+            .col(
+                ColumnDef::new(CeobeOperationVideo::OverTime)
+                    .date_time()
+                    .not_null(),
+            )
+            .col(
+                ColumnDef::new(CeobeOperationVideo::Title)
+                    .string_len(256)
+                    .not_null(),
+            )
+            .col(
+                ColumnDef::new(CeobeOperationVideo::Author)
+                    .string_len(128)
+                    .not_null(),
+            )
             .col(
                 ColumnDef::new(CeobeOperationVideo::VideoLink)
                     .string_len(256)

@@ -7,7 +7,7 @@ pub enum CeoboOperationVideoOperateError {
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
 }
-
+#[allow(dead_code)]
 type OperateResult<T> = Result<T, CeoboOperationVideoOperateError>;
 
 impl status_err::StatusErr for CeoboOperationVideoOperateError {
