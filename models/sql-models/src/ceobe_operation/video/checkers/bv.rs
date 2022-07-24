@@ -5,7 +5,7 @@ use std::{
 
 use futures::future::{ready, Ready};
 
-use super::CeobeOperationVideoCheckError;
+use super::CheckError;
 
 #[derive(PartialEq, Eq)]
 pub struct Bv([u8; 12]);
@@ -29,7 +29,7 @@ pub struct BvChecker;
 impl checker::Checker for BvChecker {
     type Args = ();
     type Checked = Bv;
-    type Err = CeobeOperationVideoCheckError;
+    type Err = CheckError;
     type Fut = Ready<Result<Bv, Self::Err>>;
     type Unchecked = String;
 
@@ -53,7 +53,7 @@ impl checker::Checker for BvChecker {
                 }
             }
 
-            Err(CeobeOperationVideoCheckError::WrongBv(uncheck))
+            Err(CheckError::WrongBv(uncheck))
         };
 
         ready(task())
@@ -64,8 +64,9 @@ impl checker::Checker for BvChecker {
 mod test {
     use checker::CheckRequire;
 
+    use crate::ceobe_operation::video::checkers::CheckError;
+
     use super::BvChecker;
-    use crate::video_data::checkers::CeobeOperationVideoCheckError;
     #[tokio::test]
     async fn test_bv_succeed() {
         let uncheck = CheckRequire::new(BvChecker, "BV1ZB4y1Y7Hm".into());
@@ -81,7 +82,7 @@ mod test {
         let checked = uncheck.lite_checking().await;
 
         assert_eq!(
-            Err(CeobeOperationVideoCheckError::WrongBv("Av170001".into())),
+            Err(CheckError::WrongBv("Av170001".into())),
             checked
         );
     }

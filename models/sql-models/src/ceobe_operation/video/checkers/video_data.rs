@@ -5,7 +5,7 @@ use typed_builder::TypedBuilder;
 
 use super::{
     bv::{Bv, BvChecker},
-    CeobeOperationVideoCheckError,
+    CheckError,
 };
 
 #[derive(Debug, TypedBuilder)]
@@ -30,5 +30,5 @@ check_obj! {
         pub video_link: MaxRangeLimit<String, 256>,
         pub cover_image: MaxRangeLimit<String, 256>
     }
-    err : CeobeOperationVideoCheckError
+    err : CheckError
 }

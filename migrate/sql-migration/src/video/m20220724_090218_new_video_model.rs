@@ -12,7 +12,8 @@ impl MigrationTrait for Migration {
             .table(DbTable)
             .if_not_exists()
             .col(ColumnDef::new(Id).integer().primary_key().auto_increment())
-            .col(ColumnDef::new(Bv).char_len(12).not_null())
+            .col(ColumnDef::new(Bv).char_len(12).not_null().unique_key())
+            .col(ColumnDef::new(Order).integer().not_null())
             .col(ColumnDef::new(StartTime).date_time().not_null())
             .col(ColumnDef::new(OverTime).date_time().not_null())
             .col(ColumnDef::new(Title).string_len(256).not_null())
@@ -27,7 +28,7 @@ impl MigrationTrait for Migration {
         // 添加唯一索引，用于软删除
         table.index(
             Index::create()
-                .col(Bv)
+                .col(Order)
                 .col(DeleteAt)
                 .name("mark-delete-id")
                 .unique(),
@@ -50,9 +51,8 @@ pub use CeobeOperationVideo::{Table as DbTable, *};
 pub enum CeobeOperationVideo {
     Table,
     Id,
-    // BV1Rg411Z7LV
-    // BV1ZB4y1Y7Hm
     Bv,
+    Order,
     StartTime,
     OverTime,
     Title,

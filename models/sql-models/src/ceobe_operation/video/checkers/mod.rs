@@ -4,10 +4,10 @@ use std::convert::Infallible;
 
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
-pub use CeobeOperationVideoCheckError::*;
+pub use CheckError::*;
 
 #[derive(Debug, Error, PartialEq, Eq)]
-pub enum CeobeOperationVideoCheckError {
+pub enum CheckError {
     #[error("范围超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),
 
@@ -18,7 +18,7 @@ pub enum CeobeOperationVideoCheckError {
     Infallible(#[from] Infallible),
 }
 
-impl StatusErr for CeobeOperationVideoCheckError {
+impl StatusErr for CheckError {
     fn prefix(&self) -> status_err::ErrPrefix {
         match self {
             LengthExceed(inner) => inner.prefix(),

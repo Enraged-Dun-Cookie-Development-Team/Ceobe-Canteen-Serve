@@ -7,6 +7,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub bv: String,
+    pub order: i32,
     pub start_time: DateTime,
     pub over_time: DateTime,
     pub title: String,
