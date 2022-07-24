@@ -25,10 +25,8 @@ impl Bv {
     }
 }
 
-impl AsRef<str> for Bv{
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
+impl AsRef<str> for Bv {
+    fn as_ref(&self) -> &str { self.as_str() }
 }
 
 impl Debug for Bv {
