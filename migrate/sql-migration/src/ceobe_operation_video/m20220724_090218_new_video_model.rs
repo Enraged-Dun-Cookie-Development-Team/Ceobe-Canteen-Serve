@@ -1,4 +1,3 @@
-use chrono::NaiveDateTime;
 use sea_orm_migration::prelude::*;
 pub struct Migration;
 impl MigrationName for Migration {
@@ -20,11 +19,12 @@ impl MigrationTrait for Migration {
             .col(ColumnDef::new(Author).string_len(128).not_null())
             .col(ColumnDef::new(VideoLink).string_len(256).not_null())
             .col(ColumnDef::new(CoverImage).string_len(256).not_null())
-            .col(ColumnDef::new(DeleteAt).date_time().not_null().default(
-                Value::ChronoDateTime(
-                    Box::new(NaiveDateTime::from_timestamp(0, 0)).into(),
-                ),
-            ));
+            .col(
+                ColumnDef::new(DeleteAt)
+                    .date_time()
+                    .not_null()
+                    .default(get_zero_data_time()),
+            );
         // 添加唯一索引，用于软删除
         table.index(
             Index::create()
@@ -45,6 +45,7 @@ impl MigrationTrait for Migration {
         Ok(())
     }
 }
+use sql_models::get_zero_data_time;
 pub use CeobeOperationVideo::{Table as DbTable, *};
 
 #[derive(Iden)]
