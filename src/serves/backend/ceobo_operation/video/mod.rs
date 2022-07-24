@@ -1,8 +1,12 @@
 use once_cell::sync::Lazy;
 
 use self::error::CeobeOperationVideoError;
-use crate::utils::user_authorize::{
-    auth_level::prefabs::Chef, AuthenticationLevel,
+use crate::{
+    new_auth_level,
+    utils::user_authorize::{
+        auth_level::prefabs::{Chef, Cooker},
+        AuthenticationLevel,
+    },
 };
 
 mod controllers;
@@ -19,5 +23,12 @@ static REQUEST_CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {
         .expect("Reqwest 客户端创建失败")
 });
 
+new_auth_level! {
+    pub VideoAuth => [
+        Chef
+        Cooker
+    ]
+}
+
 type VideoAuthentication =
-    AuthenticationLevel<Chef, CeobeOperationVideoError>;
+    AuthenticationLevel<VideoAuth, CeobeOperationVideoError>;
