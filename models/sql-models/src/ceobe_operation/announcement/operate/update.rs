@@ -17,6 +17,7 @@ impl CeoboOperationAnnouncementSqlOperate {
         .collect::<Vec<_>>();
         // 新建数据
         model_announcement::Entity::insert_many(announcement_list).exec(&db).await?;
+        db.commit().await?;
 
         Ok(())
     }
