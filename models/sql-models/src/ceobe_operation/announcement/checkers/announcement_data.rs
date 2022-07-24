@@ -11,7 +11,7 @@ use super::{
 };
 
 #[derive(Debug, TypedBuilder)]
-pub struct CeobeOperationAnnouncement {
+pub struct CeobeOpAnnouncement {
     pub start_time: NaiveDateTime,
     pub over_time: NaiveDateTime,
     pub content: String,
@@ -21,7 +21,7 @@ pub struct CeobeOperationAnnouncement {
 
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
-    pub struct CeobeOperationAnnouncementUncheck = CeobeOperationAnnouncementChecker > CeobeOperationAnnouncement{
+    pub struct CeobeOpAnnouncementUncheck = CeobeOpAnnouncementChecker > CeobeOpAnnouncement{
         pub start_time: NoCheck<NaiveDateTime>,
         pub over_time: NoCheck<NaiveDateTime>,
         pub content: NoCheck<String>,
@@ -34,13 +34,13 @@ check_obj! {
 
 impl model_announcement::ActiveModel {
     pub(in crate::ceobe_operation::announcement) fn from_announcement_data_with_order(
-        CeobeOperationAnnouncement {
+        CeobeOpAnnouncement {
             start_time,
             over_time,
             content,
             img_url,
             notice,
-        }: CeobeOperationAnnouncement,
+        }: CeobeOpAnnouncement,
         order: i32,
     ) -> Self {
         Self {
