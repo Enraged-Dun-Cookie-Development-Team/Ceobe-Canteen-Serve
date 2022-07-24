@@ -1,5 +1,5 @@
 mod admin;
-mod video;
+mod ceobe_operation_video;
 
 pub use sea_orm_migration::MigratorTrait;
 use sea_orm_migration::{async_trait, MigrationTrait};
@@ -14,7 +14,7 @@ impl MigratorTrait for Migrator {
             admin::m20220429_142528_alter_user::Migration
             admin::m20220429_230336_alter_user::Migration
             admin::m20220722_082735_change_user_table_name::Migration
-            video::m20220724_090218_new_video_model::Migration
+            ceobe_operation_video::m20220724_090218_new_video_model::Migration
         ]
     }
 }
