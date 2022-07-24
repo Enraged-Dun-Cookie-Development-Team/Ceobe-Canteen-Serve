@@ -35,8 +35,7 @@ impl Checker for DateFormatChecker {
     }
 }
 
-const TIME_FORMAT :&str = "%H:%M:%S";
-
+const TIME_FORMAT: &str = "%H:%M:%S";
 
 pub struct TimeFormatChecker;
 
