@@ -1,7 +1,7 @@
 use futures::{future::ready, StreamExt};
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
-    EntityTrait, QueryFilter, StreamTrait,
+    EntityTrait, QueryFilter, QueryOrder, StreamTrait,
 };
 use sql_connection::get_sql_database;
 
@@ -21,6 +21,7 @@ impl CeoboOperationVideoSqlOperate {
     {
         let v = model_video::Entity::find()
             .filter(filter)
+            .order_by_asc(model_video::Column::Order)
             .stream(db)
             .await?;
 
