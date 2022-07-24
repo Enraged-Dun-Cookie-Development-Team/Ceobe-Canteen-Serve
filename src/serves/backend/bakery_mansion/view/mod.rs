@@ -1,5 +1,5 @@
 use crate::{
-    models::mansion::preludes::*, utils::time_format::naive_data_format,
+    models::mansion::preludes::*, utils::time_format::naive_date_format,
 };
 
 crate::quick_struct! {
@@ -42,7 +42,7 @@ impl From<Daily> for ViewDaily {
         }: Daily,
     ) -> Self {
         Self {
-            datetime: naive_data_format(date_time),
+            datetime: naive_date_format(date_time),
             info: info.into_iter().map(Into::into).collect(),
             content,
         }
