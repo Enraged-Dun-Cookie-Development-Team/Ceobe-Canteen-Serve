@@ -18,6 +18,7 @@ impl MigrationTrait for Migration {
                     .primary_key()
                     .auto_increment(),
             )
+            .col(ColumnDef::new(VideoData::Bv).char_len(12).not_null())
             .col(ColumnDef::new(VideoData::StartTime).date_time().not_null())
             .col(ColumnDef::new(VideoData::OverTime).date_time().not_null())
             .col(ColumnDef::new(VideoData::Title).string_len(256).not_null())
@@ -43,7 +44,7 @@ impl MigrationTrait for Migration {
         // 添加唯一索引，用于软删除
         table.index(
             Index::create()
-                .col(VideoData::Title)
+                .col(VideoData::Bv)
                 .col(VideoData::DeleteAt)
                 .name("mark-delete-id")
                 .unique(),
@@ -65,6 +66,9 @@ impl MigrationTrait for Migration {
 pub enum VideoData {
     Table,
     Id,
+    // BV1Rg411Z7LV
+    // BV1ZB4y1Y7Hm
+    Bv,
     StartTime,
     OverTime,
     Title,
