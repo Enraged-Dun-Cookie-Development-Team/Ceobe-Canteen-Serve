@@ -6,9 +6,9 @@ use sql_connection::get_sql_database;
 
 use crate::{ceobe_operation::announcement::models::{get_zero_data_time, model_announcement}, StreamResult};
 
-use super::{CeoboOperationAnnouncementSqlOperate, OperateResult};
+use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 
-impl CeoboOperationAnnouncementSqlOperate {
+impl CeobeOperationAnnouncementSqlOperate {
     pub async fn find_by_filter_raw<'r, 'db, C>(
         filter: impl IntoCondition, db: &'db C,
     ) -> OperateResult<StreamResult<'r, model_announcement::Model>>

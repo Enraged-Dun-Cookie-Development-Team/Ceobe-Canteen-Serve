@@ -5,7 +5,7 @@ mod delete;
 use status_err::HttpCode;
 use thiserror::Error;
 
-pub struct CeoboOperationAnnouncementSqlOperate;
+pub struct CeobeOperationAnnouncementSqlOperate;
 
 pub use OperateError::*;
 
