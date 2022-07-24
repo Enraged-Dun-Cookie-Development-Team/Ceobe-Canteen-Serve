@@ -13,7 +13,7 @@ pub struct Model {
     pub order: i32,
     pub notice: bool,
     /// field for soft delete
-    pub(in crate::ceobe_operation_announcement) delete_at: DateTime,
+    pub(in crate::ceobe_operation::announcement) delete_at: DateTime,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
