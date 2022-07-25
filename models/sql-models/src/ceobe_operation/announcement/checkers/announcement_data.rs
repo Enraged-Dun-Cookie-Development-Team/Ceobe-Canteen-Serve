@@ -1,4 +1,7 @@
-use checker::{check_obj, prefabs::{no_check::NoCheck, date_time_format::DateTimeFormatChecker}};
+use checker::{
+    check_obj,
+    prefabs::{date_time_format::DateTimeFormatChecker, no_check::NoCheck},
+};
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;

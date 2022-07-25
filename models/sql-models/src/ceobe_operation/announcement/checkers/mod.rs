@@ -12,9 +12,10 @@ pub enum CheckError {
 
     #[error("日期格式错误: {0}")]
     DateTimeFormat(#[from] chrono::ParseError),
+}
 
-    #[error("不可能失败")]
-    Infallible(#[from] Infallible),
+impl From<Infallible> for CheckError {
+    fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
 }
 
 impl StatusErr for CheckError {
@@ -22,7 +23,6 @@ impl StatusErr for CheckError {
         match self {
             LengthExceed(inner) => inner.prefix(),
             DateTimeFormat(inner) => inner.prefix(),
-            CheckError::Infallible(_) => unreachable!(),
         }
     }
 
@@ -30,7 +30,6 @@ impl StatusErr for CheckError {
         match self {
             DateTimeFormat(inner) => inner.code(),
             LengthExceed(inner) => inner.code(),
-            Infallible(_) => unreachable!(),
         }
     }
 }
