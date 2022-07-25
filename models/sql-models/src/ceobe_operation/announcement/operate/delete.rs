@@ -1,11 +1,11 @@
 use sea_orm::{
     sea_query::Expr, ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter,
-    Value,
 };
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
-use crate::ceobe_operation::announcement::models::{
-    get_now_naive_date_time, get_zero_data_time, model_announcement,
+use crate::{
+    ceobe_operation::announcement::models::model_announcement,
+    get_now_naive_date_time, get_zero_data_time,
 };
 
 impl CeobeOperationAnnouncementSqlOperate {
@@ -18,7 +18,7 @@ impl CeobeOperationAnnouncementSqlOperate {
             )
             .col_expr(
                 model_announcement::Column::DeleteAt,
-                Expr::value(Value::ChronoDateTime(get_now_naive_date_time())),
+                Expr::value(get_now_naive_date_time()),
             )
             .exec(db)
             .await?;

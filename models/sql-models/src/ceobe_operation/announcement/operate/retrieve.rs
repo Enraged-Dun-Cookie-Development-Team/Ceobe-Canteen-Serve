@@ -9,10 +9,8 @@ use sql_connection::get_sql_database;
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::{
-    ceobe_operation::announcement::models::{
-        get_zero_data_time, model_announcement,
-    },
-    StreamResult,
+    ceobe_operation::announcement::models::model_announcement,
+    get_zero_data_time, StreamResult,
 };
 
 impl CeobeOperationAnnouncementSqlOperate {

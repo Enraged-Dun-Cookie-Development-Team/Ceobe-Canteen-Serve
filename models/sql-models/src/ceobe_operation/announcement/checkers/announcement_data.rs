@@ -1,4 +1,4 @@
-use checker::{check_obj, prefabs::no_check::NoCheck};
+use checker::{check_obj, prefabs::{no_check::NoCheck, date_time_format::DateTimeFormatChecker}};
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
@@ -19,8 +19,8 @@ pub struct CeobeOpAnnouncement {
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
     pub struct CeobeOpAnnouncementUncheck = CeobeOpAnnouncementChecker > CeobeOpAnnouncement{
-        pub start_time: NoCheck<NaiveDateTime>,
-        pub over_time: NoCheck<NaiveDateTime>,
+        pub start_time: DateTimeFormatChecker,
+        pub over_time: DateTimeFormatChecker,
         pub content: NoCheck<String>,
         pub img_url: MaxRangeLimit<String, 256>,
         pub notice: NoCheck<bool>
