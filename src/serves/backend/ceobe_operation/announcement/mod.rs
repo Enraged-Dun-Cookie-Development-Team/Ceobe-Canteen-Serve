@@ -1,10 +1,15 @@
-use crate::{new_auth_level, utils::user_authorize::{AuthenticationLevel, auth_level::prefabs::{Cooker, Chef}}};
-
 use self::error::CeobeOperationAnnouncementError;
+use crate::{
+    new_auth_level,
+    utils::user_authorize::{
+        auth_level::prefabs::{Chef, Cooker},
+        AuthenticationLevel,
+    },
+};
 
-pub mod view;
-pub mod error;
 pub mod controllers;
+pub mod error;
+pub mod view;
 
 new_auth_level! {
     pub AnnouncementAuth => [

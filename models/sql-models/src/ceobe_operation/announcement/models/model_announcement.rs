@@ -1,7 +1,7 @@
 use chrono::Local;
 use sea_orm::{entity::prelude::*, Set};
 
-#[derive(Debug, Clone, PartialEq, DeriveEntityModel)]
+#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "ceobe_operation_announcement")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -31,6 +31,7 @@ impl ActiveModel {
         let now = Local::now().naive_local();
         self.delete_at = Set(now);
     }
+
     // 还原删除
     pub fn soft_recover(&mut self) {
         let date_time = chrono::NaiveDateTime::from_timestamp(0, 0);

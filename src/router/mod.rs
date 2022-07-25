@@ -2,7 +2,9 @@ mod back_end;
 mod front_end;
 
 use axum::{routing::get, Router};
-pub use back_end::{BakeryMansionBackend, UserAuthBackend, CeobeOperationAnnouncement};
+pub use back_end::{
+    BakeryMansionBackend, CeobeOperationAnnouncement, UserAuthBackend,
+};
 pub use front_end::BakeryMansionFrontend;
 
 use self::{back_end::back_end_router, front_end::front_end_router};

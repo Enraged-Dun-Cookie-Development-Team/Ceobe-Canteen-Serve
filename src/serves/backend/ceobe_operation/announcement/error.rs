@@ -1,5 +1,3 @@
-use std::string::FromUtf8Error;
-
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use orm_migrate::sql_models::ceobe_operation::announcement;
 use resp_result::RespResult;
@@ -16,4 +14,5 @@ error_generate! {
     DbOperate = announcement::operate::OperateError
 }
 
-pub(crate) type AnnouncementRespResult<T> = RespResult<T, CeobeOperationAnnouncementError>;
+pub(crate) type AnnouncementRespResult<T> =
+    RespResult<T, CeobeOperationAnnouncementError>;

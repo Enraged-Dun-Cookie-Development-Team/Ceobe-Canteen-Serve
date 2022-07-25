@@ -1,12 +1,19 @@
 use std::future::ready;
 
 use futures::StreamExt;
-use sea_orm::{ConnectionTrait, sea_query::IntoCondition, StreamTrait, Condition, DbErr, EntityTrait, ColumnTrait, QueryFilter, QueryOrder};
+use sea_orm::{
+    sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
+    EntityTrait, QueryFilter, QueryOrder, StreamTrait,
+};
 use sql_connection::get_sql_database;
 
-use crate::{ceobe_operation::announcement::models::{get_zero_data_time, model_announcement}, StreamResult};
-
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
+use crate::{
+    ceobe_operation::announcement::models::{
+        get_zero_data_time, model_announcement,
+    },
+    StreamResult,
+};
 
 impl CeobeOperationAnnouncementSqlOperate {
     pub async fn find_by_filter_raw<'r, 'db, C>(
@@ -31,9 +38,9 @@ impl CeobeOperationAnnouncementSqlOperate {
     where
         C: ConnectionTrait + StreamTrait<'db> + Send,
     {
-        let filter = Condition::all()
-            .add(filter.into_condition())
-            .add(model_announcement::Column::DeleteAt.eq(get_zero_data_time()));
+        let filter = Condition::all().add(filter.into_condition()).add(
+            model_announcement::Column::DeleteAt.eq(get_zero_data_time()),
+        );
         Self::find_by_filter_raw(filter, db).await
     }
 

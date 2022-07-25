@@ -4,11 +4,8 @@ use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 
+use super::CheckError;
 use crate::ceobe_operation::announcement::models::model_announcement;
-
-use super::{
-    CheckError,
-};
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOpAnnouncement {
@@ -31,7 +28,6 @@ check_obj! {
     err : CheckError
 }
 
-
 impl model_announcement::ActiveModel {
     pub(in crate::ceobe_operation::announcement) fn from_announcement_data_with_order(
         CeobeOpAnnouncement {
@@ -45,7 +41,7 @@ impl model_announcement::ActiveModel {
     ) -> Self {
         Self {
             start_time: Set(start_time),
-            over_time :Set(over_time),
+            over_time: Set(over_time),
             content: Set(content),
             img_url: Set(img_url),
             order: Set(order),
