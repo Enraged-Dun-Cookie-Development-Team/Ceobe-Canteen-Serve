@@ -21,7 +21,7 @@ impl CeobeOperationVideoSqlOperate {
         db: &impl ConnectionTrait,
     ) -> OperateResult<u64> {
         let resp = model_video::Entity::update_many()
-            .filter(model_video::Column::DeleteAt.ne(get_zero_data_time()))
+            .filter(model_video::Column::DeleteAt.eq(get_zero_data_time()))
             .col_expr(
                 model_video::Column::DeleteAt,
                 Expr::value(get_now_naive_date_time()),
