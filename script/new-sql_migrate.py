@@ -69,6 +69,8 @@ if os.path.exists(migrate_filename):
 if not os.path.exists(target_mod):
     print(f"target model {target_mod} not exist, create it")
     os.makedirs(target_mod)
+
+if not os.path.exists(mod_file):
     pathlib.Path(mod_file).touch()
     extra_mods.append(model)
 

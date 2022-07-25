@@ -4,6 +4,7 @@ mod user_auth;
 use axum::Router;
 pub use bakery_mansion::BakeryMansionBackend;
 pub use ceobe_operation::CeobeOperationAnnouncement;
+pub use ceobe_operation::CeobeOperationVideo;
 pub use user_auth::UserAuthBackend;
 
 use self::{

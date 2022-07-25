@@ -3,7 +3,7 @@ use mongo_migration::mongo_models::mansion_data::preludes::{
 };
 
 use super::{ViewDaily, ViewInfo, ViewMansionWithTime};
-use crate::utils::time_format::{bson_date_time_format, naive_data_format};
+use crate::utils::time_format::{bson_date_time_format, naive_date_format};
 
 impl From<Info> for ViewInfo {
     fn from(Info { predict, forecast }: Info) -> Self {
@@ -23,7 +23,7 @@ impl From<Daily> for ViewDaily {
         }: Daily,
     ) -> Self {
         Self {
-            datetime: naive_data_format(date_time),
+            datetime: naive_date_format(date_time),
             info: info.into_iter().map(Into::into).collect(),
             content,
         }
