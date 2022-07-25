@@ -4,12 +4,12 @@ use axum::{
 };
 use tower::limit::ConcurrencyLimitLayer;
 
-pub struct CeoboOperationVideo;
+pub struct CeobeOperationVideo;
 
 pub(super) fn video_router() -> Router {
     Router::new()
-        .route("/detail", get(CeoboOperationVideo::get_video_detail))
+        .route("/detail", get(CeobeOperationVideo::get_video_detail))
         .layer(ConcurrencyLimitLayer::new(5))
-        .route("/list", get(CeoboOperationVideo::list_all))
-        .route("/submitList", post(CeoboOperationVideo::update_list))
+        .route("/list", get(CeobeOperationVideo::list_all))
+        .route("/submitList", post(CeobeOperationVideo::update_list))
 }

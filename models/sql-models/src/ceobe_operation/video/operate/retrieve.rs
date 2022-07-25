@@ -5,13 +5,13 @@ use sea_orm::{
 };
 use sql_connection::get_sql_database;
 
-use super::{CeoboOperationVideoSqlOperate, OperateResult};
+use super::{CeobeOperationVideoSqlOperate, OperateResult};
 use crate::{
     ceobe_operation::video::models::model_video, get_zero_data_time,
     StreamResult,
 };
 
-impl CeoboOperationVideoSqlOperate {
+impl CeobeOperationVideoSqlOperate {
     pub async fn find_by_filter_raw<'r, 'db, C>(
         filter: impl IntoCondition, db: &'db C,
     ) -> OperateResult<StreamResult<'r, model_video::Model>>
