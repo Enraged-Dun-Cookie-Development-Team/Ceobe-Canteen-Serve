@@ -1,0 +1,35 @@
+pub mod announcement_data;
+use std::convert::Infallible;
+
+use status_err::{ErrPrefix, StatusErr};
+use thiserror::Error;
+pub use CheckError::*;
+
+#[derive(Debug, Error)]
+pub enum CheckError {
+    #[error("范围超出限制: {0}")]
+    LengthExceed(#[from] range_limit::Error),
+
+    #[error("日期格式错误: {0}")]
+    DateTimeFormat(#[from] chrono::ParseError),
+}
+
+impl From<Infallible> for CheckError {
+    fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
+}
+
+impl StatusErr for CheckError {
+    fn prefix(&self) -> ErrPrefix {
+        match self {
+            LengthExceed(inner) => inner.prefix(),
+            DateTimeFormat(inner) => inner.prefix(),
+        }
+    }
+
+    fn code(&self) -> u16 {
+        match self {
+            DateTimeFormat(inner) => inner.code(),
+            LengthExceed(inner) => inner.code(),
+        }
+    }
+}
