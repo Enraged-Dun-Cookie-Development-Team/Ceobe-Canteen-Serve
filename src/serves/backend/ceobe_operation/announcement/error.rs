@@ -16,4 +16,4 @@ error_generate! {
     DbOperate = announcement::operate::OperateError
 }
 
-pub(super) type AnnouncementRespResult<T> = RespResult<T, CeobeOperationAnnouncementError>;
+pub(crate) type AnnouncementRespResult<T> = RespResult<T, CeobeOperationAnnouncementError>;
