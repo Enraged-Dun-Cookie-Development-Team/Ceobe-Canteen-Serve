@@ -27,9 +27,11 @@ impl CeobeOperationAnnouncementSqlOperate {
             })
             .collect::<Vec<_>>();
         // 新建数据
-        model_announcement::Entity::insert_many(announcement_list)
+        if !announcement_list.is_empty() {
+            model_announcement::Entity::insert_many(announcement_list)
             .exec(&db)
             .await?;
+        }
         db.commit().await?;
 
         Ok(())

@@ -14,7 +14,7 @@ impl CeobeOperationAnnouncementSqlOperate {
     ) -> OperateResult<u64> {
         let resp = model_announcement::Entity::update_many()
             .filter(
-                model_announcement::Column::DeleteAt.ne(get_zero_data_time()),
+                model_announcement::Column::DeleteAt.eq(get_zero_data_time()),
             )
             .col_expr(
                 model_announcement::Column::DeleteAt,
