@@ -7,7 +7,7 @@ use orm_migrate::sql_models::ceobe_operation::video::{
     checkers::{
         bv_arg_checker::{BvQuery, BvQueryChecker, BvQueryUncheck},
         video_data::{
-            CeobeOpVideoChecker, CeobeOpVideoUncheck, CeobeOpVideo,
+            CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
         },
     },
     operate::CeobeOperationVideoSqlOperate,
