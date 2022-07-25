@@ -2,7 +2,7 @@ mod retrieve;
 mod update;
 use thiserror::Error;
 
-pub struct CeoboOperationVideoSqlOperate;
+pub struct CeobeOperationVideoSqlOperate;
 
 pub use OperateError::*;
 

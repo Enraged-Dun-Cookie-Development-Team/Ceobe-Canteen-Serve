@@ -7,10 +7,10 @@ use orm_migrate::sql_models::ceobe_operation::video::{
     checkers::{
         bv_arg_checker::{BvQuery, BvQueryChecker, BvQueryUncheck},
         video_data::{
-            CeobeOpVideoChecker, CeobeOpVideoUncheck, CeoboOpVideo,
+            CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
         },
     },
-    operate::CeoboOperationVideoSqlOperate,
+    operate::CeobeOperationVideoSqlOperate,
 };
 use reqwest::Url;
 use resp_result::RespResult;
@@ -21,7 +21,7 @@ use super::{
     VideoAuthentication, REQUEST_CLIENT,
 };
 use crate::{
-    router::CeoboOperationVideo, utils::data_checker::PreLiteChecker,
+    router::CeobeOperationVideo, utils::data_checker::PreLiteChecker,
 };
 
 type BvQueryCheck = PreLiteChecker<
@@ -35,12 +35,12 @@ type UpdateVideoCheck = PreLiteChecker<
     IntoIterChecker<
         Vec<CeobeOpVideoUncheck>,
         CeobeOpVideoChecker,
-        Vec<CeoboOpVideo>,
+        Vec<CeobeOpVideo>,
     >,
     CeobeOperationVideoError,
 >;
 
-impl CeoboOperationVideo {
+impl CeobeOperationVideo {
     pub async fn get_video_detail(
         _: VideoAuthentication,
         PreHandling(BvQuery { bv }): PreRespHandling<BvQueryCheck>,
@@ -58,7 +58,7 @@ impl CeoboOperationVideo {
         _: VideoAuthentication,
     ) -> VideoRespResult<Vec<VideoItem>> {
         RespResult::ok(
-            CeoboOperationVideoSqlOperate::find_all_not_delete()
+            CeobeOperationVideoSqlOperate::find_all_not_delete()
                 .await?
                 .into_iter()
                 .map(Into::into)
@@ -70,7 +70,7 @@ impl CeoboOperationVideo {
         _: VideoAuthentication,
         PreHandling(videos): PreRespHandling<UpdateVideoCheck>,
     ) -> VideoRespResult<()> {
-        CeoboOperationVideoSqlOperate::update_all(videos).await?;
+        CeobeOperationVideoSqlOperate::update_all(videos).await?;
         RespResult::ok(())
     }
 }

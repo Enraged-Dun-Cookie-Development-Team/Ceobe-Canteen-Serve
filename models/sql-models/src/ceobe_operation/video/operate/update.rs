@@ -7,16 +7,16 @@ use sea_orm::{
 };
 use sql_connection::get_sql_transaction;
 
-use super::{CeoboOperationVideoSqlOperate, OperateResult};
+use super::{CeobeOperationVideoSqlOperate, OperateResult};
 use crate::{
     ceobe_operation::video::{
-        checkers::video_data::CeoboOpVideo,
+        checkers::video_data::CeobeOpVideo,
         models::model_video::{self, ActiveModel},
     },
     get_now_naive_date_time, get_zero_data_time,
 };
 
-impl CeoboOperationVideoSqlOperate {
+impl CeobeOperationVideoSqlOperate {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,
     ) -> OperateResult<u64> {
@@ -31,7 +31,7 @@ impl CeoboOperationVideoSqlOperate {
         Ok(resp.rows_affected)
     }
 
-    pub async fn update_all(videos: Vec<CeoboOpVideo>) -> OperateResult<()> {
+    pub async fn update_all(videos: Vec<CeobeOpVideo>) -> OperateResult<()> {
         let db = get_sql_transaction().await?;
         // 所有先前的数据都设置为删除
         Self::all_soft_remove(&db).await?;
