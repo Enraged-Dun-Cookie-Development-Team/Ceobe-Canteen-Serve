@@ -10,7 +10,7 @@ pub mod mansion;
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
 #[derive(Debug, Error)]
-pub enum MansionDataCheckerError {
+pub enum CheckError {
     #[error("数据长度校验异常: {0}")]
     Size(#[from] range_limit::Error),
     #[error("未知饼学大厦ID格式: {0:?}")]
@@ -23,9 +23,9 @@ pub enum MansionDataCheckerError {
     MansionDataFormat(#[from] chrono::ParseError),
 }
 
-impl StatusErr for MansionDataCheckerError {
+impl StatusErr for CheckError {
     fn prefix(&self) -> status_err::ErrPrefix {
-        use MansionDataCheckerError::*;
+        use CheckError::*;
         match self {
             Size(rl) => rl.prefix(),
             MansionDataFormat(_) => ErrPrefix::PARSE,
@@ -36,7 +36,7 @@ impl StatusErr for MansionDataCheckerError {
     }
 
     fn code(&self) -> u16 {
-        use MansionDataCheckerError::*;
+        use CheckError::*;
         match self {
             Size(rl) => rl.code(),
             UnknownMansionIdFormat(_) => 0x_00_02,
@@ -47,7 +47,7 @@ impl StatusErr for MansionDataCheckerError {
     }
 
     fn http_code(&self) -> status_err::HttpCode {
-        use MansionDataCheckerError::*;
+        use CheckError::*;
         match self {
             Size(rl) => rl.http_code(),
             MansionDataFormat(_)

@@ -5,7 +5,7 @@ use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 pub use CheckError::*;
 
-#[derive(Debug, Error, PartialEq, Eq)]
+#[derive(Debug, Error)]
 pub enum CheckError {
     #[error("范围超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),

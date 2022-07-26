@@ -9,7 +9,7 @@ use serde::Deserialize;
 use super::{
     daily::{DailyChecker, DailyUncheck},
     id_checker::IdChecker,
-    MansionDataCheckerError,
+    CheckError,
 };
 use crate::mansion_data::checked::{Daily, Mansion};
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
@@ -23,7 +23,7 @@ check_obj! {
         pub fraction: FractionCheck,
         pub daily:IntoIterChecker<Vec<DailyUncheck>,DailyChecker,Vec<Daily>>
     }
-    err:MansionDataCheckerError
+    err:CheckError
 }
 
 #[derive(Debug)]
@@ -32,7 +32,7 @@ pub struct FractionCheck;
 impl Checker for FractionCheck {
     type Args = ();
     type Checked = i16;
-    type Err = MansionDataCheckerError;
+    type Err = CheckError;
     type Fut = Ready<Result<i16, Self::Err>>;
     type Unchecked = i16;
 
@@ -41,7 +41,7 @@ impl Checker for FractionCheck {
             ok(uncheck)
         }
         else {
-            err(MansionDataCheckerError::BadFraction(uncheck))
+            err(CheckError::BadFraction(uncheck))
         }
     }
 }

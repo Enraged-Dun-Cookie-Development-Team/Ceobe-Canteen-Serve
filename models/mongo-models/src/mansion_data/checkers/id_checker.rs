@@ -1,7 +1,7 @@
 use checker::{check_obj, prefabs::option_checker::OptionChecker, Checker};
 use futures_util::future::{ready, Ready};
 
-use super::MansionDataCheckerError;
+use super::CheckError;
 use crate::mansion_data::{
     checked::OptionMid,
     preludes::{MansionId, Mid},
@@ -18,7 +18,7 @@ check_obj! {
         )]
         pub id: IdChecker
     }
-    err:MansionDataCheckerError
+    err:CheckError
 }
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
@@ -31,7 +31,7 @@ check_obj! {
         )]
         pub id: OptionChecker<IdChecker>
     }
-    err:MansionDataCheckerError
+    err:CheckError
 }
 
 /// 饼学大厦号的检查器
@@ -45,12 +45,12 @@ pub struct IdChecker;
 impl Checker for IdChecker {
     type Args = ();
     type Checked = MansionId;
-    type Err = MansionDataCheckerError;
+    type Err = CheckError;
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
     fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        use MansionDataCheckerError::UnknownMansionIdFormat;
+        use CheckError::UnknownMansionIdFormat;
         let mut sp = uncheck.split('.');
 
         ready(
