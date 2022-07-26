@@ -1,6 +1,6 @@
-use super::{get_mansion_collection, MansionDataMongoOperate};
+use super::{get_mansion_collection, MansionDataMongoOperate, OperateResult, OperateError};
 use crate::mansion_data::{
-    checked::Mansion, preludes::ModelMansion, MansionDataError,
+    checked::Mansion, preludes::ModelMansion
 };
 
 impl MansionDataMongoOperate {
@@ -8,7 +8,7 @@ impl MansionDataMongoOperate {
     /// params：mansion 大厦信息
     pub async fn create_mansion_data(
         mansion: Mansion,
-    ) -> Result<(), MansionDataError> {
+    ) -> OperateResult<()> {
         let collection = get_mansion_collection()?;
 
         // 判断mansion id是否已经存在
@@ -27,7 +27,7 @@ impl MansionDataMongoOperate {
                 .map_err(Into::into)
         }
         else {
-            Err(MansionDataError::MansionIdExist(mansion.id.to_string()))
+            Err(OperateError::MansionIdExist(mansion.id.to_string()))
         }
     }
 }
