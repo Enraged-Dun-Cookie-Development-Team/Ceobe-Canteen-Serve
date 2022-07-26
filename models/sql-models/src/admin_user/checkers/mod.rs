@@ -1,7 +1,5 @@
 pub mod username;
 
-use std::convert::Infallible;
-
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 pub use CheckError::*;
@@ -10,10 +8,6 @@ pub use CheckError::*;
 pub enum CheckError {
     #[error("用户名长度范围不达标: {0}")]
     UsernameLength(#[from] range_limit::Error),
-}
-
-impl From<Infallible> for CheckError {
-    fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
 }
 
 impl StatusErr for CheckError {
