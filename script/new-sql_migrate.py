@@ -193,7 +193,8 @@ class Migration(object):
 
     def get_use_way(self):
         base = "::".join(map(lambda x: x.get_name(), self.path))
-        return f"{base}::{self.file_name}::Migration"
+        base = f"{base}::" if len(base)>0 else ""
+        return f"{base}{self.file_name}::Migration"
 
     def get_file_local(self, base):
         # 构造路径
@@ -236,7 +237,7 @@ def from_input_path(rs_lib:RustLib,path, base_path) -> Migration:
     migration = Migration(rs_mods, migrate_name)
 
     if len(rs_mods) == 0:
-        pass
+        rs_lib.add_mod(migration.get_filename())
     else:
         rs_mods[len(rs_mods) - 1].add_mod(migration.get_filename())
     rs_lib.add_migration(migration)
@@ -248,6 +249,7 @@ if __name__ == '__main__':
     
     if len(paths) == 0 :
         print(f"Using like `python {sys.argv[0]} <path1>/.../<path1>/<migrate_name>")
+        sys.exit(1)
     
     rs_lib = RustLib(migrate_dir)
     for path in paths:
