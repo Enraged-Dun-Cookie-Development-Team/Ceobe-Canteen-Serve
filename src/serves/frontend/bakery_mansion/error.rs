@@ -1,6 +1,6 @@
 use axum::extract::rejection::QueryRejection;
 use mongo_migration::mongo_models::mansion_data::{
-    checkers::MansionDataCheckerError, MansionDataError,
+    checkers::MansionDataCheckerError, operate::OperateError,
 };
 
 use crate::error_generate;
@@ -10,6 +10,6 @@ error_generate!(
     // request entity error
     Query = QueryRejection
     //db error
-    Mongo = MansionDataError
+    Mongo = OperateError
     Checker = MansionDataCheckerError
 );
