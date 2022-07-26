@@ -1,8 +1,8 @@
 use mongo_connection::CollectionGuard;
 use mongodb::bson::Document;
 
-use super::MansionDataMongoOperate;
-use crate::mansion_data::{preludes::ModelMansion, MansionDataError};
+use super::{MansionDataMongoOperate, OperateResult};
+use crate::mansion_data::preludes::ModelMansion;
 
 impl MansionDataMongoOperate {
     /// 根据条件判断大厦是否存在
@@ -10,7 +10,7 @@ impl MansionDataMongoOperate {
     pub async fn is_exist_mansion_by_filter(
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<ModelMansion>,
-    ) -> Result<bool, MansionDataError> {
+    ) -> OperateResult<bool> {
         Ok(collection
             .doing(|collection| collection.count_documents(filter, None))
             .await?

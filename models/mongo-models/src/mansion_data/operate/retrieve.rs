@@ -9,11 +9,13 @@ use mongodb::{
 };
 use tap::Tap;
 
-use super::{get_mansion_collection, MansionDataMongoOperate};
+use super::{
+    get_mansion_collection, MansionDataMongoOperate, OperateError,
+    OperateResult,
+};
 use crate::mansion_data::{
     checked::Mid,
     preludes::{MansionId, ModelMansion, ModifyAt},
-    MansionDataError,
 };
 
 impl MansionDataMongoOperate {
@@ -22,18 +24,18 @@ impl MansionDataMongoOperate {
     pub async fn get_mansion_time_by_filter(
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<ModifyAt>,
-    ) -> Result<ModifyAt, MansionDataError> {
+    ) -> OperateResult<ModifyAt> {
         collection
             .doing(|collection| collection.find_one(filter, None))
             .await?
-            .ok_or(MansionDataError::MansionNotFound)
+            .ok_or(OperateError::MansionNotFound)
     }
 
     /// 获取单一大厦创建和更新时间
     /// params：mid 大厦id
     pub async fn get_mansion_time_by_id(
         mid: &MansionId, collection: &CollectionGuard<ModifyAt>,
-    ) -> Result<ModifyAt, MansionDataError> {
+    ) -> OperateResult<ModifyAt> {
         Self::get_mansion_time_by_filter(mid.into_id_filter(), collection)
             .await
     }
@@ -42,7 +44,7 @@ impl MansionDataMongoOperate {
     /// params：mid 大厦id
     pub async fn get_mansion_by_id(
         mid: &MansionId,
-    ) -> Result<ModelMansion, MansionDataError> {
+    ) -> OperateResult<ModelMansion> {
         let collection = get_mansion_collection()?.tap(|c| {
             log::info!("Get MongoDb Collection {:?}", c.namespace())
         });
@@ -59,7 +61,7 @@ impl MansionDataMongoOperate {
             })
             .await
             .tap(|re| log::info!("Task  Done is ok :{}", re.is_ok()))?
-            .ok_or(MansionDataError::MansionNotFound)
+            .ok_or(OperateError::MansionNotFound)
     }
 
     /// 获取大厦id列表（最底层）
@@ -67,7 +69,7 @@ impl MansionDataMongoOperate {
     pub async fn get_mansion_id_list_by_filter(
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<Mid>,
-    ) -> Result<Vec<String>, MansionDataError> {
+    ) -> OperateResult<Vec<String>> {
         Ok(collection
             .doing(|collection| {
                 async move {
@@ -94,8 +96,7 @@ impl MansionDataMongoOperate {
     }
 
     /// 无条件获取大厦id列表
-    pub async fn get_all_mansion_id_list(
-    ) -> Result<Vec<String>, MansionDataError> {
+    pub async fn get_all_mansion_id_list() -> OperateResult<Vec<String>> {
         let collection = get_mansion_collection()?;
         Self::get_mansion_id_list_by_filter(None, &collection.with_mapping())
             .await
@@ -105,7 +106,7 @@ impl MansionDataMongoOperate {
     /// params： time 往前多少时间
     pub async fn get_mansion_id_list_by_time(
         time: Duration,
-    ) -> Result<Vec<String>, MansionDataError> {
+    ) -> OperateResult<Vec<String>> {
         let collection = get_mansion_collection()?;
 
         let now = Local::now().naive_local() - time;

@@ -4,13 +4,13 @@ use sea_orm::{
 };
 use sql_connection::get_sql_transaction;
 
-use super::UserSqlOperate;
-use crate::admin_user::{models::user, AdminUserError};
+use super::{OperateError, OperateResult, UserSqlOperate};
+use crate::admin_user::models::user;
 
 impl UserSqlOperate {
     pub async fn update_user_name(
         uid: i64, new_name: String,
-    ) -> Result<(), AdminUserError> {
+    ) -> OperateResult<()> {
         let ctx = get_sql_transaction().await?;
 
         // check user name exist
@@ -20,7 +20,7 @@ impl UserSqlOperate {
         )
         .await?
         {
-            return Err(AdminUserError::ConflictUsername {
+            return Err(OperateError::ConflictUsername {
                 username: new_name,
             });
         }
@@ -40,7 +40,7 @@ impl UserSqlOperate {
     pub async fn update_user_password<Verify, Encode, Map, Err, T>(
         uid: i64, new_pwd: String, old_pwd: String, verify: Verify,
         encode: Encode, mapping: Map,
-    ) -> Result<Result<T, Err>, AdminUserError>
+    ) -> OperateResult<Result<T, Err>>
     where
         Verify: Fn(&str, &str) -> Result<bool, Err>,
         Encode: Fn(&str) -> Result<String, Err>,
@@ -64,7 +64,7 @@ impl UserSqlOperate {
         let encoded = match verifying() {
             // ok can update
             Ok(true) => encode(&new_pwd),
-            Ok(false) => Err(AdminUserError::PasswordNoChange)?,
+            Ok(false) => Err(OperateError::PasswordNoChange)?,
             Err(err) => return Ok(Err(err)),
         };
 

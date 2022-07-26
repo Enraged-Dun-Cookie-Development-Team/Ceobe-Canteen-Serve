@@ -1,8 +1,10 @@
-use super::{get_mansion_collection, MansionDataMongoOperate};
+use super::{
+    get_mansion_collection, MansionDataMongoOperate, OperateError,
+    OperateResult,
+};
 use crate::mansion_data::{
     checked::Mansion,
     preludes::{MansionId, ModelMansion},
-    MansionDataError,
 };
 
 impl MansionDataMongoOperate {
@@ -11,7 +13,7 @@ impl MansionDataMongoOperate {
     /// mansion: 大厦信息
     pub async fn update_mansion(
         mid: MansionId, mansion: Mansion,
-    ) -> Result<(), MansionDataError> {
+    ) -> OperateResult<()> {
         let collection = get_mansion_collection()?;
         // 获取原先数据新增时间和修改时间
         let old_mansion_time =
@@ -37,7 +39,7 @@ impl MansionDataMongoOperate {
             Ok(())
         }
         else {
-            Err(MansionDataError::MansionIdExist(mansion.id.to_string()))
+            Err(OperateError::MansionIdExist(mansion.id.to_string()))
         }
     }
 }

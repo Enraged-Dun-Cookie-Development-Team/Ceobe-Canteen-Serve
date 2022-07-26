@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use axum_prehandle::PreHandler;
-use orm_migrate::sql_models::admin_user::{
-    operate::UserSqlOperate, AdminUserError,
+use orm_migrate::sql_models::admin_user::operate::{
+    OperateError, UserSqlOperate,
 };
 use time_usage::async_time_usage_with_name;
 
@@ -44,7 +44,7 @@ impl<B: Send> PreHandler<B> for TokenAuth {
         .await
         .map_err(|err| {
             match err {
-                AdminUserError::UserNotExist => {
+                OperateError::UserNotExist => {
                     AuthError::TokenInfoNotFound(TokenInfoNotFound)
                 }
                 err => AuthError::UserDbOperate(err),
