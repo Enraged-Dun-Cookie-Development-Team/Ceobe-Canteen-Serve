@@ -1,9 +1,10 @@
 use checker::{
-    check_obj, prefabs::collect_checkers::iter_checkers::IntoIterChecker,
-    Checker,
+    check_obj,
+    prefabs::{
+        collect_checkers::iter_checkers::IntoIterChecker,
+        date_time_format::DateFormatChecker,
+    },
 };
-use chrono::NaiveDate;
-use futures_util::{self, future::ready};
 
 use super::{
     each_info::{EachInfoUncheck, InfoChecker},
@@ -20,20 +21,4 @@ check_obj! {
         pub info: IntoIterChecker<Vec<EachInfoUncheck>,InfoChecker,Vec<Info>>
     }
     err:CheckError
-}
-pub struct DateFormatChecker;
-
-impl Checker for DateFormatChecker {
-    type Args = ();
-    type Checked = NaiveDate;
-    type Err = CheckError;
-    type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
-    type Unchecked = String;
-
-    fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        ready(
-            NaiveDate::parse_from_str(&uncheck, "%Y-%m-%d")
-                .map_err(Into::into),
-        )
-    }
 }
