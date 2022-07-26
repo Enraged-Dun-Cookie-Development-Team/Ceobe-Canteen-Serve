@@ -9,10 +9,13 @@ use mongodb::{
 };
 use tap::Tap;
 
-use super::{get_mansion_collection, MansionDataMongoOperate, OperateResult, OperateError};
+use super::{
+    get_mansion_collection, MansionDataMongoOperate, OperateError,
+    OperateResult,
+};
 use crate::mansion_data::{
     checked::Mid,
-    preludes::{MansionId, ModelMansion, ModifyAt}
+    preludes::{MansionId, ModelMansion, ModifyAt},
 };
 
 impl MansionDataMongoOperate {
@@ -93,8 +96,7 @@ impl MansionDataMongoOperate {
     }
 
     /// 无条件获取大厦id列表
-    pub async fn get_all_mansion_id_list(
-    ) -> OperateResult<Vec<String>> {
+    pub async fn get_all_mansion_id_list() -> OperateResult<Vec<String>> {
         let collection = get_mansion_collection()?;
         Self::get_mansion_id_list_by_filter(None, &collection.with_mapping())
             .await

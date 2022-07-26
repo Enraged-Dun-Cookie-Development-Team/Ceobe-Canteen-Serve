@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use axum_prehandle::PreHandler;
-use orm_migrate::sql_models::admin_user::{
-    operate::{UserSqlOperate, OperateError},
+use orm_migrate::sql_models::admin_user::operate::{
+    OperateError, UserSqlOperate,
 };
 use time_usage::async_time_usage_with_name;
 

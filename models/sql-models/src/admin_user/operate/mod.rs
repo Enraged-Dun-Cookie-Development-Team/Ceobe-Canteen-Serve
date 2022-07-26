@@ -58,8 +58,9 @@ impl status_err::StatusErr for OperateError {
             Db(db) => db.http_code(),
             PasswordWrong => HttpCode::UNAUTHORIZED,
             UserNotExist => HttpCode::NOT_FOUND,
-            ConflictUsername { username: _ }
-            | PasswordNoChange => HttpCode::BAD_REQUEST,
+            ConflictUsername { username: _ } | PasswordNoChange => {
+                HttpCode::BAD_REQUEST
+            }
         }
     }
 }

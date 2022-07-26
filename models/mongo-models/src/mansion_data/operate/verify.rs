@@ -2,7 +2,7 @@ use mongo_connection::CollectionGuard;
 use mongodb::bson::Document;
 
 use super::{MansionDataMongoOperate, OperateResult};
-use crate::mansion_data::{preludes::ModelMansion};
+use crate::mansion_data::preludes::ModelMansion;
 
 impl MansionDataMongoOperate {
     /// 根据条件判断大厦是否存在

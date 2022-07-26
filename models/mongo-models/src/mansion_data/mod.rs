@@ -6,6 +6,3 @@ pub mod operate;
 pub mod preludes {
     pub use super::{checked::*, checkers::*, models::*};
 }
-
-
-

@@ -12,7 +12,7 @@ pub struct VideoItem {
     pub title: String,
     pub author: String,
     pub video_link: String,
-    #[serde(rename="cover_img")]
+    #[serde(rename = "cover_img")]
     pub cover_image: String,
 }
 

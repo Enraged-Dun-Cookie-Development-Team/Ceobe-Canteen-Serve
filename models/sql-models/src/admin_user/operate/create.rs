@@ -1,10 +1,8 @@
 use sea_orm::{ActiveModelTrait, ConnectionTrait, TransactionTrait};
 use sql_connection::{get_sql_database, sea_orm::Set};
 
-use super::{UserSqlOperate, OperateResult};
-use crate::admin_user::{
-    models::{auth_level::AuthLevel, user},
-};
+use super::{OperateResult, UserSqlOperate};
+use crate::admin_user::models::{auth_level::AuthLevel, user};
 
 impl UserSqlOperate {
     pub async fn add_user_with_encoded_password_db(

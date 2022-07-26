@@ -2,7 +2,7 @@ pub mod username;
 
 use std::convert::Infallible;
 
-use status_err::{ErrPrefix, StatusErr, HttpCode};
+use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 pub use CheckError::*;
 

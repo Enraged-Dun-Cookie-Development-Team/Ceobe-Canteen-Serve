@@ -4,7 +4,6 @@ use typed_builder::TypedBuilder;
 
 use super::CheckError;
 
-
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
 check_obj! {

@@ -4,10 +4,8 @@ use sea_orm::{
 };
 use sql_connection::get_sql_database;
 
-use super::{UserCounts, UserSqlOperate, OperateResult};
-use crate::admin_user::{
-    models::{auth_level::AuthLevel, user}
-};
+use super::{OperateResult, UserCounts, UserSqlOperate};
+use crate::admin_user::models::{auth_level::AuthLevel, user};
 
 impl UserSqlOperate {
     pub async fn is_user_exist_raw(

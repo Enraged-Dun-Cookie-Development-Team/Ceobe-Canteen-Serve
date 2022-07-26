@@ -1,7 +1,10 @@
-use super::{get_mansion_collection, MansionDataMongoOperate, OperateError, OperateResult};
+use super::{
+    get_mansion_collection, MansionDataMongoOperate, OperateError,
+    OperateResult,
+};
 use crate::mansion_data::{
     checked::Mansion,
-    preludes::{MansionId, ModelMansion}
+    preludes::{MansionId, ModelMansion},
 };
 
 impl MansionDataMongoOperate {
