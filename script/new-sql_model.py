@@ -122,8 +122,9 @@ class RustMod(object):
         return next_path
 
 class CMO(object):
-    def __init__(self, mod_name) -> None:
+    def __init__(self, path, mod_name) -> None:
         self.name = mod_name
+        self.path = path
 
     def get_filename(self):
         return self.name
@@ -157,7 +158,7 @@ def from_input_path(rs_lib:RustLib, path, base_path) -> CMO:
 
         base_path = os.path.join(base_path, mod_name)
 
-    cmo = CMO(cmo_name)
+    cmo = CMO(base_path, cmo_name)
 
     if len(rs_mods) == 0:
         rs_lib.add_mod(cmo.get_filename())
