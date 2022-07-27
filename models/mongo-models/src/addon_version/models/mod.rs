@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Version(u32, u32, u32, Option<String>);
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
