@@ -140,12 +140,21 @@ class RustMod(object):
 
 
 class CMO(object):
-    def __init__(self, path, mod_name) -> None:
+    def __init__(self, mod_list: list, mod_name) -> None:
         self.name = mod_name
-        self.path = path
+        self.path = mod_list
 
     def get_filename(self):
         return self.name
+
+    def create_file_dir(self, base):
+        base_dir = base
+        for rs_mod in self.path:
+            rs_mod: RustMod
+            base_dir = rs_mod.writing_mod(base_dir, True)
+
+    def writing_migrate_file(self, base_dir):
+        self.create_file_dir(base_dir)
 
 
 class CheckerMod(object):
@@ -182,12 +191,8 @@ def from_input_path(rs_lib: RustLib, path, base_path) -> CMO:
 
         base_path = os.path.join(base_path, mod_name)
 
-    cmo = CMO(base_path, cmo_name)
+    cmo = CMO(rs_mods, cmo_name)
 
-    if len(rs_mods) == 0:
-        rs_lib.add_mod(cmo.get_filename())
-    else:
-        rs_mods[len(rs_mods) - 1].add_mod(cmo.get_filename())
     return cmo
 
 
@@ -207,5 +212,6 @@ if __name__ == '__main__':
         curd = path_operate[1:]
 
         migrate = from_input_path(rs_lib, path, rs_lib.get_src_dir())
+        migrate.writing_migrate_file( rs_lib.get_src_dir())
 
     rs_lib.writing_mods()
