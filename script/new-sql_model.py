@@ -19,6 +19,94 @@ pub mod models;
 pub mod operate;
 """
 
+checker_mod_template = """
+pub mod %s_data;
+use std::convert::Infallible;
+use thiserror::Error;
+
+use status_err::{ErrPrefix, StatusErr, HttpCode};
+pub use CheckError::*;
+
+#[derive(Debug, Error)]
+pub enum CheckError {
+    todo!()
+}
+
+impl StatusErr for CheckError {
+    fn prefix(&self) -> ErrPrefix {
+        match self {
+            todo!()
+        }
+    }
+
+    fn code(&self) -> u16 {
+        match self {
+            todo!()
+        }
+    }
+
+    fn http_code(&self) -> HttpCode {
+        match self {
+            todo!()
+        }
+    }
+}
+"""
+operate_mod_template = """
+use thiserror::Error;
+use status_err::{ErrPrefix, StatusErr, HttpCode};
+
+pub struct %sSqlOperate;
+
+pub use OperateError::*;
+
+#[derive(Debug, Error)]
+pub enum OperateError {
+    todo!()
+}
+#[allow(dead_code)]
+type OperateResult<T> = Result<T, OperateError>;
+
+impl StatusErr for OperateError {
+    fn prefix(&self) -> ErrPrefix {
+        match self {
+            todo!()
+        }
+    }
+
+    fn code(&self) -> u16 {
+        match self {
+            todo!()
+        }
+    }
+
+    fn http_code(&self) -> HttpCode {
+        match self {
+            todo!()
+        }
+    }
+}
+"""
+model_template = """
+use sea_orm::entity::prelude::*;
+
+#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
+#[sea_orm(table_name = "%s")]
+pub struct Model {
+    #[sea_orm(primary_key)]
+    pub id: i32,
+    todo!()
+}
+
+#[derive(Debug, Clone, Copy, EnumIter)]
+pub enum Relation \{\}
+
+impl RelationTrait for Relation {
+    fn def(&self) -> RelationDef { panic!("No Relate") }
+}
+"""
+
+
 mod_patten = re.compile(r'(?:pub)? mod ([a-zA-Z_][a-zA-Z0-9_]*);')
 
 
