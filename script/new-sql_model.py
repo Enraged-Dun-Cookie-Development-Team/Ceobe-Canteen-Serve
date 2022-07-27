@@ -3,6 +3,7 @@ import pathlib
 from posixpath import split
 import re
 import sys
+from unittest import result
 
 sql_model_dir = "./models/sql-models"
 operation_template = """
@@ -20,6 +21,7 @@ pub mod operate;
 
 mod_patten = re.compile(r'(?:pub)? mod ([a-zA-Z_][a-zA-Z0-9_]*);')
 
+
 class RustLib(object):
     def __init__(self, crate_path):
         self.need_add_mods = []
@@ -27,6 +29,10 @@ class RustLib(object):
         self.lib_file = os.path.join(self.src_dir, "lib.rs")
         with open(self.lib_file, "r+", encoding="utf-8") as f:
             self.file = f.read()
+
+    def __del__(self):
+        with open(self.lib_file,"w") as f :
+            f.write(self.file)
 
     def get_src_dir(self):
         return self.src_dir
@@ -37,6 +43,17 @@ class RustLib(object):
     def add_mod(self, rs_mod):
         self.need_add_mods.append(rs_mod)
 
+# 在lib文件中，将need_add_mods加入现有mod的后面
+    def writing_mods(self):
+        exist_mod = mod_patten.findall(self.file)
+        vec = []
+
+        for rs_mod in self.need_add_mods:
+            if rs_mod not in exist_mod:
+                vec.append(f"pub mod {rs_mod};\n")
+
+        mods = ''.join(vec)
+        self.file = f"{mods}{self.file}"
 
 class RustMod(object):
     def __init__(self, mod_name) -> None:
@@ -57,13 +74,13 @@ class RustMod(object):
 
     def add_mod(self, rs_mod: str):
         self.need_add_mods.append(rs_mod)
-        
+
     def __str__(self) -> str:
         return f"Mod {self.name}"
-    
+
     __repr__ = __str__
 
-    # 检查model 是否存在    
+    # 检查model 是否存在
     def model_exist(self, base_path: str) -> bool:
         # 1 拼接路径
         # 2 判断路径指定文件夹是否存在
@@ -76,7 +93,7 @@ class RustMod(object):
         outer_file = self.get_outer_mod_file_path(base_path)
 
         mod_file_exist = (os.path.exists(inner_file) & os.path.isfile(inner_file)) | (
-                os.path.exists(outer_file) & os.path.isfile(outer_file))
+            os.path.exists(outer_file) & os.path.isfile(outer_file))
 
         return dir_exist & mod_file_exist
 
@@ -121,6 +138,7 @@ class RustMod(object):
 
         return next_path
 
+
 class CMO(object):
     def __init__(self, path, mod_name) -> None:
         self.name = mod_name
@@ -129,22 +147,28 @@ class CMO(object):
     def get_filename(self):
         return self.name
 
+
 class CheckerMod(object):
     pass
 
+
 class ModelsMod(object):
     pass
+
 
 class OperateMod(object):
     pass
 
 # path: ceobe/operation/video
-def from_input_path(rs_lib:RustLib, path, base_path) -> CMO:
+
+
+def from_input_path(rs_lib: RustLib, path, base_path) -> CMO:
     _, cmo_name = os.path.split(path)
     rs_mods = []
     for mod_name in re.split(r"[\\/]", path):
         mod_name = mod_name.strip()
-        if mod_name == "": continue
+        if mod_name == "":
+            continue
         rs_mod = RustMod(mod_name)
 
         # 添加 mod 到上一级
@@ -167,25 +191,21 @@ def from_input_path(rs_lib:RustLib, path, base_path) -> CMO:
     return cmo
 
 
-
 if __name__ == '__main__':
     operates = sys.argv[1:]
-    
-    if len(operates) == 0 :
-        print(f"Using like `python {sys.argv[0]} \"<path1>/.../<path1>/<model_name> <c> <u> <r> <d>\"")
+
+    if len(operates) == 0:
+        print(
+            f"Using like `python {sys.argv[0]} \"<path1>/.../<path1>/<model_name> <c> <u> <r> <d>\"")
         sys.exit(1)
-    
+
     rs_lib = RustLib(sql_model_dir)
 
     for operate in operates:
         path_operate = operate.split(" ")
-        path = path_operate[0] 
+        path = path_operate[0]
         curd = path_operate[1:]
 
+        migrate = from_input_path(rs_lib, path, rs_lib.get_src_dir())
 
-
-
-
-
-
-    
+    rs_lib.writing_mods()
