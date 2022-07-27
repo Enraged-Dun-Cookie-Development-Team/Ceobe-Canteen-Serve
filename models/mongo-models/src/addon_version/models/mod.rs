@@ -1,23 +1,21 @@
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
+use url::Url;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Version(u32, u32, u32, Option<String>);
 
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-pub struct DescriptionSegment {
-    subtitle: Option<String>,
-    detail: Vec<String>,
-}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SpareLink(Url, String);
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DownloadResource {
-    crx: String,
-    zip: String,
-    chrome: String,
-    edge: String,
-    firefox: String,
-    spare: String,
+    crx: Url,
+    zip: Url,
+    chrome: Url,
+    edge: Url,
+    firefox: Url,
+    spare: SpareLink,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -25,6 +23,6 @@ pub struct AddonVersion {
     logo: String,
     version: Version,
     title: String,
-    description: Vec<DescriptionSegment>,
+    description: String,
     down: DownloadResource,
 }
