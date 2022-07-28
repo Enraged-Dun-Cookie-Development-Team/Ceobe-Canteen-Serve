@@ -52,6 +52,30 @@ impl StatusErr for CheckError {
     }
 }
 """
+checker_template = """
+use checker::check_obj;
+use typed_builder::TypedBuilder;
+
+use super::CheckError;
+use crate::%s::%s::models::model_%s;
+
+#[derive(Debug, TypedBuilder)]
+pub struct %s {
+    todo!()
+}
+
+check_obj! {
+    #[derive(Debug,serde::Deserialize)]
+    pub struct %sUncheck = %sChecker > %s{
+        todo!()
+    }
+    err : CheckError
+}
+
+impl model_announcement::ActiveModel {
+    todo!()
+}
+"""
 operate_mod_template = """
 use thiserror::Error;
 use status_err::{ErrPrefix, StatusErr, HttpCode};
@@ -87,8 +111,16 @@ impl StatusErr for OperateError {
     }
 }
 """
+operate_template = """
+use super::%sSqlOperate;
+
+impl %sSqlOperate {
+    todo!()
+}
+"""
 model_template = """
-use sea_orm::entity::prelude::*;
+use chrono::Local;
+use sea_orm::{ entity::prelude::*, Set };
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "%s")]
@@ -99,10 +131,26 @@ pub struct Model {
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
-pub enum Relation \{\}
+pub enum Relation {}
 
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef { panic!("No Relate") }
+}
+
+impl ActiveModelBehavior for ActiveModel {}
+
+impl ActiveModel {
+    // 软删除
+    pub fn soft_remove(&mut self) {
+        let now = Local::now().naive_local();
+        self.delete_at = Set(now);
+    }
+
+    // 还原删除
+    pub fn soft_recover(&mut self) {
+        let date_time = chrono::NaiveDateTime::from_timestamp(0, 0);
+        self.delete_at = Set(date_time)
+    }
 }
 """
 
@@ -246,7 +294,11 @@ class CMO(object):
 
 
 class CheckerMod(object):
-    pass
+    def __init__(self, base_dir):
+        pass
+
+    def add_mod(self, rs_mod):
+        pass
 
 
 class ModelsMod(object):
@@ -256,9 +308,8 @@ class ModelsMod(object):
 class OperateMod(object):
     pass
 
+# 处理带个路径
 # path: ceobe/operation/video
-
-
 def from_input_path(rs_lib: RustLib, path, base_path) -> CMO:
     _, cmo_name = os.path.split(path)
     rs_mods = []
@@ -289,7 +340,7 @@ if __name__ == '__main__':
 
     if len(operates) == 0:
         print(
-            f"Using like `python {sys.argv[0]} \"<path1>/.../<path1>/<model_name> <c> <u> <r> <d>\"")
+            f"Using like `python {sys.argv[0]} \"<path1>/.../<path1>/<model_name> <curd>\"")
         sys.exit(1)
 
     rs_lib = RustLib(sql_model_dir)
@@ -297,7 +348,7 @@ if __name__ == '__main__':
     for operate in operates:
         path_operate = operate.split(" ")
         path = path_operate[0]
-        curd = path_operate[1:]
+        curd = path_operate[1]
 
         migrate = from_input_path(rs_lib, path, rs_lib.get_src_dir())
         migrate.writing_migrate_file( rs_lib.get_src_dir())
