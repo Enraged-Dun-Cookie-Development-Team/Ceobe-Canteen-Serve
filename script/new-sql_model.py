@@ -3,7 +3,9 @@ import pathlib
 from posixpath import split
 import re
 import sys
+from this import d
 from unittest import result
+from venv import create
 
 sql_model_dir = "./models/sql-models"
 operation_template = """
@@ -157,6 +159,8 @@ impl ActiveModel {
 
 mod_patten = re.compile(r'(?:pub)? mod ([a-zA-Z_][a-zA-Z0-9_]*);')
 
+def name_convert_to_camel(name: str) -> str:
+    return re.sub(r'(_[a-z])', lambda x: x.group(1)[1].upper(), name.capitalize())
 
 class RustLib(object):
     def __init__(self, crate_path):
@@ -279,34 +283,93 @@ class CMO(object):
     def __init__(self, mod_list: list, mod_name) -> None:
         self.name = mod_name
         self.path = mod_list
+        self.before_path_snake = self.get_before_path_snake()
 
     def get_filename(self):
         return self.name
+
+    def get_before_path_snake(self):
+        file = ""
+        for mod in self.path:
+            file.join(f"{mod.get_name()}_")
+        return file
 
     def create_file_dir(self, base):
         base_dir = base
         for rs_mod in self.path:
             rs_mod: RustMod
             base_dir = rs_mod.writing_mod(base_dir, True)
+        return base_dir
 
-    def writing_migrate_file(self, base_dir):
-        self.create_file_dir(base_dir)
+    def writing_cmo_mod_file(self, base_dir):
+        base_dir = self.create_file_dir(base_dir)
+
+        self.create_cmo_folder(base_dir)
+
+    def create_cmo_folder(self, base_dir):
+        check = CheckerMod(self.name, base_dir, self.before_path_snake)
+        model = CheckerMod(self.name, base_dir, self.before_path_snake)
+        operate = CheckerMod(self.name, base_dir, self.before_path_snake)
+
+
 
 
 class CheckerMod(object):
-    def __init__(self, base_dir):
-        pass
+    def __init__(self, name, base_dir, before_path_snake):
+        self.path = os.path.join(base_dir, "checkers")
+        self.name = name
+        self.before_path_snake = before_path_snake
+        self.need_add_mods = []
+        self.add_mod(f"{self.name}_data")
 
-    def add_mod(self, rs_mod):
-        pass
+    def add_mod(self, mod_name):
+        self.need_add_mods.append(mod_name)
+
+    
 
 
 class ModelsMod(object):
-    pass
+    def __init__(self, name, base_dir, before_path_snake):
+        self.path = os.path.join(base_dir, "models")
+        self.name = name
+        self.need_add_mods = []
+        self.before_path_snake = before_path_snake
+        self.add_mod(f"model_{self.name}")
+
+    def add_mod(self, mod_name):
+        self.need_add_mods.append(mod_name)
+
+    def create_mod(self):
+        with open(os.path.join(self.path, "mod.rs"), "w") as mod_file:
+            for rs_mod in self.need_add_mods:
+                mod_file.write(f"pub mod {rs_mod};\n")
+    
+    def create_files(self):
+        for rs_mod in self.need_add_mods: 
+            with open(os.path.join(self.path, rs_mod), "w") as mod_file:
+                mod_file.write(model_template % f"{self.before_path_snake}{self.name}")
+
 
 
 class OperateMod(object):
-    pass
+    def __init__(self,name, base_dir, before_path_snake):
+        self.path = os.path.join(base_dir, "operate")
+        self.name = name
+        self.need_add_mods = []
+        self.before_path_snake = before_path_snake
+
+    def add_mod(self, mod_name):
+        self.need_add_mods.append(mod_name)
+
+    def add_operate(self, operations):
+        if "c" in operations:
+            self.add_mod("create")
+        if "u" in operations:
+            self.add_mod("update")
+        if "r" in operations:
+            self.add_mod("retrieve")
+        if "d" in operations:
+            self.add_mod("delete")
 
 # 处理带个路径
 # path: ceobe/operation/video
@@ -351,6 +414,6 @@ if __name__ == '__main__':
         curd = path_operate[1]
 
         migrate = from_input_path(rs_lib, path, rs_lib.get_src_dir())
-        migrate.writing_migrate_file( rs_lib.get_src_dir())
+        migrate.writing_cmo_mod_file( rs_lib.get_src_dir())
 
     rs_lib.writing_mods()
