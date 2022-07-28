@@ -29,6 +29,7 @@ mod models;
 mod router;
 mod serves;
 mod utils;
+mod middleware;
 
 extern crate serde;
 
