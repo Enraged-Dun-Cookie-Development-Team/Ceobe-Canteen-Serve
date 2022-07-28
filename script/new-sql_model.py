@@ -6,13 +6,14 @@ import sys
 from this import d
 from unittest import result
 from venv import create
+from string import punctuation
 
 sql_model_dir = "./models/sql-models"
 operation_template = """
 use super::%sSqlOperate;
 
 impl %sSqlOperate {
-    todo!()
+    todo!();
 }
 """
 folder_mod_template = """
@@ -31,25 +32,25 @@ pub use CheckError::*;
 
 #[derive(Debug, Error)]
 pub enum CheckError {
-    todo!()
+    
 }
 
 impl StatusErr for CheckError {
     fn prefix(&self) -> ErrPrefix {
         match self {
-            todo!()
+            
         }
     }
 
     fn code(&self) -> u16 {
         match self {
-            todo!()
+            
         }
     }
 
     fn http_code(&self) -> HttpCode {
         match self {
-            todo!()
+            
         }
     }
 }
@@ -59,23 +60,23 @@ use checker::check_obj;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
-use crate::%s::%s::models::model_%s;
+use crate::%s::models::model_%s;
 
 #[derive(Debug, TypedBuilder)]
 pub struct %s {
-    todo!()
+    
 }
 
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
     pub struct %sUncheck = %sChecker > %s{
-        todo!()
+        todo!();
     }
     err : CheckError
 }
 
 impl model_announcement::ActiveModel {
-    todo!()
+    todo!();
 }
 """
 operate_mod_template = """
@@ -88,7 +89,7 @@ pub use OperateError::*;
 
 #[derive(Debug, Error)]
 pub enum OperateError {
-    todo!()
+    
 }
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
@@ -96,19 +97,19 @@ type OperateResult<T> = Result<T, OperateError>;
 impl StatusErr for OperateError {
     fn prefix(&self) -> ErrPrefix {
         match self {
-            todo!()
+            
         }
     }
 
     fn code(&self) -> u16 {
         match self {
-            todo!()
+            
         }
     }
 
     fn http_code(&self) -> HttpCode {
         match self {
-            todo!()
+            
         }
     }
 }
@@ -117,7 +118,7 @@ operate_template = """
 use super::%sSqlOperate;
 
 impl %sSqlOperate {
-    todo!()
+    todo!();
 }
 """
 model_template = """
@@ -129,7 +130,7 @@ use sea_orm::{ entity::prelude::*, Set };
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    todo!()
+    
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -160,7 +161,10 @@ impl ActiveModel {
 mod_patten = re.compile(r'(?:pub)? mod ([a-zA-Z_][a-zA-Z0-9_]*);')
 
 def name_convert_to_camel(name: str) -> str:
+    name = name_convert_to_snack(name)
     return re.sub(r'(_[a-z])', lambda x: x.group(1)[1].upper(), name.capitalize())
+def name_convert_to_snack(name: str) -> str:
+    return name.replace("::", "_")
 
 class RustLib(object):
     def __init__(self, crate_path):
@@ -254,7 +258,7 @@ class RustMod(object):
             else:
                 mod_file_path = self.get_inner_mod_file_path(base_path)
             if os.path.exists(mod_file_path):
-                pathlib.Path(mod_file_path).touch()
+                os.makedirs(mod_file_path)
         return dir_path
 
     def writing_mod(self, base_path, using_inner: True):
@@ -283,15 +287,17 @@ class CMO(object):
     def __init__(self, mod_list: list, mod_name) -> None:
         self.name = mod_name
         self.path = mod_list
-        self.before_path_snake = self.get_before_path_snake()
+        self.need_add_mods = ["checkers", "models", "operate"]
+        self.before_path = self.get_before_path()
 
     def get_filename(self):
         return self.name
 
-    def get_before_path_snake(self):
+    def get_before_path(self):
         file = ""
         for mod in self.path:
-            file.join(f"{mod.get_name()}_")
+            file = file + f"{mod.get_name()}::"
+        file = "".join([ele.strip(punctuation) for ele in file.split()])
         return file
 
     def create_file_dir(self, base):
@@ -301,67 +307,111 @@ class CMO(object):
             base_dir = rs_mod.writing_mod(base_dir, True)
         return base_dir
 
-    def writing_cmo_mod_file(self, base_dir):
+    def create_self_mod(self, base_dir):
+        with open(os.path.join(base_dir, "mod.rs"), "w") as mod_file:
+            for rs_mod in self.need_add_mods:
+                mod_file.write(f"pub mod {rs_mod};\n")
+
+    def writing_cmo_mod_file(self, base_dir, curd):
         base_dir = self.create_file_dir(base_dir)
+        self.create_self_mod(base_dir)
 
-        self.create_cmo_folder(base_dir)
+        self.create_cmo_folder(base_dir, curd)
 
-    def create_cmo_folder(self, base_dir):
-        check = CheckerMod(self.name, base_dir, self.before_path_snake)
-        model = CheckerMod(self.name, base_dir, self.before_path_snake)
-        operate = CheckerMod(self.name, base_dir, self.before_path_snake)
+    def create_cmo_folder(self, base_dir, curd):
+        check = CheckerMod(self.name, base_dir, self.before_path)
+        model = ModelsMod(self.name, base_dir, self.before_path)
+        operate = OperateMod(self.name, base_dir, self.before_path)
+        operate.add_operate(curd)
+
+        check.create_mod()
+        check.create_files()
+        model.create_mod()
+        model.create_files()
+        operate.create_mod()
+        operate.create_files()
 
 
 
 
 class CheckerMod(object):
-    def __init__(self, name, base_dir, before_path_snake):
+    def __init__(self, name, base_dir, before_path):
         self.path = os.path.join(base_dir, "checkers")
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         self.name = name
-        self.before_path_snake = before_path_snake
+        self.before_path = before_path
         self.need_add_mods = []
         self.add_mod(f"{self.name}_data")
 
     def add_mod(self, mod_name):
         self.need_add_mods.append(mod_name)
 
+    def create_mod(self):
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        path = os.path.join(self.path, "mod.rs")
+        with open(path, "w") as mod_file:
+            for rs_mod in self.need_add_mods:
+                mod_file.write(f"pub mod {rs_mod};\n")
+            mod_file.write(checker_mod_template %f"{self.name}")
+    
+    def create_files(self):
+        if not os.path.exists(self.path):
+                os.makedirs(self.path)
+        for rs_mod in self.need_add_mods: 
+            path = os.path.join(self.path, f"{rs_mod}.rs")
+            with open(path, "w") as mod_file:
+                mod_file.write(checker_template % ( self.before_path, self.name, name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path) ))
+
     
 
 
 class ModelsMod(object):
-    def __init__(self, name, base_dir, before_path_snake):
+    def __init__(self, name, base_dir, before_path):
         self.path = os.path.join(base_dir, "models")
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+
         self.name = name
         self.need_add_mods = []
-        self.before_path_snake = before_path_snake
+        self.before_path = before_path
         self.add_mod(f"model_{self.name}")
 
     def add_mod(self, mod_name):
         self.need_add_mods.append(mod_name)
 
     def create_mod(self):
-        with open(os.path.join(self.path, "mod.rs"), "w") as mod_file:
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        path = os.path.join(self.path, "mod.rs")
+        with open(path, "w") as mod_file:
             for rs_mod in self.need_add_mods:
                 mod_file.write(f"pub mod {rs_mod};\n")
     
     def create_files(self):
+        if not os.path.exists(self.path):
+                os.makedirs(self.path)
         for rs_mod in self.need_add_mods: 
-            with open(os.path.join(self.path, rs_mod), "w") as mod_file:
-                mod_file.write(model_template % f"{self.before_path_snake}{self.name}")
+            path = os.path.join(self.path, f"{rs_mod}.rs")
+            with open(path, "w") as mod_file:
+                mod_file.write(model_template % f"{name_convert_to_snack(self.before_path)}_{self.name}")
 
 
 
 class OperateMod(object):
-    def __init__(self,name, base_dir, before_path_snake):
+    def __init__(self,name, base_dir, before_path):
         self.path = os.path.join(base_dir, "operate")
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         self.name = name
         self.need_add_mods = []
-        self.before_path_snake = before_path_snake
+        self.before_path = before_path
 
     def add_mod(self, mod_name):
         self.need_add_mods.append(mod_name)
 
-    def add_operate(self, operations):
+    def add_operate(self, operations="curd"):
         if "c" in operations:
             self.add_mod("create")
         if "u" in operations:
@@ -370,6 +420,24 @@ class OperateMod(object):
             self.add_mod("retrieve")
         if "d" in operations:
             self.add_mod("delete")
+    
+    def create_mod(self):
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        path = os.path.join(self.path, "mod.rs")
+        with open(path, "w") as mod_file:
+            for rs_mod in self.need_add_mods:
+                mod_file.write(f"pub mod {rs_mod};\n")
+            mod_file.write(operate_mod_template % f"{name_convert_to_camel(self.before_path)}")
+    
+    def create_files(self):
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
+        for rs_mod in self.need_add_mods: 
+            path = os.path.join(self.path, f"{rs_mod}.rs")
+            with open(path, "w") as mod_file:
+                mod_file.write(operate_template % (f"{name_convert_to_camel(self.before_path)}", f"{name_convert_to_camel(self.before_path)}"))
+
 
 # 处理带个路径
 # path: ceobe/operation/video
@@ -413,7 +481,7 @@ if __name__ == '__main__':
         path = path_operate[0]
         curd = path_operate[1]
 
-        migrate = from_input_path(rs_lib, path, rs_lib.get_src_dir())
-        migrate.writing_cmo_mod_file( rs_lib.get_src_dir())
+        cmo = from_input_path(rs_lib, path, rs_lib.get_src_dir())
+        cmo.writing_cmo_mod_file( rs_lib.get_src_dir(), curd)
 
     rs_lib.writing_mods()
