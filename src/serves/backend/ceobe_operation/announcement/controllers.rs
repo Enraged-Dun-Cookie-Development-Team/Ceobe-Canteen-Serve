@@ -13,7 +13,6 @@ use orm_migrate::sql_models::ceobe_operation::announcement::{
 use super::{
     error::{AnnouncementRespResult, CeobeOperationAnnouncementError},
     view::AnnouncementItem,
-    AnnouncementAuthentication,
 };
 use crate::{
     router::CeobeOperationAnnouncement, utils::data_checker::PreLiteChecker,
@@ -32,7 +31,6 @@ type UpdateAnnouncementCheck = PreLiteChecker<
 impl CeobeOperationAnnouncement {
     // 获取公告列表
     pub async fn get_announcement_list(
-        _: AnnouncementAuthentication,
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
         Ok(CeobeOperationAnnouncementSqlOperate::find_all_not_delete()
             .await?
@@ -44,7 +42,6 @@ impl CeobeOperationAnnouncement {
 
     // 更新公告列表
     pub async fn update_announcement_list(
-        _: AnnouncementAuthentication,
         PreHandling(announcements): PreRespHandling<UpdateAnnouncementCheck>,
     ) -> AnnouncementRespResult<()> {
         CeobeOperationAnnouncementSqlOperate::update_all(announcements)

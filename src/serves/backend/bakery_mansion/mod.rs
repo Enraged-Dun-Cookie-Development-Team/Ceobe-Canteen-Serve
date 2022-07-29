@@ -8,26 +8,9 @@ mod view;
 
 type MansionRResult<T> = RespResult<T, error::MansionError>;
 
-use self::{
-    error::MansionError,
-    models::{
-        MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
-    },
+use self::models::{
+    MIdCheckerPretreat, MansionCheckerPretreat, OptionMidCheckerPretreat,
 };
-use crate::utils::user_authorize::{
-    auth_level::prefabs::{Architect, Chef},
-    AuthenticationLevel,
-};
-
-crate::new_auth_level! {
-    pub MansionAuth=>[
-        Chef
-        Architect
-    ]
-}
-
-pub type MansionAuthentication =
-    AuthenticationLevel<MansionAuth, MansionError>;
 
 pub type OptionMidCheckerPretreatment =
     PreRespHandling<OptionMidCheckerPretreat>;

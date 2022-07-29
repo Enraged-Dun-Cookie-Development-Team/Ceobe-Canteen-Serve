@@ -18,7 +18,7 @@ use resp_result::RespResult;
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},
     view::VideoItem,
-    VideoAuthentication, REQUEST_CLIENT,
+    REQUEST_CLIENT,
 };
 use crate::{
     router::CeobeOperationVideo, utils::data_checker::PreLiteChecker,
@@ -42,7 +42,6 @@ type UpdateVideoCheck = PreLiteChecker<
 
 impl CeobeOperationVideo {
     pub async fn get_video_detail(
-        _: VideoAuthentication,
         PreHandling(BvQuery { bv }): PreRespHandling<BvQueryCheck>,
     ) -> VideoRespResult<String> {
         let url = Url::parse_with_params(
@@ -54,9 +53,7 @@ impl CeobeOperationVideo {
         RespResult::ok(String::from_utf8(body.to_vec())?)
     }
 
-    pub async fn list_all(
-        _: VideoAuthentication,
-    ) -> VideoRespResult<Vec<VideoItem>> {
+    pub async fn list_all() -> VideoRespResult<Vec<VideoItem>> {
         RespResult::ok(
             CeobeOperationVideoSqlOperate::find_all_not_delete()
                 .await?
@@ -67,7 +64,6 @@ impl CeobeOperationVideo {
     }
 
     pub async fn update_list(
-        _: VideoAuthentication,
         PreHandling(videos): PreRespHandling<UpdateVideoCheck>,
     ) -> VideoRespResult<()> {
         CeobeOperationVideoSqlOperate::update_all(videos).await?;
