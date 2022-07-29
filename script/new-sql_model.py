@@ -23,7 +23,6 @@ pub mod operate;
 """
 
 checker_mod_template = """
-pub mod %s_data;
 use std::convert::Infallible;
 use thiserror::Error;
 
@@ -354,7 +353,7 @@ class CheckerMod(object):
         with open(path, "w") as mod_file:
             for rs_mod in self.need_add_mods:
                 mod_file.write(f"pub mod {rs_mod};\n")
-            mod_file.write(checker_mod_template %f"{self.name}")
+            mod_file.write(checker_mod_template)
     
     def create_files(self):
         if not os.path.exists(self.path):
