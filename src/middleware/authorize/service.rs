@@ -20,22 +20,33 @@ use tower::Service;
 
 use super::{error::AuthorizeError, AuthorizeInfo};
 use crate::utils::user_authorize::{
-    config::get_authorize_information, decrypt_token,
+    auth_level::{AuthLevelVerify, UnacceptableAuthorizationLevelError},
+    config::get_authorize_information,
+    decrypt_token,
 };
 
-#[derive(Clone)]
 pub struct AuthorizeService<S, L> {
-    inner: S,
-    _pha: PhantomData<L>,
+    pub(super) inner: S,
+    pub(super) _pha: PhantomData<L>,
+}
+
+impl<S: Clone, L> Clone for AuthorizeService<S, L> {
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone(),
+            _pha: PhantomData,
+        }
+    }
 }
 
 impl<S, L> Service<Request<Body>> for AuthorizeService<S, L>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
     S::Error: Send + 'static,
+    L: AuthLevelVerify,
 {
     type Error = S::Error;
-    type Future = AuthorizeFut<S>;
+    type Future = AuthorizeFut<S, L>;
     type Response = S::Response;
 
     fn poll_ready(
@@ -46,28 +57,36 @@ where
 
     fn call(&mut self, req: Request<Body>) -> Self::Future {
         // 1 get req head
+        log::info!("鉴权-> 从请求头中加载用户登录信息");
         let token = match get_authorize_information(&req) {
             Some(header) => header,
             None => {
+                log::error!("获取用户登录信息失败");
                 return AuthorizeFut {
                     state: AuthorizeFutState::Error(error_resp(
                         AuthorizeError::NoToken,
                     )),
                     __pha: PhantomPinned,
+                    _pha_auth_level: PhantomData,
                 }
             }
         };
 
+        log::info!("鉴权-> 解析用户登录信息");
         // parse token
         let user = match decrypt_token(token).map_err(AuthorizeError::from) {
             Ok(v) => v,
             Err(err) => {
+                log::error!("解析用户信息失败");
                 return AuthorizeFut {
                     state: AuthorizeFutState::Error(error_resp(err)),
                     __pha: PhantomPinned,
+                    _pha_auth_level: PhantomData,
                 }
             }
         };
+
+        log::info!("鉴权-> 查询并确认用户信息");
         // query database
         let query_db_fut =
             Box::pin(UserSqlOperate::find_user_with_version_verify(
@@ -84,6 +103,7 @@ where
                 self.inner.clone(),
             ),
             __pha: PhantomPinned,
+            _pha_auth_level: PhantomData,
         }
     }
 }
@@ -92,12 +112,14 @@ fn error_resp(err: AuthorizeError) -> Response {
     RespResult::<Nil, _>::err(err).into_response()
 }
 
-pub struct AuthorizeFut<S>
+pub struct AuthorizeFut<S, L>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
     S::Error: Send + 'static,
+    L: AuthLevelVerify,
 {
     state: AuthorizeFutState<S>,
+    _pha_auth_level: PhantomData<L>,
     __pha: PhantomPinned,
 }
 
@@ -129,10 +151,11 @@ where
     Error(S::Response),
 }
 
-impl<S> Future for AuthorizeFut<S>
+impl<S, L> Future for AuthorizeFut<S, L>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
     S::Error: Send + 'static,
+    L: AuthLevelVerify,
 {
     type Output = Result<S::Response, S::Error>;
 
@@ -162,11 +185,25 @@ where
                         }() {
                             // ok go ahead
                             Ok(model) => {
+                                log::debug!(
+                                    "鉴权-> 用户信息查询完成, \
+                                     检查权限等级是否匹配"
+                                );
+                                // verify user authorize level
+                                if !L::verify(&model.auth) {
+                                    return Poll::Ready(Ok(error_resp(UnacceptableAuthorizationLevelError::new(L::auth_name()).into())));
+                                }
+
+                                log::debug!(
+                                    "鉴权-> 鉴权通过! \
+                                     将用户信息添加到Request"
+                                );
                                 // set to req
                                 req.extensions_mut()
                                     .insert(AuthorizeInfo(model));
                                 // next fut
                                 // take req
+                                log::debug!("鉴权-> 执行内部service");
                                 let req = std::mem::take(req);
                                 let mut fut = inner.call(req);
                                 let pin_fut =
@@ -177,12 +214,20 @@ where
                                         return Poll::Ready(v);
                                     }
                                     Poll::Pending => {
+                                        log::debug!(
+                                            "鉴权-> 内部Service未完成, \
+                                             状态切换"
+                                        );
                                         AuthorizeFutState::Inner(fut)
                                     }
                                 }
                             }
                             // error return
                             Err(error) => {
+                                log::error!(
+                                    "鉴权-> 用户信息查询时出现异常 {}",
+                                    error
+                                );
                                 let resp = error_resp(error);
                                 return Poll::Ready(Ok(resp));
                             }
@@ -194,6 +239,7 @@ where
             }
             EnumProj::Inner(fut) => return fut.poll(cx),
             EnumProj::Error(err) => {
+                log::error!("鉴权-> 出现异常");
                 let err = std::mem::take(err);
                 return Poll::Ready(Ok(err));
             }
