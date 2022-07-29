@@ -1,12 +1,13 @@
+mod layer;
 use async_trait::async_trait;
 use axum::extract::{FromRequest, RequestParts};
 use orm_migrate::sql_models::admin_user::models::user;
 use resp_result::{Nil, RespResult};
 
-use self::error::AuthorizeError;
+pub use self::error::AuthorizeError;
 
-pub mod error;
-pub mod service;
+mod error;
+mod service;
 
 pub struct AuthorizeInfo(pub user::Model);
 
@@ -25,3 +26,6 @@ impl<B: Send> FromRequest<B> for AuthorizeInfo {
         Ok(v)
     }
 }
+
+pub use layer::AuthorizeLayer;
+pub use service::AuthorizeService;
