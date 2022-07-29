@@ -22,7 +22,7 @@ impl<B: Send> FromRequest<B> for AuthorizeInfo {
             .extensions_mut()
             .remove::<Self>()
             .ok_or(AuthorizeError::NoAuthorizeLayer)
-            .map_err(|err| RespResult::err(err))?;
+            .map_err(RespResult::err)?;
         Ok(v)
     }
 }

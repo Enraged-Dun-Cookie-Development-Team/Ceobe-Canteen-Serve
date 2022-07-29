@@ -3,7 +3,11 @@ use axum::{
     Router,
 };
 
-use crate::{middleware::authorize::AuthorizeLayer, new_auth_level, utils::user_authorize::auth_level::prefabs::{Chef, Cooker}};
+use crate::{
+    middleware::authorize::AuthorizeLayer,
+    new_auth_level,
+    utils::user_authorize::auth_level::prefabs::{Chef, Cooker},
+};
 
 pub struct CeobeOperationAnnouncement;
 

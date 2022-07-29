@@ -68,7 +68,7 @@ where
                     )),
                     __pha: PhantomPinned,
                     _pha_auth_level: PhantomData,
-                }
+                };
             }
         };
 
@@ -82,7 +82,7 @@ where
                     state: AuthorizeFutState::Error(error_resp(err)),
                     __pha: PhantomPinned,
                     _pha_auth_level: PhantomData,
-                }
+                };
             }
         };
 
@@ -174,14 +174,14 @@ where
                     // query finish
                     Poll::Ready(resp) => {
                         match || -> Result<user::Model, AuthorizeError> {
-                            Ok(resp.map_err(|err| {
+                            resp.map_err(|err| {
                                 match err {
                                     OperateError::UserNotExist => {
                                         AuthorizeError::TokenInfoNotFound
                                     }
                                     err => AuthorizeError::UserDbOperate(err),
                                 }
-                            })??)
+                            })?
                         }() {
                             // ok go ahead
                             Ok(model) => {

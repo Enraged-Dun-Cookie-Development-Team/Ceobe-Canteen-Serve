@@ -3,7 +3,10 @@ use axum::{
     Router,
 };
 
-use crate::{utils::user_authorize::auth_level::prefabs::{Chef, Architect}, middleware::authorize::AuthorizeLayer};
+use crate::{
+    middleware::authorize::AuthorizeLayer,
+    utils::user_authorize::auth_level::prefabs::{Architect, Chef},
+};
 
 pub struct BakeryMansionBackend;
 

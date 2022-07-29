@@ -20,10 +20,7 @@ use crate::{
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
-    utils::user_authorize::{
-        AuthInfo, GenerateToken, PasswordEncoder,
-        User,
-    },
+    utils::user_authorize::{AuthInfo, GenerateToken, PasswordEncoder, User},
 };
 
 crate::quick_struct! {

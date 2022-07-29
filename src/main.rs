@@ -25,11 +25,11 @@ use crate::error::{not_exist, serve_panic};
 mod bootstrap;
 mod configs;
 mod error;
+mod middleware;
 mod models;
 mod router;
 mod serves;
 mod utils;
-mod middleware;
 
 extern crate serde;
 
