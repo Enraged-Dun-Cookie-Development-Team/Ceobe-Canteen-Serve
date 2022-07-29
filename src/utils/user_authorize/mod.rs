@@ -13,7 +13,7 @@ pub use set_token::GenerateToken;
 use sha2::Sha256;
 
 use crate::models::sql::models::user;
-
+pub use valid_token::decrypt_token;
 pub type Authentication<E> = PreRespMapErrorHandling<TokenAuth, E>;
 pub type AuthenticationLevel<L, E> =
     PreRespMapErrorHandling<auth_level::AuthLevel<L>, E>;

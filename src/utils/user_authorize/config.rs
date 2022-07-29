@@ -1,4 +1,6 @@
+use axum::body::Body;
 use hmac::{digest::KeyInit, Hmac};
+use http::Request;
 use once_cell::sync::OnceCell;
 use sha2::Sha256;
 
@@ -61,6 +63,14 @@ pub(super) fn get_jwt_key() -> &'static Hmac<Sha256> {
 fn get_header_name() -> &'static str {
     let config = get_local_config();
     config.header
+}
+
+pub fn get_authorize_information(req: &Request<Body>) -> Option<String> {
+    req.headers()
+        .get(get_header_name())
+        .and_then(|v| v.to_str().ok())
+        .and_then(|s| urlencoding::decode(s).ok())
+        .map(|s| s.into_owned())
 }
 
 pub(super) struct TokenHeader;
