@@ -184,7 +184,8 @@ class RustLib(object):
         return self.lib_file
 
     def add_mod(self, rs_mod):
-        self.need_add_mods.append(rs_mod)
+        if rs_mod not in self.need_add_mods:
+            self.need_add_mods.append(rs_mod)
 
 # 在lib文件中，将need_add_mods加入现有mod的后面
     def writing_mods(self):
@@ -216,7 +217,8 @@ class RustMod(object):
         return self.name
 
     def add_mod(self, rs_mod: str):
-        self.need_add_mods.append(rs_mod)
+        if rs_mod not in self.need_add_mods:
+            self.need_add_mods.append(rs_mod)
 
     def __str__(self) -> str:
         return f"Mod {self.name}"
@@ -344,7 +346,8 @@ class CheckerMod(object):
         self.add_mod(f"{self.name}_data")
 
     def add_mod(self, mod_name):
-        self.need_add_mods.append(mod_name)
+        if mod_name not in self.need_add_mods:
+            self.need_add_mods.append(mod_name)
 
     def create_mod(self):
         if not os.path.exists(self.path):
@@ -378,7 +381,9 @@ class ModelsMod(object):
         self.add_mod(f"model_{self.name}")
 
     def add_mod(self, mod_name):
-        self.need_add_mods.append(mod_name)
+        if mod_name not in self.need_add_mods:
+            self.need_add_mods.append(mod_name)
+
 
     def create_mod(self):
         if not os.path.exists(self.path):
@@ -408,7 +413,9 @@ class OperateMod(object):
         self.before_path = before_path
 
     def add_mod(self, mod_name):
-        self.need_add_mods.append(mod_name)
+        if mod_name not in self.need_add_mods:
+            self.need_add_mods.append(mod_name)
+
 
     def add_operate(self, operations="curd"):
         if "c" in operations:
