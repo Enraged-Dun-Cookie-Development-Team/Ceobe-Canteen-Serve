@@ -23,7 +23,6 @@ pub mod operate;
 """
 
 checker_mod_template = """
-use std::convert::Infallible;
 use thiserror::Error;
 
 use status_err::{ErrPrefix, StatusErr, HttpCode};
@@ -69,13 +68,13 @@ pub struct %s {
 check_obj! {
     #[derive(Debug,serde::Deserialize)]
     pub struct %sUncheck = %sChecker > %s{
-        todo!();
+        
     }
-    err : CheckError
+    err: CheckError
 }
 
-impl model_announcement::ActiveModel {
-    todo!();
+impl model_%s::ActiveModel {
+    
 }
 """
 operate_mod_template = """
@@ -117,12 +116,14 @@ operate_template = """
 use super::%sSqlOperate;
 
 impl %sSqlOperate {
-    todo!();
+    
 }
 """
 model_template = """
 use chrono::Local;
 use sea_orm::{ entity::prelude::*, Set };
+
+use crate::get_zero_data_time;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "%s")]
@@ -131,9 +132,9 @@ pub struct Model {
     pub id: i32,
     
     /// field for soft delete
-    pub(in crate::%s) create_at: Datetime,
-    pub(in crate::%s) update_at: Datetime,
-    pub(in crate::%s) delete_at: Datetime,
+    pub(in crate::%s) create_at: DateTime,
+    pub(in crate::%s) update_at: DateTime,
+    pub(in crate::%s) delete_at: DateTime,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -154,23 +155,23 @@ impl ActiveModel {
 
     // 还原删除
     pub fn soft_recover(&mut self) {
-        let date_time = chrono::NaiveDateTime::from_timestamp(0, 0);
-        self.delete_at = Set(date_time)
+        self.delete_at = Set(get_zero_data_time)
     }
 
     // 更新操作
-    pub fn now_modify(&mut self) -> Self {
+    pub fn now_modify(&mut self) {
         let now = Local::now().naive_local();
         self.update_at = Set(now);
     }
 }
 
-impl Default for ActiveModel {
+impl Default for Model {
     fn default() -> Self {
         let now = Local::now().naive_local();
         Self {
             create_at: now,
             update_at: now,
+            ..Default::default()
         }
     }
 }
@@ -194,7 +195,7 @@ class RustLib(object):
             self.file = f.read()
 
     def __del__(self):
-        with open(self.lib_file,"w") as f :
+        with open(self.lib_file,"w", encoding="utf-8") as f :
             f.write(self.file)
 
     def get_src_dir(self):
@@ -292,7 +293,7 @@ class RustMod(object):
         else:
             mod_file_path = self.get_outer_mod_file_path(base_path)
 
-        with open(mod_file_path, "a+") as mod_file:
+        with open(mod_file_path, "a+", encoding="utf-8") as mod_file:
             mod_file.seek(0, 0)
             all_code = mod_file.read()
             exist_mod = mod_patten.findall(all_code)
@@ -329,7 +330,7 @@ class CMO(object):
         return base_dir
 
     def create_self_mod(self, base_dir):
-        with open(os.path.join(base_dir, "mod.rs"), "w") as mod_file:
+        with open(os.path.join(base_dir, "mod.rs"), "w", encoding="utf-8") as mod_file:
             for rs_mod in self.need_add_mods:
                 mod_file.write(f"pub mod {rs_mod};\n")
 
@@ -373,7 +374,7 @@ class CheckerMod(object):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         path = os.path.join(self.path, "mod.rs")
-        with open(path, "w") as mod_file:
+        with open(path, "w", encoding="utf-8") as mod_file:
             for rs_mod in self.need_add_mods:
                 mod_file.write(f"pub mod {rs_mod};\n")
             mod_file.write(checker_mod_template)
@@ -383,8 +384,8 @@ class CheckerMod(object):
                 os.makedirs(self.path)
         for rs_mod in self.need_add_mods: 
             path = os.path.join(self.path, f"{rs_mod}.rs")
-            with open(path, "w") as mod_file:
-                mod_file.write(checker_template % ( self.before_path, self.name, name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path) ))
+            with open(path, "w", encoding="utf-8") as mod_file:
+                mod_file.write(checker_template % ( self.before_path, self.name, name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path), name_convert_to_camel(self.before_path), self.name ))
 
     
 
@@ -409,7 +410,7 @@ class ModelsMod(object):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         path = os.path.join(self.path, "mod.rs")
-        with open(path, "w") as mod_file:
+        with open(path, "w", encoding="utf-8") as mod_file:
             for rs_mod in self.need_add_mods:
                 mod_file.write(f"pub mod {rs_mod};\n")
     
@@ -418,7 +419,7 @@ class ModelsMod(object):
                 os.makedirs(self.path)
         for rs_mod in self.need_add_mods: 
             path = os.path.join(self.path, f"{rs_mod}.rs")
-            with open(path, "w") as mod_file:
+            with open(path, "w", encoding="utf-8") as mod_file:
                 mod_file.write(model_template % (f"{name_convert_to_snack(self.before_path)}_{self.name}", f"{self.before_path}", f"{self.before_path}", f"{self.before_path}"))
 
 
@@ -451,7 +452,7 @@ class OperateMod(object):
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         path = os.path.join(self.path, "mod.rs")
-        with open(path, "w") as mod_file:
+        with open(path, "w", encoding="utf-8") as mod_file:
             for rs_mod in self.need_add_mods:
                 mod_file.write(f"pub mod {rs_mod};\n")
             mod_file.write(operate_mod_template % f"{name_convert_to_camel(self.before_path)}")
@@ -461,7 +462,7 @@ class OperateMod(object):
             os.makedirs(self.path)
         for rs_mod in self.need_add_mods: 
             path = os.path.join(self.path, f"{rs_mod}.rs")
-            with open(path, "w") as mod_file:
+            with open(path, "w", encoding="utf-8") as mod_file:
                 mod_file.write(operate_template % (f"{name_convert_to_camel(self.before_path)}", f"{name_convert_to_camel(self.before_path)}"))
 
 
