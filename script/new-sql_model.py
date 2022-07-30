@@ -130,6 +130,10 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     
+    /// field for soft delete
+    pub(in crate::%s) create_at: Datetime,
+    pub(in crate::%s) update_at: Datetime,
+    pub(in crate::%s) delete_at: Datetime,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -152,6 +156,22 @@ impl ActiveModel {
     pub fn soft_recover(&mut self) {
         let date_time = chrono::NaiveDateTime::from_timestamp(0, 0);
         self.delete_at = Set(date_time)
+    }
+
+    // 更新操作
+    pub fn now_modify(&mut self) -> Self {
+        let now = Local::now().naive_local();
+        self.update_at = Set(now);
+    }
+}
+
+impl Default for ActiveModel {
+    fn default() -> Self {
+        let now = Local::now().naive_local();
+        Self {
+            create_at: now,
+            update_at: now,
+        }
     }
 }
 """
@@ -399,7 +419,7 @@ class ModelsMod(object):
         for rs_mod in self.need_add_mods: 
             path = os.path.join(self.path, f"{rs_mod}.rs")
             with open(path, "w") as mod_file:
-                mod_file.write(model_template % f"{name_convert_to_snack(self.before_path)}_{self.name}")
+                mod_file.write(model_template % (f"{name_convert_to_snack(self.before_path)}_{self.name}", f"{self.before_path}", f"{self.before_path}", f"{self.before_path}"))
 
 
 
