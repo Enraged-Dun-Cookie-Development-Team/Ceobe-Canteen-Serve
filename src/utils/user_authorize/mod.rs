@@ -7,16 +7,12 @@ mod set_token;
 mod valid_token;
 
 pub use auth_pretreator::TokenAuth;
-use axum_prehandle::PreRespMapErrorHandling;
 use hmac::Hmac;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
+pub use valid_token::decrypt_token;
 
 use crate::models::sql::models::user;
-
-pub type Authentication<E> = PreRespMapErrorHandling<TokenAuth, E>;
-pub type AuthenticationLevel<L, E> =
-    PreRespMapErrorHandling<auth_level::AuthLevel<L>, E>;
 
 crate::quick_struct! {
 

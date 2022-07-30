@@ -3,8 +3,8 @@ use chrono::Duration;
 use mongo_migration::mongo_models::mansion_data::operate::MansionDataMongoOperate;
 
 use super::{
-    MansionAuthentication, MansionBodyCheckerPretreatment, MansionRResult,
-    MidCheckerPretreatment, OptionMidCheckerPretreatment,
+    MansionBodyCheckerPretreatment, MansionRResult, MidCheckerPretreatment,
+    OptionMidCheckerPretreatment,
 };
 use crate::{
     router::BakeryMansionBackend,
@@ -13,7 +13,6 @@ use crate::{
 
 impl BakeryMansionBackend {
     pub async fn save_mansion(
-        _: MansionAuthentication,
         ReqPretreatment(mid): OptionMidCheckerPretreatment,
         ReqPretreatment(json): MansionBodyCheckerPretreatment,
     ) -> MansionRResult<()> {
@@ -35,7 +34,6 @@ impl BakeryMansionBackend {
     }
 
     pub async fn get_mansion(
-        _: MansionAuthentication,
         ReqPretreatment(mid): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
         let data =
@@ -43,9 +41,7 @@ impl BakeryMansionBackend {
         MansionRResult::ok(data.into())
     }
 
-    pub async fn get_recent_id(
-        _: MansionAuthentication,
-    ) -> MansionRResult<Vec<String>> {
+    pub async fn get_recent_id() -> MansionRResult<Vec<String>> {
         let mansion_ids =
             MansionDataMongoOperate::get_mansion_id_list_by_time(
                 Duration::days(60),
@@ -56,7 +52,6 @@ impl BakeryMansionBackend {
     }
 
     pub async fn remove_mansion(
-        _: MansionAuthentication,
         ReqPretreatment(mid): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
         MansionDataMongoOperate::delete_mansion(&mid.id).await?;

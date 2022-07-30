@@ -12,6 +12,7 @@ use time_usage::sync_time_usage_with_name;
 
 use super::{view::ChangePassword, UsernamePretreatment};
 use crate::{
+    middleware::authorize::AuthorizeInfo,
     models::sql::models::auth_level::AuthLevel,
     router::UserAuthBackend,
     serves::backend::user_auth::{
@@ -19,11 +20,7 @@ use crate::{
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
-    utils::user_authorize::{
-        auth_level::prefabs::Chef, error::AuthError, AuthInfo,
-        Authentication, AuthenticationLevel, GenerateToken, PasswordEncoder,
-        User,
-    },
+    utils::user_authorize::{AuthInfo, GenerateToken, PasswordEncoder, User},
 };
 
 crate::quick_struct! {
@@ -39,16 +36,12 @@ crate::quick_struct! {
 
 impl UserAuthBackend {
     pub async fn create_user(
-        auth: AuthenticationLevel<Chef, AdminUserError>,
         query: PreRespMapErrorHandling<
             QueryParams<NewUserAuthLevel>,
             AdminUserError,
         >,
     ) -> AdminUserRResult<CreateUser> {
         let permission = query.0.permission;
-
-        // token鉴权
-        let _ = auth.0;
 
         // 生成随机用户名密码
         let rand_username: String =
@@ -135,9 +128,9 @@ impl UserAuthBackend {
     }
 
     pub async fn get_info(
-        user: Authentication<AuthError>,
+        AuthorizeInfo(user): AuthorizeInfo,
     ) -> AdminUserRResult<UserInfo> {
-        let AuthInfo { auth, username, .. } = user.0;
+        let AuthInfo { auth, username, .. } = user;
 
         let user_info = UserInfo {
             roles: [auth],
@@ -148,10 +141,10 @@ impl UserAuthBackend {
     }
 
     pub async fn change_username(
-        user: Authentication<AuthError>,
+        AuthorizeInfo(user): AuthorizeInfo,
         PreHandling(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
-        let id = user.0.id;
+        let id = user.id;
 
         let username = username.username;
 
@@ -161,7 +154,7 @@ impl UserAuthBackend {
     }
 
     pub async fn change_password(
-        PreHandling(user): Authentication<AuthError>,
+        AuthorizeInfo(user): AuthorizeInfo,
         PreHandling(body): PreRespMapErrorHandling<
             JsonPayload<ChangePassword>,
             AdminUserError,
