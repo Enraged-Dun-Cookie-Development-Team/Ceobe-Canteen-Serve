@@ -155,7 +155,7 @@ impl ActiveModel {
 
     // 还原删除
     pub fn soft_recover(&mut self) {
-        self.delete_at = Set(get_zero_data_time)
+        self.delete_at = Set(get_zero_data_time())
     }
 
     // 更新操作
