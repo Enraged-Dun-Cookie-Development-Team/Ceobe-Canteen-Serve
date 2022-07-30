@@ -63,13 +63,8 @@ where
             Some(header) => header,
             None => {
                 log::error!("获取用户登录信息失败");
-                return AuthorizeFut {
-                    state: AuthorizeFutState::Error(error_resp(
-                        AuthorizeError::NoToken,
-                    )),
-                    __pha: PhantomPinned,
-                    _pha_auth_level: PhantomData,
-                };
+                return AuthorizeFutState::new_error(AuthorizeError::NoToken)
+                    .into();
             }
         };
 
@@ -79,11 +74,7 @@ where
             Ok(v) => v,
             Err(err) => {
                 log::error!("解析用户信息失败");
-                return AuthorizeFut {
-                    state: AuthorizeFutState::Error(error_resp(err)),
-                    __pha: PhantomPinned,
-                    _pha_auth_level: PhantomData,
-                };
+                return AuthorizeFutState::new_error(err).into();
             }
         };
 
@@ -97,15 +88,8 @@ where
                 AuthorizeError::TOkenInvalid,
             ));
 
-        AuthorizeFut {
-            state: AuthorizeFutState::QueryDatabase(
-                query_db_fut,
-                req,
-                self.inner.clone(),
-            ),
-            __pha: PhantomPinned,
-            _pha_auth_level: PhantomData,
-        }
+        AuthorizeFutState::new_db_query(query_db_fut, req, self.inner.clone())
+            .into()
     }
 }
 
@@ -122,6 +106,21 @@ where
     state: AuthorizeFutState<S>,
     _pha_auth_level: PhantomData<L>,
     __pha: PhantomPinned,
+}
+
+impl<S, L> From<AuthorizeFutState<S>> for AuthorizeFut<S, L>
+where
+    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
+    S::Error: Send + 'static,
+    L: AuthLevelVerify,
+{
+    fn from(state: AuthorizeFutState<S>) -> Self {
+        Self {
+            state,
+            _pha_auth_level: PhantomData,
+            __pha: PhantomPinned,
+        }
+    }
 }
 
 #[pin_project(project = EnumProj)]
@@ -151,6 +150,28 @@ where
     Error(S::Response),
 }
 
+impl<S> AuthorizeFutState<S>
+where
+    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
+    S::Error: Send + 'static,
+{
+    fn new_error(err: impl Into<AuthorizeError>) -> Self {
+        Self::Error(RespResult::<Nil, _>::err(err.into()).into_response())
+    }
+
+    fn new_inner(fut: S::Future) -> Self { Self::Inner(fut) }
+
+    fn new_db_query(
+        box_future: BoxFuture<
+            'static,
+            Result<Result<user::Model, AuthorizeError>, OperateError>,
+        >,
+        req: Request<Body>, service: S,
+    ) -> Self {
+        Self::QueryDatabase(box_future, req, service)
+    }
+}
+
 impl<S, L> Future for AuthorizeFut<S, L>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
@@ -163,11 +184,11 @@ where
         self: Pin<&mut Self>, cx: &mut Context<'_>,
     ) -> Poll<Self::Output> {
         // get mut of self , make sure self never move
-        let mut_this = unsafe { self.get_unchecked_mut() };
+        let mut state = unsafe {
+            Pin::new_unchecked(&mut self.get_unchecked_mut().state)
+        };
         // pinned the state then project in match
-        let next = match unsafe { Pin::new_unchecked(&mut mut_this.state) }
-            .project()
-        {
+        let next = match state.as_mut().project() {
             // query database
             EnumProj::QueryDatabase(fut, req, inner) => {
                 match fut.as_mut().poll(cx) {
@@ -220,7 +241,7 @@ where
                                         );
                                     }
                                 }
-                                AuthorizeFutState::Inner(fut)
+                                AuthorizeFutState::new_inner(fut)
                             }
                             // error return
                             Err(error) => {
@@ -244,13 +265,7 @@ where
                 return Poll::Ready(Ok(err));
             }
         };
-        // state pinned ptr drop
-
-        // pinned it again ,update its value
-        // update state
-        let mut raw_state =
-            unsafe { Pin::new_unchecked(&mut mut_this.state) };
-        raw_state.set(next);
+        state.set(next);
         Poll::Pending
     }
 }
