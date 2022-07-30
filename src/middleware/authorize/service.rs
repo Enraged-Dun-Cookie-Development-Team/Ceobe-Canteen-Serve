@@ -1,7 +1,7 @@
 use std::{
     marker::{PhantomData, PhantomPinned},
     pin::Pin,
-    task::Poll,
+    task::{Context, Poll}, mem::take,
 };
 
 use axum::{
@@ -50,7 +50,7 @@ where
     type Response = S::Response;
 
     fn poll_ready(
-        &mut self, cx: &mut std::task::Context<'_>,
+        &mut self, cx: &mut Context<'_>,
     ) -> Poll<Result<(), Self::Error>> {
         self.inner.poll_ready(cx)
     }
@@ -134,7 +134,6 @@ where
     // step 2 query database (async)
     QueryDatabase(
         // query db fut
-        #[pin]
         BoxFuture<
             'static,
             Result<Result<user::Model, AuthorizeError>, OperateError>,
@@ -160,17 +159,17 @@ where
     type Output = Result<S::Response, S::Error>;
 
     fn poll(
-        self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>,
+        self: Pin<&mut Self>, cx: &mut Context<'_>,
     ) -> Poll<Self::Output> {
+        // get mut of self , make sure self never move
         let mut_this = unsafe { self.get_unchecked_mut() };
-        let raw_state = &mut mut_this.state;
-        let pin_state = unsafe { Pin::new_unchecked(raw_state) };
-        let state = pin_state.project();
-
-        let next = match state {
+        // pinned the state then project in match
+        let next = match unsafe { Pin::new_unchecked(&mut mut_this.state) }
+            .project()
+        {
             // query database
             EnumProj::QueryDatabase(fut, req, inner) => {
-                match fut.poll(cx) {
+                match fut.as_mut().poll(cx) {
                     // query finish
                     Poll::Ready(resp) => {
                         match || -> Result<user::Model, AuthorizeError> {
@@ -204,12 +203,12 @@ where
                                 // next fut
                                 // take req
                                 log::debug!("鉴权-> 执行内部service");
-                                let req = std::mem::take(req);
+                                let req = take(req);
                                 let mut fut = inner.call(req);
-                                let pin_fut =
-                                    unsafe { Pin::new_unchecked(&mut fut) };
                                 // poll next
-                                match pin_fut.poll(cx) {
+                                match unsafe { Pin::new_unchecked(&mut fut) }
+                                    .poll(cx)
+                                {
                                     Poll::Ready(v) => {
                                         return Poll::Ready(v);
                                     }
@@ -218,9 +217,9 @@ where
                                             "鉴权-> 内部Service未完成, \
                                              状态切换"
                                         );
-                                        AuthorizeFutState::Inner(fut)
                                     }
                                 }
+                                AuthorizeFutState::Inner(fut)
                             }
                             // error return
                             Err(error) => {
@@ -240,13 +239,17 @@ where
             EnumProj::Inner(fut) => return fut.poll(cx),
             EnumProj::Error(err) => {
                 log::error!("鉴权-> 出现异常");
-                let err = std::mem::take(err);
+                let err = take(err);
                 return Poll::Ready(Ok(err));
             }
         };
+        // state pinned ptr drop
+
+        // pinned it again ,update its value
         // update state
-        let raw_state = &mut mut_this.state;
-        *raw_state = next;
+        let mut raw_state =
+            unsafe { Pin::new_unchecked(&mut mut_this.state) };
+        raw_state.set(next);
         Poll::Pending
     }
 }
