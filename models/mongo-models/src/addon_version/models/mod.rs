@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
 
+use crate::RecordUnit;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Version(u32, u32, u32, Option<String>);
 
@@ -20,8 +22,9 @@ pub struct DownloadResource {
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct AddonVersion {
-    logo: String,
     version: Version,
+    time_record: RecordUnit,
+    logo: String,
     title: String,
     description: String,
     down: DownloadResource,
