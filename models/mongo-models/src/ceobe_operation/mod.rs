@@ -1,1 +1,1 @@
-pub mod addon_version;
+pub mod plugin_version;

@@ -26,7 +26,7 @@ pub struct DownloadResource {
     name = "PluginVersionChecked",
     extra(derive(Debug, TypedBuilder))
 ))]
-pub struct AddonVersion {
+pub struct PluginVersion {
     version: Version,
     #[sub_model(ignore("PluginVersionChecked"))]
     time_record: RecordUnit,
@@ -39,7 +39,7 @@ pub struct AddonVersion {
 impl PluginVersionChecked {
     pub fn into_with_time_record(
         self, time_record: RecordUnit,
-    ) -> AddonVersion {
+    ) -> PluginVersion {
         let Self {
             version,
             logo,
@@ -48,7 +48,7 @@ impl PluginVersionChecked {
             down,
         } = self;
 
-        AddonVersion {
+        PluginVersion {
             version,
             time_record,
             logo,
