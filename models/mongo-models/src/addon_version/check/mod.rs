@@ -1,4 +1,6 @@
-use std::convert::Infallible;
+pub mod download_resource_checker;
+pub mod plugin_version_checker;
+pub mod spare_link_checker;
 
 pub mod version_checker;
 
@@ -9,8 +11,7 @@ pub enum CheckError {
 
     #[error("版本号格式错误: {0:?}")]
     VersionFormat(String),
-}
 
-impl From<Infallible> for CheckError {
-    fn from(_: Infallible) -> Self { unreachable!() }
+    #[error("长度超出限制: {0}")]
+    LengthExceed(#[from] range_limit::Error),
 }
