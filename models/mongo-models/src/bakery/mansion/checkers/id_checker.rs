@@ -2,7 +2,7 @@ use checker::{check_obj, prefabs::option_checker::OptionChecker, Checker};
 use futures_util::future::{ready, Ready};
 
 use super::CheckError;
-use crate::mansion_data::{
+use crate::bakery::mansion::{
     checked::OptionMid,
     preludes::{MansionId, Mid},
 };

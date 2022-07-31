@@ -1,5 +1,5 @@
 use axum::extract::rejection::QueryRejection;
-use mongo_migration::mongo_models::mansion_data::{
+use mongo_migration::mongo_models::bakery::mansion::{
     checkers::CheckError, operate::OperateError,
 };
 

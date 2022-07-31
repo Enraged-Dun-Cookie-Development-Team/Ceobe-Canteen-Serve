@@ -1,5 +1,5 @@
 use super::{get_mansion_collection, MansionDataMongoOperate, OperateResult};
-use crate::mansion_data::preludes::MansionId;
+use crate::bakery::mansion::preludes::MansionId;
 
 impl MansionDataMongoOperate {
     /// 删除大厦
