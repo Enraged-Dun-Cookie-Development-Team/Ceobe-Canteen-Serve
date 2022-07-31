@@ -1,4 +1,4 @@
-use mongodb::bson::doc;
+use mongodb::{bson::doc, options::CountOptions};
 
 use super::{
     get_plugin_version_collection, OperateError, PluginDbOperation,
@@ -24,7 +24,12 @@ impl PluginDbOperation {
         };
         // checker version exist
         let count = db
-            .doing(|collect| collect.count_documents(filter, None))
+            .doing(|collect| {
+                collect.count_documents(
+                    filter,
+                    CountOptions::builder().limit(1).build(),
+                )
+            })
             .await?;
 
         if count > 0 {
