@@ -13,6 +13,10 @@ pub struct RecordUnit {
     pub delete_at: Option<DateTime>,
 }
 
+impl Default for RecordUnit {
+    fn default() -> Self { Self::new() }
+}
+
 impl RecordUnit {
     pub fn new() -> Self {
         let now = now();
