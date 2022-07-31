@@ -3,8 +3,7 @@ use range_limit::limits::max_limit::MaxRangeLimit;
 
 use super::{
     download_resource_checker::DownloadResourceChecker,
-    version_checker::VersionChecker, CheckError,
-    PluginVersionChecked
+    version_checker::VersionChecker, CheckError, PluginVersionChecked,
 };
 
 check_obj! {
