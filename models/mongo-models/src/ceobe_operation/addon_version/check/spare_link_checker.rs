@@ -2,8 +2,7 @@ use checker::{prefabs::url_checker::UrlChecker, Checker, LiteChecker};
 use futures::future::{ready, Ready};
 use range_limit::limits::max_limit::MaxRangeLimit;
 
-use super::CheckError;
-use crate::addon_version::models::SpareLink;
+use super::{CheckError, SpareLink};
 
 pub struct SpareLinkChecker;
 

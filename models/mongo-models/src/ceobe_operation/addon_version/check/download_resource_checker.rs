@@ -1,8 +1,9 @@
 use checker::{check_obj, prefabs::url_checker::UrlChecker};
 use serde::Deserialize;
 
-use super::{spare_link_checker::SpareLinkChecker, CheckError};
-use crate::addon_version::models::DownloadResource;
+use super::{
+    spare_link_checker::SpareLinkChecker, CheckError, DownloadResource,
+};
 
 check_obj! {
     #[derive(Debug, Deserialize)]

@@ -4,6 +4,10 @@ pub mod spare_link_checker;
 
 pub mod version_checker;
 
+pub(self) use super::models::{
+    DownloadResource, PluginVersionChecked, SpareLink, Version,
+};
+
 #[derive(Debug, thiserror::Error)]
 pub enum CheckError {
     #[error("Url格式异常 {0}")]

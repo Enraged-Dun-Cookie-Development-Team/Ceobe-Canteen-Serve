@@ -1,8 +1,7 @@
 use checker::Checker;
 use futures::future::{ready, Ready};
 
-use super::CheckError;
-use crate::addon_version::models::Version;
+use super::{CheckError, Version};
 
 pub struct VersionChecker;
 
