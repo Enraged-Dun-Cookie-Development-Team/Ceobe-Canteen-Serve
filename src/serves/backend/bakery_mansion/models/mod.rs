@@ -1,5 +1,5 @@
 use axum_prehandle::prefabs::{json::JsonPayload, query::QueryParams};
-use mongo_migration::mongo_models::mansion_data::checkers::{
+use mongo_migration::mongo_models::bakery::mansion::checkers::{
     id_checker::{MidChecker, MidUncheck, OpMidChecker, OpMidUncheck},
     mansion::{MansionChecker, MansionUncheck},
 };

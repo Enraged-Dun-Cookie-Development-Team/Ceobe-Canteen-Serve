@@ -10,7 +10,7 @@ use super::{
     each_info::{EachInfoUncheck, InfoChecker},
     CheckError, MaxLimitString,
 };
-use crate::mansion_data::checked::{Daily, Info};
+use crate::bakery::mansion::checked::{Daily, Info};
 
 check_obj! {
     #[derive(serde::Deserialize,Debug)]

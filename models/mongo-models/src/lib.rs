@@ -1,3 +1,3 @@
-pub mod mansion_data;
+pub mod bakery;
 
 pub use mongo_connection;

@@ -1,5 +1,5 @@
 use axum_prehandle::prefabs::query::QueryParams;
-use mongo_migration::mongo_models::mansion_data::checkers::id_checker::{
+use mongo_migration::mongo_models::bakery::mansion::checkers::id_checker::{
     MidChecker, MidUncheck,
 };
 

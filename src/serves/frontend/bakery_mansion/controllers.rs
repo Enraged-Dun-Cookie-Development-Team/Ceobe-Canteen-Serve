@@ -1,5 +1,5 @@
 use axum_prehandle::PreHandling;
-use mongo_migration::mongo_models::mansion_data::operate::MansionDataMongoOperate;
+use mongo_migration::mongo_models::bakery::mansion::operate::MansionDataMongoOperate;
 
 use super::{MansionRResult, MidCheckerPretreatment};
 use crate::{

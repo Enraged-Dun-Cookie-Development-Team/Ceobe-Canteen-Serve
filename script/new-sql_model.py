@@ -133,7 +133,7 @@ pub struct Model {
     
     /// field for soft delete
     pub(in crate::%s) create_at: DateTime,
-    pub(in crate::%s) update_at: DateTime,
+    pub(in crate::%s) modify_at: DateTime,
     pub(in crate::%s) delete_at: DateTime,
 }
 
@@ -161,7 +161,7 @@ impl ActiveModel {
     // 更新操作
     pub fn now_modify(&mut self) {
         let now = Local::now().naive_local();
-        self.update_at = Set(now);
+        self.modify_at = Set(now);
     }
 }
 
