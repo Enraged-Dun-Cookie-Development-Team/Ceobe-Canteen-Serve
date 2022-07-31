@@ -23,17 +23,18 @@ pub struct DownloadResource {
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
+    vis = "pub",
     name = "PluginVersionChecked",
     extra(derive(Debug, TypedBuilder))
 ))]
 pub struct PluginVersion {
-    version: Version,
+    pub version: Version,
     #[sub_model(ignore("PluginVersionChecked"))]
-    time_record: RecordUnit,
-    logo: String,
-    title: String,
-    description: String,
-    down: DownloadResource,
+    pub time_record: RecordUnit,
+    pub logo: String,
+    pub title: String,
+    pub description: String,
+    pub down: DownloadResource,
 }
 
 impl PluginVersionChecked {
