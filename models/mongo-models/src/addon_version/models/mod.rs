@@ -5,7 +5,7 @@ use url::Url;
 use crate::RecordUnit;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Version(u32, u32, u32, Option<String>);
+pub struct Version(pub u32, pub u32, pub u32);
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SpareLink(Url, String);
