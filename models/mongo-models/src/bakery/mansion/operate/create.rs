@@ -2,7 +2,7 @@ use super::{
     get_mansion_collection, MansionDataMongoOperate, OperateError,
     OperateResult,
 };
-use crate::mansion_data::{checked::Mansion, preludes::ModelMansion};
+use crate::bakery::mansion::{checked::Mansion, preludes::ModelMansion};
 
 impl MansionDataMongoOperate {
     /// 新建饼学大厦

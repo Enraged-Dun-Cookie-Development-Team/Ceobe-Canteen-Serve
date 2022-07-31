@@ -3,5 +3,5 @@ pub mod sql {
 }
 
 pub mod mansion {
-    pub use mongo_migration::mongo_models::mansion_data::*;
+    pub use mongo_migration::mongo_models::bakery::mansion::*;
 }

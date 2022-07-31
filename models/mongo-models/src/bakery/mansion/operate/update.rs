@@ -2,7 +2,7 @@ use super::{
     get_mansion_collection, MansionDataMongoOperate, OperateError,
     OperateResult,
 };
-use crate::mansion_data::{
+use crate::bakery::mansion::{
     checked::Mansion,
     preludes::{MansionId, ModelMansion},
 };

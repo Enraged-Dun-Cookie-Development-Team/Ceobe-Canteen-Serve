@@ -2,7 +2,7 @@ use checker::{check_obj, Checker};
 use futures_util::future::ready;
 
 use super::{CheckError, MaxLimitString};
-use crate::mansion_data::{checked::Info, preludes::Predict};
+use crate::bakery::mansion::{checked::Info, preludes::Predict};
 
 check_obj! {
     #[derive(Debug,serde::Deserialize)]

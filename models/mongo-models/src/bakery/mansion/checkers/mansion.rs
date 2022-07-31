@@ -11,7 +11,7 @@ use super::{
     id_checker::IdChecker,
     CheckError,
 };
-use crate::mansion_data::checked::{Daily, Mansion};
+use crate::bakery::mansion::checked::{Daily, Mansion};
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 check_obj! {
     #[derive(Debug,Deserialize)]
