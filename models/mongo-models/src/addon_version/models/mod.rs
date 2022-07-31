@@ -35,3 +35,26 @@ pub struct AddonVersion {
     description: String,
     down: DownloadResource,
 }
+
+impl PluginVersionChecked {
+    pub fn into_with_time_record(
+        self, time_record: RecordUnit,
+    ) -> AddonVersion {
+        let Self {
+            version,
+            logo,
+            title,
+            description,
+            down,
+        } = self;
+
+        AddonVersion {
+            version,
+            time_record,
+            logo,
+            title,
+            description,
+            down,
+        }
+    }
+}
