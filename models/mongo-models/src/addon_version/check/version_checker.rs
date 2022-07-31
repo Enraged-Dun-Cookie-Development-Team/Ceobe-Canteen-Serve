@@ -14,7 +14,7 @@ impl Checker for VersionChecker {
     type Unchecked = String;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        let mut spilt_str = uncheck.split(".");
+        let mut spilt_str = uncheck.split('.');
 
         ready(
             spilt_str
@@ -51,7 +51,7 @@ mod test {
 
         println!("{:?}", resp)
     }
-    
+
     #[test]
     #[should_panic]
     fn test_bad_version() {
@@ -61,6 +61,4 @@ mod test {
 
         println!("{:?}", resp)
     }
-
-
 }

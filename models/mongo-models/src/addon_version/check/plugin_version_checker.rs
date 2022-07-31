@@ -2,7 +2,9 @@ use checker::check_obj;
 use range_limit::limits::max_limit::MaxRangeLimit;
 
 use super::{
-    super::models::PluginVersionChecked, version_checker::VersionChecker, download_resource_checker::DownloadResourceChecker, CheckError,
+    super::models::PluginVersionChecked,
+    download_resource_checker::DownloadResourceChecker,
+    version_checker::VersionChecker, CheckError,
 };
 
 check_obj! {
