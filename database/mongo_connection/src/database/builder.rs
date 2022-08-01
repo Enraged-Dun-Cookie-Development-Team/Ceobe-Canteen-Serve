@@ -9,30 +9,29 @@ use crate::MongoDb;
 /// 可以添加并进行Collection的配置
 pub(crate) struct DatabaseBuilder {
     pub(crate) client: Client,
-    pub(crate) db: Option<MongoDb>,
+    pub(crate) db: MongoDb,
     pub(crate) inner_collect: HashMap<TypeId, Collection<()>>,
 }
 impl DatabaseBuilder {
     pub(crate) fn new(db: MongoDb, client: Client) -> Self {
         Self {
-            db: db.into(),
-            inner_collect: HashMap::default(),
             client,
+            db,
+            inner_collect: HashMap::default(),
         }
     }
 }
 
 impl DbManager for DatabaseBuilder {
-    fn get_db(&mut self) -> mongodb::Database {
-        self.db.take().expect("Mongo Database 正在被占用")
-    }
+    fn get_client(&self) -> &Client { &self.client }
+
+    fn get_db(&self) -> &mongodb::Database { &self.db }
 
     fn extent_collections<
         I: IntoIterator<Item = (TypeId, Collection<()>)>,
     >(
-        &mut self, db: mongodb::Database, iter: I,
+        &mut self, iter: I,
     ) {
-        self.db.replace(db);
         self.inner_collect.extend(iter);
     }
 }
