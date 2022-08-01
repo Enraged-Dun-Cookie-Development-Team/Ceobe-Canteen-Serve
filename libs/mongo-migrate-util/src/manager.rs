@@ -3,7 +3,7 @@ use std::any::TypeId;
 use dashmap::{DashMap, DashSet};
 use mongodb::{Client, ClientSession, Collection, Database};
 
-use crate::MigrationTrait;
+use crate::{CollectManage, MigrationTrait};
 
 #[derive(Debug)]
 pub struct Manager<'db> {
@@ -36,9 +36,12 @@ impl<'db> Manager<'db> {
     }
 
     /// append an new migration onto the mongodb database
-    pub async fn append<M: MigrationTrait>(
+    pub async fn append<M>(
         &mut self, migrate: M,
-    ) -> Result<&mut Manager<'db>, mongodb::error::Error> {
+    ) -> Result<&mut Manager<'db>, mongodb::error::Error>
+    where
+        M: MigrationTrait,
+    {
         // get model type id
         let ty_id = TypeId::of::<M::Model>();
         // using name find type id
@@ -83,7 +86,9 @@ impl<'db> Manager<'db> {
         };
 
         // run migrate
-        migrate.migrate(&collection, &mut self.session).await?;
+        migrate
+            .migrate(CollectManage::new(collection), &mut self.session)
+            .await?;
 
         Ok(self)
     }

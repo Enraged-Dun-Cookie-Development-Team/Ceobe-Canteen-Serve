@@ -1,8 +1,10 @@
-use mongodb::{options::CreateCollectionOptions, ClientSession, Collection};
+use mongodb::{options::CreateCollectionOptions, ClientSession};
 use serde::{Deserialize, Serialize};
 
+use crate::CollectManage;
+
 #[async_trait::async_trait]
-pub trait MigrationTrait: Sync + Send {
+pub trait MigrationTrait: Sync + Send + Sized {
     /// the model that migrate
     type Model: Serialize + for<'de> Deserialize<'de> + 'static;
 
@@ -13,7 +15,6 @@ pub trait MigrationTrait: Sync + Send {
 
     /// doing migration with session
     async fn migrate(
-        &self, collection: &Collection<Self::Model>,
-        session: &mut ClientSession,
+        &self, collection: CollectManage<Self>, session: &mut ClientSession,
     ) -> Result<(), mongodb::error::Error>;
 }
