@@ -107,12 +107,9 @@ impl<'db> Manager<'db> {
         Ok(self)
     }
 
-    pub async fn done(
+    pub fn done(
         self,
-    ) -> Result<
-        <DashMap<TypeId, Collection<()>> as IntoIterator>::IntoIter,
-        mongodb::error::Error,
-    > {
+    ) -> <DashMap<TypeId, Collection<()>> as IntoIterator>::IntoIter {
         if !self.exist_names.is_empty() {
             log::warn!(
                 "还有Collect 未被注册: {:?}",
@@ -120,6 +117,6 @@ impl<'db> Manager<'db> {
             );
         }
 
-        Ok(self.collections.into_iter())
+        self.collections.into_iter()
     }
 }
