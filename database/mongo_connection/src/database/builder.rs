@@ -23,7 +23,6 @@ impl DatabaseBuilder {
 }
 
 impl DbManager for DatabaseBuilder {
-
     fn get_db(&self) -> &mongodb::Database { &self.db }
 
     fn extent_collections<
