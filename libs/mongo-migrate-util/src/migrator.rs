@@ -19,7 +19,7 @@ pub trait MigratorTrait {
         log::info!("开始执行 Migrate MongoDb");
         self.migrating(&mut manager).await?;
 
-        log::info!("执行完成");
+        log::info!("执行 Migrate MongoDb 完成");
         let collects = manager.done().await?;
 
         db_manage.extent_collections(collects);

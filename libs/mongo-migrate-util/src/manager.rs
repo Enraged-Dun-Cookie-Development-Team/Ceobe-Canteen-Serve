@@ -113,6 +113,13 @@ impl<'db> Manager<'db> {
         <DashMap<TypeId, Collection<()>> as IntoIterator>::IntoIter,
         mongodb::error::Error,
     > {
+        if !self.exist_names.is_empty() {
+            log::warn!(
+                "还有Collect 未被注册: {:?}",
+                self.exist_names.into_iter().collect::<Vec<_>>()
+            );
+        }
+
         Ok(self.collections.into_iter())
     }
 }
