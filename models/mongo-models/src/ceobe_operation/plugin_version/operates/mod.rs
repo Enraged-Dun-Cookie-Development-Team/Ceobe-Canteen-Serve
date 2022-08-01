@@ -1,5 +1,5 @@
-pub mod verify;
 mod update;
+mod verify;
 
 pub struct PluginDbOperation;
 
