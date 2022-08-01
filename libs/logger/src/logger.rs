@@ -11,7 +11,9 @@ impl<A: LoggerAdapter> Logger<A> {
 }
 
 impl<A: LoggerAdapter> log::Log for Logger<A> {
-    fn enabled(&self, _metadata: &log::Metadata) -> bool { true }
+    fn enabled(&self, metadata: &log::Metadata) -> bool {
+        metadata.level() <= self.0.level_filter
+    }
 
     fn log(&self, record: &log::Record) {
         if !Self::enabled(self, record.metadata()) {
