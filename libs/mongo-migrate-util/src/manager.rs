@@ -1,8 +1,7 @@
-use std::any::{type_name, TypeId};
+use std::any::TypeId;
 
 use dashmap::{DashMap, DashSet};
 use mongodb::{Client, ClientSession, Collection, Database};
-use serde::{Deserialize, Serialize};
 
 use crate::MigrationTrait;
 
@@ -39,7 +38,7 @@ impl<'db> Manager<'db> {
     /// append an new migration onto the mongodb database
     pub async fn append<M: MigrationTrait>(
         &mut self, migrate: M,
-    ) -> Result<(), mongodb::error::Error> {
+    ) -> Result<&mut Manager<'db>, mongodb::error::Error> {
         // get model type id
         let ty_id = TypeId::of::<M::Model>();
         // using name find type id
@@ -48,12 +47,10 @@ impl<'db> Manager<'db> {
         {
             // the collect has been register
             if collect_ty.value() == &ty_id {
-                let collect = self
-                    .collections
+                self.collections
                     .get(&collect_ty.value())
                     .expect("Collect 注册时异常")
-                    .clone_with_type::<M::Model>();
-                collect
+                    .clone_with_type()
             }
             else {
                 // same name but diff Model Panic
@@ -62,23 +59,24 @@ impl<'db> Manager<'db> {
         }
         else {
             // collect name not been connect with type ID
-            // remove collection from name set
-            self.exist_names.remove(migrate.name());
-            // exist
-            // adding name map
-            self.name_model_map.insert(migrate.name(), ty_id);
-            // create collection
-            self.db
-                .create_collection_with_session(
-                    migrate.name(),
-                    migrate.create_options(),
-                    &mut self.session,
-                )
-                .await?;
+            // remove collection from name set, if any
+            if self.exist_names.remove(migrate.name()).is_none() {
+                // collect not exist
+                // create collection
+                self.db
+                    .create_collection_with_session(
+                        migrate.name(),
+                        migrate.create_options(),
+                        &mut self.session,
+                    )
+                    .await?;
+            }
 
+            // adding to name map
+            self.name_model_map.insert(migrate.name(), ty_id);
             // get collection
             let collect = self.db.collection::<M::Model>(migrate.name());
-            // adding to exist collection
+            // adding to  collections
             self.collections.insert(ty_id, collect.clone_with_type());
 
             collect
@@ -87,7 +85,7 @@ impl<'db> Manager<'db> {
         // run migrate
         migrate.migrate(&collection, &mut self.session).await?;
 
-        Ok(())
+        Ok(self)
     }
 
     pub async fn apply_all(

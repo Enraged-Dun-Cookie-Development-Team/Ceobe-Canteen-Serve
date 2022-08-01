@@ -8,7 +8,7 @@ use super::manager::Manager;
 #[async_trait]
 pub trait MigratorTrait {
     async fn migrating(
-        &self, manage: &Manager<'_>,
+        &self, manage: &mut Manager<'_>,
     ) -> Result<(), mongodb::error::Error>;
 
     async fn register<D: DbManager + Send + Sync + 'static>(
