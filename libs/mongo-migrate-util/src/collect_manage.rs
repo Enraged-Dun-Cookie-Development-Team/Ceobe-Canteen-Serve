@@ -56,8 +56,8 @@ impl<M: MigrationTrait> CollectManage<M> {
             .and_then(|opts| opts.name.as_ref())
             // name not set => None : create any way
             // name set = > exist => return true => Some(idx_name) do not
-            // create          = > not exist = > return false =>
-            // None create idx
+            // create
+            //          = > not exist = > return false => None create idx
             .filter(|idx_name| set.contains(*idx_name))
             .is_none()
         {

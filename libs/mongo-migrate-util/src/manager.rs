@@ -8,10 +8,10 @@ use crate::{CollectManage, MigrationTrait};
 
 #[derive(Debug)]
 pub struct Manager<'db> {
-    pub db: &'db Database,
-    pub collections: DashMap<TypeId, Collection<()>>,
-    pub name_model_map: DashMap<&'static str, TypeId>,
-    pub exist_names: DashSet<String>,
+    db: &'db Database,
+    collections: DashMap<TypeId, Collection<()>>,
+    name_model_map: DashMap<&'static str, TypeId>,
+    exist_names: DashSet<String>,
 }
 
 impl<'db> Manager<'db> {
