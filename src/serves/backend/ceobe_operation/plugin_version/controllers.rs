@@ -9,9 +9,7 @@ use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
 };
 
 use super::error::{CeobeOperationPluginVersionError, PluginRespResult};
-use crate::{
-    router::CeobeOpVersion, utils::data_checker::PreLiteChecker,
-};
+use crate::{router::CeobeOpVersion, utils::data_checker::PreLiteChecker};
 
 type PluginVersionPreChecker = PreLiteChecker<
     JsonPayload<PluginVersionUncheck>,
