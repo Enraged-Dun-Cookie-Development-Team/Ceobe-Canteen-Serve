@@ -8,11 +8,12 @@ pub struct Migrator;
 
 #[async_trait]
 impl MigratorTrait for Migrator {
-    async fn migrating(&self, manage: &mut Manager<'_>) -> Result<(), MongoErr> {
+    async fn migrating(
+        &self, manage: &mut Manager<'_>,
+    ) -> Result<(), MongoErr> {
         manage
             .append(migrations::bakery::mansion::Migration)
-            .await?
-            ;
+            .await?;
 
         Ok(())
     }

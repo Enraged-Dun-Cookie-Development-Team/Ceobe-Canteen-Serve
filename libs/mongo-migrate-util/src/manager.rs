@@ -48,7 +48,7 @@ impl<'db> Manager<'db> {
             // the collect has been register
             if collect_ty.value() == &ty_id {
                 self.collections
-                    .get(&collect_ty.value())
+                    .get(collect_ty.value())
                     .expect("Collect 注册时异常")
                     .clone_with_type()
             }
