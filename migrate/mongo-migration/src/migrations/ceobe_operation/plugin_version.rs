@@ -13,7 +13,8 @@ impl MigrationTrait for Migration {
         let plugin_version = manager
             .collection::<PluginVersion, _>("ceobe_operation_plugin_version");
 
-        let exist_idx = plugin_version.list_index_names().await?;
+        let exist_idx =
+            plugin_version.list_index_names().await.unwrap_or_default();
         log::info!("All idx of {} : {:?}", plugin_version.name(), exist_idx);
 
         // adding unique index
