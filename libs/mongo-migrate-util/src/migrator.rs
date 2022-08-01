@@ -1,29 +1,35 @@
 use std::any::TypeId;
 
-use mongodb::{Collection, Database};
+use async_trait::async_trait;
+use mongodb::{Client, Collection, Database};
 
-use super::{manager::Manager, migration::MigrationTrait};
+use super::manager::Manager;
 
-#[async_trait::async_trait]
+#[async_trait]
 pub trait MigratorTrait {
-    fn migrators(&self) -> Vec<Box<dyn MigrationTrait>>;
+    async fn migrating(
+        &self, manage: &Manager<'_>,
+    ) -> Result<(), mongodb::error::Error>;
 
-    async fn register<D: DbManager + Send + 'static>(
+    async fn register<D: DbManager + Send + Sync + 'static>(
         &self, mut db_manage: D,
     ) -> Result<D, mongodb::error::Error> {
-        let manager = Manager::builder().db(db_manage.get_db()).build();
-        for migrate in self.migrators() {
-            let _ = migrate.migrate(&manager).await?;
-        }
-        let Manager { db, collections } = manager;
-        db_manage.extent_collections(db, collections);
+        let mut manager =
+            Manager::new(db_manage.get_client(), db_manage.get_db()).await?;
+
+        self.migrating(&mut manager).await?;
+
+        let collects = manager.apply_all().await?;
+
+        db_manage.extent_collections(collects);
         Ok(db_manage)
     }
 }
 
 pub trait DbManager {
-    fn get_db(&mut self) -> Database;
+    fn get_client(&self) -> &Client;
+    fn get_db(&self) -> &Database;
     fn extent_collections<I: IntoIterator<Item = (TypeId, Collection<()>)>>(
-        &mut self, db: Database, iter: I,
+        &mut self, iter: I,
     );
 }

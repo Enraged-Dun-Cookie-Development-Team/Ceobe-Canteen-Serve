@@ -1,46 +1,102 @@
 use std::any::{type_name, TypeId};
 
-use dashmap::DashMap;
-use mongodb::{Collection, Database};
+use dashmap::{DashMap, DashSet};
+use mongodb::{Client, ClientSession, Collection, Database};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, typed_builder::TypedBuilder)]
-pub struct Manager {
-    pub db: Database,
-    #[builder(default)]
+use crate::MigrationTrait;
+
+#[derive(Debug)]
+pub struct Manager<'db> {
+    pub session: ClientSession,
+
+    pub db: &'db Database,
     pub collections: DashMap<TypeId, Collection<()>>,
+    pub name_model_map: DashMap<&'static str, TypeId>,
+    pub exist_names: DashSet<String>,
 }
 
-impl Manager {
-    pub fn collection<C, N: Into<Option<&'static str>>>(
-        &self, name: N,
-    ) -> Collection<C>
-    where
-        C: Serialize + for<'de> Deserialize<'de>,
-        C: 'static,
-        C: Sized + Send,
-    {
-        let name = name.into().unwrap_or(type_name::<C>());
-        let id = TypeId::of::<C>();
-
-        let collect = self.db.collection::<C>(name);
-
-        let save = collect.clone_with_type::<()>();
-        self.collections.insert(id, save);
-
-        collect
+impl<'db> Manager<'db> {
+    pub async fn new(
+        client: &'db Client, db: &'db Database,
+    ) -> Result<Manager<'db>, mongodb::error::Error> {
+        let mut session = client.start_session(None).await?;
+        // get all exist collection name;
+        let names = db
+            .list_collection_names_with_session(None, &mut session)
+            .await?
+            .into_iter()
+            .collect();
+        Ok(Self {
+            db,
+            collections: DashMap::new(),
+            name_model_map: DashMap::new(),
+            exist_names: names,
+            session,
+        })
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn get_collection<C>(&self) -> Option<Collection<C>>
-    where
-        C: Serialize + for<'de> Deserialize<'de>,
-        C: 'static,
-        C: Sized + Send,
-    {
-        let id = TypeId::of::<C>();
-        self.collections
-            .get(&id)
-            .map(|v| v.value().clone_with_type::<C>())
+    /// append an new migration onto the mongodb database
+    pub async fn append<M: MigrationTrait>(
+        &mut self, migrate: M,
+    ) -> Result<(), mongodb::error::Error> {
+        // get model type id
+        let ty_id = TypeId::of::<M::Model>();
+        // using name find type id
+        let collection = if let Some(collect_ty) =
+            self.name_model_map.get(migrate.name())
+        {
+            // the collect has been register
+            if collect_ty.value() == &ty_id {
+                let collect = self
+                    .collections
+                    .get(&collect_ty.value())
+                    .expect("Collect 注册时异常")
+                    .clone_with_type::<M::Model>();
+                collect
+            }
+            else {
+                // same name but diff Model Panic
+                panic!("存在同名的collection 但是模型不一致")
+            }
+        }
+        else {
+            // collect name not been connect with type ID
+            // remove collection from name set
+            self.exist_names.remove(migrate.name());
+            // exist
+            // adding name map
+            self.name_model_map.insert(migrate.name(), ty_id);
+            // create collection
+            self.db
+                .create_collection_with_session(
+                    migrate.name(),
+                    migrate.create_options(),
+                    &mut self.session,
+                )
+                .await?;
+
+            // get collection
+            let collect = self.db.collection::<M::Model>(migrate.name());
+            // adding to exist collection
+            self.collections.insert(ty_id, collect.clone_with_type());
+
+            collect
+        };
+
+        // run migrate
+        migrate.migrate(&collection, &mut self.session).await?;
+
+        Ok(())
+    }
+
+    pub async fn apply_all(
+        mut self,
+    ) -> Result<
+        <DashMap<TypeId, Collection<()>> as IntoIterator>::IntoIter,
+        mongodb::error::Error,
+    > {
+        self.session.commit_transaction().await?;
+        Ok(self.collections.into_iter())
     }
 }
