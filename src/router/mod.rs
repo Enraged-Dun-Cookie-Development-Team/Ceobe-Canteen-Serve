@@ -3,8 +3,8 @@ mod front_end;
 
 use axum::{routing::get, Router};
 pub use back_end::{
-    BakeryMansionBackend, CeobeOperationAnnouncement, CeobeOperationVideo,
-    UserAuthBackend,
+    BakeryMansionBackend, CeobeOpVersion, CeobeOperationAnnouncement,
+    CeobeOperationVideo, UserAuthBackend,
 };
 pub use front_end::BakeryMansionFrontend;
 

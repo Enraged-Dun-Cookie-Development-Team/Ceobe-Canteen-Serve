@@ -13,6 +13,8 @@ impl MigratorTrait for Migrator {
     ) -> Result<(), MongoErr> {
         manage
             .append(migrations::bakery::mansion::Migration)
+            .await?
+            .append(migrations::ceobe_operation::plugin_version::Migration)
             .await?;
 
         Ok(())
