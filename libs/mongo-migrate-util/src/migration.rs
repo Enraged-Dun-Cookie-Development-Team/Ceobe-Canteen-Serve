@@ -1,4 +1,4 @@
-use mongodb::{options::CreateCollectionOptions, ClientSession};
+use mongodb::options::CreateCollectionOptions;
 use serde::{Deserialize, Serialize};
 
 use crate::CollectManage;
@@ -15,6 +15,6 @@ pub trait MigrationTrait: Sync + Send + Sized {
 
     /// doing migration with session
     async fn migrate(
-        &self, collection: CollectManage<Self>, session: &mut ClientSession,
+        &self, collection: CollectManage<Self>,
     ) -> Result<(), mongodb::error::Error>;
 }

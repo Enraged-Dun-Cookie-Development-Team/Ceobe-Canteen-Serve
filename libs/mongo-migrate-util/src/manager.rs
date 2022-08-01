@@ -1,14 +1,13 @@
-use std::any::TypeId;
+use std::any::{type_name, TypeId};
 
 use dashmap::{DashMap, DashSet};
-use mongodb::{Client, ClientSession, Collection, Database};
+use mongodb::{Collection, Database};
+use tap::Tap;
 
 use crate::{CollectManage, MigrationTrait};
 
 #[derive(Debug)]
 pub struct Manager<'db> {
-    pub session: ClientSession,
-
     pub db: &'db Database,
     pub collections: DashMap<TypeId, Collection<()>>,
     pub name_model_map: DashMap<&'static str, TypeId>,
@@ -17,13 +16,13 @@ pub struct Manager<'db> {
 
 impl<'db> Manager<'db> {
     pub async fn new(
-        client: &'db Client, db: &'db Database,
+        db: &'db Database,
     ) -> Result<Manager<'db>, mongodb::error::Error> {
-        let mut session = client.start_session(None).await?;
         // get all exist collection name;
         let names = db
-            .list_collection_names_with_session(None, &mut session)
+            .list_collection_names(None)
             .await?
+            .tap(|vec| log::info!("当前MongoDb数据库内有Collect : {vec:?}"))
             .into_iter()
             .collect();
         Ok(Self {
@@ -31,7 +30,6 @@ impl<'db> Manager<'db> {
             collections: DashMap::new(),
             name_model_map: DashMap::new(),
             exist_names: names,
-            session,
         })
     }
 
@@ -42,12 +40,22 @@ impl<'db> Manager<'db> {
     where
         M: MigrationTrait,
     {
+        log::debug!(
+            "Migrate Mongo 数据库, name : {:?}, model : `{}`",
+            migrate.name(),
+            type_name::<M::Model>()
+        );
         // get model type id
         let ty_id = TypeId::of::<M::Model>();
+
         // using name find type id
         let collection = if let Some(collect_ty) =
             self.name_model_map.get(migrate.name())
         {
+            log::debug!(
+                "该 collection 已经被注册, 从已有表中提取信息 {:?}",
+                migrate.name()
+            );
             // the collect has been register
             if collect_ty.value() == &ty_id {
                 self.collections
@@ -61,20 +69,28 @@ impl<'db> Manager<'db> {
             }
         }
         else {
+            log::debug!(
+                "该 collection 还未被注册 检查是否在 已有的collect中 {:?}",
+                migrate.name()
+            );
             // collect name not been connect with type ID
             // remove collection from name set, if any
             if self.exist_names.remove(migrate.name()).is_none() {
+                log::debug!(
+                    "该 collection 未被创建, 创建colletion {:?}",
+                    migrate.name()
+                );
                 // collect not exist
                 // create collection
                 self.db
-                    .create_collection_with_session(
+                    .create_collection(
                         migrate.name(),
                         migrate.create_options(),
-                        &mut self.session,
                     )
                     .await?;
             }
 
+            log::debug!("注册 collection {:?}", migrate.name());
             // adding to name map
             self.name_model_map.insert(migrate.name(), ty_id);
             // get collection
@@ -86,20 +102,17 @@ impl<'db> Manager<'db> {
         };
 
         // run migrate
-        migrate
-            .migrate(CollectManage::new(collection), &mut self.session)
-            .await?;
+        migrate.migrate(CollectManage::new(collection)).await?;
 
         Ok(self)
     }
 
-    pub async fn apply_all(
-        mut self,
+    pub async fn done(
+        self,
     ) -> Result<
         <DashMap<TypeId, Collection<()>> as IntoIterator>::IntoIter,
         mongodb::error::Error,
     > {
-        self.session.commit_transaction().await?;
         Ok(self.collections.into_iter())
     }
 }

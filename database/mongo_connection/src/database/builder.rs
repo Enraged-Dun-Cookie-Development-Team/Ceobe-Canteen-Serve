@@ -23,7 +23,6 @@ impl DatabaseBuilder {
 }
 
 impl DbManager for DatabaseBuilder {
-    fn get_client(&self) -> &Client { &self.client }
 
     fn get_db(&self) -> &mongodb::Database { &self.db }
 

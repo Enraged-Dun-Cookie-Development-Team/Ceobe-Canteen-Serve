@@ -3,7 +3,7 @@ const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
 
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::bakery::mansion::preludes::*;
-use mongodb::{bson::doc, options::IndexOptions, ClientSession, IndexModel};
+use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 pub struct Migration;
 
@@ -14,7 +14,7 @@ impl MigrationTrait for Migration {
     fn name(&self) -> &'static str { "bakery_mansion" }
 
     async fn migrate(
-        &self, mut mansion: CollectManage<Self>, session: &mut ClientSession,
+        &self, mut mansion: CollectManage<Self>,
     ) -> Result<(), mongodb::error::Error> {
         log::info!("注册 {} Index", MANSION_IDX_NAME);
         mansion
@@ -32,7 +32,6 @@ impl MigrationTrait for Migration {
                     )
                     .build(),
                 None,
-                session,
             )
             .await?;
 
@@ -50,7 +49,6 @@ impl MigrationTrait for Migration {
                     )
                     .build(),
                 None,
-                session,
             )
             .await?;
 

@@ -1,8 +1,7 @@
 use std::{collections::HashSet, ops::Deref};
 
-use mongodb::{
-    options::CreateIndexOptions, ClientSession, Collection, IndexModel,
-};
+use mongodb::{options::CreateIndexOptions, Collection, IndexModel};
+use tap::Tap;
 
 use crate::MigrationTrait;
 
@@ -28,14 +27,10 @@ impl<M: MigrationTrait> CollectManage<M> {
     }
 
     async fn get_idx_set(
-        &mut self, session: &mut ClientSession,
+        &mut self,
     ) -> Result<&mut HashSet<String>, mongodb::error::Error> {
         let set = self.idx_set.insert(
-            self.collect
-                .list_index_names_with_session(session)
-                .await?
-                .into_iter()
-                .collect(),
+            self.collect.list_index_names().await?.into_iter().collect(),
         );
 
         Ok(set)
@@ -44,12 +39,11 @@ impl<M: MigrationTrait> CollectManage<M> {
     pub async fn create_idx_if_not_exist(
         &mut self, index: IndexModel,
         options: impl Into<Option<CreateIndexOptions>>,
-        session: &mut ClientSession,
     ) -> Result<(), mongodb::error::Error> {
         // get idx set
         let set = match &self.idx_set {
             Some(set) => set,
-            None => self.get_idx_set(session).await?,
+            None => self.get_idx_set().await?,
         };
         // check idx name is exist
         // if idx name not set ,do not check
@@ -61,17 +55,25 @@ impl<M: MigrationTrait> CollectManage<M> {
             .as_ref()
             .and_then(|opts| opts.name.as_ref())
             // name not set => None : create any way
-            // name set = > exist => return true => Some(idx_name) do not create
-            //          = > not exist = > return false => None create idx
+            // name set = > exist => return true => Some(idx_name) do not
+            // create          = > not exist = > return false =>
+            // None create idx
             .filter(|idx_name| set.contains(*idx_name))
             .is_none()
         {
             // create idx
             let idx_name = self
                 .collect
-                .create_index_with_session(index, options, session)
+                .create_index(index, options)
                 .await?
-                .index_name;
+                .index_name
+                .tap(|idx_name| {
+                    log::info!(
+                        "指针 {:?} 创建完成 {:?}",
+                        idx_name,
+                        self.collect.name()
+                    )
+                });
 
             // add new idx to idx set
             if let Some(set) = &mut self.idx_set {

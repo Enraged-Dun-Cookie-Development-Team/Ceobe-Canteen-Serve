@@ -43,7 +43,7 @@ impl MongoConnectBuilder {
 
 async fn init_mongodb(url: &str) -> Result<MongoClient, MongoErr> {
     log::info!("连接到Mongodb");
-    let mut copts = ClientOptions::parse(url).await?;
+    let mut copts = ClientOptions::parse(url).await?;    
     copts.app_name = Some("CeobeCanteen".into());
 
     let client = MongoClient::with_options(copts)?;
@@ -51,7 +51,7 @@ async fn init_mongodb(url: &str) -> Result<MongoClient, MongoErr> {
 }
 
 fn format_url(cfg: &impl DbConnectConfig) -> String {
-    format!(
+    let s = format!(
         "{}://{}:{}@{}:{}/{}?authSource=admin",
         cfg.scheme(),
         cfg.username(),
@@ -59,5 +59,8 @@ fn format_url(cfg: &impl DbConnectConfig) -> String {
         cfg.host(),
         cfg.port(),
         cfg.name()
-    )
+    );
+
+    log::info!("Connect to Mongo {}",s);
+    s
 }
