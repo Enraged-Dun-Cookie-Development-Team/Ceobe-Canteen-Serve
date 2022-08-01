@@ -1,7 +1,7 @@
 use axum::extract::rejection::{
     JsonRejection, PathRejection, QueryRejection,
 };
-use mongo_migration::mongo_models::mansion_data::{
+use mongo_migration::mongo_models::bakery::mansion::{
     checkers::CheckError, operate::OperateError,
 };
 
