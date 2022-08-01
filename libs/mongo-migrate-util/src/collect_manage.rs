@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, ops::Deref};
 
 use mongodb::{
     options::CreateIndexOptions, ClientSession, Collection, IndexModel,
@@ -11,6 +11,12 @@ pub struct CollectManage<M: MigrationTrait> {
     collect: Collection<M::Model>,
     // index set
     idx_set: Option<HashSet<String>>,
+}
+
+impl<M: MigrationTrait> Deref for CollectManage<M> {
+    type Target = Collection<M::Model>;
+
+    fn deref(&self) -> &Self::Target { &self.collect }
 }
 
 impl<M: MigrationTrait> CollectManage<M> {
@@ -47,24 +53,30 @@ impl<M: MigrationTrait> CollectManage<M> {
         };
         // check idx name is exist
         // if idx name not set ,do not check
-        if let Some(idx_name) =
-            index.options.as_ref().and_then(|opts| opts.name.as_ref())
+
+        // the name not set
+        // the name is not exist
+        if index
+            .options
+            .as_ref()
+            .and_then(|opts| opts.name.as_ref())
+            // name not set => None : create any way
+            // name set = > exist => return true => Some(idx_name) do not create
+            //          = > not exist = > return false => None create idx
+            .filter(|idx_name| set.contains(*idx_name))
+            .is_none()
         {
-            if set.contains(idx_name) {
-                return Ok(());
+            // create idx
+            let idx_name = self
+                .collect
+                .create_index_with_session(index, options, session)
+                .await?
+                .index_name;
+
+            // add new idx to idx set
+            if let Some(set) = &mut self.idx_set {
+                set.insert(idx_name);
             }
-        }
-
-        // create idx
-        let idx_name = self
-            .collect
-            .create_index_with_session(index, options, session)
-            .await?
-            .index_name;
-
-        // add new idx to idx set
-        if let Some(set) = &mut self.idx_set {
-            set.insert(idx_name);
         }
 
         Ok(())
