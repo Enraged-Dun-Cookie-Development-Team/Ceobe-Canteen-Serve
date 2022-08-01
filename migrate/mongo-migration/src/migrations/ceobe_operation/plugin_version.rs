@@ -28,9 +28,7 @@ impl MigrationTrait for Migration {
                 .create_index(
                     IndexModel::builder()
                         .keys(doc! {
-                            "version.0":1i32,
-                            "version.1":1i32,
-                            "version.2":1i32,
+                            "version":1i32,
                         })
                         .options(
                             IndexOptions::builder()
