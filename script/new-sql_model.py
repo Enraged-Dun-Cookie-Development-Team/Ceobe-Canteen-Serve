@@ -1,11 +1,6 @@
 import os
-import pathlib
-from posixpath import split
 import re
 import sys
-from this import d
-from unittest import result
-from venv import create
 from string import punctuation
 
 sql_model_dir = "./models/sql-models"
@@ -13,7 +8,7 @@ operation_template = """
 use super::%sSqlOperate;
 
 impl %sSqlOperate {
-    todo!();
+    
 }
 """
 folder_mod_template = """
@@ -79,7 +74,7 @@ impl model_%s::ActiveModel {
 """
 operate_mod_template = """
 use thiserror::Error;
-use status_err::{ErrPrefix, StatusErr, HttpCode};
+use status_err::{ErrPrefix, StatusErr};
 
 pub struct %sSqlOperate;
 
@@ -87,7 +82,8 @@ pub use OperateError::*;
 
 #[derive(Debug, Error)]
 pub enum OperateError {
-    
+    #[error("查询数据库异常: {0}")]
+    Db(#[from] sea_orm::DbErr),
 }
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
@@ -95,19 +91,13 @@ type OperateResult<T> = Result<T, OperateError>;
 impl StatusErr for OperateError {
     fn prefix(&self) -> ErrPrefix {
         match self {
-            
+            Db(inner) => inner.prefix(),
         }
     }
 
     fn code(&self) -> u16 {
         match self {
-            
-        }
-    }
-
-    fn http_code(&self) -> HttpCode {
-        match self {
-            
+            Db(inner) => inner.code(),
         }
     }
 }
@@ -133,7 +123,7 @@ pub struct Model {
     
     /// field for soft delete
     pub(in crate::%s) create_at: DateTime,
-    pub(in crate::%s) update_at: DateTime,
+    pub(in crate::%s) modify_at: DateTime,
     pub(in crate::%s) delete_at: DateTime,
 }
 
@@ -158,21 +148,17 @@ impl ActiveModel {
         self.delete_at = Set(get_zero_data_time())
     }
 
+    // 新建操作
+    pub fn now_create(&mut self) {
+        let now = Local::now().naive_local();
+        self.create_at = Set(now);
+        self.modify_at = Set(now);
+    }
+
     // 更新操作
     pub fn now_modify(&mut self) {
         let now = Local::now().naive_local();
-        self.update_at = Set(now);
-    }
-}
-
-impl Default for Model {
-    fn default() -> Self {
-        let now = Local::now().naive_local();
-        Self {
-            create_at: now,
-            update_at: now,
-            ..Default::default()
-        }
+        self.modify_at = Set(now);
     }
 }
 """
