@@ -5,7 +5,7 @@ use url::Url;
 
 use crate::RecordUnit;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Version(pub u32, pub u32, pub u32);
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
