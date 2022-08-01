@@ -1,5 +1,6 @@
 use checker::check_obj;
 use range_limit::limits::max_limit::MaxRangeLimit;
+use serde::Deserialize;
 
 use super::{
     download_resource_checker::DownloadResourceChecker,
@@ -7,6 +8,7 @@ use super::{
 };
 
 check_obj! {
+    #[derive(Debug, Deserialize)]
     pub struct PluginVersionUncheck = PluginVersionChecker > PluginVersionChecked{
         version: VersionChecker,
         logo: MaxRangeLimit<String, 128>,
