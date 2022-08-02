@@ -1,4 +1,5 @@
 pub mod app_version_data;
+pub mod app_version_checker;
 
 use std::convert::Infallible;
 
