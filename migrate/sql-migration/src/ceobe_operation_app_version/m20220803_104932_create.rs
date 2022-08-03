@@ -42,6 +42,14 @@ impl MigrationTrait for Migration {
                     .not_null()
                     .default(get_zero_data_time()),
             );
+
+        // 添加唯一索引，方便查询，更新软删除条目则取消软删除
+        table.index(
+            Index::create()
+                .col(Version)
+                .name("version")
+                .unique(),
+        );
             
         manager.create_table(table).await?;
         Ok(())
