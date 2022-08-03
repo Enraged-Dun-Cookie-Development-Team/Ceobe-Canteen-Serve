@@ -1,4 +1,3 @@
-use chrono::Local;
 use sea_orm::{ entity::prelude::*, Set };
 
 use crate::{get_zero_data_time, get_now_naive_date_time};
@@ -9,7 +8,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub version: String,
-    pub forcus: bool,
+    pub force: bool,
     pub last_force_version: String,
     pub description: String,
     /// field for soft delete
@@ -37,12 +36,6 @@ impl ActiveModel {
     // 还原删除
     pub fn soft_recover(&mut self) {
         self.delete_at = Set(get_zero_data_time())
-    }
-
-    pub fn now_create(&mut self) {
-        let now = get_now_naive_date_time();
-        self.create_at = Set(now);
-        self.modify_at = Set(now);
     }
 
     // 更新操作
