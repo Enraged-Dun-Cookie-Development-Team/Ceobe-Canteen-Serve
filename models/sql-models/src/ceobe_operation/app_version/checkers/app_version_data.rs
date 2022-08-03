@@ -21,7 +21,7 @@ check_obj! {
         pub version: AppVersionChecker,
         pub force: NoCheck<bool>,
         pub last_force_version: AppVersionChecker,
-        pub description: MaxRangeLimit<String, 2048>
+        pub description: MaxRangeLimit<String, 4096>
     }
     err: CheckError
 }

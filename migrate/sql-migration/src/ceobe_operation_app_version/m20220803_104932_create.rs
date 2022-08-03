@@ -23,7 +23,7 @@ impl MigrationTrait for Migration {
             .col(ColumnDef::new(Version).char_len(11).not_null())
             .col(ColumnDef::new(Force).boolean().not_null().default(false))
             .col(ColumnDef::new(LastForceVersion).char_len(11).not_null())
-            .col(ColumnDef::new(Description).char_len(4096).not_null().default(""))
+            .col(ColumnDef::new(Description).text().not_null().default(""))
             .col(
                 ColumnDef::new(CreateAt)
                     .date_time()
