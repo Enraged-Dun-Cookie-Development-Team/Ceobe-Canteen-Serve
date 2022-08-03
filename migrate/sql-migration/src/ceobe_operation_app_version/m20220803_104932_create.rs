@@ -20,9 +20,9 @@ impl MigrationTrait for Migration {
                     .primary_key()
                     .not_null(),
             )
-            .col(ColumnDef::new(Version).char_len(11).not_null())
+            .col(ColumnDef::new(Version).string_len(11).not_null())
             .col(ColumnDef::new(Force).boolean().not_null().default(false))
-            .col(ColumnDef::new(LastForceVersion).char_len(11).not_null())
+            .col(ColumnDef::new(LastForceVersion).string_len(11).not_null())
             .col(ColumnDef::new(Description).text().not_null().default(""))
             .col(
                 ColumnDef::new(CreateAt)
