@@ -21,7 +21,7 @@ impl MigrationTrait for Migration {
                     .not_null(),
             )
             .col(ColumnDef::new(Version).char_len(11).not_null())
-            .col(ColumnDef::new(Forcus).boolean().not_null().default(false))
+            .col(ColumnDef::new(Force).boolean().not_null().default(false))
             .col(ColumnDef::new(LastForceVersion).char_len(11).not_null())
             .col(ColumnDef::new(Description).char_len(4096).not_null().default(""))
             .col(
@@ -62,7 +62,7 @@ pub(super) enum CeobeOperationAppVersion {
     Table,
     Id,
     Version,
-    Forcus,
+    Force,
     LastForceVersion,
     Description,
     // soft delete
