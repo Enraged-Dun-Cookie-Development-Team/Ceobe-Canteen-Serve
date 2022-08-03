@@ -62,13 +62,4 @@ mod test {
 
         println!("{:?}", resp)
     }
-
-    #[test]
-    fn test_test() {
-        let option: Option<String> = Option::Some(String::from("dsfsdf"));
-
-        let resp = option.and_then(|s| Some(s.parse::<u32>().ok()?));
-
-        println!("{:?}", resp)
-    }
 }

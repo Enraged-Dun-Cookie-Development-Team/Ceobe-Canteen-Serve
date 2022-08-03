@@ -1,11 +1,10 @@
-
 use chrono::Local;
 use sea_orm::{ entity::prelude::*, Set };
 
-use crate::get_zero_data_time;
+use crate::{get_zero_data_time};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
-#[sea_orm(table_name = "ceobe_operation_app_version_app_version")]
+#[sea_orm(table_name = "ceobe_operation_app_version")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
