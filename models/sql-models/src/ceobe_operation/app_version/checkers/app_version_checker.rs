@@ -1,6 +1,5 @@
-use futures::future::{Ready, ready};
-
 use checker::Checker;
+use futures::future::{ready, Ready};
 
 use super::CheckError;
 
@@ -29,9 +28,7 @@ impl Checker for AppVersionChecker {
                         security_ver.parse::<u32>().ok()?,
                     ))
                 })
-                .map(|_| {
-                    uncheck.clone()
-                })
+                .map(|_| uncheck.clone())
                 .ok_or(CheckError::VersionFormat(uncheck)),
         )
     }
@@ -43,12 +40,12 @@ mod test {
 
     use super::AppVersionChecker;
 
-
     #[test]
     fn test_good_version() {
         let uncheck = String::from("0.11");
 
-        let resp = AppVersionChecker::lite_check(uncheck).into_inner().unwrap();
+        let resp =
+            AppVersionChecker::lite_check(uncheck).into_inner().unwrap();
 
         println!("{:?}", resp)
     }
@@ -58,7 +55,8 @@ mod test {
     fn test_bad_version() {
         let uncheck = String::from("0.112.2rr.2");
 
-        let resp = AppVersionChecker::lite_check(uncheck).into_inner().unwrap();
+        let resp =
+            AppVersionChecker::lite_check(uncheck).into_inner().unwrap();
 
         println!("{:?}", resp)
     }

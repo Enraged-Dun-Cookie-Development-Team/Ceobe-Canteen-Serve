@@ -1,11 +1,10 @@
-pub mod app_version_data;
 pub mod app_version_checker;
+pub mod app_version_data;
 
 use std::convert::Infallible;
 
-use thiserror::Error;
-
 use status_err::{ErrPrefix, StatusErr};
+use thiserror::Error;
 pub use CheckError::*;
 
 #[derive(Debug, Error)]

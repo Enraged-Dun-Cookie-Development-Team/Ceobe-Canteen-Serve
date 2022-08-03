@@ -1,6 +1,3 @@
-
 use super::CeobeOperationAppVersionSqlOperate;
 
-impl CeobeOperationAppVersionSqlOperate {
-    
-}
+impl CeobeOperationAppVersionSqlOperate {}

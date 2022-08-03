@@ -13,7 +13,7 @@ use crate::{
         checkers::video_data::CeobeOpVideo,
         models::model_video::{self, ActiveModel},
     },
-    get_zero_data_time, get_now_naive_date_time_value,
+    get_now_naive_date_time_value, get_zero_data_time,
 };
 
 impl CeobeOperationVideoSqlOperate {

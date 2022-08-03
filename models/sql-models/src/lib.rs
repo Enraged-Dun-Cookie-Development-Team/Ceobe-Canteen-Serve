@@ -22,4 +22,3 @@ pub fn get_zero_data_time() -> NaiveDateTime {
 pub fn get_now_naive_date_time() -> NaiveDateTime {
     Local::now().naive_local()
 }
-
