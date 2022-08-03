@@ -23,7 +23,7 @@ pub(super) fn ceobe_operation_router() -> Router {
         .nest("/announcement", announcement_router())
         .nest("/video", video_router())
         .nest("/version", version_router())
-        .route_layer(AuthorizeLayer::<Cooker>::new())
+        .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
 }
 
 new_auth_level! {
