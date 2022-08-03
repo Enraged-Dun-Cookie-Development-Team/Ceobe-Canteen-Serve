@@ -7,4 +7,4 @@ CREATE TABLE `ceobe_operation_app_version`(
     `create_at` DATETIME NOT NULL DEFAULT NOW(),
     `modify_at` DATETIME NOT NULL DEFAULT NOW(),
     `delete_at` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:00'
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci
