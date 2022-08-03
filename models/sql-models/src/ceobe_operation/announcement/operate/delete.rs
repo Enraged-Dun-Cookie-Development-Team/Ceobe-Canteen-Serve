@@ -5,7 +5,7 @@ use sea_orm::{
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::{
     ceobe_operation::announcement::models::model_announcement,
-    get_now_naive_date_time, get_zero_data_time,
+    get_zero_data_time, get_now_naive_date_time_value,
 };
 
 impl CeobeOperationAnnouncementSqlOperate {
@@ -18,7 +18,7 @@ impl CeobeOperationAnnouncementSqlOperate {
             )
             .col_expr(
                 model_announcement::Column::DeleteAt,
-                Expr::value(get_now_naive_date_time()),
+                Expr::value(get_now_naive_date_time_value()),
             )
             .exec(db)
             .await?;
