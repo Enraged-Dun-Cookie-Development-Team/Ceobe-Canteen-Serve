@@ -406,7 +406,7 @@ class ModelsMod(object):
         for rs_mod in self.need_add_mods: 
             path = os.path.join(self.path, f"{rs_mod}.rs")
             with open(path, "w", encoding="utf-8") as mod_file:
-                mod_file.write(model_template % (f"{name_convert_to_snack(self.before_path)}_{self.name}", f"{self.before_path}", f"{self.before_path}", f"{self.before_path}"))
+                mod_file.write(model_template % (f"{name_convert_to_snack(self.before_path)}", f"{self.before_path}", f"{self.before_path}", f"{self.before_path}"))
 
 
 
