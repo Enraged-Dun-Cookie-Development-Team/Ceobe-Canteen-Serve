@@ -16,9 +16,9 @@ use syn::{parse_macro_input, ItemStruct};
 /// - Named 结构体
 /// - 不包含任何泛型参数
 /// - 结构体每一项(field)的名称为对应 `Checked` 中的对应字段(field)名称
-/// - 结构体中的每一项为合法的 [Checker](checker::Checker)
+/// - 结构体中的每一项为合法的 `Checker`
 /// - 通常情况该结构体名称为 `XXXChecker` ,该名称将用于生成用于实现
-///   [Checker](checker::Checker) 的空白结构体
+///   `Checker` 的空白结构体
 ///
 /// 以下为一个可供使用的结构体
 ///
@@ -99,7 +99,7 @@ use syn::{parse_macro_input, ItemStruct};
 ///
 /// 1. `Uncheck` 结构体，名称通过过程宏参数提供
 /// 2. `Checker` 空白结构体，并为其实现
-/// [Checker](checker::Checker)
+/// `Checker`
 /// 3. `CheckerFut`
 /// [!Unpin](std::marker::Unpin) 的结构体，并为其实现
 /// [Future](std::future::Future) ，在其内部实现具体`check`过程
