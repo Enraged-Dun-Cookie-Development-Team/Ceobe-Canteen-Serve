@@ -1,7 +1,6 @@
-use chrono::Local;
 use sea_orm::{entity::prelude::*, Set};
 
-use crate::get_zero_data_time;
+use crate::{get_now_naive_date_time, get_zero_data_time};
 
 #[derive(Debug, Clone, Eq, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "ceobe_operation_video")]
@@ -31,8 +30,7 @@ impl ActiveModelBehavior for ActiveModel {}
 
 impl ActiveModel {
     pub fn soft_remove(&mut self) {
-        let now = Local::now().naive_local();
-        self.delete_at = Set(now);
+        self.delete_at = Set(get_now_naive_date_time());
     }
 
     pub fn soft_recover(&mut self) {
