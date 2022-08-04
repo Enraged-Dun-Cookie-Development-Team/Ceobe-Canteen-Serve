@@ -106,7 +106,7 @@ impl<'c> ToTokens for UncheckField<'c> {
         let name = &self.inner.field_name;
         let checker = &self.inner.checker;
         let token = quote! {
-            #(#[#attr])*
+            #(#attr)*
             #vis #name : checker::CheckRequire< #checker >
         };
 

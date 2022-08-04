@@ -67,7 +67,7 @@ impl ToTokens for CheckObj {
         let uncheck_iter =
             inner_checkers.iter().map(|v| v.get_uncheck_field());
         let uncheck_token = quote::quote! {
-            #(#[#uncheck_attrs])*
+            #(#uncheck_attrs)*
             #checker_vis struct #uncheck {
                 #(#uncheck_iter),*
             }
