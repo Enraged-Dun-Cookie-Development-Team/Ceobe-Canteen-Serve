@@ -18,7 +18,6 @@ pub mod collect_checkers {
     pub use checker::prefabs::collect_checkers::*;
 }
 
-
 mod check_require {
     pub use checker::CheckRequire;
 }

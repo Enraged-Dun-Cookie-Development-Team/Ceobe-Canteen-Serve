@@ -49,8 +49,7 @@ pub type PasswordEncoder =
 /// 权限等级鉴定模块
 pub mod auth_level {
     pub use super::auth_level_check::{
-        error::UnacceptableAuthorizationLevelError, 
-        AuthLevelVerify,
+        error::UnacceptableAuthorizationLevelError, AuthLevelVerify,
     };
     pub mod prefabs {
         pub use super::super::auth_level_check::prefabs::*;
