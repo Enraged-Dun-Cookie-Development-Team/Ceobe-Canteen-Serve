@@ -104,10 +104,9 @@ use syn::{parse_macro_input, ItemStruct};
 ///   一致
 /// - 生成的 `Uncheck` 中每一个域(field)的可见性 与
 ///   被挂载结构体的对应域(field) 一致
-/// - 如果要在 `Uncheck`
-///   的某一域(field)上挂载过程宏等，
-///   可直接在被挂载对象对应的域(field)上进行挂载， [check_obj](macro@check_obj)
-///   将会搬运到相应的位置
+/// - 如果要在 `Uncheck` 的某一域(field)上挂载过程宏等，
+///   可直接在被挂载对象对应的域(field)上进行挂载，
+///   [check_obj](macro@check_obj) 将会搬运到相应的位置
 ///
 /// ## 生成什么？
 ///
