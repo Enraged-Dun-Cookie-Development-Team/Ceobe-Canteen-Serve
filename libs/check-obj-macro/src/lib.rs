@@ -8,6 +8,98 @@ use inner_checker_info::InnerCheckerInfo;
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, ItemStruct};
 
+/// check obj 过程宏，根据挂载的结构体构造复合`Checker` 已经包装的 `Uncheck`
+/// 对象以及配套的`Future` 对象 ## 对被挂载的结构体的要求
+///
+/// - Named 结构体
+/// - 不包含任何泛型参数
+/// - 结构体每一项(field)的名称为对应 `Checked` 中的对应字段(field)名称
+/// - 结构体中的每一项为合法的 [Checker](checker::Checker)
+/// - 通常情况该结构体名称为 `XXXChecker` ,该名称将用于生成用于实现
+///   [Checker](checker::Checker) 的空白结构体
+///
+/// 以下为一个可供使用的结构体
+///
+/// ```rust
+/// use checker::prefabs::no_check::NoCheck;
+///
+/// pub struct ExampleChecker{
+///     bar: NoCheck<i32>,
+///     foo: NoCheck<String>
+/// }
+/// ```
+///
+/// ## 对 `Checked` 结构体的要求
+///
+/// - Named 结构体
+/// - 有挂载 `#[derive(typedBuilder)]`
+/// - 需要通过 `Checker` 获取的域(field)需要与被挂载结构体对应域(field)相同
+/// - 不需要通过 `Checker` 获取的域(field)需要通过
+///   [TypedBuilder](typed_builder::TypedBuilder)
+///   相关配置，使得可以在不提供相关值时仍然可以`build()`
+///
+/// 以下为一个可供使用的结构体
+///
+/// ```rust
+/// use typed_builder::TypedBuilder;
+///
+/// #[derive(Debug, TypedBuilder)]
+/// pub struct Example{
+///     bar: i32,
+///     foo: String,
+///     #[builder(default = 11)]
+///     default_bar: i32,
+///     #[builder(default)]
+///     default_foo :Option<String>,
+/// }
+/// ```
+///
+/// ## 过程宏参数
+/// 当以上的相关结构体都准备完毕了，现在就可以开始挂载过程宏了
+/// 过程宏需要3个参数，分别是
+/// 1. `uncheck` 传递一个标识符，用于作为生成的 `UnCheck` 的名称
+/// 2. `checked` 传递一个类型，为`Checked` 结构体的类型
+/// 3. `error` 传递一个类型， 为生成的 `Checker` 的异常统一映射目标类型，
+/// 要求所有的内部`Checker` 的 `Err` 都实现了 [Into](Into)
+///
+/// 传递顺序不可打乱，使用`,` 分割，最后的`,` 可选
+///
+/// 以下为一次可能的挂载过程宏参数
+///
+/// ```rust
+/// 
+/// use checker::prefabs::no_check::NoCheck;
+/// use typed_builder::TypedBuilder;
+///
+/// #[checker::check_gen(
+///     uncheck = ExampleUncheck,
+///     checked = Example,
+///     error = std::convert::Infallible
+/// )]
+/// pub struct ExampleChecker{
+///     bar: NoCheck<i32>,
+///     foo: NoCheck<String>,
+/// }
+///
+/// #[derive(Debug, TypedBuilder)]
+/// pub struct Example{
+///     bar: i32,
+///     foo: String,
+///     #[builder(default = 11)]
+///     default_bar: i32,
+///     #[builder(default)]
+///     default_foo :Option<String>,
+/// }
+/// ```
+///
+/// ## 生成什么？
+///
+/// 1. 通过被挂载的结构体，生成 `Uncheck` 结构体，名称通过过程宏参数提供
+/// 2. 通过被挂载的结构体，生成 `Checker` 空白结构体，并为其实现
+/// [Checker](checker::Checker)
+/// 3. 通过被挂载的结构体，生成 `CheckerFut`
+/// [!Unpin](std::marker::Unpin) 的结构体，并为其实现
+/// [Future](std::future::Future) ，在其内部实现具体`check`过程
 #[proc_macro_attribute]
 pub fn check_obj(params: TokenStream, item: TokenStream) -> TokenStream {
     let params = parse_macro_input!(params as checker_info::CheckerInfo);

@@ -18,6 +18,10 @@ async fn main() {
 pub struct TestChecked {
     a: i32,
     b: String,
+    #[builder(default = 11)]
+    default_bar :i32,
+    #[builder(default)]
+    default_foo :Option<String>
 }
 
 #[check_gen(

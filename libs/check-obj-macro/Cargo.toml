@@ -11,3 +11,6 @@ proc-macro = true
 syn = "1"
 quote = "1"
 typed-builder = "0.10"
+
+[dev-dependencies]
+checker = {path = "../checker"}
