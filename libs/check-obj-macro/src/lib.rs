@@ -3,6 +3,7 @@ mod codegen;
 mod utils;
 mod checker_info;
 mod inner_checker_info;
+use codegen::check_obj::CheckObj;
 use inner_checker_info::InnerCheckerInfo;
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, ItemStruct};
@@ -14,6 +15,7 @@ pub fn check_obj(params: TokenStream, item: TokenStream) -> TokenStream {
 
     let body = syn_error!(InnerCheckerInfo::from_item_struct(body));
 
+    let check_obj = CheckObj::from((params, body));
 
-    unimplemented!()
+    quote::quote! {#check_obj}.into()
 }

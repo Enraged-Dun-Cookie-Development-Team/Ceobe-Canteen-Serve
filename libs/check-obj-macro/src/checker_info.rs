@@ -1,14 +1,14 @@
 use syn::{
     parse::{Lookahead1, Parse, ParseStream},
-    Ident, Token, TypePath,
+    Ident, Token, Type,
 };
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, TypedBuilder)]
 pub(crate) struct CheckerInfo {
     pub(crate) uncheck_name: syn::Ident,
-    pub(crate) checked: TypePath,
-    pub(crate) error: TypePath,
+    pub(crate) checked: Type,
+    pub(crate) error: Type,
 }
 
 impl Parse for CheckerInfo {
@@ -77,7 +77,7 @@ fn parse_uncheck<'a>(
 
 fn parse_ty<'a>(
     input: &'a ParseStream, lookahead: Lookahead1<'a>, name: &str,
-) -> syn::Result<(TypePath, Lookahead1<'a>)> {
+) -> syn::Result<(Type, Lookahead1<'a>)> {
     let lookahead = parse_name_and_eq(input, lookahead, name)?;
     // check uncheck type name
 
