@@ -17,8 +17,8 @@ use syn::{parse_macro_input, ItemStruct};
 /// - 不包含任何泛型参数
 /// - 结构体每一项(field)的名称为对应 `Checked` 中的对应字段(field)名称
 /// - 结构体中的每一项为合法的 `Checker`
-/// - 通常情况该结构体名称为 `XXXChecker` ,该名称将用于生成用于实现
-///   `Checker` 的空白结构体
+/// - 通常情况该结构体名称为 `XXXChecker` ,该名称将用于生成用于实现 `Checker`
+///   的空白结构体
 ///
 /// 以下为一个可供使用的结构体
 ///
@@ -57,7 +57,7 @@ use syn::{parse_macro_input, ItemStruct};
 /// ```
 ///
 /// ## 过程宏参数
-/// 
+///
 /// 当以上的相关结构体都准备完毕了，现在就可以开始挂载过程宏了
 /// 过程宏需要3个参数，分别是
 /// 1. `uncheck` 传递一个标识符，用于作为生成的 `UnCheck` 的名称
@@ -79,6 +79,7 @@ use syn::{parse_macro_input, ItemStruct};
 ///     checked = Example,
 ///     error = std::convert::Infallible
 /// )]
+/// #[derive(Debug)]
 /// pub struct ExampleChecker{
 ///     bar: NoCheck<i32>,
 ///     foo: NoCheck<String>,
@@ -94,6 +95,19 @@ use syn::{parse_macro_input, ItemStruct};
 ///     default_foo :Option<String>,
 /// }
 /// ```
+/// ### 注意事项
+///
+/// - 如果需要挂载额外的过程宏或者 `derive` 宏到 `Uncheck` 结构体上，可以在
+///   [check_obj](macro@check_obj)
+/// 之下挂载宏，[check_obj](macro@check_obj)将会将其搬运到 `Uncheck` 结构体上
+/// - 生成的 `Uncheck` 与 `Checker` 的可见性 与 被挂载结构体的可见性 (`pub`)
+///   一致
+/// - 生成的 `Uncheck` 中每一个域(field)的可见性 与
+///   被挂载结构体的对应域(field) 一致
+/// - 如果要在 `Uncheck`
+///   的某一域(field)上挂载过程宏等，
+///   可直接在被挂载对象对应的域(field)上进行挂载， [check_obj](macro@check_obj)
+///   将会搬运到相应的位置
 ///
 /// ## 生成什么？
 ///
