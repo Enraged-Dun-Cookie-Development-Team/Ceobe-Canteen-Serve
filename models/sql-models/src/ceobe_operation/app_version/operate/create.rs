@@ -19,12 +19,12 @@ impl CeobeOperationAppVersionSqlOperate {
         if Self::is_exist_app_version(version_info.version.clone(), db)
             .await?
         {
-            return Err(OperateError::AppVersionIdExist(
-                version_info.version,
-            ));
+            Err(OperateError::AppVersionIdExist(version_info.version))
         }
-        let active = ActiveModel::create_app_version(version_info);
-        active.insert(db).await?;
-        Ok(())
+        else {
+            let active = ActiveModel::create_app_version(version_info);
+            active.insert(db).await?;
+            Ok(())
+        }
     }
 }
