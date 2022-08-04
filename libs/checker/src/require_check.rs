@@ -11,8 +11,8 @@ where
     D: LiteChecker,
     <D as Checker>::Args: LiteArgs,
 {
-    pub async fn lite_checking(self) -> Result<D::Checked, D::Err> {
-        D::lite_check(self.0).await
+    pub fn lite_checking(self) -> D::Fut {
+        D::lite_check(self.0)
     }
 }
 
@@ -27,9 +27,7 @@ where
     }
 
     #[inline]
-    pub async fn checking(self, args: D::Args) -> Result<D::Checked, D::Err> {
-        D::check(args, self.0).await
-    }
+    pub fn checking(self, args: D::Args) -> D::Fut { D::check(args, self.0) }
 }
 
 impl<D: Checker> Debug for CheckRequire<D> {
