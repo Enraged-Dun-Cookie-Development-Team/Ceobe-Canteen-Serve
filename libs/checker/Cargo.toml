@@ -10,10 +10,11 @@ pin-project = "1"
 serde = "1"
 chrono = "0.4"
 url = "2"
+check-obj-macro = { path = "../check-obj-macro" }
 
 [dependencies.range-limit]
 path = "../range-limit"
 
 [dev-dependencies]
-tokio = { version = "1", features = ["test-util", "macros"] }
+tokio = { version = "1", features = ["test-util", "macros", "rt-multi-thread"] }
 typed-builder = "0.10"

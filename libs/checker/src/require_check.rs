@@ -13,7 +13,7 @@ where
 {
     #[inline]
     #[allow(dead_code)]
-    pub(crate) fn into_check_fut(self, args: D::Args) -> CheckFut<D> {
+    pub fn into_check_fut(self, args: D::Args) -> CheckFut<D> {
         CheckFut::Fut(self.checking(args))
     }
 }

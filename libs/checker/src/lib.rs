@@ -12,3 +12,4 @@ pub use require_check::CheckRequire;
 pub use check_fut::CheckFut;
 
 pub use crate::checker::{Checker, LiteChecker, RefChecker};
+pub use check_obj_macro::check_obj as check_gen;
