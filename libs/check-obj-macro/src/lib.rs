@@ -8,8 +8,10 @@ use inner_checker_info::InnerCheckerInfo;
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, ItemStruct};
 
-/// check obj 过程宏，根据挂载的结构体构造复合`Checker` 已经包装的 `Uncheck`
-/// 对象以及配套的`Future` 对象 ## 对被挂载的结构体的要求
+/// check obj 过程宏，根据挂载的结构体构造复合 `Checker` 已经包装的 `Uncheck`
+/// 对象以及配套的 [Future](std::future::Future) 对象
+///
+/// ## 对被挂载的结构体的要求
 ///
 /// - Named 结构体
 /// - 不包含任何泛型参数
@@ -55,6 +57,7 @@ use syn::{parse_macro_input, ItemStruct};
 /// ```
 ///
 /// ## 过程宏参数
+/// 
 /// 当以上的相关结构体都准备完毕了，现在就可以开始挂载过程宏了
 /// 过程宏需要3个参数，分别是
 /// 1. `uncheck` 传递一个标识符，用于作为生成的 `UnCheck` 的名称
@@ -94,10 +97,10 @@ use syn::{parse_macro_input, ItemStruct};
 ///
 /// ## 生成什么？
 ///
-/// 1. 通过被挂载的结构体，生成 `Uncheck` 结构体，名称通过过程宏参数提供
-/// 2. 通过被挂载的结构体，生成 `Checker` 空白结构体，并为其实现
+/// 1. `Uncheck` 结构体，名称通过过程宏参数提供
+/// 2. `Checker` 空白结构体，并为其实现
 /// [Checker](checker::Checker)
-/// 3. 通过被挂载的结构体，生成 `CheckerFut`
+/// 3. `CheckerFut`
 /// [!Unpin](std::marker::Unpin) 的结构体，并为其实现
 /// [Future](std::future::Future) ，在其内部实现具体`check`过程
 #[proc_macro_attribute]
