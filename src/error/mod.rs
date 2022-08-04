@@ -21,7 +21,7 @@ impl Serialize for T {
 
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
-/// 并提供 [Form](std::form::Form)转换实现，
+/// 并提供 [Form](std::convert::Form)转换实现，
 /// 和 [StatusErr](status_err::StatusErr)实现
 ///     ```rust
 ///     error_generate!(

@@ -1,4 +1,4 @@
-use checker::{check_obj, prefabs::no_check::NoCheck};
+use checker::prefabs::no_check::NoCheck;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
@@ -17,15 +17,17 @@ pub struct CeobeOperationAppVersion {
     pub description: String,
 }
 
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct CeobeOperationAppVersionUncheck = CeobeOperationAppVersionChecker > CeobeOperationAppVersion{
-        pub version: AppVersionChecker,
-        pub force: NoCheck<bool>,
-        pub last_force_version: AppVersionChecker,
-        pub description: MaxRangeLimit<String, 4096>
-    }
-    err: CheckError
+#[checker::check_gen(
+    uncheck = CeobeOperationAppVersionUncheck,
+    checked = CeobeOperationAppVersion,
+    error = CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct CeobeOperationAppVersionChecker {
+    pub version: AppVersionChecker,
+    pub force: NoCheck<bool>,
+    pub last_force_version: AppVersionChecker,
+    pub description: MaxRangeLimit<String, 4096>,
 }
 
 impl model_app_version::ActiveModel {

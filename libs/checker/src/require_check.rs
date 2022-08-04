@@ -2,18 +2,29 @@ use core::fmt::Debug;
 
 use serde::Deserialize;
 
-use crate::{checker::LiteChecker, lite_args::LiteArgs, Checker};
+use crate::{checker::LiteChecker, lite_args::LiteArgs, CheckFut, Checker};
 
 pub struct CheckRequire<D: Checker>(D::Unchecked);
+
+impl<D> CheckRequire<D>
+where
+    D: Checker,
+    D::Checked: 'static,
+{
+    #[inline]
+    #[allow(dead_code)]
+    pub fn into_check_fut(self, args: D::Args) -> CheckFut<D> {
+        CheckFut::Fut(self.checking(args))
+    }
+}
 
 impl<D> CheckRequire<D>
 where
     D: LiteChecker,
     <D as Checker>::Args: LiteArgs,
 {
-    pub async fn lite_checking(self) -> Result<D::Checked, D::Err> {
-        D::lite_check(self.0).await
-    }
+    #[inline]
+    pub fn lite_checking(self) -> D::Fut { D::lite_check(self.0) }
 }
 
 #[allow(dead_code)]
@@ -27,9 +38,7 @@ where
     }
 
     #[inline]
-    pub async fn checking(self, args: D::Args) -> Result<D::Checked, D::Err> {
-        D::check(args, self.0).await
-    }
+    pub fn checking(self, args: D::Args) -> D::Fut { D::check(args, self.0) }
 }
 
 impl<D: Checker> Debug for CheckRequire<D> {

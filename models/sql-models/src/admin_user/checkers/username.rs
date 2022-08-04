@@ -1,4 +1,4 @@
-use checker::check_obj;
+use checker::check_gen;
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use typed_builder::TypedBuilder;
 
@@ -6,12 +6,14 @@ use super::CheckError;
 
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
-check_obj! {
-    #[derive(serde::Deserialize,Debug)]
-    pub struct UsernameUncheck = UsernameChecker > Username{
-        pub username : MaxLimitString<16>
-    }
-    err:CheckError
+#[check_gen(
+    uncheck = UsernameUncheck,
+    checked =  Username,
+    error = CheckError
+)]
+#[derive(serde::Deserialize, Debug)]
+pub struct UsernameChecker {
+    pub username: MaxLimitString<16>,
 }
 
 #[derive(Debug, Clone, TypedBuilder)]

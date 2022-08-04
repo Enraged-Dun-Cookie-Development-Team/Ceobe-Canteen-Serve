@@ -1,4 +1,4 @@
-use checker::{check_obj, prefabs::date_time_format::DateTimeFormatChecker};
+use checker::{check_gen, prefabs::date_time_format::DateTimeFormatChecker};
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
@@ -20,20 +20,21 @@ pub struct CeobeOpVideo {
     pub video_link: String,
     pub cover_image: String,
 }
-
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct CeobeOpVideoUncheck = CeobeOpVideoChecker > CeobeOpVideo{
-        pub bv: BvChecker,
-        pub start_time: DateTimeFormatChecker,
-        pub over_time: DateTimeFormatChecker,
-        pub title: MaxRangeLimit<String, 256>,
-        pub author: MaxRangeLimit<String, 128>,
-        pub video_link: MaxRangeLimit<String, 256>,
-        #[serde(alias = "cover_img")]
-        pub cover_image: MaxRangeLimit<String, 256>
-    }
-    err : CheckError
+#[check_gen(
+    uncheck = CeobeOpVideoUncheck,
+    checked = CeobeOpVideo,
+    error = CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct CeobeOpVideoChecker {
+    pub bv: BvChecker,
+    pub start_time: DateTimeFormatChecker,
+    pub over_time: DateTimeFormatChecker,
+    pub title: MaxRangeLimit<String, 256>,
+    pub author: MaxRangeLimit<String, 128>,
+    pub video_link: MaxRangeLimit<String, 256>,
+    #[serde(alias = "cover_img")]
+    pub cover_image: MaxRangeLimit<String, 256>,
 }
 
 impl model_video::ActiveModel {

@@ -1,17 +1,19 @@
-use checker::{check_obj, Checker};
+use checker::Checker;
 use futures_util::future::ready;
 
 use super::{CheckError, MaxLimitString};
 use crate::bakery::mansion::{checked::Info, preludes::Predict};
 
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct EachInfoUncheck = InfoChecker > Info{
-        #[serde(alias="forecast_status")]
-        pub predict: PredictLevelChecker,
-        pub forecast: MaxLimitString<2048>
-    }
-    err:CheckError
+#[checker::check_gen(
+    uncheck = EachInfoUncheck,
+    checked = Info,
+    error = CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct InfoChecker {
+    #[serde(alias = "forecast_status")]
+    pub predict: PredictLevelChecker,
+    pub forecast: MaxLimitString<2048>,
 }
 
 pub struct PredictLevelChecker;
