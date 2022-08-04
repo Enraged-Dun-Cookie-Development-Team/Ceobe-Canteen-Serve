@@ -93,16 +93,17 @@ impl ToTokens for CheckObj {
             }
 
             impl std::future::Future for #fut_token {
-                Output = Result<#uncheck, #error>;
+                type Output = Result<#checked, #error>;
 
                 fn poll(self:std::pin::Pin<&mut Self>, #context: &mut std::task::Context<'_>) -> std::task::Poll<Self::Output>{
+                    let #root = unsafe{ self.get_unchecked_mut() };
                     // poll all
                     #(
                         #fut_poll
-                    )*
+                    );*
 
                     // all finish
-                    let #builder = <#uncheck>::builder();
+                    let #builder = <#checked>::builder();
 
                     #(
                         #fut_field_final
@@ -139,7 +140,7 @@ impl ToTokens for CheckObj {
 
                 type Args = ( #(#checker_args),*, );
 
-                type checked = #checked;
+                type Checked = #checked;
 
                 type Err = #error;
 

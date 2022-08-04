@@ -214,7 +214,7 @@ impl<'c, 'r> ToTokens for CheckingPoll<'c, 'r> {
         } = self;
         let token = quote! {
             // get the field
-            let mut __check_field = #root.#name;
+            let __check_field = &mut #root.#name;
             // not finish poll it
             if !__check_field.is_finish(){
                 // pin it
@@ -253,7 +253,7 @@ impl<'c, 'r> ToTokens for CheckingFutFinal<'c, 'r> {
             builder,
         } = self;
         let token = quote! {
-            let #builder = #builder.#name(#root.#name.take())
+            let #builder = #builder.#name(#root.#name.take());
         };
         tokens.extend(token)
     }

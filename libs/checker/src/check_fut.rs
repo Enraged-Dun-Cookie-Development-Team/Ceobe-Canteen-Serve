@@ -44,7 +44,7 @@ impl<C: Checker> Future for CheckFut<C> {
                 match fut.poll(cx) {
                     Poll::Ready(Ok(checked)) => {
                         self.set(Self::Checked(checked.into()));
-                        Poll::Pending
+                        Poll::Ready(Ok(()))
                     }
                     Poll::Ready(Err(err)) => Poll::Ready(Err(err)),
                     Poll::Pending => Poll::Pending,
