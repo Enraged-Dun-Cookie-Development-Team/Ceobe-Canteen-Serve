@@ -77,12 +77,12 @@ impl ToTokens for CheckObj {
         // checker fut
         let fut_field_final = inner_checkers
             .iter()
-            .map(|v| v.get_checking_fut_final(&root, &builder));
+            .map(|v| v.get_checking_fut_final(root, builder));
         let fut_field =
             inner_checkers.iter().map(|v| v.get_checking_fut_field());
         let fut_poll = inner_checkers
             .iter()
-            .map(|v| v.get_checking_poll(&root, &context, error));
+            .map(|v| v.get_checking_poll(root, context, error));
 
         let checker_fut_token = quote::quote! {
             #checker_vis struct #fut_token{
@@ -122,7 +122,7 @@ impl ToTokens for CheckObj {
         let check_bounds = inner_checkers.iter().map(|v| v.get_check_bound());
         let fut_create = inner_checkers
             .iter()
-            .map(|v| v.get_checking_fut_create(&uncheck_name, v.get_name()));
+            .map(|v| v.get_checking_fut_create(uncheck_name, v.get_name()));
         let checker_args =
             inner_checkers.iter().map(|v| v.get_checking_args());
         let arg_checker_args = inner_checkers.iter().map(|v| v.get_name());

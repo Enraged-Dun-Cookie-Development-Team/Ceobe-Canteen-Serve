@@ -1,5 +1,6 @@
-
-use checker::{prefabs::no_check::NoCheck, CheckRequire, LiteChecker, check_gen};
+use checker::{
+    check_gen, prefabs::no_check::NoCheck, CheckRequire, LiteChecker,
+};
 use typed_builder::TypedBuilder;
 
 #[tokio::main]
@@ -22,7 +23,8 @@ pub struct TestChecked {
 #[check_gen(
     uncheck = TestUncheck,
     checked = self::TestChecked,
-    error = std::convert::Infallible)]
+    error = std::convert::Infallible
+)]
 pub struct TestChecker {
     a: NoCheck<i32>,
     b: NoCheck<String>,

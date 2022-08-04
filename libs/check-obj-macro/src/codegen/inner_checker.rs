@@ -11,11 +11,10 @@ pub struct InnerChecker {
 }
 
 impl InnerChecker {
-    pub fn get_name(&self)->&Ident{
-        &self.field_name
-    }
+    pub fn get_name(&self) -> &Ident { &self.field_name }
+
     pub fn get_uncheck_field(&self) -> UncheckField<'_> {
-        UncheckField { inner: &self }
+        UncheckField { inner: self }
     }
 
     pub fn get_checking_args(&self) -> CheckingArgs<'_> {
