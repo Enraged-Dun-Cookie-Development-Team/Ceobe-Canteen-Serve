@@ -1,9 +1,9 @@
-pub mod verify;
 pub mod create;
 pub mod retrieve;
+pub mod verify;
 
 use sea_orm::FromQueryResult;
-use status_err::{ErrPrefix, StatusErr, HttpCode};
+use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 
 pub struct CeobeOperationAppVersionSqlOperate;
@@ -34,7 +34,7 @@ impl StatusErr for OperateError {
             AppVersionIdExist(_) => 0x000B,
         }
     }
-    
+
     fn http_code(&self) -> HttpCode {
         match self {
             AppVersionIdExist(_) => HttpCode::CONFLICT,
