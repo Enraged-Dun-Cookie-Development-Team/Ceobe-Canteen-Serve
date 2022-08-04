@@ -1,4 +1,4 @@
-use checker::check_obj;
+use checker::check_gen;
 use typed_builder::TypedBuilder;
 
 use super::{
@@ -11,11 +11,13 @@ pub struct BvQuery {
     pub bv: Bv,
 }
 
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct BvQueryUncheck = BvQueryChecker > BvQuery{
-        #[serde(alias = "bv_number")]
-        bv :BvChecker
-    }
-    err : CheckError
+#[check_gen(
+    uncheck = BvQueryUncheck,
+    checked = BvQuery,
+    error = CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct BvQueryChecker {
+    #[serde(alias = "bv_number")]
+    bv: BvChecker,
 }

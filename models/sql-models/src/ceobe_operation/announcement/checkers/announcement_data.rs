@@ -1,5 +1,5 @@
 use checker::{
-    check_obj,
+    check_gen,
     prefabs::{date_time_format::DateTimeFormatChecker, no_check::NoCheck},
 };
 use chrono::NaiveDateTime;
@@ -18,17 +18,18 @@ pub struct CeobeOpAnnouncement {
     pub img_url: String,
     pub notice: bool,
 }
-
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct CeobeOpAnnouncementUncheck = CeobeOpAnnouncementChecker > CeobeOpAnnouncement{
-        pub start_time: DateTimeFormatChecker,
-        pub over_time: DateTimeFormatChecker,
-        pub content: MaxRangeLimit<String, 4096>,
-        pub img_url: MaxRangeLimit<String, 256>,
-        pub notice: NoCheck<bool>
-    }
-    err : CheckError
+#[check_gen(
+    uncheck = CeobeOpAnnouncementUncheck,
+    checked = CeobeOpAnnouncement,
+    error = CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct CeobeOpAnnouncementChecker {
+    pub start_time: DateTimeFormatChecker,
+    pub over_time: DateTimeFormatChecker,
+    pub content: MaxRangeLimit<String, 4096>,
+    pub img_url: MaxRangeLimit<String, 256>,
+    pub notice: NoCheck<bool>,
 }
 
 impl model_announcement::ActiveModel {

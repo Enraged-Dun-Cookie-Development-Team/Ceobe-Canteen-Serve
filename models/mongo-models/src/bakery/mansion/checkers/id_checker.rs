@@ -1,37 +1,39 @@
-use checker::{check_obj, prefabs::option_checker::OptionChecker, Checker};
+use checker::{prefabs::option_checker::OptionChecker, Checker};
 use futures_util::future::{ready, Ready};
 
 use super::CheckError;
-use crate::bakery::mansion::{
-    checked::OptionMid,
-    preludes::{MansionId, Mid},
-};
+use crate::bakery::mansion::preludes::{MansionId, Mid, OptionMid};
 
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct MidUncheck = MidChecker > Mid{
-        #[serde(
-            alias="idBefore",
-            alias="id_before",
-            alias="mansionId",
-            alias="mansion_id"
-        )]
-        pub id: IdChecker
-    }
-    err:CheckError
+#[checker::check_gen(
+    uncheck = MidUncheck,
+    checked = Mid,
+    error = CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct MidChecker {
+    #[serde(
+        alias = "idBefore",
+        alias = "id_before",
+        alias = "mansionId",
+        alias = "mansion_id"
+    )]
+    pub id: IdChecker,
 }
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct OpMidUncheck = OpMidChecker > OptionMid{
-        #[serde(
-            alias="idBefore",
-            alias="id_before",
-            alias="mansionId",
-            alias="mansion_id"
-        )]
-        pub id: OptionChecker<IdChecker>
-    }
-    err:CheckError
+
+#[checker::check_gen(
+    uncheck = OpMidUncheck,
+    checked = OptionMid,
+    error = CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct OpMidChecker {
+    #[serde(
+        alias = "idBefore",
+        alias = "id_before",
+        alias = "mansionId",
+        alias = "mansion_id"
+    )]
+    pub id: OptionChecker<IdChecker>,
 }
 
 /// 饼学大厦号的检查器
