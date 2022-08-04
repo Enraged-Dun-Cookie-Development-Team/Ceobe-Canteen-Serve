@@ -71,7 +71,7 @@ use syn::{parse_macro_input, ItemStruct};
 /// use checker::prefabs::no_check::NoCheck;
 /// use typed_builder::TypedBuilder;
 ///
-/// #[checker::check_gen(
+/// #[checker::check_obj(
 ///     uncheck = ExampleUncheck,
 ///     checked = Example,
 ///     error = std::convert::Infallible
