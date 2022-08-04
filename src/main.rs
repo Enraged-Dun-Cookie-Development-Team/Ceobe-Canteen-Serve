@@ -4,7 +4,6 @@ use std::sync::Arc;
 
 use axum::{handler::Handler, Extension, Router};
 use bootstrap::create::create_default_user;
-use checker::check_obj;
 use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,

@@ -72,9 +72,3 @@ pub fn get_authorize_information(req: &Request<Body>) -> Option<String> {
         .and_then(|s| urlencoding::decode(s).ok())
         .map(|s| s.into_owned())
 }
-
-pub(super) struct TokenHeader;
-
-impl crate::utils::data_struct::header_info::FromHeaders for TokenHeader {
-    fn header_name() -> &'static str { get_header_name() }
-}

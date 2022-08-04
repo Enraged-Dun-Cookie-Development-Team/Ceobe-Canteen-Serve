@@ -2,11 +2,9 @@ pub mod config;
 pub mod error;
 
 mod auth_level_check;
-mod auth_pretreator;
 mod set_token;
 mod valid_token;
 
-pub use auth_pretreator::TokenAuth;
 use hmac::Hmac;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
@@ -51,7 +49,7 @@ pub type PasswordEncoder =
 /// 权限等级鉴定模块
 pub mod auth_level {
     pub use super::auth_level_check::{
-        error::UnacceptableAuthorizationLevelError, pretreator::AuthLevel,
+        error::UnacceptableAuthorizationLevelError, 
         AuthLevelVerify,
     };
     pub mod prefabs {
