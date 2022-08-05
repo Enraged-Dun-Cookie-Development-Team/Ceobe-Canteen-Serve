@@ -41,7 +41,6 @@ log = "0.4.14"
 jwt = "0.16.0"
 hmac = "0.12.1"
 sha2 = "0.10.2"
-bcrypt = "0.10"
 # else
 rust-crypto = "0.2"
 chrono = { version = "0.4", features = ["serde"] }

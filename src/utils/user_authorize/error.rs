@@ -25,12 +25,13 @@ status_err::status_error!(
         6
     ]=>"Token失效"
 );
+use crypto_str::inner_encoders::bcrypt::BcryptError;
 
 error_generate!(
     pub AuthError
 
     Jwt = jwt::Error
-    Bcrypt = bcrypt::BcryptError
+    Bcrypt = BcryptError
 
     UserDbOperate = OperateError
 
