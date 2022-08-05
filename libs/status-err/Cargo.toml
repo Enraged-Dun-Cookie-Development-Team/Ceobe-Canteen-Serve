@@ -11,7 +11,7 @@ http = "0.2"
 jwt = "0.16.0"
 log = { version = "0", optional = true }
 url = "2"
-bcrypt = "0.10"
+bcrypt = "0.13"
 mongodb = "2"
 chrono = "0.4"
 
