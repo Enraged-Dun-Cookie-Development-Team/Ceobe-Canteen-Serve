@@ -1,4 +1,5 @@
 use std::any::Any;
+
 use axum::{
     body::{Body, BoxBody},
     response::IntoResponse,
@@ -183,7 +184,6 @@ status_err::status_error! {
     ]=>"服务器发生未预期的异常"
 }
 
-
 status_err::resp_error_impl!(ServicePanic);
 
 status_err::status_error! {
@@ -192,7 +192,6 @@ status_err::status_error! {
         0x00_00
     ]=>""
 }
-
 
 status_err::resp_error_impl!(NotAnError);
 

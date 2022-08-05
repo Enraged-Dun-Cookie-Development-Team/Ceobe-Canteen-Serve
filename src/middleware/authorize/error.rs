@@ -1,10 +1,11 @@
 use std::fmt::Debug;
 
+use crypto_str::inner_encoders::bcrypt::BcryptError;
 use http::StatusCode;
 use orm_migrate::sql_models::admin_user::operate::OperateError;
 use serde::Serialize;
 use status_err::{ErrPrefix, StatusErr};
-use crypto_str::inner_encoders::bcrypt::BcryptError;
+
 use crate::utils::user_authorize::auth_level;
 
 #[derive(Debug, thiserror::Error)]

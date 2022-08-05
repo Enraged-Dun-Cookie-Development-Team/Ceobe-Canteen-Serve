@@ -78,7 +78,7 @@ macro_rules! status_error {
         [
         $pre:expr, $code:literal : $status:expr
         ]
-        =>$des:literal 
+        =>$des:literal
     }=>{
         $crate::status_error!($v $name[$pre,$code:$status]=>$des |$des );
     };

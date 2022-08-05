@@ -1,7 +1,6 @@
 use crate::{ErrPrefix, StatusErr};
 
 impl StatusErr for sea_orm::DbErr {
-
     fn respond_msg(&self) -> std::borrow::Cow<'_, str> {
         "数据库异常".into()
     }
