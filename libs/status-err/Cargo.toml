@@ -30,7 +30,7 @@ version = "1.0"
 path = "../range-limit"
 
 [dependencies.resp-result]
-version = "0.2"
+version = "0.3"
 features = ["extra-code", "log"]
 
 [dependencies.request-pretreat]

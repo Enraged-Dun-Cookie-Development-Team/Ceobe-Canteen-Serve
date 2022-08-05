@@ -78,11 +78,11 @@ path = "./libs/logger"
 path = "./libs/status-err"
 
 [dependencies.resp-result]
-version = "0.2"
+version = "0.3"
 features = ["axum-full"]
 
 [dependencies.axum-prehandle]
-version = "0.1"
+version = "0.1.1"
 
 [dependencies.checker]
 path = "./libs/checker"
