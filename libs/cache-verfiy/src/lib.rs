@@ -1,5 +1,6 @@
 mod encode;
 mod error;
+mod headers;
 mod time_format;
 mod traits;
 mod verify;

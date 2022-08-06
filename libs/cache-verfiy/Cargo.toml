@@ -14,8 +14,10 @@ sha3 = "0.10"
 chrono = "0.4"
 # web support
 http = "0.2"
-axum = "0.5"
+axum = { version = "0.5", features = ["original-uri"] }
 async-trait = "0.1"
 resp-result = "0.3"
 # utils
 thiserror = "1"
+#parse
+nom = "7"

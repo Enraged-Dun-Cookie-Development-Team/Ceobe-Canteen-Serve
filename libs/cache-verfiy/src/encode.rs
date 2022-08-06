@@ -12,8 +12,5 @@ pub fn encode<S: Serialize>(identify: &S) -> VerifyResult<String> {
     hash.update(vec);
 
     let out = hash.finalize();
-    Ok(format!(
-        "\"{}\"",
-        String::from_utf8(out.to_ascii_lowercase())?
-    ))
+    Ok(String::from_utf8(out.to_ascii_lowercase())?)
 }
