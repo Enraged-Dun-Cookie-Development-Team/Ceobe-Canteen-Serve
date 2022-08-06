@@ -1,12 +1,10 @@
-pub fn add(left: usize, right: usize) -> usize { left + right }
+mod encode;
+mod verify;
+mod error;
+mod time_format;
+mod traits;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use error::Error;
+pub use traits::ModifyState;
+pub use traits::CacheState;
+pub use verify::CacheVerify;
