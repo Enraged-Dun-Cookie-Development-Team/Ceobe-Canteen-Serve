@@ -70,7 +70,7 @@ impl CacheVerify {
         &self, data: T,
     ) -> VerifyResult<(Option<T>, ExtraFlags)> {
         let tag = data.get_entity_tag()?;
-        let last_modify = to_request_header(data.get_last_modify_time())?;
+        let last_modify = to_request_header(&data.get_last_modify_time())?;
 
         let (data, extra_flags) = match &self.ctrl_header {
             ControlHeaders::IfNoneMatch(tags) => {
@@ -103,13 +103,13 @@ impl CacheVerify {
         // entity tag
         + ExtraFlag::insert_header(ETAG, tag)
         // last modify
-        +ExtraFlag::insert_header(LAST_MODIFIED,last_modify)
+        + ExtraFlag::insert_header(LAST_MODIFIED,last_modify)
         // local
         + ExtraFlag::insert_header(CONTENT_LOCATION, &self.uri.to_string())
         // using cache with headers
-        +ExtraFlag::insert_header(VARY,"ETag, Last-Modified")
+        + ExtraFlag::insert_header(VARY,"ETag, Last-Modified")
         // cache config
-        +ExtraFlag::insert_header(CACHE_CONTROL,"public, s-maxage=28800");
+        + ExtraFlag::insert_header(CACHE_CONTROL,"public, s-maxage=28800");
         Ok((data, extra_flags))
     }
 }
