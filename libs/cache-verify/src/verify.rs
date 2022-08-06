@@ -1,4 +1,4 @@
-use std::convert::Infallible;
+use std::{convert::Infallible, time::Duration};
 
 use async_trait::async_trait;
 use axum::{
@@ -23,6 +23,10 @@ use crate::{
 pub struct CacheVerify {
     ctrl_header: ControlHeaders,
     uri: Uri,
+    pub enable_content_local: bool,
+    pub enable_vary: bool,
+    pub max_age: Duration,
+    pub public_cache: bool,
 }
 
 #[async_trait]
@@ -41,6 +45,10 @@ impl FromRequest<Body> for CacheVerify {
                 Self {
                     ctrl_header: ControlHeaders::None,
                     uri,
+                    enable_content_local: true,
+                    enable_vary: true,
+                    max_age: Duration::from_secs(28800),
+                    public_cache: true,
                 }
             }
             else {
@@ -60,7 +68,14 @@ impl FromRequest<Body> for CacheVerify {
                             .map(ControlHeaders::IfModifySince)
                     })
                     .unwrap_or(ControlHeaders::None);
-                Self { ctrl_header, uri }
+                Self {
+                    ctrl_header,
+                    uri,
+                    enable_content_local: true,
+                    enable_vary: true,
+                    max_age: Duration::from_secs(28800),
+                    public_cache: true,
+                }
             },
         )
     }
@@ -73,7 +88,7 @@ impl CacheVerify {
         let tag = data.get_entity_tag()?;
         let last_modify = to_request_header(&data.get_last_modify_time())?;
 
-        let (data, extra_flags) = match &self.ctrl_header {
+        let (data, mut extra_flags) = match &self.ctrl_header {
             ControlHeaders::IfNoneMatch(tags) => {
                 match data.verify_entity_tag(tags)? {
                     CacheState::NotModify => {
@@ -100,17 +115,40 @@ impl CacheVerify {
             }
             ControlHeaders::None => (Some(data), ().into()),
         };
-        let extra_flags = extra_flags
+        extra_flags = extra_flags
         // entity tag
         + ExtraFlag::insert_header(ETAG, format!("\"{tag}\""))
         // last modify
-        + ExtraFlag::insert_header(LAST_MODIFIED,last_modify)
-        // local
-        + ExtraFlag::insert_header(CONTENT_LOCATION, &self.uri.to_string())
-        // using cache with headers
-        + ExtraFlag::insert_header(VARY,"ETag, Last-Modified")
+        + ExtraFlag::insert_header(LAST_MODIFIED,last_modify);
+        if self.enable_content_local {
+            // local
+            extra_flags = extra_flags
+                + ExtraFlag::insert_header(
+                    CONTENT_LOCATION,
+                    &self.uri.to_string(),
+                );
+        }
+        if self.enable_vary {
+            // using cache with headers
+            extra_flags = extra_flags
+                + ExtraFlag::insert_header(VARY, "ETag, Last-Modified")
+        }
+
         // cache config pub cache 12h
-        + ExtraFlag::insert_header(CACHE_CONTROL,"public, s-maxage=28800");
+        extra_flags = extra_flags
+            + ExtraFlag::insert_header(
+                CACHE_CONTROL,
+                format!(
+                    "{0}, s-maxage={1}, max-age={1}",
+                    if self.public_cache {
+                        "public"
+                    }
+                    else {
+                        "private"
+                    },
+                    self.max_age.as_secs()
+                ),
+            );
         Ok((data, extra_flags))
     }
 }
