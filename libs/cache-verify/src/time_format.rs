@@ -8,6 +8,7 @@ const MODIFY_TIME_FORMAT: &str = "%a, %d %b %Y %H:%M:%S GMT";
 pub(crate) fn from_request_head(
     header: &HeaderValue,
 ) -> VerifyResult<NaiveDateTime> {
+    log::info!("取得请求头\"If-Modified-Since\"信息 {header:?}");
     let data_time = header.to_str()?;
     Ok(NaiveDateTime::parse_from_str(
         data_time,

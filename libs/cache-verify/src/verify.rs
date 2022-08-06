@@ -36,7 +36,8 @@ impl FromRequest<Body> for CacheVerify {
 
         // if not get or head , default none;
         Ok(
-            if req.method() != Method::GET || req.method() != Method::HEAD {
+            if req.method() != Method::GET && req.method() != Method::HEAD {
+                log::warn!("不是`GET` 或者 `HEAD` 方法,不获取任何内容");
                 Self {
                     ctrl_header: ControlHeaders::None,
                     uri,
@@ -101,14 +102,14 @@ impl CacheVerify {
         };
         let extra_flags = extra_flags
         // entity tag
-        + ExtraFlag::insert_header(ETAG, tag)
+        + ExtraFlag::insert_header(ETAG, format!("\"{tag}\""))
         // last modify
         + ExtraFlag::insert_header(LAST_MODIFIED,last_modify)
         // local
         + ExtraFlag::insert_header(CONTENT_LOCATION, &self.uri.to_string())
         // using cache with headers
         + ExtraFlag::insert_header(VARY,"ETag, Last-Modified")
-        // cache config
+        // cache config pub cache 12h
         + ExtraFlag::insert_header(CACHE_CONTROL,"public, s-maxage=28800");
         Ok((data, extra_flags))
     }

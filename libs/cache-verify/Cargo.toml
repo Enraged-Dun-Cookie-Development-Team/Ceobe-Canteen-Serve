@@ -19,5 +19,10 @@ async-trait = "0.1"
 resp-result = "0.3"
 # utils
 thiserror = "1"
+base64 = "0.13"
 #parse
 nom = "7"
+# status error
+status-err = { path = "../../libs/status-err" }
+#log
+log = "0.4"
