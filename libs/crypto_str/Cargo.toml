@@ -17,12 +17,12 @@ trans = ["wrap"]
 wrap = []
 
 [dependencies]
-bcrypt_ = { package = "bcrypt", version = "0.10", optional = true }
+bcrypt_ = { package = "bcrypt", version = "0.13", optional = true }
 
 [dependencies.serde_]
 package = "serde"
 optional = true
-version = "1.0"
+version = "1"
 
 [dependencies.time-usage]
 path = "../time-usage"

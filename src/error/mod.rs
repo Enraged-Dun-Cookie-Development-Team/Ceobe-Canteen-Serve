@@ -48,7 +48,6 @@ macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
         #[derive(Debug)]
         $v enum $err_name{
-            Infallible,
             $(
                 $v_name($inner_err)
             ),+
@@ -61,19 +60,25 @@ macro_rules! error_generate {
                     $(
                         Self::$v_name(err)=>{write!(f, "{}::{} => {}",stringify!($err_name), stringify!($v_name), err)}
                     ),+
-                    Self::Infallible => unreachable!(),
                 }
             }
         }
         /// 实现 status Error 可供下一级封装使用
         impl status_err::StatusErr for $err_name{
             #[inline]
+            fn respond_msg(&self) -> std::borrow::Cow<'_, str>{
+                match self{
+                    $(
+                        Self::$v_name(err) => {err.respond_msg()}
+                    ),+
+                }
+            }
+            #[inline]
             fn prefix(&self) -> status_err::ErrPrefix{
                 match self{
                     $(
                         Self::$v_name(err) => {err.prefix()}
                     ),+
-                    Self::Infallible => unreachable!(),
                 }
             }
             #[inline]
@@ -82,7 +87,6 @@ macro_rules! error_generate {
                     $(
                         Self::$v_name(err) => {err.code()}
                     ),+
-                    Self::Infallible => unreachable!(),
                 }
             }
 
@@ -92,22 +96,7 @@ macro_rules! error_generate {
                     $(
                         Self::$v_name(err) => {err.http_code()}
                     ),+
-                    Self::Infallible => unreachable!(),
                 }
-            }
-        }
-        impl serde::Serialize for $err_name{
-            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-            where
-                S: serde::Serializer {
-                    match self{
-                        $(
-                            Self::$v_name(err) => {
-                                serializer.serialize_str(&format!("{}",err))
-                            }
-                        ),+
-                        Self::Infallible => unreachable!(),
-                    }
             }
         }
 
@@ -127,7 +116,7 @@ macro_rules! error_generate {
         impl From<std::convert::Infallible> for $err_name{
             #[inline]
             fn from(_: std::convert::Infallible) -> Self {
-                Self::Infallible
+                unreachable!()
             }
         }
     };
@@ -186,15 +175,6 @@ status_err::status_error! {
     ]=>"该路由不存在，请检查请求路径"
 }
 
-impl Serialize for RouteNotExistError {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str("该路由不存在，请检查请求路径")
-    }
-}
-
 status_err::resp_error_impl!(RouteNotExistError);
 
 status_err::status_error! {
@@ -204,15 +184,6 @@ status_err::status_error! {
     ]=>"服务器发生未预期的异常"
 }
 
-impl Serialize for ServicePanic {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str("服务器发生未预期的异常")
-    }
-}
-
 status_err::resp_error_impl!(ServicePanic);
 
 status_err::status_error! {
@@ -220,15 +191,6 @@ status_err::status_error! {
         ErrPrefix::NO_ERR,
         0x00_00
     ]=>""
-}
-
-impl Serialize for NotAnError {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str("这异常不应该发生")
-    }
 }
 
 status_err::resp_error_impl!(NotAnError);

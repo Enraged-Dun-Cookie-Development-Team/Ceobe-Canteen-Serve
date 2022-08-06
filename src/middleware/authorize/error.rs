@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use bcrypt::BcryptError;
+use crypto_str::inner_encoders::bcrypt::BcryptError;
 use http::StatusCode;
 use orm_migrate::sql_models::admin_user::operate::OperateError;
 use serde::Serialize;
