@@ -1,3 +1,6 @@
+use std::borrow::Cow;
+
+use cache_verify::ModifyState;
 use chrono::Local;
 use mongodb::bson::{self, doc, Document};
 use serde::{Deserialize, Serialize};
@@ -46,6 +49,16 @@ impl From<Mansion> for ModelMansion {
     fn from(m: Mansion) -> Self {
         Self::with_modify_time(m, Default::default())
     }
+}
+
+impl ModifyState for ModelMansion {
+    type Identify = Self;
+
+    fn get_last_modify_time(&self) -> Cow<'_, chrono::NaiveDateTime> {
+        Cow::Owned(self.modify_time.to_chrono().naive_local())
+    }
+
+    fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
 
 impl ModelMansion {

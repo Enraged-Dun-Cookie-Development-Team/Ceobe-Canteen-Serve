@@ -1,4 +1,9 @@
 mod convert;
+use std::borrow::Cow;
+
+use cache_verify::ModifyState;
+use chrono::NaiveDateTime;
+
 use crate::models::mansion::preludes::*;
 
 crate::quick_struct! {
@@ -22,5 +27,19 @@ crate::quick_struct! {
     pub ViewInfo{
         forecast_status:Predict
         forecast:String
+    }
+}
+
+pub struct MansionIds(pub(super) Vec<String>);
+
+impl ModifyState for MansionIds {
+    type Identify = Vec<String>;
+
+    fn get_last_modify_time(&self) -> Cow<'_, chrono::NaiveDateTime> {
+        Cow::Owned(NaiveDateTime::from_timestamp(0, 0))
+    }
+
+    fn get_identify(&self) -> Cow<'_, Self::Identify> {
+        Cow::Borrowed(&self.0)
     }
 }
