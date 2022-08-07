@@ -13,7 +13,7 @@ use crate::{
 impl BakeryMansionFrontend {
     pub async fn get_mansion_with_time(
         PreHandling(mid): MidCheckerPretreatment,
-        modify: cache_verify::CacheVerify,
+        modify: modify_cache::CacheVerify,
     ) -> FLagMansionRResult<ViewMansionWithTime> {
         let (data, extra) = modify.is_modify(
             MansionDataMongoOperate::get_mansion_by_id(&mid.id).await?,
@@ -23,7 +23,7 @@ impl BakeryMansionFrontend {
     }
 
     pub async fn get_all_id(
-        mut modify: cache_verify::CacheVerify,
+        mut modify: modify_cache::CacheVerify,
     ) -> FLagMansionRResult<Vec<String>> {
         let ctrl = modify.cache_info.get_control();
         ctrl.set_max_age(Duration::from_secs(60 * 60 * 4));

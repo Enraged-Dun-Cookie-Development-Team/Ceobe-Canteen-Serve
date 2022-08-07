@@ -1,5 +1,5 @@
 [package]
-name = "cache-verify"
+name = "modify-cache"
 version = "0.1.0"
 edition = "2021"
 
