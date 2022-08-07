@@ -54,8 +54,8 @@ impl From<Mansion> for ModelMansion {
 impl ModifyState for ModelMansion {
     type Identify = Self;
 
-    fn get_last_modify_time(&self) -> Cow<'_, chrono::NaiveDateTime> {
-        Cow::Owned(self.modify_time.to_chrono().naive_local())
+    fn get_last_modify_time(&self) -> Option<Cow<'_, chrono::NaiveDateTime>> {
+        Some(Cow::Owned(self.modify_time.to_chrono().naive_local()))
     }
 
     fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
