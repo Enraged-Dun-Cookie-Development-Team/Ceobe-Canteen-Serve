@@ -31,6 +31,12 @@ crate::quick_struct! {
 
 pub struct MansionIds(pub(super) Vec<String>);
 
+impl MansionIds {
+    pub(super) fn into_inner(this: Option<Self>) -> Option<Vec<String>> {
+        this.map(|v| v.0)
+    }
+}
+
 impl ModifyState for MansionIds {
     type Identify = Vec<String>;
 

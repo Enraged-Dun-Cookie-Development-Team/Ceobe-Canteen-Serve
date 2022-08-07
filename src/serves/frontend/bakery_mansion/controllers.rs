@@ -15,7 +15,7 @@ impl BakeryMansionFrontend {
         PreHandling(mid): MidCheckerPretreatment,
         modify: modify_cache::CheckModify,
     ) -> FLagMansionRResult<ViewMansionWithTime> {
-        let (data, extra) = modify.is_modify(
+        let (data, extra) = modify.check_modify(
             MansionDataMongoOperate::get_mansion_by_id(&mid.id).await?,
         )?;
 
@@ -25,12 +25,15 @@ impl BakeryMansionFrontend {
     pub async fn get_all_id(
         mut modify: modify_cache::CheckModify,
     ) -> FLagMansionRResult<Vec<String>> {
-        let ctrl = modify.cache_info.get_control();
+        let ctrl = modify.cache_headers.get_control();
         ctrl.set_max_age(Duration::from_secs(60 * 60 * 4));
-        let (data, extra) = modify.is_modify(MansionIds(
+
+        let (data, extra) = modify.check_modify(MansionIds(
             MansionDataMongoOperate::get_all_mansion_id_list().await?,
         ))?;
 
-        RespResult::ok(data.map(|v| v.0)).with_flags(extra)
+        RespResult::ok(data)
+            .map(MansionIds::into_inner)
+            .with_flags(extra)
     }
 }

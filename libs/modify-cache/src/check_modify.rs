@@ -6,7 +6,7 @@ use axum::{
     extract::{FromRequest, OriginalUri, RequestParts},
 };
 use http::{
-    header::{ETAG, LAST_MODIFIED},
+    header::{CONTENT_TYPE, ETAG, LAST_MODIFIED},
     method::Method,
     StatusCode,
 };
@@ -22,7 +22,7 @@ use crate::{
 
 pub struct CheckModify {
     ctrl_header: ControlHeaders,
-    pub cache_info: CacheHeaders,
+    pub cache_headers: CacheHeaders,
 }
 
 #[async_trait]
@@ -40,7 +40,7 @@ impl FromRequest<Body> for CheckModify {
                 log::warn!("不是`GET` 或者 `HEAD` 方法,不获取任何内容");
                 Self {
                     ctrl_header: ControlHeaders::None,
-                    cache_info: Default::default(),
+                    cache_headers: Default::default(),
                 }
             }
             else {
@@ -62,7 +62,7 @@ impl FromRequest<Body> for CheckModify {
                     .unwrap_or(ControlHeaders::None);
                 Self {
                     ctrl_header,
-                    cache_info: CacheHeaders {
+                    cache_headers: CacheHeaders {
                         content_local: Some(uri),
                         ..Default::default()
                     },
@@ -73,7 +73,7 @@ impl FromRequest<Body> for CheckModify {
 }
 
 impl CheckModify {
-    pub fn is_modify<T: ModifyState>(
+    pub fn check_modify<T: ModifyState>(
         &self, data: T,
     ) -> VerifyResult<(Option<T>, ExtraFlags)> {
         let tag = data.get_entity_tag()?;
@@ -88,7 +88,8 @@ impl CheckModify {
                         (
                             None,
                             ExtraFlag::empty_body()
-                                + ExtraFlag::status(StatusCode::NOT_MODIFIED),
+                                + ExtraFlag::status(StatusCode::NOT_MODIFIED)
+                                + ExtraFlag::remove_header(CONTENT_TYPE),
                         )
                     }
                     CacheState::Update(v) => (Some(v), ().into()),
@@ -100,6 +101,7 @@ impl CheckModify {
                         (
                             None,
                             ExtraFlag::empty_body()
+                                + ExtraFlag::remove_header(CONTENT_TYPE)
                                 + ExtraFlag::status(StatusCode::NOT_MODIFIED),
                         )
                     }
@@ -113,7 +115,7 @@ impl CheckModify {
         extra_flags = extra_flags
         // entity tag
         + ExtraFlag::insert_header(ETAG, format!("\"{tag}\""))
-        + &self.cache_info;
+        + &self.cache_headers;
 
         if let Some(last_modify) = last_modify {
             // last modify
