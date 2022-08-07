@@ -13,20 +13,20 @@ use http::{
 use resp_result::{ExtraFlag, ExtraFlags};
 
 use crate::{
-    cache_ctrl::CacheInfo,
+    cache_ctrl::CacheHeaders,
     error::VerifyResult,
     headers::{self, ControlHeaders},
     time_format::{from_request_head, to_request_header},
     traits::{CacheState, ModifyState},
 };
 
-pub struct CacheVerify {
+pub struct CheckModify {
     ctrl_header: ControlHeaders,
-    pub cache_info: CacheInfo,
+    pub cache_info: CacheHeaders,
 }
 
 #[async_trait]
-impl FromRequest<Body> for CacheVerify {
+impl FromRequest<Body> for CheckModify {
     type Rejection = Infallible;
 
     async fn from_request(
@@ -62,7 +62,7 @@ impl FromRequest<Body> for CacheVerify {
                     .unwrap_or(ControlHeaders::None);
                 Self {
                     ctrl_header,
-                    cache_info: CacheInfo {
+                    cache_info: CacheHeaders {
                         content_local: Some(uri),
                         ..Default::default()
                     },
@@ -72,7 +72,7 @@ impl FromRequest<Body> for CacheVerify {
     }
 }
 
-impl CacheVerify {
+impl CheckModify {
     pub fn is_modify<T: ModifyState>(
         &self, data: T,
     ) -> VerifyResult<(Option<T>, ExtraFlags)> {

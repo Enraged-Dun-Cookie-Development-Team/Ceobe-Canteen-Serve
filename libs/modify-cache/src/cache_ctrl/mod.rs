@@ -9,13 +9,13 @@ use resp_result::{ExtraFlag, ExtraFlags};
 
 use self::control::CacheControl;
 #[derive(Debug, Default)]
-pub struct CacheInfo {
+pub struct CacheHeaders {
     pub(crate) content_local: Option<Uri>,
     pub(crate) vary_headers: Vec<HeaderName>,
     pub(crate) control: CacheControl,
 }
 
-impl CacheInfo {
+impl CacheHeaders {
     pub fn clean_content_local(&mut self) -> &mut Self {
         self.content_local = None;
         self
@@ -40,10 +40,10 @@ impl CacheInfo {
     pub fn get_control(&mut self) -> &mut CacheControl { &mut self.control }
 }
 
-impl<'c> Add<&'c CacheInfo> for ExtraFlags {
+impl<'c> Add<&'c CacheHeaders> for ExtraFlags {
     type Output = ExtraFlags;
 
-    fn add(mut self, rhs: &'c CacheInfo) -> Self::Output {
+    fn add(mut self, rhs: &'c CacheHeaders) -> Self::Output {
         if let Some(uri) = &rhs.content_local {
             self = self
                 + ExtraFlag::insert_header(CONTENT_LOCATION, uri.to_string());
@@ -66,11 +66,11 @@ impl<'c> Add<&'c CacheInfo> for ExtraFlags {
 mod test {
     use http::header::{AUTHORIZATION, IF_MODIFIED_SINCE, IF_NONE_MATCH};
 
-    use super::CacheInfo;
+    use super::CacheHeaders;
 
     #[test]
     fn test_extra_headers() {
-        let mut d = CacheInfo::default();
+        let mut d = CacheHeaders::default();
         d.add_vary_headers([IF_NONE_MATCH, IF_MODIFIED_SINCE, AUTHORIZATION]);
 
         println!("{d:?}")
