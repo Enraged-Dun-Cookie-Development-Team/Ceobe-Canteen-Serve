@@ -6,19 +6,26 @@ use serde::Serialize;
 use crate::{encode::encode, error::VerifyResult};
 
 pub trait ModifyState: Sized {
-    fn get_last_modify_time(&self) -> Cow<'_, NaiveDateTime>;
+    fn get_last_modify_time(&self) -> Option<Cow<'_, NaiveDateTime>> { None }
 
     type Identify: Serialize + Clone;
 
     fn get_identify(&self) -> Cow<'_, Self::Identify>;
 
-    fn verify_modify(self, modify_since: &NaiveDateTime) -> CacheState<Self> {
+    fn verify_modify(
+        self, modify_since: &NaiveDateTime,
+    ) -> Result<CacheState<Self>, Self> {
         let modify_time = self.get_last_modify_time();
-        if modify_time.as_ref() <= modify_since {
-            CacheState::NotModify
+        if let Some(modify_time) = modify_time {
+            Ok(if modify_time.as_ref() <= modify_since {
+                CacheState::NotModify
+            }
+            else {
+                CacheState::Update(self)
+            })
         }
         else {
-            CacheState::Update(self)
+            Err(self)
         }
     }
 

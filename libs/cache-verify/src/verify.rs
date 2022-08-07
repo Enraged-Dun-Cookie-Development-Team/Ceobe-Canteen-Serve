@@ -1,4 +1,4 @@
-use std::{convert::Infallible, time::Duration};
+use std::convert::Infallible;
 
 use async_trait::async_trait;
 use axum::{
@@ -6,14 +6,14 @@ use axum::{
     extract::{FromRequest, OriginalUri, RequestParts},
 };
 use http::{
-    header::{CACHE_CONTROL, CONTENT_LOCATION, ETAG, LAST_MODIFIED, VARY},
+    header::{ETAG, LAST_MODIFIED},
     method::Method,
-    uri::Uri,
     StatusCode,
 };
 use resp_result::{ExtraFlag, ExtraFlags};
 
 use crate::{
+    cache_ctrl::CacheInfo,
     error::VerifyResult,
     headers::{self, ControlHeaders},
     time_format::{from_request_head, to_request_header},
@@ -22,11 +22,7 @@ use crate::{
 
 pub struct CacheVerify {
     ctrl_header: ControlHeaders,
-    uri: Uri,
-    pub enable_content_local: bool,
-    pub enable_vary: bool,
-    pub max_age: Duration,
-    pub public_cache: bool,
+    pub cache_info: CacheInfo,
 }
 
 #[async_trait]
@@ -44,11 +40,7 @@ impl FromRequest<Body> for CacheVerify {
                 log::warn!("不是`GET` 或者 `HEAD` 方法,不获取任何内容");
                 Self {
                     ctrl_header: ControlHeaders::None,
-                    uri,
-                    enable_content_local: true,
-                    enable_vary: true,
-                    max_age: Duration::from_secs(28800),
-                    public_cache: true,
+                    cache_info: Default::default(),
                 }
             }
             else {
@@ -70,11 +62,10 @@ impl FromRequest<Body> for CacheVerify {
                     .unwrap_or(ControlHeaders::None);
                 Self {
                     ctrl_header,
-                    uri,
-                    enable_content_local: true,
-                    enable_vary: true,
-                    max_age: Duration::from_secs(28800),
-                    public_cache: true,
+                    cache_info: CacheInfo {
+                        content_local: Some(uri),
+                        ..Default::default()
+                    },
                 }
             },
         )
@@ -86,7 +77,9 @@ impl CacheVerify {
         &self, data: T,
     ) -> VerifyResult<(Option<T>, ExtraFlags)> {
         let tag = data.get_entity_tag()?;
-        let last_modify = to_request_header(&data.get_last_modify_time())?;
+        let last_modify = data
+            .get_last_modify_time()
+            .and_then(|v| to_request_header(&v).ok());
 
         let (data, mut extra_flags) = match &self.ctrl_header {
             ControlHeaders::IfNoneMatch(tags) => {
@@ -103,14 +96,16 @@ impl CacheVerify {
             }
             ControlHeaders::IfModifySince(date_time) => {
                 match data.verify_modify(date_time) {
-                    CacheState::NotModify => {
+                    Ok(CacheState::NotModify) => {
                         (
                             None,
                             ExtraFlag::empty_body()
                                 + ExtraFlag::status(StatusCode::NOT_MODIFIED),
                         )
                     }
-                    CacheState::Update(v) => (Some(v), ().into()),
+                    Err(v) | Ok(CacheState::Update(v)) => {
+                        (Some(v), ().into())
+                    }
                 }
             }
             ControlHeaders::None => (Some(data), ().into()),
@@ -118,37 +113,14 @@ impl CacheVerify {
         extra_flags = extra_flags
         // entity tag
         + ExtraFlag::insert_header(ETAG, format!("\"{tag}\""))
-        // last modify
-        + ExtraFlag::insert_header(LAST_MODIFIED,last_modify);
-        if self.enable_content_local {
-            // local
+        + &self.cache_info;
+
+        if let Some(last_modify) = last_modify {
+            // last modify
             extra_flags = extra_flags
-                + ExtraFlag::insert_header(
-                    CONTENT_LOCATION,
-                    &self.uri.to_string(),
-                );
-        }
-        if self.enable_vary {
-            // using cache with headers
-            extra_flags = extra_flags
-                + ExtraFlag::insert_header(VARY, "ETag, Last-Modified")
+                + ExtraFlag::insert_header(LAST_MODIFIED, last_modify)
         }
 
-        // cache config pub cache 12h
-        extra_flags = extra_flags
-            + ExtraFlag::insert_header(
-                CACHE_CONTROL,
-                format!(
-                    "{0}, s-maxage={1}, max-age={1}",
-                    if self.public_cache {
-                        "public"
-                    }
-                    else {
-                        "private"
-                    },
-                    self.max_age.as_secs()
-                ),
-            );
         Ok((data, extra_flags))
     }
 }
