@@ -8,6 +8,7 @@ use crate::input_loading::{
 pub struct StatusErrImpl {
     ident: Ident,
     vars: Vec<VariantInfo>,
+    resp_err: bool,
 }
 
 impl StatusErrorDeriveInfo {
@@ -24,6 +25,7 @@ impl StatusErrorDeriveInfo {
         Ok(StatusErrImpl {
             ident: self.ident,
             vars,
+            resp_err: self.resp_err,
         })
     }
 }
@@ -94,6 +96,13 @@ impl ToTokens for StatusErrImpl {
             }
         };
 
-        tokens.extend(impl_token)
+        tokens.extend(impl_token);
+
+        if self.resp_err {
+            let token = quote::quote! {
+                ::status_err::resp_error_impl!(#name);
+            };
+            tokens.extend(token)
+        }
     }
 }
