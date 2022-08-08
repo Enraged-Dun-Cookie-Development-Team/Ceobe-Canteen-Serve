@@ -18,7 +18,7 @@ impl serde::Serialize for StatusCode {
     where
         S: serde::Serializer,
     {
-        let info = format!("{}{:04}", self.prefix, self.code);
+        let info = format!("{}{:04X}", self.prefix, self.code);
 
         info.serialize(serializer)
     }
