@@ -85,7 +85,7 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
             VariantInnerInfo::Create(_) => {
                 quote::quote! {
                     Self::#ident #style =>{
-                        ::status_err::StatusErr::information(self)
+                        std::borrow::Cow::Owned(<Self as ToString>::to_string(self))
                     }
                 }
             }
