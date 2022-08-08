@@ -18,49 +18,36 @@ struct UserCounts {
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, status_err::StatusErr)]
 pub enum OperateError {
     #[error("SQL数据库异常")]
     Db(#[from] sea_orm::DbErr),
     #[error("指定用户不存在")]
+    #[status_err(err(
+        err_code = 0x00_07,
+        prefix = "ErrPrefix::UNAUTHORIZED",
+        http_code = "HttpCode::NOT_FOUND"
+    ))]
     UserNotExist,
     #[error("用户名冲突，[{username:?}]已经被使用")]
+    #[status_err(err(
+        err_code = 0x0008,
+        prefix = "ErrPrefix::UNAUTHORIZED",
+        http_code = "HttpCode::BAD_REQUEST"
+    ))]
     ConflictUsername { username: String },
     #[error("密码未更改")]
+    #[status_err(err(
+        err_code = 0x0009,
+        prefix = "ErrPrefix::UNAUTHORIZED",
+        http_code = "HttpCode::BAD_REQUEST"
+    ))]
     PasswordNoChange,
     #[error("密码校验错误")]
+    #[status_err(err(
+        err_code = 0x0004,
+        prefix = "ErrPrefix::UNAUTHORIZED",
+        http_code = "HttpCode::UNAUTHORIZED"
+    ))]
     PasswordWrong,
-}
-
-impl status_err::StatusErr for OperateError {
-    fn prefix(&self) -> ErrPrefix {
-        match self {
-            Db(db) => db.prefix(),
-            UserNotExist
-            | ConflictUsername { username: _ }
-            | PasswordNoChange
-            | PasswordWrong => ErrPrefix::UNAUTHORIZED,
-        }
-    }
-
-    fn code(&self) -> u16 {
-        match self {
-            Db(db) => db.code(),
-            PasswordWrong => 0x0004,
-            UserNotExist => 0x00_07,
-            ConflictUsername { username: _ } => 0x0008,
-            PasswordNoChange => 0x0009,
-        }
-    }
-
-    fn http_code(&self) -> HttpCode {
-        match self {
-            Db(db) => db.http_code(),
-            PasswordWrong => HttpCode::UNAUTHORIZED,
-            UserNotExist => HttpCode::NOT_FOUND,
-            ConflictUsername { username: _ } | PasswordNoChange => {
-                HttpCode::BAD_REQUEST
-            }
-        }
-    }
 }
