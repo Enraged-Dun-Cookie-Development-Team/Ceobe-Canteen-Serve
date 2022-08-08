@@ -24,11 +24,9 @@ mod test {
             r#"
             #[derive(StatusErr)]
             pub enum Error{
-                #[status_err(from_inner)]
                 UrlParse(url::ParseError),
                 #[status_err(
                     err(
-                        msg = "Token [{0:?}] Not Found",
                         resp_msg = "token [{0:?}] 未找到",
                         err_code = 0x0023,
                         prefix = "Prefix::CHECK",
