@@ -6,7 +6,6 @@ use crate::utils::time_format::naive_date_time_format;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct VideoItem {
-    pub bv: String,
     pub start_time: String,
     pub over_time: String,
     pub title: String,
@@ -19,7 +18,6 @@ pub struct VideoItem {
 impl From<model_video::Model> for VideoItem {
     fn from(
         model_video::Model {
-            bv,
             start_time,
             over_time,
             title,
@@ -30,7 +28,6 @@ impl From<model_video::Model> for VideoItem {
         }: model_video::Model,
     ) -> Self {
         Self {
-            bv,
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
             title,
