@@ -3,8 +3,8 @@ use syn::{Expr, Ident};
 
 #[derive(Debug)]
 pub struct FormatStr {
-    raw_fmt: String,
-    args: Vec<Args>,
+    pub(crate) raw_fmt: String,
+    pub(crate) args: Vec<Args>,
 }
 
 impl FromMeta for FormatStr {
@@ -53,7 +53,7 @@ impl FromMeta for FormatStr {
     }
 }
 #[derive(Debug)]
-enum Args {
+pub(crate) enum Args {
     List(Expr),
     NameValue(Ident, Expr),
 }

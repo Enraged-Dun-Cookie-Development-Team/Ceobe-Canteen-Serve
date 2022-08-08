@@ -10,6 +10,8 @@ pub struct StatusErrorDeriveInfo {
     pub(crate) data: ast::Data<VariantInfo, Ignored>,
 }
 
+
+
 #[cfg(test)]
 mod test {
     use darling::FromDeriveInput;

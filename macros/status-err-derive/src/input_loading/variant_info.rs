@@ -1,12 +1,10 @@
 use darling::{ast, FromMeta, FromVariant};
 use syn::{spanned::Spanned, Expr, Ident, LitInt};
 
-use super::{field_info::FieldInfo, format_str::FormatStr};
+use super::field_info::FieldInfo;
 
 #[derive(Debug, FromMeta)]
 pub struct NormalVariant {
-    #[darling(rename = "msg")]
-    pub(crate) message: FormatStr,
     pub(crate) resp_msg: Option<String>,
     #[darling(rename = "err_code")]
     pub(crate) error_code: LitInt,
@@ -72,8 +70,23 @@ pub struct VariantInfo {
     pub(crate) fields: ast::Fields<FieldInfo>,
     #[darling(default)]
     pub(crate) err: VariantInnerInfo,
-    #[darling(default)]
-    pub(crate) from_inner: bool,
+}
+
+impl VariantInfo {
+    pub fn checking(&self) -> syn::Result<()> {
+        if matches!(self.err, VariantInnerInfo::Transparent)
+            && self.fields.is_tuple()
+            && self.fields.len() == 1
+        {
+        }
+        else {
+            Err(syn::Error::new(
+                self.ident.span(),
+                "Transparent Only Support Tuple with 1 Field",
+            ))?
+        }
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -89,7 +102,6 @@ mod test {
             r#"
         #[status_err(
             err(
-                msg("{}avc{a},{b}","\"12345\"",a = "1234"),
                 resp_msg = "avc",
                 err_code = 0x0012,
                 prefix = "Prefix::CHECK"
@@ -107,7 +119,7 @@ mod test {
     fn test_transparent() {
         let meta: Variant = syn::parse_str(
             r#"
-        #[status_err(err = "transparent",from_inner)]
+        #[status_err]
         Var(String)
         "#,
         )

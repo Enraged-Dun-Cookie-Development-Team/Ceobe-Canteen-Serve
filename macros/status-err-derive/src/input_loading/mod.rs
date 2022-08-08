@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-mod derive_info;
-mod field_info;
-mod format_str;
-mod variant_info;
+pub(crate) mod derive_info;
+pub(crate) mod field_info;
+pub(crate) mod format_str;
+pub(crate) mod variant_info;
