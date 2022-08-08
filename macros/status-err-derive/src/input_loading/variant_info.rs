@@ -1,12 +1,12 @@
 use darling::{ast, FromMeta, FromVariant};
 use syn::{spanned::Spanned, Expr, Ident, LitInt};
 
-use super::field_info::FieldInfo;
+use super::{field_info::FieldInfo, format_str::FormatStr};
 
 #[derive(Debug, FromMeta)]
 pub struct NormalVariant {
     #[darling(rename = "msg")]
-    pub(crate) message: String,
+    pub(crate) message: FormatStr,
     pub(crate) resp_msg: Option<String>,
     #[darling(rename = "err_code")]
     pub(crate) error_code: LitInt,
@@ -87,7 +87,14 @@ mod test {
     fn test_from_meta() {
         let meta: Variant = syn::parse_str(
             r#"
-        #[status_err(err(msg = "avc{a},{b}",resp_msg="avc",err_code = 0x0012,prefix = "Prefix::CHECK"))]
+        #[status_err(
+            err(
+                msg("{}avc{a},{b}","\"12345\"",a = "1234"),
+                resp_msg = "avc",
+                err_code = 0x0012,
+                prefix = "Prefix::CHECK"
+            )
+        )]
         Var(String)
         "#,
         )
