@@ -21,5 +21,4 @@ pub enum TestErr {
         http_code = "HttpCode::NOT_FOUND"
     ))]
     Else { start: String },
-
 }

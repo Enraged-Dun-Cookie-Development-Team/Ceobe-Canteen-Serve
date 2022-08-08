@@ -9,10 +9,8 @@ pub struct StatusErrorDeriveInfo {
     pub(crate) ident: Ident,
     pub(crate) data: ast::Data<VariantInfo, Ignored>,
     #[darling(default)]
-    pub(crate) resp_err:bool
+    pub(crate) resp_err: bool,
 }
-
-
 
 #[cfg(test)]
 mod test {

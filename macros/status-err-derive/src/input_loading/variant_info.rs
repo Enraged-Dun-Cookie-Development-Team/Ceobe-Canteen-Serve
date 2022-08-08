@@ -12,6 +12,7 @@ pub struct NormalVariant {
     pub(crate) http_code: Option<Expr>,
 }
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Default)]
 pub enum VariantInnerInfo {
     #[default]

@@ -11,7 +11,7 @@ pub struct InfoImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_info_impl<'s>(err_name: &'s Ident) -> InfoImplToken<'s> {
+    pub fn get_info_impl(err_name: &Ident) -> InfoImplToken<'_> {
         InfoImplToken {
             error_name: err_name,
         }
@@ -51,7 +51,7 @@ pub struct RespMsgImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_resp_msg_impl<'s>(&'s self) -> RespMsgImplToken<'s> {
+    pub fn get_resp_msg_impl(&self) -> RespMsgImplToken<'_> {
         RespMsgImplToken {
             ident: &self.ident,
             info: &self.err,
@@ -100,7 +100,7 @@ pub struct PrefixImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_prefix_impl<'s>(&'s self) -> PrefixImplToken<'s> {
+    pub fn get_prefix_impl(& self) -> PrefixImplToken<'_> {
         PrefixImplToken {
             ident: &self.ident,
             info: &self.err,
@@ -139,7 +139,7 @@ pub struct CodeImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_code_impl<'s>(&'s self) -> CodeImplToken<'s> {
+    pub fn get_code_impl(& self) -> CodeImplToken<'_> {
         CodeImplToken {
             ident: &self.ident,
             info: &self.err,
@@ -180,7 +180,7 @@ pub struct HttpCodeImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_http_code_impl<'s>(&'s self) -> HttpCodeImplToken<'s> {
+    pub fn get_http_code_impl(&self) -> HttpCodeImplToken<'_> {
         HttpCodeImplToken {
             ident: &self.ident,
             info: &self.err,

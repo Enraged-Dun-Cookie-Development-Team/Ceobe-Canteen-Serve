@@ -25,10 +25,10 @@ impl FromMeta for FormatStr {
         let mut iter = items.iter();
         let fmt_str = iter
             .next()
-            .ok_or(darling::Error::missing_field("Format Str"))?;
+            .ok_or_else(||darling::Error::missing_field("Format Str"))?;
         let fmt_str = String::from_nested_meta(fmt_str)?;
 
-        let v = iter.map(|meta| Args::from_nested_meta(meta)).fold(
+        let v = iter.map(Args::from_nested_meta).fold(
             darling::Result::Ok(Vec::new()),
             |vec, args| {
                 let args = args?;
