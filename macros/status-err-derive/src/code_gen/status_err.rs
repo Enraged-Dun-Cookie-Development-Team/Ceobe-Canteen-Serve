@@ -42,7 +42,7 @@ impl ToTokens for StatusErrImpl {
         let resp_msg_impl = quote::quote! {
             #[inline]
             fn respond_msg(&self) -> std::borrow::Cow<'_, str> {
-                match Self{
+                match self{
                     #(#resp_msg_impl_iter),*
                 }
             }
@@ -53,7 +53,7 @@ impl ToTokens for StatusErrImpl {
         let prefix_impl = quote::quote! {
             #[inline]
             fn prefix(&self) -> ::status_err::ErrPrefix {
-                match Self{
+                match self{
                     #(#prefix_impl_iter),*
                 }
             }

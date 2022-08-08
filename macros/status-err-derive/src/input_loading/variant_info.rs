@@ -74,18 +74,20 @@ pub struct VariantInfo {
 
 impl VariantInfo {
     pub fn checking(&self) -> syn::Result<()> {
-        if matches!(self.err, VariantInnerInfo::Transparent)
-            && self.fields.is_tuple()
-            && self.fields.len() == 1
-        {
+        match self.err {
+            VariantInnerInfo::Transparent => {
+                if self.fields.is_tuple() && self.fields.len() == 1 {
+                    Ok(())
+                }
+                else {
+                    Err(syn::Error::new(
+                        self.ident.span(),
+                        "Transparent Only Support Tuple with 1 Field",
+                    ))
+                }
+            }
+            VariantInnerInfo::Create(_) => Ok(()),
         }
-        else {
-            Err(syn::Error::new(
-                self.ident.span(),
-                "Transparent Only Support Tuple with 1 Field",
-            ))?
-        }
-        Ok(())
     }
 }
 

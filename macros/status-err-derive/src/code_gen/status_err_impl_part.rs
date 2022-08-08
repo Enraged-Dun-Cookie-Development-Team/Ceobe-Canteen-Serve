@@ -11,9 +11,7 @@ pub struct InfoImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_info_impl<'s>(
-        err_name: &'s Ident,
-    ) -> InfoImplToken<'s> {
+    pub fn get_info_impl<'s>(err_name: &'s Ident) -> InfoImplToken<'s> {
         InfoImplToken {
             error_name: err_name,
         }
@@ -69,7 +67,7 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    <Self>::#ident(ref inner) => {
+                    Self::#ident(ref inner) => {
                         ::status_err::StatusErr::respond_msg(inner)
                     }
                 }
@@ -79,14 +77,14 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
                 ..
             }) => {
                 quote::quote! {
-                    <Self>::#ident #style =>{
-                        std::borrow::Cow::Borrow(#msg)
+                    Self::#ident #style =>{
+                        std::borrow::Cow::Borrowed(#msg)
                     }
                 }
             }
             VariantInnerInfo::Create(_) => {
                 quote::quote! {
-                    <Self>::#ident #style =>{
+                    Self::#ident #style =>{
                         ::status_err::StatusErr::information(self)
                     }
                 }
@@ -118,14 +116,14 @@ impl<'s> ToTokens for PrefixImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    <Self>::#ident(ref inner) => {
+                    Self::#ident(ref inner) => {
                         ::status_err::StatusErr::prefix(inner)
                     }
                 }
             }
             VariantInnerInfo::Create(NormalVariant { prefix, .. }) => {
                 quote::quote! {
-                    <Self>::#ident #style =>{
+                    Self::#ident #style =>{
                         #prefix
                     }
                 }
@@ -157,7 +155,7 @@ impl<'s> ToTokens for CodeImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    <Self>::#ident(ref inner) => {
+                    Self::#ident(ref inner) => {
                         ::status_err::StatusErr::code(inner)
                     }
                 }
@@ -166,7 +164,7 @@ impl<'s> ToTokens for CodeImplToken<'s> {
                 error_code, ..
             }) => {
                 quote::quote! {
-                    <Self>::#ident #style =>{
+                    Self::#ident #style =>{
                         #error_code
                     }
                 }
@@ -198,8 +196,8 @@ impl<'s> ToTokens for HttpCodeImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    <Self>::#ident(ref inner) => {
-                        ::status_err::StatusErr::respond_msg(inner)
+                    Self::#ident(ref inner) => {
+                        ::status_err::StatusErr::http_code(inner)
                     }
                 }
             }
@@ -208,14 +206,14 @@ impl<'s> ToTokens for HttpCodeImplToken<'s> {
                 ..
             }) => {
                 quote::quote! {
-                    <Self>::#ident #style =>{
+                    Self::#ident #style =>{
                         #code
                     }
                 }
             }
             VariantInnerInfo::Create(_) => {
                 quote::quote! {
-                    <Self>::#ident #style =>{
+                    Self::#ident #style =>{
                         ::status_err::StatusErr::status(self).http_code()
                     }
                 }
