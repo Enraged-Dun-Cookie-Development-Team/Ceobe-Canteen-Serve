@@ -100,7 +100,7 @@ pub struct PrefixImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_prefix_impl(& self) -> PrefixImplToken<'_> {
+    pub fn get_prefix_impl(&self) -> PrefixImplToken<'_> {
         PrefixImplToken {
             ident: &self.ident,
             info: &self.err,
@@ -139,7 +139,7 @@ pub struct CodeImplToken<'s> {
 }
 
 impl VariantInfo {
-    pub fn get_code_impl(& self) -> CodeImplToken<'_> {
+    pub fn get_code_impl(&self) -> CodeImplToken<'_> {
         CodeImplToken {
             ident: &self.ident,
             info: &self.err,
