@@ -13,4 +13,5 @@ quote = "1"
 darling = "0.14"
 
 [dev-dependencies]
-thiserror = "1"
+status-err = { path = "../../libs/status-err" }
+resp-result = "0.3"
