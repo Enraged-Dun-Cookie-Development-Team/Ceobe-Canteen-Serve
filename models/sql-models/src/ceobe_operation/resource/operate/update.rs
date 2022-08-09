@@ -1,6 +1,3 @@
-
 use super::CeobeOperationResourceSqlOperate;
 
-impl CeobeOperationResourceSqlOperate {
-    
-}
+impl CeobeOperationResourceSqlOperate {}

@@ -25,7 +25,7 @@ pub struct Model {
     pub id: i32,
     #[sub_model(ignore("Countdown"))]
     pub(in crate::ceobe_operation::resource) ty: ResourceType,
-    
+    // data
     pub message: String,
     pub banner_info: String,
     pub countdown_end: DateTime,

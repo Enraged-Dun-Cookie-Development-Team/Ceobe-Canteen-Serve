@@ -1,9 +1,9 @@
 pub mod create;
-pub mod update;
 pub mod retrieve;
+pub mod update;
 
-use thiserror::Error;
 use status_err::{ErrPrefix, StatusErr};
+use thiserror::Error;
 
 pub struct CeobeOperationResourceSqlOperate;
 
