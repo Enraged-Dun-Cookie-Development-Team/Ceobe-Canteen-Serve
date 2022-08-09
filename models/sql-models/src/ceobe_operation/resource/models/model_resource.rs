@@ -71,6 +71,11 @@ impl ActiveModel {
         self.modify_at = Set(now);
     }
 
+    pub fn now_create_with_time(&mut self, now: chrono::NaiveDateTime) {
+        self.create_at = Set(now);
+        self.modify_at = Set(now)
+    }
+
     // 更新操作
     pub fn now_modify(&mut self) {
         let now = Local::now().naive_local();
