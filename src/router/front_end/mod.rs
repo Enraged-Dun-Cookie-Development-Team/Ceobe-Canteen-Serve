@@ -3,6 +3,7 @@ mod ceobe_operation;
 use axum::Router;
 pub use bakery_mansion::BakeryMansionFrontend;
 pub use ceobe_operation::CeobeOperationVideoFrontend;
+pub use ceobe_operation::CeobeOperationAnnouncementFrontend;
 
 use self::{
     bakery_mansion::bakery_mansion_router,

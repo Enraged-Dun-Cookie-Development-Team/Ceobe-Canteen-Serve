@@ -1,7 +1,8 @@
 use axum::extract::rejection::QueryRejection;
+use orm_migrate::sql_models::ceobe_operation::announcement;
 use resp_result::RespResult;
 
-use crate::{error_generate, serves::backend::ceobe_operation::announcement};
+use crate::{error_generate};
 
 error_generate! {
     pub CeobeOperationAnnouncementError
@@ -10,4 +11,4 @@ error_generate! {
     DbOperate = announcement::operate::OperateError
 }
 
-pub(super) type VideoRespResult<T> = RespResult<T, CeobeOperationAnnouncementError>;
+pub(super) type AnnouncementRespResult<T> = RespResult<T, CeobeOperationAnnouncementError>;
