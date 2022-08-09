@@ -63,8 +63,10 @@ where
             Some(header) => header,
             None => {
                 log::error!("获取用户登录信息失败");
-                return AuthorizeFutState::new_error(AuthorizeError::NoToken)
-                    .into();
+                return AuthorizeFutState::new_error(
+                    AuthorizeError::TokenNotFound,
+                )
+                .into();
             }
         };
 

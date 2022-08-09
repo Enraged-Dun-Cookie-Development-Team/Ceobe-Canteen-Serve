@@ -6,18 +6,7 @@ use axum::{
 };
 use http::Request;
 use resp_result::RespResult;
-use serde::Serialize;
 use status_err::ErrPrefix;
-
-struct T;
-impl Serialize for T {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        serializer.serialize_str("12313")
-    }
-}
 
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
@@ -46,78 +35,14 @@ impl Serialize for T {
 ///     ```
 macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
-        #[derive(Debug)]
+        #[derive(Debug, status_err::ThisError, status_err::StatusErr)]
+        #[status_err(resp_err)]
         $v enum $err_name{
             $(
-                $v_name($inner_err)
+                #[error(transparent)]
+                #[status_err(err = "transparent")]
+                $v_name(#[from] $inner_err)
             ),+
-        }
-        impl std::error::Error for $err_name{}
-        impl std::fmt::Display for $err_name{
-            #[inline]
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                match self{
-                    $(
-                        Self::$v_name(err)=>{write!(f, "{}::{} => {}",stringify!($err_name), stringify!($v_name), err)}
-                    ),+
-                }
-            }
-        }
-        /// 实现 status Error 可供下一级封装使用
-        impl status_err::StatusErr for $err_name{
-            #[inline]
-            fn respond_msg(&self) -> std::borrow::Cow<'_, str>{
-                match self{
-                    $(
-                        Self::$v_name(err) => {err.respond_msg()}
-                    ),+
-                }
-            }
-            #[inline]
-            fn prefix(&self) -> status_err::ErrPrefix{
-                match self{
-                    $(
-                        Self::$v_name(err) => {err.prefix()}
-                    ),+
-                }
-            }
-            #[inline]
-            fn code(&self) -> u16{
-                match self{
-                    $(
-                        Self::$v_name(err) => {err.code()}
-                    ),+
-                }
-            }
-
-            #[inline]
-            fn http_code(&self) -> http::StatusCode{
-                match self{
-                    $(
-                        Self::$v_name(err) => {err.http_code()}
-                    ),+
-                }
-            }
-        }
-
-        // 实现 Resp -error 可以作为RespResult的异常
-        status_err::resp_error_impl!($err_name);
-        // 转换代码
-        $(
-            impl From<$inner_err> for $err_name{
-                #[inline]
-                fn from(src: $inner_err) -> Self {
-                    Self::$v_name(src)
-                }
-            }
-
-        )+
-
-        impl From<std::convert::Infallible> for $err_name{
-            #[inline]
-            fn from(_: std::convert::Infallible) -> Self {
-                unreachable!()
-            }
         }
     };
     ($v:vis $err_name:ident = $msg:literal)=>{
