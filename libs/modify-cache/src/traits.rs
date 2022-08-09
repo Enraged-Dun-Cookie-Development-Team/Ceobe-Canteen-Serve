@@ -30,7 +30,7 @@ pub trait ModifyState: Sized {
     }
 
     fn verify_entity_tag(
-        self, entity_tag: &HashSet<String>,self_tag:&str
+        self, entity_tag: &HashSet<String>, self_tag: &str,
     ) -> VerifyResult<CacheState<Self>> {
         if entity_tag.contains(self_tag) {
             Ok(CacheState::NotModify)
