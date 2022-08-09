@@ -1,5 +1,5 @@
 mod convert;
-use crate::models::mansion::preludes::*;
+use crate::models::mongo::mansion::preludes::*;
 
 crate::quick_struct! {
     pub ViewMansionWithTime {

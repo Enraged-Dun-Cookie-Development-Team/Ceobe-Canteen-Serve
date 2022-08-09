@@ -1,4 +1,4 @@
-use orm_migrate::sql_models::ceobe_operation::announcement::models::model_announcement;
+use crate::models::sql::announcement::models::model_announcement;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -12,7 +12,6 @@ pub struct AnnouncementItem {
     pub notice: bool,
 }
 
-// TODO:修改view拼接content与img_url
 impl From<model_announcement::Model> for AnnouncementItem {
     fn from(
         model_announcement::Model {
