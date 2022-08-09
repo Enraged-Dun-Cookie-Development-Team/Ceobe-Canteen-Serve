@@ -83,7 +83,7 @@ impl CheckModify {
 
         let (data, mut extra_flags) = match &self.ctrl_header {
             ControlHeaders::IfNoneMatch(tags) => {
-                match data.verify_entity_tag(tags)? {
+                match data.verify_entity_tag(tags,&tag)? {
                     CacheState::NotModify => {
                         (
                             None,
