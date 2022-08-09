@@ -1,0 +1,17 @@
+[package]
+name = "status-err-derive"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "1"
+quote = "1"
+darling = "0.14"
+
+[dev-dependencies]
+status-err = { path = "../../libs/status-err" }
+resp-result = "0.3"

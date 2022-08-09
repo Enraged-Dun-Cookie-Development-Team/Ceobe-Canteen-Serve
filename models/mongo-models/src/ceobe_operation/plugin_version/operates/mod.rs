@@ -8,36 +8,18 @@ use super::models::{PluginVersion, PluginVersionChecked, Version};
 
 pub struct PluginDbOperation;
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug, thiserror::Error, StatusErr)]
 pub enum OperateError {
     #[error("数据库查询异常")]
     Db(#[from] MongoDbError),
 
     #[error("版本号已经存在 {0:?}")]
+    #[status_err(err(
+        prefix = "ErrPrefix::CHECKER",
+        err_code = 0x000B,
+        http_code = "HttpCode::CONFLICT"
+    ))]
     ConflictVersion(Version),
-}
-
-impl StatusErr for OperateError {
-    fn prefix(&self) -> ErrPrefix {
-        match self {
-            OperateError::Db(inner) => inner.prefix(),
-            OperateError::ConflictVersion(_) => ErrPrefix::CHECKER,
-        }
-    }
-
-    fn code(&self) -> u16 {
-        match self {
-            OperateError::Db(inner) => inner.code(),
-            OperateError::ConflictVersion(_) => 0x000B,
-        }
-    }
-
-    fn http_code(&self) -> HttpCode {
-        match self {
-            OperateError::ConflictVersion(_) => HttpCode::CONFLICT,
-            _ => self.status().http_code(),
-        }
-    }
 }
 
 fn get_plugin_version_collection(

@@ -16,6 +16,10 @@ mongodb = "2"
 chrono = "0.4"
 bincode= "1"
 
+# marco
+status-err-derive = {path = "../../macros/status-err-derive"}
+thiserror = "1"
+
 [dependencies.serde]
 version = "1.0"
 
