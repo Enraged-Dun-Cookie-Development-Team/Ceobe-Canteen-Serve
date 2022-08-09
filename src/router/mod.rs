@@ -6,7 +6,7 @@ pub use back_end::{
     BakeryMansionBackend, CeobeOpVersion, CeobeOperationAnnouncement,
     CeobeOperationVideo, UserAuthBackend, 
 };
-pub use front_end::{BakeryMansionFrontend, CeobeOperationVideoFrontend, CeobeOperationAnnouncementFrontend};
+pub use front_end::{BakeryMansionFrontend, CeobeOperationVideoFrontend, CeobeOperationAnnouncementFrontend, CeobeOperationVersionFrontend};
 
 use self::{back_end::back_end_router, front_end::front_end_router};
 
