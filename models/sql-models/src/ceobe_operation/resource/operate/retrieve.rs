@@ -38,7 +38,10 @@ impl CeobeOperationResourceSqlOperate {
             .stream(db)
             .await?;
 
-        let data = resp_stream.next().await.ok_or(OperateError::NoneAllAvailable)??;
+        let data = resp_stream
+            .next()
+            .await
+            .ok_or(OperateError::NoneAllAvailable)??;
 
         // not only one raa
         if resp_stream.next().await.is_some() {

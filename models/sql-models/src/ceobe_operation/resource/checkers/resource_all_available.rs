@@ -25,7 +25,9 @@ pub struct ResourceAllAvailableChecker {
 }
 
 impl ResourceAllAvailableCheck {
-    pub(super) fn into_active_with_create(self,now:NaiveDateTime) -> model_resource::ActiveModel {
+    pub(super) fn into_active_with_create(
+        self, now: NaiveDateTime,
+    ) -> model_resource::ActiveModel {
         let mut active = model_resource::ActiveModel {
             start_time: Set(self.start_time),
             over_time: Set(self.over_time),
