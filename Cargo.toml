@@ -96,3 +96,6 @@ path = "./migrate/sql-migration"
 
 [dependencies.mongo-migration]
 path = "./migrate/mongo-migration"
+
+[dependencies.modify-cache]
+path = "./libs/modify-cache"

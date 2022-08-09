@@ -49,6 +49,20 @@ std::string::FromUtf8Error[
     5:StatusCode::INTERNAL_SERVER_ERROR
     ] -> "字符串编码异常"
 );
+
+status_error!(
+    http::header::ToStrError[
+        ErrPrefix::PARSE,
+        0x0006: StatusCode::BAD_REQUEST
+    ] -> "http 请求头内容解析异常"
+);
+status_error!(
+    http::header::InvalidHeaderValue[
+        ErrPrefix::PARSE,
+        0x0007: StatusCode::INTERNAL_SERVER_ERROR
+    ] -> "非法 Http 请求头内容"
+);
+
 // check prefix
 status_error!(
 Infallible[
@@ -79,6 +93,12 @@ QueryRejection[
     ErrPrefix::CHECKER,
     0x00_07
     ] -> "请求的`Query`解析失败"
+);
+status_error!(
+bincode::Error[
+    ErrPrefix::CHECKER,
+    0x00_0C
+    ] -> "`Bincode` 序列化/反序列化异常 "
 );
 
 // authorized prefix
