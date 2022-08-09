@@ -2,6 +2,7 @@ use checker::prefabs::date_time_format::DateTimeFormatChecker;
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
+use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
@@ -21,6 +22,7 @@ pub struct CountdownCheck {
     checked = CountdownCheck,
     error = CheckError
 )]
+#[derive(Debug, Deserialize)]
 pub struct CountdownChecker {
     message: MaxRangeLimit<String, 255>,
     banner_info: MaxRangeLimit<String, 255>,

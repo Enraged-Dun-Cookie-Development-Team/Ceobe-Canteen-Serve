@@ -9,15 +9,10 @@ use crate::get_zero_data_time;
 #[sea_orm(table_name = "ceobe_operation_resource")]
 #[sub_model(
     none(
-        vis = "pub(in crate::ceobe_operation::resource)",
         name = "ResourceAllAvailable",
         extra(derive(Debug, Clone, FromQueryResult))
     ),
-    all(
-        vis = "pub(in crate::ceobe_operation::resource)",
-        name = "Countdown",
-        extra(derive(Debug, Clone, FromQueryResult))
-    )
+    all(name = "Countdown", extra(derive(Debug, Clone, FromQueryResult)))
 )]
 pub struct Model {
     #[sub_model(ignore("Countdown"))]

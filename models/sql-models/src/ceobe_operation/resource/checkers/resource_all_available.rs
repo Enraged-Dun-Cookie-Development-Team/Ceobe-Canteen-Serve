@@ -1,6 +1,7 @@
 use checker::prefabs::date_time_format::DateTimeFormatChecker;
 use chrono::NaiveDateTime;
 use sea_orm::Set;
+use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
@@ -17,6 +18,7 @@ pub struct ResourceAllAvailableCheck {
     checked = ResourceAllAvailableCheck,
     error = CheckError
 )]
+#[derive(Debug, Deserialize)]
 pub struct ResourceAllAvailableChecker {
     start_time: DateTimeFormatChecker,
     over_time: DateTimeFormatChecker,
