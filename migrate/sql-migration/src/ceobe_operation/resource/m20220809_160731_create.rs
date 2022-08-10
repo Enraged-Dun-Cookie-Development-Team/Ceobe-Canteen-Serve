@@ -18,7 +18,7 @@ impl MigrationTrait for Migration {
                 ColumnDef::new(Ty)
                     .enumeration(
                         "resource_type",
-                        ["resources_all_available", "countdown"],
+                        ["resource_all_available", "countdown"],
                     )
                     .not_null()
                     .default("countdown"),
