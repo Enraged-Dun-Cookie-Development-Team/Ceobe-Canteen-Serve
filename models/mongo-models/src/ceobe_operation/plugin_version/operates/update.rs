@@ -1,12 +1,12 @@
 use super::{
     get_plugin_version_collection, OperateError, PluginDbOperation,
-    PluginVersionChecked,
+    PluginVersionChecked, OperateResult,
 };
 use crate::RecordUnit;
 impl PluginDbOperation {
     pub async fn update_new(
         version: PluginVersionChecked,
-    ) -> Result<(), OperateError> {
+    ) -> OperateResult<()> {
         let db = get_plugin_version_collection()?;
 
         let plugin_version = version.into_with_time_record(RecordUnit::new());

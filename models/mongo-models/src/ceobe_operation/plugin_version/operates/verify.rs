@@ -1,13 +1,13 @@
 use mongo_connection::CollectionGuard;
 use mongodb::bson::doc;
 
-use super::{OperateError, PluginDbOperation, Version};
+use super::{OperateError, PluginDbOperation, Version, OperateResult};
 use crate::ceobe_operation::plugin_version::models::PluginVersion;
 
 impl PluginDbOperation {
     pub async fn verify_version(
         version: Version, collect: &CollectionGuard<PluginVersion>,
-    ) -> Result<(), OperateError> {
+    ) -> OperateResult<()> {
         // version can not be the same even is delete
         let filter = doc! {
             "version" : [
@@ -15,7 +15,6 @@ impl PluginDbOperation {
                 version.1,
                 version.2,
             ]
-
         };
         // checker version exist
         if collect
