@@ -16,7 +16,10 @@ use orm_migrate::{
 };
 use tokio::sync::oneshot;
 use tower::ServiceBuilder;
-use tower_http::{catch_panic::CatchPanicLayer, trace::TraceLayer};
+use tower_http::{
+    catch_panic::CatchPanicLayer, compression::CompressionLayer,
+    trace::TraceLayer,
+};
 use utils::user_authorize;
 
 use crate::error::{not_exist, serve_panic};
@@ -81,7 +84,8 @@ async fn task(config: GlobalConfig) {
             ServiceBuilder::new()
                 .layer(CatchPanicLayer::custom(serve_panic))
                 .layer(Extension(Arc::new(config)))
-                .layer(TraceLayer::new_for_http()),
+                .layer(TraceLayer::new_for_http())
+                .layer(CompressionLayer::new()),
         );
 
     let (tx, rx) = oneshot::channel();
