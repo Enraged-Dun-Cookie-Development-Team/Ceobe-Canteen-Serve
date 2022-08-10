@@ -1,6 +1,11 @@
 mod convert;
 use crate::models::mongo::mansion::preludes::*;
 
+use std::borrow::Cow;
+
+use modify_cache::ModifyState;
+
+
 crate::quick_struct! {
     pub ViewMansionWithTime {
         id:String
@@ -22,5 +27,21 @@ crate::quick_struct! {
     pub ViewInfo{
         forecast_status:Predict
         forecast:String
+    }
+}
+
+pub struct MansionIds(pub(super) Vec<String>);
+
+impl MansionIds {
+    pub(super) fn into_inner(this: Option<Self>) -> Option<Vec<String>> {
+        this.map(|v| v.0)
+    }
+}
+
+impl ModifyState for MansionIds {
+    type Identify = Vec<String>;
+
+    fn get_identify(&self) -> Cow<'_, Self::Identify> {
+        Cow::Borrowed(&self.0)
     }
 }

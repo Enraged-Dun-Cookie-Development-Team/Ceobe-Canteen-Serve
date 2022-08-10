@@ -1,0 +1,28 @@
+[package]
+name = "modify-cache"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+# serde
+serde = "1"
+bincode = "1"
+# hash
+sha3 = "0.10"
+# time
+chrono = "0.4"
+# web support
+http = "0.2"
+axum = { version = "0.5", features = ["original-uri"] }
+async-trait = "0.1"
+resp-result = "0.3"
+# utils
+thiserror = "1"
+base64 = "0.13"
+#parse
+nom = "7"
+# status error
+status-err = { path = "../../libs/status-err" }
+#log
+log = "0.4"

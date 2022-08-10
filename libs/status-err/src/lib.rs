@@ -3,6 +3,9 @@ mod impls;
 pub mod status_code;
 use std::borrow::Cow;
 
+pub use status_err_derive::StatusErr;
+pub use thiserror::Error as ThisError;
+
 pub trait StatusErr: std::error::Error {
     #[inline]
     fn information(&self) -> Cow<'_, str> { format!("{}", self).into() }

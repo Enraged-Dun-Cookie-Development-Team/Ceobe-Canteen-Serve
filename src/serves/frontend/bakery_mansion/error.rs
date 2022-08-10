@@ -12,4 +12,5 @@ error_generate!(
     //db error
     Mongo = OperateError
     Checker = CheckError
+    ModifyVerify = modify_cache::Error
 );

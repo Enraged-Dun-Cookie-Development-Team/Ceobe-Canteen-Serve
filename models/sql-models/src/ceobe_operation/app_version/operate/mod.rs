@@ -10,46 +10,32 @@ pub struct CeobeOperationAppVersionSqlOperate;
 
 pub use OperateError::*;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, StatusErr)]
 pub enum OperateError {
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
     #[error("App指定版本:[{0:?}]信息已经存在")]
+    #[status_err(err(
+        err_code = 0x000B,
+        prefix = "ErrPrefix::CHECKER",
+        http_code = "HttpCode::CONFLICT"
+    ))]
     AppVersionIdExist(String),
     #[error("App指定版本:[{0:?}]信息不存在")]
+    #[status_err(err(
+        err_code = 0x000D,
+        prefix = "ErrPrefix::CHECKER",
+    ))]
     AppVersionIdNoExist(String),
     #[error("还没有App版本信息")]
+    #[status_err(err(
+        err_code = 0x000E,
+        prefix = "ErrPrefix::CHECKER",
+    ))]
     NotAppVersion,
 }
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
-
-impl StatusErr for OperateError {
-    fn prefix(&self) -> ErrPrefix {
-        match self {
-            Db(inner) => inner.prefix(),
-            AppVersionIdExist(_) => ErrPrefix::CHECKER,
-            AppVersionIdNoExist(_) => ErrPrefix::CHECKER,
-            NotAppVersion=> ErrPrefix::CHECKER,
-        }
-    }
-
-    fn code(&self) -> u16 {
-        match self {
-            Db(inner) => inner.code(),
-            AppVersionIdExist(_) => 0x000B,
-            AppVersionIdNoExist(_) => 0x000C,
-            NotAppVersion=> 0x000D,
-        }
-    }
-
-    fn http_code(&self) -> HttpCode {
-        match self {
-            AppVersionIdExist(_) => HttpCode::CONFLICT,
-            _ => self.status().http_code(),
-        }
-    }
-}
 
 #[derive(FromQueryResult)]
 struct AppVerionCounts {
