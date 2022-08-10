@@ -16,6 +16,10 @@ pub enum OperateError {
     Db(#[from] sea_orm::DbErr),
     #[error("App指定版本:[{0:?}]信息已经存在")]
     AppVersionIdExist(String),
+    #[error("App指定版本:[{0:?}]信息不存在")]
+    AppVersionIdNoExist(String),
+    #[error("还没有App版本信息")]
+    NotAppVersion,
 }
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
@@ -25,6 +29,8 @@ impl StatusErr for OperateError {
         match self {
             Db(inner) => inner.prefix(),
             AppVersionIdExist(_) => ErrPrefix::CHECKER,
+            AppVersionIdNoExist(_) => ErrPrefix::CHECKER,
+            NotAppVersion=> ErrPrefix::CHECKER,
         }
     }
 
@@ -32,6 +38,8 @@ impl StatusErr for OperateError {
         match self {
             Db(inner) => inner.code(),
             AppVersionIdExist(_) => 0x000B,
+            AppVersionIdNoExist(_) => 0x000C,
+            NotAppVersion=> 0x000D,
         }
     }
 
