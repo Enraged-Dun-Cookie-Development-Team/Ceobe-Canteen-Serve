@@ -20,7 +20,9 @@ impl MigrationTrait for Migration {
             .create_idx_if_not_exist(
                 IndexModel::builder()
                     .keys(doc! {
-                        "version":1i32,
+                        "version.0":1i32,
+                        "version.1":1i32,
+                        "version.2":1i32,
                     })
                     .options(
                         IndexOptions::builder()
