@@ -1,11 +1,11 @@
 pub mod announcement_data;
 use std::convert::Infallible;
 
-use status_err::{ErrPrefix, StatusErr};
+use status_err::StatusErr;
 use thiserror::Error;
 pub use CheckError::*;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, StatusErr)]
 pub enum CheckError {
     #[error("范围超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),
@@ -16,20 +16,4 @@ pub enum CheckError {
 
 impl From<Infallible> for CheckError {
     fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
-}
-
-impl StatusErr for CheckError {
-    fn prefix(&self) -> ErrPrefix {
-        match self {
-            LengthExceed(inner) => inner.prefix(),
-            DateTimeFormat(inner) => inner.prefix(),
-        }
-    }
-
-    fn code(&self) -> u16 {
-        match self {
-            DateTimeFormat(inner) => inner.code(),
-            LengthExceed(inner) => inner.code(),
-        }
-    }
 }

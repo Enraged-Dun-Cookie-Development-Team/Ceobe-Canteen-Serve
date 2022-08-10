@@ -3,21 +3,11 @@ use thiserror::Error;
 
 use crate::MongoErr;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, StatusErr)]
 pub enum MongoDbError {
     #[error("MongoDb 数据库异常 {0}")]
     Mongo(#[from] MongoErr),
     #[error("指定集合不存在{0:?}")]
+    #[status_err(err(err_code = 0x0013, prefix = "ErrPrefix::MONGO_DB"))]
     CollectionNotFound(&'static str),
-}
-
-impl StatusErr for MongoDbError {
-    fn prefix(&self) -> ErrPrefix { ErrPrefix::MONGO_DB }
-
-    fn code(&self) -> u16 {
-        match self {
-            MongoDbError::Mongo(err) => err.code(),
-            MongoDbError::CollectionNotFound(_) => 0x0013,
-        }
-    }
 }

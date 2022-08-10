@@ -10,7 +10,7 @@ pin-project = "1"
 serde = "1"
 chrono = "0.4"
 url = "2"
-check-obj-macro = { path = "../check-obj-macro" }
+check-obj-macro = { path = "../../macros/check-obj-macro" }
 
 [dependencies.range-limit]
 path = "../range-limit"
