@@ -6,7 +6,9 @@ use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
-use crate::ceobe_operation::resource::models::model_resource::ActiveModel;
+use crate::ceobe_operation::resource::models::{
+    model_resource::ActiveModel, resource_type::ResourceType,
+};
 
 #[derive(Debug, TypedBuilder)]
 pub struct CountdownCheck {
@@ -24,8 +26,11 @@ pub struct CountdownCheck {
 )]
 #[derive(Debug, Deserialize)]
 pub struct CountdownChecker {
+    #[serde(alias = "text")]
     message: MaxRangeLimit<String, 255>,
+    #[serde(alias = "remark")]
     banner_info: MaxRangeLimit<String, 255>,
+    #[serde(alias = "time")]
     countdown_end: DateTimeFormatChecker,
     start_time: DateTimeFormatChecker,
     over_time: DateTimeFormatChecker,
@@ -43,6 +48,7 @@ impl CountdownCheck {
         now: NaiveDateTime,
     ) -> ActiveModel {
         let mut active = ActiveModel {
+            ty: Set(ResourceType::Countdown),
             message: Set(message),
             banner_info: Set(banner_info),
             countdown_end: Set(countdown_end),
@@ -51,7 +57,6 @@ impl CountdownCheck {
             ..Default::default()
         };
         active.now_create_with_time(now);
-
         active
     }
 }

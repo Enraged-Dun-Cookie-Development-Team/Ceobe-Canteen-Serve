@@ -5,7 +5,9 @@ use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
-use crate::ceobe_operation::resource::models::model_resource;
+use crate::ceobe_operation::resource::models::{
+    model_resource, resource_type::ResourceType,
+};
 
 #[derive(Debug, TypedBuilder)]
 pub struct ResourceAllAvailableCheck {
@@ -29,12 +31,12 @@ impl ResourceAllAvailableCheck {
         self, now: NaiveDateTime,
     ) -> model_resource::ActiveModel {
         let mut active = model_resource::ActiveModel {
+            ty: Set(ResourceType::ResourceAllAvailable),
             start_time: Set(self.start_time),
             over_time: Set(self.over_time),
             ..Default::default()
         };
         active.now_create_with_time(now);
-
         active
     }
 }

@@ -44,49 +44,50 @@ pub struct CeobeOperationResourceChecker {
 impl CeobeOperationResource {
     pub fn into_active_list(
         self, now: NaiveDateTime,
-    ) -> Vec<model_resource::ActiveModel> {
+    ) -> (
+        Option<model_resource::ActiveModel>,
+        Vec<model_resource::ActiveModel>,
+    ) {
         let size = if let Some(ref countdown) = self.countdown {
             countdown.len()
         }
         else {
             0
-        } + if self.resource_all_available.is_some() {
-            1
-        }
-        else {
-            0
         };
         match (self.countdown, self.resource_all_available) {
-            (None, None) => Vec::new(),
-            (None, Some(raa)) => vec![raa.into_active_with_create(now)],
+            (None, None) => (None, Vec::new()),
+            (None, Some(raa)) => {
+                (None, vec![raa.into_active_with_create(now)])
+            }
             (Some(countdown), None) => {
-                countdown
-                    .into_iter()
-                    .map(|c| CountdownCheck::into_active_with_create(c, now))
-                    .collect()
+                (
+                    None,
+                    countdown
+                        .into_iter()
+                        .map(|c| {
+                            CountdownCheck::into_active_with_create(c, now)
+                        })
+                        .collect(),
+                )
             }
             (Some(countdown), Some(resource_all_available)) => {
-                countdown
-                    .into_iter()
-                    .map(|countdown| {
-                        CountdownCheck::into_active_with_create(
-                            countdown, now,
-                        )
-                    })
-                    .fold(
-                        {
-                            let mut vec = Vec::with_capacity(size);
-                            vec.push(
-                                resource_all_available
-                                    .into_active_with_create(now),
-                            );
-                            vec
-                        },
-                        |mut vec, countdown| {
-                            vec.push(countdown);
-                            vec
-                        },
-                    )
+                (
+                    Some(resource_all_available.into_active_with_create(now)),
+                    countdown
+                        .into_iter()
+                        .map(|countdown| {
+                            CountdownCheck::into_active_with_create(
+                                countdown, now,
+                            )
+                        })
+                        .fold(
+                            Vec::with_capacity(size),
+                            |mut vec, countdown| {
+                                vec.push(countdown);
+                                vec
+                            },
+                        ),
+                )
             }
         }
     }

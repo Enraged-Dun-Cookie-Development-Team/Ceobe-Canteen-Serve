@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use sea_orm::{ConnectionTrait, EntityTrait};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, EntityTrait};
 
 use super::CeobeOperationResourceSqlOperate;
 use crate::ceobe_operation::resource::{
@@ -11,11 +11,13 @@ impl CeobeOperationResourceSqlOperate {
         db: &impl ConnectionTrait, resource: CeobeOperationResource,
         now: NaiveDateTime,
     ) -> Result<(), super::OperateError> {
-        let actives = resource.into_active_list(now);
-        if !actives.is_empty() {
-            model_resource::Entity::insert_many(actives)
-                .exec(db)
-                .await?;
+        let (raa, cd) = resource.into_active_list(now);
+        if let Some(raa) = raa {
+            raa.insert(db).await?;
+        }
+
+        if !cd.is_empty() {
+            model_resource::Entity::insert_many(cd).exec(db).await?;
         }
 
         Ok(())
