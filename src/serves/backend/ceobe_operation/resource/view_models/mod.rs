@@ -38,15 +38,11 @@ pub struct Countdown {
 impl ModifyState for Resource {
     type Identify = Self;
 
-    fn get_last_modify_time(
-        &self,
-    ) -> Option<Cow<'_, NaiveDateTime>> {
+    fn get_last_modify_time(&self) -> Option<Cow<'_, NaiveDateTime>> {
         Some(Cow::Borrowed(&self.modify_at))
     }
 
-    fn get_identify(&self) -> Cow<'_, Self::Identify> {
-        Cow::Borrowed(self)
-    }
+    fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
 
 impl From<model_resource::Countdown> for Countdown {
