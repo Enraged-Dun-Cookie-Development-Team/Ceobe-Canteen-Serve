@@ -47,7 +47,6 @@ pub struct OptionPluginVersionChecker {
     pub version: OptionChecker<PluginVersionChecker>,
 }
 
-#[allow(dead_code)]
 pub type OptionPluginVersionCheckerPretreat = PreLiteChecker<
     QueryParams<PluginVersionUncheck>,
     OptionPluginVersionChecker,
