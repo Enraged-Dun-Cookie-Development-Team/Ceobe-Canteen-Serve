@@ -1,4 +1,4 @@
-use std::fmt::{Display, self};
+use std::fmt::{self, Display};
 
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;

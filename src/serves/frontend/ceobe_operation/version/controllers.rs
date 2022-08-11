@@ -37,10 +37,18 @@ impl CeobeOperationVersionFrontend {
         let version = version.version;
         match version {
             Some(version) => {
-                Ok(PluginDbOperation::get_plugin_version_info_by_version(version).await?.into()).into()
+                Ok(PluginDbOperation::get_plugin_version_info_by_version(
+                    version,
+                )
+                .await?
+                .into())
+                .into()
             }
             None => {
-                Ok(PluginDbOperation::get_newest_plugin_version_info().await?.into()).into()
+                Ok(PluginDbOperation::get_newest_plugin_version_info()
+                    .await?
+                    .into())
+                .into()
             }
         }
     }

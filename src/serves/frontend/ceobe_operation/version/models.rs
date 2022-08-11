@@ -11,11 +11,10 @@ use crate::utils::data_checker::PreLiteChecker;
 
 use super::error::CeobeOperationVersionError;
 
-
 // 用于app版本请求参数
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct AppVersion {
-    pub version: Option<String>
+    pub version: Option<String>,
 }
 #[checker::check_gen(
     uncheck = AppVersionUncheck,
@@ -27,14 +26,16 @@ pub struct OptionAppVersionChecker {
     pub version: OptionChecker<AppVersionChecker>,
 }
 
-pub type OptionAppVersionCheckerPretreat =
-    PreLiteChecker<QueryParams<AppVersionUncheck>, OptionAppVersionChecker, CeobeOperationVersionError>;
-
+pub type OptionAppVersionCheckerPretreat = PreLiteChecker<
+    QueryParams<AppVersionUncheck>,
+    OptionAppVersionChecker,
+    CeobeOperationVersionError,
+>;
 
 // 用于插件版本请求参数
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct PluginVersion {
-    pub version: Option<Version>
+    pub version: Option<Version>,
 }
 #[checker::check_gen(
     uncheck = PluginVersionUncheck,
@@ -46,5 +47,8 @@ pub struct OptionPluginVersionChecker {
     pub version: OptionChecker<PluginVersionChecker>,
 }
 
-pub type OptionPluginVersionCheckerPretreat =
-    PreLiteChecker<QueryParams<PluginVersionUncheck>, OptionPluginVersionChecker, CeobeOperationVersionError>;
+pub type OptionPluginVersionCheckerPretreat = PreLiteChecker<
+    QueryParams<PluginVersionUncheck>,
+    OptionPluginVersionChecker,
+    CeobeOperationVersionError,
+>;
