@@ -6,7 +6,7 @@ pub(crate) mod error;
 mod models;
 mod view;
 
-type FLagMansionRResult<T> = FlagRespResult<Option<T>, error::MansionError>;
+type FlagMansionRResult<T> = FlagRespResult<Option<T>, error::MansionError>;
 
 use self::models::MidCheckerPretreat;
 

@@ -5,7 +5,7 @@ use modify_cache::CacheMode;
 use mongo_migration::mongo_models::bakery::mansion::operate::MansionDataMongoOperate;
 use resp_result::RespResult;
 
-use super::{view::MansionIds, FLagMansionRResult, MidCheckerPretreatment};
+use super::{view::MansionIds, FlagMansionRResult, MidCheckerPretreatment};
 use crate::{
     router::BakeryMansionFrontend,
     serves::frontend::bakery_mansion::view::ViewMansionWithTime,
@@ -15,7 +15,7 @@ impl BakeryMansionFrontend {
     pub async fn get_mansion_with_time(
         PreHandling(mid): MidCheckerPretreatment,
         mut modify: modify_cache::CheckModify,
-    ) -> FLagMansionRResult<ViewMansionWithTime> {
+    ) -> FlagMansionRResult<ViewMansionWithTime> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_ty(CacheMode::NoCache);
 
@@ -28,7 +28,7 @@ impl BakeryMansionFrontend {
 
     pub async fn get_all_id(
         mut modify: modify_cache::CheckModify,
-    ) -> FLagMansionRResult<Vec<String>> {
+    ) -> FlagMansionRResult<Vec<String>> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_ty(CacheMode::NoCache);
 
