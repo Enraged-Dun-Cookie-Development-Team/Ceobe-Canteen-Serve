@@ -4,7 +4,7 @@ use url::Url;
 
 use crate::models::{
     mongo::plugin_version::{
-        models::SpareLink, DownloadResource, PluginVersion,
+        models::{SpareLink, DownloadResource, PluginVersion}
     },
     sql::app_version::models::model_app_version,
 };

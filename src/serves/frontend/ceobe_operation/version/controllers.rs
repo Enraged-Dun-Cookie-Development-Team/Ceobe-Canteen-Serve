@@ -1,8 +1,11 @@
+use std::time::Duration;
+
 use axum_prehandle::{PreHandling, PreRespHandling};
-use mongo_migration::mongo_models::ceobe_operation::plugin_version::operates::PluginDbOperation;
+use resp_result::RespResult;
+use crate::models::mongo::plugin_version::operates::PluginDbOperation;
 
 use super::{
-    error::VersionRespResult,
+    error::{FlagVersionRespResult},
     models::{AppVersion, OptionAppVersionCheckerPretreat, OptionPluginVersionCheckerPretreat},
     view::{AppVersionView, PluginVersionView},
 };
@@ -17,13 +20,23 @@ impl CeobeOperationVersionFrontend {
         PreHandling(AppVersion { version }): PreRespHandling<
             OptionAppVersionCheckerPretreat,
         >,
-    ) -> VersionRespResult<AppVersionView> {
+        mut modify: modify_cache::CheckModify
+    ) -> FlagVersionRespResult<AppVersionView> {
+        let ctrl = modify.cache_headers.get_control();
+        ctrl.set_max_age(Duration::from_secs(60*60*1));
+
         match version {
             Some(version) => {
-                Ok(CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?.into()).into()
+                let (data, extra) = modify.check_modify(
+                    CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?
+                )?;
+                RespResult::ok(data.map(Into::into)).with_flags(extra)
             }
             None => {
-                Ok(CeobeOperationAppVersionSqlOperate::get_newest_app_version_info().await?.into()).into()
+                let (data, extra) = modify.check_modify(
+                    CeobeOperationAppVersionSqlOperate::get_newest_app_version_info().await?
+                )?;
+                RespResult::ok(data.map(Into::into)).with_flags(extra)
             }
         }
     }
@@ -33,22 +46,30 @@ impl CeobeOperationVersionFrontend {
         PreHandling(version): PreRespHandling<
             OptionPluginVersionCheckerPretreat,
         >,
-    ) -> VersionRespResult<PluginVersionView> {
+        mut modify: modify_cache::CheckModify
+    ) -> FlagVersionRespResult<PluginVersionView> {
+        let ctrl = modify.cache_headers.get_control();
+        ctrl.set_max_age(Duration::from_secs(60*60*1));
+
+
         let version = version.version;
         match version {
             Some(version) => {
-                Ok(PluginDbOperation::get_plugin_version_info_by_version(
-                    version,
-                )
-                .await?
-                .into())
-                .into()
+                let (data, extra) = modify.check_modify(
+                    PluginDbOperation::get_plugin_version_info_by_version(
+                        version,   
+                    )
+                    .await?
+                )?;
+                RespResult::ok(data.map(Into::into)).with_flags(extra)
+
             }
             None => {
-                Ok(PluginDbOperation::get_newest_plugin_version_info()
-                    .await?
-                    .into())
-                .into()
+                let (data, extra) = modify.check_modify(
+                    PluginDbOperation::get_newest_plugin_version_info()
+                        .await?
+                )?;
+                RespResult::ok(data.map(Into::into)).with_flags(extra)
             }
         }
     }

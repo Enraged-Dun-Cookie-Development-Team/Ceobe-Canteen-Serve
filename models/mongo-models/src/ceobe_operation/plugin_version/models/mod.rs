@@ -1,5 +1,8 @@
 pub mod spare_link;
 pub mod version;
+use std::borrow::Cow;
+
+use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
 pub use spare_link::SpareLink;
 use sub_model::SubModel;
@@ -56,4 +59,14 @@ impl PluginVersionChecked {
             down,
         }
     }
+}
+
+impl ModifyState for PluginVersion {
+    type Identify = Self;
+
+    fn get_last_modify_time(&self) -> Option<Cow<'_, chrono::NaiveDateTime>> {
+        Some(Cow::Owned(self.time_record.modify_at.to_chrono().naive_local()))
+    }
+
+    fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }

@@ -1,5 +1,5 @@
 use axum::extract::rejection::QueryRejection;
-use resp_result::RespResult;
+use resp_result::{RespResult, FlagRespResult};
 
 use crate::{
     error_generate,
@@ -14,7 +14,8 @@ error_generate! {
     Query = QueryRejection
     DbOperate = app_version::operate::OperateError
     MongoDbError = plugin_version::operates::OperateError
+    ModifyVerify = modify_cache::Error
 }
 
-pub(super) type VersionRespResult<T> =
-    RespResult<T, CeobeOperationVersionError>;
+pub(super) type FlagVersionRespResult<T> =
+    FlagRespResult<Option<T>, CeobeOperationVersionError>;
