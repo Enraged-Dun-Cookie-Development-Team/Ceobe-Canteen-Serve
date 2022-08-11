@@ -1,3 +1,6 @@
+use std::borrow::Cow;
+
+use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -37,5 +40,20 @@ impl From<model_video::Model> for VideoItem {
             video_link,
             cover_image,
         }
+    }
+}
+
+// 用于请求头缓存信息生成
+pub struct VideoItems(pub(super) Vec<VideoItem>);
+impl VideoItems {
+    pub(super) fn into_inner(this: Option<Self>) -> Option<Vec<VideoItem>> {
+        this.map(|v| v.0)
+    }
+}
+impl ModifyState for VideoItems {
+    type Identify = Vec<VideoItem>;
+
+    fn get_identify(&self) -> Cow<'_, Self::Identify> {
+        Cow::Borrowed(&self.0)
     }
 }
