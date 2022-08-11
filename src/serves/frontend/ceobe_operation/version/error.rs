@@ -4,7 +4,7 @@ use resp_result::RespResult;
 use crate::{
     error_generate,
     models::{
-        mongo::plugin_version
+        mongo::plugin_version,
         sql::app_version,
     },
 };
