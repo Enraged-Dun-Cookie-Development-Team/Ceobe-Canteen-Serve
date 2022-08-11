@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use axum_prehandle::PreHandling;
+use modify_cache::CacheMode;
 use mongo_migration::mongo_models::bakery::mansion::operate::MansionDataMongoOperate;
 use resp_result::RespResult;
 
@@ -13,8 +14,11 @@ use crate::{
 impl BakeryMansionFrontend {
     pub async fn get_mansion_with_time(
         PreHandling(mid): MidCheckerPretreatment,
-        modify: modify_cache::CheckModify,
+        mut modify: modify_cache::CheckModify,
     ) -> FLagMansionRResult<ViewMansionWithTime> {
+        let ctrl = modify.cache_headers.get_control();
+        ctrl.set_ty(CacheMode::NoCache);
+
         let (data, extra) = modify.check_modify(
             MansionDataMongoOperate::get_mansion_by_id(&mid.id).await?,
         )?;
@@ -26,7 +30,7 @@ impl BakeryMansionFrontend {
         mut modify: modify_cache::CheckModify,
     ) -> FLagMansionRResult<Vec<String>> {
         let ctrl = modify.cache_headers.get_control();
-        ctrl.set_max_age(Duration::from_secs(60 * 60 * 4));
+        ctrl.set_ty(CacheMode::NoCache);
 
         let (data, extra) = modify.check_modify(MansionIds(
             MansionDataMongoOperate::get_all_mansion_id_list().await?,
