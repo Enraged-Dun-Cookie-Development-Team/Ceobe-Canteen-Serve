@@ -10,7 +10,8 @@ use crate::error_generate;
 error_generate! {
     pub CeobeOperationVersionError
 
-    Check = CheckError
+    AppCheck = AppCheckError
+    PluginCheck = PluginCheckError
     Query = QueryRejection
     DbOperate = app_version::operate::OperateError
     MongoDbError = plugin_version::operates::OperateError

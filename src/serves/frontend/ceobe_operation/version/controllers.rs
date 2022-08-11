@@ -1,4 +1,5 @@
 use axum_prehandle::{PreHandling, PreRespHandling};
+use mongo_migration::mongo_models::ceobe_operation::plugin_version::operates::PluginDbOperation;
 
 use super::{
     error::VersionRespResult,
@@ -11,20 +12,37 @@ use crate::{
 };
 
 impl CeobeOperationVersionFrontend {
+    // 获取app对应版本信息
     pub async fn app_version(
         PreHandling(AppVersion { version }): PreRespHandling<
             OptionAppVersionCheckerPretreat,
         >,
     ) -> VersionRespResult<AppVersionView> {
-        Ok(match version {
-                    Some(version) => {
-                        CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?.into()
-                    }
-                    None => {
-                        CeobeOperationAppVersionSqlOperate::get_newest_app_version_info().await?.into()
-                    }
-                }).into()
+        let version = version.version;
+        match version {
+            Some(version) => {
+                Ok(CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?.into()).into()
+            }
+            None => {
+                Ok(CeobeOperationAppVersionSqlOperate::get_newest_app_version_info().await?.into()).into()
+            }
+        }
     }
 
-    pub async fn plugin_version() {}
+    // 获取插件端对应版本信息
+    pub async fn plugin_version(
+        PreHandling(version): PreRespHandling<
+            OptionPluginVersionCheckerPretreat,
+        >,
+    ) -> VersionRespResult<PluginVersionView> {
+        let version = version.version;
+        match version {
+            Some(version) => {
+                Ok(PluginDbOperation::get_plugin_version_info_by_version(version).await?.into()).into()
+            }
+            None => {
+                Ok(PluginDbOperation::get_newest_plugin_version_info().await?.into()).into()
+            }
+        }
+    }
 }
