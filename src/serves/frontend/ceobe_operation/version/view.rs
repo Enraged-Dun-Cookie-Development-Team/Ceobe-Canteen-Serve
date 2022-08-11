@@ -48,7 +48,7 @@ pub struct DownloadView {
     chrome: Url,
     edge: Url,
     firefox: Url,
-    spare: SpareLink,
+    spare: SpareLinkView,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct PluginVersionView {
@@ -58,16 +58,6 @@ pub struct PluginVersionView {
     pub title: String,
     pub down: DownloadView,
 }
-// 插件版本转换
-// impl From<Version> for VersionView {
-//     fn from(Version(major_ver, minor_ver, security_ver): Version) -> Self {
-//         Self {
-//             version: major_ver.to_string()
-//                 + &minor_ver.to_string()
-//                 + &security_ver.to_string(),
-//         }
-//     }
-// }
 
 impl From<SpareLink> for SpareLinkView {
     fn from(SpareLink(url, remark): SpareLink) -> Self { Self(url, remark) }
@@ -90,7 +80,7 @@ impl From<DownloadResource> for DownloadView {
             chrome,
             edge,
             firefox,
-            spare,
+            spare: spare.into(),
         }
     }
 }
