@@ -1,12 +1,16 @@
 use mongodb::{bson::doc, options::FindOneOptions};
 
-use crate::ceobe_operation::plugin_version::models::{Version, PluginVersion};
-
-use super::{PluginDbOperation, OperateResult, get_plugin_version_collection, OperateError};
+use super::{
+    get_plugin_version_collection, OperateError, OperateResult,
+    PluginDbOperation,
+};
+use crate::ceobe_operation::plugin_version::models::{
+    PluginVersion, Version,
+};
 
 impl PluginDbOperation {
     pub async fn get_plugin_version_info_by_version(
-        version: Version
+        version: Version,
     ) -> OperateResult<PluginVersion> {
         let collection = get_plugin_version_collection()?;
         let filter = doc! {
@@ -24,9 +28,9 @@ impl PluginDbOperation {
     ) -> OperateResult<PluginVersion> {
         let collection = get_plugin_version_collection()?;
         collection
-            .doing(|collection| 
+            .doing(|collection|
                 collection.find_one(
-                    None, 
+                    None,
                     FindOneOptions::builder()
                     .projection(doc! {"version":1i32})
                     .sort(doc! {"version.major":-1, "version.minor":-1, "version.security":-1})

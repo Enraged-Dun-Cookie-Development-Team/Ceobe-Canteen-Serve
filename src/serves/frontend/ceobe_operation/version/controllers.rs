@@ -1,11 +1,13 @@
 use axum_prehandle::{PreHandling, PreRespHandling};
 
+use super::{
+    error::VersionRespResult, models::OptionAppVersionCheckerPretreat,
+    view::AppVersionView,
+};
 use crate::{
     models::sql::app_version::operate::CeobeOperationAppVersionSqlOperate,
     router::CeobeOperationVersionFrontend,
 };
-
-use super::{models::OptionAppVersionCheckerPretreat, error::VersionRespResult, view::AppVersionView};
 
 impl CeobeOperationVersionFrontend {
     pub async fn app_version(
@@ -23,4 +25,6 @@ impl CeobeOperationVersionFrontend {
             }
         }
     }
+
+    pub async fn plugin_version() {}
 }

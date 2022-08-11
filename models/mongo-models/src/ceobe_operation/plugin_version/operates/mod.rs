@@ -22,16 +22,10 @@ pub enum OperateError {
     ))]
     ConflictVersion(Version),
     #[error("版本信息不存在 {0:?}")]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x000D,
-    ))]
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x000D,))]
     VersionNotFind(Version),
     #[error("暂没有版本信息")]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x000E,
-    ))]
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x000E,))]
     VersionInfoNoExist,
 }
 

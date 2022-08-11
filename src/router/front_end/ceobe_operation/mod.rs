@@ -1,13 +1,16 @@
 use axum::Router;
 
-use self::{video::video_router, announcement::announcement_router, version::version_router};
+use self::{
+    announcement::announcement_router, version::version_router,
+    video::video_router,
+};
 
-mod video;
 mod announcement;
 mod version;
-pub use video::CeobeOperationVideoFrontend;
+mod video;
 pub use announcement::CeobeOperationAnnouncementFrontend;
 pub use version::CeobeOperationVersionFrontend;
+pub use video::CeobeOperationVideoFrontend;
 
 pub(super) fn ceobe_operation_router() -> Router {
     Router::new()

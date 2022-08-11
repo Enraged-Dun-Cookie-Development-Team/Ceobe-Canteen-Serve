@@ -1,5 +1,6 @@
 use crate::{
-    models::mongo::mansion::preludes::*, utils::time_format::naive_date_format,
+    models::mongo::mansion::preludes::*,
+    utils::time_format::naive_date_format,
 };
 
 crate::quick_struct! {

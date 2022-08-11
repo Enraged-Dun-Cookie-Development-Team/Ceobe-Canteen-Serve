@@ -1,8 +1,10 @@
-use crate::models::sql::video::models::model_video;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-use crate::utils::time_format::naive_date_time_format;
+use crate::{
+    models::sql::video::models::model_video,
+    utils::time_format::naive_date_time_format,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct VideoItem {

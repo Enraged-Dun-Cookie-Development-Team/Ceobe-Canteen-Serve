@@ -1,8 +1,10 @@
-use crate::models::sql::announcement::models::model_announcement;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-use crate::utils::time_format::naive_date_time_format;
+use crate::{
+    models::sql::announcement::models::model_announcement,
+    utils::time_format::naive_date_time_format,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct AnnouncementItem {
@@ -26,13 +28,10 @@ impl From<model_announcement::Model> for AnnouncementItem {
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
-            html: "<div class=\"online-area\"><img class=\"online-title-img \
-                   radius\" src=\""
-                .to_owned()
-                + &img_url
-                + "\"/><div>"
-                + &content
-                + &"</div></div>".to_string(),
+            html: format!(
+                r#"<div class="online-area"><img class="online-title-img radius" src="{}"/><div>{}</div></div>"#,
+                img_url, content
+            ),
             notice,
         }
     }

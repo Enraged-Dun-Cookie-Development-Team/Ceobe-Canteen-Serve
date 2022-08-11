@@ -1,9 +1,8 @@
 use orm_migrate::sql_models::ceobe_operation::video::operate::CeobeOperationVideoSqlOperate;
 use resp_result::RespResult;
 
-use crate::router::CeobeOperationVideoFrontend;
-
 use super::{error::VideoRespResult, view::VideoItem};
+use crate::router::CeobeOperationVideoFrontend;
 
 impl CeobeOperationVideoFrontend {
     pub async fn list_all() -> VideoRespResult<Vec<VideoItem>> {

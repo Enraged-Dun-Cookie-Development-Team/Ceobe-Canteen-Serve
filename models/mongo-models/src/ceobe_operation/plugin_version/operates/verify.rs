@@ -1,7 +1,7 @@
 use mongo_connection::CollectionGuard;
 use mongodb::bson::doc;
 
-use super::{OperateError, PluginDbOperation, Version, OperateResult};
+use super::{OperateError, OperateResult, PluginDbOperation, Version};
 use crate::ceobe_operation::plugin_version::models::PluginVersion;
 
 impl PluginDbOperation {
