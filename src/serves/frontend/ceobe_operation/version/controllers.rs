@@ -1,7 +1,8 @@
 use axum_prehandle::{PreHandling, PreRespHandling};
 
 use super::{
-    error::VersionRespResult, models::OptionAppVersionCheckerPretreat,
+    error::VersionRespResult,
+    models::{AppVersion, OptionAppVersionCheckerPretreat},
     view::AppVersionView,
 };
 use crate::{
@@ -11,19 +12,18 @@ use crate::{
 
 impl CeobeOperationVersionFrontend {
     pub async fn app_version(
-        PreHandling(version): PreRespHandling<
+        PreHandling(AppVersion { version }): PreRespHandling<
             OptionAppVersionCheckerPretreat,
         >,
     ) -> VersionRespResult<AppVersionView> {
-        let version = version.version;
-        match version {
-            Some(version) => {
-                Ok(CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?.into()).into()
-            }
-            None => {
-                Ok(CeobeOperationAppVersionSqlOperate::get_newest_app_version_info().await?.into()).into()
-            }
-        }
+        Ok(match version {
+                    Some(version) => {
+                        CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?.into()
+                    }
+                    None => {
+                        CeobeOperationAppVersionSqlOperate::get_newest_app_version_info().await?.into()
+                    }
+                }).into()
     }
 
     pub async fn plugin_version() {}
