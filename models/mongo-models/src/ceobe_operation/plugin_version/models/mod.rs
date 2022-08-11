@@ -1,15 +1,17 @@
+pub mod version;
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 use url::Url;
+pub use version::Version;
 
 use crate::RecordUnit;
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct Version(pub u32, pub u32, pub u32);
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SpareLink(pub Url, pub String);
+pub struct SpareLink {
+    pub url: Url,
+    pub msg: String,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DownloadResource {
