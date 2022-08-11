@@ -1,4 +1,4 @@
-use mongo_migration::mongo_models::bakery::mansion::preludes::{
+use crate::models::mongo::mansion::preludes::{
     Daily, Info, ModelMansion,
 };
 

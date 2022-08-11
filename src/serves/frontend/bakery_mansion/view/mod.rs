@@ -1,9 +1,10 @@
 mod convert;
+use crate::models::mongo::mansion::preludes::*;
+
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
 
-use crate::models::mansion::preludes::*;
 
 crate::quick_struct! {
     pub ViewMansionWithTime {

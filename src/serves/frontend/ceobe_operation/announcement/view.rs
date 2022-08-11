@@ -8,8 +8,7 @@ use crate::utils::time_format::naive_date_time_format;
 pub struct AnnouncementItem {
     pub start_time: String,
     pub over_time: String,
-    pub content: String,
-    pub img_url: String,
+    pub html: String,
     pub notice: bool,
 }
 
@@ -27,8 +26,13 @@ impl From<model_announcement::Model> for AnnouncementItem {
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
-            content,
-            img_url,
+            html: "<div class=\"online-area\"><img class=\"online-title-img \
+                   radius\" src=\""
+                .to_owned()
+                + &img_url
+                + "\"/><div>"
+                + &content
+                + &"</div></div>".to_string(),
             notice,
         }
     }
