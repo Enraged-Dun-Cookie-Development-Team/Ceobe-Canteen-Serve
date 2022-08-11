@@ -3,8 +3,8 @@ use mongo_migration::mongo_models::ceobe_operation::plugin_version::operates::Pl
 
 use super::{
     error::VersionRespResult,
-    models::{AppVersion, OptionAppVersionCheckerPretreat},
-    view::AppVersionView,
+    models::{AppVersion, OptionAppVersionCheckerPretreat, OptionPluginVersionCheckerPretreat},
+    view::{AppVersionView, PluginVersionView},
 };
 use crate::{
     models::sql::app_version::operate::CeobeOperationAppVersionSqlOperate,
@@ -18,7 +18,6 @@ impl CeobeOperationVersionFrontend {
             OptionAppVersionCheckerPretreat,
         >,
     ) -> VersionRespResult<AppVersionView> {
-        let version = version.version;
         match version {
             Some(version) => {
                 Ok(CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?.into()).into()
