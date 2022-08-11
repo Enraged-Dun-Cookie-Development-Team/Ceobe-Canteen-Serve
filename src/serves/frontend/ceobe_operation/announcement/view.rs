@@ -28,13 +28,10 @@ impl From<model_announcement::Model> for AnnouncementItem {
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
-            html: "<div class=\"online-area\"><img class=\"online-title-img \
-                   radius\" src=\""
-                .to_owned()
-                + &img_url
-                + "\"/><div>"
-                + &content
-                + "</div></div>",
+            html: format!(
+                r#"<div class="online-area"><img class="online-title-img radius" src="{}"/><div>{}</div></div>"#,
+                img_url, content
+            ),
             notice,
         }
     }

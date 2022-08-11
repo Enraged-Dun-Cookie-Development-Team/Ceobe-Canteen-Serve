@@ -1,24 +1,15 @@
-use std::fmt::{self, Display};
-
+pub mod spare_link;
+pub mod version;
 use serde::{Deserialize, Serialize};
+pub use spare_link::SpareLink;
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 use url::Url;
+pub use version::Version;
 
 use crate::RecordUnit;
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct Version(pub u32, pub u32, pub u32);
-impl Display for Version {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}.{}.{}", self.0, self.1, self.2)
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SpareLink(pub Url, pub String);
-
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+
 pub struct DownloadResource {
     pub crx: Url,
     pub zip: Url,

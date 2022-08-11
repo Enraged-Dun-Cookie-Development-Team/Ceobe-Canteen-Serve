@@ -2,7 +2,8 @@ use axum_prehandle::{PreHandling, PreRespHandling};
 use mongo_migration::mongo_models::ceobe_operation::plugin_version::operates::PluginDbOperation;
 
 use super::{
-    error::VersionRespResult, models::{OptionAppVersionCheckerPretreat, OptionPluginVersionCheckerPretreat},
+    error::VersionRespResult,
+    models::{AppVersion, OptionAppVersionCheckerPretreat, OptionPluginVersionCheckerPretreat},
     view::{AppVersionView, PluginVersionView},
 };
 use crate::{
@@ -13,11 +14,10 @@ use crate::{
 impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
     pub async fn app_version(
-        PreHandling(version): PreRespHandling<
+        PreHandling(AppVersion { version }): PreRespHandling<
             OptionAppVersionCheckerPretreat,
         >,
     ) -> VersionRespResult<AppVersionView> {
-        let version = version.version;
         match version {
             Some(version) => {
                 Ok(CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?.into()).into()

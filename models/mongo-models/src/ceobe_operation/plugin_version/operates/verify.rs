@@ -10,11 +10,11 @@ impl PluginDbOperation {
     ) -> OperateResult<()> {
         // version can not be the same even is delete
         let filter = doc! {
-            "version" : [
-                version.0,
-                version.1,
-                version.2,
-            ]
+            "version" : {
+                "major": version.major,
+                "minor": version.minor,
+                "security": version.security
+            }
         };
         // checker version exist
         if collect

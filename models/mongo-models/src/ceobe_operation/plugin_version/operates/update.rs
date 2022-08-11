@@ -1,6 +1,6 @@
 use super::{
-    get_plugin_version_collection, OperateResult,
-    PluginDbOperation, PluginVersionChecked,
+    get_plugin_version_collection, OperateResult, PluginDbOperation,
+    PluginVersionChecked,
 };
 use crate::RecordUnit;
 impl PluginDbOperation {

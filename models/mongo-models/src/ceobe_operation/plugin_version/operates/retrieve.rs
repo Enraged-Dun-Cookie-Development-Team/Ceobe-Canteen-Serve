@@ -14,7 +14,9 @@ impl PluginDbOperation {
     ) -> OperateResult<PluginVersion> {
         let collection = get_plugin_version_collection()?;
         let filter = doc! {
-            "version" : [version.0, version.1, version.2]
+            "version.major": version.major,
+            "version.minor": version.minor,
+            "version.security": version.security
         };
         collection
             .doing(|collection| collection.find_one(filter, None))
@@ -30,7 +32,7 @@ impl PluginDbOperation {
                 collection.find_one(
                     None,
                     FindOneOptions::builder()
-                    .sort(doc! {"version.0":-1, "version.1":-1, "version.2":-1})
+                    .sort(doc! {"version.major":-1, "version.minor":-1, "version.security":-1})
                     .build()
                 )
             )
