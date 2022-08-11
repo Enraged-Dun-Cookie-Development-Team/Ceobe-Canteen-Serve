@@ -29,7 +29,11 @@ impl Checker for VersionChecker {
                     ))
                 })
                 .map(|(major_ver, minor_ver, security_ver)| {
-                    Version(major_ver, minor_ver, security_ver)
+                    Version {
+                        major: major_ver,
+                        minor: minor_ver,
+                        security: security_ver,
+                    }
                 })
                 .ok_or(CheckError::VersionFormat(uncheck)),
         )

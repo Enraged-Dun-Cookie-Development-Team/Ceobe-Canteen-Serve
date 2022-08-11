@@ -1,24 +1,25 @@
+pub mod spare_link;
+pub mod version;
+use std::borrow::Cow;
+
+use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
+pub use spare_link::SpareLink;
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 use url::Url;
+pub use version::Version;
 
 use crate::RecordUnit;
-
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct Version(pub u32, pub u32, pub u32);
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SpareLink(pub Url, pub String);
-
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+
 pub struct DownloadResource {
-    crx: Url,
-    zip: Url,
-    chrome: Url,
-    edge: Url,
-    firefox: Url,
-    spare: SpareLink,
+    pub crx: Url,
+    pub zip: Url,
+    pub chrome: Url,
+    pub edge: Url,
+    pub firefox: Url,
+    pub spare: SpareLink,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
@@ -58,4 +59,16 @@ impl PluginVersionChecked {
             down,
         }
     }
+}
+
+impl ModifyState for PluginVersion {
+    type Identify = Self;
+
+    fn get_last_modify_time(&self) -> Option<Cow<'_, chrono::NaiveDateTime>> {
+        Some(Cow::Owned(
+            self.time_record.modify_at.to_chrono().naive_local(),
+        ))
+    }
+
+    fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
