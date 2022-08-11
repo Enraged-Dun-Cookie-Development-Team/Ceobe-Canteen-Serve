@@ -1,5 +1,9 @@
+use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
+    models::SpareLink, DownloadResource, PluginVersion,
+};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
+use url::Url;
 
 use crate::models::sql::app_version::models::model_app_version;
 
@@ -33,6 +37,69 @@ impl From<model_app_version::Model> for AppVersionView {
 }
 
 // 插件版本
-pub use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
-    DownloadView, PluginVersionView,
-};
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SpareLinkView(pub Url, pub String);
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct DownloadView {
+    crx: Url,
+    zip: Url,
+    chrome: Url,
+    edge: Url,
+    firefox: Url,
+    spare: SpareLinkView,
+}
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct PluginVersionView {
+    pub version: String,
+    pub description: String,
+    pub logo: String,
+    pub title: String,
+    pub down: DownloadView,
+}
+
+impl From<SpareLink> for SpareLinkView {
+    fn from(SpareLink { url, msg }: SpareLink) -> Self { Self(url, msg) }
+}
+
+impl From<DownloadResource> for DownloadView {
+    fn from(
+        DownloadResource {
+            crx,
+            zip,
+            chrome,
+            edge,
+            firefox,
+            spare,
+        }: DownloadResource,
+    ) -> Self {
+        Self {
+            crx,
+            zip,
+            chrome,
+            edge,
+            firefox,
+            spare: spare.into(),
+        }
+    }
+}
+
+impl From<PluginVersion> for PluginVersionView {
+    fn from(
+        PluginVersion {
+            version,
+            description,
+            logo,
+            title,
+            down,
+            ..
+        }: PluginVersion,
+    ) -> Self {
+        Self {
+            version: version.to_string(),
+            description,
+            logo,
+            title,
+            down: down.into(),
+        }
+    }
+}

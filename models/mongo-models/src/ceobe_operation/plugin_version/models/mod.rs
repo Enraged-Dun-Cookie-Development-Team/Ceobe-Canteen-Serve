@@ -8,51 +8,34 @@ use url::Url;
 pub use version::Version;
 
 use crate::RecordUnit;
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
-#[sub_model(all(
-    name = "DownloadView",
-    extra(derive(Deserialize, Serialize, Debug))
-))]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+
 pub struct DownloadResource {
-    crx: Url,
-    zip: Url,
-    chrome: Url,
-    edge: Url,
-    firefox: Url,
-    #[sub_model(having(
-        for = "DownloadView",
-        to_type(ty = "(String, String)", by = "SpareLink::into_tuple")
-    ))]
-    spare: SpareLink,
+    pub crx: Url,
+    pub zip: Url,
+    pub chrome: Url,
+    pub edge: Url,
+    pub firefox: Url,
+    pub spare: SpareLink,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
-#[sub_model(
-    all(
-        vis = "pub",
-        name = "PluginVersionChecked",
-        extra(derive(Debug, TypedBuilder))
-    ),
-    all(
-        name = "PluginVersionView",
-        extra(derive(Deserialize, Serialize, Debug))
-    )
-)]
+#[sub_model(all(
+    vis = "pub",
+    name = "PluginVersionChecked",
+    extra(derive(Debug, TypedBuilder))
+))]
 pub struct PluginVersion {
     #[sub_model(having(
         for = "PluginVersionView",
         to_type(ty = "String", by = "Version::to_version_str")
     ))]
     pub version: Version,
-    #[sub_model(ignore("PluginVersionChecked"), ignore("PluginVersionView"))]
+    #[sub_model(ignore("PluginVersionChecked"))]
     pub time_record: RecordUnit,
     pub logo: String,
     pub title: String,
     pub description: String,
-    #[sub_model(having(
-        for = "PluginVersionView",
-        to_type(ty = "DownloadView", by = "Into::into")
-    ))]
     pub down: DownloadResource,
 }
 
