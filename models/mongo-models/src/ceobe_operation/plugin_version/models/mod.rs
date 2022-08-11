@@ -10,7 +10,7 @@ pub use version::Version;
 use crate::RecordUnit;
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
-    name = "Download",
+    name = "DownloadView",
     extra(derive(Deserialize, Serialize, Debug))
 ))]
 pub struct DownloadResource {
@@ -20,7 +20,7 @@ pub struct DownloadResource {
     edge: Url,
     firefox: Url,
     #[sub_model(having(
-        for = "Download",
+        for = "DownloadView",
         to_type(ty = "(String, String)", by = "SpareLink::into_tuple")
     ))]
     spare: SpareLink,
@@ -51,7 +51,7 @@ pub struct PluginVersion {
     pub description: String,
     #[sub_model(having(
         for = "PluginVersionView",
-        to_type(ty = "Download", by = "Into::into")
+        to_type(ty = "DownloadView", by = "Into::into")
     ))]
     pub down: DownloadResource,
 }

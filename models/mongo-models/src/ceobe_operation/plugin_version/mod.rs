@@ -3,6 +3,6 @@ pub mod models;
 pub mod operates;
 
 pub use models::{
-    Download, DownloadResource, PluginVersion, PluginVersionChecked,
+    DownloadView, DownloadResource, PluginVersion, PluginVersionChecked,
     PluginVersionView,
 };
