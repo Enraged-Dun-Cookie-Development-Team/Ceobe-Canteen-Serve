@@ -26,10 +26,6 @@ pub struct DownloadResource {
     extra(derive(Debug, TypedBuilder))
 ))]
 pub struct PluginVersion {
-    #[sub_model(having(
-        for = "PluginVersionView",
-        to_type(ty = "String", by = "Version::to_version_str")
-    ))]
     pub version: Version,
     #[sub_model(ignore("PluginVersionChecked"))]
     pub time_record: RecordUnit,
