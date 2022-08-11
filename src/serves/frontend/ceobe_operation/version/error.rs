@@ -1,5 +1,5 @@
 use axum::extract::rejection::QueryRejection;
-use resp_result::{RespResult, FlagRespResult};
+use resp_result::FlagRespResult;
 
 use crate::{
     error_generate,

@@ -43,7 +43,9 @@ impl From<model_announcement::Model> for AnnouncementItem {
 // 用于请求头缓存信息生成
 pub struct AnnouncementItems(pub(super) Vec<AnnouncementItem>);
 impl AnnouncementItems {
-    pub(super) fn into_inner(this: Option<Self>) -> Option<Vec<AnnouncementItem>> {
+    pub(super) fn into_inner(
+        this: Option<Self>,
+    ) -> Option<Vec<AnnouncementItem>> {
         this.map(|v| v.0)
     }
 }
@@ -54,4 +56,3 @@ impl ModifyState for AnnouncementItems {
         Cow::Borrowed(&self.0)
     }
 }
-

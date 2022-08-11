@@ -1,7 +1,6 @@
-use crate::models::sql::video;
-use resp_result::{RespResult, FlagRespResult};
+use resp_result::FlagRespResult;
 
-use crate::error_generate;
+use crate::{error_generate, models::sql::video};
 
 error_generate! {
     pub CeobeOperationVideoError
@@ -10,4 +9,5 @@ error_generate! {
     ModifyVerify = modify_cache::Error
 }
 
-pub(super) type FlagVideoRespResult<T> = FlagRespResult<Option<T>, CeobeOperationVideoError>;
+pub(super) type FlagVideoRespResult<T> =
+    FlagRespResult<Option<T>, CeobeOperationVideoError>;

@@ -1,6 +1,6 @@
 use std::borrow::Cow;
-use modify_cache::ModifyState;
 
+use modify_cache::ModifyState;
 use sea_orm::{entity::prelude::*, Set};
 use serde::Serialize;
 

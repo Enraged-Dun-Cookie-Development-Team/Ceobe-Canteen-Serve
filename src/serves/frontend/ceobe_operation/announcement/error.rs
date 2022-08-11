@@ -1,5 +1,5 @@
 use orm_migrate::sql_models::ceobe_operation::announcement;
-use resp_result::{RespResult, FlagRespResult};
+use resp_result::FlagRespResult;
 
 use crate::error_generate;
 
@@ -11,4 +11,4 @@ error_generate! {
 }
 
 pub(super) type FlagAnnouncementRespResult<T> =
-FlagRespResult<Option<T>, CeobeOperationAnnouncementError>;
+    FlagRespResult<Option<T>, CeobeOperationAnnouncementError>;

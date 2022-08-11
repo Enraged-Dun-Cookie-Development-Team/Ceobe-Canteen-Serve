@@ -2,7 +2,10 @@ use modify_cache::CacheMode;
 use orm_migrate::sql_models::ceobe_operation::announcement::operate::CeobeOperationAnnouncementSqlOperate;
 use resp_result::RespResult;
 
-use super::{error::{FlagAnnouncementRespResult}, view::{AnnouncementItem, AnnouncementItems}};
+use super::{
+    error::FlagAnnouncementRespResult,
+    view::{AnnouncementItem, AnnouncementItems},
+};
 use crate::router::CeobeOperationAnnouncementFrontend;
 
 impl CeobeOperationAnnouncementFrontend {
@@ -14,12 +17,14 @@ impl CeobeOperationAnnouncementFrontend {
         ctrl.set_ty(CacheMode::NoCache);
 
         let (data, extra) = modify.check_modify(AnnouncementItems(
-        CeobeOperationAnnouncementSqlOperate::find_all_not_delete()
-            .await?
-            .into_iter()
-            .map(Into::into)
-            .collect()
+            CeobeOperationAnnouncementSqlOperate::find_all_not_delete()
+                .await?
+                .into_iter()
+                .map(Into::into)
+                .collect(),
         ))?;
-        RespResult::ok(data).map(AnnouncementItems::into_inner).with_flags(extra)
+        RespResult::ok(data)
+            .map(AnnouncementItems::into_inner)
+            .with_flags(extra)
     }
 }

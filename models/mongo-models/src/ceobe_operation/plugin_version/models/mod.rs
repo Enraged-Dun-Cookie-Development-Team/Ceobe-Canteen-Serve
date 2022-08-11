@@ -65,7 +65,9 @@ impl ModifyState for PluginVersion {
     type Identify = Self;
 
     fn get_last_modify_time(&self) -> Option<Cow<'_, chrono::NaiveDateTime>> {
-        Some(Cow::Owned(self.time_record.modify_at.to_chrono().naive_local()))
+        Some(Cow::Owned(
+            self.time_record.modify_at.to_chrono().naive_local(),
+        ))
     }
 
     fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }

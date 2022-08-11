@@ -3,8 +3,8 @@ use typed_builder::TypedBuilder;
 use url::Url;
 
 use crate::models::{
-    mongo::plugin_version::{
-        models::{SpareLink, DownloadResource, PluginVersion}
+    mongo::plugin_version::models::{
+        DownloadResource, PluginVersion, SpareLink,
     },
     sql::app_version::models::model_app_version,
 };
