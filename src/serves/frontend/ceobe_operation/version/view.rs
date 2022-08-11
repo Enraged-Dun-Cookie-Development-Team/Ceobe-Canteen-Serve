@@ -1,4 +1,4 @@
-use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
+use crate::models::mongo::plugin_version::{
     models::SpareLink, DownloadResource, PluginVersion,
 };
 use serde::{Deserialize, Serialize};

@@ -1,9 +1,13 @@
 use axum::extract::rejection::QueryRejection;
-use mongo_migration::mongo_models::ceobe_operation::plugin_version;
-use orm_migrate::sql_models::ceobe_operation::app_version;
 use resp_result::RespResult;
 
-use crate::error_generate;
+use crate::{
+    error_generate,
+    models::{
+        mongo::plugin_version
+        sql::app_version,
+    },
+};
 
 error_generate! {
     pub CeobeOperationVersionError

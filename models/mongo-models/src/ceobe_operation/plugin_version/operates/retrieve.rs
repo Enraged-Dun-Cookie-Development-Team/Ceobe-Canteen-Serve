@@ -32,7 +32,6 @@ impl PluginDbOperation {
                 collection.find_one(
                     None,
                     FindOneOptions::builder()
-                    .projection(doc! {"version":1i32})
                     .sort(doc! {"version.major":-1, "version.minor":-1, "version.security":-1})
                     .build()
                 )
