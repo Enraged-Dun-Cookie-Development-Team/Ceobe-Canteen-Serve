@@ -1,11 +1,13 @@
-use crate::models::mongo::plugin_version::{
-    models::SpareLink, DownloadResource, PluginVersion,
-};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use crate::models::sql::app_version::models::model_app_version;
+use crate::models::{
+    mongo::plugin_version::{
+        models::SpareLink, DownloadResource, PluginVersion,
+    },
+    sql::app_version::models::model_app_version,
+};
 
 // app版本
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
