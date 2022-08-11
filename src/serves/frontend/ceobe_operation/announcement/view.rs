@@ -1,3 +1,6 @@
+use std::borrow::Cow;
+
+use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -36,3 +39,19 @@ impl From<model_announcement::Model> for AnnouncementItem {
         }
     }
 }
+
+// 用于请求头缓存信息生成
+pub struct AnnouncementItems(pub(super) Vec<AnnouncementItem>);
+impl AnnouncementItems {
+    pub(super) fn into_inner(this: Option<Self>) -> Option<Vec<AnnouncementItem>> {
+        this.map(|v| v.0)
+    }
+}
+impl ModifyState for AnnouncementItems {
+    type Identify = Vec<AnnouncementItem>;
+
+    fn get_identify(&self) -> Cow<'_, Self::Identify> {
+        Cow::Borrowed(&self.0)
+    }
+}
+
