@@ -22,9 +22,8 @@ pub enum OperateError {
     MultiAllAvailable,
     #[error("没有可用的资源全可用的记录")]
     #[status_err(err(
-        prefix = r#"ErrPrefix::CHECKER"#,
-        err_code = 0x00_0E,
-        http_code = "HttpCode::INTERNAL_SERVER_ERROR"
+        prefix = r#"ErrPrefix::NOT_FOUND"#,
+        err_code = 0x00_06,
     ))]
     NoneAllAvailable,
 }
