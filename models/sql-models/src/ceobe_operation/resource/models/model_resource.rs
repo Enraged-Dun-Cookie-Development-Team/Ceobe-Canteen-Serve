@@ -59,13 +59,6 @@ impl ActiveModel {
         self.delete_at = Set(get_zero_data_time())
     }
 
-    // 新建操作
-    pub fn now_create(&mut self) {
-        let now = Local::now().naive_local();
-        self.create_at = Set(now);
-        self.modify_at = Set(now);
-    }
-
     pub fn now_create_with_time(&mut self, now: chrono::NaiveDateTime) {
         self.create_at = Set(now);
         self.modify_at = Set(now)
