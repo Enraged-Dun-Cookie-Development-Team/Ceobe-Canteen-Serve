@@ -12,7 +12,6 @@ error_generate! {
     Json = JsonRejection
     Check = CheckError
     DbOperate = OperateError
-    ModifyCheck = modify_cache::Error
 }
 
 pub type ResourceRResult<T> = RespResult<T, ResourceError>;
