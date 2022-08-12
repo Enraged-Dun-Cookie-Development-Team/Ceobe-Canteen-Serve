@@ -11,6 +11,7 @@ use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Resource {
+    #[serde(rename="resources")]
     resource_all_available: AllAvailable,
     countdown: Vec<Countdown>,
     #[serde(skip)]
