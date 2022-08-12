@@ -1,9 +1,7 @@
 mod all_available;
 mod countdown;
 
-use orm_migrate::sql_models::{
-    ceobe_operation::resource::models::model_resource,
-};
+use orm_migrate::sql_models::ceobe_operation::resource::models::model_resource;
 use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
