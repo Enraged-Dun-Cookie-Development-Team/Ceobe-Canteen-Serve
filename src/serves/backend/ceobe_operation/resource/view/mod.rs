@@ -1,5 +1,5 @@
-mod countdown;
 mod all_available;
+mod countdown;
 use std::borrow::Cow;
 
 use chrono::NaiveDateTime;
@@ -8,7 +8,6 @@ use orm_migrate::sql_models::{
     ceobe_operation::resource::models::model_resource, get_zero_data_time,
 };
 use serde::Serialize;
-
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Resource {
@@ -30,8 +29,6 @@ impl ModifyState for Resource {
 
     fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
-
-
 
 impl
     From<(

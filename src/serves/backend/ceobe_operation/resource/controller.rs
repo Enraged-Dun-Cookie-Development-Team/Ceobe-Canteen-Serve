@@ -1,10 +1,6 @@
-use std::time::Duration;
-
-use axum::headers::HeaderName;
 use axum_prehandle::{
     prefabs::json::JsonPayload, PreHandling, PreRespHandling,
 };
-use modify_cache::{CacheMode, CheckModify};
 use orm_migrate::sql_models::ceobe_operation::resource::{
     checkers::resource_data::{
         CeobeOperationResourceChecker, CeobeOperationResourceUncheck,
@@ -40,6 +36,6 @@ impl CeobeOpResource {
             })
             .await?;
 
-        RespResult::ok(data)
+        RespResult::ok(resp)
     }
 }
