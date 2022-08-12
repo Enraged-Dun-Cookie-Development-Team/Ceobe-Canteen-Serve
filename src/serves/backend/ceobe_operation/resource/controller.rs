@@ -15,7 +15,7 @@ use resp_result::{FlagWarp, RespResult};
 
 use super::{
     error::{ResourceError, ResourceRResult},
-    view_models::Resource,
+    view::Resource,
 };
 use crate::{
     router::CeobeOpResource,
