@@ -24,7 +24,7 @@ impl Checker for SpareLinkChecker {
                         .map_err(Into::into)
                         .map(|label| (url, label))
                 })
-                .map(|(url, label)| SpareLink(url, label)),
+                .map(|(url, label)| SpareLink { url, msg: label }),
         )
     }
 }

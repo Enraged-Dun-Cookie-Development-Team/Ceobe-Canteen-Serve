@@ -23,6 +23,7 @@ checker = { path = "../../libs/checker" }
 range-limit = { path = "../../libs/range-limit" }
 sql_connection = { path = "../../database/sql_connection" }
 status-err = { path = "../../libs/status-err" }
+modify-cache = {path = "../../libs/modify-cache"}
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }
