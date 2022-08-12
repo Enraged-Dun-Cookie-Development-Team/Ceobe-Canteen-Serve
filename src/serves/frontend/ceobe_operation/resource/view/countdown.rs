@@ -5,11 +5,11 @@ use crate::utils::time_format::naive_date_time_format;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Countdown {
-    #[serde(rename="text")]
+    #[serde(rename = "text")]
     message: String,
-    #[serde(rename="remark")]
+    #[serde(rename = "remark")]
     banner_info: String,
-    #[serde(rename="time")]
+    #[serde(rename = "time")]
     countdown_end: String,
     start_time: String,
     over_time: String,

@@ -1,8 +1,9 @@
 use resp_result::FlagRespResult;
 
-use crate::models::sql::resource::operate::OperateError;
-use crate::models::sql::resource::checkers::CheckError;
-use crate::error_generate;
+use crate::{
+    error_generate,
+    models::sql::resource::{checkers::CheckError, operate::OperateError},
+};
 
 error_generate! {
     pub ResourceError

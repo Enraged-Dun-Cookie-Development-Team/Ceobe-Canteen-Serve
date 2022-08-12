@@ -1,3 +1,3 @@
-mod view;
-mod error;
 mod controllers;
+mod error;
+mod view;

@@ -2,17 +2,17 @@ mod resource;
 use axum::Router;
 
 use self::{
-    announcement::announcement_router, version::version_router,
-    video::video_router, resource::resource_router,
+    announcement::announcement_router, resource::resource_router,
+    version::version_router, video::video_router,
 };
 
 mod announcement;
 mod version;
 mod video;
 pub use announcement::CeobeOperationAnnouncementFrontend;
+pub use resource::CeobeOperationResourceFrontend;
 pub use version::CeobeOperationVersionFrontend;
 pub use video::CeobeOperationVideoFrontend;
-pub use resource::CeobeOperationResourceFrontend;
 
 pub(super) fn ceobe_operation_router() -> Router {
     Router::new()
