@@ -1,11 +1,8 @@
 mod all_available;
 mod countdown;
-use std::borrow::Cow;
 
-use chrono::NaiveDateTime;
-use modify_cache::ModifyState;
 use orm_migrate::sql_models::{
-    ceobe_operation::resource::models::model_resource, get_zero_data_time,
+    ceobe_operation::resource::models::model_resource,
 };
 use serde::Serialize;
 
@@ -13,7 +10,7 @@ use serde::Serialize;
 pub struct Resource {
     #[serde(rename = "resources")]
     resource_all_available: AllAvailable,
-    countdown: Vec<Countdown>
+    countdown: Vec<Countdown>,
 }
 
 pub use all_available::AllAvailable;
@@ -33,7 +30,7 @@ impl
     ) -> Self {
         Self {
             resource_all_available: raa.into(),
-            countdown: cd.into_iter().map(Into::into).collect()
+            countdown: cd.into_iter().map(Into::into).collect(),
         }
     }
 }

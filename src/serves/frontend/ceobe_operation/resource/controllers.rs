@@ -12,7 +12,9 @@ impl CeobeOperationResourceFrontend {
     pub async fn resource_list(
         mut modify: modify_cache::CheckModify,
     ) -> FlagResourceRespResult<Resource> {
-        modify.cache_headers.get_control()
+        modify
+            .cache_headers
+            .get_control()
             .set_max_age(Duration::from_secs(60 * 60));
 
         let (data, extra) = modify.check_modify(
