@@ -11,18 +11,13 @@ use orm_migrate::sql_models::ceobe_operation::resource::{
     },
     operate::CeobeOperationResourceSqlOperate,
 };
-use resp_result::{FlagWarp, RespResult};
+use resp_result::RespResult;
 
 use super::{
     error::{ResourceError, ResourceRResult},
     view::Resource,
 };
-use crate::{
-    router::CeobeOpResource,
-    utils::{
-        data_checker::PreLiteChecker, user_authorize::config::get_header_name,
-    },
-};
+use crate::{router::CeobeOpResource, utils::data_checker::PreLiteChecker};
 
 type ResourceUploadCheck = PreLiteChecker<
     JsonPayload<CeobeOperationResourceUncheck>,
@@ -38,25 +33,13 @@ impl CeobeOpResource {
         RespResult::ok(())
     }
 
-    pub async fn get_resource(
-        mut modify: CheckModify,
-    ) -> ResourceRResult<FlagWarp<Option<Resource>>> {
-        modify
-            .cache_headers
-            .clean_content_local()
-            .add_vary_headers([HeaderName::from_static(get_header_name())])
-            .get_control()
-            .set_ty(CacheMode::Private)
-            .set_max_age(Duration::from_secs(4 * 60 * 60));
-
+    pub async fn get_resource() -> ResourceRResult<Resource> {
         let resp =
             CeobeOperationResourceSqlOperate::get_resource(|raa, cd| {
                 Resource::from((raa, cd))
             })
             .await?;
 
-        let (data, flags) = modify.check_modify(resp)?;
-
-        RespResult::ok(data).with_flags(flags)
+        RespResult::ok(data)
     }
 }
