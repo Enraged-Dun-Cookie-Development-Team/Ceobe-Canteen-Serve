@@ -22,16 +22,10 @@ pub enum OperateError {
     ))]
     AppVersionIdExist(String),
     #[error("App指定版本:[{0:?}]信息不存在")]
-    #[status_err(err(
-        err_code = 0x0004,
-        prefix = "ErrPrefix::NOT_FOUND",
-    ))]
+    #[status_err(err(err_code = 0x0004, prefix = "ErrPrefix::NOT_FOUND",))]
     AppVersionIdNoExist(String),
     #[error("还没有App版本信息")]
-    #[status_err(err(
-        err_code = 0x0005,
-        prefix = "ErrPrefix::NOT_FOUND",
-    ))]
+    #[status_err(err(err_code = 0x0005, prefix = "ErrPrefix::NOT_FOUND",))]
     NotAppVersion,
 }
 #[allow(dead_code)]
