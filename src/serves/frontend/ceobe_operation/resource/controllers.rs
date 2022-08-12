@@ -12,8 +12,8 @@ impl CeobeOperationResourceFrontend {
     pub async fn resource_list(
         mut modify: modify_cache::CheckModify,
     ) -> FlagResourceRespResult<Resource> {
-        let ctrl = modify.cache_headers.get_control();
-        ctrl.set_max_age(Duration::from_secs(60 * 60));
+        modify.cache_headers.get_control()
+            .set_max_age(Duration::from_secs(60 * 60));
 
         let (data, extra) = modify.check_modify(
             CeobeOperationResourceSqlOperate::get_resource(|raa, cd| {
