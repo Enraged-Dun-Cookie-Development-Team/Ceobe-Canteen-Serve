@@ -1,5 +1,5 @@
-mod delete;
 mod create;
+mod delete;
 mod retrieve;
 mod update;
 
