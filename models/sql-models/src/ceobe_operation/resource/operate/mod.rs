@@ -1,6 +1,7 @@
-pub mod create;
-pub mod retrieve;
-pub mod update;
+mod delete;
+mod create;
+mod retrieve;
+mod update;
 
 use status_err::StatusErr;
 use thiserror::Error;
