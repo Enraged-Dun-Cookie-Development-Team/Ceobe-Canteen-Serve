@@ -9,6 +9,7 @@ pub use back_end::{
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationVersionFrontend, CeobeOperationVideoFrontend,
+    CeobeOperationResourceFrontend
 };
 
 use self::{back_end::back_end_router, front_end::front_end_router};

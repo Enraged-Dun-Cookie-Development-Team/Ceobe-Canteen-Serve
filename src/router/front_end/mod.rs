@@ -4,7 +4,7 @@ use axum::Router;
 pub use bakery_mansion::BakeryMansionFrontend;
 pub use ceobe_operation::{
     CeobeOperationAnnouncementFrontend, CeobeOperationVersionFrontend,
-    CeobeOperationVideoFrontend,
+    CeobeOperationVideoFrontend, CeobeOperationResourceFrontend
 };
 
 use self::{
