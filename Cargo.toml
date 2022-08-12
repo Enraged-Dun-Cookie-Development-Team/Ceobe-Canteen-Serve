@@ -30,7 +30,12 @@ figment = { version = "0.10", features = ["yaml", "json", "toml"] }
 # axum
 axum = { version = "0.5", features = ["headers"] }
 tower = { version = "0.4", features = ["limit"] }
-tower-http = { version = "0.3", features = ["trace", "catch-panic"] }
+tower-http = { version = "0.3", features = [
+    "trace",
+    "catch-panic",
+    "set-header",
+    "compression-full"
+] }
 # web
 url = "2.2.2"
 http = "0.2"

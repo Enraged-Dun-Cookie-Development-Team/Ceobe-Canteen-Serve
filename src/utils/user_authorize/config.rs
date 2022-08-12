@@ -60,7 +60,7 @@ pub(super) fn get_jwt_key() -> &'static Hmac<Sha256> {
     &config.jwt_key
 }
 
-fn get_header_name() -> &'static str {
+pub fn get_header_name() -> &'static str {
     let config = get_local_config();
     config.header
 }
