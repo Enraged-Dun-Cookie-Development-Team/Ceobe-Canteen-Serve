@@ -54,7 +54,6 @@ pub struct DownloadView {
 pub struct PluginVersionView {
     pub version: String,
     pub description: String,
-    pub logo: String,
     pub title: String,
     pub down: DownloadView,
 }
@@ -90,7 +89,6 @@ impl From<PluginVersion> for PluginVersionView {
         PluginVersion {
             version,
             description,
-            logo,
             title,
             down,
             ..
@@ -99,7 +97,6 @@ impl From<PluginVersion> for PluginVersionView {
         Self {
             version: version.to_string(),
             description,
-            logo,
             title,
             down: down.into(),
         }
