@@ -1,6 +1,6 @@
-mod ceobe_operation_resource;
 mod ceobe_operation_announcement;
 mod ceobe_operation_app_version;
+mod ceobe_operation_resource;
 
 mod admin;
 mod ceobe_operation_video;
