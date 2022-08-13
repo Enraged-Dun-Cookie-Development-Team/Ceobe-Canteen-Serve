@@ -14,7 +14,6 @@ use super::{
 #[derive(Debug, Deserialize)]
 pub struct PluginVersionChecker {
     version: VersionChecker,
-    logo: MaxRangeLimit<String, 128>,
     title: MaxRangeLimit<String, 128>,
     description: MaxRangeLimit<String, 1024>,
     down: DownloadResourceChecker,

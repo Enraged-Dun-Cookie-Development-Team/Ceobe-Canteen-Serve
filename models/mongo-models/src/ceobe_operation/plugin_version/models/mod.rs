@@ -32,7 +32,6 @@ pub struct PluginVersion {
     pub version: Version,
     #[sub_model(ignore("PluginVersionChecked"))]
     pub time_record: RecordUnit,
-    pub logo: String,
     pub title: String,
     pub description: String,
     pub down: DownloadResource,
@@ -44,7 +43,6 @@ impl PluginVersionChecked {
     ) -> PluginVersion {
         let Self {
             version,
-            logo,
             title,
             description,
             down,
@@ -53,7 +51,6 @@ impl PluginVersionChecked {
         PluginVersion {
             version,
             time_record,
-            logo,
             title,
             description,
             down,

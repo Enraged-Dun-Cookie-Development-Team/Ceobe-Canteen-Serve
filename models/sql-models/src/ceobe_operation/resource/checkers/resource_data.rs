@@ -30,7 +30,9 @@ pub struct CeobeOperationResource {
     error = CheckError
 )]
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct CeobeOperationResourceChecker {
+    #[serde(alias = "resources")]
     resource_all_available: OptionChecker<ResourceAllAvailableChecker>,
     countdown: OptionChecker<
         IntoIterChecker<

@@ -1,6 +1,6 @@
-mod ceobe_operation;
 mod ceobe_operation_announcement;
 mod ceobe_operation_app_version;
+mod ceobe_operation_resource;
 
 mod admin;
 mod ceobe_operation_video;
@@ -21,7 +21,7 @@ impl MigratorTrait for Migrator {
             ceobe_operation_announcement::m20220724_115553_create::Migration
             ceobe_operation_video::m20220724_090218_new_video_model::Migration
             ceobe_operation_app_version::m20220803_104932_create::Migration
-            ceobe_operation::resource::m20220809_160731_create::Migration
+            ceobe_operation_resource::m20220809_160731_create::Migration
         ]
     }
 }
