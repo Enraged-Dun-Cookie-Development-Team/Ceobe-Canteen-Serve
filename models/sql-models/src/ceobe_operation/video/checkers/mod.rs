@@ -17,4 +17,7 @@ pub enum CheckError {
 
     #[error("日期格式错误: {0}")]
     WrongDateTimeFormat(#[from] chrono::ParseError),
+
+    #[error("Url格式异常 {0}")]
+    Url(#[from] url::ParseError),
 }
