@@ -13,6 +13,7 @@ chrono = { version = "0.4", features = ["serde"] }
 futures = "0.3"
 sub-model = "0.1"
 serde = { version = "1", features = ["derive"] }
+url = { version = "2", features = ["serde"] }
 sea-orm = { version = "0.9", default-features = false, features = [
     "sqlx-mysql",
     "runtime-tokio-rustls",
