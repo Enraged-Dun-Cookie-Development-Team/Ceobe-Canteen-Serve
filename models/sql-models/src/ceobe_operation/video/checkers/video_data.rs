@@ -1,8 +1,14 @@
-use checker::{check_gen, prefabs::date_time_format::DateTimeFormatChecker};
+use checker::{
+    check_gen,
+    prefabs::{
+        date_time_format::DateTimeFormatChecker, url_checker::UrlChecker,
+    },
+};
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
+use url::Url;
 
 use super::{
     bv::{Bv, BvChecker},
@@ -17,8 +23,8 @@ pub struct CeobeOpVideo {
     pub over_time: NaiveDateTime,
     pub title: String,
     pub author: String,
-    pub video_link: String,
-    pub cover_image: String,
+    pub video_link: Url,
+    pub cover_image: Url,
 }
 #[check_gen(
     uncheck = CeobeOpVideoUncheck,
@@ -32,9 +38,9 @@ pub struct CeobeOpVideoChecker {
     pub over_time: DateTimeFormatChecker,
     pub title: MaxRangeLimit<String, 256>,
     pub author: MaxRangeLimit<String, 128>,
-    pub video_link: MaxRangeLimit<String, 256>,
+    pub video_link: UrlChecker,
     #[serde(alias = "cover_img")]
-    pub cover_image: MaxRangeLimit<String, 256>,
+    pub cover_image: UrlChecker,
 }
 
 impl model_video::ActiveModel {
@@ -57,8 +63,8 @@ impl model_video::ActiveModel {
             over_time: Set(over_time),
             title: Set(title),
             author: Set(author),
-            video_link: Set(video_link),
-            cover_image: Set(cover_image),
+            video_link: Set(video_link.to_string()),
+            cover_image: Set(cover_image.to_string()),
             ..Default::default()
         }
     }
@@ -81,8 +87,8 @@ impl model_video::ActiveModel {
         self.over_time = Set(over_time);
         self.title = Set(title);
         self.author = Set(author);
-        self.video_link = Set(video_link);
-        self.cover_image = Set(cover_image);
+        self.video_link = Set(video_link.to_string());
+        self.cover_image = Set(cover_image.to_string());
         self.soft_recover();
     }
 }
