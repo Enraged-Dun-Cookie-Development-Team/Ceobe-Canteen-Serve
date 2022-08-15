@@ -1,4 +1,9 @@
-use checker::{check_gen, prefabs::{date_time_format::DateTimeFormatChecker, url_checker::UrlChecker}};
+use checker::{
+    check_gen,
+    prefabs::{
+        date_time_format::DateTimeFormatChecker, url_checker::UrlChecker,
+    },
+};
 use chrono::NaiveDateTime;
 use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
