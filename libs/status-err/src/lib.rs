@@ -38,7 +38,7 @@ impl std::fmt::Display for ErrPrefix {
 
 impl ErrPrefix {
     /// 数据检查时产生的异常
-    pub const CHECKER: Self = Self('C', HttpCode::NOT_ACCEPTABLE);
+    pub const CHECKER: Self = Self('C', HttpCode::BAD_REQUEST);
     /// IO 过程中异常
     pub const IO: Self = Self('I', HttpCode::INTERNAL_SERVER_ERROR);
     /// MongoDb 数据库异常
@@ -50,7 +50,7 @@ impl ErrPrefix {
     pub const NOT_MODIFIED: Self = Self('M', HttpCode::NOT_MODIFIED);
     pub const NO_ERR: Self = Self('0', HttpCode::OK);
     ///  类型钻换时出现的异常
-    pub const PARSE: Self = Self('P', HttpCode::NOT_ACCEPTABLE);
+    pub const PARSE: Self = Self('P', HttpCode::BAD_REQUEST);
     /// 数据库产生的异常
     pub const SEA_ORM: Self = Self('D', HttpCode::INTERNAL_SERVER_ERROR);
     /// actix 框架产生的异常
