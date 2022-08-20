@@ -1,12 +1,16 @@
-use actix_web::HttpRequest;
+use std::any::Any;
+
+use axum::{
+    body::{Body, BoxBody},
+    response::IntoResponse,
+};
+use http::Request;
 use resp_result::RespResult;
 use status_err::ErrPrefix;
 
-use crate::database::error::DatabaseError;
-
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
-/// 并提供 [Form](std::form::Form)转换实现，
+/// 并提供 [Form](std::convert::Form)转换实现，
 /// 和 [StatusErr](status_err::StatusErr)实现
 ///     ```rust
 ///     error_generate!(
@@ -25,80 +29,20 @@ use crate::database::error::DatabaseError;
 ///         //   |     |------新建包装类型的类型名称
 ///             pub JsonError
 ///             (      
-///                 actix_web::Error  // 内部包装的类型
+///                 Error  // 内部包装的类型
 ///             )"反序列化异常" // 为包装类型添加额外的异常信息
 ///         );
 ///     ```
 macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
-        #[derive(Debug)]
+        #[derive(Debug, status_err::ThisError, status_err::StatusErr)]
+        #[status_err(resp_err)]
         $v enum $err_name{
-            Infallible,
             $(
-                $v_name($inner_err)
+                #[error(transparent)]
+                #[status_err(err = "transparent")]
+                $v_name(#[from] $inner_err)
             ),+
-        }
-        impl std::error::Error for $err_name{}
-        impl std::fmt::Display for $err_name{
-            #[inline]
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                match self{
-                    $(
-                        Self::$v_name(err)=>{write!(f, "{}::{} => {}",stringify!($err_name),stringify!($v_name), err)}
-                    ),+
-                    Self::Infallible=>unreachable!(),
-                }
-            }
-        }
-        /// 实现 status Error 可供下一级封装使用
-        impl status_err::StatusErr for $err_name{
-            #[inline]
-            fn prefix(&self) -> status_err::ErrPrefix{
-                match self{
-                    $(
-                        Self::$v_name(err)=>{err.prefix()}
-                    ),+
-                    Self::Infallible=>unreachable!(),
-                }
-            }
-            #[inline]
-            fn code(&self) -> u16{
-                match self{
-                    $(
-                        Self::$v_name(err)=>{err.code()}
-                    ),+
-                    Self::Infallible=>unreachable!(),
-                }
-            }
-
-            #[inline]
-            fn http_code(&self)->http::StatusCode{
-                match self{
-                    $(
-                        Self::$v_name(err)=>{err.http_code()}
-                    ),+
-                    Self::Infallible=>unreachable!(),
-                }
-            }
-        }
-        // 实现 Resp -error 可以作为RespResult的异常
-        status_err::resp_error_impl!($err_name);
-        // 转换代码
-        $(
-            impl From<$inner_err> for $err_name{
-                #[inline]
-                fn from(src: $inner_err) -> Self {
-                    Self::$v_name(src)
-                }
-            }
-
-        )+
-
-        impl From<std::convert::Infallible> for $err_name{
-            #[inline]
-            fn from(_: std::convert::Infallible) -> Self {
-                Self::Infallible
-            }
         }
     };
     ($v:vis $err_name:ident = $msg:literal)=>{
@@ -107,7 +51,15 @@ macro_rules! error_generate {
         impl std::error::Error for $err_name{}
         impl std::fmt::Display for $err_name{
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-               writeln!(f, "{} => {}",stringify!($err_name), $msg)
+                writeln!(f, "{} => {}",stringify!($err_name), $msg)
+            }
+        }
+
+        impl serde::Serialize for $err_name{
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: serde::Serializer {
+                serializer.serialize_str($msg)
             }
         }
     };
@@ -120,40 +72,74 @@ macro_rules! error_generate {
         #[derive(Debug)]
         $v struct $wrap_name($err_ty);
         impl std::error::Error for $wrap_name{}
+
         impl std::fmt::Display for $wrap_name{
             #[inline]
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-               writeln!(f, "{} => {} `{}`",stringify!($wrap_name), $msg, self.0)
+                writeln!(f, "{} => {} `{}`",stringify!($wrap_name), $msg, self.0)
             }
         }
+
+
         impl From<$err_ty> for $wrap_name{
             #[inline]
             fn from(src:$err_ty)->Self{
                 Self(src)
             }
         }
+
+
     };
 
 }
 
-error_generate!(
-    pub GlobalError
-    Io=std::io::Error
-    Db=DatabaseError
-    Route=RouteNotExistError
-    Mongo=mongodb::error::Error
-);
-
 status_err::status_error! {
     pub RouteNotExistError[
         ErrPrefix::NOT_FOUND,
-        0002
+        0x_00_02
     ]=>"该路由不存在，请检查请求路径"
 }
 
 status_err::resp_error_impl!(RouteNotExistError);
 
-pub async fn not_exist(req: HttpRequest) -> RespResult<(), RouteNotExistError> {
-    log::error!("路由未找到 `{}` {}", req.path(), &req.method());
+status_err::status_error! {
+    pub ServicePanic[
+        ErrPrefix::SERVE,
+        0x00_01
+    ]=>"服务器发生未预期的异常"
+}
+
+status_err::resp_error_impl!(ServicePanic);
+
+status_err::status_error! {
+    pub NotAnError[
+        ErrPrefix::NO_ERR,
+        0x00_00
+    ]=>""
+}
+
+status_err::resp_error_impl!(NotAnError);
+
+pub async fn not_exist(
+    req: Request<Body>,
+) -> RespResult<(), RouteNotExistError> {
+    log::error!("路由未找到 `{}` {}", req.uri(), &req.method());
     RespResult::err(RouteNotExistError)
+}
+
+pub fn serve_panic(
+    error: Box<dyn Any + Send + 'static>,
+) -> http::Response<BoxBody> {
+    let detail = if let Some(msg) = error.downcast_ref::<String>() {
+        msg.as_str()
+    }
+    else if let Some(msg) = error.downcast_ref::<&str>() {
+        *msg
+    }
+    else {
+        "Unknown panic message"
+    };
+
+    log::error!("服务器发生未预期panic : {}", detail);
+    RespResult::<(), _>::err(ServicePanic).into_response()
 }

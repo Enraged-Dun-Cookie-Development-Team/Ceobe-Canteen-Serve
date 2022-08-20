@@ -19,12 +19,12 @@ impl<Src, E> Deref for CryptoWarp<Src, E> {
     fn deref(&self) -> &Self::Target { &self.1 }
 }
 
-impl<Src, E> Into<CryptoString<E>> for CryptoWarp<Src, E>
+impl<Src, E> From<CryptoWarp<Src, E>> for CryptoString<E>
 where
     E: Encoder,
     Src: private::CryptoSource,
 {
-    fn into(self) -> CryptoString<E> { self.1 }
+    fn from(val: CryptoWarp<Src, E>) -> Self { val.1 }
 }
 
 pub struct Raw;

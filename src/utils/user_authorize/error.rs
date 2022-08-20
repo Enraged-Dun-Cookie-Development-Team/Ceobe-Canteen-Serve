@@ -1,47 +1,14 @@
-use http::StatusCode;
-use status_err::ErrPrefix;
+use crypto_str::inner_encoders::bcrypt::BcryptError;
+use orm_migrate::sql_models::admin_user::operate::OperateError;
 
-use super::auth_level;
-use crate::error_generate;
+#[derive(Debug, status_err::ThisError, status_err::StatusErr)]
+pub enum AuthError {
+    #[error(transparent)]
+    Jwt(#[from] jwt::Error),
 
-status_err::status_error!(
-    pub TokenNotFound [
-        ErrPrefix::UNAUTHORIZED,
-        0001
-    ]=>"缺少Token字段"
-);
+    #[error(transparent)]
+    Bcrypt(#[from] BcryptError),
 
-status_err::status_error!(
-    pub PasswordWrong [
-        ErrPrefix::UNAUTHORIZED,
-        0004
-    ]=>"密码错误"
-);
-
-status_err::status_error!(
-    pub UserNotFound [
-        ErrPrefix::UNAUTHORIZED,
-        0003:StatusCode::NOT_FOUND
-    ]=>"Token对应信息不存在"
-);
-
-status_err::status_error!(
-    pub TokenInvalid [
-        ErrPrefix::UNAUTHORIZED,
-        0006
-    ]=>"Token失效"
-);
-
-error_generate!(
-    pub AuthError
-
-    Jwt=jwt::Error
-    NoToken = TokenNotFound
-    NoUser = UserNotFound
-    Password = PasswordWrong
-    Actix = actix_web::Error
-    Db = sea_orm::DbErr
-    Bcrypto = bcrypt::BcryptError
-    AuthLevel = auth_level::UnacceptableAuthorizationLevelError
-    TokenInvalid = TokenInvalid
-);
+    #[error(transparent)]
+    UserDbOperate(#[from] OperateError),
+}

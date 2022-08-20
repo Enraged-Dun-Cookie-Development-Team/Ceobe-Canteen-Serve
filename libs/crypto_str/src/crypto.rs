@@ -32,7 +32,7 @@ where
         sync_time_usage_with_name("密码加密", || {
             match self {
                 CryptoString::Raw(r, _) => {
-                    E::encode(r).and_then(|e| Ok(Self::Crypto(e)))
+                    E::encode(r).map(|e| Self::Crypto(e))
                 }
                 c => Ok(c),
             }
@@ -54,7 +54,7 @@ where
 impl<E> AsRef<str> for CryptoString<E> {
     fn as_ref(&self) -> &str {
         match self {
-            CryptoString::Raw(r, _) | CryptoString::Crypto(r) => &r,
+            CryptoString::Raw(r, _) | CryptoString::Crypto(r) => r,
         }
     }
 }

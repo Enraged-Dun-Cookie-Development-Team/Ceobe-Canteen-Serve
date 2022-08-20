@@ -18,7 +18,7 @@ impl serde::Serialize for StatusCode {
     where
         S: serde::Serializer,
     {
-        let info = format!("{}{:04}", self.prefix, self.code);
+        let info = format!("{}{:04X}", self.prefix, self.code);
 
         info.serialize(serializer)
     }
@@ -31,10 +31,7 @@ impl StatusCode {
 
     pub fn http_code(&self) -> http::StatusCode { self.prefix.get_status() }
 
-    pub fn get_prefix(&self) -> ErrPrefix {
-        let p = self.prefix;
-        p
-    }
+    pub fn get_prefix(&self) -> ErrPrefix { self.prefix }
 
     pub fn get_code(&self) -> u16 { self.code }
 }

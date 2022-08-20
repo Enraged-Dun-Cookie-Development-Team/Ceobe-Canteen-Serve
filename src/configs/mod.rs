@@ -1,18 +1,16 @@
-pub mod actix_logger;
 pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
+use mongo_migration::mongo_connection::MongoDbConfig;
+use orm_migrate::sql_connection::DbConfig;
 use serde::Deserialize;
 
 use self::{
     auth_config::AuthConfig, first_user::FirstUserConfig,
     http_listen_config::HttpListenConfig, logger::LoggerConfig,
     resp_result_config::RespResultConfig,
-};
-use crate::{
-    database::config::DbConfig, utils::mongodb_utils::config::MongoDbConfig,
 };
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";

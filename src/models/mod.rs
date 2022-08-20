@@ -1,8 +1,7 @@
-pub mod mansion;
-pub mod common;
+pub mod sql {
+    pub use orm_migrate::sql_models::{admin_user::*, ceobe_operation::*};
+}
 
-
-crate::generate_model_register!(
-    RootModels,
-    mansion::MansionModel
-);
+pub mod mongo {
+    pub use mongo_migration::mongo_models::{bakery::*, ceobe_operation::*};
+}

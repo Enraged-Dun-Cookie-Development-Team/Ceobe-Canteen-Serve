@@ -11,11 +11,12 @@ pub mod inner_encoders {
         pub use crate::encoders::bcrypt::BcryptEncoder;
         pub type DefaultBcryptEncoder = BcryptEncoder<12>;
         pub type BcryptString = crate::CryptoString<DefaultBcryptEncoder>;
+        pub use bcrypt_::BcryptError;
     }
 
     #[cfg(feature = "none")]
     pub mod none {
-        pub use crate::encoders::none::{NoCrypto, NoErr};
+        pub use crate::encoders::none::NoCrypto;
         pub type NoCrtpyoString = crate::CryptoString<NoCrypto>;
     }
 }

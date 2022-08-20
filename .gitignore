@@ -15,3 +15,4 @@ Config.yaml
 
 
 libs/mongo-wrap/*
+.vscode/

@@ -1,31 +1,21 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, convert::Infallible};
 
 use crate::Encoder;
 
 pub struct NoCrypto;
 
 impl Encoder for NoCrypto {
-    type Error = NoErr;
+    type Error = Infallible;
 
-    fn encode<'s>(
-        raw: Cow<'s, str>,
-    ) -> Result<std::borrow::Cow<'s, str>, Self::Error> {
+    fn encode(
+        raw: Cow<'_, str>,
+    ) -> Result<std::borrow::Cow<'_, str>, Self::Error> {
         Ok(raw)
     }
 
-    fn verify<'s, S: AsRef<str>>(
-        encrypted: &std::borrow::Cow<'s, str>, input: &S,
+    fn verify<S: AsRef<str>>(
+        encrypted: &str, input: &S,
     ) -> Result<bool, Self::Error> {
         Ok(encrypted == input.as_ref())
-    }
-}
-
-#[derive(Debug)]
-pub struct NoErr;
-
-impl std::error::Error for NoErr {}
-impl std::fmt::Display for NoErr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "No Error")
     }
 }

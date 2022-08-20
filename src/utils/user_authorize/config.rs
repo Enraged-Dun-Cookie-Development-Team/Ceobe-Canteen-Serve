@@ -1,6 +1,8 @@
+use axum::body::Body;
 use hmac::{digest::KeyInit, Hmac};
+use http::Request;
+use once_cell::sync::OnceCell;
 use sha2::Sha256;
-use state::Storage;
 
 crate::quick_trait! {
     pub AuthConfig{
@@ -9,7 +11,7 @@ crate::quick_trait! {
     }
 }
 
-static LOCAL_CONFIG: Storage<LocalAuthConfig> = Storage::new();
+static LOCAL_CONFIG: OnceCell<LocalAuthConfig> = OnceCell::new();
 
 struct LocalAuthConfig {
     jwt_key: Hmac<Sha256>,
@@ -41,21 +43,16 @@ impl LocalAuthConfig {
 }
 
 pub(super) fn set_auth_config<C: AuthConfig>(cfg: &C) {
-    if LOCAL_CONFIG.set(LocalAuthConfig::from_config(cfg)) {
-    }
-    else {
+    if LOCAL_CONFIG.set(LocalAuthConfig::from_config(cfg)).is_err() {
         panic!("UserAuth配置信息重复提供")
     }
 }
 
 fn get_local_config() -> &'static LocalAuthConfig {
-    if let Some(config) = LOCAL_CONFIG.try_get() {
-        config
-    }
-    else {
+    LOCAL_CONFIG.get_or_init(|| {
         log::warn!("Auth模块配置文件未配置，将使用默认配置信息");
-        LOCAL_CONFIG.get_or_set(LocalAuthConfig::default)
-    }
+        LocalAuthConfig::default()
+    })
 }
 
 pub(super) fn get_jwt_key() -> &'static Hmac<Sha256> {
@@ -63,13 +60,15 @@ pub(super) fn get_jwt_key() -> &'static Hmac<Sha256> {
     &config.jwt_key
 }
 
-fn get_header_name() -> &'static str {
+pub fn get_header_name() -> &'static str {
     let config = get_local_config();
     config.header
 }
 
-pub(super) struct TokenHeader;
-
-impl crate::utils::data_struct::header_info::FromHeaders for TokenHeader {
-    fn header_name() -> &'static str { get_header_name() }
+pub fn get_authorize_information(req: &Request<Body>) -> Option<String> {
+    req.headers()
+        .get(get_header_name())
+        .and_then(|v| v.to_str().ok())
+        .and_then(|s| urlencoding::decode(s).ok())
+        .map(|s| s.into_owned())
 }

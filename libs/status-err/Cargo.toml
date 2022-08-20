@@ -5,28 +5,28 @@ version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-actix = "0.13"
-actix-http = "3"
-actix-web = "4"
+reqwest = "0.11"
+axum = "0.5"
 http = "0.2"
 jwt = "0.16.0"
-log = {version = "0", optional = true}
+log = { version = "0", optional = true }
 url = "2"
-bcrypt = "0.10"
+bcrypt = "0.13"
 mongodb = "2"
 chrono = "0.4"
+bincode= "1"
+
+# marco
+status-err-derive = {path = "../../macros/status-err-derive"}
+thiserror = "1"
 
 [dependencies.serde]
 version = "1.0"
 
 [dependencies.sea-orm]
+version = "0.9"
 default-features = false
-features = [
-  "sqlx-mysql",
-  "runtime-tokio-rustls",
-  "macros", # "debug-print"
-]
-version = "0.7"
+features = ["sqlx-mysql", "runtime-tokio-rustls", "macros"]
 
 [dependencies.serde_json]
 version = "1.0"
@@ -35,8 +35,8 @@ version = "1.0"
 path = "../range-limit"
 
 [dependencies.resp-result]
-version = "0.1"
+version = "0.3.2"
 features = ["extra-code", "log"]
 
 [dependencies.request-pretreat]
-version="0.1.1"
+version = "0.1.1"

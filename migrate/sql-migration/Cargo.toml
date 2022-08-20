@@ -1,0 +1,17 @@
+[package]
+name = "migration"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "migration"
+path = "src/lib.rs"
+
+[features]
+
+[dependencies]
+tokio = { version = "1", features = ["macros"] }
+chrono = "0.4"
+sea-orm-migration = { version = "0.9" }
+sql-models = { path = "../../models/sql-models" }
