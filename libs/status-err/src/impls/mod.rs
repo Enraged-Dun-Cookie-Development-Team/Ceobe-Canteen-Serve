@@ -14,46 +14,46 @@ status_error!(
     std::io::Error
     [
         ErrPrefix::IO,
-        1:StatusCode::INTERNAL_SERVER_ERROR
+        0x0001:StatusCode::INTERNAL_SERVER_ERROR
     ] -> "IO时出现异常"
 );
 // parse prefix
 status_error!(
 url::ParseError[
     ErrPrefix::PARSE,
-    0x0001:StatusCode::BAD_REQUEST
+    0x0001
     ] -> "Url 解析异常"
 );
 
 status_error!(
 ParseIntError[
     ErrPrefix::PARSE,
-    0x0002:StatusCode::BAD_REQUEST
+    0x0002
     ] -> "数字转换异常"
 );
 
 status_error!(
 jwt::Error[
-    ErrPrefix::PARSE,3
+    ErrPrefix::PARSE, 0x0003
     ] -> "Jwt解析异常"
 );
 
 status_error!(
 chrono::ParseError[
-    ErrPrefix::PARSE,4
+    ErrPrefix::PARSE, 0x0004
     ] -> "日期转换异常"
 );
 status_error!(
 std::string::FromUtf8Error[
     ErrPrefix::PARSE,
-    5:StatusCode::INTERNAL_SERVER_ERROR
+    0x0005:StatusCode::INTERNAL_SERVER_ERROR
     ] -> "字符串编码异常"
 );
 
 status_error!(
     http::header::ToStrError[
         ErrPrefix::PARSE,
-        0x0006: StatusCode::BAD_REQUEST
+        0x0006
     ] -> "http 请求头内容解析异常"
 );
 status_error!(
@@ -73,7 +73,7 @@ Infallible[
 status_error!(
     range_limit::Error[
     ErrPrefix::CHECKER,
-    0x00_01:StatusCode::BAD_REQUEST
+    0x00_01
     ] ->"范围检查未通过"
 );
 status_error!(
