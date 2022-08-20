@@ -21,14 +21,14 @@ status_error!(
 status_error!(
 url::ParseError[
     ErrPrefix::PARSE,
-    0x0001:StatusCode::NOT_ACCEPTABLE
+    0x0001:StatusCode::BAD_REQUEST
     ] -> "Url 解析异常"
 );
 
 status_error!(
 ParseIntError[
     ErrPrefix::PARSE,
-    0x0002:StatusCode::NOT_ACCEPTABLE
+    0x0002:StatusCode::BAD_REQUEST
     ] -> "数字转换异常"
 );
 
@@ -73,7 +73,7 @@ Infallible[
 status_error!(
     range_limit::Error[
     ErrPrefix::CHECKER,
-    0x00_01:StatusCode::NOT_ACCEPTABLE
+    0x00_01:StatusCode::BAD_REQUEST
     ] ->"范围检查未通过"
 );
 status_error!(
