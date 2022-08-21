@@ -12,9 +12,13 @@ pub struct UserAuthBackend;
 
 pub(super) fn user_auth_router() -> Router {
     Router::new()
+        .route(
+            "/create",
+            post(UserAuthBackend::create_user)
+                .route_layer(AuthorizeLayer::<Chef>::new()),
+        )
         .merge(
             Router::new()
-                .route("/create", post(UserAuthBackend::create_user))
                 .route(
                     "/changeUsername",
                     post(UserAuthBackend::change_username),
@@ -23,10 +27,6 @@ pub(super) fn user_auth_router() -> Router {
                     "/changePassword",
                     post(UserAuthBackend::change_password),
                 )
-                .route_layer(AuthorizeLayer::<Chef>::new()),
-        )
-        .merge(
-            Router::new()
                 .route("/info", get(UserAuthBackend::get_info))
                 .route_layer(AuthorizeLayer::<Any>::new()),
         )
