@@ -4,12 +4,6 @@ use axum::{
 };
 use tower::limit::ConcurrencyLimitLayer;
 
-use crate::{
-    middleware::authorize::AuthorizeLayer,
-    new_auth_level,
-    utils::user_authorize::auth_level::prefabs::{Chef, Cooker},
-};
-
 pub struct CeobeOperationVideo;
 
 pub(super) fn video_router() -> Router {
@@ -21,12 +15,4 @@ pub(super) fn video_router() -> Router {
         )
         .route("/list", get(CeobeOperationVideo::list_all))
         .route("/submitList", post(CeobeOperationVideo::update_list))
-        .route_layer(AuthorizeLayer::<VideoAuth>::new())
-}
-
-new_auth_level! {
-    pub VideoAuth => [
-        Chef
-        Cooker
-    ]
 }
