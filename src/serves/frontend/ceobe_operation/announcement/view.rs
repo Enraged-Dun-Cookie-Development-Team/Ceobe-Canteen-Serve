@@ -3,6 +3,7 @@ use std::borrow::Cow;
 use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
+use url::Url;
 
 use crate::{
     models::sql::announcement::models::model_announcement,
@@ -28,15 +29,27 @@ impl From<model_announcement::Model> for AnnouncementItem {
             ..
         }: model_announcement::Model,
     ) -> Self {
+        let image = Url::parse(&img_url)
+            .map(|url| url.to_string())
+            .unwrap_or_else(|_| format!(r#"/assets/image/{}.png"#, img_url));
+
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
             html: format!(
-                r#"<div class="online-area"><img class="online-title-img radius" src="{}"/><div>{}</div></div>"#,
-                img_url, content
+                r#"<div class="online-area"><img class="online-title-img radius" src="{image}"/><div>{content}</div></div>"#,
             ),
             notice,
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_url() {
+        let url = url::Url::parse("icon");
+        println!("{:?}", url)
     }
 }
 
