@@ -29,21 +29,27 @@ impl From<model_announcement::Model> for AnnouncementItem {
             ..
         }: model_announcement::Model,
     ) -> Self {
-        let url = Url::parse(&img_url);
+        let image = Url::parse(&img_url)
+            .map(|url| url.to_string())
+            .unwrap_or_else(|_| format!(r#"/assets/image/{}.png"#, img_url));
 
-        let image = match url {
-            Ok(_) => img_url,
-            Err(_) => format!(r#"/assets/image/{}.png"#, img_url),
-        };
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
             html: format!(
-                r#"<div class="online-area"><img class="online-title-img radius" src="{}"/><div>{}</div></div>"#,
-                image, content
+                r#"<div class="online-area"><img class="online-title-img radius" src="{image}"/><div>{content}</div></div>"#,
             ),
             notice,
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_url() {
+        let url = url::Url::parse("icon");
+        println!("{:?}", url)
     }
 }
 
