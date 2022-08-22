@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use url::Url;
 
 use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
@@ -28,12 +29,18 @@ impl From<model_announcement::Model> for AnnouncementItem {
             ..
         }: model_announcement::Model,
     ) -> Self {
+        let url = Url::parse(&img_url);
+        let image;
+        match url {
+            Ok(_) => image = img_url,
+            Err(_) => image = format!(r#"/assets/image/{}.png"#,img_url),
+        }
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
             html: format!(
                 r#"<div class="online-area"><img class="online-title-img radius" src="{}"/><div>{}</div></div>"#,
-                img_url, content
+                image, content
             ),
             notice,
         }
