@@ -1,9 +1,9 @@
 use std::borrow::Cow;
-use url::Url;
 
 use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
+use url::Url;
 
 use crate::{
     models::sql::announcement::models::model_announcement,
@@ -30,11 +30,11 @@ impl From<model_announcement::Model> for AnnouncementItem {
         }: model_announcement::Model,
     ) -> Self {
         let url = Url::parse(&img_url);
-        let image;
-        match url {
-            Ok(_) => image = img_url,
-            Err(_) => image = format!(r#"/assets/image/{}.png"#,img_url),
-        }
+
+        let image = match url {
+            Ok(_) => img_url,
+            Err(_) => format!(r#"/assets/image/{}.png"#, img_url),
+        };
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
