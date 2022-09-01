@@ -71,7 +71,7 @@ impl resp_result::RespConfig for RespResultConfig {
     }
 }
 
-#[derive(Debug, serde::Deserialize, PartialEq, Clone)]
+#[derive(Debug, serde::Deserialize, PartialEq, Clone, Eq)]
 #[serde(untagged)]
 pub enum SignError {
     Simple(String),
