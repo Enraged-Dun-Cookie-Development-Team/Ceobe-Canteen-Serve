@@ -16,7 +16,7 @@ chrono = "0.4"
 http = "0.2"
 axum = { version = "0.5", features = ["original-uri"] }
 async-trait = "0.1"
-resp-result = "0.3"
+resp-result = "0.4.1"
 # utils
 thiserror = "1"
 base64 = "0.13"
