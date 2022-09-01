@@ -181,29 +181,28 @@ macro_rules! resp_error_impl {
             fn log_message(&self) ->  std::borrow::Cow<'_, str> {
                 $crate::StatusErr::information(self)
             }
-        
+
             fn resp_message(&self) ->  std::borrow::Cow<'_, str> {
                 $crate::StatusErr::respond_msg(self)
             }
-        
+
             fn http_code(&self) -> http::StatusCode {
                 $crate::StatusErr::http_code(self)
             }
-        
+
             type ExtraMessage = $crate::status_code::StatusCode;
-        
+
             fn extra_message(&self) -> Self::ExtraMessage {
                 $crate::StatusErr::status(self)
             }
-        
+
             fn resp_message_default() -> Option<std::borrow::Cow<'static, str>> {
                 Some("Operate Success".into())
             }
-        
+
             fn extra_message_default() -> Option<Self::ExtraMessage> {
                 Some($crate::status_code::StatusCode::new($crate::ErrPrefix::NO_ERR,0x0000))
             }
         }
     };
 }
-
