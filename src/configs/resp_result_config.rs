@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use resp_result::ConfigTrait;
+use resp_result::{ConfigTrait, RespConfig, SignType, StatusSign};
 
 #[derive(Debug, serde::Deserialize)]
 pub struct RespResultConfig {
@@ -12,7 +12,7 @@ pub struct RespResultConfig {
     #[serde(alias = "fix-field", default = "Default::default")]
     full_field: bool,
     #[serde(alias = "bool-status")]
-    signed_status: Option<String>,
+    signed_status: Option<SignError>,
     #[serde(alias = "body-extra-err")]
     body_extra_err: Option<String>,
     // resp configs
@@ -29,30 +29,139 @@ impl resp_result::SerdeConfig for RespResultConfig {
         self.err_msg_name.clone().into()
     }
 
-    fn full_field(&self) -> bool { self.full_field }
+    fn fixed_field(&self) -> bool { self.full_field }
 
-    fn signed_base_status(&self) -> Option<Cow<'static, str>> {
+    fn signed_status(&self) -> Option<StatusSign> {
         self.signed_status
-            .clone()
-            .map(Into::<Cow<'static, str>>::into)
+            .as_ref()
+            .cloned()
+            .map(|v| {
+                match v {
+                    SignError::Simple(key) => (key, SignType::Bool),
+                    SignError::BoolRev { key, rev } => {
+                        (
+                            key,
+                            if rev {
+                                SignType::BoolRevert
+                            }
+                            else {
+                                SignType::Bool
+                            },
+                        )
+                    }
+                    SignError::Num { key, ok, fail } => {
+                        (key, SignType::new_number(ok, fail))
+                    }
+                    SignError::Str { key, ok, fail } => {
+                        (key, SignType::new_str(ok, fail))
+                    }
+                }
+            })
+            .map(|(k, v)| StatusSign::new(k, v))
     }
 
-    fn extra_code(&self) -> Option<Cow<'static, str>> {
+    fn extra_message(&self) -> Option<Cow<'static, str>> {
         self.body_extra_err.clone().map(Into::into)
     }
 }
 
-impl resp_result::RespConfig for RespResultConfig {
+impl RespConfig for RespResultConfig {
     fn head_extra_code(&self) -> Option<Cow<'static, str>> {
         self.header_extra_err.clone().map(Into::into)
     }
 }
 
+#[derive(Debug, serde::Deserialize, PartialEq, Clone, Eq)]
+#[serde(untagged)]
+pub enum SignError {
+    Simple(String),
+    BoolRev {
+        key: String,
+        #[serde(default)]
+        rev: bool,
+    },
+    Num {
+        key: String,
+        ok: u8,
+        fail: u8,
+    },
+    Str {
+        key: String,
+        ok: String,
+        fail: String,
+    },
+}
 #[cfg(test)]
 mod test {
+    use super::SignError;
+
     #[test]
     fn test_128() {
         let a = 128u8;
         println!("{:b}", a);
+    }
+    #[test]
+    fn test_serde() {
+        // basic name only
+        let json = serde_json::json! {
+            "Acvv"
+        };
+        let v =
+            serde_json::from_value::<super::SignError>(json).expect("Bad");
+        assert_eq!(v, SignError::Simple(String::from("Acvv")));
+        // name with rev
+        let json = serde_json::json! {
+            {
+                "key": "Acvv",
+                "rev": true
+            }
+        };
+        let v =
+            serde_json::from_value::<super::SignError>(json).expect("Bad");
+        assert_eq!(
+            v,
+            SignError::BoolRev {
+                key: String::from("Acvv"),
+                rev: true
+            }
+        );
+
+        // name with ok/fail code u8
+        let json = serde_json::json! {
+            {
+                "key": "Acvv",
+                "ok": 200,
+                "fail":100
+            }
+        };
+        let v =
+            serde_json::from_value::<super::SignError>(json).expect("Bad");
+        assert_eq!(
+            v,
+            SignError::Num {
+                key: String::from("Acvv"),
+                ok: 200,
+                fail: 100
+            }
+        );
+
+        // name with ok/fail code u8
+        let json = serde_json::json! {
+            {
+                "key": "Acvv",
+                "ok": "ok",
+                "fail":"failure"
+            }
+        };
+        let v =
+            serde_json::from_value::<super::SignError>(json).expect("Bad");
+        assert_eq!(
+            v,
+            SignError::Str {
+                key: String::from("Acvv"),
+                ok: String::from("ok"),
+                fail: String::from("failure")
+            }
+        );
     }
 }
