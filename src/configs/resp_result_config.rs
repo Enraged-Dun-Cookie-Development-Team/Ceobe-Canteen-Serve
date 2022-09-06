@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use resp_result::{ConfigTrait, SignType, StatusSign};
+use resp_result::{ConfigTrait, RespConfig, SignType, StatusSign};
 
 #[derive(Debug, serde::Deserialize)]
 pub struct RespResultConfig {
@@ -31,7 +31,7 @@ impl resp_result::SerdeConfig for RespResultConfig {
 
     fn fixed_field(&self) -> bool { self.full_field }
 
-    fn signed_status(&self) -> Option<resp_result::StatusSign> {
+    fn signed_status(&self) -> Option<StatusSign> {
         self.signed_status
             .as_ref()
             .cloned()
@@ -65,7 +65,7 @@ impl resp_result::SerdeConfig for RespResultConfig {
     }
 }
 
-impl resp_result::RespConfig for RespResultConfig {
+impl RespConfig for RespResultConfig {
     fn head_extra_code(&self) -> Option<Cow<'static, str>> {
         self.header_extra_err.clone().map(Into::into)
     }
