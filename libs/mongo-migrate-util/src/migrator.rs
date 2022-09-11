@@ -26,6 +26,17 @@ pub trait MigratorTrait {
         Ok(db_manage)
     }
 }
+#[async_trait]
+impl<M> MigratorTrait for &M
+where
+    M: MigratorTrait + Send + Sync,
+{
+    async fn migrating(
+        &self, manage: &mut Manager<'_>,
+    ) -> Result<(), mongodb::error::Error> {
+        <M as MigratorTrait>::migrating(&self, manage).await
+    }
+}
 
 pub trait DbManager {
     fn get_db(&self) -> &Database;
