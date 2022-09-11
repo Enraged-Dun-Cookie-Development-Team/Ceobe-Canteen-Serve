@@ -41,16 +41,16 @@ where
     }
 }
 
-impl<M> DatabaseInitialMigration<M> for DatabaseManage
+impl<'p, M> DatabaseInitialMigration<'p, M> for DatabaseManage
 where
-    M: mongo_migrate_util::MigratorTrait + 'static + Sync + Send,
+    M: mongo_migrate_util::MigratorTrait + Sync + Send + 'p,
 {
-    type MigrateFuture<'p> =
-        impl Future<Output = Result<Self::Builder, Self::Error>> + 'p;
+    type MigrateFuture =
+        impl Future<Output = Result<Self::Builder, Self::Error>>;
 
     fn apply_migration(
-        builder: Self::Builder, params: &M,
-    ) -> Self::MigrateFuture<'_> {
+        builder: Self::Builder, params: M,
+    ) -> Self::MigrateFuture {
         async move { builder.apply_mongo_migration(params).await }
     }
 }

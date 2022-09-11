@@ -19,16 +19,15 @@ pub trait DatabaseInitialConnect<Params: 'static>:
     fn start_connect(params: &Params) -> Self::ConnectFuture<'_>;
 }
 
-pub trait DatabaseInitialMigration<Params: 'static>:
+pub trait DatabaseInitialMigration<'p, Params: 'p>:
     DatabaseInitialBasic
 {
-    type MigrateFuture<'s>: Future<Output = Result<Self::Builder, Self::Error>>
-        + 's;
+    type MigrateFuture: Future<Output = Result<Self::Builder, Self::Error>>;
 
     /// apply the database migration
     fn apply_migration(
-        builder: Self::Builder, params: &Params,
-    ) -> Self::MigrateFuture<'_>;
+        builder: Self::Builder, params: Params,
+    ) -> Self::MigrateFuture;
 }
 
 /// a trait that for database init itself
@@ -52,15 +51,15 @@ where
     D::build(builder)
 }
 
-pub async fn connect_db_with_migrate<D, C, M>(
-    connect_params: &C, migrate_params: &M,
+pub async fn connect_db_with_migrate<'c, D, C, M>(
+    connect_params: &'c C, migrate_params: M,
 ) -> Result<D::BuildResult, D::Error>
 where
-    D: DatabaseInitialConnect<C>
-        + DatabaseInitialMigration<M>
+    for<'s> D: DatabaseInitialConnect<C>
+        + DatabaseInitialMigration<'c, M>
         + DatabaseInitial,
     C: 'static,
-    M: 'static,
+    M: 'c,
 {
     let builder = D::start_connect(connect_params).await?;
     let builder = D::apply_migration(builder, migrate_params).await?;
