@@ -148,7 +148,7 @@ impl UserAuthBackend {
 
         let username = username.username;
 
-        UserSqlOperate::update_user_name(id as i64, username.clone()).await?;
+        UserSqlOperate::update_user_name(id, username.clone()).await?;
 
         Ok(UserName { username }).into()
     }
@@ -166,7 +166,7 @@ impl UserAuthBackend {
         let new_password = body.new_password;
 
         let generate_token = UserSqlOperate::update_user_password(
-            id as i64,
+            id,
             new_password,
             old_password,
             |old, new| PasswordEncoder::verify(old, &new),
