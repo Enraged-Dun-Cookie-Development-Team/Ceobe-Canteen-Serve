@@ -1,6 +1,6 @@
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
-    EntityTrait, QueryFilter,
+    EntityTrait, QueryFilter, QuerySelect,
 };
 use sql_connection::{get_sql_database, get_sql_transaction};
 
@@ -40,7 +40,7 @@ impl UserSqlOperate {
     }
 
     pub async fn find_user_by_id_raw(
-        uid: i64, db: &impl ConnectionTrait,
+        uid: i32, db: &impl ConnectionTrait,
     ) -> OperateResult<user::Model> {
         Self::query_one_user_raw(
             user::Column::Id.eq(uid).into_condition(),
@@ -49,6 +49,7 @@ impl UserSqlOperate {
         .await
     }
 
+    // 获取并验证密码
     pub async fn find_user_and_verify_pwd<V, M, E, T>(
         name: &str, pwd: &str, verify: V, mapping: M,
     ) -> OperateResult<Result<T, E>>
@@ -70,8 +71,9 @@ impl UserSqlOperate {
         }
     }
 
+    /// 获取并验证密码版本
     pub async fn find_user_with_version_verify<M, E, T>(
-        uid: i64, token_version: u32, ok_mapper: M, error: E,
+        uid: i32, token_version: u32, ok_mapper: M, error: E,
     ) -> OperateResult<Result<T, E>>
     where
         M: Fn(user::Model) -> T,
@@ -86,5 +88,19 @@ impl UserSqlOperate {
         else {
             Ok(Err(error))
         }
+    }
+
+    /// 分页获取用户列表
+    pub async fn find_user_list(page:u64, size:u64) -> OperateResult<Vec<user::UserList>> {
+        let db = get_sql_database();
+        Ok(user::Entity::find()
+            .select_only()
+            .column(user::Column::Id)
+            .column(user::Column::Username)
+            .column(user::Column::Auth)
+            .offset((page-1)*size).limit(size)
+            .into_model::<user::UserList>()
+            .all(db)
+            .await?)
     }
 }
