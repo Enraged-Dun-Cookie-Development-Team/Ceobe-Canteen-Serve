@@ -1,6 +1,6 @@
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
-    EntityTrait, QueryFilter, QuerySelect,
+    EntityTrait, QueryFilter, QuerySelect, PaginatorTrait,
 };
 use sql_connection::{get_sql_database, get_sql_transaction};
 
@@ -102,5 +102,13 @@ impl UserSqlOperate {
             .into_model::<user::UserList>()
             .all(db)
             .await?)
+    }
+
+    /// 获取用户总数
+    pub async fn get_user_total_number() -> OperateResult<u64> {
+        let db = get_sql_database();
+        Ok(user::Entity::find()
+            .count(db)
+            .await?.try_into().unwrap())
     }
 }
