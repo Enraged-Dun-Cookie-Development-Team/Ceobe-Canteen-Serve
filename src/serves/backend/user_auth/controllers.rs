@@ -241,9 +241,8 @@ impl UserAuthBackend {
             AdminUserError,
         >,
     ) -> AdminUserRResult<()> {
-        let uid = body.id;
-        let new_auth = body.auth;
-        UserSqlOperate::update_user_auth(uid, new_auth).await?;
+        let ChangeAuthReq{ id, auth } = body;
+        UserSqlOperate::update_user_auth(id, auth).await?;
         Ok(()).into()
     }
 
