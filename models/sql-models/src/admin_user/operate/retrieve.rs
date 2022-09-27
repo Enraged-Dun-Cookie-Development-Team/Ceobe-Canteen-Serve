@@ -108,8 +108,8 @@ impl UserSqlOperate {
     }
 
     /// 获取用户总数
-    pub async fn get_user_total_number() -> OperateResult<u64> {
+    pub async fn get_user_total_number() -> OperateResult<usize> {
         let db = get_sql_database();
-        Ok(user::Entity::find().count(db).await?.try_into().unwrap())
+        Ok(user::Entity::find().count(db).await?)
     }
 }

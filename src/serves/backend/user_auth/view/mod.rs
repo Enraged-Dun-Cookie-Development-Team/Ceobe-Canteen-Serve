@@ -26,11 +26,11 @@ crate::quick_struct! {
     pub PageSize {
         page: u64
         size: u64
-        total_count: u64
+        total_count: usize
         total_page: u64
     }
 
-    pub ViewUserListResq {
+    pub ViewUserListResp {
         user_table: Vec<UserTable>
         page_size: PageSize
     }

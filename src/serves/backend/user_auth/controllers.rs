@@ -14,7 +14,7 @@ use time_usage::sync_time_usage_with_name;
 use super::{
     view::{
         ChangeAuthReq, ChangePassword, DeleteOneUserReq, PageSize, UserTable,
-        ViewUserListResq,
+        ViewUserListResp,
     },
     UsernamePretreatment,
 };
@@ -202,7 +202,7 @@ impl UserAuthBackend {
     pub async fn user_list(
         AuthorizeInfo(_): AuthorizeInfo,
         Query(params): Query<HashMap<String, u64>>,
-    ) -> AdminUserRResult<ViewUserListResq> {
+    ) -> AdminUserRResult<ViewUserListResp> {
         let page = match params.get("page") {
             Some(value) => value,
             None => todo!(),
@@ -221,7 +221,7 @@ impl UserAuthBackend {
         // 获取用户数量
         let count = UserSqlOperate::get_user_total_number().await?;
 
-        let resq: ViewUserListResq = ViewUserListResq {
+        let resp: ViewUserListResp = ViewUserListResp {
             user_table: user_list,
             page_size: PageSize {
                 page: *page,
@@ -230,7 +230,7 @@ impl UserAuthBackend {
                 total_page: (count as f64 / *size as f64).ceil() as u64,
             },
         };
-        Ok(resq).into()
+        Ok(resp).into()
     }
 
     // 修改用户权限
