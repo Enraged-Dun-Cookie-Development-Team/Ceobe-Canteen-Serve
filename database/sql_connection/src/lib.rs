@@ -7,7 +7,7 @@ mod static_vars;
 use std::future::Future;
 
 pub use config::{DbConfig, DbConnectConfig, DbOptionsConfig};
-use database_initial::{
+use database_traits::initial::{
     DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
     DatabaseInitialMigration,
 };

@@ -16,7 +16,7 @@ use std::future::Future;
 
 pub use config::{DbConnectConfig, MongoDbConfig};
 pub use database::manager::{CollectionGuard, DatabaseManage};
-use database_initial::{
+use database_traits::initial::{
     DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
     DatabaseInitialMigration,
 };

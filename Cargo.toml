@@ -104,5 +104,5 @@ path = "./migrate/mongo-migration"
 [dependencies.modify-cache]
 path = "./libs/modify-cache"
 
-[dependencies.database_initial]
-path = "./database/database_initial"
+[dependencies.database_traits]
+path = "./database/database_traits"

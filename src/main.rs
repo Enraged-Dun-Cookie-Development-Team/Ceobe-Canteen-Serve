@@ -8,9 +8,9 @@ use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use database_initial::connect_db_with_migrate;
+use database_traits::initial::connect_db_with_migrate;
 use figment::providers::{Format, Json, Toml, Yaml};
-use mongo_migration::mongo_connection::{self};
+use mongo_migration::mongo_connection;
 use orm_migrate::{sql_connection::SqlDatabase, Migrator, MigratorTrait};
 use tokio::sync::oneshot;
 use tower::ServiceBuilder;
