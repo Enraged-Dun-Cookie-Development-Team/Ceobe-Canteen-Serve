@@ -1,6 +1,6 @@
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
-    EntityTrait, QueryFilter, QuerySelect, PaginatorTrait,
+    EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
 };
 use sql_connection::{get_sql_database, get_sql_transaction};
 
@@ -91,14 +91,17 @@ impl UserSqlOperate {
     }
 
     /// 分页获取用户列表
-    pub async fn find_user_list(page:u64, size:u64) -> OperateResult<Vec<user::UserList>> {
+    pub async fn find_user_list(
+        page: u64, size: u64,
+    ) -> OperateResult<Vec<user::UserList>> {
         let db = get_sql_database();
         Ok(user::Entity::find()
             .select_only()
             .column(user::Column::Id)
             .column(user::Column::Username)
             .column(user::Column::Auth)
-            .offset((page-1)*size).limit(size)
+            .offset((page - 1) * size)
+            .limit(size)
             .into_model::<user::UserList>()
             .all(db)
             .await?)
@@ -107,8 +110,6 @@ impl UserSqlOperate {
     /// 获取用户总数
     pub async fn get_user_total_number() -> OperateResult<u64> {
         let db = get_sql_database();
-        Ok(user::Entity::find()
-            .count(db)
-            .await?.try_into().unwrap())
+        Ok(user::Entity::find().count(db).await?.try_into().unwrap())
     }
 }

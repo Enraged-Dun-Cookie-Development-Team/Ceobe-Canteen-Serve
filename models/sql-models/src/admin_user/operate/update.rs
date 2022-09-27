@@ -2,10 +2,10 @@ use sea_orm::{
     sea_query::IntoCondition, ActiveModelTrait, ColumnTrait, IntoActiveModel,
     Set,
 };
-use sql_connection::{get_sql_transaction, get_sql_database};
+use sql_connection::{get_sql_database, get_sql_transaction};
 
 use super::{OperateError, OperateResult, UserSqlOperate};
-use crate::admin_user::models::{user, auth_level::AuthLevel};
+use crate::admin_user::models::{auth_level::AuthLevel, user};
 
 impl UserSqlOperate {
     pub async fn update_user_name(

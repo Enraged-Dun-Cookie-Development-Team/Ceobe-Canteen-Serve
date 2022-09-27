@@ -1,7 +1,7 @@
+mod delete;
 mod retrieve;
 mod update;
 mod verify;
-mod delete;
 use sea_orm::FromQueryResult;
 
 mod create;

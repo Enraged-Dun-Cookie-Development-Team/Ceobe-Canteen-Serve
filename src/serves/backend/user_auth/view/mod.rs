@@ -1,4 +1,6 @@
-use orm_migrate::sql_models::admin_user::models::{auth_level::AuthLevel, user::UserList};
+use orm_migrate::sql_models::admin_user::models::{
+    auth_level::AuthLevel, user::UserList,
+};
 
 crate::quick_struct! {
     pub CreateUser {
@@ -58,17 +60,7 @@ crate::quick_struct! {
 }
 
 impl From<UserList> for UserTable {
-    fn from(
-        UserList {
-            username,
-            auth,
-            id,
-        }: UserList,
-    ) -> Self {
-        Self {
-            id,
-            username,
-            auth,
-        }
+    fn from(UserList { username, auth, id }: UserList) -> Self {
+        Self { id, username, auth }
     }
 }

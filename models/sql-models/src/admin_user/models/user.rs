@@ -6,14 +6,8 @@ use super::auth_level::AuthLevel;
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "admin_user")]
 #[sub_model(
-    all(
-        name = "VerifiedUser",
-        extra(derive(sea_orm::FromQueryResult))
-    ),
-    none(
-        name = "UserList",
-        extra(derive(sea_orm::FromQueryResult))
-    )
+    all(name = "VerifiedUser", extra(derive(sea_orm::FromQueryResult))),
+    none(name = "UserList", extra(derive(sea_orm::FromQueryResult)))
 )]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -25,7 +19,7 @@ pub struct Model {
     pub username: String,
     #[sea_orm(column_type = "Char(Some(64))")]
     pub password: String,
-    #[sub_model(ignore("VerifiedUser"),want("UserList"))]
+    #[sub_model(ignore("VerifiedUser"), want("UserList"))]
     pub auth: AuthLevel,
     #[sea_orm(default_value = 0)]
     pub num_pwd_change: u32,
