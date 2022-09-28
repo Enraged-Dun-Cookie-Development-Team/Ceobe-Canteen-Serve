@@ -1,3 +1,4 @@
+pub mod num_check;
 pub mod collect_checkers;
 pub mod date_time_format;
 pub mod no_check;

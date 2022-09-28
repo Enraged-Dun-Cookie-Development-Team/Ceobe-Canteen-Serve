@@ -11,6 +11,7 @@ serde = "1"
 chrono = "0.4"
 url = "2"
 check-obj-macro = { path = "../../macros/check-obj-macro" }
+num-traits = "0.2"
 
 [dependencies.range-limit]
 path = "../range-limit"
