@@ -8,12 +8,10 @@ use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
+use database_initial::connect_db_with_migrate;
 use figment::providers::{Format, Json, Toml, Yaml};
-use mongo_migration::mongo_connection::MongoConnectBuilder;
-use orm_migrate::{
-    sql_connection::{connect_to_sql_database, get_sql_database},
-    Migrator, MigratorTrait,
-};
+use mongo_migration::mongo_connection::{self};
+use orm_migrate::{sql_connection::SqlDatabase, Migrator, MigratorTrait};
 use tokio::sync::oneshot;
 use tower::ServiceBuilder;
 use tower_http::{
@@ -55,24 +53,24 @@ async fn main() {
 
 async fn task(config: GlobalConfig) {
     // connect to database 连接到数据库
-    connect_to_sql_database(&config.database)
-        .await
-        .expect("无法连接到数据库");
-    let db = get_sql_database();
-    Migrator::up(db, None)
-        .await
-        .expect("Migration Sql 数据库失败");
-    log::info!("完成对Mysql数据库进行migration操作");
-    create_default_user(&config.admin_user).await;
+    connect_db_with_migrate::<SqlDatabase, _, _>(&config.database, |db| {
+        async {
+            Migrator::up(db, None).await?;
+            log::info!("完成对Mysql数据库进行migration操作");
+            create_default_user(&config.admin_user).await;
+            Ok(())
+        }
+    })
+    .await
+    .expect("无法连接并初始化SQL数据库");
 
     // mongo db
-    MongoConnectBuilder::new(&config.mongodb)
-        .await
-        .expect("连接到MongoDb数据库异常")
-        .apply_mongo_migration(mongo_migration::Migrator)
-        .await
-        .expect("注册Collection错误")
-        .build();
+    connect_db_with_migrate::<mongo_connection::DatabaseManage, _, _>(
+        &config.mongodb,
+        mongo_migration::Migrator,
+    )
+    .await
+    .expect("无法连接并初始化MongoDb数据库");
 
     // load server socket config
     let http_socket = HttpConfig::socket(&config.http_listen);

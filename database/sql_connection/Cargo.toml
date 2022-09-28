@@ -8,6 +8,7 @@ edition = "2021"
 once_cell = "1"
 serde = { version = "1", features = ["derive"] }
 log = "0.4"
+database_initial = {path = "../database_initial"}
 
 # data base crate
 [dependencies.sea-orm]

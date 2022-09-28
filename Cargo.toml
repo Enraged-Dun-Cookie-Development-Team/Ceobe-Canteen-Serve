@@ -103,3 +103,6 @@ path = "./migrate/mongo-migration"
 
 [dependencies.modify-cache]
 path = "./libs/modify-cache"
+
+[dependencies.database_initial]
+path = "./database/database_initial"
