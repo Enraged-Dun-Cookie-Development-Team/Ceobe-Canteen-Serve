@@ -1,22 +1,20 @@
-use std::{borrow::Cow, collections::HashMap};
+use std::borrow::Cow;
 
-use axum::extract::Query;
 use axum_prehandle::{
     prefabs::{json::JsonPayload, query::QueryParams},
     PreHandling, PreRespMapErrorHandling,
 };
 use crypto::digest::Digest;
 use crypto_str::Encoder;
+use futures::future;
 use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
+use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use time_usage::sync_time_usage_with_name;
 
 use super::{
-    view::{
-        ChangeAuthReq, ChangePassword, DeleteOneUserReq, PageSize, UserTable,
-        ViewUserListResp,
-    },
-    UsernamePretreatment,
+    view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
+    PageSizePretreatment, UsernamePretreatment,
 };
 use crate::{
     middleware::authorize::AuthorizeInfo,
@@ -201,16 +199,10 @@ impl UserAuthBackend {
     // 获取用户列表
     pub async fn user_list(
         AuthorizeInfo(_): AuthorizeInfo,
-        Query(params): Query<HashMap<String, usize>>,
-    ) -> AdminUserRResult<ViewUserListResp> {
-        let page = match params.get("page") {
-            Some(value) => value,
-            None => todo!(),
-        };
-        let size = match params.get("size") {
-            Some(value) => value,
-            None => todo!(),
-        };
+        PreHandling(page_size): PageSizePretreatment,
+    ) -> AdminUserRResult<ListWithPageInfo<Vec<UserTable>>> {
+        let page = page_size.page;
+        let size = page_size.size;
         // 获取用户列表
         let user_list = async {
             let list: Vec<UserTable> =
@@ -239,7 +231,7 @@ impl UserAuthBackend {
             AdminUserError,
         >,
     ) -> AdminUserRResult<()> {
-        let ChangeAuthReq{ id, auth } = body;
+        let ChangeAuthReq { id, auth } = body;
         UserSqlOperate::update_user_auth(id, auth).await?;
         Ok(()).into()
     }

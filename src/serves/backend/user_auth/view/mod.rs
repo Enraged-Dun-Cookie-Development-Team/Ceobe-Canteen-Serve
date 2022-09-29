@@ -23,18 +23,6 @@ crate::quick_struct! {
         auth:AuthLevel
     }
 
-    pub PageSize {
-        page: usize
-        size: usize
-        total_count: usize
-        total_page: usize
-    }
-
-    pub ViewUserListResp {
-        user_table: Vec<UserTable>
-        page_size: PageSize
-    }
-
     pub UserName {
         username: String
     }
