@@ -201,7 +201,7 @@ impl UserAuthBackend {
     // 获取用户列表
     pub async fn user_list(
         AuthorizeInfo(_): AuthorizeInfo,
-        Query(params): Query<HashMap<String, u64>>,
+        Query(params): Query<HashMap<String, usize>>,
     ) -> AdminUserRResult<ViewUserListResp> {
         let page = match params.get("page") {
             Some(value) => value,
@@ -227,7 +227,7 @@ impl UserAuthBackend {
                 page: *page,
                 size: *size,
                 total_count: count,
-                total_page: (count as f64 / *size as f64).ceil() as u64,
+                total_page: (count as f64 / *size as f64).ceil() as usize,
             },
         };
         Ok(resp).into()

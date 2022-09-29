@@ -1,3 +1,4 @@
+use page_size::database::OffsetLimit;
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
     EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
@@ -92,7 +93,7 @@ impl UserSqlOperate {
 
     /// 分页获取用户列表
     pub async fn find_user_list(
-        page: u64, size: u64,
+        page: usize, size: usize,
     ) -> OperateResult<Vec<user::UserList>> {
         let db = get_sql_database();
         Ok(user::Entity::find()
@@ -100,8 +101,7 @@ impl UserSqlOperate {
             .column(user::Column::Id)
             .column(user::Column::Username)
             .column(user::Column::Auth)
-            .offset((page - 1) * size)
-            .limit(size)
+            .offset_limit(page, size)
             .into_model::<user::UserList>()
             .all(db)
             .await?)

@@ -24,10 +24,10 @@ crate::quick_struct! {
     }
 
     pub PageSize {
-        page: u64
-        size: u64
+        page: usize
+        size: usize
         total_count: usize
-        total_page: u64
+        total_page: usize
     }
 
     pub ViewUserListResp {
