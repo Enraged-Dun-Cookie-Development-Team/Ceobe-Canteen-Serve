@@ -212,14 +212,19 @@ impl UserAuthBackend {
             None => todo!(),
         };
         // 获取用户列表
-        let user_list: Vec<UserTable> =
-            UserSqlOperate::find_user_list(*page, *size)
-                .await?
-                .into_iter()
-                .map(Into::into)
-                .collect();
+        let user_list = async {
+            let list: Vec<UserTable> =
+                UserSqlOperate::find_user_list(*page, *size)
+                    .await?
+                    .into_iter()
+                    .map(Into::into)
+                    .collect();
+            list
+        };
         // 获取用户数量
-        let count = UserSqlOperate::get_user_total_number().await?;
+        let count = async { UserSqlOperate::get_user_total_number().await? };
+        // 异步获取
+        let future_result = future::join(user_list, count).await;
 
         let resq = user_list.generate_list_with_page_info(page, size, count);
 
