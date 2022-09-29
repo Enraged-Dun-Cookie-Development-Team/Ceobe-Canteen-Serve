@@ -221,16 +221,9 @@ impl UserAuthBackend {
         // 获取用户数量
         let count = UserSqlOperate::get_user_total_number().await?;
 
-        let resp: ViewUserListResp = ViewUserListResp {
-            user_table: user_list,
-            page_size: PageSize {
-                page: *page,
-                size: *size,
-                total_count: count,
-                total_page: (count as f64 / *size as f64).ceil() as usize,
-            },
-        };
-        Ok(resp).into()
+        let resq = user_list.generate_list_with_page_info(page, size, count);
+
+        Ok(resq).into()
     }
 
     // 修改用户权限

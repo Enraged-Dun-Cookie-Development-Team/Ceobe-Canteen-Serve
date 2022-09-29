@@ -106,3 +106,6 @@ path = "./libs/modify-cache"
 
 [dependencies.database_initial]
 path = "./database/database_initial"
+
+[dependencies.page_size]
+path = "./libs/page_size"
