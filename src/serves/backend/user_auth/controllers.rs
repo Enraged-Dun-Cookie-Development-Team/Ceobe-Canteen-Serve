@@ -219,7 +219,6 @@ impl UserAuthBackend {
 
     // 修改用户权限
     pub async fn change_auth(
-        AuthorizeInfo(_): AuthorizeInfo,
         PreHandling(body): PreRespMapErrorHandling<
             JsonPayload<ChangeAuthReq>,
             AdminUserError,
@@ -232,7 +231,6 @@ impl UserAuthBackend {
 
     // 删除用户
     pub async fn delete_one_user(
-        AuthorizeInfo(_): AuthorizeInfo,
         PreHandling(body): PreRespMapErrorHandling<
             JsonPayload<DeleteOneUserReq>,
             AdminUserError,
