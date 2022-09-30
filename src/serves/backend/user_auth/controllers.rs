@@ -6,10 +6,9 @@ use axum_prehandle::{
 };
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use futures::{future, FutureExt, TryFutureExt};
+use futures::{future, TryFutureExt};
 use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
 use page_size::{
-    request::PageSize,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
 };
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
