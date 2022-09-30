@@ -1,4 +1,4 @@
-use axum_prehandle::{prefabs::json::JsonPayload, PreRespHandling};
+use axum_prehandle::{prefabs::{json::JsonPayload, query::QueryParams}, PreRespHandling};
 use orm_migrate::sql_models::admin_user::checkers::username::{
     UsernameChecker, UsernameUncheck,
 };
@@ -24,7 +24,7 @@ type UsernamePretreatment = PreRespHandling<
 
 type PageSizePretreatment = PreRespHandling<
     PreLiteChecker<
-        JsonPayload<PageSizeUncheck>,
+        QueryParams<PageSizeUncheck>,
         PageSizeChecker,
         AdminUserError,
     >,
