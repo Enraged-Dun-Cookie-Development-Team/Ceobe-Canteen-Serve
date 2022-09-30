@@ -6,9 +6,12 @@ use axum_prehandle::{
 };
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use futures::future;
+use futures::{future, FutureExt, TryFutureExt};
 use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
-use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use page_size::{
+    request::PageSize,
+    response::{GenerateListWithPageInfo, ListWithPageInfo},
+};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use time_usage::sync_time_usage_with_name;
 
@@ -218,7 +221,7 @@ impl UserAuthBackend {
         // 异步获取
         let future_result = future::join(user_list, count).await;
 
-        let resq = user_list.generate_list_with_page_info(page, size, count);
+        let resq = user_list?.with_page_info(page_size, count?);
 
         Ok(resq).into()
     }

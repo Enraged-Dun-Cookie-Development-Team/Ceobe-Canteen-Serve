@@ -1,4 +1,4 @@
-use page_size::database::OffsetLimit;
+use page_size::{database::OffsetLimit, request::PageSize};
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
     EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
@@ -50,7 +50,7 @@ impl UserSqlOperate {
         .await
     }
 
-    // 获取并验证密码
+    /// 获取并验证密码
     pub async fn find_user_and_verify_pwd<V, M, E, T>(
         name: &str, pwd: &str, verify: V, mapping: M,
     ) -> OperateResult<Result<T, E>>
@@ -93,7 +93,7 @@ impl UserSqlOperate {
 
     /// 分页获取用户列表
     pub async fn find_user_list(
-        page: usize, size: usize,
+        page_size: PageSize
     ) -> OperateResult<Vec<user::UserList>> {
         let db = get_sql_database();
         Ok(user::Entity::find()
@@ -101,7 +101,7 @@ impl UserSqlOperate {
             .column(user::Column::Id)
             .column(user::Column::Username)
             .column(user::Column::Auth)
-            .offset_limit(page, size)
+            .offset_limit(page_size)
             .into_model::<user::UserList>()
             .all(db)
             .await?)

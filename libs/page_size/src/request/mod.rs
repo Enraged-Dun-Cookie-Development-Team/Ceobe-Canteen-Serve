@@ -2,10 +2,10 @@ use checker::{
     check_obj,
     prefabs::num_check::{NonZeroUnsignedChecker, NonZeroUnsignedError},
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-#[derive(Copy, Clone, Debug, TypedBuilder)]
+#[derive(Copy, Clone, Debug, TypedBuilder, Serialize)]
 pub struct PageSize {
     pub page: usize,
     pub size: usize,
