@@ -201,25 +201,16 @@ impl UserAuthBackend {
 
     // 获取用户列表
     pub async fn user_list(
-        AuthorizeInfo(_): AuthorizeInfo,
         PreHandling(page_size): PageSizePretreatment,
-    ) -> AdminUserRResult<ListWithPageInfo<Vec<UserTable>>> {
-        let page = page_size.page;
-        let size = page_size.size;
+    ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         // 获取用户列表
-        let user_list = async {
-            let list: Vec<UserTable> =
-                UserSqlOperate::find_user_list(*page, *size)
-                    .await?
-                    .into_iter()
-                    .map(Into::into)
-                    .collect();
-            list
-        };
+        let user_list = UserSqlOperate::find_user_list(page_size).map_ok(|a| {
+            a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
+        });
         // 获取用户数量
-        let count = async { UserSqlOperate::get_user_total_number().await? };
+        let count = UserSqlOperate::get_user_total_number();
         // 异步获取
-        let future_result = future::join(user_list, count).await;
+        let (user_list, count) = future::join(user_list, count).await;
 
         let resq = user_list?.with_page_info(page_size, count?);
 
