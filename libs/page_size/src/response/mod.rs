@@ -1,38 +1,39 @@
 use serde::Serialize;
 
+use crate::request::PageSize;
 
+#[derive(Serialize)]
 pub struct PageInfo {
-    page: usize,
-    size: usize,
+    #[serde(flatten)]
+    page_size: PageSize,
     total_count: usize,
     total_page: usize,
 }
 
 /// 列表与分页信息
-pub struct ListWithPageInfo<T: Serialize + IntoIterator> {
-    list: T,
+#[derive(Serialize)]
+pub struct ListWithPageInfo<T> where T: Serialize {
+    list: Vec<T>,
     page_size: PageInfo
 }
 
-pub trait GenerateListWithPageInfo {
-    type ListType: Serialize + IntoIterator;
-    fn generate_list_with_page_info(self, page: usize, size: usize, count: usize) -> ListWithPageInfo<Self::ListType>;
+pub trait GenerateListWithPageInfo: IntoIterator where Self::Item : Serialize {
+    fn with_page_info(self, page_size: PageSize, count: usize) -> ListWithPageInfo<Self::Item>;
 }
 
 
-impl<T:Serialize + IntoIterator> GenerateListWithPageInfo for T {
-    type ListType = T;
+impl<T> GenerateListWithPageInfo for T where 
+T: IntoIterator,
+T::Item: Serialize {
     /// 将列表，与分页信息存入一个结构体
-    fn generate_list_with_page_info(self, page: usize, size: usize, count: usize) -> ListWithPageInfo<Self::ListType> {
+    fn with_page_info(self, page_size: PageSize, count: usize) -> ListWithPageInfo<Self::Item> {
         ListWithPageInfo {
-            list: self,
+            list: self.into_iter().collect(),
             page_size: PageInfo {
-                page,
-                size,
+                page_size,
                 total_count: count,
-                total_page: (count as f64 / size as f64).ceil() as usize,
+                total_page: (count as f64 / page_size.size as f64).ceil() as usize,
             }
-            
         }
     }
 }
