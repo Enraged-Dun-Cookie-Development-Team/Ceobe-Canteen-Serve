@@ -3,7 +3,7 @@ use std::{marker::PhantomData, fmt::Display};
 use futures::future::{ready, Ready, ok};
 use num_traits::{Unsigned, Zero};
 
-use crate::{RefChecker};
+use crate::Checker;
 
 #[derive(Debug)]
 pub struct NonZeroUnsignedError;
@@ -22,17 +22,18 @@ impl std::error::Error for NonZeroUnsignedError {
 
 pub struct NonZeroUnsignedChecker<T: Unsigned + Zero + 'static> (PhantomData<T>);
 
-impl<T: Unsigned + Zero + 'static> RefChecker for NonZeroUnsignedChecker<T> {
-    type Target = T;
+impl<T: Unsigned + Zero + 'static> Checker for NonZeroUnsignedChecker<T> {
     type Args = ();
     type Err = NonZeroUnsignedError;
-    type Fut = Ready<Result<(), Self::Err>>;
+    type Fut = Ready<Result<T, Self::Err>>;
+    type Unchecked = T;
+    type Checked = T;
 
-    fn ref_checker(_: Self::Args, target: &Self::Target) -> Self::Fut {
-        if target.is_zero() {
+    fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+        if uncheck.is_zero() {
             ready(Err(NonZeroUnsignedError))
         } else {
-            ok(())
+            ok(uncheck)
         }
     }
 }
