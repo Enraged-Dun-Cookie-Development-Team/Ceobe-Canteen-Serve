@@ -34,10 +34,10 @@ impl FromRequest<Body> for MongoConnect {
 }
 
 impl GetDatabaseConnect for MongoConnect {
-    type Connect<'s> = &'s DatabaseManage;
+    type Connect<'s> = DatabaseManage;
     type Error = error::MongoDbError;
 
-    fn get_connect(&self) -> Result<Self::Connect<'_>, Self::Error> {
+    fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error> {
         Ok(get_mongo_database())
     }
 }

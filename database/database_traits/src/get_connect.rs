@@ -9,7 +9,7 @@ pub trait GetDatabaseConnect: FromRequest<Body> {
     where
         Self: 's;
 
-    fn get_connect(&self) -> Result<Self::Connect<'_>, Self::Error>;
+    fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error>;
 }
 
 pub trait GetDatabaseCollection<C>: GetDatabaseConnect {

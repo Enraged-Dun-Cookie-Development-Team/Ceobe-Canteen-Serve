@@ -39,10 +39,10 @@ impl FromRequest<Body> for SqlConnect {
 }
 
 impl GetDatabaseConnect for SqlConnect {
-    type Connect<'s> = &'s DatabaseConnection;
+    type Connect<'s> = DatabaseConnection;
     type Error = DbErr;
 
-    fn get_connect(&self) -> Result<Self::Connect<'_>, Self::Error> {
+    fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error> {
         Ok(get_sql_database())
     }
 }

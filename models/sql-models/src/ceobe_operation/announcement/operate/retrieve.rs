@@ -45,12 +45,12 @@ impl CeobeOperationAnnouncementSqlOperate {
         .await
     }
 
-    pub async fn find_all_not_delete<'db, D, C>(
+    pub async fn find_all_not_delete<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<model_announcement::Model>>
     where
-        C: ConnectionTrait + StreamTrait<'db> + Send + 'static,
-        D: GetDatabaseConnect<Error = DbErr, Connect<'db> = &'db C> + 'static,
+        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D::Connect<'db>: ConnectionTrait + StreamTrait<'db> + Send + 'static,
     {
         Ok(Self::find_by_filter_not_delete_raw(
             Condition::all(),
