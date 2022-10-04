@@ -11,3 +11,4 @@ pub use sea_orm;
 pub use static_vars::{
     connect_to_sql_database, get_sql_database, get_sql_transaction,
 };
+pub use database_traits;
