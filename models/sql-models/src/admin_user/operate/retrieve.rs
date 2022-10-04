@@ -1,8 +1,10 @@
 use sea_orm::{
-    sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
+    sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
     EntityTrait, QueryFilter,
 };
-use sql_connection::{get_sql_database, get_sql_transaction};
+use sql_connection::database_traits::get_connect::{
+    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+};
 
 use super::{OperateError, OperateResult, UserSqlOperate};
 use crate::admin_user::models::user;
@@ -49,16 +51,20 @@ impl UserSqlOperate {
         .await
     }
 
-    pub async fn find_user_and_verify_pwd<V, M, E, T>(
-        name: &str, pwd: &str, verify: V, mapping: M,
+    pub async fn find_user_and_verify_pwd<'db, D, V, M, E, T>(
+        db: &'db D, name: &str, pwd: &str, verify: V, mapping: M,
     ) -> OperateResult<Result<T, E>>
     where
         V: Fn(&str, &str) -> Result<bool, E>,
         M: Fn(user::Model) -> T,
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
+        D::Transaction<'db>: ConnectionTrait,
     {
-        let ctx = get_sql_transaction().await?;
+        let ctx = db.get_transaction().await?;
 
         let user = Self::find_user_by_name_raw(name, &ctx).await?;
+
+        ctx.submit().await?;
 
         match verify(&user.password, pwd) {
             Ok(true) => {
@@ -70,13 +76,15 @@ impl UserSqlOperate {
         }
     }
 
-    pub async fn find_user_with_version_verify<M, E, T>(
-        uid: i64, token_version: u32, ok_mapper: M, error: E,
+    pub async fn find_user_with_version_verify<'db, D, M, E, T>(
+        db: &'db D, uid: i64, token_version: u32, ok_mapper: M, error: E,
     ) -> OperateResult<Result<T, E>>
     where
         M: Fn(user::Model) -> T,
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
     {
-        let db = get_sql_database();
+        let db = db.get_connect()?;
 
         let user = Self::find_user_by_id_raw(uid, db).await?;
 

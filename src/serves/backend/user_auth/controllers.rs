@@ -6,7 +6,10 @@ use axum_prehandle::{
 };
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
+use orm_migrate::{
+    sql_connection::SqlConnect,
+    sql_models::admin_user::operate::UserSqlOperate,
+};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use time_usage::sync_time_usage_with_name;
 
@@ -36,6 +39,7 @@ crate::quick_struct! {
 
 impl UserAuthBackend {
     pub async fn create_user(
+        db: SqlConnect,
         query: PreRespMapErrorHandling<
             QueryParams<NewUserAuthLevel>,
             AdminUserError,
@@ -80,11 +84,14 @@ impl UserAuthBackend {
         // 加密密码
         let encode_password =
             sync_time_usage_with_name("随机密码加密", || {
-                PasswordEncoder::encode(rand_password.into())
+                tokio::task::block_in_place(|| {
+                    PasswordEncoder::encode(rand_password.into())
+                })
             })?;
 
         // 将用户信息写入数据库
         UserSqlOperate::add_user_with_encoded_password(
+            &db,
             rand_username,
             encode_password.to_string(),
             permission,
@@ -101,15 +108,21 @@ impl UserAuthBackend {
     }
 
     pub async fn login(
+        db: SqlConnect,
         PreHandling(body): PreRespMapErrorHandling<
             JsonPayload<UserLogin>,
             AdminUserError,
         >,
     ) -> AdminUserRResult<UserToken> {
         let token_info = UserSqlOperate::find_user_and_verify_pwd(
+            &db,
             &body.username,
             &body.password,
-            |src, dst| PasswordEncoder::verify(src, &dst),
+            |src, dst| {
+                tokio::task::block_in_place(|| {
+                    PasswordEncoder::verify(src, &dst)
+                })
+            },
             |user| {
                 User {
                     id: user.id,
@@ -141,20 +154,21 @@ impl UserAuthBackend {
     }
 
     pub async fn change_username(
-        AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
         PreHandling(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         let id = user.id;
 
         let username = username.username;
 
-        UserSqlOperate::update_user_name(id as i64, username.clone()).await?;
+        UserSqlOperate::update_user_name(&db, id as i64, username.clone())
+            .await?;
 
         Ok(UserName { username }).into()
     }
 
     pub async fn change_password(
-        AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
         PreHandling(body): PreRespMapErrorHandling<
             JsonPayload<ChangePassword>,
             AdminUserError,
@@ -166,6 +180,7 @@ impl UserAuthBackend {
         let new_password = body.new_password;
 
         let generate_token = UserSqlOperate::update_user_password(
+            &db,
             id as i64,
             new_password,
             old_password,
