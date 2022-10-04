@@ -1,17 +1,23 @@
-use sea_orm::EntityTrait;
-use sql_connection::get_sql_transaction;
+use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
+use sql_connection::database_traits::get_connect::{
+    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+};
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::ceobe_operation::announcement::{
     checkers::announcement_data::CeobeOpAnnouncement,
     models::model_announcement::{self, ActiveModel},
 };
-
 impl CeobeOperationAnnouncementSqlOperate {
-    pub async fn update_all(
-        announcements: Vec<CeobeOpAnnouncement>,
-    ) -> OperateResult<()> {
-        let db = get_sql_transaction().await?;
+    pub async fn update_all<'d, D>(
+        db: &'d D, announcements: Vec<CeobeOpAnnouncement>,
+    ) -> OperateResult<()>
+    where
+        D: GetDatabaseConnect<Error = DbErr>,
+        D: GetDatabaseTransaction<> + 'd,
+        D::Transaction<'d>: ConnectionTrait + 'd + TransactionOps<Error = DbErr>,
+    {
+        let db = db.get_transaction().await?;
         // 所有先前的数据都设置为删除
         Self::all_soft_remove(&db).await?;
 
@@ -32,7 +38,7 @@ impl CeobeOperationAnnouncementSqlOperate {
                 .exec(&db)
                 .await?;
         }
-        db.commit().await?;
+        db.submit().await?;
 
         Ok(())
     }
