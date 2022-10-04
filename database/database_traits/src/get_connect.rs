@@ -9,10 +9,15 @@ pub trait GetDatabaseConnect {
     fn get_connect(&self) -> Result<Self::Connect<'_>, Self::Error>;
 }
 
-pub trait GetDatabaseTransaction {
-    type Error: StdError;
+pub trait GetDatabaseCollection<C>: GetDatabaseConnect {
+    type CollectGuard<'s>: 's
+    where
+        Self: 's;
+    fn get_collection(&self) -> Result<Self::CollectGuard<'_>, Self::Error>;
+}
 
-    type Transaction<'s>: TransactionOps+ 's
+pub trait GetDatabaseTransaction: GetDatabaseConnect {
+    type Transaction<'s>: TransactionOps + 's
     where
         Self: 's;
 
