@@ -3,14 +3,17 @@ use axum_prehandle::{
     PreHandling, PreRespHandling,
 };
 use checker::prefabs::collect_checkers::iter_checkers::IntoIterChecker;
-use orm_migrate::sql_models::ceobe_operation::video::{
-    checkers::{
-        bv_arg_checker::{BvQuery, BvQueryChecker, BvQueryUncheck},
-        video_data::{
-            CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
+use orm_migrate::{
+    sql_connection::SqlConnect,
+    sql_models::ceobe_operation::video::{
+        checkers::{
+            bv_arg_checker::{BvQuery, BvQueryChecker, BvQueryUncheck},
+            video_data::{
+                CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
+            },
         },
+        operate::CeobeOperationVideoSqlOperate,
     },
-    operate::CeobeOperationVideoSqlOperate,
 };
 use reqwest::Url;
 use resp_result::RespResult;
@@ -53,9 +56,9 @@ impl CeobeOperationVideo {
         RespResult::ok(String::from_utf8(body.to_vec())?)
     }
 
-    pub async fn list_all() -> VideoRespResult<Vec<VideoItem>> {
+    pub async fn list_all(db: SqlConnect) -> VideoRespResult<Vec<VideoItem>> {
         RespResult::ok(
-            CeobeOperationVideoSqlOperate::find_all_not_delete()
+            CeobeOperationVideoSqlOperate::find_all_not_delete(&db)
                 .await?
                 .into_iter()
                 .map(Into::into)
@@ -64,9 +67,10 @@ impl CeobeOperationVideo {
     }
 
     pub async fn update_list(
+        db: SqlConnect,
         PreHandling(videos): PreRespHandling<UpdateVideoCheck>,
     ) -> VideoRespResult<()> {
-        CeobeOperationVideoSqlOperate::update_all(videos).await?;
+        CeobeOperationVideoSqlOperate::update_all(&db, videos).await?;
         RespResult::ok(())
     }
 }
