@@ -139,6 +139,15 @@ where
     }
 }
 
+type QueryDbWithReqFuture = BoxFuture<
+    'static,
+    (
+        Result<Result<user::Model, AuthorizeError>, OperateError>,
+        // for next step
+        Request<Body>,
+    ),
+>;
+
 #[pin_project(project = EnumProj)]
 pub enum AuthorizeFutState<S>
 where
@@ -150,14 +159,7 @@ where
     // step 2 query database (async)
     QueryDatabase(
         // query db fut
-        BoxFuture<
-            'static,
-            (
-                Result<Result<user::Model, AuthorizeError>, OperateError>,
-                // for next step
-                Request<Body>,
-            ),
-        >,
+        QueryDbWithReqFuture,
         S,
     ),
     // set user info in to request
@@ -179,16 +181,7 @@ where
 
     fn new_inner(fut: S::Future) -> Self { Self::Inner(fut) }
 
-    fn new_db_query(
-        box_future: BoxFuture<
-            'static,
-            (
-                Result<Result<user::Model, AuthorizeError>, OperateError>,
-                Request<Body>,
-            ),
-        >,
-        service: S,
-    ) -> Self {
+    fn new_db_query(box_future: QueryDbWithReqFuture, service: S) -> Self {
         Self::QueryDatabase(box_future, service)
     }
 }
