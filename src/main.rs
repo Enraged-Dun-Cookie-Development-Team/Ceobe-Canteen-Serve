@@ -57,7 +57,7 @@ async fn task(config: GlobalConfig) {
         async {
             Migrator::up(db, None).await?;
             log::info!("完成对Mysql数据库进行migration操作");
-            create_default_user(&config.admin_user).await;
+            create_default_user(db,&config.admin_user).await;
             Ok(())
         }
     })
