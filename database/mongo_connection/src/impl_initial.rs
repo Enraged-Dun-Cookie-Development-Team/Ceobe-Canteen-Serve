@@ -1,7 +1,10 @@
-use database_traits::initial::{DatabaseInitialBasic, DatabaseInitialConnect, DatabaseInitialMigration, DatabaseInitial};
+use database_traits::initial::{
+    DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
+    DatabaseInitialMigration,
+};
 use futures::Future;
 
-use crate::{DatabaseManage, MongoConnectBuilder, MongoErr, DbConnectConfig};
+use crate::{DatabaseManage, DbConnectConfig, MongoConnectBuilder, MongoErr};
 
 impl DatabaseInitialBasic for DatabaseManage {
     type Builder = MongoConnectBuilder;

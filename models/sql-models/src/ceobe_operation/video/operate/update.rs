@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use futures::{future::ok, StreamExt, TryStreamExt};
+use futures::{future::ok, stream::iter, StreamExt, TryStreamExt};
 use sea_orm::{
     sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait, DbErr,
     EntityTrait, IntoActiveModel, QueryFilter, StreamTrait,
@@ -81,7 +81,7 @@ impl CeobeOperationVideoSqlOperate {
                     }
                 }
             })
-            .pipe(|iter| futures::stream::iter(iter))
+            .pipe(iter)
             .then(|active| active.save(&db))
             .try_for_each_concurrent(None, |_| ok(()))
             .await?;

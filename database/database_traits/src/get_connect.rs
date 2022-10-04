@@ -1,7 +1,9 @@
 use std::{error::Error as StdError, future::Future};
 
-pub use axum::{body::Body, extract::FromRequest};
-pub use axum::extract::RequestParts;
+pub use axum::{
+    body::Body,
+    extract::{FromRequest, RequestParts},
+};
 
 pub trait GetDatabaseConnect: FromRequest<Body> {
     type Error: std::error::Error;

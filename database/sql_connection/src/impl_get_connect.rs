@@ -57,7 +57,7 @@ impl GetDatabaseTransaction for SqlConnect {
         impl Future<Output = Result<SqlTransaction, DbErr>> + 's;
 
     fn get_transaction(&self) -> Self::TransactionFuture<'_> {
-        async { get_sql_transaction().await.map(|t| SqlTransaction(t)) }
+        async { get_sql_transaction().await.map(SqlTransaction) }
     }
 }
 

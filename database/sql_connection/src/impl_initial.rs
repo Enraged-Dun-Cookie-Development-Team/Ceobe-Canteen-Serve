@@ -1,8 +1,13 @@
 use std::future::Future;
 
-use database_traits::initial::{DatabaseInitialBasic, DatabaseInitialConnect, DatabaseInitialMigration, DatabaseInitial};
+use database_traits::initial::{
+    DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
+    DatabaseInitialMigration,
+};
 
-use crate::{DbOptionsConfig, config, connect_to_sql_database, get_sql_database};
+use crate::{
+    config, connect_to_sql_database, get_sql_database, DbOptionsConfig,
+};
 
 pub struct SqlDatabase;
 pub struct SqlDatabaseBuilder;

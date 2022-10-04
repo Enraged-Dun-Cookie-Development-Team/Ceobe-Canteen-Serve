@@ -21,9 +21,9 @@ impl CeobeOperationAppVersionSqlOperate {
             .filter(model_app_version::Column::Version.eq(version.as_ref()))
             .one(db.get_connect()?)
             .await?
-            .ok_or(OperateError::AppVersionIdNoExist(
-                version.as_ref().to_owned(),
-            ))
+            .ok_or_else(|| {
+                OperateError::AppVersionIdNoExist(version.as_ref().to_owned())
+            })
     }
 
     pub async fn get_newest_app_version_info<'db, D>(

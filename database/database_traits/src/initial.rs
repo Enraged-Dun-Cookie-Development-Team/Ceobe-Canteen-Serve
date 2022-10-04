@@ -1,5 +1,3 @@
-
-
 use std::{error::Error as StdError, future::Future};
 
 pub trait DatabaseInitialBasic {

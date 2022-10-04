@@ -36,11 +36,13 @@ impl CeobeOperationAnnouncement {
     pub async fn get_announcement_list(
         db: SqlConnect,
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
-        Ok(CeobeOperationAnnouncementSqlOperate::find_all_not_delete(&db)
-            .await?
-            .into_iter()
-            .map(Into::into)
-            .collect())
+        Ok(
+            CeobeOperationAnnouncementSqlOperate::find_all_not_delete(&db)
+                .await?
+                .into_iter()
+                .map(Into::into)
+                .collect(),
+        )
         .into()
     }
 

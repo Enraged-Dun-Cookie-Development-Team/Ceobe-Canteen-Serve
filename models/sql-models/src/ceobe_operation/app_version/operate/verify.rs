@@ -21,6 +21,6 @@ impl CeobeOperationAppVersionSqlOperate {
             .await?
             .unwrap()
             .pipe(|AppVersionCounts { count }| count != 0)
-            .pipe(|result| Ok(result))
+            .pipe(Ok)
     }
 }
