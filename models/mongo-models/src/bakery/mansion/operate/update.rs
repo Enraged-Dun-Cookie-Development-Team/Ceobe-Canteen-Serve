@@ -1,5 +1,7 @@
+use mongo_connection::MongoDbCollectionTrait;
+
 use super::{
-    get_mansion_collection, MansionDataMongoOperate, OperateError,
+    MansionDataMongoOperate, OperateError,
     OperateResult,
 };
 use crate::bakery::mansion::{
@@ -11,10 +13,11 @@ impl MansionDataMongoOperate {
     /// 更新大厦
     /// mid: 原先大厦id
     /// mansion: 大厦信息
-    pub async fn update_mansion(
+    pub async fn update_mansion<'db>(
+        db:&'db impl MongoDbCollectionTrait<'db,ModelMansion>,
         mid: MansionId, mansion: Mansion,
     ) -> OperateResult<()> {
-        let collection = get_mansion_collection()?;
+        let collection = db.get_collection()?;
         // 获取原先数据新增时间和修改时间
         let old_mansion_time =
             Self::get_mansion_time_by_id(&mid, &collection.with_mapping())
