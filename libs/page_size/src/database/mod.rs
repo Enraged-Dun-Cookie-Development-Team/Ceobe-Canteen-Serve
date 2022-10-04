@@ -7,7 +7,7 @@ pub trait OffsetLimit {
 }
 
 impl<E: EntityTrait> OffsetLimit for Select<E> {
-    fn offset_limit(self, page_size: PageSize) -> Self {
-        self.offset(((page_size.page-1)*page_size.size) as u64).limit((page_size.page*page_size.size) as u64)
+    fn offset_limit(self, PageSize{page, size}: PageSize) -> Self {
+        self.offset(((page-1)*size) as u64).limit((page*size) as u64)
     }
 }
