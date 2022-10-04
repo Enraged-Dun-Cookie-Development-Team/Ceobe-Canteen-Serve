@@ -1,9 +1,12 @@
-use futures::StreamExt;
+use futures::{future::join, StreamExt, TryStreamExt};
 use sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
+    ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
     QuerySelect, StreamTrait,
 };
-use sql_connection::get_sql_transaction;
+use sql_connection::database_traits::get_connect::{
+    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+};
+use tap::Pipe;
 
 use super::{CeobeOperationResourceSqlOperate, OperateError};
 use crate::{
@@ -66,28 +69,33 @@ impl CeobeOperationResourceSqlOperate {
             .into_model::<Countdown>()
             .stream(db)
             .await?
-            .fold(Result::<_, OperateError>::Ok(Vec::new()), |vec, data| {
-                async move {
-                    let (mut vec, data) = (vec?, data?);
-                    vec.push(data);
-                    Ok(vec)
-                }
-            })
+            .try_collect()
             .await?;
 
         Ok(resp_stream)
     }
 
-    pub async fn get_resource<F, T>(map: F) -> Result<T, OperateError>
+    pub async fn get_resource<'db, D, F, T>(
+        db: &'db D, map: F,
+    ) -> Result<T, OperateError>
     where
         F: FnOnce(ResourceAllAvailable, Vec<Countdown>) -> T,
+        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseTransaction,
+        for<'s> D::Transaction<'db>: ConnectionTrait
+            + StreamTrait<'s>
+            + Send
+            + TransactionOps<Error = DbErr>,
     {
-        let db = get_sql_transaction().await?;
+        let db = db.get_transaction().await?;
+        let (raa, countdown) = join(
+            Self::get_resource_all_available(&db),
+            Self::get_all_countdown(&db),
+        )
+        .await
+        .pipe(|(raa, countdown)| Ok::<_, OperateError>((raa?, countdown?)))?;
 
-        let raa = Self::get_resource_all_available(&db).await?;
-        let countdown = Self::get_all_countdown(&db).await?;
-
-        db.commit().await?;
+        db.submit().await?;
 
         Ok(map(raa, countdown))
     }
