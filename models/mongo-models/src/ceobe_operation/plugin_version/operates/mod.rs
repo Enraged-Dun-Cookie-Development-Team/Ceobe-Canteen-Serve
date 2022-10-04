@@ -2,10 +2,10 @@ pub mod retrieve;
 mod update;
 mod verify;
 
-use mongo_connection::{get_mongo_collection, CollectionGuard, MongoDbError};
+use mongo_connection::MongoDbError;
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 
-use super::models::{PluginVersion, PluginVersionChecked, Version};
+use super::models::{PluginVersionChecked, Version};
 
 pub struct PluginDbOperation;
 
@@ -27,11 +27,6 @@ pub enum OperateError {
     #[error("暂没有版本信息")]
     #[status_err(err(err_code = 0x0005, prefix = "ErrPrefix::NOT_FOUND",))]
     VersionInfoNoExist,
-}
-
-fn get_plugin_version_collection(
-) -> Result<CollectionGuard<PluginVersion>, MongoDbError> {
-    get_mongo_collection()
 }
 
 type OperateResult<T> = Result<T, OperateError>;
