@@ -1,10 +1,12 @@
 use std::{
+    convert::Infallible,
     future::Future,
     ops::{Deref, DerefMut},
 };
 
 use database_traits::get_connect::{
-    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    Body, FromRequest, GetDatabaseConnect, GetDatabaseTransaction,
+    RequestParts, TransactionOps,
 };
 use sea_orm::{
     ConnectionTrait, DatabaseConnection, DatabaseTransaction, DbErr,
@@ -15,6 +17,26 @@ use crate::{get_sql_database, get_sql_transaction};
 
 #[derive(Debug, Default)]
 pub struct SqlConnect;
+
+impl FromRequest<Body> for SqlConnect {
+    type Rejection = Infallible;
+
+    fn from_request<'life0, 'async_trait>(
+        _: &'life0 mut RequestParts<Body>,
+    ) -> core::pin::Pin<
+        Box<
+            dyn core::future::Future<Output = Result<Self, Self::Rejection>>
+                + core::marker::Send
+                + 'async_trait,
+        >,
+    >
+    where
+        'life0: 'async_trait,
+        Self: 'async_trait,
+    {
+        Box::pin(async { Ok(SqlConnect) })
+    }
+}
 
 impl GetDatabaseConnect for SqlConnect {
     type Connect<'s> = &'s DatabaseConnection;
