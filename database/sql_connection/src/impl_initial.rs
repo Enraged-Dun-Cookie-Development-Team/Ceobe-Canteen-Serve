@@ -6,7 +6,7 @@ use database_traits::initial::{
 };
 
 use crate::{
-    config, connect_to_sql_database, get_sql_database, DbOptionsConfig,
+    config, DbOptionsConfig, static_vars::{connect_to_sql_database, get_sql_database},
 };
 
 pub struct SqlDatabase;

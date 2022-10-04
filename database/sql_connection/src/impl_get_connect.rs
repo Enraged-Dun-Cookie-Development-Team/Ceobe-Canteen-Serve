@@ -13,7 +13,8 @@ use sea_orm::{
     StreamTrait, TransactionStream, TransactionTrait,
 };
 
-use crate::{get_sql_database, get_sql_transaction};
+use crate::static_vars::{get_sql_database, get_sql_transaction};
+
 
 #[derive(Debug, Default)]
 pub struct SqlConnect;

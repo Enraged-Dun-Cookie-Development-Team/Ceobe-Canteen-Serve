@@ -6,8 +6,8 @@ use database_traits::get_connect::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    error, get_mongo_collection, get_mongo_database, CollectionGuard,
-    DatabaseManage, MongoDbError,
+    error, CollectionGuard,
+    DatabaseManage, MongoDbError, static_vars::{get_mongo_database, get_mongo_collection},
 };
 
 #[derive(Debug, Default)]
