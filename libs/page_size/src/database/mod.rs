@@ -1,3 +1,5 @@
+use std::{slice::SliceIndex, ops::Deref};
+
 use sea_orm::{Select, EntityTrait, QuerySelect};
 
 use crate::request::PageSize;
@@ -8,6 +10,6 @@ pub trait OffsetLimit {
 
 impl<E: EntityTrait> OffsetLimit for Select<E> {
     fn offset_limit(self, PageSize{page, size}: PageSize) -> Self {
-        self.offset(((page-1)*size) as u64).limit((page*size) as u64)
+        self.offset(((page.deref()-1)*size.deref()) as u64).limit((page.deref()*size.deref()) as u64)
     }
 }

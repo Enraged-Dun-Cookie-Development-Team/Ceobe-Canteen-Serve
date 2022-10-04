@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use serde::Serialize;
 
 use crate::request::PageSize;
@@ -32,7 +34,7 @@ T::Item: Serialize {
             page_size: PageInfo {
                 page_size,
                 total_count: count,
-                total_page: (count as f64 / page_size.size as f64).ceil() as usize,
+                total_page: (count as f64 / *page_size.size.deref() as f64).ceil() as usize,
             }
         }
     }
