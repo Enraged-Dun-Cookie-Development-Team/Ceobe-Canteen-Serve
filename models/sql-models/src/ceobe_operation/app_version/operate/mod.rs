@@ -28,10 +28,10 @@ pub enum OperateError {
     #[status_err(err(err_code = 0x0005, prefix = "ErrPrefix::NOT_FOUND",))]
     NotAppVersion,
 }
-#[allow(dead_code)]
+
 type OperateResult<T> = Result<T, OperateError>;
 
 #[derive(FromQueryResult)]
-struct AppVerionCounts {
+struct AppVersionCounts {
     pub(crate) count: i64,
 }

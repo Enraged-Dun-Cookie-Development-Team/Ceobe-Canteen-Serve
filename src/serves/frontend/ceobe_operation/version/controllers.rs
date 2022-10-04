@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use axum_prehandle::{PreHandling, PreRespHandling};
+use orm_migrate::sql_connection::SqlConnect;
 use resp_result::RespResult;
 
 use super::{
@@ -22,6 +23,7 @@ use crate::{
 impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
     pub async fn app_version(
+        db: SqlConnect,
         PreHandling(AppVersion { version }): PreRespHandling<
             OptionAppVersionCheckerPretreat,
         >,
@@ -33,13 +35,13 @@ impl CeobeOperationVersionFrontend {
         match version {
             Some(version) => {
                 let (data, extra) = modify.check_modify(
-                    CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(version).await?
+                    CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(&db,&version).await?
                 )?;
                 RespResult::ok(data.map(Into::into)).with_flags(extra)
             }
             None => {
                 let (data, extra) = modify.check_modify(
-                    CeobeOperationAppVersionSqlOperate::get_newest_app_version_info().await?
+                    CeobeOperationAppVersionSqlOperate::get_newest_app_version_info(&db).await?
                 )?;
                 RespResult::ok(data.map(Into::into)).with_flags(extra)
             }
