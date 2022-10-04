@@ -1,9 +1,6 @@
 use mongo_connection::MongoDbCollectionTrait;
 
-use super::{
-    MansionDataMongoOperate, OperateError,
-    OperateResult,
-};
+use super::{MansionDataMongoOperate, OperateError, OperateResult};
 use crate::bakery::mansion::{
     checked::Mansion,
     preludes::{MansionId, ModelMansion},
@@ -14,7 +11,7 @@ impl MansionDataMongoOperate {
     /// mid: 原先大厦id
     /// mansion: 大厦信息
     pub async fn update_mansion<'db>(
-        db:&'db impl MongoDbCollectionTrait<'db,ModelMansion>,
+        db: &'db impl MongoDbCollectionTrait<'db, ModelMansion>,
         mid: MansionId, mansion: Mansion,
     ) -> OperateResult<()> {
         let collection = db.get_collection()?;

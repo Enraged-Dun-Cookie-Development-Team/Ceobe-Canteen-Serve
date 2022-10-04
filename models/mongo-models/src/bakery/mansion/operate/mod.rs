@@ -1,6 +1,4 @@
-use mongo_connection::{MongoDbError};
-
-
+use mongo_connection::MongoDbError;
 
 mod create;
 mod delete;
@@ -12,7 +10,6 @@ use thiserror::Error;
 pub struct MansionDataMongoOperate;
 pub use OperateError::*;
 pub type MongoErr = mongodb::error::Error;
-
 
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
