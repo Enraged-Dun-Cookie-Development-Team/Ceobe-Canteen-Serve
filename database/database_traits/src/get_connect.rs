@@ -7,8 +7,12 @@ pub trait GetDatabaseConnect {
         Self: 's;
 
     fn get_connect(&self) -> Result<Self::Connect<'_>, Self::Error>;
+}
 
-    type Transaction<'s>: 's
+pub trait GetDatabaseTransaction {
+    type Error: StdError;
+
+    type Transaction<'s>: TransactionOps+ 's
     where
         Self: 's;
 
@@ -20,8 +24,7 @@ pub trait GetDatabaseConnect {
 
     fn get_transaction(&self) -> Self::TransactionFuture<'_>;
 }
-
-pub trait TransactionOperate {
+pub trait TransactionOps {
     type Error: StdError;
 
     type SubmitFuture<'s>: Future<Output = Result<(), Self::Error>>
