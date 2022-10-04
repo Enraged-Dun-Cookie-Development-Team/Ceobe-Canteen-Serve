@@ -29,7 +29,6 @@ impl GetDatabaseConnect for SqlConnect {
 pub struct SqlTransaction(pub DatabaseTransaction);
 
 impl GetDatabaseTransaction for SqlConnect {
-    type Error = DbErr;
     type Transaction<'s> = SqlTransaction;
 
     type TransactionFuture<'s> =
