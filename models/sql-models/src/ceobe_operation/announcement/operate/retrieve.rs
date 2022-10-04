@@ -50,7 +50,7 @@ impl CeobeOperationAnnouncementSqlOperate {
     ) -> OperateResult<Vec<model_announcement::Model>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait + StreamTrait<'db> + Send + 'static,
+        for<'s> D::Connect<'db>: ConnectionTrait + StreamTrait<'s>
     {
         Ok(Self::find_by_filter_not_delete_raw(
             Condition::all(),

@@ -14,8 +14,8 @@ impl CeobeOperationAnnouncementSqlOperate {
     ) -> OperateResult<()>
     where
         D: GetDatabaseConnect<Error = DbErr>,
-        D: GetDatabaseTransaction<> + 'd,
-        D::Transaction<'d>: ConnectionTrait + 'd + TransactionOps<Error = DbErr>,
+        D: GetDatabaseTransaction + 'd,
+        D::Transaction<'d>: ConnectionTrait,
     {
         let db = db.get_transaction().await?;
         // 所有先前的数据都设置为删除

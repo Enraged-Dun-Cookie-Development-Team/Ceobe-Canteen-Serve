@@ -82,10 +82,7 @@ impl CeobeOperationResourceSqlOperate {
         F: FnOnce(ResourceAllAvailable, Vec<Countdown>) -> T,
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D: GetDatabaseTransaction,
-        for<'s> D::Transaction<'db>: ConnectionTrait
-            + StreamTrait<'s>
-            + Send
-            + TransactionOps<Error = DbErr>,
+        for<'s> D::Transaction<'db>: ConnectionTrait + StreamTrait<'s>,
     {
         let db = db.get_transaction().await?;
         let (raa, countdown) = join(

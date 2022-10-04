@@ -20,7 +20,7 @@ pub trait GetDatabaseCollection<C>: GetDatabaseConnect {
 }
 
 pub trait GetDatabaseTransaction: GetDatabaseConnect {
-    type Transaction<'s>: TransactionOps + 's
+    type Transaction<'s>: TransactionOps<Error = Self::Error> + 's
     where
         Self: 's;
 

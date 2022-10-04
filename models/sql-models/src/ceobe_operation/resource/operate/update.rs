@@ -17,7 +17,7 @@ impl CeobeOperationResourceSqlOperate {
     where
         D: GetDatabaseConnect<Error = DbErr>,
         D: GetDatabaseTransaction + 'static,
-        D::Transaction<'db>: ConnectionTrait + TransactionOps<Error = DbErr>,
+        D::Transaction<'db>: ConnectionTrait,
     {
         let db = db.get_transaction().await?;
         let now = Local::now().naive_local();
