@@ -13,8 +13,7 @@ impl CeobeOperationAnnouncementSqlOperate {
         db: &'d D, announcements: Vec<CeobeOpAnnouncement>,
     ) -> OperateResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr>,
-        D: GetDatabaseTransaction + 'd,
+        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'd,
         D::Transaction<'d>: ConnectionTrait,
     {
         let db = db.get_transaction().await?;

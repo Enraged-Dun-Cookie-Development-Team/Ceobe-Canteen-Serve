@@ -80,9 +80,10 @@ impl CeobeOperationResourceSqlOperate {
     ) -> Result<T, OperateError>
     where
         F: FnOnce(ResourceAllAvailable, Vec<Countdown>) -> T,
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D: GetDatabaseTransaction,
-        for<'s> D::Transaction<'db>: ConnectionTrait + StreamTrait<'s>,
+        D: GetDatabaseConnect<Error = DbErr>
+            + GetDatabaseTransaction
+            + 'static,
+        D::Transaction<'db>: ConnectionTrait + for<'s> StreamTrait<'s>,
     {
         let db = db.get_transaction().await?;
         let (raa, countdown) = join(

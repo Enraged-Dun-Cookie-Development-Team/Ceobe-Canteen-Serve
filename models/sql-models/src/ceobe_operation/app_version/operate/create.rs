@@ -17,7 +17,7 @@ impl CeobeOperationAppVersionSqlOperate {
     ) -> OperateResult<()>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait + Send,
+        D::Connect<'db>: ConnectionTrait,
     {
         let db = db.get_connect()?;
         // 判断版本是否已存在

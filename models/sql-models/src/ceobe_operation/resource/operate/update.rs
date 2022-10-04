@@ -15,8 +15,9 @@ impl CeobeOperationResourceSqlOperate {
         db: &'db D, resource: CeobeOperationResource,
     ) -> Result<(), OperateError>
     where
-        D: GetDatabaseConnect<Error = DbErr>,
-        D: GetDatabaseTransaction + 'static,
+        D: GetDatabaseConnect<Error = DbErr>
+            + GetDatabaseTransaction
+            + 'static,
         D::Transaction<'db>: ConnectionTrait,
     {
         let db = db.get_transaction().await?;

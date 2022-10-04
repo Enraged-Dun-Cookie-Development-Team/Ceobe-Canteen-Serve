@@ -15,7 +15,7 @@ impl CeobeOperationAppVersionSqlOperate {
     ) -> OperateResult<model_app_version::Model>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait + Send,
+        D::Connect<'db>: ConnectionTrait,
     {
         model_app_version::Entity::find()
             .filter(model_app_version::Column::Version.eq(version.as_ref()))
@@ -31,7 +31,7 @@ impl CeobeOperationAppVersionSqlOperate {
     ) -> OperateResult<model_app_version::Model>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait + Send,
+        D::Connect<'db>: ConnectionTrait,
     {
         model_app_version::Entity::find()
             .order_by(model_app_version::Column::CreateAt, Order::Desc)

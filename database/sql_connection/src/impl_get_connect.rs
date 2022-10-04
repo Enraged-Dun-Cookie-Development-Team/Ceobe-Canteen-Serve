@@ -206,31 +206,3 @@ impl TransactionTrait for SqlTransaction {
         self.0.transaction(callback)
     }
 }
-
-pub trait SqlDatabaseConnectTrait<'db>
-where
-    Self: GetDatabaseConnect<Error = DbErr> + 'static,
-    Self::Connect<'db>: ConnectionTrait + for<'s> StreamTrait<'s>,
-{
-}
-
-impl<'db, D> SqlDatabaseConnectTrait<'db> for D
-where
-    Self: GetDatabaseConnect<Error = DbErr> + 'static,
-    Self::Connect<'db>: ConnectionTrait + for<'s> StreamTrait<'s>,
-{
-}
-
-pub trait SqlDatabaseTransactionTrait<'db>
-where
-    Self: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'static,
-    Self::Transaction<'db>: ConnectionTrait + for<'s> StreamTrait<'s>,
-{
-}
-
-impl<'db, D> SqlDatabaseTransactionTrait<'db> for D
-where
-    Self: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'static,
-    Self::Transaction<'db>: ConnectionTrait + for<'s> StreamTrait<'s>,
-{
-}
