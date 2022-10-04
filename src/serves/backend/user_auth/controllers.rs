@@ -211,9 +211,9 @@ impl UserAuthBackend {
         // 异步获取
         let (user_list, count) = future::join(user_list, count).await;
 
-        let resq = user_list?.with_page_info(page_size, count?);
+        let resp = user_list?.with_page_info(page_size, count?);
 
-        Ok(resq).into()
+        Ok(resp).into()
     }
 
     // 修改用户权限
