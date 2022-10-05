@@ -8,9 +8,7 @@ use crypto::digest::Digest;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
 use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
-use page_size::{
-    response::{GenerateListWithPageInfo, ListWithPageInfo},
-};
+use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use time_usage::sync_time_usage_with_name;
 
@@ -203,9 +201,10 @@ impl UserAuthBackend {
         PreHandling(page_size): PageSizePretreatment,
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         // 获取用户列表
-        let user_list = UserSqlOperate::find_user_list(page_size).map_ok(|a| {
-            a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
-        });
+        let user_list =
+            UserSqlOperate::find_user_list(page_size).map_ok(|a| {
+                a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
+            });
         // 获取用户数量
         let count = UserSqlOperate::get_user_total_number();
         // 异步获取

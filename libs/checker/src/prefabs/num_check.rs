@@ -44,7 +44,5 @@ impl<T: Unsigned + 'static + Copy> Copy for NonZeroUnsigned<T> {}
 impl<T: Unsigned + 'static> Deref for NonZeroUnsigned<T> {
     type Target = T;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }

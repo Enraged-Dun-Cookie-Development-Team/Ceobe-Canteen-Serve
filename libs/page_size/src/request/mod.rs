@@ -1,6 +1,8 @@
 use checker::{
     check_obj,
-    prefabs::num_check::{NonZeroUnsignedChecker, NonZeroUnsignedError, NonZeroUnsigned},
+    prefabs::num_check::{
+        NonZeroUnsigned, NonZeroUnsignedChecker, NonZeroUnsignedError,
+    },
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;

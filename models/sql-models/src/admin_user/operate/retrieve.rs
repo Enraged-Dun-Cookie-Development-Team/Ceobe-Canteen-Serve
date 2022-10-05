@@ -93,7 +93,7 @@ impl UserSqlOperate {
 
     /// 分页获取用户列表
     pub async fn find_user_list(
-        page_size: PageSize
+        page_size: PageSize,
     ) -> OperateResult<Vec<user::UserList>> {
         let db = get_sql_database();
         Ok(user::Entity::find()
