@@ -71,14 +71,14 @@ impl TransactionOps for SqlTransaction {
     where
         Self: 's,
     {
-        self.0.rollback()
+        self.0.commit()
     }
 
     fn roll_back<'r>(self) -> Self::RollBackFuture<'r>
     where
         Self: 'r,
     {
-        self.0.commit()
+        self.0.rollback()
     }
 }
 
