@@ -6,11 +6,16 @@ use axum_prehandle::{
 };
 use crypto::digest::Digest;
 use crypto_str::Encoder;
+use futures::{future, TryFutureExt};
 use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
+use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use time_usage::sync_time_usage_with_name;
 
-use super::{view::ChangePassword, UsernamePretreatment};
+use super::{
+    view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
+    PageSizePretreatment, UsernamePretreatment,
+};
 use crate::{
     middleware::authorize::AuthorizeInfo,
     models::sql::models::auth_level::AuthLevel,
@@ -148,7 +153,7 @@ impl UserAuthBackend {
 
         let username = username.username;
 
-        UserSqlOperate::update_user_name(id as i64, username.clone()).await?;
+        UserSqlOperate::update_user_name(id, username.clone()).await?;
 
         Ok(UserName { username }).into()
     }
@@ -166,7 +171,7 @@ impl UserAuthBackend {
         let new_password = body.new_password;
 
         let generate_token = UserSqlOperate::update_user_password(
-            id as i64,
+            id,
             new_password,
             old_password,
             |old, new| PasswordEncoder::verify(old, &new),
@@ -189,5 +194,48 @@ impl UserAuthBackend {
         let user_token = UserToken { token };
 
         Ok(user_token).into()
+    }
+
+    // 获取用户列表
+    pub async fn user_list(
+        PreHandling(page_size): PageSizePretreatment,
+    ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
+        // 获取用户列表
+        let user_list =
+            UserSqlOperate::find_user_list(page_size).map_ok(|a| {
+                a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
+            });
+        // 获取用户数量
+        let count = UserSqlOperate::get_user_total_number();
+        // 异步获取
+        let (user_list, count) = future::join(user_list, count).await;
+
+        let resp = user_list?.with_page_info(page_size, count?);
+
+        Ok(resp).into()
+    }
+
+    // 修改用户权限
+    pub async fn change_auth(
+        PreHandling(body): PreRespMapErrorHandling<
+            JsonPayload<ChangeAuthReq>,
+            AdminUserError,
+        >,
+    ) -> AdminUserRResult<()> {
+        let ChangeAuthReq { id, auth } = body;
+        UserSqlOperate::update_user_auth(id, auth).await?;
+        Ok(()).into()
+    }
+
+    // 删除用户
+    pub async fn delete_one_user(
+        PreHandling(body): PreRespMapErrorHandling<
+            JsonPayload<DeleteOneUserReq>,
+            AdminUserError,
+        >,
+    ) -> AdminUserRResult<()> {
+        let uid = body.id;
+        UserSqlOperate::delete_one_user(uid).await?;
+        Ok(()).into()
     }
 }

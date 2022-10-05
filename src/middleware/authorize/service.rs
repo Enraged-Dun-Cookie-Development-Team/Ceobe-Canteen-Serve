@@ -84,7 +84,7 @@ where
         // query database
         let query_db_fut =
             Box::pin(UserSqlOperate::find_user_with_version_verify(
-                user.id as i64,
+                user.id,
                 user.num_pwd_change,
                 |user| user,
                 AuthorizeError::TOkenInvalid,

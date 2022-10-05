@@ -39,3 +39,6 @@ version = "0.4.1"
 default-features = false
 features = ["extra-error", "log"]
 
+[dependencies.checker]
+path = "../checker"
+

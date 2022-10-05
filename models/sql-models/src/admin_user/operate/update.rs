@@ -2,14 +2,14 @@ use sea_orm::{
     sea_query::IntoCondition, ActiveModelTrait, ColumnTrait, IntoActiveModel,
     Set,
 };
-use sql_connection::get_sql_transaction;
+use sql_connection::{get_sql_database, get_sql_transaction};
 
 use super::{OperateError, OperateResult, UserSqlOperate};
-use crate::admin_user::models::user;
+use crate::admin_user::models::{auth_level::AuthLevel, user};
 
 impl UserSqlOperate {
     pub async fn update_user_name(
-        uid: i64, new_name: String,
+        uid: i32, new_name: String,
     ) -> OperateResult<()> {
         let ctx = get_sql_transaction().await?;
 
@@ -38,7 +38,7 @@ impl UserSqlOperate {
     }
 
     pub async fn update_user_password<Verify, Encode, Map, Err, T>(
-        uid: i64, new_pwd: String, old_pwd: String, verify: Verify,
+        uid: i32, new_pwd: String, old_pwd: String, verify: Verify,
         encode: Encode, mapping: Map,
     ) -> OperateResult<Result<T, Err>>
     where
@@ -81,5 +81,22 @@ impl UserSqlOperate {
 
         ctx.commit().await?;
         Ok(Ok(resp))
+    }
+
+    // 更新用户权限
+    pub async fn update_user_auth(
+        uid: i32, new_auth: AuthLevel,
+    ) -> OperateResult<()> {
+        let db = get_sql_database();
+
+        let mut user = Self::find_user_by_id_raw(uid, db)
+            .await?
+            .into_active_model();
+
+        user.auth = Set(new_auth);
+
+        user.update(db).await?;
+
+        Ok(())
     }
 }

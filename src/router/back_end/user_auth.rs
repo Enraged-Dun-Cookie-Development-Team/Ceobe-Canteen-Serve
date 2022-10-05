@@ -1,5 +1,5 @@
 use axum::{
-    routing::{get, post},
+    routing::{delete, get, post},
     Router,
 };
 
@@ -12,11 +12,11 @@ pub struct UserAuthBackend;
 
 pub(super) fn user_auth_router() -> Router {
     Router::new()
-        .route(
-            "/create",
-            post(UserAuthBackend::create_user)
-                .route_layer(AuthorizeLayer::<Chef>::new()),
-        )
+        .route("/create", post(UserAuthBackend::create_user))
+        .route("/userList", get(UserAuthBackend::user_list))
+        .route("/changeAuth", post(UserAuthBackend::change_auth))
+        .route("/deleteUser", delete(UserAuthBackend::delete_one_user))
+        .route_layer(AuthorizeLayer::<Chef>::new())
         .merge(
             Router::new()
                 .route(
