@@ -25,6 +25,7 @@ range-limit = { path = "../../libs/range-limit" }
 sql_connection = { path = "../../database/sql_connection" }
 status-err = { path = "../../libs/status-err" }
 modify-cache = {path = "../../libs/modify-cache"}
+page_size = {path = "../../libs/page_size"}
 tap = "1.0.1"
 
 [dev-dependencies]

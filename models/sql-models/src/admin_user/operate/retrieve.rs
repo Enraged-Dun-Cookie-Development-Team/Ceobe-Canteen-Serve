@@ -1,6 +1,7 @@
+use page_size::{database::OffsetLimit, request::PageSize};
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
-    EntityTrait, QueryFilter,
+    EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
 };
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
@@ -42,7 +43,7 @@ impl UserSqlOperate {
     }
 
     pub async fn find_user_by_id_raw(
-        uid: i64, db: &impl ConnectionTrait,
+        uid: i32, db: &impl ConnectionTrait,
     ) -> OperateResult<user::Model> {
         Self::query_one_user_raw(
             user::Column::Id.eq(uid).into_condition(),
@@ -76,8 +77,9 @@ impl UserSqlOperate {
         }
     }
 
+    /// 获取并验证密码版本
     pub async fn find_user_with_version_verify<'db, D, M, E, T>(
-        db: &'db D, uid: i64, token_version: u32, ok_mapper: M, error: E,
+        db: &'db D, uid: i32, token_version: u32, ok_mapper: M, error: E,
     ) -> OperateResult<Result<T, E>>
     where
         M: Fn(user::Model) -> T,
@@ -94,5 +96,27 @@ impl UserSqlOperate {
         else {
             Ok(Err(error))
         }
+    }
+
+    /// 分页获取用户列表
+    pub async fn find_user_list(
+        page_size: PageSize,
+    ) -> OperateResult<Vec<user::UserList>> {
+        let db = get_sql_database();
+        Ok(user::Entity::find()
+            .select_only()
+            .column(user::Column::Id)
+            .column(user::Column::Username)
+            .column(user::Column::Auth)
+            .offset_limit(page_size)
+            .into_model::<user::UserList>()
+            .all(db)
+            .await?)
+    }
+
+    /// 获取用户总数
+    pub async fn get_user_total_number() -> OperateResult<usize> {
+        let db = get_sql_database();
+        Ok(user::Entity::find().count(db).await?)
     }
 }

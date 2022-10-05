@@ -5,6 +5,7 @@ use std::{convert::Infallible, num::ParseIntError};
 use axum::extract::rejection::{
     JsonRejection, PathRejection, QueryRejection,
 };
+use checker::prefabs::num_check::NonZeroUnsignedError;
 use http::StatusCode;
 
 use crate::{status_error, ErrPrefix};
@@ -114,4 +115,11 @@ status_error!(
         ErrPrefix::NOT_FOUND,
         3 : StatusCode::INTERNAL_SERVER_ERROR
     ] -> "发起请求时异常"
+);
+
+status_error!(
+    NonZeroUnsignedError[
+        ErrPrefix::CHECKER,
+        0x00_0E
+    ] -> "预期为0值取得非0值"
 );
