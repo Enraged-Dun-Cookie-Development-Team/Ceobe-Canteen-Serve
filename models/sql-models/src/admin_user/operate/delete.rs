@@ -1,7 +1,5 @@
 use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
-use sql_connection::{
-    database_traits::get_connect::GetDatabaseConnect,
-};
+use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 
 use super::{OperateResult, UserSqlOperate};
 use crate::admin_user::models::user;
