@@ -99,10 +99,14 @@ impl UserSqlOperate {
     }
 
     /// 分页获取用户列表
-    pub async fn find_user_list(
-        page_size: PageSize,
-    ) -> OperateResult<Vec<user::UserList>> {
-        let db = get_sql_database();
+    pub async fn find_user_list<'db, D>(
+        db: &'db D, page_size: PageSize,
+    ) -> OperateResult<Vec<user::UserList>>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
+    {
+        let db = db.get_connect()?;
         Ok(user::Entity::find()
             .select_only()
             .column(user::Column::Id)
@@ -115,8 +119,14 @@ impl UserSqlOperate {
     }
 
     /// 获取用户总数
-    pub async fn get_user_total_number() -> OperateResult<usize> {
-        let db = get_sql_database();
-        Ok(user::Entity::find().count(db).await?)
+    pub async fn get_user_total_number<'db, D>(
+        db: &'db D,
+    ) -> OperateResult<usize>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
+    {
+        let db = db.get_connect()?;
+        user::Entity::find().count(db).await.map_err(Into::into)
     }
 }

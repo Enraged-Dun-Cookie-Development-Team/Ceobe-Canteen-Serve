@@ -3,7 +3,7 @@ use sea_orm::{
     DbErr, IntoActiveModel, Set,
 };
 use sql_connection::database_traits::get_connect::{
-    GetDatabaseTransaction, TransactionOps,
+    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
 
 use super::{OperateError, OperateResult, UserSqlOperate};
@@ -92,18 +92,24 @@ impl UserSqlOperate {
     }
 
     // 更新用户权限
-    pub async fn update_user_auth(
-        uid: i32, new_auth: AuthLevel,
-    ) -> OperateResult<()> {
-        let db = get_sql_database();
+    pub async fn update_user_auth<'db, D>(
+        db: &'db D, uid: i32, new_auth: AuthLevel,
+    ) -> OperateResult<()>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
+        D::Transaction<'db>: ConnectionTrait,
+    {
+        let db = db.get_transaction().await?;
 
-        let mut user = Self::find_user_by_id_raw(uid, db)
+        let mut user = Self::find_user_by_id_raw(uid, &db)
             .await?
             .into_active_model();
 
         user.auth = Set(new_auth);
 
-        user.update(db).await?;
+        user.update(&db).await?;
+
+        db.submit().await?;
 
         Ok(())
     }

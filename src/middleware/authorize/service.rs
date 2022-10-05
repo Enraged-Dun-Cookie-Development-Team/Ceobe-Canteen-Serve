@@ -95,7 +95,7 @@ where
                 .expect("Fetch Sql Database Using the body");
             UserSqlOperate::find_user_with_version_verify(
                 &db,
-                user.id as i64,
+                user.id,
                 user.num_pwd_change,
                 |user| user,
                 AuthorizeError::TOkenInvalid,
