@@ -1,5 +1,3 @@
-#![feature(generic_associated_types)]
-
 use std::{error::Error as StdError, future::Future};
 
 pub trait DatabaseInitialBasic {

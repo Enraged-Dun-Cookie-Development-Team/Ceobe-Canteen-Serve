@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use orm_migrate::sql_connection::SqlConnect;
 use resp_result::RespResult;
 
 use super::{error::FlagResourceRespResult, view::Resource};
@@ -10,7 +11,7 @@ use crate::{
 
 impl CeobeOperationResourceFrontend {
     pub async fn resource_list(
-        mut modify: modify_cache::CheckModify,
+        db: SqlConnect, mut modify: modify_cache::CheckModify,
     ) -> FlagResourceRespResult<Resource> {
         modify
             .cache_headers
@@ -18,7 +19,7 @@ impl CeobeOperationResourceFrontend {
             .set_max_age(Duration::from_secs(60 * 60));
 
         let (data, extra) = modify.check_modify(
-            CeobeOperationResourceSqlOperate::get_resource(|raa, cd| {
+            CeobeOperationResourceSqlOperate::get_resource(&db, |raa, cd| {
                 Resource::from((raa, cd))
             })
             .await?,

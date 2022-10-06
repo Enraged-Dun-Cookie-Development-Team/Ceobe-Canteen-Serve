@@ -1,6 +1,4 @@
-use mongo_connection::{get_mongo_collection, CollectionGuard, MongoDbError};
-
-use super::preludes::ModelMansion;
+use mongo_connection::MongoDbError;
 
 mod create;
 mod delete;
@@ -12,11 +10,6 @@ use thiserror::Error;
 pub struct MansionDataMongoOperate;
 pub use OperateError::*;
 pub type MongoErr = mongodb::error::Error;
-
-fn get_mansion_collection(
-) -> Result<CollectionGuard<ModelMansion>, MongoDbError> {
-    get_mongo_collection()
-}
 
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;

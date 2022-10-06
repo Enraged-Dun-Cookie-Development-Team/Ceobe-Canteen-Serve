@@ -8,9 +8,9 @@ use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use database_initial::connect_db_with_migrate;
+use database_traits::initial::connect_db_with_migrate;
 use figment::providers::{Format, Json, Toml, Yaml};
-use mongo_migration::mongo_connection::{self};
+use mongo_migration::mongo_connection;
 use orm_migrate::{sql_connection::SqlDatabase, Migrator, MigratorTrait};
 use tokio::sync::oneshot;
 use tower::ServiceBuilder;
@@ -57,7 +57,7 @@ async fn task(config: GlobalConfig) {
         async {
             Migrator::up(db, None).await?;
             log::info!("完成对Mysql数据库进行migration操作");
-            create_default_user(&config.admin_user).await;
+            create_default_user(db, &config.admin_user).await;
             Ok(())
         }
     })

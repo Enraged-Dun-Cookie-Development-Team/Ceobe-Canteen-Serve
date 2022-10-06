@@ -1,17 +1,23 @@
 use sea_orm::{
-    sea_query::IntoCondition, ActiveModelTrait, ColumnTrait, IntoActiveModel,
-    Set,
+    sea_query::IntoCondition, ActiveModelTrait, ColumnTrait, ConnectionTrait,
+    DbErr, IntoActiveModel, Set,
 };
-use sql_connection::{get_sql_database, get_sql_transaction};
+use sql_connection::database_traits::get_connect::{
+    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+};
 
 use super::{OperateError, OperateResult, UserSqlOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
 
 impl UserSqlOperate {
-    pub async fn update_user_name(
-        uid: i32, new_name: String,
-    ) -> OperateResult<()> {
-        let ctx = get_sql_transaction().await?;
+    pub async fn update_user_name<'db, D>(
+        db: &'db D, uid: i32, new_name: String,
+    ) -> OperateResult<()>
+    where
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
+        D::Transaction<'db>: ConnectionTrait,
+    {
+        let ctx = db.get_transaction().await?;
 
         // check user name exist
         if Self::is_user_exist_raw(
@@ -33,20 +39,22 @@ impl UserSqlOperate {
 
         user.save(&ctx).await?;
 
-        ctx.commit().await?;
+        ctx.submit().await?;
         Ok(())
     }
 
-    pub async fn update_user_password<Verify, Encode, Map, Err, T>(
-        uid: i32, new_pwd: String, old_pwd: String, verify: Verify,
-        encode: Encode, mapping: Map,
+    pub async fn update_user_password<'db, D, Verify, Encode, Map, Err, T>(
+        db: &'db D, uid: i32, new_pwd: String, old_pwd: String,
+        verify: Verify, encode: Encode, mapping: Map,
     ) -> OperateResult<Result<T, Err>>
     where
         Verify: Fn(&str, &str) -> Result<bool, Err>,
         Encode: Fn(&str) -> Result<String, Err>,
         Map: Fn(user::Model) -> T,
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
+        D::Transaction<'db>: ConnectionTrait,
     {
-        let ctx = get_sql_transaction().await?;
+        let ctx = db.get_transaction().await?;
 
         let user = Self::find_user_by_id_raw(uid, &ctx).await?;
         let pwd_version = user.num_pwd_change;
@@ -79,23 +87,29 @@ impl UserSqlOperate {
             Err(err) => return Ok(Err(err)),
         };
 
-        ctx.commit().await?;
+        ctx.submit().await?;
         Ok(Ok(resp))
     }
 
     // 更新用户权限
-    pub async fn update_user_auth(
-        uid: i32, new_auth: AuthLevel,
-    ) -> OperateResult<()> {
-        let db = get_sql_database();
+    pub async fn update_user_auth<'db, D>(
+        db: &'db D, uid: i32, new_auth: AuthLevel,
+    ) -> OperateResult<()>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
+        D::Transaction<'db>: ConnectionTrait,
+    {
+        let db = db.get_transaction().await?;
 
-        let mut user = Self::find_user_by_id_raw(uid, db)
+        let mut user = Self::find_user_by_id_raw(uid, &db)
             .await?
             .into_active_model();
 
         user.auth = Set(new_auth);
 
-        user.update(db).await?;
+        user.update(&db).await?;
+
+        db.submit().await?;
 
         Ok(())
     }

@@ -1,11 +1,14 @@
 use axum_prehandle::{
     prefabs::json::JsonPayload, PreHandling, PreRespHandling,
 };
-use orm_migrate::sql_models::ceobe_operation::resource::{
-    checkers::resource_data::{
-        CeobeOperationResourceChecker, CeobeOperationResourceUncheck,
+use orm_migrate::{
+    sql_connection::SqlConnect,
+    sql_models::ceobe_operation::resource::{
+        checkers::resource_data::{
+            CeobeOperationResourceChecker, CeobeOperationResourceUncheck,
+        },
+        operate::CeobeOperationResourceSqlOperate,
     },
-    operate::CeobeOperationResourceSqlOperate,
 };
 use resp_result::RespResult;
 
@@ -23,15 +26,17 @@ type ResourceUploadCheck = PreLiteChecker<
 
 impl CeobeOpResource {
     pub async fn upload_resource(
+        db: SqlConnect,
         PreHandling(resource): PreRespHandling<ResourceUploadCheck>,
     ) -> ResourceRResult<()> {
-        CeobeOperationResourceSqlOperate::update_resource(resource).await?;
+        CeobeOperationResourceSqlOperate::update_resource(&db, resource)
+            .await?;
         RespResult::ok(())
     }
 
-    pub async fn get_resource() -> ResourceRResult<Resource> {
+    pub async fn get_resource(db: SqlConnect) -> ResourceRResult<Resource> {
         let resp =
-            CeobeOperationResourceSqlOperate::get_resource(|raa, cd| {
+            CeobeOperationResourceSqlOperate::get_resource(&db, |raa, cd| {
                 Resource::from((raa, cd))
             })
             .await?;

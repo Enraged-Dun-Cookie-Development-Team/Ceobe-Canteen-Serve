@@ -13,7 +13,7 @@ futures = "0.3"
 urlencoding = "2.1.0"
 thiserror = "1"
 async-trait = "0.1"
-database_initial = { path = "../database_initial" }
+database_traits = { path = "../database_traits" }
 [dependencies.status-err]
 path = "../../libs/status-err"
 

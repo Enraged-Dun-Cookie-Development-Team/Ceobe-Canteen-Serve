@@ -1,9 +1,11 @@
 use page_size::{database::OffsetLimit, request::PageSize};
 use sea_orm::{
-    sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
+    sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
     EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
 };
-use sql_connection::{get_sql_database, get_sql_transaction};
+use sql_connection::database_traits::get_connect::{
+    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+};
 
 use super::{OperateError, OperateResult, UserSqlOperate};
 use crate::admin_user::models::user;
@@ -50,17 +52,20 @@ impl UserSqlOperate {
         .await
     }
 
-    /// 获取并验证密码
-    pub async fn find_user_and_verify_pwd<V, M, E, T>(
-        name: &str, pwd: &str, verify: V, mapping: M,
+    pub async fn find_user_and_verify_pwd<'db, D, V, M, E, T>(
+        db: &'db D, name: &str, pwd: &str, verify: V, mapping: M,
     ) -> OperateResult<Result<T, E>>
     where
         V: Fn(&str, &str) -> Result<bool, E>,
         M: Fn(user::Model) -> T,
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
+        D::Transaction<'db>: ConnectionTrait,
     {
-        let ctx = get_sql_transaction().await?;
+        let ctx = db.get_transaction().await?;
 
         let user = Self::find_user_by_name_raw(name, &ctx).await?;
+
+        ctx.submit().await?;
 
         match verify(&user.password, pwd) {
             Ok(true) => {
@@ -73,13 +78,15 @@ impl UserSqlOperate {
     }
 
     /// 获取并验证密码版本
-    pub async fn find_user_with_version_verify<M, E, T>(
-        uid: i32, token_version: u32, ok_mapper: M, error: E,
+    pub async fn find_user_with_version_verify<'db, D, M, E, T>(
+        db: &'db D, uid: i32, token_version: u32, ok_mapper: M, error: E,
     ) -> OperateResult<Result<T, E>>
     where
         M: Fn(user::Model) -> T,
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
     {
-        let db = get_sql_database();
+        let db = db.get_connect()?;
 
         let user = Self::find_user_by_id_raw(uid, db).await?;
 
@@ -92,10 +99,14 @@ impl UserSqlOperate {
     }
 
     /// 分页获取用户列表
-    pub async fn find_user_list(
-        page_size: PageSize,
-    ) -> OperateResult<Vec<user::UserList>> {
-        let db = get_sql_database();
+    pub async fn find_user_list<'db, D>(
+        db: &'db D, page_size: PageSize,
+    ) -> OperateResult<Vec<user::UserList>>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
+    {
+        let db = db.get_connect()?;
         Ok(user::Entity::find()
             .select_only()
             .column(user::Column::Id)
@@ -108,8 +119,14 @@ impl UserSqlOperate {
     }
 
     /// 获取用户总数
-    pub async fn get_user_total_number() -> OperateResult<usize> {
-        let db = get_sql_database();
-        Ok(user::Entity::find().count(db).await?)
+    pub async fn get_user_total_number<'db, D>(
+        db: &'db D,
+    ) -> OperateResult<usize>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
+    {
+        let db = db.get_connect()?;
+        user::Entity::find().count(db).await.map_err(Into::into)
     }
 }
