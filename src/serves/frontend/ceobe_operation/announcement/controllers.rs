@@ -1,5 +1,8 @@
 use modify_cache::CacheMode;
-use orm_migrate::sql_models::ceobe_operation::announcement::operate::CeobeOperationAnnouncementSqlOperate;
+use orm_migrate::{
+    sql_connection::SqlConnect,
+    sql_models::ceobe_operation::announcement::operate::CeobeOperationAnnouncementSqlOperate,
+};
 use resp_result::RespResult;
 
 use super::{
@@ -11,13 +14,13 @@ use crate::router::CeobeOperationAnnouncementFrontend;
 impl CeobeOperationAnnouncementFrontend {
     // 获取公告列表
     pub async fn get_announcement_list(
-        mut modify: modify_cache::CheckModify,
+        db: SqlConnect, mut modify: modify_cache::CheckModify,
     ) -> FlagAnnouncementRespResult<Vec<AnnouncementItem>> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_ty(CacheMode::NoCache);
 
         let (data, extra) = modify.check_modify(AnnouncementItems(
-            CeobeOperationAnnouncementSqlOperate::find_all_not_delete()
+            CeobeOperationAnnouncementSqlOperate::find_all_not_delete(&db)
                 .await?
                 .into_iter()
                 .map(Into::into)

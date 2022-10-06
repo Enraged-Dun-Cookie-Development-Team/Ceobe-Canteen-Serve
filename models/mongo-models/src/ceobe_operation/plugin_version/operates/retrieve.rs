@@ -1,18 +1,19 @@
+use mongo_connection::MongoDbCollectionTrait;
 use mongodb::{bson::doc, options::FindOneOptions};
 
-use super::{
-    get_plugin_version_collection, OperateError, OperateResult,
-    PluginDbOperation,
-};
+use super::{OperateError, OperateResult, PluginDbOperation};
 use crate::ceobe_operation::plugin_version::models::{
     PluginVersion, Version,
 };
 
 impl PluginDbOperation {
-    pub async fn get_plugin_version_info_by_version(
-        version: Version,
-    ) -> OperateResult<PluginVersion> {
-        let collection = get_plugin_version_collection()?;
+    pub async fn get_plugin_version_info_by_version<'db, D>(
+        db: &'db D, version: Version,
+    ) -> OperateResult<PluginVersion>
+    where
+        D: MongoDbCollectionTrait<'db, PluginVersion>,
+    {
+        let collection = db.get_collection()?;
         let filter = doc! {
             "version.major": version.major,
             "version.minor": version.minor,
@@ -24,9 +25,13 @@ impl PluginDbOperation {
             .ok_or(OperateError::VersionNotFind(version))
     }
 
-    pub async fn get_newest_plugin_version_info(
-    ) -> OperateResult<PluginVersion> {
-        let collection = get_plugin_version_collection()?;
+    pub async fn get_newest_plugin_version_info<'db, D>(
+        db: &'db D,
+    ) -> OperateResult<PluginVersion>
+    where
+        D: MongoDbCollectionTrait<'db, PluginVersion>,
+    {
+        let collection = db.get_collection()?;
         collection
             .doing(|collection|
                 collection.find_one(

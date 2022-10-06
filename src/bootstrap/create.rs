@@ -1,11 +1,14 @@
 use crypto::{digest::Digest, md5::Md5};
 use crypto_str::Encoder;
-use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
+use orm_migrate::{
+    sql_connection::sea_orm::TransactionTrait,
+    sql_models::admin_user::operate::UserSqlOperate,
+};
 
 use super::default_user::FUserConfig;
 use crate::utils::user_authorize::PasswordEncoder;
 
-pub async fn create_default_user<C>(conf: &C)
+pub async fn create_default_user<C>(db: &impl TransactionTrait, conf: &C)
 where
     C: FUserConfig,
 {
@@ -20,6 +23,7 @@ where
         .expect("初始用户密码加密错误！");
 
     UserSqlOperate::not_exist_then_create_admin(
+        db,
         conf.username(),
         encode_password.to_string(),
     )

@@ -6,11 +6,19 @@ use axum_prehandle::{
 };
 use crypto::digest::Digest;
 use crypto_str::Encoder;
-use orm_migrate::sql_models::admin_user::operate::UserSqlOperate;
+use futures::{future, TryFutureExt};
+use orm_migrate::{
+    sql_connection::SqlConnect,
+    sql_models::admin_user::operate::UserSqlOperate,
+};
+use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use time_usage::sync_time_usage_with_name;
 
-use super::{view::ChangePassword, UsernamePretreatment};
+use super::{
+    view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
+    PageSizePretreatment, UsernamePretreatment,
+};
 use crate::{
     middleware::authorize::AuthorizeInfo,
     models::sql::models::auth_level::AuthLevel,
@@ -36,6 +44,7 @@ crate::quick_struct! {
 
 impl UserAuthBackend {
     pub async fn create_user(
+        db: SqlConnect,
         query: PreRespMapErrorHandling<
             QueryParams<NewUserAuthLevel>,
             AdminUserError,
@@ -80,11 +89,14 @@ impl UserAuthBackend {
         // 加密密码
         let encode_password =
             sync_time_usage_with_name("随机密码加密", || {
-                PasswordEncoder::encode(rand_password.into())
+                tokio::task::block_in_place(|| {
+                    PasswordEncoder::encode(rand_password.into())
+                })
             })?;
 
         // 将用户信息写入数据库
         UserSqlOperate::add_user_with_encoded_password(
+            &db,
             rand_username,
             encode_password.to_string(),
             permission,
@@ -101,15 +113,21 @@ impl UserAuthBackend {
     }
 
     pub async fn login(
+        db: SqlConnect,
         PreHandling(body): PreRespMapErrorHandling<
             JsonPayload<UserLogin>,
             AdminUserError,
         >,
     ) -> AdminUserRResult<UserToken> {
         let token_info = UserSqlOperate::find_user_and_verify_pwd(
+            &db,
             &body.username,
             &body.password,
-            |src, dst| PasswordEncoder::verify(src, &dst),
+            |src, dst| {
+                tokio::task::block_in_place(|| {
+                    PasswordEncoder::verify(src, &dst)
+                })
+            },
             |user| {
                 User {
                     id: user.id,
@@ -141,20 +159,20 @@ impl UserAuthBackend {
     }
 
     pub async fn change_username(
-        AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
         PreHandling(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         let id = user.id;
 
         let username = username.username;
 
-        UserSqlOperate::update_user_name(id as i64, username.clone()).await?;
+        UserSqlOperate::update_user_name(&db, id, username.clone()).await?;
 
         Ok(UserName { username }).into()
     }
 
     pub async fn change_password(
-        AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
         PreHandling(body): PreRespMapErrorHandling<
             JsonPayload<ChangePassword>,
             AdminUserError,
@@ -166,7 +184,8 @@ impl UserAuthBackend {
         let new_password = body.new_password;
 
         let generate_token = UserSqlOperate::update_user_password(
-            id as i64,
+            &db,
+            id,
             new_password,
             old_password,
             |old, new| PasswordEncoder::verify(old, &new),
@@ -189,5 +208,50 @@ impl UserAuthBackend {
         let user_token = UserToken { token };
 
         Ok(user_token).into()
+    }
+
+    // 获取用户列表
+    pub async fn user_list(
+        db: SqlConnect, PreHandling(page_size): PageSizePretreatment,
+    ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
+        // 获取用户列表
+        let user_list = UserSqlOperate::find_user_list(&db, page_size)
+            .map_ok(|a| {
+                a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
+            });
+        // 获取用户数量
+        let count = UserSqlOperate::get_user_total_number(&db);
+        // 异步获取
+        let (user_list, count) = future::join(user_list, count).await;
+
+        let resp = user_list?.with_page_info(page_size, count?);
+
+        Ok(resp).into()
+    }
+
+    // 修改用户权限
+    pub async fn change_auth(
+        db: SqlConnect,
+        PreHandling(body): PreRespMapErrorHandling<
+            JsonPayload<ChangeAuthReq>,
+            AdminUserError,
+        >,
+    ) -> AdminUserRResult<()> {
+        let ChangeAuthReq { id, auth } = body;
+        UserSqlOperate::update_user_auth(&db, id, auth).await?;
+        Ok(()).into()
+    }
+
+    // 删除用户
+    pub async fn delete_one_user(
+        db: SqlConnect,
+        PreHandling(body): PreRespMapErrorHandling<
+            JsonPayload<DeleteOneUserReq>,
+            AdminUserError,
+        >,
+    ) -> AdminUserRResult<()> {
+        let uid = body.id;
+        UserSqlOperate::delete_one_user(&db, uid).await?;
+        Ok(()).into()
     }
 }

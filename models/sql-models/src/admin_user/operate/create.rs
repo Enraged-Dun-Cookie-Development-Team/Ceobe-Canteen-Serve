@@ -1,5 +1,10 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, TransactionTrait};
-use sql_connection::{get_sql_database, sea_orm::Set};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
+use sql_connection::{
+    database_traits::get_connect::{
+        GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    },
+    sea_orm::Set,
+};
 
 use super::{OperateResult, UserSqlOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
@@ -20,11 +25,15 @@ impl UserSqlOperate {
         Ok(())
     }
 
-    pub async fn add_user_with_encoded_password(
-        username: String, encoded_pwd: String, auth_level: AuthLevel,
-    ) -> OperateResult<()> {
-        let db = get_sql_database();
-        let ctx = db.begin().await?;
+    pub async fn add_user_with_encoded_password<'db, D>(
+        db: &'db D, username: String, encoded_pwd: String,
+        auth_level: AuthLevel,
+    ) -> OperateResult<()>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
+        D::Transaction<'db>: ConnectionTrait,
+    {
+        let ctx = db.get_transaction().await?;
 
         Self::add_user_with_encoded_password_db(
             username,
@@ -34,7 +43,7 @@ impl UserSqlOperate {
         )
         .await?;
 
-        ctx.commit().await?;
+        ctx.submit().await?;
         Ok(())
     }
 }

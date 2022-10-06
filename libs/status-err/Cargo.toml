@@ -35,8 +35,10 @@ version = "1.0"
 path = "../range-limit"
 
 [dependencies.resp-result]
-version = "0.3.2"
-features = ["extra-code", "log"]
+version = "0.4.1"
+default-features = false
+features = ["extra-error", "log"]
 
-[dependencies.request-pretreat]
-version = "0.1.1"
+[dependencies.checker]
+path = "../checker"
+

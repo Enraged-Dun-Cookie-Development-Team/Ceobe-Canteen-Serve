@@ -1,3 +1,4 @@
+mod delete;
 mod retrieve;
 mod update;
 mod verify;

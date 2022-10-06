@@ -177,23 +177,31 @@ macro_rules! error_wrapper {
 macro_rules! resp_error_impl {
     ($t:ty) => {
         /// 实现 Resp -error 可以作为RespResult的异常
-        impl resp_result::RespError for $t {
-            type ExtraCode = status_err::status_code::StatusCode;
-
-            fn log_message(&self) -> std::borrow::Cow<'_, str> {
-                status_err::StatusErr::information(self)
+        impl ::resp_result::RespError for $t {
+            fn log_message(&self) ->  std::borrow::Cow<'_, str> {
+                $crate::StatusErr::information(self)
             }
 
-            fn resp_message(&self) -> std::borrow::Cow<'_, str> {
-                status_err::StatusErr::respond_msg(self)
-            }
-
-            fn extra_code(&self) -> Self::ExtraCode {
-                status_err::StatusErr::status(self)
+            fn resp_message(&self) ->  std::borrow::Cow<'_, str> {
+                $crate::StatusErr::respond_msg(self)
             }
 
             fn http_code(&self) -> http::StatusCode {
-                status_err::StatusErr::http_code(self)
+                $crate::StatusErr::http_code(self)
+            }
+
+            type ExtraMessage = $crate::status_code::StatusCode;
+
+            fn extra_message(&self) -> Self::ExtraMessage {
+                $crate::StatusErr::status(self)
+            }
+
+            fn resp_message_default() -> Option<std::borrow::Cow<'static, str>> {
+                Some("Operate Success".into())
+            }
+
+            fn extra_message_default() -> Option<Self::ExtraMessage> {
+                Some($crate::status_code::StatusCode::new($crate::ErrPrefix::NO_ERR,0x0000))
             }
         }
     };

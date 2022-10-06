@@ -7,16 +7,21 @@ use std::{
 
 use axum::{
     body::Body,
+    extract::{FromRequest, RequestParts},
     response::{IntoResponse, Response},
 };
 use futures::{future::BoxFuture, Future};
 use http::Request;
-use orm_migrate::sql_models::admin_user::{
-    models::user,
-    operate::{OperateError, UserSqlOperate},
+use orm_migrate::{
+    sql_connection::SqlConnect,
+    sql_models::admin_user::{
+        models::user,
+        operate::{OperateError, UserSqlOperate},
+    },
 };
 use pin_project::pin_project;
 use resp_result::{Nil, RespResult};
+use tap::Pipe;
 use tower::Service;
 
 use super::{error::AuthorizeError, AuthorizeInfo};
@@ -82,15 +87,24 @@ where
 
         log::info!("鉴权-> 查询并确认用户信息");
         // query database
-        let query_db_fut =
-            Box::pin(UserSqlOperate::find_user_with_version_verify(
-                user.id as i64,
+        let query_db_fut = Box::pin(async move {
+            let mut part = RequestParts::new(req);
+            let db = SqlConnect::from_request(&mut part).await.unwrap();
+            let req = part
+                .try_into_request()
+                .expect("Fetch Sql Database Using the body");
+            UserSqlOperate::find_user_with_version_verify(
+                &db,
+                user.id,
                 user.num_pwd_change,
                 |user| user,
                 AuthorizeError::TOkenInvalid,
-            ));
+            )
+            .await
+            .pipe(|org| (org, req))
+        });
 
-        AuthorizeFutState::new_db_query(query_db_fut, req, self.inner.clone())
+        AuthorizeFutState::new_db_query(query_db_fut, self.inner.clone())
             .into()
     }
 }
@@ -125,6 +139,15 @@ where
     }
 }
 
+type QueryDbWithReqFuture = BoxFuture<
+    'static,
+    (
+        Result<Result<user::Model, AuthorizeError>, OperateError>,
+        // for next step
+        Request<Body>,
+    ),
+>;
+
 #[pin_project(project = EnumProj)]
 pub enum AuthorizeFutState<S>
 where
@@ -136,12 +159,7 @@ where
     // step 2 query database (async)
     QueryDatabase(
         // query db fut
-        BoxFuture<
-            'static,
-            Result<Result<user::Model, AuthorizeError>, OperateError>,
-        >,
-        // for next step
-        Request<Body>,
+        QueryDbWithReqFuture,
         S,
     ),
     // set user info in to request
@@ -163,14 +181,8 @@ where
 
     fn new_inner(fut: S::Future) -> Self { Self::Inner(fut) }
 
-    fn new_db_query(
-        box_future: BoxFuture<
-            'static,
-            Result<Result<user::Model, AuthorizeError>, OperateError>,
-        >,
-        req: Request<Body>, service: S,
-    ) -> Self {
-        Self::QueryDatabase(box_future, req, service)
+    fn new_db_query(box_future: QueryDbWithReqFuture, service: S) -> Self {
+        Self::QueryDatabase(box_future, service)
     }
 }
 
@@ -192,20 +204,25 @@ where
         // pinned the state then project in match
         let next = match state.as_mut().project() {
             // query database
-            EnumProj::QueryDatabase(fut, req, inner) => {
+            EnumProj::QueryDatabase(fut, inner) => {
                 match fut.as_mut().poll(cx) {
                     // query finish
-                    Poll::Ready(resp) => {
-                        match || -> Result<user::Model, AuthorizeError> {
-                            resp.map_err(|err| {
+                    Poll::Ready((resp, mut req)) => {
+                        match resp
+                            .map_err(|err| {
                                 match err {
                                     OperateError::UserNotExist => {
                                         AuthorizeError::TokenInfoNotFound
                                     }
                                     err => AuthorizeError::UserDbOperate(err),
                                 }
-                            })?
-                        }() {
+                            })
+                            .pipe(|resp| {
+                                match resp {
+                                    Ok(Ok(v)) => Ok(v),
+                                    Ok(Err(e)) | Err(e) => Err(e),
+                                }
+                            }) {
                             // ok go ahead
                             Ok(model) => {
                                 log::debug!(
@@ -221,13 +238,13 @@ where
                                     "鉴权-> 鉴权通过! \
                                      将用户信息添加到Request"
                                 );
+
                                 // set to req
                                 req.extensions_mut()
                                     .insert(AuthorizeInfo(model));
                                 // next fut
                                 // take req
                                 log::debug!("鉴权-> 执行内部service");
-                                let req = take(req);
                                 let mut fut = inner.call(req);
                                 // poll next
                                 match unsafe { Pin::new_unchecked(&mut fut) }

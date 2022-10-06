@@ -1,11 +1,14 @@
 use std::collections::HashMap;
 
-use futures::{future::ready, StreamExt};
+use futures::{future::ok, stream::iter, StreamExt, TryStreamExt};
 use sea_orm::{
-    sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait,
-    EntityTrait, IntoActiveModel, QueryFilter,
+    sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait, DbErr,
+    EntityTrait, IntoActiveModel, QueryFilter, StreamTrait,
 };
-use sql_connection::get_sql_transaction;
+use sql_connection::database_traits::get_connect::{
+    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+};
+use tap::{Pipe, Tap};
 
 use super::{CeobeOperationVideoSqlOperate, OperateResult};
 use crate::{
@@ -31,8 +34,17 @@ impl CeobeOperationVideoSqlOperate {
         Ok(resp.rows_affected)
     }
 
-    pub async fn update_all(videos: Vec<CeobeOpVideo>) -> OperateResult<()> {
-        let db = get_sql_transaction().await?;
+    pub async fn update_all<'db, D>(
+        db: &'db D, videos: Vec<CeobeOpVideo>,
+    ) -> OperateResult<()>
+    where
+        D: GetDatabaseConnect<Error = DbErr>
+            + GetDatabaseTransaction
+            + 'static,
+        for<'stream> D::Transaction<'db>:
+            ConnectionTrait + StreamTrait<'stream>,
+    {
+        let db = db.get_transaction().await?;
         // 所有先前的数据都设置为删除
         Self::all_soft_remove(&db).await?;
 
@@ -43,33 +55,38 @@ impl CeobeOperationVideoSqlOperate {
             &db,
         )
         .await?
-        .fold(Ok(HashMap::new()), |map, data| {
-            ready({
-                data.and_then(|data| Ok((data, map?))).map(
-                    |(data, mut map)| {
-                        map.insert(data.bv.clone(), data);
-                        map
-                    },
-                )
-            })
-        })
+        .map_ok(|model| (model.bv.clone(), model))
+        .try_collect::<HashMap<_, _>>()
         .await?;
 
         // 更新或者插入视频信息
-        for active in videos.into_iter().enumerate().map(|(order, video)| {
-            if let Some(model) = exist_data.remove(video.bv.as_str()) {
-                let mut active = model.into_active_model();
-                active.update_with_video_and_order(video, order as i32);
-                active
-            }
-            else {
-                ActiveModel::from_video_data_with_order(video, order as i32)
-            }
-        }) {
-            active.save(&db).await?;
-        }
+        videos
+            .into_iter()
+            .enumerate()
+            .map(|(order, video)| {
+                match exist_data.remove(video.bv.as_str()) {
+                    Some(model) => {
+                        model.into_active_model().tap_mut(|active| {
+                            active.update_with_video_and_order(
+                                video,
+                                order as i32,
+                            )
+                        })
+                    }
+                    None => {
+                        ActiveModel::from_video_data_with_order(
+                            video,
+                            order as i32,
+                        )
+                    }
+                }
+            })
+            .pipe(iter)
+            .then(|active| active.save(&db))
+            .try_for_each_concurrent(None, |_| ok(()))
+            .await?;
 
-        db.commit().await?;
+        db.submit().await?;
         Ok(())
     }
 }

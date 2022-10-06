@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use orm_migrate::sql_connection::SqlConnect;
 use resp_result::RespResult;
 
 use super::{
@@ -13,13 +14,13 @@ use crate::{
 
 impl CeobeOperationVideoFrontend {
     pub async fn list_all(
-        mut modify: modify_cache::CheckModify,
+        db: SqlConnect, mut modify: modify_cache::CheckModify,
     ) -> FlagVideoRespResult<Vec<VideoItem>> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_max_age(Duration::from_secs(60 * 60));
 
         let (data, extra) = modify.check_modify(VideoItems(
-            CeobeOperationVideoSqlOperate::find_all_not_delete()
+            CeobeOperationVideoSqlOperate::find_all_not_delete(&db)
                 .await?
                 .into_iter()
                 .map(Into::into)

@@ -45,8 +45,8 @@ impl<'c> Add<&'c CacheHeaders> for ExtraFlags {
 
     fn add(mut self, rhs: &'c CacheHeaders) -> Self::Output {
         if let Some(uri) = &rhs.content_local {
-            self = self
-                + ExtraFlag::insert_header(CONTENT_LOCATION, uri.to_string());
+            self +=
+                ExtraFlag::insert_header(CONTENT_LOCATION, uri.to_string());
         }
         if let Some(s) = rhs
             .vary_headers
@@ -55,10 +55,17 @@ impl<'c> Add<&'c CacheHeaders> for ExtraFlags {
             .map(Cow::Borrowed)
             .reduce(|l, r| format!("{l}, {r}").into())
         {
-            self = self + ExtraFlag::insert_header(VARY, s.to_string())
+            self += ExtraFlag::insert_header(VARY, s.to_string())
         }
 
         self + &rhs.control
+    }
+}
+
+impl<'c> std::ops::AddAssign<&'c CacheHeaders> for ExtraFlags {
+    fn add_assign(&mut self, rhs: &'c CacheHeaders) {
+        let this = std::mem::replace(self, ExtraFlags::from(()));
+        let _ = std::mem::replace(self, this + rhs);
     }
 }
 

@@ -112,15 +112,14 @@ impl CheckModify {
             }
             ControlHeaders::None => (Some(data), ().into()),
         };
-        extra_flags = extra_flags
         // entity tag
-        + ExtraFlag::insert_header(ETAG, format!("\"{tag}\""))
-        + &self.cache_headers;
+        extra_flags += ExtraFlag::insert_header(ETAG, format!("\"{tag}\""));
+        extra_flags += &self.cache_headers;
 
         if let Some(last_modify) = last_modify {
             // last modify
-            extra_flags = extra_flags
-                + ExtraFlag::insert_header(LAST_MODIFIED, last_modify)
+            extra_flags +=
+                ExtraFlag::insert_header(LAST_MODIFIED, last_modify)
         }
 
         Ok((data, extra_flags))
