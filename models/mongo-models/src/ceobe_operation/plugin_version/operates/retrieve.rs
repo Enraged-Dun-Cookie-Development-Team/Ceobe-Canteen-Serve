@@ -22,7 +22,7 @@ impl PluginDbOperation {
         collection
             .doing(|collection| collection.find_one(filter, None))
             .await?
-            .ok_or(OperateError::VersionNotFind(version))
+            .ok_or_else(|| OperateError::VersionNotFind(version))
     }
 
     pub async fn get_newest_plugin_version_info<'db, D>(

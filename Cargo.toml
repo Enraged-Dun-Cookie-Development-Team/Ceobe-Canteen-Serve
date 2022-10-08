@@ -8,6 +8,10 @@ default-run = "server"
 name = "server"
 path = "./src/main.rs"
 
+[profile.release]
+strip = true
+lto = true
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
 members = ["libs/*", "./models/*", "./migrate/*", "./database/*", "./macros/*"]
@@ -107,7 +111,6 @@ path = "./libs/modify-cache"
 
 [dependencies.database_traits]
 path = "./database/database_traits"
-
 
 [dependencies.page_size]
 path = "./libs/page_size"
