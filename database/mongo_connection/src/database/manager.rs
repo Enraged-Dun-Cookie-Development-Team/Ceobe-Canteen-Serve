@@ -65,9 +65,9 @@ impl DatabaseManage {
         F: FnOnce(Collection<C>) -> Fut,
         Fut: Future<Output = Result<O, MongoErr>>,
     {
-        let collection = self
-            .collection::<C>()
-            .ok_or_else(||MongoDbError::CollectionNotFound(type_name::<C>()))?;
+        let collection = self.collection::<C>().ok_or_else(|| {
+            MongoDbError::CollectionNotFound(type_name::<C>())
+        })?;
         handle(collection).await.map_err(MongoDbError::from)
     }
 
@@ -78,7 +78,7 @@ impl DatabaseManage {
         C: for<'de> serde::Deserialize<'de> + 'static + serde::Serialize,
     {
         self.collection::<C>()
-            .ok_or_else(||MongoDbError::CollectionNotFound(type_name::<C>()))
+            .ok_or_else(|| MongoDbError::CollectionNotFound(type_name::<C>()))
             .map(|c| CollectionGuard { inner: c })
     }
 }
