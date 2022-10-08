@@ -1,7 +1,6 @@
 # 编译文件
 target/
 
-Cargo.lock
 
 .ENV
 
