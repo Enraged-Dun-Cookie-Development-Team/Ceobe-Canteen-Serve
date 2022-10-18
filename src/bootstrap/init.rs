@@ -15,3 +15,9 @@ use crate::{
 fn logger_register(logger: &'arg LoggerConfig) -> impl PreparedEffect {
     logger.register_logger();
 }
+
+/// 请求返回resp配置
+#[prepare(RespConfig 'arg)]
+fn resp_conf(resp_result: &'arg RespResultConfig) -> impl PreparedEffect {
+    resp_result::set_config(resp_result);
+}

@@ -45,6 +45,7 @@ async fn main() {
 
     ServerPrepare::with_config(config)
         .append(LoggerRegister)
+        .append(RespConfig)
         .prepare_start()
         .await
         .expect("准备启动服务异常")
