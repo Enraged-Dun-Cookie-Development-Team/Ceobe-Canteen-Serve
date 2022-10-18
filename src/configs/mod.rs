@@ -25,20 +25,27 @@ pub const CONFIG_FILE_YAML: &str = "./Config.yaml";
 pub struct GlobalConfig {
     /// 数据库连接相关配置
     #[serde(alias = "db")]
+    #[provider(transparent, ref)]
     pub database: DbConfig,
     #[serde(alias = "mongo")]
+    #[provider(transparent, ref)]
     pub mongodb: MongoDbConfig,
     /// 日志文件相关配置
     #[serde(alias = "log")]
+    #[provider(transparent, ref)]
     pub logger: LoggerConfig,
     /// resp Result
     #[serde(alias = "rresult")]
+    #[provider(transparent, ref)]
     pub resp_result: RespResultConfig,
     #[serde(alias = "auth", default = "Default::default")]
+    #[provider(transparent, ref)]
     pub user_auth: AuthConfig,
     #[serde(alias = "user")]
+    #[provider(transparent, ref)]
     pub admin_user: FirstUserConfig,
     #[serde(alias = "http", default = "Default::default")]
+    #[provider(transparent, ref)]
     pub http_listen: HttpListenConfig,
 }
 
