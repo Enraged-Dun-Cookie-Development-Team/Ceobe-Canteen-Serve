@@ -21,3 +21,9 @@ fn logger_register(logger: &'arg LoggerConfig) -> impl PreparedEffect {
 fn resp_conf(resp_result: &'arg RespResultConfig) -> impl PreparedEffect {
     resp_result::set_config(resp_result);
 }
+
+/// 鉴权配置
+#[prepare(BackAuthConfig 'arg)]
+fn backend_user_auth_conf(user_auth: &'arg AuthConfig) -> impl PreparedEffect {
+    user_authorize::set_auth_config(user_auth);
+}
