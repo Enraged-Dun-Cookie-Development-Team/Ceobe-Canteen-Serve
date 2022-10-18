@@ -15,7 +15,7 @@ pub trait DbOptionsConfig {
     fn sql_logger(&self) -> bool { false }
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, Clone)]
 pub struct DbConfig {
     pub(crate) scheme: String,
     pub(crate) username: String,

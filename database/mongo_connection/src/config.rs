@@ -7,7 +7,7 @@ pub trait DbConnectConfig: serde::de::DeserializeOwned {
     fn name(&self) -> &str;
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, Clone)]
 pub struct MongoDbConfig {
     username: String,
     password: String,

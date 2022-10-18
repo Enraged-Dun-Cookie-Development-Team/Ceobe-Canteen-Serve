@@ -3,6 +3,7 @@
 use std::sync::Arc;
 
 use axum::{handler::Handler, Extension, Router};
+use axum_starter::ServerPrepare;
 use bootstrap::create::create_default_user;
 use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
@@ -48,7 +49,14 @@ async fn main() {
     resp_result::set_config(&config.resp_result);
     // 鉴权配置
     user_authorize::set_auth_config(&config.user_auth);
-    task(config).await
+    // task(config).await
+    ServerPrepare::with_config(config)
+        .prepare_start()
+        .await
+        .expect("准备启动服务异常")
+        .launch()
+        .await
+        .expect("启动服务异常");
 }
 
 async fn task(config: GlobalConfig) {

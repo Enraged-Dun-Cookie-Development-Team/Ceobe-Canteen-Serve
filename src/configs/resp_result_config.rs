@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use resp_result::{ConfigTrait, RespConfig, SignType, StatusSign};
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, Clone)]
 pub struct RespResultConfig {
     // serde configs
     #[serde(alias = "body", alias = "b")]

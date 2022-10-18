@@ -9,7 +9,7 @@ pub trait HttpConfig {
     }
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, Clone)]
 pub struct HttpListenConfig {
     #[serde(default = "host_default")]
     pub(crate) host: IpAddr,
