@@ -5,6 +5,8 @@ use std::sync::Arc;
 use axum::{handler::Handler, Extension, Router};
 use axum_starter::ServerPrepare;
 use bootstrap::{
+    create::create_default_user, init::{SqlDatabaseConnect, RespConfig, LoggerRegister, BackAuthConfig},
+};
 use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
@@ -19,7 +21,6 @@ use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
     trace::TraceLayer,
 };
-use utils::user_authorize;
 
 use crate::error::{not_exist, serve_panic};
 
@@ -47,6 +48,7 @@ async fn main() {
         .append(LoggerRegister)
         .append(RespConfig)
         .append(BackAuthConfig)
+        .append(SqlDatabaseConnect)
         .prepare_start()
         .await
         .expect("准备启动服务异常")

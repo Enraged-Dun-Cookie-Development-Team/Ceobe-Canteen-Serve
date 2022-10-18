@@ -27,3 +27,22 @@ fn resp_conf(resp_result: &'arg RespResultConfig) -> impl PreparedEffect {
 fn backend_user_auth_conf(user_auth: &'arg AuthConfig) -> impl PreparedEffect {
     user_authorize::set_auth_config(user_auth);
 }
+
+
+
+/// 连接mysql数据库并且做一次migrate up
+#[prepare(SqlDatabaseConnect 'arg)]
+async fn connect_sql_db_with_migrate<'arg>(
+    database: &'arg DbConfig, admin_user: &'arg FirstUserConfig,
+) -> Result<impl PreparedEffect, DbErr> {
+    connect_db_with_migrate::<SqlDatabase, _, _>(database, |db| {
+        async {
+            Migrator::up(db, None).await?;
+            log::info!("完成对Mysql数据库进行migration操作");
+            create_default_user(db, admin_user).await;
+            Ok(())
+        }
+    })
+    .await?;
+    Ok(())
+}
