@@ -1,7 +1,10 @@
-use std::sync::Arc;
-
-use axum::{Extension, handler::Handler};
-use axum_starter::{prepare, PreparedEffect,router::{Route, Nest, Fallback}, graceful::SetGraceful};
+use axum::handler::Handler;
+use axum_starter::{
+    graceful::SetGraceful,
+    prepare,
+    router::{Fallback, Nest},
+    PreparedEffect,
+};
 use database_traits::initial::connect_db_with_migrate;
 use futures::FutureExt;
 use mongo_migration::mongo_connection::{self, MongoDbConfig, MongoDbError};
@@ -10,16 +13,16 @@ use orm_migrate::{
     Migrator, MigratorTrait,
 };
 use tokio::sync::oneshot;
-use tower::ServiceBuilder;
-use tower_http::{catch_panic::CatchPanicLayer, trace::TraceLayer, compression::CompressionLayer};
 
 use crate::{
     bootstrap::default_user::create_default_user,
     configs::{
         auth_config::AuthConfig, first_user::FirstUserConfig,
-        logger::LoggerConfig, resp_result_config::RespResultConfig, http_listen_config::{HttpConfig, HttpListenConfig}, GlobalConfig,
+        logger::LoggerConfig, resp_result_config::RespResultConfig,
     },
-    utils::user_authorize, router, error::{not_exist, serve_panic},
+    error::not_exist,
+    router,
+    utils::user_authorize,
 };
 
 /// 日志配置
@@ -30,7 +33,9 @@ fn logger_register(logger: &'arg LoggerConfig) -> impl PreparedEffect {
 
 /// 请求返回resp配置
 #[prepare(RespConfig 'arg)]
-async fn resp_conf(resp_result: &'arg RespResultConfig) -> impl PreparedEffect {
+async fn resp_conf(
+    resp_result: &'arg RespResultConfig,
+) -> impl PreparedEffect {
     resp_result::set_config(resp_result);
 }
 
@@ -76,17 +81,13 @@ async fn connect_mongo_db<'arg>(
 /// 配置router
 #[prepare(RouterConfig)]
 fn router_config() -> impl PreparedEffect {
-    (
-        Nest::new("/api/v1", router::root_route()),
-    )
+    (Nest::new("/api/v1", router::root_route()),)
 }
 
 /// 配置router
 #[prepare(RouterFallback)]
 fn router_fallback() -> impl PreparedEffect {
-    (
-        Fallback::new(not_exist.into_service()),
-    )
+    (Fallback::new(not_exist.into_service()),)
 }
 
 pub async fn graceful_shutdown() -> impl PreparedEffect {

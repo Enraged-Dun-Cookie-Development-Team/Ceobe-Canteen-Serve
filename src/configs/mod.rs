@@ -3,7 +3,7 @@ pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
-use std::net::{SocketAddr, SocketAddrV4, Ipv4Addr, SocketAddrV6, IpAddr};
+use std::net::{IpAddr, SocketAddr, SocketAddrV4, SocketAddrV6};
 
 use axum_starter::{Provider, ServeAddress, ServerEffect};
 use mongo_migration::mongo_connection::MongoDbConfig;
@@ -49,12 +49,20 @@ pub struct GlobalConfig {
     pub http_listen: HttpListenConfig,
 }
 
-
 impl<'r> Provider<'r, SocketAddr> for GlobalConfig {
     fn provide(&'r self) -> SocketAddr {
         match self.http_listen.host {
-            IpAddr::V4(ip4) => SocketAddr::V4(SocketAddrV4::new(ip4, self.http_listen.port)),
-            IpAddr::V6(ip6) => SocketAddr::V6(SocketAddrV6::new(ip6, self.http_listen.port,0,0 ))
+            IpAddr::V4(ip4) => {
+                SocketAddr::V4(SocketAddrV4::new(ip4, self.http_listen.port))
+            }
+            IpAddr::V6(ip6) => {
+                SocketAddr::V6(SocketAddrV6::new(
+                    ip6,
+                    self.http_listen.port,
+                    0,
+                    0,
+                ))
+            }
         }
     }
 }
@@ -64,8 +72,17 @@ impl ServeAddress for GlobalConfig {
 
     fn get_address(&self) -> Self::Address {
         match self.http_listen.host {
-            IpAddr::V4(ip4) => SocketAddr::V4(SocketAddrV4::new(ip4, self.http_listen.port)),
-            IpAddr::V6(ip6) => SocketAddr::V6(SocketAddrV6::new(ip6, self.http_listen.port,0,0 ))
+            IpAddr::V4(ip4) => {
+                SocketAddr::V4(SocketAddrV4::new(ip4, self.http_listen.port))
+            }
+            IpAddr::V6(ip6) => {
+                SocketAddr::V6(SocketAddrV6::new(
+                    ip6,
+                    self.http_listen.port,
+                    0,
+                    0,
+                ))
+            }
         }
     }
 }

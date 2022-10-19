@@ -1,7 +1,9 @@
-use crypto::{md5::Md5, digest::Digest};
+use crypto::{digest::Digest, md5::Md5};
 use crypto_str::Encoder;
-use orm_migrate::{sql_connection::sea_orm::TransactionTrait, sql_models::admin_user::operate::UserSqlOperate};
-use url::quirks::password;
+use orm_migrate::{
+    sql_connection::sea_orm::TransactionTrait,
+    sql_models::admin_user::operate::UserSqlOperate,
+};
 
 use crate::utils::user_authorize::PasswordEncoder;
 
