@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use axum::{Router, Extension, handler::Handler};
-use axum_starter::{prepare, PreparedEffect, graceful::SetGraceful};
+use axum::{Extension, handler::Handler};
+use axum_starter::{prepare, PreparedEffect,router::{Route, Nest, Fallback}, graceful::SetGraceful};
 use database_traits::initial::connect_db_with_migrate;
 use futures::FutureExt;
 use mongo_migration::mongo_connection::{self, MongoDbConfig, MongoDbError};
@@ -73,19 +73,20 @@ async fn connect_mongo_db<'arg>(
     Ok(())
 }
 
-/// 配置sock与router
-#[prepare(HttpRouterConfig 'arg)]
-async fn http_and_router_config<'arg>(http_listen: &'arg HttpListenConfig) -> impl PreparedEffect {
-    // load server socket config
-    let http_socket = HttpConfig::socket(http_listen);
+/// 配置router
+#[prepare(RouterConfig)]
+fn router_config() -> impl PreparedEffect {
+    (
+        Nest::new("/api/v1", router::root_route()),
+    )
+}
 
-    let router = Router::new()
-        .nest("/api/v1", router::root_route())
-        .fallback(not_exist.into_service());
-
-    axum::Server::bind(&http_socket)
-    .serve(router.into_make_service())
-    .await.expect("服务出现异常");
+/// 配置router
+#[prepare(RouterFallback)]
+fn router_fallback() -> impl PreparedEffect {
+    (
+        Fallback::new(not_exist.into_service()),
+    )
 }
 
 pub async fn graceful_shutdown() -> impl PreparedEffect {

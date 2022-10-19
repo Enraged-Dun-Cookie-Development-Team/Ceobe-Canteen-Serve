@@ -5,7 +5,7 @@ use std::sync::Arc;
 use axum::{handler::Handler, Extension, Router};
 use axum_starter::ServerPrepare;
 use bootstrap::{
-    default_user::create_default_user, init::{SqlDatabaseConnect, RespConfig, LoggerRegister, BackAuthConfig, MongoDatabaseConnect, HttpRouterConfig, graceful_shutdown},
+    default_user::create_default_user, init::{SqlDatabaseConnect, RespConfig, LoggerRegister, BackAuthConfig, MongoDatabaseConnect, graceful_shutdown, RouterConfig, RouterFallback},
 };
 use configs::{
     http_listen_config::HttpConfig, GlobalConfig, CONFIG_FILE_JSON,
@@ -50,7 +50,8 @@ async fn main() {
         .append(BackAuthConfig)
         .append(SqlDatabaseConnect)
         .append(MongoDatabaseConnect)
-        .append(HttpRouterConfig)
+        .append(RouterConfig)
+        .append(RouterFallback)
         .with_global_middleware(CatchPanicLayer::custom(serve_panic))
         .with_global_middleware(TraceLayer::new_for_http())
         .with_global_middleware(CompressionLayer::new())
