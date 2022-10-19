@@ -1,23 +1,30 @@
-use axum_starter::{prepare, PreparedEffect};
+use std::sync::Arc;
+
+use axum::{Router, Extension, handler::Handler};
+use axum_starter::{prepare, PreparedEffect, graceful::SetGraceful};
 use database_traits::initial::connect_db_with_migrate;
+use futures::FutureExt;
 use mongo_migration::mongo_connection::{self, MongoDbConfig, MongoDbError};
 use orm_migrate::{
     sql_connection::{sea_orm::DbErr, DbConfig, SqlDatabase},
     Migrator, MigratorTrait,
 };
+use tokio::sync::oneshot;
+use tower::ServiceBuilder;
+use tower_http::{catch_panic::CatchPanicLayer, trace::TraceLayer, compression::CompressionLayer};
 
 use crate::{
     bootstrap::default_user::create_default_user,
     configs::{
         auth_config::AuthConfig, first_user::FirstUserConfig,
-        logger::LoggerConfig, resp_result_config::RespResultConfig,
+        logger::LoggerConfig, resp_result_config::RespResultConfig, http_listen_config::{HttpConfig, HttpListenConfig}, GlobalConfig,
     },
-    utils::user_authorize,
+    utils::user_authorize, router, error::{not_exist, serve_panic},
 };
 
 /// 日志配置
 #[prepare(LoggerRegister 'arg)]
-async fn logger_register(logger: &'arg LoggerConfig) -> impl PreparedEffect {
+fn logger_register(logger: &'arg LoggerConfig) -> impl PreparedEffect {
     logger.register_logger();
 }
 
@@ -64,4 +71,19 @@ async fn connect_mongo_db<'arg>(
     )
     .await?;
     Ok(())
+}
+
+/// 配置sock与router
+#[prepare(HttpRouterConfig 'arg)]
+async fn http_and_router_config<'arg>(http_listen: &'arg HttpListenConfig) -> impl PreparedEffect {
+    // load server socket config
+    let http_socket = HttpConfig::socket(http_listen);
+
+    let router = Router::new()
+        .nest("/api/v1", router::root_route())
+        .fallback(not_exist.into_service());
+
+    axum::Server::bind(&http_socket)
+    .serve(router.into_make_service())
+    .await.expect("服务出现异常");
 }
