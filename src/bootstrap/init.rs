@@ -87,3 +87,22 @@ async fn http_and_router_config<'arg>(http_listen: &'arg HttpListenConfig) -> im
     .serve(router.into_make_service())
     .await.expect("服务出现异常");
 }
+
+pub async fn graceful_shutdown() -> impl PreparedEffect {
+    let (tx, rx) = oneshot::channel();
+    tokio::spawn(async move {
+        match tokio::signal::ctrl_c().await {
+            Ok(_) => {
+                log::info!("收到退出信号");
+                tx.send(())
+            }
+            Err(err) => {
+                log::error!("等待退出信号异常 {err}");
+                tx.send(())
+            }
+        }
+    });
+    tokio::task::yield_now().await;
+
+    SetGraceful::new(rx.map(|_| ()))
+}
