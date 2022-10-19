@@ -7,7 +7,7 @@ use orm_migrate::{
 };
 
 use crate::{
-    bootstrap::create::create_default_user,
+    bootstrap::default_user::create_default_user,
     configs::{
         auth_config::AuthConfig, first_user::FirstUserConfig,
         logger::LoggerConfig, resp_result_config::RespResultConfig,
@@ -44,6 +44,7 @@ async fn connect_sql_db_with_migrate<'arg>(
         async {
             Migrator::up(db, None).await?;
             log::info!("完成对Mysql数据库进行migration操作");
+            // 创建初始后台用户
             create_default_user(db, admin_user).await;
             Ok(())
         }
