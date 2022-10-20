@@ -27,7 +27,7 @@ impl LoggerAdapter for FileLogger {
     }
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize)]
 #[serde(tag = "logger_target")]
 pub enum LoggerConfig {
     #[serde(rename = "file")]
