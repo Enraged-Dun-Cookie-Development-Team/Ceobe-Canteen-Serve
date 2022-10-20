@@ -3,7 +3,7 @@ pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
-use std::{convert::Infallible, net::SocketAddr};
+use std::net::SocketAddr;
 
 use axum_starter::{
     ConfigureServerEffect, LoggerInitialization, Provider, ServeAddress,
@@ -55,11 +55,10 @@ pub struct GlobalConfig {
 }
 
 impl LoggerInitialization for GlobalConfig {
-    type Error = Infallible;
+    type Error = ::logger::Error;
 
     fn init_logger(&self) -> Result<(), Self::Error> {
-        self.logger.register_logger();
-        Ok(())
+        self.logger.init_log()
     }
 }
 
