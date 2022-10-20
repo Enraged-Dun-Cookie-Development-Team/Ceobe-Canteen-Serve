@@ -1,5 +1,4 @@
 #![feature(type_alias_impl_trait)]
-#![allow(clippy::needless_lifetimes)]
 use axum_starter::ServerPrepare;
 use bootstrap::init::{
     graceful_shutdown, BackAuthConfig, LoggerInitialization,

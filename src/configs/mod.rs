@@ -5,7 +5,7 @@ pub mod logger;
 pub mod resp_result_config;
 use std::net::{IpAddr, SocketAddr, SocketAddrV4, SocketAddrV6};
 
-use axum_starter::{Provider, ServeAddress, ServerEffect};
+use axum_starter::{Provider, ServeAddress, ServerEffect, ConfigureServerEffect};
 use mongo_migration::mongo_connection::MongoDbConfig;
 use orm_migrate::sql_connection::DbConfig;
 use serde::Deserialize;
@@ -64,3 +64,5 @@ impl ServeAddress for GlobalConfig {
 }
 
 impl ServerEffect for GlobalConfig {}
+
+impl ConfigureServerEffect for GlobalConfig {}
