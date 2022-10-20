@@ -1,9 +1,7 @@
 #![feature(type_alias_impl_trait)]
 use axum_starter::ServerPrepare;
-use bootstrap::init::{
-    graceful_shutdown, BackAuthConfig, LoggerInitialization,
-    RResultConfig, RouterFallback, RouteV1, MysqlDbConnect, MongoDbConnect,
-};
+
+use bootstrap::init::{component_init::{LoggerInitialization, RResultConfig, BackAuthConfig}, db_init::{MysqlDbConnect, MongoDbConnect}, service_init::{RouterFallback, RouteV1, graceful_shutdown}};
 use configs::{
     GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
