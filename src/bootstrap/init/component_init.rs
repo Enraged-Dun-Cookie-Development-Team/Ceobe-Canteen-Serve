@@ -23,7 +23,7 @@ async fn resp_conf(
 }
 
 /// 鉴权配置
-#[prepare(BackAuthConfig 'arg)]
+#[prepare(BackendAuthConfig 'arg)]
 async fn backend_user_auth_conf(
     user_auth: &'arg AuthConfig,
 ) -> impl PreparedEffect {

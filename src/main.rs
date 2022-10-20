@@ -1,7 +1,7 @@
 #![feature(type_alias_impl_trait)]
 use axum_starter::ServerPrepare;
 use bootstrap::init::{
-    component_init::{BackAuthConfig, LoggerInitialization, RResultConfig},
+    component_init::{BackendAuthConfig, LoggerInitialization, RResultConfig},
     db_init::{MongoDbConnect, MysqlDbConnect},
     service_init::{graceful_shutdown, RouteV1, RouterFallback},
 };
@@ -39,7 +39,7 @@ async fn main() {
     ServerPrepare::with_config(config)
         .append(LoggerInitialization)
         .append(RResultConfig)
-        .append(BackAuthConfig)
+        .append(BackendAuthConfig)
         .append(MysqlDbConnect)
         .append(MongoDbConnect)
         .append(RouteV1)
