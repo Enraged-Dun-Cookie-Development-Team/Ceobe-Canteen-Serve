@@ -1,6 +1,12 @@
 use axum_starter::{prepare, PreparedEffect};
 
-use crate::{configs::{logger::LoggerConfig, resp_result_config::RespResultConfig, auth_config::AuthConfig}, utils::user_authorize};
+use crate::{
+    configs::{
+        auth_config::AuthConfig, logger::LoggerConfig,
+        resp_result_config::RespResultConfig,
+    },
+    utils::user_authorize,
+};
 
 /// 日志配置
 #[prepare(LoggerInitialization 'arg)]

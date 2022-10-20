@@ -1,9 +1,15 @@
 use axum_starter::{prepare, PreparedEffect};
 use database_traits::initial::connect_db_with_migrate;
-use mongo_migration::mongo_connection::{MongoDbConfig, self, MongoDbError};
-use orm_migrate::{sql_connection::{DbConfig, sea_orm::DbErr, SqlDatabase}, Migrator, MigratorTrait};
+use mongo_migration::mongo_connection::{self, MongoDbConfig, MongoDbError};
+use orm_migrate::{
+    sql_connection::{sea_orm::DbErr, DbConfig, SqlDatabase},
+    Migrator, MigratorTrait,
+};
 
-use crate::{configs::first_user::FirstUserConfig, bootstrap::default_user::create_default_user};
+use crate::{
+    bootstrap::default_user::create_default_user,
+    configs::first_user::FirstUserConfig,
+};
 
 /// 连接mysql数据库并且做一次migrate up
 #[prepare(MysqlDbConnect 'arg)]

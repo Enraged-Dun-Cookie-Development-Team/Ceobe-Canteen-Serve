@@ -3,16 +3,20 @@ pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
-use std::net::{IpAddr, SocketAddr, SocketAddrV4, SocketAddrV6};
+use std::net::SocketAddr;
 
-use axum_starter::{Provider, ServeAddress, ServerEffect, ConfigureServerEffect};
+use axum_starter::{
+    ConfigureServerEffect, Provider, ServeAddress, ServerEffect,
+};
 use mongo_migration::mongo_connection::MongoDbConfig;
 use orm_migrate::sql_connection::DbConfig;
 use serde::Deserialize;
 
 use self::{
-    auth_config::AuthConfig, first_user::FirstUserConfig,
-    http_listen_config::{HttpListenConfig, HttpConfig}, logger::LoggerConfig,
+    auth_config::AuthConfig,
+    first_user::FirstUserConfig,
+    http_listen_config::{HttpConfig, HttpListenConfig},
+    logger::LoggerConfig,
     resp_result_config::RespResultConfig,
 };
 
@@ -50,17 +54,13 @@ pub struct GlobalConfig {
 }
 
 impl<'r> Provider<'r, SocketAddr> for GlobalConfig {
-    fn provide(&'r self) -> SocketAddr {
-        self.http_listen.socket()
-    }
+    fn provide(&'r self) -> SocketAddr { self.http_listen.socket() }
 }
 
 impl ServeAddress for GlobalConfig {
     type Address = SocketAddr;
 
-    fn get_address(&self) -> Self::Address {
-        self.provide()
-    }
+    fn get_address(&self) -> Self::Address { self.provide() }
 }
 
 impl ServerEffect for GlobalConfig {}
