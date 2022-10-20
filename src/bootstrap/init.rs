@@ -26,13 +26,13 @@ use crate::{
 };
 
 /// 日志配置
-#[prepare(LoggerRegister 'arg)]
+#[prepare(LoggerInitialization 'arg)]
 fn logger_register(logger: &'arg LoggerConfig) -> impl PreparedEffect {
     logger.register_logger();
 }
 
-/// 请求返回resp配置
-#[prepare(RespConfig 'arg)]
+/// 请求rresult配置
+#[prepare(RResultConfig 'arg)]
 async fn resp_conf(
     resp_result: &'arg RespResultConfig,
 ) -> impl PreparedEffect {
@@ -48,8 +48,8 @@ async fn backend_user_auth_conf(
 }
 
 /// 连接mysql数据库并且做一次migrate up
-#[prepare(SqlDatabaseConnect 'arg)]
-async fn connect_sql_db_with_migrate<'arg>(
+#[prepare(MysqlDbConnect 'arg)]
+async fn connect_mysql_db_with_migrate<'arg>(
     database: &'arg DbConfig, admin_user: &'arg FirstUserConfig,
 ) -> Result<impl PreparedEffect, DbErr> {
     connect_db_with_migrate::<SqlDatabase, _, _>(database, |db| {
@@ -66,7 +66,7 @@ async fn connect_sql_db_with_migrate<'arg>(
 }
 
 /// 连接mongodb数据库
-#[prepare(MongoDatabaseConnect 'arg)]
+#[prepare(MongoDbConnect 'arg)]
 async fn connect_mongo_db<'arg>(
     mongodb: &'arg MongoDbConfig,
 ) -> Result<impl PreparedEffect, MongoDbError> {
@@ -79,15 +79,15 @@ async fn connect_mongo_db<'arg>(
 }
 
 /// 配置router
-#[prepare(RouterConfig)]
-fn router_config() -> impl PreparedEffect {
-    (Nest::new("/api/v1", router::root_route()),)
+#[prepare(RouteV1)]
+fn router_v1() -> impl PreparedEffect {
+    Nest::new("/api/v1", router::root_route())
 }
 
-/// 配置router
+/// 配置Fallback
 #[prepare(RouterFallback)]
 fn router_fallback() -> impl PreparedEffect {
-    (Fallback::new(not_exist.into_service()),)
+    Fallback::new(not_exist.into_service())
 }
 
 pub async fn graceful_shutdown() -> impl PreparedEffect {

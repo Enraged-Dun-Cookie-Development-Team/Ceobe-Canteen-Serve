@@ -2,8 +2,8 @@
 #![allow(clippy::needless_lifetimes)]
 use axum_starter::ServerPrepare;
 use bootstrap::init::{
-    graceful_shutdown, BackAuthConfig, LoggerRegister, MongoDatabaseConnect,
-    RespConfig, RouterConfig, RouterFallback, SqlDatabaseConnect,
+    graceful_shutdown, BackAuthConfig, LoggerInitialization,
+    RResultConfig, RouterFallback, RouteV1, MysqlDbConnect, MongoDbConnect,
 };
 use configs::{
     GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
@@ -37,12 +37,12 @@ async fn main() {
         .expect("配置文件解析失败");
 
     ServerPrepare::with_config(config)
-        .append(LoggerRegister)
-        .append(RespConfig)
+        .append(LoggerInitialization)
+        .append(RResultConfig)
         .append(BackAuthConfig)
-        .append(SqlDatabaseConnect)
-        .append(MongoDatabaseConnect)
-        .append(RouterConfig)
+        .append(MysqlDbConnect)
+        .append(MongoDbConnect)
+        .append(RouteV1)
         .append(RouterFallback)
         .with_global_middleware(CatchPanicLayer::custom(serve_panic))
         .with_global_middleware(TraceLayer::new_for_http())
