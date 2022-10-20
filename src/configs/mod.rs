@@ -12,7 +12,7 @@ use serde::Deserialize;
 
 use self::{
     auth_config::AuthConfig, first_user::FirstUserConfig,
-    http_listen_config::HttpListenConfig, logger::LoggerConfig,
+    http_listen_config::{HttpListenConfig, HttpConfig}, logger::LoggerConfig,
     resp_result_config::RespResultConfig,
 };
 
@@ -51,19 +51,7 @@ pub struct GlobalConfig {
 
 impl<'r> Provider<'r, SocketAddr> for GlobalConfig {
     fn provide(&'r self) -> SocketAddr {
-        match self.http_listen.host {
-            IpAddr::V4(ip4) => {
-                SocketAddr::V4(SocketAddrV4::new(ip4, self.http_listen.port))
-            }
-            IpAddr::V6(ip6) => {
-                SocketAddr::V6(SocketAddrV6::new(
-                    ip6,
-                    self.http_listen.port,
-                    0,
-                    0,
-                ))
-            }
-        }
+        self.http_listen.socket()
     }
 }
 
@@ -71,19 +59,7 @@ impl ServeAddress for GlobalConfig {
     type Address = SocketAddr;
 
     fn get_address(&self) -> Self::Address {
-        match self.http_listen.host {
-            IpAddr::V4(ip4) => {
-                SocketAddr::V4(SocketAddrV4::new(ip4, self.http_listen.port))
-            }
-            IpAddr::V6(ip6) => {
-                SocketAddr::V6(SocketAddrV6::new(
-                    ip6,
-                    self.http_listen.port,
-                    0,
-                    0,
-                ))
-            }
-        }
+        self.provide()
     }
 }
 
