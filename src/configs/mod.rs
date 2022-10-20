@@ -3,10 +3,11 @@ pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod resp_result_config;
-use std::net::SocketAddr;
+use std::{convert::Infallible, net::SocketAddr};
 
 use axum_starter::{
-    ConfigureServerEffect, Provider, ServeAddress, ServerEffect,
+    ConfigureServerEffect, LoggerInitialization, Provider, ServeAddress,
+    ServerEffect,
 };
 use mongo_migration::mongo_connection::MongoDbConfig;
 use orm_migrate::sql_connection::DbConfig;
@@ -25,7 +26,6 @@ pub const CONFIG_FILE_JSON: &str = "./Config.json";
 pub const CONFIG_FILE_YAML: &str = "./Config.yaml";
 
 #[derive(Debug, Deserialize, Provider)]
-
 pub struct GlobalConfig {
     /// 数据库连接相关配置
     #[serde(alias = "db")]
@@ -50,11 +50,17 @@ pub struct GlobalConfig {
     pub admin_user: FirstUserConfig,
     #[serde(alias = "http", default = "Default::default")]
     #[provider(transparent, ref)]
+    #[provider(map_to(ty = "SocketAddr", by = "HttpConfig::socket"))]
     pub http_listen: HttpListenConfig,
 }
 
-impl<'r> Provider<'r, SocketAddr> for GlobalConfig {
-    fn provide(&'r self) -> SocketAddr { self.http_listen.socket() }
+impl LoggerInitialization for GlobalConfig {
+    type Error = Infallible;
+
+    fn init_logger(&self) -> Result<(), Self::Error> {
+        self.logger.register_logger();
+        Ok(())
+    }
 }
 
 impl ServeAddress for GlobalConfig {

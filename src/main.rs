@@ -1,7 +1,7 @@
 #![feature(type_alias_impl_trait)]
 use axum_starter::ServerPrepare;
 use bootstrap::init::{
-    component_init::{BackendAuthConfig, LoggerInitialization, RResultConfig},
+    component_init::{BackendAuthConfig, RResultConfig},
     db_init::{MongoDbConnect, MysqlDbConnect},
     service_init::{graceful_shutdown, RouteV1, RouterFallback},
 };
@@ -37,11 +37,15 @@ async fn main() {
         .expect("配置文件解析失败");
 
     ServerPrepare::with_config(config)
-        .append(LoggerInitialization)
+        .init_logger()
+        .expect("日志初始化失败")
+        // components
         .append(RResultConfig)
         .append(BackendAuthConfig)
+        // database
         .append(MysqlDbConnect)
         .append(MongoDbConnect)
+        // router
         .append(RouteV1)
         .append(RouterFallback)
         .with_global_middleware(CatchPanicLayer::custom(serve_panic))

@@ -2,17 +2,10 @@ use axum_starter::{prepare, PreparedEffect};
 
 use crate::{
     configs::{
-        auth_config::AuthConfig, logger::LoggerConfig,
-        resp_result_config::RespResultConfig,
+        auth_config::AuthConfig, resp_result_config::RespResultConfig,
     },
     utils::user_authorize,
 };
-
-/// 日志配置
-#[prepare(LoggerInitialization 'arg)]
-fn logger_register(logger: &'arg LoggerConfig) -> impl PreparedEffect {
-    logger.register_logger();
-}
 
 /// 请求rresult配置
 #[prepare(RResultConfig 'arg)]
