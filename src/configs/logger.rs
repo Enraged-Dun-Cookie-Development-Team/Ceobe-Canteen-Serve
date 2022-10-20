@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct LoggerConfig {
-    #[serde(default)]
+    #[serde(default,flatten)]
     log_to: LogTo,
     level: LogLevel,
 }
@@ -12,10 +12,10 @@ pub struct LoggerConfig {
 impl LoggerConfig {
     pub fn init_log(&self) -> Result<(), logger::Error> {
         let mut init = LogInit::new(self);
-        if self.log_to.file.is_some() {
+        if self.log_to.to_file.is_some() {
             init = init.log_to_file(&self.log_to)?
         }
-        if self.log_to.stdout {
+        if self.log_to.to_stdout {
             init = init.log_to_stdout();
         }
 
@@ -26,16 +26,16 @@ impl LoggerConfig {
 #[derive(Debug, Deserialize)]
 pub struct LogTo {
     #[serde(default)]
-    file: Option<String>,
+    to_file: Option<String>,
     #[serde(default = "default_enable")]
-    stdout: bool,
+    to_stdout: bool,
 }
 
 impl Default for LogTo {
     fn default() -> Self {
         Self {
-            file: None,
-            stdout: true,
+            to_file: None,
+            to_stdout: true,
         }
     }
 }
@@ -76,5 +76,5 @@ impl GetLogLevel for LoggerConfig {
 }
 
 impl logger::FileLoggerInfo for LogTo {
-    fn log_file(&self) -> &str { self.file.as_deref().unwrap_or("") }
+    fn log_file(&self) -> &str { self.to_file.as_deref().unwrap_or("log_out.log") }
 }
