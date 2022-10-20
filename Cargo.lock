@@ -1648,6 +1648,7 @@ dependencies = [
  "chrono",
  "fern",
  "log",
+ "thiserror",
  "yansi",
 ]
 

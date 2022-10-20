@@ -8,6 +8,7 @@ edition = "2021"
 yansi = "0.5"
 chrono = "0.4"
 fern = { version = "0.6.1", features = ["chrono", "colored"] }
+thiserror = "1.0.37"
 
 [dependencies.log]
 version = "0.4"

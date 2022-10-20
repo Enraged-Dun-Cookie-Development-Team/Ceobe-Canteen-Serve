@@ -1,15 +1,10 @@
 use std::io;
 
-use log::LevelFilter;
-
 pub struct LogToFile;
 
 impl LogToFile {
-    pub fn new(
-        cfg: &impl FileLoggerInfo, filter: LevelFilter,
-    ) -> io::Result<fern::Dispatch> {
+    pub fn new(cfg: &impl FileLoggerInfo) -> io::Result<fern::Dispatch> {
         Ok(fern::Dispatch::new()
-        .level(filter)
             .format(move |out, message, record| {
                 out.finish(format_args!(
                     "{time} | {level} - ({target})[{file}:{line}] => \

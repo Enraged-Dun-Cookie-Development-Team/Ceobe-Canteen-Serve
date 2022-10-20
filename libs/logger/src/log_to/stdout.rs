@@ -1,12 +1,11 @@
 use std::io;
 
 use fern::colors::{Color, ColoredLevelConfig};
-use log::LevelFilter;
 
 pub struct LogToStdout;
 
 impl LogToStdout {
-    pub fn new(filter: LevelFilter) -> fern::Dispatch {
+    pub fn new() -> fern::Dispatch {
         let color = ColoredLevelConfig::new()
             .error(Color::BrightRed)
             .info(Color::Green)
@@ -15,7 +14,6 @@ impl LogToStdout {
             .warn(Color::BrightMagenta);
 
         fern::Dispatch::new()
-            .level(filter)
             .format(move |out, message, record| {
                 out.finish(format_args!(
                     "{time} | {level:<5} - [{local}] => {message}",

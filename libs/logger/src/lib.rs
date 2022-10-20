@@ -1,17 +1,20 @@
+mod error;
+mod log_init;
 mod log_to;
+pub use error::Error;
+pub use log_init::{GetLogLevel, LogInit};
 pub use log_to::{
     file::{FileLoggerInfo, LogToFile},
     stdout::LogToStdout,
-    GetLogLevel,
 };
 
 #[cfg(test)]
 mod test {
-    use crate::log_to::stdout::LogToStdout;
+    use crate::LogToStdout;
 
     #[test]
     fn test() {
-        LogToStdout::new(log::LevelFilter::Trace).apply().unwrap();
+        LogToStdout::new().apply().unwrap();
 
         log::info!("AAA");
         log::error!("AAA");
