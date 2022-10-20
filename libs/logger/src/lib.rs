@@ -14,7 +14,7 @@ mod test {
 
     #[test]
     fn test() {
-        LogToStdout::new().apply().unwrap();
+        LogToStdout::init().apply().unwrap();
 
         log::info!("AAA");
         log::error!("AAA");

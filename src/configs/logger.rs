@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 pub struct LoggerConfig {
-    #[serde(default,flatten)]
+    #[serde(default, flatten)]
     log_to: LogTo,
     level: LogLevel,
 }
@@ -76,5 +76,7 @@ impl GetLogLevel for LoggerConfig {
 }
 
 impl logger::FileLoggerInfo for LogTo {
-    fn log_file(&self) -> &str { self.to_file.as_deref().unwrap_or("log_out.log") }
+    fn log_file(&self) -> &str {
+        self.to_file.as_deref().unwrap_or("log_out.log")
+    }
 }

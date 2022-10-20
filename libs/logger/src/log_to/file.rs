@@ -3,7 +3,7 @@ use std::io;
 pub struct LogToFile;
 
 impl LogToFile {
-    pub fn new(cfg: &impl FileLoggerInfo) -> io::Result<fern::Dispatch> {
+    pub fn init(cfg: &impl FileLoggerInfo) -> io::Result<fern::Dispatch> {
         Ok(fern::Dispatch::new()
             .format(move |out, message, record| {
                 out.finish(format_args!(

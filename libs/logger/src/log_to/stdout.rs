@@ -5,7 +5,7 @@ use fern::colors::{Color, ColoredLevelConfig};
 pub struct LogToStdout;
 
 impl LogToStdout {
-    pub fn new() -> fern::Dispatch {
+    pub fn init() -> fern::Dispatch {
         let color = ColoredLevelConfig::new()
             .error(Color::BrightRed)
             .info(Color::Green)
