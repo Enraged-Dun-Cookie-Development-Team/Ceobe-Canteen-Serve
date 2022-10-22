@@ -43,8 +43,9 @@ async fn main() {
         .append(RResultConfig)
         .append(BackendAuthConfig)
         // database
-        .append(MysqlDbConnect)
-        .append(MongoDbConnect)
+        .append_concurrent(|set| {
+            set.join(MysqlDbConnect).join(MongoDbConnect)
+        })
         // router
         .append(RouteV1)
         .append(RouterFallback)

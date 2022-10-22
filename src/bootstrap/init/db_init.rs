@@ -12,7 +12,7 @@ use crate::{
 };
 
 /// 连接mysql数据库并且做一次migrate up
-#[prepare(MysqlDbConnect 'arg)]
+#[prepare(box MysqlDbConnect 'arg)]
 async fn connect_mysql_db_with_migrate<'arg>(
     database: &'arg DbConfig, admin_user: &'arg FirstUserConfig,
 ) -> Result<impl PreparedEffect, DbErr> {
@@ -30,7 +30,7 @@ async fn connect_mysql_db_with_migrate<'arg>(
 }
 
 /// 连接mongodb数据库
-#[prepare(MongoDbConnect 'arg)]
+#[prepare(box MongoDbConnect 'arg)]
 async fn connect_mongo_db<'arg>(
     mongodb: &'arg MongoDbConfig,
 ) -> Result<impl PreparedEffect, MongoDbError> {
