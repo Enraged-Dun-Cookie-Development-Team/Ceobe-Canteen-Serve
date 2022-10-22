@@ -6,6 +6,7 @@ use bootstrap::init::{
     service_init::{graceful_shutdown, RouteV1, RouterFallback},
 };
 use configs::{
+    auth_config::AuthConfig, resp_result_config::RespResultConfig,
     GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Format, Json, Toml, Yaml};
@@ -40,8 +41,8 @@ async fn main() {
         .init_logger()
         .expect("日志初始化失败")
         // components
-        .append(RResultConfig)
-        .append(BackendAuthConfig)
+        .append(RResultConfig::<_, RespResultConfig>)
+        .append(BackendAuthConfig::<_, AuthConfig>)
         // database
         .append_concurrent(|set| {
             set.join(MysqlDbConnect).join(MongoDbConnect)
