@@ -22,17 +22,47 @@ migrator = []
 database = []
 async_utils = []
 
+[workspace.dependencies]
+resp-result = "0.4"
+axum-prehandle = "0.1"
+tokio = { version = "1", features = [
+    "sync",
+    "rt",
+    "rt-multi-thread",
+    "time",
+    "signal"
+] }
+axum-starter = { version = "0.3", features = ["logger"] }
+typed-builder = "0.10"
+once_cell = "1"
+thiserror = "1"
+sea-orm = { version = "0.9", default-features = false, features = [
+    "sqlx-mysql",
+    "runtime-tokio-rustls",
+    "macros"
+] }
+reqwest = { version = "0.11", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tap = "1.0.1"
+log = "0.4.14"
+urlencoding = "2.1.0"
+async-trait = "0.1"
+futures = "0.3"
+mongodb = "2"
+axum = "0.5"
+
 [dependencies]
 # db
 bson = { version = "2.1.0", features = ["chrono-0_4"] }
 # async
-async-trait = "0.1"
-futures = "0.3"
+async-trait =  { workspace = true }
+futures =  { workspace = true }
 pin-project = "1"
 # config
 figment = { version = "0.10", features = ["yaml", "json", "toml"] }
 # axum
-axum = { version = "0.5", features = ["headers"] }
+axum = {workspace = true, features = ["headers"] }
 tower = { version = "0.4", features = ["limit"] }
 tower-http = { version = "0.3", features = [
     "trace",
@@ -40,13 +70,12 @@ tower-http = { version = "0.3", features = [
     "set-header",
     "compression-full"
 ] }
-axum-starter = { version = "0.3", features = ["logger"] }
+axum-starter = { workspace = true }
 # web
 url = "2.2.2"
 http = "0.2"
 http-body = "0.4"
-urlencoding = "2.1.0"
-log = "0.4.14"
+urlencoding = { workspace = true }
 #encrypt
 jwt = "0.16.0"
 hmac = "0.12.1"
@@ -55,25 +84,24 @@ sha2 = "0.10.2"
 rust-crypto = "0.2"
 chrono = { version = "0.4", features = ["serde"] }
 rand = "0.8.5"
-typed-builder = "0.10"
-once_cell = "1"
-thiserror = "1"
+typed-builder = { workspace = true }
+once_cell = { workspace = true }
+thiserror = { workspace = true }
 # request
-reqwest = "0.11"
+reqwest = { workspace = true }
 # Xss
 ammonia = "3"
-tap = "1.0.1"
+tap =  { workspace = true }
+log = { workspace = true }
 
 [dependencies.tokio]
-version = "1.15.0"
-features = ["sync", "rt", "rt-multi-thread", "time", "signal"]
+workspace = true
 
 [dependencies.serde]
-version = "1.0.133"
-features = ["derive"]
+workspace = true
 
 [dependencies.serde_json]
-version = "1.0.75"
+workspace = true
 
 [dependencies.crypto_str]
 path = "./libs/crypto_str"
@@ -89,10 +117,10 @@ path = "./libs/logger"
 path = "./libs/status-err"
 
 [dependencies.resp-result]
-version = "0.4.1"
+workspace = true
 
 [dependencies.axum-prehandle]
-version = "0.1.2"
+workspace = true
 
 [dependencies.checker]
 path = "./libs/checker"
