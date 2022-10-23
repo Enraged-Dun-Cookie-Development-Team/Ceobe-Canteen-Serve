@@ -28,7 +28,7 @@ where
     M: mongo_migrate_util::MigratorTrait + Sync + Send + 'p,
 {
     type MigrateFuture =
-        impl Future<Output = Result<Self::Builder, Self::Error>>;
+        impl Future<Output = Result<Self::Builder, Self::Error>> + 'p;
 
     fn apply_migration(
         builder: Self::Builder, params: M,

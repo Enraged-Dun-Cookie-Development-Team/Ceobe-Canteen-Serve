@@ -1,81 +1,48 @@
-use std::{
-    fs::{File, OpenOptions},
-    io::Write,
-    path::Path,
-};
-
 use log::LevelFilter;
-use logger::{logger_info::LoggerInfo, LoggerAdapter};
+use logger::{GetLogLevel, LogInit};
 use serde::Deserialize;
 
-pub struct FileLogger(File);
+#[derive(Debug, Deserialize)]
+pub struct LoggerConfig {
+    #[serde(default, flatten)]
+    log_to: LogTo,
+    level: LogLevel,
+}
 
-impl LoggerAdapter for FileLogger {
-    fn do_log<'a, 'b>(&self, info: LoggerInfo<'_, '_>) {
-        let f = &mut &self.0;
-        writeln!(
-            f,
-            "{} | {:<16} - {} => {}",
-            info.time, info.level, info.location, info.msg
-        )
-        .ok();
-    }
+impl LoggerConfig {
+    pub fn init_log(&self) -> Result<(), logger::Error> {
+        let mut init = LogInit::new(self);
+        if self.log_to.to_file.is_some() {
+            init = init.log_to_file(&self.log_to)?
+        }
+        if self.log_to.to_stdout {
+            init = init.log_to_stdout();
+        }
 
-    fn flush(&self) {
-        let file = &mut &self.0;
-        file.flush().ok();
+        init.apply()
     }
 }
 
 #[derive(Debug, Deserialize)]
-#[serde(tag = "logger_target")]
-pub enum LoggerConfig {
-    #[serde(rename = "file")]
-    File { to_file: String, level: LogLevel },
-    #[serde(rename = "stdout")]
-    Std {
-        #[serde(default = "default_color")]
-        enable_color: bool,
-        level: LogLevel,
-    },
+pub struct LogTo {
+    #[serde(default)]
+    to_file: Option<String>,
+    #[serde(default = "default_enable")]
+    to_stdout: bool,
 }
 
-fn default_color() -> bool { true }
-
-impl LoggerConfig {
-    pub fn register_logger(&self) {
-        match self {
-            LoggerConfig::File { to_file, level } => {
-                let path = Path::new(to_file);
-                let file = OpenOptions::new()
-                    .create(true)
-                    .write(true)
-                    .truncate(true)
-                    .open(path)
-                    .expect("无法打开日志文件");
-
-                let adapter = FileLogger(file);
-                let conf = logger::LoggerConfig {
-                    level_filter: level.into(),
-                    enable_color: false,
-                };
-                logger::init(conf, adapter).expect("无法启动日志")
-            }
-            LoggerConfig::Std {
-                enable_color,
-                level,
-            } => {
-                logger::init_std(logger::LoggerConfig {
-                    level_filter: level.into(),
-                    enable_color: *enable_color,
-                })
-                .expect("Can not Start Logger");
-            }
+impl Default for LogTo {
+    fn default() -> Self {
+        Self {
+            to_file: None,
+            to_stdout: true,
         }
     }
 }
 
-#[derive(Debug, Deserialize, Clone)]
+fn default_enable() -> bool { true }
+
+#[derive(Debug, Deserialize, Clone, Default, Copy)]
 pub enum LogLevel {
     #[serde(alias = "off")]
     Off,
@@ -84,15 +51,12 @@ pub enum LogLevel {
     #[serde(alias = "warn")]
     Warn,
     #[serde(alias = "info")]
+    #[default]
     Info,
     #[serde(alias = "debug")]
     Debug,
     #[serde(alias = "trace")]
     Trace,
-}
-
-impl Default for LogLevel {
-    fn default() -> Self { Self::Info }
 }
 
 impl<'l> From<&'l LogLevel> for LevelFilter {
@@ -105,5 +69,14 @@ impl<'l> From<&'l LogLevel> for LevelFilter {
             LogLevel::Debug => LevelFilter::Debug,
             LogLevel::Trace => LevelFilter::Trace,
         }
+    }
+}
+impl GetLogLevel for LoggerConfig {
+    fn get_level(&self) -> log::LevelFilter { (&self.level).into() }
+}
+
+impl logger::FileLoggerInfo for LogTo {
+    fn log_file(&self) -> &str {
+        self.to_file.as_deref().unwrap_or("log_out.log")
     }
 }

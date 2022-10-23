@@ -1,27 +1,25 @@
-mod config;
-mod logger;
-mod logger_adapter;
-pub mod logger_info;
+mod error;
+mod log_init;
+mod log_to;
+pub use error::Error;
+pub use log_init::{GetLogLevel, LogInit};
+pub use log_to::{
+    file::{FileLoggerInfo, LogToFile},
+    stdout::LogToStdout,
+};
 
-use std::io::stdout;
+#[cfg(test)]
+mod test {
+    use crate::LogToStdout;
 
-pub use config::Config as LoggerConfig;
-use logger::panic_hook;
-pub use logger::Logger;
-pub use logger_adapter::LoggerAdapter;
+    #[test]
+    fn test() {
+        LogToStdout::init().apply().unwrap();
 
-pub fn init_std(config: LoggerConfig) -> Result<(), log::SetLoggerError> {
-    init(config, stdout())
-}
-
-pub fn init<A: LoggerAdapter + Sync + Send + 'static>(
-    config: LoggerConfig, adapter: A,
-) -> Result<(), log::SetLoggerError> {
-    std::panic::set_hook(Box::new(panic_hook));
-
-    let filter = config.level_filter;
-    let logger = Logger::new(config, adapter);
-
-    log::set_boxed_logger(Box::new(logger))
-        .map(|()| log::set_max_level(filter))
+        log::info!("AAA");
+        log::error!("AAA");
+        log::warn!("AAA");
+        log::trace!("AAA");
+        log::debug!("AAA");
+    }
 }

@@ -349,9 +349,9 @@ dependencies = [
 
 [[package]]
 name = "axum-starter"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "abc99b7bfa281e6c72e7703caa2c508cea9d72531c05eb14815dcbcbbed3224d"
+checksum = "7cf06f50d14efc4e42f14532484e05ad076c99d2617d7b3d9118337b64a6e1c6"
 dependencies = [
  "axum",
  "axum-starter-macro",
@@ -366,9 +366,9 @@ dependencies = [
 
 [[package]]
 name = "axum-starter-macro"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64bac4408badd6d954e92dd4e50bc33f32f220afbc24da27788166021fe13dee"
+checksum = "191eda28aa27681806fe6e0bd02646ba4ba172dab22e8aa017c06989abcb7772"
 dependencies = [
  "darling 0.14.1",
  "proc-macro2",
@@ -681,6 +681,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2850f2f5a82cbf437dd5af4d49848fbdfc27c157c3d010345776f952765261c5"
 dependencies = [
  "os_str_bytes",
+]
+
+[[package]]
+name = "colored"
+version = "1.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f4ffc801dacf156c5854b9df4f425a626539c3a6ef7893cc0c5084a23f0b6c59"
+dependencies = [
+ "atty",
+ "lazy_static",
+ "winapi",
 ]
 
 [[package]]
@@ -1004,6 +1015,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3fcf0cee53519c866c09b5de1f6c56ff9d647101f81c1964fa632e148896cdf"
 dependencies = [
  "instant",
+]
+
+[[package]]
+name = "fern"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3bdd7b0849075e79ee9a1836df22c717d1eba30451796fdc631b04565dd11e2a"
+dependencies = [
+ "chrono",
+ "colored",
+ "log",
 ]
 
 [[package]]
@@ -1624,7 +1646,9 @@ name = "logger"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "fern",
  "log",
+ "thiserror",
  "yansi",
 ]
 

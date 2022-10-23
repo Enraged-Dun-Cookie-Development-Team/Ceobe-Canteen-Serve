@@ -18,9 +18,9 @@
   | `database`/`db` | `max_conn` | 是 | `u32` | 数据库的最大连接数 | 无 |
   | `database`/`db` | `min_conn` | 是 | `u32` | 数据库的最小连接数 | 无 |
   | `database`/`db` | `logger` | 否 | `bool` | 是否开始数据库操作日志 | 默认关闭 |
-  | `logger`/`log` | `logger_target` | 是 | `file`或者`stdout` | 日志输出目的 | 无 |
-  | `logger`/`log` | `to_file` | 是 | `String` | 日志输出的文件 | `logger_target` 为 `file` 时才有效 |
-  | `logger`/`log` | `enable_color` | 否 | `bool` | 日志输出是否带颜色 | `logger_target` 为 `stdout` 时才有效,默认为 `true` |
+
+  | `logger`/`log` | `to_stdout` | 否 | `bool` | 同时将日志输出到 Stdout | 默认为 true |
+  | `logger`/`log` | `to_file` | 否 | `String` | 同时将日志输出的文件 | 有值将会同时将日志输出到指定文件 |
   | `logger`/`log` | `level` | 是 | `off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace` | 日志输出过滤等级 | 无 |
   | `resp_result`/ `rresult` | `body` | 是 | `String` | 响应成功时的响应体字段名称 | 无 |
   | `resp_result`/ `rresult` | `err-msg` | 是 | `String` | 响应失败时异常字段名称 | 无 |
@@ -58,7 +58,9 @@
   logger=true
 
   [log]
-  logger_target="stdout"
+  level = "debug"
+  to_file = "./logout.log"
+  to_stdout = true
 
   [rresult]
   body = "body"
@@ -149,7 +151,7 @@
   | `C`  |  000B  |   409    | 版本号已经被使用                 |
   | `C`  |  000C  |   400    | `Bincode` 序列化/反序列化异常    |
   | `C`  |  000D  |   500    | 存在多个可用的资源全可用的记录   |
-  | `C`  |  000E  |   400    | 预期为0值取得非0值   |
+  | `C`  |  000E  |   400    | 预期为 0 值取得非 0 值           |
 
 - 数据库异常（SeaOrm）
 
