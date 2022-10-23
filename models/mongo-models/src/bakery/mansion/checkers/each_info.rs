@@ -1,5 +1,5 @@
 use checker::Checker;
-use futures_util::future::ready;
+use futures::future::{Ready, ready};
 
 use super::{CheckError, MaxLimitString};
 use crate::bakery::mansion::{checked::Info, preludes::Predict};
@@ -22,7 +22,7 @@ impl Checker for PredictLevelChecker {
     type Args = ();
     type Checked = Predict;
     type Err = CheckError;
-    type Fut = futures_util::future::Ready<Result<Self::Checked, Self::Err>>;
+    type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {

@@ -5,11 +5,11 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-futures = "0.3"
+futures = { workspace = true }
 pin-project = "1"
-serde = "1"
-chrono = "0.4"
-url = "2"
+serde = { workspace = true }
+chrono = { workspace = true }
+url = { workspace = true }
 check-obj-macro = { path = "../../macros/check-obj-macro" }
 num-traits = "0.2"
 
@@ -17,5 +17,5 @@ num-traits = "0.2"
 path = "../range-limit"
 
 [dev-dependencies]
-tokio = { version = "1", features = ["test-util", "macros", "rt-multi-thread"] }
-typed-builder = "0.10"
+tokio = { workspace = true }
+typed-builder = { workspace = true }

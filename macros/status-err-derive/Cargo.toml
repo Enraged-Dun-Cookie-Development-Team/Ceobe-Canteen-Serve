@@ -14,4 +14,4 @@ darling = "0.14"
 
 [dev-dependencies]
 status-err = { path = "../../libs/status-err" }
-resp-result = "0.4.1"
+resp-result = { workspace = true }

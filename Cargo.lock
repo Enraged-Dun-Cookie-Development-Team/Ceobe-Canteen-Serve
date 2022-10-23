@@ -1649,7 +1649,6 @@ dependencies = [
  "fern",
  "log",
  "thiserror",
- "yansi",
 ]
 
 [[package]]
@@ -1727,9 +1726,9 @@ dependencies = [
 
 [[package]]
 name = "md-5"
-version = "0.10.1"
+version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "658646b21e0b72f7866c7038ab086d3d5e1cd6271f060fd37defb241949d0582"
+checksum = "66b48670c893079d3c2ed79114e3644b7004df1c361a4e0ad52e2e6940d07c3d"
 dependencies = [
  "digest 0.10.3",
 ]
@@ -1821,7 +1820,6 @@ name = "mongo-migration"
 version = "0.1.0"
 dependencies = [
  "async-trait",
- "dashmap",
  "log",
  "mongo-migrate-util",
  "mongo-models",
@@ -1837,7 +1835,6 @@ dependencies = [
  "checker",
  "chrono",
  "futures",
- "futures-util",
  "log",
  "modify-cache",
  "mongo_connection",
@@ -2335,7 +2332,7 @@ dependencies = [
  "bytes",
  "fallible-iterator",
  "hmac 0.12.1",
- "md-5 0.10.1",
+ "md-5 0.10.4",
  "memchr",
  "rand 0.8.5",
  "sha2 0.10.2",
@@ -2344,9 +2341,9 @@ dependencies = [
 
 [[package]]
 name = "postgres-types"
-version = "0.2.3"
+version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ebd6e8b7189a73169290e89bd24c771071f1012d8fe6f738f5226531f0b03d89"
+checksum = "73d946ec7d256b04dfadc4e6a3292324e6f417124750fc5c0950f981b703a0f1"
 dependencies = [
  "bytes",
  "chrono",
@@ -3361,9 +3358,9 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "sub-model"
-version = "0.1.1"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1db5faa45fb866003a905d9cdab2109fd578a6b6118aa3ec6ee82169c5e27f2"
+checksum = "7a0dd5a19d8654b9f2a2551bbd1f5253586708cb4e8ac917446cdcc85d0f55c3"
 dependencies = [
  "darling 0.13.4",
  "proc-macro2",
@@ -4222,12 +4219,6 @@ checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
 dependencies = [
  "linked-hash-map",
 ]
-
-[[package]]
-name = "yansi"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09041cd90cf85f7f8b2df60c646f853b7f535ce68f85244eb6731cf89fa498ec"
 
 [[package]]
 name = "zeroize"

@@ -11,4 +11,4 @@ initial = []
 get-connect = []
 
 [dependencies]
-axum = "0.5"
+axum = { workspace = true }
