@@ -1,3 +1,4 @@
+mod check_prehandle;
 mod check_fut;
 mod checker;
 mod checker_impls;
@@ -11,5 +12,5 @@ pub use check_obj_macro::{check_obj, check_obj as check_gen};
 pub use checker_impls::CheckRefFut;
 pub use lite_args::LiteArgs;
 pub use require_check::CheckRequire;
-
+pub use check_prehandle::PreLiteChecker;
 pub use crate::checker::{Checker, LiteChecker, RefChecker};
