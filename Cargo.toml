@@ -129,8 +129,6 @@ workspace = true
 [dependencies.checker]
 path = "./libs/checker"
 
-[dependencies.time-usage]
-path = "./libs/time-usage"
 
 [dependencies.orm-migrate]
 package = "migration"

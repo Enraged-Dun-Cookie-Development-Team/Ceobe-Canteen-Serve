@@ -22,11 +22,10 @@ mod check_require {
     pub use checker::CheckRequire;
 }
 
-use std::{any::type_name, marker::PhantomData};
+use std::marker::PhantomData;
 
 pub use check_require::*;
 pub use ref_checker::RefChecker;
-use time_usage::async_time_usage_with_name;
 
 pub struct PreLiteChecker<Punchecked, C, E>(PhantomData<(Punchecked, C, E)>)
 where
@@ -54,18 +53,9 @@ where
         request: &mut RequestParts<Body>,
     ) -> Result<Self::Output, Self::Rejection> {
         let args = <<C as DataChecker>::Args as LiteArgs>::get_arg();
-        let uncheck = async_time_usage_with_name(
-            format!("获取未检查数据-{}", type_name::<C::Unchecked>())
-                .as_str(),
-            Punchecked::handling(request),
-        )
-        .await?;
+        let uncheck = Punchecked::handling(request).await?;
 
-        let checked = async_time_usage_with_name(
-            format!("执行检查-{}", type_name::<C>()).as_str(),
-            C::check(args, uncheck),
-        )
-        .await?;
+        let checked = C::check(args, uncheck).await?;
         Ok(checked)
     }
 }
