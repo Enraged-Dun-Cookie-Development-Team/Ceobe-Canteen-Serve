@@ -4,9 +4,10 @@ use axum_prehandle::{
     prefabs::{json::JsonPayload, query::QueryParams},
     PreHandling, PreRespMapErrorHandling,
 };
-use crypto::digest::Digest;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
+use md5::Md5;
+use md5::Digest;
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::admin_user::operate::UserSqlOperate,
@@ -76,9 +77,10 @@ impl UserAuthBackend {
         // 进行md5加密
         let rand_password =
             sync_time_usage_with_name("随机密码MD5加密", || {
-                let mut md5 = crypto::md5::Md5::new();
-                md5.input_str(&rand_password);
-                let rand_password = md5.result_str();
+                let mut md5 = Md5::new();
+                md5.update(&rand_password);
+                let rand_password = md5.finalize();
+                let rand_password = hex::encode(rand_password);
                 log::debug!(
                     "新建用户密码通过MD5加密后是： {:?}",
                     rand_password

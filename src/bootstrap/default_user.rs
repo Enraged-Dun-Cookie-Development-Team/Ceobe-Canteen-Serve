@@ -1,5 +1,5 @@
-use crypto::{digest::Digest, md5::Md5};
 use crypto_str::Encoder;
+use md5::{Digest, Md5};
 use orm_migrate::{
     sql_connection::sea_orm::TransactionTrait,
     sql_models::admin_user::operate::UserSqlOperate,
@@ -18,8 +18,9 @@ where
 {
     let password = conf.password();
     let mut md5 = Md5::new();
-    md5.input_str(&password);
-    let password = md5.result_str();
+    md5.update(&password);
+    let password = md5.finalize();
+    let password = hex::encode(password);
     log::debug!("密码通过MD5加密后是-> {:?}", password);
 
     // 加密密码
