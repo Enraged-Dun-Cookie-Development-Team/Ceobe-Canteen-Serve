@@ -1,5 +1,5 @@
 use checker::{prefabs::option_checker::OptionChecker, Checker};
-use futures::future::{Ready, ready};
+use futures::future::{ready, Ready};
 
 use super::CheckError;
 use crate::bakery::mansion::preludes::{MansionId, Mid, OptionMid};

@@ -6,8 +6,7 @@ use axum_prehandle::{
 };
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
-use md5::Md5;
-use md5::Digest;
+use md5::{Digest, Md5};
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::admin_user::operate::UserSqlOperate,
