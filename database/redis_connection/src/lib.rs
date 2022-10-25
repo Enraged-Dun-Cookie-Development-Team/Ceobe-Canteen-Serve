@@ -1,3 +1,5 @@
+mod static_var;
+mod config;
 pub fn add(left: usize, right: usize) -> usize { left + right }
 
 #[cfg(test)]
