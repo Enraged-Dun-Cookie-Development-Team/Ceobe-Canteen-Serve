@@ -1,14 +1,6 @@
+#![feature(type_alias_impl_trait)]
+mod impl_initial;
 mod static_var;
 mod config;
-pub fn add(left: usize, right: usize) -> usize { left + right }
+mod impl_get_connect;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}

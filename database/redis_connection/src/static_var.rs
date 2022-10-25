@@ -30,11 +30,11 @@ where
 }
 
 // 获取redis数据库
-fn get_redis_client() -> &'static Client {
+pub fn get_redis_client() -> &'static Client {
     REDIS_DATABASE_CLIENT.get().expect("Redis 数据库连接未建立")
 }
 
 // 获取redis连接
-pub fn get_redis_connection() ->  Result<Connection, RedisError> {
+pub fn get_redis_connection() -> Result<Connection, RedisError> {
     get_redis_client().get_connection()
 }
