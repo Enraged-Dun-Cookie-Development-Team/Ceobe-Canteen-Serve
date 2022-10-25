@@ -8,7 +8,7 @@ pub use thiserror::Error as ThisError;
 
 pub trait StatusErr: std::error::Error {
     #[inline]
-    fn information(&self) -> Cow<'_, str> { format!("{}", self).into() }
+    fn information(&self) -> Cow<'_, str> { format!("{self}").into() }
 
     fn respond_msg(&self) -> Cow<'_, str> { self.information() }
     /// 异常码
