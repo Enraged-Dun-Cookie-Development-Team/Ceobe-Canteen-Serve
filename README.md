@@ -39,6 +39,11 @@
   | `admin_user`/ `user` | `password` | 是 | `String` | 默认后台第一个最高权限密码 | |
   | `http_listen`/ `http` | `host` | 否 | `IpAddr` | http 监听的 host | 默认为`127.0.0.1` |
   | `http_listen`/ `http` | `port` | 否 | `u16` | http 监听的 port | 默认为`8000` |
+  | `redis` | `username` | 是 | `String` | Redis 进行数据库连接使用的用户 | 无 暂时不需要 |
+  | `redis` | `password` | 是 | `String` | Redis 进行数据库连接使用的用户密码 | 无 暂时不需要 |
+  | `redis` | `host` | 否 | `String` | Redis 进行数据库连接使用的 host | 默认为`localhost`暂时不需要 |
+  | `redis` | `port` | 否 | `u16` | Redis 进行数据库连接使用的端口 | 默认为`6379` 暂时不需要 |
+  | `redis` | `db` | 是 | `u8` | Redis 进行数据库连接使用的数据库 | 默认为`0` 暂时不需要 |
 
 - Toml
 
