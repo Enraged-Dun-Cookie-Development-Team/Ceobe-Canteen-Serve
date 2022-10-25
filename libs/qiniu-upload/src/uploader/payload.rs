@@ -1,17 +1,17 @@
-use crate::error;
+use std::{fmt::Debug, path::Path};
+
 use futures::AsyncRead;
 use mime::Mime;
 use mime_guess::{mime::APPLICATION_OCTET_STREAM, MimeGuess};
-use std::{fmt::Debug, path::Path};
+
+use crate::error;
 
 pub trait PayloadLocal {
     fn bucket(&self) -> &str;
 
     fn obj_name(&self) -> &str;
 
-    fn file_name(&self) -> &str {
-        self.obj_name()
-    }
+    fn file_name(&self) -> &str { self.obj_name() }
 }
 
 pub trait PayloadContent {

@@ -1,4 +1,6 @@
-use ceobe_qiniu_upload::{FilePayload, JsonPayload, PayloadLocal, SecretConfig, Uploader};
+use ceobe_qiniu_upload::{
+    FilePayload, JsonPayload, PayloadLocal, SecretConfig, Uploader,
+};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
@@ -9,19 +11,17 @@ pub struct SecretConfigure {
 }
 
 impl SecretConfig for SecretConfigure {
-    fn access_key(&self) -> &str {
-        &self.access_key
-    }
+    fn access_key(&self) -> &str { &self.access_key }
 
-    fn secret_key(&self) -> &str {
-        &self.secret_key
-    }
+    fn secret_key(&self) -> &str { &self.secret_key }
 }
 
 fn read_config() -> SecretConfigure {
-    let f = std::fs::read("./test_payloads/secret_config.json").expect("config File not exist");
+    let f = std::fs::read("./test_payloads/secret_config.json")
+        .expect("config File not exist");
 
-    let payload = serde_json::from_slice::<SecretConfigure>(&f).expect("Bad Json format");
+    let payload = serde_json::from_slice::<SecretConfigure>(&f)
+        .expect("Bad Json format");
     payload
 }
 
@@ -39,13 +39,9 @@ async fn test_json_upload() {
     struct J;
 
     impl PayloadLocal for J {
-        fn bucket(&self) -> &str {
-            "frozen-string"
-        }
+        fn bucket(&self) -> &str { "frozen-string" }
 
-        fn obj_name(&self) -> &str {
-            "foo_json2"
-        }
+        fn obj_name(&self) -> &str { "foo_json2" }
     }
 
     impl JsonPayload for J {
@@ -78,21 +74,15 @@ async fn test_file_upload() {
     struct J;
 
     impl PayloadLocal for J {
-        fn bucket(&self) -> &str {
-            "frozen-string"
-        }
+        fn bucket(&self) -> &str { "frozen-string" }
 
-        fn obj_name(&self) -> &str {
-            "foo_json_file"
-        }
+        fn obj_name(&self) -> &str { "foo_json_file" }
     }
 
     impl FilePayload for J {
         type Path = str;
 
-        fn file_path(&self) -> &Self::Path {
-            "./test_payloads/test.json"
-        }
+        fn file_path(&self) -> &Self::Path { "./test_payloads/test.json" }
     }
 
     let v = u.upload_file(J).await.expect("Upload error");

@@ -5,7 +5,7 @@ pub trait SecretConfig {
 
 pub trait GetBucket {
     type BucketName: AsRef<str> + ?Sized;
-    type Iterator<'i>: Iterator<Item = & 'i Self::BucketName>
+    type Iterator<'i>: Iterator<Item = &'i Self::BucketName>
     where
         Self: 'i;
 

@@ -7,17 +7,17 @@ use std::{collections::HashMap, fmt::Debug};
 use futures::Future;
 use qiniu_upload_manager::AutoUploaderObjectParams;
 use smallstr::SmallString;
-
-use crate::{error, SecretConfig};
+pub use upload_json::JsonPayload;
 
 pub use self::{
     builder::{ManagedUploader, UploaderBuilder},
     payload::{FilePayload, PayloadContent, PayloadLocal},
 };
-pub use upload_json::JsonPayload;
+use crate::{error, SecretConfig};
 #[derive(Debug)]
 pub struct Uploader {
-    managers: HashMap<SmallString<[u8; 64]>, ManagedUploader, ahash::RandomState>,
+    managers:
+        HashMap<SmallString<[u8; 64]>, ManagedUploader, ahash::RandomState>,
 }
 
 impl Uploader {
@@ -26,31 +26,29 @@ impl Uploader {
     }
 
     pub async fn custom_upload<'l, L, F, Fut, O>(
-        &self,
-        local: &'l L,
-        handle: F,
+        &self, local: &'l L, handle: F,
     ) -> Result<O, error::Error>
     where
         L: PayloadLocal,
         F: for<'r> FnOnce(&'r ManagedUploader) -> Fut,
         Fut: Future<Output = Result<O, error::Error>> + 'l,
     {
-        let manager = self
-            .managers
-            .get(local.bucket())
-            .ok_or_else(|| error::Error::BucketNotInManage(local.bucket().into()))?;
+        let manager = self.managers.get(local.bucket()).ok_or_else(|| {
+            error::Error::BucketNotInManage(local.bucket().into())
+        })?;
 
         handle(manager).await
     }
 
     pub async fn upload(
-        &self,
-        payload: impl PayloadLocal + PayloadContent,
+        &self, payload: impl PayloadLocal + PayloadContent,
     ) -> Result<ResponsePayload, error::Error> {
         let auto_uploader = self
             .managers
             .get(payload.bucket())
-            .ok_or_else(|| error::Error::BucketNotInManage(payload.bucket().into()))?
+            .ok_or_else(|| {
+                error::Error::BucketNotInManage(payload.bucket().into())
+            })?
             .get_default_upload();
 
         let params = AutoUploaderObjectParams::builder()
