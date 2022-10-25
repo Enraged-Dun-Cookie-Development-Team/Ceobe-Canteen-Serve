@@ -570,6 +570,7 @@ dependencies = [
  "pin-project",
  "rand 0.8.5",
  "range-limit",
+ "redis_connection",
  "reqwest",
  "resp-result",
  "rust-crypto",
