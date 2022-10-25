@@ -4,25 +4,23 @@ use axum_core::extract::FromRequest;
 use axum_starter::{extension::SetExtension, prepare, PreparedEffect};
 use futures::future::ok;
 
-use crate::{SecretConfig, Uploader, UploaderNotFound};
+use crate::{
+    GetBucket, SecretConfig, Uploader, UploaderBuilder, UploaderNotFound,
+};
 
 #[prepare(box QiniuUpload 'c)]
-fn init_this<'c, C, I>(
-    secret: &'c C,
-    exist_buckets: I,
+fn init_this<'c, C>(
+    qiniu_config: &'c C,
 ) -> Result<impl PreparedEffect, crate::Error>
 where
-    C: SecretConfig,
-    I: IntoIterator,
-    I::Item: AsRef<str>,
+    C: SecretConfig + GetBucket,
 {
-    let uploader = Uploader::builder(secret);
+    let uploader = Uploader::builder(qiniu_config);
 
-    let uploader = exist_buckets
+    let uploader = qiniu_config
+        .get_buckets()
         .into_iter()
-        .try_fold(uploader, |uploader, bucket_name| {
-            uploader.add_bucket(bucket_name.as_ref())
-        })?
+        .try_fold(uploader, UploaderBuilder::add_bucket)?
         .build();
 
     Ok(SetExtension::arc(uploader))
@@ -35,9 +33,7 @@ pub struct QiniuUploader {
 impl Deref for QiniuUploader {
     type Target = Uploader;
 
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
+    fn deref(&self) -> &Self::Target { &self.inner }
 }
 
 impl<B> FromRequest<B> for QiniuUploader {

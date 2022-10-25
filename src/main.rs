@@ -7,7 +7,7 @@ use bootstrap::init::{
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
-    auth_config::AuthConfig, qiniu_secret::QiniuSecret,
+    auth_config::AuthConfig, qiniu_secret::QiniuUploadConfig,
     resp_result_config::RespResultConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
@@ -45,7 +45,7 @@ async fn main() {
         // components
         .append(RResultConfig::<_, RespResultConfig>)
         .append(BackendAuthConfig::<_, AuthConfig>)
-        .append(QiniuUpload::<_, QiniuSecret, &[String]>)
+        .append(QiniuUpload::<_, QiniuUploadConfig>)
         // database
         .append_concurrent(|set| {
             set.join(MysqlDbConnect).join(MongoDbConnect)

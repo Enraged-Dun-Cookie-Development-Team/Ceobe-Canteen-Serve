@@ -19,7 +19,7 @@ use self::{
     first_user::FirstUserConfig,
     http_listen_config::{HttpConfig, HttpListenConfig},
     logger::LoggerConfig,
-    qiniu_secret::QiniuSecret,
+    qiniu_secret::QiniuUploadConfig,
     resp_result_config::RespResultConfig,
 };
 
@@ -58,16 +58,8 @@ pub struct GlobalConfig {
     )]
     pub http_listen: HttpListenConfig,
     #[serde(alias = "qiniu")]
-    #[provider(
-        transparent,
-        ref,
-        map_to(
-            ty = "&'b [String]",
-            by = "QiniuSecret::get_bucket",
-            lifetime = "'b"
-        )
-    )]
-    pub qiniu_secret: QiniuSecret,
+    #[provider(transparent, ref)]
+    pub qiniu_secret: QiniuUploadConfig,
 }
 
 impl LoggerInitialization for GlobalConfig {

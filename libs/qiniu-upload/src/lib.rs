@@ -4,7 +4,7 @@ mod error;
 mod config;
 mod uploader;
 
-pub use config::SecretConfig;
+pub use config::{SecretConfig,GetBucket};
 pub use error::{Error, UploaderNotFound};
 pub use uploader::{
     FilePayload, JsonPayload, ManagedUploader, PayloadContent, PayloadLocal, Uploader,
