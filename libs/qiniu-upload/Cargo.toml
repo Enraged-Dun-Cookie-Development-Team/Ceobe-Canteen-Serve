@@ -1,0 +1,26 @@
+[package]
+name = "ceobe-qiniu-upload"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ahash = "0.8.0"
+axum-core = "0.2.9"
+axum-starter = "0.3.0"
+futures = "0.3.25"
+mime = "0.3.16"
+mime_guess = "2.0.4"
+qiniu-http-client = { version = "0.2.0", default-features = false }
+qiniu-upload-manager = { version = "0.2.0", features = ["async", "isahc"] }
+qiniu-upload-token = "0.2.0"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+smallstr = "0.3.0"
+thiserror = "1.0.37"
+
+[dev-dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1.21.2", features = ["full"] }
