@@ -2,7 +2,7 @@
 use axum_starter::ServerPrepare;
 use bootstrap::init::{
     component_init::{BackendAuthConfig, RResultConfig},
-    db_init::{MongoDbConnect, MysqlDbConnect},
+    db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
     service_init::{graceful_shutdown, RouteV1, RouterFallback},
 };
 use configs::{
@@ -45,7 +45,7 @@ async fn main() {
         .append(BackendAuthConfig::<_, AuthConfig>)
         // database
         .append_concurrent(|set| {
-            set.join(MysqlDbConnect).join(MongoDbConnect)
+            set.join(MysqlDbConnect).join(MongoDbConnect).join(RedisDbConnect)
         })
         // router
         .append(RouteV1)
