@@ -31,7 +31,7 @@ impl From<model_announcement::Model> for AnnouncementItem {
     ) -> Self {
         let image = Url::parse(&img_url)
             .map(|url| url.to_string())
-            .unwrap_or_else(|_| format!(r#"/assets/image/{}.png"#, img_url));
+            .unwrap_or_else(|_| format!(r#"/assets/image/{img_url}.png"#));
 
         Self {
             start_time: naive_date_time_format(start_time),
@@ -49,7 +49,7 @@ mod test {
     #[test]
     fn test_url() {
         let url = url::Url::parse("icon");
-        println!("{:?}", url)
+        println!("{url:?}")
     }
 }
 
