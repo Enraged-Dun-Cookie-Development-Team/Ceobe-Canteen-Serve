@@ -63,6 +63,7 @@ reqwest = "0.11"
 # Xss
 ammonia = "3"
 tap = "1.0.1"
+ceobe-qiniu-upload = { version = "0.1.0", path = "libs/qiniu-upload" }
 
 [dependencies.tokio]
 version = "1.15.0"

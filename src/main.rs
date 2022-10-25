@@ -5,9 +5,11 @@ use bootstrap::init::{
     db_init::{MongoDbConnect, MysqlDbConnect},
     service_init::{graceful_shutdown, RouteV1, RouterFallback},
 };
+use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
-    auth_config::AuthConfig, resp_result_config::RespResultConfig,
-    GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
+    auth_config::AuthConfig, qiniu_secret::QiniuSecret,
+    resp_result_config::RespResultConfig, GlobalConfig, CONFIG_FILE_JSON,
+    CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Format, Json, Toml, Yaml};
 use tower_http::{
@@ -43,6 +45,7 @@ async fn main() {
         // components
         .append(RResultConfig::<_, RespResultConfig>)
         .append(BackendAuthConfig::<_, AuthConfig>)
+        .append(QiniuUpload::<_, QiniuSecret, &[String]>)
         // database
         .append_concurrent(|set| {
             set.join(MysqlDbConnect).join(MongoDbConnect)

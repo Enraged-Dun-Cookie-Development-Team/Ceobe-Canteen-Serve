@@ -2,6 +2,7 @@ pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
+pub mod qiniu_secret;
 pub mod resp_result_config;
 use std::net::SocketAddr;
 
@@ -18,6 +19,7 @@ use self::{
     first_user::FirstUserConfig,
     http_listen_config::{HttpConfig, HttpListenConfig},
     logger::LoggerConfig,
+    qiniu_secret::QiniuSecret,
     resp_result_config::RespResultConfig,
 };
 
@@ -49,9 +51,23 @@ pub struct GlobalConfig {
     #[provider(transparent, ref)]
     pub admin_user: FirstUserConfig,
     #[serde(alias = "http", default = "Default::default")]
-    #[provider(transparent, ref)]
-    #[provider(map_to(ty = "SocketAddr", by = "HttpConfig::socket"))]
+    #[provider(
+        transparent,
+        ref,
+        map_to(ty = "SocketAddr", by = "HttpConfig::socket")
+    )]
     pub http_listen: HttpListenConfig,
+    #[serde(alias = "qiniu")]
+    #[provider(
+        transparent,
+        ref,
+        map_to(
+            ty = "&'b [String]",
+            by = "QiniuSecret::get_bucket",
+            lifetime = "'b"
+        )
+    )]
+    pub qiniu_secret: QiniuSecret,
 }
 
 impl LoggerInitialization for GlobalConfig {

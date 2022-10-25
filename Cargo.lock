@@ -589,6 +589,7 @@ dependencies = [
  "axum-prehandle",
  "axum-starter",
  "bson",
+ "ceobe-qiniu-upload",
  "checker",
  "chrono",
  "crypto_str",
