@@ -27,7 +27,7 @@ impl Display for Error {
                 )
             }
             Error::FixSize { require, get } => {
-                write!(f, "require Size == {} but get {}", require, get)
+                write!(f, "require Size == {require} but get {get}")
             }
         }
     }
