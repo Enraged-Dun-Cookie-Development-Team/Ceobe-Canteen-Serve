@@ -1,6 +1,6 @@
 use std::convert::Infallible;
 
-use database_traits::get_connect::{FromRequest, Body, RequestParts, GetDatabaseConnect};
+use database_traits::get_connect::{FromRequest, Body, RequestParts, GetDatabaseConnect, GetDatabaseConnectGuard};
 use redis::{RedisError, Connection, Client};
 
 use crate::static_var::{get_redis_client, get_redis_connection};
@@ -29,11 +29,11 @@ impl FromRequest<Body> for RedisConnect {
     }
 }
 
-impl GetDatabaseConnect for RedisConnect {
-    type Connect<'s> = Connection;
+impl GetDatabaseConnectGuard for RedisConnect {
+    type ConnectGuard<'s> = Connection;
     type Error = RedisError;
 
-    fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error> {
-       get_redis_connection()
+    fn get_connect_guard(&self) -> Result<Self::ConnectGuard<'_>, Self::Error> {
+        get_redis_connection()
     }
 }

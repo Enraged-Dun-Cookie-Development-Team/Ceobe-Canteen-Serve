@@ -11,9 +11,8 @@ where
     C: DbConnectConfig,
 {
     let db_url = format!(
-        "{scheme}://{username}:{password}@{host}:{port}/{db}",
+        "{scheme}://:{password}@{host}:{port}/{db}",
         scheme = config.scheme(),
-        username = config.username(),
         password = config.password(),
         host = config.host(),
         port = config.port(),
@@ -21,7 +20,7 @@ where
     );
 
     log::info!("准备连接到数据库: {}", db_url);
-    let client = redis::Client::open("db_url")?;
+    let client = redis::Client::open(db_url)?;
     if REDIS_DATABASE_CLIENT.set(client).is_err() {
         panic!("Redis 数据库连接已经建立")
     }
