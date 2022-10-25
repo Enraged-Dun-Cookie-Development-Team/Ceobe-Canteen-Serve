@@ -20,7 +20,9 @@ pub trait GetDatabaseConnectGuard: FromRequest<Body> {
     where
         Self: 's;
 
-    fn get_connect_guard(&self) -> Result<Self::ConnectGuard<'_>, Self::Error>;
+    fn get_connect_guard(
+        &self,
+    ) -> Result<Self::ConnectGuard<'_>, Self::Error>;
 }
 
 pub trait GetDatabaseCollection<C>: GetDatabaseConnect {

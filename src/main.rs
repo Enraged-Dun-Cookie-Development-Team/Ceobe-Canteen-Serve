@@ -45,7 +45,9 @@ async fn main() {
         .append(BackendAuthConfig::<_, AuthConfig>)
         // database
         .append_concurrent(|set| {
-            set.join(MysqlDbConnect).join(MongoDbConnect).join(RedisDbConnect)
+            set.join(MysqlDbConnect)
+                .join(MongoDbConnect)
+                .join(RedisDbConnect)
         })
         // router
         .append(RouteV1)

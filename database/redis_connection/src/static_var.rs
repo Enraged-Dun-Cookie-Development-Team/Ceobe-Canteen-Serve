@@ -1,12 +1,13 @@
 use once_cell::sync::OnceCell;
-use redis::{Client, Connection, RedisError, Commands};
+use redis::{Client, Connection, RedisError};
 
 use crate::config::DbConnectConfig;
 
-static REDIS_DATABASE_CLIENT: OnceCell<Client> =
-    OnceCell::new();
+static REDIS_DATABASE_CLIENT: OnceCell<Client> = OnceCell::new();
 
-pub async fn connect_to_redis_database<C>(config: &C) -> Result<(), RedisError>
+pub async fn connect_to_redis_database<C>(
+    config: &C,
+) -> Result<(), RedisError>
 where
     C: DbConnectConfig,
 {

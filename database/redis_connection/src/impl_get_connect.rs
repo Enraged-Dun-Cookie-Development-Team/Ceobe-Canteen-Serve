@@ -1,10 +1,11 @@
 use std::convert::Infallible;
 
-use database_traits::get_connect::{FromRequest, Body, RequestParts, GetDatabaseConnect, GetDatabaseConnectGuard};
-use redis::{RedisError, Connection, Client};
+use database_traits::get_connect::{
+    Body, FromRequest, GetDatabaseConnectGuard, RequestParts,
+};
+use redis::{Connection, RedisError};
 
-use crate::static_var::{get_redis_client, get_redis_connection};
-
+use crate::static_var::get_redis_connection;
 
 #[derive(Debug, Default)]
 pub struct RedisConnect;
@@ -33,7 +34,9 @@ impl GetDatabaseConnectGuard for RedisConnect {
     type ConnectGuard<'s> = Connection;
     type Error = RedisError;
 
-    fn get_connect_guard(&self) -> Result<Self::ConnectGuard<'_>, Self::Error> {
+    fn get_connect_guard(
+        &self,
+    ) -> Result<Self::ConnectGuard<'_>, Self::Error> {
         get_redis_connection()
     }
 }

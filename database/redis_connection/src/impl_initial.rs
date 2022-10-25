@@ -1,10 +1,11 @@
 use std::future::Future;
 
-use database_traits::initial::{DatabaseInitialBasic, DatabaseInitialConnect, DatabaseInitial};
+use database_traits::initial::{
+    DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
+};
 use redis::RedisError;
 
-use crate::{static_var::connect_to_redis_database, config};
-
+use crate::{config, static_var::connect_to_redis_database};
 
 pub struct RedisDatabase;
 pub struct RedisDatabaseBuilder;
@@ -28,7 +29,6 @@ where
         }
     }
 }
-
 
 impl DatabaseInitial for RedisDatabase {
     type BuildResult = ();

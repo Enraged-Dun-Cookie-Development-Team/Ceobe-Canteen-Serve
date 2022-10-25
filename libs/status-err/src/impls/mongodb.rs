@@ -35,7 +35,7 @@ impl StatusErr for mongodb::error::Error {
     }
 
     fn information(&self) -> std::borrow::Cow<'static, str> {
-        format!("{} : {}", std::any::type_name::<Self>(), self).into()
+        format!("{} : {self}", std::any::type_name::<Self>()).into()
     }
 
     fn http_code(&self) -> HttpCode { self.prefix().get_status() }

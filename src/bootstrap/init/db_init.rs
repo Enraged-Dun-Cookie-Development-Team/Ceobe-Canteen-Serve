@@ -1,11 +1,11 @@
 use axum_starter::{prepare, PreparedEffect};
-use database_traits::initial::{connect_db_with_migrate, connect_db};
+use database_traits::initial::{connect_db, connect_db_with_migrate};
 use mongo_migration::mongo_connection::{self, MongoDbConfig, MongoDbError};
 use orm_migrate::{
     sql_connection::{sea_orm::DbErr, DbConfig, SqlDatabase},
     Migrator, MigratorTrait,
 };
-use redis_connection::{RedisDbConfig, RedisDatabase, RedisError};
+use redis_connection::{RedisDatabase, RedisDbConfig, RedisError};
 
 use crate::{
     bootstrap::default_user::create_default_user,
