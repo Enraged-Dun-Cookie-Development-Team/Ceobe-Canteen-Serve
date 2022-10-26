@@ -10,9 +10,9 @@ use crate::static_var::get_redis_client;
 pub struct RedisConnect(ConnectionManager);
 
 impl RedisConnect {
-    pub fn new()->Self{
+    pub fn from_static() -> Self {
         RedisConnect(get_redis_client().to_owned())
-    } 
+    }
 }
 
 impl FromRequest<Body> for RedisConnect {
@@ -31,7 +31,7 @@ impl FromRequest<Body> for RedisConnect {
         'life0: 'async_trait,
         Self: 'async_trait,
     {
-        Box::pin(async { Ok(RedisConnect::new()) })
+        Box::pin(async { Ok(RedisConnect::from_static()) })
     }
 }
 

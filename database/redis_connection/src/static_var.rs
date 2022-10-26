@@ -16,7 +16,9 @@ where
     url.set_host(config.host().into()).unwrap();
     url.set_port(config.port().into()).unwrap();
     url.set_password(config.password()).unwrap();
-    url.path_segments_mut().unwrap().extend([config.db().to_string()]);
+    url.path_segments_mut()
+        .unwrap()
+        .extend([config.db().to_string()]);
 
     log::info!("准备连接到数据库: {}", url);
     let client = redis::Client::open(url)?;
@@ -42,7 +44,8 @@ mod test {
         let mut url = Url::parse("redis://").expect("bad url");
 
         url.set_host("localhost".into()).expect("Cannot be base");
-        url.set_password("localhost".into()).expect("Cannot be base");
+        url.set_password("localhost".into())
+            .expect("Cannot be base");
         println!("{url:?}");
     }
 }

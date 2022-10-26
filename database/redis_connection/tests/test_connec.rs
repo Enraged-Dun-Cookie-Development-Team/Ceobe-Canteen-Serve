@@ -36,7 +36,7 @@ impl DbConnectConfig for MockCfg {
 async fn test_connect() {
     init_connect().await;
 
-    let mut redis = RedisConnect::new();
+    let mut redis = RedisConnect::from_static();
 
     let conn = redis.mut_connect().unwrap();
     conn.set("key", "foo").await.expect("error")
@@ -45,7 +45,7 @@ async fn test_connect() {
 async fn test_set_timeout() {
     init_connect().await;
 
-    let mut redis = RedisConnect::new();
+    let mut redis = RedisConnect::from_static();
 
     let conn = redis.mut_connect().unwrap();
     let _: Option<()> =
