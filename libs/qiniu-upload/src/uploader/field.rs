@@ -31,8 +31,8 @@ impl<L> ByteUploader<L>
 where
     L: PayloadLocal,
 {
-    pub async fn from_field<'s>(
-        field: Field<'s>, local: L,
+    pub async fn from_field(
+        field: Field<'_>, local: L,
     ) -> Result<Self, MultipartError> {
         let content_type = field.content_type().map(SmallString::from_str);
         let payload = field.bytes().await?;
