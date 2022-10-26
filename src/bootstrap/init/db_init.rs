@@ -43,7 +43,7 @@ async fn connect_mongo_db<'arg>(
     Ok(())
 }
 
-/// 连接mysql数据库并且做一次migrate up
+/// 连接Redis数据库
 #[prepare(box RedisDbConnect 'arg)]
 async fn connect_redis_db<'arg>(
     database: &'arg RedisDbConfig,
