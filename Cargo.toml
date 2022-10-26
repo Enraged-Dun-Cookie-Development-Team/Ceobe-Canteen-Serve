@@ -23,6 +23,7 @@ database = []
 async_utils = []
 
 [workspace.dependencies]
+ahash = "0.8"
 resp-result = "0.4"
 axum-prehandle = "0.1"
 tokio = { version = "1", features = [
