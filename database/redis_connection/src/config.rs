@@ -29,7 +29,7 @@ impl DbConnectConfig for RedisDbConfig {
     fn db(&self) -> u8 { self.db }
 }
 
-fn host_default() -> String { "localhost".into() }
+fn host_default() -> String { "127.0.0.1".into() }
 
 fn port_default() -> u16 { 6379 }
 
