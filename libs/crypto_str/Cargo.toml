@@ -24,5 +24,4 @@ package = "serde"
 optional = true
 version = "1"
 
-[dependencies.time-usage]
-path = "../time-usage"
+

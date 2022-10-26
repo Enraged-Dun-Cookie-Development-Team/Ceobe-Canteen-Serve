@@ -5,16 +5,16 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-once_cell = "1"
-serde = { version = "1", features = ["derive"] }
-log = "0.4"
+once_cell = { workspace = true }
+serde = { workspace = true }
+log = { workspace = true }
 database_traits = { path = "../database_traits" }
 redis = { version = "0.22", features = [
     "tokio-comp",
     "ahash",
     "connection-manager"
 ] }
-url = "2.3.1"
+url = { workspace = true }
 
 [dev-dependencies]
 tokio = { version = "1.21.2", features = ["full"] }

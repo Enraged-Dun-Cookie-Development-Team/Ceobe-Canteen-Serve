@@ -26,7 +26,7 @@ mod test {
     fn test_time_format() {
         let time = bson::DateTime::now();
         let st = time.to_chrono().format(TIME_FORMAT).to_string();
-        println!("{}", st)
+        println!("{st}")
     }
 
     #[test]
@@ -34,6 +34,6 @@ mod test {
     fn test_naive_format() {
         let time = NaiveDate::from_ymd(2022, 1, 21);
         let format = time.format(DATE_FORMAT).to_string();
-        println!("{}", format)
+        println!("{format}")
     }
 }

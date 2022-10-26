@@ -96,6 +96,6 @@ mod test {
             syn::parse_str("uncheck=Uncheck, checked=Checked, error=Error,")
                 .expect("Token Error");
 
-        println!("{:?}", token)
+        println!("{token:?}")
     }
 }

@@ -31,7 +31,7 @@ mod test {
     use checker::{
         check_gen,
         prefabs::{no_check::NoCheck, num_check::NonZeroUnsignedError},
-        CheckRequire, LiteChecker,
+        LiteChecker,
     };
     use serde::Deserialize;
     use typed_builder::TypedBuilder;
@@ -39,7 +39,8 @@ mod test {
     use super::{PageSize, PageSizeChecker};
 
     #[derive(Debug, TypedBuilder)]
-    pub struct TestChecked {
+    #[allow(dead_code)]
+    struct TestChecked {
         a: i32,
         b: String,
         test_page_size: PageSize,
@@ -60,7 +61,7 @@ mod test {
         error = TestError
     )]
     #[derive(Deserialize)]
-    pub struct TestChecker {
+    struct TestChecker {
         a: NoCheck<i32>,
         b: NoCheck<String>,
         #[serde(flatten)]

@@ -49,7 +49,7 @@ mod test {
     #[test]
     fn test_url() {
         let url = url::Url::parse("icon");
-        println!("{:?}", url)
+        println!("{url:?}")
     }
 }
 
