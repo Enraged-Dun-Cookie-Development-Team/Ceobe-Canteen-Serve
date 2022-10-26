@@ -98,7 +98,7 @@ mod test {
     #[test]
     fn test_128() {
         let a = 128u8;
-        println!("{:b}", a);
+        println!("{a:b}");
     }
     #[test]
     fn test_serde() {
