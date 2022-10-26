@@ -1,6 +1,6 @@
 pub trait DbConnectConfig: serde::de::DeserializeOwned {
     fn scheme(&self) -> &str;
-    fn password(&self) -> &str;
+    fn password(&self) -> Option<&str> { None }
     fn host(&self) -> &str;
     fn port(&self) -> u16;
     fn db(&self) -> u8;
@@ -20,7 +20,7 @@ pub struct RedisDbConfig {
 impl DbConnectConfig for RedisDbConfig {
     fn scheme(&self) -> &str { "redis" }
 
-    fn password(&self) -> &str { &self.password }
+    fn password(&self) -> Option<&str> { Some(&self.password) }
 
     fn host(&self) -> &str { &self.host }
 

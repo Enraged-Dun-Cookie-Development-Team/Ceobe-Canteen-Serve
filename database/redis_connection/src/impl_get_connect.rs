@@ -9,6 +9,12 @@ use crate::static_var::get_redis_client;
 
 pub struct RedisConnect(ConnectionManager);
 
+impl RedisConnect {
+    pub fn new()->Self{
+        RedisConnect(get_redis_client().to_owned())
+    } 
+}
+
 impl FromRequest<Body> for RedisConnect {
     type Rejection = Infallible;
 
@@ -25,7 +31,7 @@ impl FromRequest<Body> for RedisConnect {
         'life0: 'async_trait,
         Self: 'async_trait,
     {
-        Box::pin(async { Ok(RedisConnect(get_redis_client().to_owned())) })
+        Box::pin(async { Ok(RedisConnect::new()) })
     }
 }
 

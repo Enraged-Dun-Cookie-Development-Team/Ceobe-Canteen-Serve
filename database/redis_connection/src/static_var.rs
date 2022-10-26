@@ -1,5 +1,6 @@
 use once_cell::sync::OnceCell;
 use redis::{aio::ConnectionManager, RedisError};
+use url::Url;
 
 use crate::config::DbConnectConfig;
 static REDIS_DATABASE_CLIENT: OnceCell<ConnectionManager> = OnceCell::new();
@@ -10,17 +11,15 @@ pub async fn connect_to_redis_database<C>(
 where
     C: DbConnectConfig,
 {
-    let db_url = format!(
-        "{scheme}://:{password}@{host}:{port}/{db}",
-        scheme = config.scheme(),
-        password = config.password(),
-        host = config.host(),
-        port = config.port(),
-        db = config.db()
-    );
+    let mut url = Url::parse("redis://").unwrap();
 
-    log::info!("准备连接到数据库: {}", db_url);
-    let client = redis::Client::open(db_url)?;
+    url.set_host(config.host().into()).unwrap();
+    url.set_port(config.port().into()).unwrap();
+    url.set_password(config.password()).unwrap();
+    url.path_segments_mut().unwrap().extend([config.db().to_string()]);
+
+    log::info!("准备连接到数据库: {}", url);
+    let client = redis::Client::open(url)?;
     let manager = ConnectionManager::new(client).await?;
     if REDIS_DATABASE_CLIENT.set(manager).is_err() {
         panic!("Redis 数据库连接已经建立")
@@ -32,4 +31,18 @@ where
 // 获取redis数据库
 pub fn get_redis_client() -> &'static ConnectionManager {
     REDIS_DATABASE_CLIENT.get().expect("Redis 数据库连接未建立")
+}
+
+#[cfg(test)]
+mod test {
+    use url::Url;
+
+    #[test]
+    fn test_url() {
+        let mut url = Url::parse("redis://").expect("bad url");
+
+        url.set_host("localhost".into()).expect("Cannot be base");
+        url.set_password("localhost".into()).expect("Cannot be base");
+        println!("{url:?}");
+    }
 }
