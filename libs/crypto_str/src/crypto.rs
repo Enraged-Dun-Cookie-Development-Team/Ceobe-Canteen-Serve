@@ -1,7 +1,5 @@
 use std::{borrow::Cow, marker::PhantomData, ops::Deref};
 
-use time_usage::sync_time_usage_with_name;
-
 use crate::Encoder;
 
 #[derive(Debug, Clone)]
@@ -29,25 +27,19 @@ where
     }
 
     pub fn crypto(self) -> Result<Self, E::Error> {
-        sync_time_usage_with_name("密码加密", || {
-            match self {
-                CryptoString::Raw(r, _) => {
-                    E::encode(r).map(|e| Self::Crypto(e))
-                }
-                c => Ok(c),
-            }
-        })
+        match self {
+            CryptoString::Raw(r, _) => E::encode(r).map(|e| Self::Crypto(e)),
+            c => Ok(c),
+        }
     }
 
     pub fn verify(&self, rhs: &Self) -> std::result::Result<bool, E::Error> {
-        sync_time_usage_with_name("密码校验", || {
-            match (self, rhs) {
-                (Self::Raw(r, _), Self::Raw(r2, _)) => Ok(r == r2),
-                (Self::Raw(r, _), Self::Crypto(c)) => E::verify(c, r),
-                (Self::Crypto(c), Self::Raw(r, _)) => E::verify(c, r),
-                (Self::Crypto(c1), Self::Crypto(c2)) => Ok(c1 == c2),
-            }
-        })
+        match (self, rhs) {
+            (Self::Raw(r, _), Self::Raw(r2, _)) => Ok(r == r2),
+            (Self::Raw(r, _), Self::Crypto(c)) => E::verify(c, r),
+            (Self::Crypto(c), Self::Raw(r, _)) => E::verify(c, r),
+            (Self::Crypto(c1), Self::Crypto(c2)) => Ok(c1 == c2),
+        }
     }
 }
 

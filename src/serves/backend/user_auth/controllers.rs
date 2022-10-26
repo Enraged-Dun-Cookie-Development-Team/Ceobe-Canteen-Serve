@@ -4,16 +4,15 @@ use axum_prehandle::{
     prefabs::{json::JsonPayload, query::QueryParams},
     PreHandling, PreRespMapErrorHandling,
 };
-use crypto::digest::Digest;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
+use md5::{Digest, Md5};
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::admin_user::operate::UserSqlOperate,
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use time_usage::sync_time_usage_with_name;
 
 use super::{
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
@@ -53,46 +52,40 @@ impl UserAuthBackend {
         let permission = query.0.permission;
 
         // 生成随机用户名密码
-        let rand_username: String =
-            sync_time_usage_with_name("生成随机用户名", || {
-                thread_rng()
-                    .sample_iter(&Alphanumeric)
-                    .take(10)
-                    .map(char::from)
-                    .collect()
-            });
-        let rand_password: String =
-            sync_time_usage_with_name("生成随机用户密码", || {
-                thread_rng()
-                    .sample_iter(&Alphanumeric)
-                    .take(10)
-                    .map(char::from)
-                    .collect()
-            });
+        let rand_username: String = {
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(10)
+                .map(char::from)
+                .collect()
+        };
+        let rand_password: String = {
+            thread_rng()
+                .sample_iter(&Alphanumeric)
+                .take(10)
+                .map(char::from)
+                .collect()
+        };
 
         let username = rand_username.clone();
         let plaintext_password = rand_password.clone();
 
         // 进行md5加密
-        let rand_password =
-            sync_time_usage_with_name("随机密码MD5加密", || {
-                let mut md5 = crypto::md5::Md5::new();
-                md5.input_str(&rand_password);
-                let rand_password = md5.result_str();
-                log::debug!(
-                    "新建用户密码通过MD5加密后是： {:?}",
-                    rand_password
-                );
-                rand_password
-            });
+        let rand_password = {
+            let mut md5 = Md5::new();
+            md5.update(&rand_password);
+            let rand_password = md5.finalize();
+            let rand_password = hex::encode(rand_password);
+            log::debug!("新建用户密码通过MD5加密后是： {:?}", rand_password);
+            rand_password
+        };
 
         // 加密密码
-        let encode_password =
-            sync_time_usage_with_name("随机密码加密", || {
-                tokio::task::block_in_place(|| {
-                    PasswordEncoder::encode(rand_password.into())
-                })
-            })?;
+        let encode_password = {
+            tokio::task::block_in_place(|| {
+                PasswordEncoder::encode(rand_password.into())
+            })
+        }?;
 
         // 将用户信息写入数据库
         UserSqlOperate::add_user_with_encoded_password(

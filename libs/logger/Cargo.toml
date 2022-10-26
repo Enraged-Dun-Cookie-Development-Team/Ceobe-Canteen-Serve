@@ -5,11 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-yansi = "0.5"
-chrono = "0.4"
+chrono = { workspace = true }
 fern = { version = "0.6.1", features = ["chrono", "colored"] }
-thiserror = "1.0.37"
+thiserror = { workspace = true }
 
 [dependencies.log]
-version = "0.4"
-features = ["std"]
+workspace = true

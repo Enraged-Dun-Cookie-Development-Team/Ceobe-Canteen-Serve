@@ -44,7 +44,7 @@ fn parse_name_and_eq<'a>(
     }
     let ident: Ident = input.parse()?;
     if ident != name {
-        Err(syn::Error::new(ident.span(), format!("expect `{}`", name)))?;
+        Err(syn::Error::new(ident.span(), format!("expect `{name}`")))?;
     }
 
     // check eq sign
@@ -96,6 +96,6 @@ mod test {
             syn::parse_str("uncheck=Uncheck, checked=Checked, error=Error,")
                 .expect("Token Error");
 
-        println!("{:?}", token)
+        println!("{token:?}")
     }
 }

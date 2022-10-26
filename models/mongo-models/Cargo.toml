@@ -5,21 +5,20 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-mongodb = { version =  "2",features = ["bson-chrono-0_4"]}
-chrono = { version = "0.4", features = ["serde"] }
-typed-builder = "0.10"
-thiserror = "1"
-futures = "0.3"
-log = "0.4"
-tap = "1"
-url = { version = "2", features = ["serde"] }
+mongodb = { workspace = true,features = ["bson-chrono-0_4"]}
+chrono = { workspace = true, features = ["serde"] }
+typed-builder = { workspace = true }
+thiserror = { workspace = true }
+futures = { workspace = true }
+log = { workspace = true }
+tap = { workspace = true }
+url = { workspace = true }
 modify-cache = {path = "../../libs/modify-cache"}
 [dependencies.sub-model]
-version = "0.1"
+workspace = true
 
 [dependencies.serde]
-version = "1"
-features = ["derive"]
+workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"
@@ -33,6 +32,4 @@ path = "../../database/mongo_connection"
 [dependencies.status-err]
 path = "../../libs/status-err"
 
-[dependencies.futures-util]
-version = "0.3"
-features = ["std", "sink"]
+
