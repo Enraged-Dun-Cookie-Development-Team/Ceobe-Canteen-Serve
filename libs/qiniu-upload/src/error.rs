@@ -1,3 +1,4 @@
+use axum::extract::multipart::MultipartError;
 use qiniu_upload_manager::apis::http_client::ResponseError;
 use smallstr::SmallString;
 
@@ -9,6 +10,9 @@ pub enum Error {
     BucketNotInManage(SmallString<[u8; 64]>),
     #[error(transparent)]
     Json(#[from] serde_json::Error),
+
+    #[error(transparent)]
+    Multipart(#[from] MultipartError),
 
     #[error("Custom Error: {0:?}")]
     Custom(String),

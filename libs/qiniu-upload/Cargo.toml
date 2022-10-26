@@ -6,8 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 ahash = { workspace = true }
+axum = { workspace = true, features = ["multipart"] }
 axum-core = "0.2.9"
 axum-starter = { workspace = true }
+bytes = { version = "1.2.1", features = ["serde"] }
 futures = { workspace = true }
 mime = "0.3.16"
 mime_guess = "2.0.4"

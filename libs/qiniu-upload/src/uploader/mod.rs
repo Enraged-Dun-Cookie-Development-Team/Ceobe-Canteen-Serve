@@ -1,3 +1,4 @@
+mod field;
 mod builder;
 mod file_upload;
 mod payload;
@@ -12,6 +13,7 @@ pub use upload_json::JsonPayload;
 pub use self::{
     builder::{ManagedUploader, UploaderBuilder},
     payload::{FilePayload, PayloadContent, PayloadLocal},
+    field::ByteUploader
 };
 use crate::{error, SecretConfig};
 #[derive(Debug)]
