@@ -1,14 +1,13 @@
 use std::convert::Infallible;
 
 use database_traits::get_connect::{
-    Body, FromRequest, GetDatabaseConnectGuard, RequestParts,
+    Body, FromRequest, GetMutDatabaseConnect, RequestParts,
 };
-use redis::{Connection, RedisError};
+use redis::aio::ConnectionManager;
 
-use crate::static_var::get_redis_connection;
+use crate::static_var::get_redis_client;
 
-#[derive(Debug, Default)]
-pub struct RedisConnect;
+pub struct RedisConnect(ConnectionManager);
 
 impl FromRequest<Body> for RedisConnect {
     type Rejection = Infallible;
@@ -26,17 +25,17 @@ impl FromRequest<Body> for RedisConnect {
         'life0: 'async_trait,
         Self: 'async_trait,
     {
-        Box::pin(async { Ok(RedisConnect) })
+        Box::pin(async { Ok(RedisConnect(get_redis_client().to_owned())) })
     }
 }
 
-impl GetDatabaseConnectGuard for RedisConnect {
-    type ConnectGuard<'s> = Connection;
-    type Error = RedisError;
+impl GetMutDatabaseConnect for RedisConnect {
+    type Connect<'s> = ConnectionManager
+    where
+        Self: 's;
+    type Error = Infallible;
 
-    fn get_connect_guard(
-        &self,
-    ) -> Result<Self::ConnectGuard<'_>, Self::Error> {
-        get_redis_connection()
+    fn mut_connect(&mut self) -> Result<&mut Self::Connect<'_>, Self::Error> {
+        Ok(&mut self.0)
     }
 }
