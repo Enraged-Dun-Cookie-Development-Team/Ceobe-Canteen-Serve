@@ -1,10 +1,11 @@
 use axum_starter::{prepare, PreparedEffect};
-use database_traits::initial::connect_db_with_migrate;
+use database_traits::initial::{connect_db, connect_db_with_migrate};
 use mongo_migration::mongo_connection::{self, MongoDbConfig, MongoDbError};
 use orm_migrate::{
     sql_connection::{sea_orm::DbErr, DbConfig, SqlDatabase},
     Migrator, MigratorTrait,
 };
+use redis_connection::{RedisDatabase, RedisDbConfig, RedisError};
 
 use crate::{
     bootstrap::default_user::create_default_user,
@@ -39,5 +40,15 @@ async fn connect_mongo_db<'arg>(
         mongo_migration::Migrator,
     )
     .await?;
+    Ok(())
+}
+
+/// 连接Redis数据库
+#[allow(unused)]
+#[prepare(box RedisDbConnect 'arg)]
+async fn connect_redis_db<'arg>(
+    database: &'arg RedisDbConfig,
+) -> Result<impl PreparedEffect, RedisError> {
+    connect_db::<RedisDatabase, _>(database).await?;
     Ok(())
 }

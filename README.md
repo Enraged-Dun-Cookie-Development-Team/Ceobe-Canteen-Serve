@@ -18,7 +18,6 @@
   | `database`/`db` | `max_conn` | 是 | `u32` | 数据库的最大连接数 | 无 |
   | `database`/`db` | `min_conn` | 是 | `u32` | 数据库的最小连接数 | 无 |
   | `database`/`db` | `logger` | 否 | `bool` | 是否开始数据库操作日志 | 默认关闭 |
-
   | `logger`/`log` | `to_stdout` | 否 | `bool` | 同时将日志输出到 Stdout | 默认为 true |
   | `logger`/`log` | `to_file` | 否 | `String` | 同时将日志输出的文件 | 有值将会同时将日志输出到指定文件 |
   | `logger`/`log` | `level` | 是 | `off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace` | 日志输出过滤等级 | 无 |
@@ -42,7 +41,11 @@
   | `qiniu`/ `qiniu_secret` | `access_key` | 是 | `String` | 七牛云的 Access Key | |
   | `qiniu`/ `qiniu_secret` | `secret_key` | 是 | `String` | 七牛云的 Secret Key | |
   | `qiniu`/ `qiniu_secret` | `buckets`/`bucket_list` | 否 | `Vec<String>` | 所有要使用的 Bucket(篮子) | 默认为空 |
-
+  | `redis` | `password` | 是 | `String` | Redis 进行数据库连接使用的用户密码 | 无 |
+  | `redis` | `host` | 否 | `String` | Redis 进行数据库连接使用的 host | 默认为`localhost`|
+  | `redis` | `port` | 否 | `u16` | Redis 进行数据库连接使用的端口 | 默认为`6379` |
+  | `redis` | `db` | 是 | `u8` | Redis 进行数据库连接使用的数据库 | 默认为`0` |
+  
 - Toml
 
   ```toml
