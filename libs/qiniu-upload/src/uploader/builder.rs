@@ -24,7 +24,7 @@ impl UploaderBuilder {
         }
     }
 
-    /// 新建储存空间 
+    /// 新建储存空间
     pub fn add_bucket(
         mut self, name: &(impl AsRef<str> + ?Sized),
     ) -> Result<Self, error::Error> {
