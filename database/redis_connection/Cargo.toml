@@ -1,0 +1,20 @@
+[package]
+name = "redis_connection"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+once_cell = { workspace = true }
+serde = { workspace = true }
+log = { workspace = true }
+database_traits = { path = "../database_traits" }
+redis = { version = "0.22", features = [
+    "tokio-comp",
+    "ahash",
+    "connection-manager"
+] }
+url = { workspace = true }
+
+[dev-dependencies]
+tokio = { version = "1.21.2", features = ["full"] }

@@ -46,6 +46,7 @@ async fn main() {
         // database
         .append_concurrent(|set| {
             set.join(MysqlDbConnect).join(MongoDbConnect)
+            // .join(RedisDbConnect)
         })
         // router
         .append(RouteV1)

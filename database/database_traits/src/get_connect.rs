@@ -13,6 +13,14 @@ pub trait GetDatabaseConnect: FromRequest<Body> {
 
     fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error>;
 }
+pub trait GetMutDatabaseConnect: FromRequest<Body> {
+    type Error: std::error::Error;
+    type Connect<'s>: 's
+    where
+        Self: 's;
+
+    fn mut_connect(&mut self) -> Result<&mut Self::Connect<'_>, Self::Error>;
+}
 
 pub trait GetDatabaseCollection<C>: GetDatabaseConnect {
     type CollectGuard<'s>: 's
