@@ -18,7 +18,6 @@
   | `database`/`db` | `max_conn` | 是 | `u32` | 数据库的最大连接数 | 无 |
   | `database`/`db` | `min_conn` | 是 | `u32` | 数据库的最小连接数 | 无 |
   | `database`/`db` | `logger` | 否 | `bool` | 是否开始数据库操作日志 | 默认关闭 |
-
   | `logger`/`log` | `to_stdout` | 否 | `bool` | 同时将日志输出到 Stdout | 默认为 true |
   | `logger`/`log` | `to_file` | 否 | `String` | 同时将日志输出的文件 | 有值将会同时将日志输出到指定文件 |
   | `logger`/`log` | `level` | 是 | `off` 或者</br>`error`或者</br>`warm` 或者</br>`info` 或者</br>`debug` 或者</br>`trace` | 日志输出过滤等级 | 无 |
