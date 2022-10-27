@@ -18,7 +18,7 @@ pub use self::{
 use crate::{error, SecretConfig};
 #[derive(Debug)]
 pub struct Uploader {
-    managers:
+    pub(crate) managers:
         HashMap<SmallString<[u8; 64]>, ManagedUploader, ahash::RandomState>,
 }
 

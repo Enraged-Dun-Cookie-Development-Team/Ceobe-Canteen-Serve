@@ -19,7 +19,7 @@ members = ["libs/*", "./models/*", "./migrate/*", "./database/*", "./macros/*"]
 [workspace.dependencies]
 ahash = "0.8"
 async-trait = "0.1"
-axum = "0.5"
+axum = { version = "0.5", features = ["multipart"] }
 axum-prehandle = "0.1"
 axum-starter = { version = "0.3", features = ["logger"] }
 chrono = "0.4"
@@ -101,6 +101,7 @@ typed-builder = { workspace = true }
 # web
 url = { workspace = true }
 urlencoding = { workspace = true }
+axum-macros = "0.2.3"
 
 [dependencies.tokio]
 workspace = true

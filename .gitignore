@@ -6,7 +6,7 @@ target/
 
 .idea/
 
-Config.json
+*.json
 Config.toml
 Config.yaml
 

@@ -23,6 +23,7 @@ where
         .try_fold(uploader, UploaderBuilder::add_bucket)?
         .build();
 
+    log::info!("uploader Init Done, managed Bucket: {:?}",uploader.managers.keys());
     Ok(SetExtension::arc(uploader))
 }
 
