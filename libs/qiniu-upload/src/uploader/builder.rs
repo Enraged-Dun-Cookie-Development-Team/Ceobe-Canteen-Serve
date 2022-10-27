@@ -7,6 +7,7 @@ use smallstr::SmallString;
 use crate::{error, SecretConfig};
 
 pub struct UploaderBuilder {
+    /// 认证信息
     credential: Credential,
     managers:
         HashMap<SmallString<[u8; 64]>, ManagedUploader, ahash::RandomState>,
@@ -23,9 +24,11 @@ impl UploaderBuilder {
         }
     }
 
+    /// 新建储存空间 
     pub fn add_bucket(
         mut self, name: &(impl AsRef<str> + ?Sized),
     ) -> Result<Self, error::Error> {
+        // 如果空间存在则直接返回UploaderBuilder
         if !self.managers.contains_key(name.as_ref()) {
             let manage = UploadManager::builder(
                 UploadTokenSigner::new_credential_provider(
