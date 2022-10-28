@@ -4,7 +4,7 @@ use serde::Serialize;
 use smallvec::SmallVec;
 use typed_builder::TypedBuilder;
 
-use super::{DataSourceList, GroupName, DataSource};
+use super::{DataSource, DataSourceList, GroupName};
 
 #[derive(Debug, Serialize, TypedBuilder)]
 pub struct Group {
@@ -14,10 +14,8 @@ pub struct Group {
     #[serde(rename = "datasource")]
     #[serde(skip_serializing_if = "SmallVec::is_empty")]
     #[builder(
-        default, 
-        setter(
-            transform = 
-            |list: impl IntoIterator<Item = DataSource>|
+        default, setter(
+            transform = |list: impl IntoIterator<Item = DataSource>|
             list.into_iter().collect()
         )
     )]
@@ -25,7 +23,7 @@ pub struct Group {
     #[serde(rename = "interval")]
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(transform = |interval: Duration| Some(interval.as_millis())))]
-    interval_milliseconds : Option<u128>,
+    interval_milliseconds: Option<u128>,
 }
 
 pub type Groups = SmallVec<[Group; 8]>;

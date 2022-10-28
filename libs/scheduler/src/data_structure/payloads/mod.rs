@@ -74,7 +74,7 @@ mod test {
             )])
             .build();
 
-        let serde_str =  serde_json::to_string_pretty(&config).unwrap();
+        let serde_str = serde_json::to_string_pretty(&config).unwrap();
         println!("{serde_str}");
     }
 }

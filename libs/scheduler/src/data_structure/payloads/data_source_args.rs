@@ -5,18 +5,15 @@ use serde::Serialize;
 
 use super::{ParamName, StrArgument};
 
-
-#[derive(Debug,Serialize)]
+#[derive(Debug, Serialize)]
 #[serde(untagged)]
 pub enum DataSourceArg {
     String(StrArgument),
-    Bool(bool)
+    Bool(bool),
 }
 
-impl From<bool> for  DataSourceArg {
-    fn from(value: bool) -> Self {
-        Self::Bool(value)
-    }
+impl From<bool> for DataSourceArg {
+    fn from(value: bool) -> Self { Self::Bool(value) }
 }
 
 impl From<&str> for DataSourceArg {
@@ -25,6 +22,4 @@ impl From<&str> for DataSourceArg {
     }
 }
 
-
-
-pub type DataSourceArgs = AHashMap<ParamName,DataSourceArg>;
+pub type DataSourceArgs = AHashMap<ParamName, DataSourceArg>;
