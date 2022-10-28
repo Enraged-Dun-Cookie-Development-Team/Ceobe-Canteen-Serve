@@ -17,7 +17,7 @@ strip = true
 members = ["libs/*", "./models/*", "./migrate/*", "./database/*", "./macros/*"]
 
 [workspace.dependencies]
-ahash = "0.8"
+ahash = {version = "0.8",features = ["serde"]}
 async-trait = "0.1"
 axum = { version = "0.5", features = ["multipart"] }
 axum-prehandle = "0.1"

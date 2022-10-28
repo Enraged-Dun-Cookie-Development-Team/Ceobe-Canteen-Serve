@@ -8,3 +8,10 @@ edition = "2021"
 reqwest = { workspace = true }
 axum = { workspace = true }
 axum-starter = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+smallstr = { version = "0.3", features = ["serde", "std"] }
+smallvec = { version = "1", features = ["serde", "write"] }
+ahash = { workspace = true }
+typed-builder = { workspace = true }
