@@ -1,39 +1,98 @@
 use std::marker::PhantomData;
 
-use async_trait::async_trait;
-use axum::{body::Body, extract::RequestParts};
-use axum_prehandle::PreHandler;
-
 use crate::{Checker as DataChecker, LiteArgs};
-pub struct PreLiteChecker<Punchecked, C, E>(PhantomData<(Punchecked, C, E)>)
-where
-    C: DataChecker,
-    <C as DataChecker>::Args: LiteArgs,
-    Punchecked: PreHandler<Body, Output = C::Unchecked>,
-    E: 'static + From<C::Err> + From<Punchecked::Rejection>,
-    C::Checked: 'static;
 
-#[async_trait]
-impl<Punchecked, C, E> PreHandler<Body> for PreLiteChecker<Punchecked, C, E>
+use axum::{
+    extract::{FromRequest, Path, Query, RequestParts},
+    Form, Json,
+};
+use resp_result::{resp_try, Nil, RespError, RespResult};
+
+pub struct CheckExtract<Previous, C, E>(
+    pub C::Checked,
+    PhantomData<(Previous, E)>,
+)
 where
+    Previous: UncheckFetcher<Uncheck = C::Unchecked>,
     C: DataChecker,
     C::Unchecked: Send,
+    C::Args: LiteArgs + Send,
     C::Fut: Send,
-    <C as DataChecker>::Args: LiteArgs + Send,
-    Punchecked: PreHandler<Body, Output = C::Unchecked>,
-    E: 'static + From<C::Err> + From<Punchecked::Rejection>,
-    C::Checked: 'static,
+    E: From<C::Err>,
+    E: RespError;
+
+impl<B, Previous, C, E> FromRequest<B> for CheckExtract<Previous, C, E>
+where
+    B: Send,
+    Previous: FromRequest<B> + UncheckFetcher<Uncheck = C::Unchecked>,
+    C: DataChecker,
+    C::Unchecked: Send,
+    C::Args: LiteArgs + Send,
+    C::Fut: Send,
+    E: From<Previous::Rejection>,
+    E: From<C::Err>,
+    E: RespError,
 {
-    type Output = C::Checked;
-    type Rejection = E;
+    type Rejection = RespResult<Nil, E>;
 
-    async fn handling(
-        request: &mut RequestParts<Body>,
-    ) -> Result<Self::Output, Self::Rejection> {
-        let args = <<C as DataChecker>::Args as LiteArgs>::get_arg();
-        let uncheck = Punchecked::handling(request).await?;
+    fn from_request<'life0, 'async_trait>(
+        req: &'life0 mut RequestParts<B>,
+    ) -> core::pin::Pin<
+        Box<
+            dyn core::future::Future<Output = Result<Self, Self::Rejection>>
+                + core::marker::Send
+                + 'async_trait,
+        >,
+    >
+    where
+        'life0: 'async_trait,
+        Self: 'async_trait,
+    {
+        Box::pin(async {
+            match resp_try::<_, _, E>(async {
+                let previous = Previous::from_request(req).await?.fetch();
+                let checked = C::check(LiteArgs::get_arg(), previous).await?;
+                Ok(Self(checked, PhantomData))
+            })
+            .await
+            {
+                RespResult::Success(this) => Ok(this),
+                RespResult::Err(err) => Err(RespResult::Err(err)),
+            }
+        })
+    }
+}
 
-        let checked = C::check(args, uncheck).await?;
-        Ok(checked)
+pub trait UncheckFetcher {
+    type Uncheck;
+    fn fetch(self) -> Self::Uncheck;
+}
+
+impl<T> UncheckFetcher for Json<T> {
+    type Uncheck = T;
+
+    fn fetch(self) -> Self::Uncheck {
+        self.0
+    }
+}
+impl<T> UncheckFetcher for Form<T> {
+    type Uncheck = T;
+
+    fn fetch(self) -> Self::Uncheck {
+        self.0
+    }
+}
+impl<T> UncheckFetcher for Path<T> {
+    type Uncheck = T;
+
+    fn fetch(self) -> Self::Uncheck {
+        self.0
+    }
+}
+impl<T> UncheckFetcher for Query<T> {
+    type Uncheck = T;
+
+    fn fetch(self) -> Self::Uncheck {
+        self.0
     }
 }

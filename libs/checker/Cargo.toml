@@ -12,9 +12,9 @@ chrono = { workspace = true }
 url = { workspace = true }
 check-obj-macro = { path = "../../macros/check-obj-macro" }
 num-traits = "0.2"
-axum-prehandle = { workspace = true }
 async-trait = { workspace = true }
 axum = { workspace = true }
+resp-result = { workspace = true }
 
 [dependencies.range-limit]
 path = "../range-limit"
