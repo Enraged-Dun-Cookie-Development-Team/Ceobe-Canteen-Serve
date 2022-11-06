@@ -1,7 +1,7 @@
-use axum_prehandle::{
-    prefabs::json::JsonPayload, PreHandling, PreRespHandling,
+use checker::{
+    prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
+    JsonCheckExtract,
 };
-use checker::prefabs::collect_checkers::iter_checkers::IntoIterChecker;
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::ceobe_operation::announcement::{
@@ -12,17 +12,15 @@ use orm_migrate::{
         operate::CeobeOperationAnnouncementSqlOperate,
     },
 };
+use resp_result::resp_try;
 
 use super::{
     error::{AnnouncementRespResult, CeobeOperationAnnouncementError},
     view::AnnouncementItem,
 };
-use crate::{
-    router::CeobeOperationAnnouncement, utils::data_checker::PreLiteChecker,
-};
+use crate::router::CeobeOperationAnnouncement;
 
-type UpdateAnnouncementCheck = PreLiteChecker<
-    JsonPayload<Vec<CeobeOpAnnouncementUncheck>>,
+type UpdateAnnouncementCheck = JsonCheckExtract<
     IntoIterChecker<
         Vec<CeobeOpAnnouncementUncheck>,
         CeobeOpAnnouncementChecker,
@@ -36,23 +34,33 @@ impl CeobeOperationAnnouncement {
     pub async fn get_announcement_list(
         db: SqlConnect,
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
-        Ok(
-            CeobeOperationAnnouncementSqlOperate::find_all_not_delete(&db)
+        resp_try(async {
+            Ok(
+                CeobeOperationAnnouncementSqlOperate::find_all_not_delete(
+                    &db,
+                )
                 .await?
                 .into_iter()
                 .map(Into::into)
                 .collect(),
-        )
-        .into()
+            )
+        })
+        .await
     }
 
     // 更新公告列表
     pub async fn update_announcement_list(
         db: SqlConnect,
-        PreHandling(announcements): PreRespHandling<UpdateAnnouncementCheck>,
+        CheckExtract(announcements, _): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
-        CeobeOperationAnnouncementSqlOperate::update_all(&db, announcements)
+        resp_try(async {
+            CeobeOperationAnnouncementSqlOperate::update_all(
+                &db,
+                announcements,
+            )
             .await?;
-        Ok(()).into()
+            Ok(())
+        })
+        .await
     }
 }

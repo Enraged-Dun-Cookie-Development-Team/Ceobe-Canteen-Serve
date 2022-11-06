@@ -1,37 +1,31 @@
-use axum_prehandle::{
-    prefabs::json::JsonPayload, PreHandling, PreRespHandling,
-};
+use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::ceobe_operation::resource::{
-        checkers::resource_data::{
-            CeobeOperationResourceChecker, CeobeOperationResourceUncheck,
-        },
+        checkers::resource_data::CeobeOperationResourceChecker,
         operate::CeobeOperationResourceSqlOperate,
     },
 };
-use resp_result::RespResult;
+use resp_result::{rtry, RespResult};
 
 use super::{
     error::{ResourceError, ResourceRResult},
     view::Resource,
 };
-use crate::{router::CeobeOpResource, utils::data_checker::PreLiteChecker};
+use crate::router::CeobeOpResource;
 
-type ResourceUploadCheck = PreLiteChecker<
-    JsonPayload<CeobeOperationResourceUncheck>,
-    CeobeOperationResourceChecker,
-    ResourceError,
->;
+type ResourceUploadCheck =
+    JsonCheckExtract<CeobeOperationResourceChecker, ResourceError>;
 
 impl CeobeOpResource {
     pub async fn upload_resource(
-        db: SqlConnect,
-        PreHandling(resource): PreRespHandling<ResourceUploadCheck>,
+        db: SqlConnect, CheckExtract(resource, _): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
-        CeobeOperationResourceSqlOperate::update_resource(&db, resource)
-            .await?;
-        RespResult::ok(())
+        Ok(rtry! {
+            CeobeOperationResourceSqlOperate::update_resource(&db, resource)
+            .await
+        })
+        .into()
     }
 
     pub async fn get_resource(db: SqlConnect) -> ResourceRResult<Resource> {
@@ -39,8 +33,8 @@ impl CeobeOpResource {
             CeobeOperationResourceSqlOperate::get_resource(&db, |raa, cd| {
                 Resource::from((raa, cd))
             })
-            .await?;
+            .await;
 
-        RespResult::ok(resp)
+        RespResult::ok(rtry!(resp))
     }
 }

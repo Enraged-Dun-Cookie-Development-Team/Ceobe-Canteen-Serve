@@ -1,21 +1,17 @@
-use axum_prehandle::{
-    prefabs::json::JsonPayload, PreHandling, PreRespHandling,
-};
+use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::ceobe_operation::app_version::{
-        checkers::app_version_data::{
-            CeobeOperationAppVersionChecker, CeobeOperationAppVersionUncheck,
-        },
+        checkers::app_version_data::CeobeOperationAppVersionChecker,
         operate::CeobeOperationAppVersionSqlOperate,
     },
 };
+use resp_result::resp_try;
 
 use super::error::{AppRespResult, CeobeOperationAppVersionError};
-use crate::{router::CeobeOpVersion, utils::data_checker::PreLiteChecker};
+use crate::router::CeobeOpVersion;
 
-type CreateAppVersionCheck = PreLiteChecker<
-    JsonPayload<CeobeOperationAppVersionUncheck>,
+type CreateAppVersionCheck = JsonCheckExtract<
     CeobeOperationAppVersionChecker,
     CeobeOperationAppVersionError,
 >;
@@ -23,12 +19,16 @@ type CreateAppVersionCheck = PreLiteChecker<
 impl CeobeOpVersion {
     // 新增一个app版本
     pub async fn create_app_version(
-        db: SqlConnect,
-        PreHandling(version): PreRespHandling<CreateAppVersionCheck>,
+        db: SqlConnect, CheckExtract(version, ..): CreateAppVersionCheck,
     ) -> AppRespResult<()> {
-        CeobeOperationAppVersionSqlOperate::create_one_version(&db, version)
+        resp_try(async {
+            CeobeOperationAppVersionSqlOperate::create_one_version(
+                &db, version,
+            )
             .await?;
 
-        Ok(()).into()
+            Ok(())
+        })
+        .await
     }
 }
