@@ -260,7 +260,7 @@ impl UserAuthBackend {
         >,
     ) -> AdminUserRResult<()> {
         let uid = body.id;
-        rtry!(UserSqlOperate::delete_one_user(&db, uid).await?);
+        rtry!(UserSqlOperate::delete_one_user(&db, uid).await);
         Ok(()).into()
     }
 }
