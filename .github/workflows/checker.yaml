@@ -16,11 +16,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Rust toolchain
+      - name: Rust toolchain Stable
         uses: actions-rs/toolchain@v1
         with:
           toolchain: 1.65.0
-          components: clippy, rustfmt
+          components: clippy
           default: true
+      - name: Rust toolchain Nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          components:  rustfmt
       - run: cargo +nightly fmt --check
-      - run: cargo +stable clippy
+      - run: cargo clippy
