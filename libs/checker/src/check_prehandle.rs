@@ -10,7 +10,7 @@ use resp_result::{resp_try, Nil, RespError, RespResult};
 
 pub struct CheckExtract<Previous, C, E>(
     pub C::Checked,
-    PhantomData<(Previous, E)>,
+    pub PhantomData<(Previous, E)>,
 )
 where
     Previous: UncheckFetcher<Uncheck = C::Unchecked>,
@@ -75,6 +75,10 @@ impl<T> UncheckFetcher for Json<T> {
         self.0
     }
 }
+
+pub type JsonCheckExtract<C, E> =
+    CheckExtract<Json<<C as DataChecker>::Unchecked>, C, E>;
+
 impl<T> UncheckFetcher for Form<T> {
     type Uncheck = T;
 
@@ -82,6 +86,10 @@ impl<T> UncheckFetcher for Form<T> {
         self.0
     }
 }
+
+pub type FormCheckExtract<C, E> =
+    CheckExtract<Form<<C as DataChecker>::Unchecked>, C, E>;
+
 impl<T> UncheckFetcher for Path<T> {
     type Uncheck = T;
 
@@ -89,6 +97,10 @@ impl<T> UncheckFetcher for Path<T> {
         self.0
     }
 }
+
+pub type PathCheckExtract<C, E> =
+    CheckExtract<Path<<C as DataChecker>::Unchecked>, C, E>;
+
 impl<T> UncheckFetcher for Query<T> {
     type Uncheck = T;
 
@@ -96,3 +108,6 @@ impl<T> UncheckFetcher for Query<T> {
         self.0
     }
 }
+
+pub type QueryCheckExtract<C, E> =
+    CheckExtract<Query<<C as DataChecker>::Unchecked>, C, E>;
