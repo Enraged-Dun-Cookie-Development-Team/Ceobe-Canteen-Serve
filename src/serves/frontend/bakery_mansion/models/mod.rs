@@ -1,12 +1,6 @@
-use axum_prehandle::prefabs::query::QueryParams;
-use mongo_migration::mongo_models::bakery::mansion::checkers::id_checker::{
-    MidChecker, MidUncheck,
-};
+use checker::QueryCheckExtract;
+use mongo_migration::mongo_models::bakery::mansion::preludes::id_checker::MidChecker;
 
-use crate::{
-    serves::frontend::bakery_mansion::error::MansionError,
-    utils::data_checker::PreLiteChecker,
-};
+use super::error::MansionError;
 
-pub type MidCheckerPretreat =
-    PreLiteChecker<QueryParams<MidUncheck>, MidChecker, MansionError>;
+pub type MidCheckerPretreatment = QueryCheckExtract<MidChecker, MansionError>;
