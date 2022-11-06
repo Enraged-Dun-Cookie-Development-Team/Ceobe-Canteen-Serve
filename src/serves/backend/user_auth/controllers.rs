@@ -1,8 +1,8 @@
 use std::borrow::Cow;
 
-use axum_prehandle::{
-    prefabs::{json::JsonPayload, query::QueryParams},
-    PreHandling, PreRespMapErrorHandling,
+use checker::{
+    prefabs::no_check::NoCheck, CheckExtract, JsonCheckExtract,
+    QueryCheckExtract,
 };
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
@@ -13,6 +13,7 @@ use orm_migrate::{
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
+use resp_result::{resp_try, rtry};
 
 use super::{
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
@@ -44,98 +45,102 @@ crate::quick_struct! {
 impl UserAuthBackend {
     pub async fn create_user(
         db: SqlConnect,
-        query: PreRespMapErrorHandling<
-            QueryParams<NewUserAuthLevel>,
-            AdminUserError,
-        >,
+        query: QueryCheckExtract<NoCheck<NewUserAuthLevel>, AdminUserError>,
     ) -> AdminUserRResult<CreateUser> {
-        let permission = query.0.permission;
+        resp_try(async {
+            let permission = query.0.permission;
 
-        // 生成随机用户名密码
-        let rand_username: String = {
-            thread_rng()
-                .sample_iter(&Alphanumeric)
-                .take(10)
-                .map(char::from)
-                .collect()
-        };
-        let rand_password: String = {
-            thread_rng()
-                .sample_iter(&Alphanumeric)
-                .take(10)
-                .map(char::from)
-                .collect()
-        };
+            // 生成随机用户名密码
+            let rand_username: String = {
+                thread_rng()
+                    .sample_iter(&Alphanumeric)
+                    .take(10)
+                    .map(char::from)
+                    .collect()
+            };
+            let rand_password: String = {
+                thread_rng()
+                    .sample_iter(&Alphanumeric)
+                    .take(10)
+                    .map(char::from)
+                    .collect()
+            };
 
-        let username = rand_username.clone();
-        let plaintext_password = rand_password.clone();
+            let username = rand_username.clone();
+            let plaintext_password = rand_password.clone();
 
-        // 进行md5加密
-        let rand_password = {
-            let mut md5 = Md5::new();
-            md5.update(&rand_password);
-            let rand_password = md5.finalize();
-            let rand_password = hex::encode(rand_password);
-            log::debug!("新建用户密码通过MD5加密后是： {:?}", rand_password);
-            rand_password
-        };
+            // 进行md5加密
+            let rand_password = {
+                let mut md5 = Md5::new();
+                md5.update(&rand_password);
+                let rand_password = md5.finalize();
+                let rand_password = hex::encode(rand_password);
+                log::debug!(
+                    "新建用户密码通过MD5加密后是： {:?}",
+                    rand_password
+                );
+                rand_password
+            };
 
-        // 加密密码
-        let encode_password = {
-            tokio::task::block_in_place(|| {
-                PasswordEncoder::encode(rand_password.into())
-            })
-        }?;
+            // 加密密码
+            let encode_password = {
+                tokio::task::block_in_place(|| {
+                    PasswordEncoder::encode(rand_password.into())
+                })
+            }?;
 
-        // 将用户信息写入数据库
-        UserSqlOperate::add_user_with_encoded_password(
-            &db,
-            rand_username,
-            encode_password.to_string(),
-            permission,
-        )
-        .await?;
+            // 将用户信息写入数据库
+            UserSqlOperate::add_user_with_encoded_password(
+                &db,
+                rand_username,
+                encode_password.to_string(),
+                permission,
+            )
+            .await?;
 
-        // 返回用户信息
-        let user_info = CreateUser {
-            username,
-            password: plaintext_password,
-        };
+            // 返回用户信息
+            let user_info = CreateUser {
+                username,
+                password: plaintext_password,
+            };
 
-        Ok(user_info).into()
+            Ok(user_info)
+        })
+        .await
     }
 
     pub async fn login(
         db: SqlConnect,
-        PreHandling(body): PreRespMapErrorHandling<
-            JsonPayload<UserLogin>,
+        CheckExtract(body, _): JsonCheckExtract<
+            NoCheck<UserLogin>,
             AdminUserError,
         >,
     ) -> AdminUserRResult<UserToken> {
-        let token_info = UserSqlOperate::find_user_and_verify_pwd(
-            &db,
-            &body.username,
-            &body.password,
-            |src, dst| {
-                tokio::task::block_in_place(|| {
-                    PasswordEncoder::verify(src, &dst)
-                })
-            },
-            |user| {
-                User {
+        resp_try(async {
+            let token_info = UserSqlOperate::find_user_and_verify_pwd(
+                &db,
+                &body.username,
+                &body.password,
+                |src, dst| {
+                    tokio::task::block_in_place(|| {
+                        PasswordEncoder::verify(src, &dst)
+                    })
+                },
+                |user| User {
                     id: user.id,
                     num_pwd_change: user.num_pwd_change,
-                }
-            },
-        )
-        .await??;
+                },
+            )
+            .await??;
 
-        // 生成用户token
-        let token = token_info.generate().unwrap();
+            // 生成用户token
+            let token = token_info.generate().unwrap();
 
-        // 返回用户token
-        let user_token = UserToken { token };
-        Ok(user_token).into()
+            // 返回用户token
+            let user_token = UserToken { token };
+            Ok(user_token)
+        })
+        .await
     }
 
     pub async fn get_info(
@@ -153,98 +158,109 @@ impl UserAuthBackend {
 
     pub async fn change_username(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
-        PreHandling(username): UsernamePretreatment,
+        CheckExtract(username, _): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
-        let id = user.id;
+        resp_try(async {
+            let id = user.id;
 
-        let username = username.username;
+            let username = username.username;
 
-        UserSqlOperate::update_user_name(&db, id, username.clone()).await?;
+            UserSqlOperate::update_user_name(&db, id, username.clone())
+                .await?;
 
-        Ok(UserName { username }).into()
+            Ok(UserName { username })
+        })
+        .await
     }
 
     pub async fn change_password(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
-        PreHandling(body): PreRespMapErrorHandling<
-            JsonPayload<ChangePassword>,
+        CheckExtract(body, _): JsonCheckExtract<
+            NoCheck<ChangePassword>,
             AdminUserError,
         >,
     ) -> AdminUserRResult<UserToken> {
-        let id = user.id;
+        resp_try(async {
+            let id = user.id;
 
-        let old_password = body.old_password;
-        let new_password = body.new_password;
+            let old_password = body.old_password;
+            let new_password = body.new_password;
 
-        let generate_token = UserSqlOperate::update_user_password(
-            &db,
-            id,
-            new_password,
-            old_password,
-            |old, new| PasswordEncoder::verify(old, &new),
-            |pwd| {
-                PasswordEncoder::encode(Cow::Borrowed(pwd))
-                    .map(|pwd| pwd.to_string())
-            },
-            |user| {
-                User {
+            let generate_token = UserSqlOperate::update_user_password(
+                &db,
+                id,
+                new_password,
+                old_password,
+                |old, new| PasswordEncoder::verify(old, &new),
+                |pwd| {
+                    PasswordEncoder::encode(Cow::Borrowed(pwd))
+                        .map(|pwd| pwd.to_string())
+                },
+                |user| User {
                     id: user.id,
                     num_pwd_change: user.num_pwd_change,
-                }
-            },
-        )
-        .await??;
+                },
+            )
+            .await??;
 
-        let token = generate_token.generate().unwrap();
+            let token = generate_token.generate().unwrap();
 
-        // 返回用户token
-        let user_token = UserToken { token };
+            // 返回用户token
+            let user_token = UserToken { token };
 
-        Ok(user_token).into()
+            Ok(user_token)
+        })
+        .await
     }
 
     // 获取用户列表
     pub async fn user_list(
-        db: SqlConnect, PreHandling(page_size): PageSizePretreatment,
+        db: SqlConnect, CheckExtract(page_size, _): PageSizePretreatment,
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
-        // 获取用户列表
-        let user_list = UserSqlOperate::find_user_list(&db, page_size)
-            .map_ok(|a| {
-                a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
-            });
-        // 获取用户数量
-        let count = UserSqlOperate::get_user_total_number(&db);
-        // 异步获取
-        let (user_list, count) = future::join(user_list, count).await;
+        resp_try(async {
+            // 获取用户列表
+            let user_list = UserSqlOperate::find_user_list(&db, page_size)
+                .map_ok(|a| {
+                    a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
+                });
+            // 获取用户数量
+            let count = UserSqlOperate::get_user_total_number(&db);
+            // 异步获取
+            let (user_list, count) = future::join(user_list, count).await;
 
-        let resp = user_list?.with_page_info(page_size, count?);
+            let resp = user_list?.with_page_info(page_size, count?);
 
-        Ok(resp).into()
+            Ok(resp)
+        })
+        .await
     }
 
     // 修改用户权限
     pub async fn change_auth(
         db: SqlConnect,
-        PreHandling(body): PreRespMapErrorHandling<
-            JsonPayload<ChangeAuthReq>,
+        CheckExtract(body, _): JsonCheckExtract<
+            NoCheck<ChangeAuthReq>,
             AdminUserError,
         >,
     ) -> AdminUserRResult<()> {
-        let ChangeAuthReq { id, auth } = body;
-        UserSqlOperate::update_user_auth(&db, id, auth).await?;
-        Ok(()).into()
+        resp_try(async {
+            let ChangeAuthReq { id, auth } = body;
+            UserSqlOperate::update_user_auth(&db, id, auth).await?;
+            Ok(())
+        })
+        .await
     }
 
     // 删除用户
     pub async fn delete_one_user(
         db: SqlConnect,
-        PreHandling(body): PreRespMapErrorHandling<
-            JsonPayload<DeleteOneUserReq>,
+        CheckExtract(body, _): JsonCheckExtract<
+            NoCheck<DeleteOneUserReq>,
             AdminUserError,
         >,
     ) -> AdminUserRResult<()> {
         let uid = body.id;
-        UserSqlOperate::delete_one_user(&db, uid).await?;
+        rtry!(UserSqlOperate::delete_one_user(&db, uid).await?);
         Ok(()).into()
     }
 }
