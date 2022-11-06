@@ -6,5 +6,3 @@ mod models;
 mod view;
 
 type FlagMansionRResult<T> = FlagRespResult<Option<T>, error::MansionError>;
-
-

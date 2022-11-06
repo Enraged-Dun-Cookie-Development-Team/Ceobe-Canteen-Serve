@@ -1,4 +1,3 @@
-
 use axum_starter::ServerPrepare;
 use bootstrap::init::{
     component_init::{BackendAuthConfig, RResultConfig},

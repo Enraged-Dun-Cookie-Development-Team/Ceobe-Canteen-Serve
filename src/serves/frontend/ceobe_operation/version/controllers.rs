@@ -28,14 +28,12 @@ impl CeobeOperationVersionFrontend {
         CheckExtract(AppVersion { version }, _): OptionAppVersionCheckerPretreat,
         mut modify: modify_cache::CheckModify,
     ) -> FlagVersionRespResult<AppVersionView> {
-
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_max_age(Duration::from_secs(60 * 60));
 
         resp_try(async {
 
-            let (data,extra) = 
-            modify.check_modify(
+            let (data,extra) = modify.check_modify(
                 match version {
             Some(version) => {
                     CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(&db,&version).await
@@ -61,22 +59,20 @@ impl CeobeOperationVersionFrontend {
         let version = version.version;
 
         resp_try(async {
-
-            let (data, extra) = modify.check_modify(
-                match version {
-                    Some(version) => {
+            let (data, extra) = modify.check_modify(match version {
+                Some(version) => {
                     PluginDbOperation::get_plugin_version_info_by_version(
                         &db, version,
                     )
                     .await
                 }
                 None => {
-                        PluginDbOperation::get_newest_plugin_version_info(&db)
+                    PluginDbOperation::get_newest_plugin_version_info(&db)
                         .await
                 }
-            }?
-        )?;
-        Ok(FlagWrap::new(data.map(Into::into),extra))
-    }).await
+            }?)?;
+            Ok(FlagWrap::new(data.map(Into::into), extra))
+        })
+        .await
     }
 }

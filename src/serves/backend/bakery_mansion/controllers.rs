@@ -6,17 +6,16 @@ use mongo_migration::{
 };
 use resp_result::resp_try;
 
-use crate::{
-    router::BakeryMansionBackend,
-    serves::backend::bakery_mansion::view::ViewMansion,
-};
-
 use super::{
     models::{
         MansionBodyCheckerPretreatment, MidCheckerPretreatment,
         OptionMidCheckerPretreatment,
     },
     MansionRResult,
+};
+use crate::{
+    router::BakeryMansionBackend,
+    serves::backend::bakery_mansion::view::ViewMansion,
 };
 
 impl BakeryMansionBackend {

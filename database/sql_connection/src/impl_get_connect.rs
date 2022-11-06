@@ -55,7 +55,6 @@ pub struct SqlTransaction(pub DatabaseTransaction);
 
 impl GetDatabaseTransaction for SqlConnect {
     type Transaction<'s> = SqlTransaction;
-
     type TransactionFuture<'s> =
         BoxedResultSendFuture<'s, SqlTransaction, DbErr>;
 
@@ -66,7 +65,6 @@ impl GetDatabaseTransaction for SqlConnect {
 
 impl TransactionOps for SqlTransaction {
     type Error = DbErr;
-
     type RollBackFuture<'r> = BoxedResultSendFuture<'r, (), DbErr>;
     type SubmitFuture<'r> = BoxedResultSendFuture<'r, (), DbErr>;
 
@@ -88,15 +86,11 @@ impl TransactionOps for SqlTransaction {
 impl Deref for SqlTransaction {
     type Target = DatabaseTransaction;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl DerefMut for SqlTransaction {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
+    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0 }
 }
 
 impl ConnectionTrait for SqlTransaction {

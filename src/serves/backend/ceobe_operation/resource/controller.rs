@@ -21,11 +21,10 @@ impl CeobeOpResource {
     pub async fn upload_resource(
         db: SqlConnect, CheckExtract(resource, _): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
-        Ok(rtry! {
-            CeobeOperationResourceSqlOperate::update_resource(&db, resource)
+        CeobeOperationResourceSqlOperate::update_resource(&db, resource)
             .await
-        })
-        .into()
+            .map_err(Into::into)
+            .into()
     }
 
     pub async fn get_resource(db: SqlConnect) -> ResourceRResult<Resource> {

@@ -1,4 +1,5 @@
 use std::any::Any;
+
 use axum::{
     body::{Body, BoxBody},
     response::IntoResponse,
@@ -48,7 +49,7 @@ macro_rules! error_generate {
             fn from(_: ::core::convert::Infallible)->Self{
                 unreachable!()
             }
-        } 
+        }
 
     };
     ($v:vis $err_name:ident = $msg:literal)=>{

@@ -20,15 +20,15 @@ pub fn root_route() -> Router {
         .nest("/admin", back_end_router())
         .route(
             "/panic",
-            get(|| {
-                async {
-                    #[cfg(debug_assertions)]
-                    {
-                        panic!("测试 Panic");
-                    }
-                    #[cfg(not(debug_assertions))]
-                    resp_result::RespResult::<_, crate::error::NotAnError>::ok("不可以Panic")
+            get(|| async {
+                #[cfg(debug_assertions)]
+                {
+                    panic!("测试 Panic");
                 }
+                #[cfg(not(debug_assertions))]
+                resp_result::RespResult::<_, crate::error::NotAnError>::ok(
+                    "不可以Panic",
+                )
             }),
         )
 }

@@ -126,9 +126,11 @@ impl UserAuthBackend {
                         PasswordEncoder::verify(src, &dst)
                     })
                 },
-                |user| User {
-                    id: user.id,
-                    num_pwd_change: user.num_pwd_change,
+                |user| {
+                    User {
+                        id: user.id,
+                        num_pwd_change: user.num_pwd_change,
+                    }
                 },
             )
             .await??;
@@ -196,9 +198,11 @@ impl UserAuthBackend {
                     PasswordEncoder::encode(Cow::Borrowed(pwd))
                         .map(|pwd| pwd.to_string())
                 },
-                |user| User {
-                    id: user.id,
-                    num_pwd_change: user.num_pwd_change,
+                |user| {
+                    User {
+                        id: user.id,
+                        num_pwd_change: user.num_pwd_change,
+                    }
                 },
             )
             .await??;

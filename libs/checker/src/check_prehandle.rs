@@ -1,12 +1,12 @@
 use std::marker::PhantomData;
 
-use crate::{Checker as DataChecker, LiteArgs};
-
 use axum::{
     extract::{FromRequest, Path, Query, RequestParts},
     Form, Json,
 };
 use resp_result::{resp_try, Nil, RespError, RespResult};
+
+use crate::{Checker as DataChecker, LiteArgs};
 
 pub struct CheckExtract<Previous, C, E>(
     pub C::Checked,
@@ -71,9 +71,7 @@ pub trait UncheckFetcher {
 impl<T> UncheckFetcher for Json<T> {
     type Uncheck = T;
 
-    fn fetch(self) -> Self::Uncheck {
-        self.0
-    }
+    fn fetch(self) -> Self::Uncheck { self.0 }
 }
 
 pub type JsonCheckExtract<C, E> =
@@ -82,9 +80,7 @@ pub type JsonCheckExtract<C, E> =
 impl<T> UncheckFetcher for Form<T> {
     type Uncheck = T;
 
-    fn fetch(self) -> Self::Uncheck {
-        self.0
-    }
+    fn fetch(self) -> Self::Uncheck { self.0 }
 }
 
 pub type FormCheckExtract<C, E> =
@@ -93,9 +89,7 @@ pub type FormCheckExtract<C, E> =
 impl<T> UncheckFetcher for Path<T> {
     type Uncheck = T;
 
-    fn fetch(self) -> Self::Uncheck {
-        self.0
-    }
+    fn fetch(self) -> Self::Uncheck { self.0 }
 }
 
 pub type PathCheckExtract<C, E> =
@@ -104,9 +98,7 @@ pub type PathCheckExtract<C, E> =
 impl<T> UncheckFetcher for Query<T> {
     type Uncheck = T;
 
-    fn fetch(self) -> Self::Uncheck {
-        self.0
-    }
+    fn fetch(self) -> Self::Uncheck { self.0 }
 }
 
 pub type QueryCheckExtract<C, E> =
