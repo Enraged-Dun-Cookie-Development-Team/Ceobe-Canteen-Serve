@@ -4,9 +4,12 @@ use std::{
     ops::{Deref, DerefMut},
 };
 
-use database_traits::get_connect::{
-    Body, FromRequest, GetDatabaseConnect, GetDatabaseTransaction,
-    RequestParts, TransactionOps,
+use database_traits::{
+    get_connect::{
+        Body, FromRequest, GetDatabaseConnect, GetDatabaseTransaction,
+        RequestParts, TransactionOps,
+    },
+    BoxedResultSendFuture,
 };
 use sea_orm::{
     ConnectionTrait, DatabaseConnection, DatabaseTransaction, DbErr,
@@ -54,42 +57,46 @@ impl GetDatabaseTransaction for SqlConnect {
     type Transaction<'s> = SqlTransaction;
 
     type TransactionFuture<'s> =
-        impl Future<Output = Result<SqlTransaction, DbErr>> + 's;
+        BoxedResultSendFuture<'s, SqlTransaction, DbErr>;
 
     fn get_transaction(&self) -> Self::TransactionFuture<'_> {
-        async { get_sql_transaction().await.map(SqlTransaction) }
+        Box::pin(async { get_sql_transaction().await.map(SqlTransaction) })
     }
 }
 
 impl TransactionOps for SqlTransaction {
     type Error = DbErr;
 
-    type RollBackFuture<'r> = impl Future<Output = Result<(), DbErr>> + 'r;
-    type SubmitFuture<'r> = impl Future<Output = Result<(), DbErr>> + 'r;
+    type RollBackFuture<'r> = BoxedResultSendFuture<'r, (), DbErr>;
+    type SubmitFuture<'r> = BoxedResultSendFuture<'r, (), DbErr>;
 
     fn submit<'s>(self) -> Self::SubmitFuture<'s>
     where
         Self: 's,
     {
-        self.0.commit()
+        Box::pin(self.0.commit())
     }
 
     fn roll_back<'r>(self) -> Self::RollBackFuture<'r>
     where
         Self: 'r,
     {
-        self.0.rollback()
+        Box::pin(self.0.rollback())
     }
 }
 
 impl Deref for SqlTransaction {
     type Target = DatabaseTransaction;
 
-    fn deref(&self) -> &Self::Target { &self.0 }
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
 }
 
 impl DerefMut for SqlTransaction {
-    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0 }
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
 impl ConnectionTrait for SqlTransaction {

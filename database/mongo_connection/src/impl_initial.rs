@@ -1,8 +1,10 @@
-use database_traits::initial::{
-    DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
-    DatabaseInitialMigration,
+use database_traits::{
+    initial::{
+        DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
+        DatabaseInitialMigration,
+    },
+    BoxedResultFuture,
 };
-use futures::Future;
 
 use crate::{DatabaseManage, DbConnectConfig, MongoConnectBuilder, MongoErr};
 
@@ -16,10 +18,10 @@ where
     C: DbConnectConfig + 'static + Sized,
 {
     type ConnectFuture<'p> =
-        impl Future<Output = Result<Self::Builder, Self::Error>> + 'p;
+        BoxedResultFuture<'p, Self::Builder, Self::Error>;
 
     fn start_connect(params: &C) -> Self::ConnectFuture<'_> {
-        async { MongoConnectBuilder::new(params).await }
+        Box::pin(MongoConnectBuilder::new(params))
     }
 }
 
@@ -27,13 +29,12 @@ impl<'p, M> DatabaseInitialMigration<'p, M> for DatabaseManage
 where
     M: mongo_migrate_util::MigratorTrait + Sync + Send + 'p,
 {
-    type MigrateFuture =
-        impl Future<Output = Result<Self::Builder, Self::Error>> + 'p;
+    type MigrateFuture = BoxedResultFuture<'p, Self::Builder, Self::Error>;
 
     fn apply_migration(
         builder: Self::Builder, params: M,
     ) -> Self::MigrateFuture {
-        async move { builder.apply_mongo_migration(params).await }
+        Box::pin(builder.apply_mongo_migration(params))
     }
 }
 

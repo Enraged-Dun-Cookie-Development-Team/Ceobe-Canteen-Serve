@@ -1,4 +1,4 @@
-#![feature(type_alias_impl_trait)]
+
 use axum_starter::ServerPrepare;
 use bootstrap::init::{
     component_init::{BackendAuthConfig, RResultConfig},
