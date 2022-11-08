@@ -7,13 +7,13 @@ edition = "2021"
 [dependencies]
 once_cell = { workspace = true }
 serde = { workspace = true }
-log = { workspace = true }
 mongodb = { workspace = true }
 futures = { workspace = true }
 urlencoding = { workspace = true }
 thiserror = { workspace = true }
 async-trait = { workspace = true }
 database_traits = { path = "../database_traits" }
+tracing = { workspace = true }
 
 [dependencies.status-err]
 path = "../../libs/status-err"

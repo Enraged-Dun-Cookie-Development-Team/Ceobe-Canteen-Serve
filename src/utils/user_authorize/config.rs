@@ -10,6 +10,7 @@ crate::quick_trait! {
         crate::trait_field!{*token_header:String=String::from("Token")}
     }
 }
+use tracing::log;
 
 static LOCAL_CONFIG: OnceCell<LocalAuthConfig> = OnceCell::new();
 

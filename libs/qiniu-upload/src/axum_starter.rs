@@ -8,7 +8,10 @@ use crate::{
     GetBucket, SecretConfig, Uploader, UploaderBuilder, UploaderNotFound,
 };
 
+use tracing::{info, instrument};
+
 #[prepare(box QiniuUpload 'c)]
+#[instrument(skip(qiniu_config))]
 fn init_this<'c, C>(
     qiniu_config: &'c C,
 ) -> Result<impl PreparedEffect, crate::Error>
@@ -23,9 +26,9 @@ where
         .try_fold(uploader, UploaderBuilder::add_bucket)?
         .build();
 
-    log::info!(
-        "uploader Init Done, managed Bucket: {:?}",
-        uploader.managers.keys()
+    info!(
+        qiniu.uploader = "Ready",
+        qiniu.uploader.buckets = ?uploader.managers.keys()
     );
     Ok(SetExtension::arc(uploader))
 }
@@ -37,7 +40,9 @@ pub struct QiniuUploader {
 impl Deref for QiniuUploader {
     type Target = Uploader;
 
-    fn deref(&self) -> &Self::Target { &self.inner }
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 
 impl<B> FromRequest<B> for QiniuUploader {

@@ -4,6 +4,7 @@ const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::bakery::mansion::preludes::*;
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
+use tracing::log;
 
 pub struct Migration;
 

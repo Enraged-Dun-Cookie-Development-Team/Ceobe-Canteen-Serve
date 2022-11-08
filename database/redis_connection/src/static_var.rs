@@ -1,10 +1,12 @@
 use once_cell::sync::OnceCell;
 use redis::{aio::ConnectionManager, RedisError};
+use tracing::{info, instrument};
 use url::Url;
 
 use crate::config::DbConnectConfig;
 static REDIS_DATABASE_CLIENT: OnceCell<ConnectionManager> = OnceCell::new();
 
+#[instrument(skip(config))]
 pub async fn connect_to_redis_database<C>(
     config: &C,
 ) -> Result<(), RedisError>
@@ -20,7 +22,7 @@ where
         .unwrap()
         .extend([config.db().to_string()]);
 
-    log::info!("准备连接到数据库: {}", url);
+    info!(redis.url = %url, redis.connect = true);
     let client = redis::Client::open(url)?;
     let manager = ConnectionManager::new(client).await?;
     if REDIS_DATABASE_CLIENT.set(manager).is_err() {

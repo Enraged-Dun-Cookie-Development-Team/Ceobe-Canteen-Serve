@@ -1,6 +1,6 @@
-use log::LevelFilter;
 use logger::{GetLogLevel, LogInit};
 use serde::Deserialize;
+use tracing::level_filters::LevelFilter;
 
 #[derive(Debug, Deserialize)]
 pub struct LoggerConfig {
@@ -11,15 +11,25 @@ pub struct LoggerConfig {
 
 impl LoggerConfig {
     pub fn init_log(&self) -> Result<(), logger::Error> {
-        let mut init = LogInit::new(self);
-        if self.log_to.to_file.is_some() {
-            init = init.log_to_file(&self.log_to)?
-        }
-        if self.log_to.to_stdout {
-            init = init.log_to_stdout();
-        }
+        'logger: {
+            let init = LogInit::new(self);
+            if self.log_to.to_file.is_some() && self.log_to.to_stdout {
+                init.log_to_file(&self.log_to)?.log_to_stdout().apply()?;
+                break 'logger;
+            }
 
-        init.apply()
+            if self.log_to.to_file.is_some() {
+                init.log_to_file(&self.log_to)?.apply()?;
+                break 'logger;
+            }
+
+            if self.log_to.to_stdout {
+                init.log_to_stdout().apply()?;
+                break 'logger;
+            }
+        };
+
+        Ok(())
     }
 }
 
@@ -30,7 +40,6 @@ pub struct LogTo {
     #[serde(default = "default_enable")]
     to_stdout: bool,
 }
-
 impl Default for LogTo {
     fn default() -> Self {
         Self {
@@ -40,7 +49,9 @@ impl Default for LogTo {
     }
 }
 
-fn default_enable() -> bool { true }
+fn default_enable() -> bool {
+    true
+}
 
 #[derive(Debug, Deserialize, Clone, Default, Copy)]
 pub enum LogLevel {
@@ -62,17 +73,19 @@ pub enum LogLevel {
 impl<'l> From<&'l LogLevel> for LevelFilter {
     fn from(val: &'l LogLevel) -> Self {
         match val {
-            LogLevel::Off => LevelFilter::Off,
-            LogLevel::Error => LevelFilter::Error,
-            LogLevel::Warn => LevelFilter::Warn,
-            LogLevel::Info => LevelFilter::Info,
-            LogLevel::Debug => LevelFilter::Debug,
-            LogLevel::Trace => LevelFilter::Trace,
+            LogLevel::Off => LevelFilter::OFF,
+            LogLevel::Error => LevelFilter::ERROR,
+            LogLevel::Warn => LevelFilter::WARN,
+            LogLevel::Info => LevelFilter::INFO,
+            LogLevel::Debug => LevelFilter::DEBUG,
+            LogLevel::Trace => LevelFilter::TRACE,
         }
     }
 }
 impl GetLogLevel for LoggerConfig {
-    fn get_level(&self) -> log::LevelFilter { (&self.level).into() }
+    fn get_level(&self) -> LevelFilter {
+        (&self.level).into()
+    }
 }
 
 impl logger::FileLoggerInfo for LogTo {

@@ -1,4 +1,4 @@
-use tracing::{Level, Subscriber};
+use tracing::Subscriber;
 use tracing_subscriber::{
     layer::Layered, prelude::__tracing_subscriber_SubscriberExt,
     registry::LookupSpan, util::SubscriberInitExt, EnvFilter, Layer,
@@ -6,11 +6,11 @@ use tracing_subscriber::{
 };
 
 use crate::{LogToFile, LogToStdout};
-
+use tracing::level_filters::LevelFilter;
 pub struct LogInit<S>(S);
 pub trait GetLogLevel {
-    fn get_level(&self) -> Level {
-        Level::TRACE
+    fn get_level(&self) -> LevelFilter {
+        LevelFilter::TRACE
     }
 }
 

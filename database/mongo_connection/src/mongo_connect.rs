@@ -1,5 +1,6 @@
 use mongo_migrate_util::MigratorTrait;
 use mongodb::{options::ClientOptions, Database};
+use tracing::log;
 
 use crate::{
     database::builder::DatabaseBuilder, static_vars::set_mongo_database,

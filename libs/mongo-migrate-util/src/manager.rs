@@ -3,6 +3,7 @@ use std::any::{type_name, TypeId};
 use dashmap::{DashMap, DashSet};
 use mongodb::{Collection, Database};
 use tap::Tap;
+use tracing::{info, log};
 
 use crate::{CollectManage, MigrationTrait};
 
@@ -22,7 +23,7 @@ impl<'db> Manager<'db> {
         let names = db
             .list_collection_names(None)
             .await?
-            .tap(|vec| log::info!("当前MongoDb数据库内有Collect : {vec:?}"))
+            .tap(|vec| info!(mongodb.collections = ?vec))
             .into_iter()
             .collect();
         Ok(Self {
@@ -62,13 +63,11 @@ impl<'db> Manager<'db> {
                     .get(collect_ty.value())
                     .expect("Collect 注册时异常")
                     .clone_with_type()
-            }
-            else {
+            } else {
                 // same name but diff Model Panic
                 panic!("存在同名的collection 但是模型不一致")
             }
-        }
-        else {
+        } else {
             log::debug!(
                 "该 collection 还未被注册 检查是否在 已有的collect中 {:?}",
                 migrate.name()

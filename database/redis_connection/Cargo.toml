@@ -7,7 +7,6 @@ edition = "2021"
 [dependencies]
 once_cell = { workspace = true }
 serde = { workspace = true }
-log = { workspace = true }
 database_traits = { path = "../database_traits" }
 redis = { version = "0.22", features = [
     "tokio-comp",
@@ -15,6 +14,7 @@ redis = { version = "0.22", features = [
     "connection-manager"
 ] }
 url = { workspace = true }
+tracing = { workspace = true }
 
 [dev-dependencies]
 tokio = { version = "1.21.2", features = ["full"] }

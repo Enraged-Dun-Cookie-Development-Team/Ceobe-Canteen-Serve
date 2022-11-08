@@ -6,6 +6,7 @@ use orm_migrate::{
     Migrator, MigratorTrait,
 };
 use redis_connection::{RedisDatabase, RedisDbConfig, RedisError};
+use tracing::log;
 
 use crate::{
     bootstrap::default_user::create_default_user,

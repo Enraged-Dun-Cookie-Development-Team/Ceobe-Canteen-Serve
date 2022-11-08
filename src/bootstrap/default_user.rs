@@ -6,7 +6,7 @@ use orm_migrate::{
 };
 
 use crate::utils::user_authorize::PasswordEncoder;
-
+use tracing::log;
 pub trait FUserConfig {
     fn username(&self) -> String;
     fn password(&self) -> String;

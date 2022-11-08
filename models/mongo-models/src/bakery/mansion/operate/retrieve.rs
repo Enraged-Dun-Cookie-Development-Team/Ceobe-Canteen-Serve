@@ -8,6 +8,7 @@ use mongodb::{
     options::FindOptions,
 };
 use tap::Tap;
+use tracing::log;
 
 use super::{MansionDataMongoOperate, OperateError, OperateResult};
 use crate::bakery::mansion::{

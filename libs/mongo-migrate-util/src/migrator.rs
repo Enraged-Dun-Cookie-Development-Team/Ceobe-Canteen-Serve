@@ -2,6 +2,7 @@ use std::any::TypeId;
 
 use async_trait::async_trait;
 use mongodb::{Collection, Database};
+use tracing::log;
 
 use super::manager::Manager;
 
