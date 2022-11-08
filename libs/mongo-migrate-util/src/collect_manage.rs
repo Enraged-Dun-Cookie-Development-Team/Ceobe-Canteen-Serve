@@ -16,9 +16,7 @@ pub struct CollectManage<M: MigrationTrait> {
 impl<M: MigrationTrait> Deref for CollectManage<M> {
     type Target = Collection<M::Model>;
 
-    fn deref(&self) -> &Self::Target {
-        &self.collect
-    }
+    fn deref(&self) -> &Self::Target { &self.collect }
 }
 
 impl<M: MigrationTrait> CollectManage<M> {

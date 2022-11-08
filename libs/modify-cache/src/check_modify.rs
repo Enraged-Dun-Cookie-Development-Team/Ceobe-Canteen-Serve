@@ -43,7 +43,8 @@ impl FromRequest<Body> for CheckModify {
                     ctrl_header: ControlHeaders::None,
                     cache_headers: Default::default(),
                 }
-            } else {
+            }
+            else {
                 let header = req.headers();
                 let ctrl_header = header
                     .get(http::header::IF_NONE_MATCH)
@@ -84,23 +85,27 @@ impl CheckModify {
         let (data, mut extra_flags) = match &self.ctrl_header {
             ControlHeaders::IfNoneMatch(tags) => {
                 match data.verify_entity_tag(tags, &tag)? {
-                    CacheState::NotModify => (
-                        None,
-                        ExtraFlag::empty_body()
-                            + ExtraFlag::status(StatusCode::NOT_MODIFIED)
-                            + ExtraFlag::remove_header(CONTENT_TYPE),
-                    ),
+                    CacheState::NotModify => {
+                        (
+                            None,
+                            ExtraFlag::empty_body()
+                                + ExtraFlag::status(StatusCode::NOT_MODIFIED)
+                                + ExtraFlag::remove_header(CONTENT_TYPE),
+                        )
+                    }
                     CacheState::Update(v) => (Some(v), ().into()),
                 }
             }
             ControlHeaders::IfModifySince(date_time) => {
                 match data.verify_modify(date_time) {
-                    Ok(CacheState::NotModify) => (
-                        None,
-                        ExtraFlag::empty_body()
-                            + ExtraFlag::remove_header(CONTENT_TYPE)
-                            + ExtraFlag::status(StatusCode::NOT_MODIFIED),
-                    ),
+                    Ok(CacheState::NotModify) => {
+                        (
+                            None,
+                            ExtraFlag::empty_body()
+                                + ExtraFlag::remove_header(CONTENT_TYPE)
+                                + ExtraFlag::status(StatusCode::NOT_MODIFIED),
+                        )
+                    }
                     Err(v) | Ok(CacheState::Update(v)) => {
                         (Some(v), ().into())
                     }

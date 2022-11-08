@@ -63,11 +63,13 @@ impl<'db> Manager<'db> {
                     .get(collect_ty.value())
                     .expect("Collect 注册时异常")
                     .clone_with_type()
-            } else {
+            }
+            else {
                 // same name but diff Model Panic
                 panic!("存在同名的collection 但是模型不一致")
             }
-        } else {
+        }
+        else {
             log::debug!(
                 "该 collection 还未被注册 检查是否在 已有的collect中 {:?}",
                 migrate.name()

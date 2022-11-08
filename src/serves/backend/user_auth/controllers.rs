@@ -1,5 +1,4 @@
 use std::borrow::Cow;
-use tracing::log;
 
 use checker::{
     prefabs::no_check::NoCheck, CheckExtract, JsonCheckExtract,
@@ -15,6 +14,7 @@ use orm_migrate::{
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use resp_result::{resp_try, rtry};
+use tracing::log;
 
 use super::{
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},

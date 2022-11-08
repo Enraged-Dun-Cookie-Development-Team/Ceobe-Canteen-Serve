@@ -3,12 +3,11 @@ use std::{convert::Infallible, ops::Deref, sync::Arc};
 use axum_core::extract::FromRequest;
 use axum_starter::{extension::SetExtension, prepare, PreparedEffect};
 use futures::future::ok;
+use tracing::{info, instrument};
 
 use crate::{
     GetBucket, SecretConfig, Uploader, UploaderBuilder, UploaderNotFound,
 };
-
-use tracing::{info, instrument};
 
 #[prepare(box QiniuUpload 'c)]
 #[instrument(skip(qiniu_config))]
@@ -40,9 +39,7 @@ pub struct QiniuUploader {
 impl Deref for QiniuUploader {
     type Target = Uploader;
 
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
+    fn deref(&self) -> &Self::Target { &self.inner }
 }
 
 impl<B> FromRequest<B> for QiniuUploader {

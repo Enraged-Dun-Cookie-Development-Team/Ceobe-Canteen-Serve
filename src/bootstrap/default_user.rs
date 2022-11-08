@@ -4,9 +4,9 @@ use orm_migrate::{
     sql_connection::sea_orm::TransactionTrait,
     sql_models::admin_user::operate::UserSqlOperate,
 };
+use tracing::log;
 
 use crate::utils::user_authorize::PasswordEncoder;
-use tracing::log;
 pub trait FUserConfig {
     fn username(&self) -> String;
     fn password(&self) -> String;

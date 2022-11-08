@@ -4,7 +4,6 @@ use std::{
     pin::Pin,
     task::{Context, Poll},
 };
-use tracing::log;
 
 use axum::{
     body::Body,
@@ -24,6 +23,7 @@ use pin_project::pin_project;
 use resp_result::{Nil, RespResult};
 use tap::Pipe;
 use tower::Service;
+use tracing::log;
 
 use super::{error::AuthorizeError, AuthorizeInfo};
 use crate::utils::user_authorize::{

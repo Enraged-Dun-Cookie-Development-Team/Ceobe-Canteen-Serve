@@ -10,7 +10,7 @@ impl LogToStdout {
     where
         S: Subscriber + for<'a> LookupSpan<'a>,
     {
-        let layer = tracing_subscriber::fmt::layer().event_format(
+        tracing_subscriber::fmt::layer().event_format(
             format()
                 .pretty()
                 .with_ansi(true)
@@ -19,8 +19,6 @@ impl LogToStdout {
                 .with_source_location(true)
                 .with_thread_ids(true)
                 .with_thread_names(true),
-        );
-
-        layer
+        )
     }
 }

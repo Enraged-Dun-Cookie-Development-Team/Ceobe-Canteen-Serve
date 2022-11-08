@@ -49,9 +49,7 @@ impl Default for LogTo {
     }
 }
 
-fn default_enable() -> bool {
-    true
-}
+fn default_enable() -> bool { true }
 
 #[derive(Debug, Deserialize, Clone, Default, Copy)]
 pub enum LogLevel {
@@ -83,9 +81,7 @@ impl<'l> From<&'l LogLevel> for LevelFilter {
     }
 }
 impl GetLogLevel for LoggerConfig {
-    fn get_level(&self) -> LevelFilter {
-        (&self.level).into()
-    }
+    fn get_level(&self) -> LevelFilter { (&self.level).into() }
 }
 
 impl logger::FileLoggerInfo for LogTo {
