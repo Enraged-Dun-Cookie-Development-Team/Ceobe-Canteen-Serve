@@ -10,14 +10,13 @@ axum = { workspace = true }
 http = "0.2"
 jwt = "0.16.0"
 log = { version = "0", optional = true }
-url ={ workspace = true }
+url = { workspace = true }
 bcrypt = "0.13"
 mongodb = { workspace = true }
-chrono ={ workspace = true }
-bincode= "1"
-
+chrono = { workspace = true }
+bincode = "1"
 # marco
-status-err-derive = {path = "../../macros/status-err-derive"}
+status-err-derive = { path = "../../macros/status-err-derive" }
 thiserror = { workspace = true }
 
 [dependencies.serde]
@@ -39,4 +38,3 @@ features = ["extra-error", "log"]
 
 [dependencies.checker]
 path = "../checker"
-
