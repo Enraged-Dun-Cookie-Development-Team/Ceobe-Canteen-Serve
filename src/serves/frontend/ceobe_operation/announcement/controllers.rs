@@ -3,7 +3,7 @@ use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::ceobe_operation::announcement::operate::CeobeOperationAnnouncementSqlOperate,
 };
-use resp_result::RespResult;
+use resp_result::{resp_try, FlagWrap};
 
 use super::{
     error::FlagAnnouncementRespResult,
@@ -19,15 +19,18 @@ impl CeobeOperationAnnouncementFrontend {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_ty(CacheMode::NoCache);
 
-        let (data, extra) = modify.check_modify(AnnouncementItems(
-            CeobeOperationAnnouncementSqlOperate::find_all_not_delete(&db)
+        resp_try(async {
+            let (data, extra) = modify.check_modify(AnnouncementItems(
+                CeobeOperationAnnouncementSqlOperate::find_all_not_delete(
+                    &db,
+                )
                 .await?
                 .into_iter()
                 .map(Into::into)
                 .collect(),
-        ))?;
-        RespResult::ok(data)
-            .map(AnnouncementItems::into_inner)
-            .with_flags(extra)
+            ))?;
+            Ok(FlagWrap::new(AnnouncementItems::into_inner(data), extra))
+        })
+        .await
     }
 }

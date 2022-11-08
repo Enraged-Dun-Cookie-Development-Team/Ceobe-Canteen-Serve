@@ -1,13 +1,17 @@
-use axum_prehandle::PreHandling as ReqPretreatment;
+use checker::CheckExtract;
 use chrono::Duration;
 use mongo_migration::{
     mongo_connection::MongoConnect,
     mongo_models::bakery::mansion::operate::MansionDataMongoOperate,
 };
+use resp_result::resp_try;
 
 use super::{
-    MansionBodyCheckerPretreatment, MansionRResult, MidCheckerPretreatment,
-    OptionMidCheckerPretreatment,
+    models::{
+        MansionBodyCheckerPretreatment, MidCheckerPretreatment,
+        OptionMidCheckerPretreatment,
+    },
+    MansionRResult,
 };
 use crate::{
     router::BakeryMansionBackend,
@@ -16,53 +20,63 @@ use crate::{
 
 impl BakeryMansionBackend {
     pub async fn save_mansion(
-        db: MongoConnect, ReqPretreatment(mid): OptionMidCheckerPretreatment,
-        ReqPretreatment(json): MansionBodyCheckerPretreatment,
+        db: MongoConnect,
+        CheckExtract(mid, ..): OptionMidCheckerPretreatment,
+        CheckExtract(json, ..): MansionBodyCheckerPretreatment,
     ) -> MansionRResult<()> {
-        let mid = mid.id;
-        let data = json;
+        resp_try(async move {
+            let mid = mid.id;
+            let data = json;
 
-        match mid {
-            Some(mid) => {
-                log::info!("MansionId已提供 => 更新模式");
+            match mid {
+                Some(mid) => {
+                    log::info!("MansionId已提供 => 更新模式");
 
-                MansionDataMongoOperate::update_mansion(&db, mid, data)
-                    .await?;
+                    MansionDataMongoOperate::update_mansion(&db, mid, data)
+                        .await?;
+                }
+                None => {
+                    log::info!("MansionId未提供 => 新建模式");
+                    MansionDataMongoOperate::create_mansion_data(&db, data)
+                        .await?;
+                }
             }
-            None => {
-                log::info!("MansionId未提供 => 新建模式");
-                MansionDataMongoOperate::create_mansion_data(&db, data)
-                    .await?;
-            }
-        }
-        Ok(()).into()
+            Ok(())
+        })
+        .await
     }
 
     pub async fn get_mansion(
-        db: MongoConnect, ReqPretreatment(mid): MidCheckerPretreatment,
+        db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
-        let data =
-            MansionDataMongoOperate::get_mansion_by_id(&db, &mid.id).await?;
-        MansionRResult::ok(data.into())
+        resp_try(async {
+            Ok(MansionDataMongoOperate::get_mansion_by_id(&db, &mid.id)
+                .await?
+                .into())
+        })
+        .await
     }
 
     pub async fn get_recent_id(
         db: MongoConnect,
     ) -> MansionRResult<Vec<String>> {
-        let mansion_ids =
-            MansionDataMongoOperate::get_mansion_id_list_by_time(
+        resp_try(async {
+            Ok(MansionDataMongoOperate::get_mansion_id_list_by_time(
                 &db,
                 Duration::days(60),
             )
-            .await?;
-
-        Ok(mansion_ids).into()
+            .await?)
+        })
+        .await
     }
 
     pub async fn remove_mansion(
-        db: MongoConnect, ReqPretreatment(mid): MidCheckerPretreatment,
+        db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
-        MansionDataMongoOperate::delete_mansion(&db, &mid.id).await?;
-        Ok(()).into()
+        resp_try(async {
+            MansionDataMongoOperate::delete_mansion(&db, &mid.id).await?;
+            Ok(())
+        })
+        .await
     }
 }

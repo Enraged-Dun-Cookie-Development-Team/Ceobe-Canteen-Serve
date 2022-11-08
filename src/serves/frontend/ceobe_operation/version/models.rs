@@ -1,4 +1,4 @@
-use axum_prehandle::prefabs::query::QueryParams;
+use checker::QueryCheckExtract;
 use checker::prefabs::option_checker::OptionChecker;
 use mongo_migration::mongo_models::ceobe_operation::plugin_version::check::version_checker::VersionChecker as PluginVersionChecker;
 use mongo_migration::mongo_models::ceobe_operation::plugin_version::models::Version;
@@ -7,7 +7,6 @@ use serde::{Serialize, Deserialize};
 use typed_builder::TypedBuilder;
 use crate::models::sql::app_version::checkers::CheckError as AppCheckError;
 use crate::models::mongo::plugin_version::check::CheckError as PluginCheckError;
-use crate::utils::data_checker::PreLiteChecker;
 
 use super::error::CeobeOperationVersionError;
 
@@ -26,11 +25,8 @@ pub struct OptionAppVersionChecker {
     pub version: OptionChecker<AppVersionChecker>,
 }
 
-pub type OptionAppVersionCheckerPretreat = PreLiteChecker<
-    QueryParams<AppVersionUncheck>,
-    OptionAppVersionChecker,
-    CeobeOperationVersionError,
->;
+pub type OptionAppVersionCheckerPretreat =
+    QueryCheckExtract<OptionAppVersionChecker, CeobeOperationVersionError>;
 
 // 用于插件版本请求参数
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -47,8 +43,5 @@ pub struct OptionPluginVersionChecker {
     pub version: OptionChecker<PluginVersionChecker>,
 }
 
-pub type OptionPluginVersionCheckerPretreat = PreLiteChecker<
-    QueryParams<PluginVersionUncheck>,
-    OptionPluginVersionChecker,
-    CeobeOperationVersionError,
->;
+pub type OptionPluginVersionCheckerPretreat =
+    QueryCheckExtract<OptionPluginVersionChecker, CeobeOperationVersionError>;

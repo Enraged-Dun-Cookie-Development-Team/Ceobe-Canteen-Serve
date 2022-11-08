@@ -44,6 +44,13 @@ macro_rules! error_generate {
                 $v_name(#[from] $inner_err)
             ),+
         }
+
+        impl From< ::core::convert::Infallible > for $err_name {
+            fn from(_: ::core::convert::Infallible)->Self{
+                unreachable!()
+            }
+        }
+
     };
     ($v:vis $err_name:ident = $msg:literal)=>{
         #[derive(Debug)]

@@ -1,4 +1,3 @@
-use axum_prehandle::PreRespHandling;
 use resp_result::FlagRespResult;
 
 pub mod controllers;
@@ -7,7 +6,3 @@ mod models;
 mod view;
 
 type FlagMansionRResult<T> = FlagRespResult<Option<T>, error::MansionError>;
-
-use self::models::MidCheckerPretreat;
-
-pub type MidCheckerPretreatment = PreRespHandling<MidCheckerPretreat>;

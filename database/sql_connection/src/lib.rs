@@ -1,4 +1,3 @@
-#![feature(type_alias_impl_trait)]
 mod config;
 mod impl_get_connect;
 mod impl_initial;

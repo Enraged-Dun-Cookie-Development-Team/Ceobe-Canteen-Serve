@@ -1,8 +1,11 @@
 use std::future::Future;
 
-use database_traits::initial::{
-    DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
-    DatabaseInitialMigration,
+use database_traits::{
+    initial::{
+        DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
+        DatabaseInitialMigration,
+    },
+    BoxedResultFuture,
 };
 
 use crate::{
@@ -24,13 +27,13 @@ where
     C: config::DbConnectConfig + DbOptionsConfig + 'static,
 {
     type ConnectFuture<'p> =
-        impl Future<Output = Result<Self::Builder, Self::Error>> + 'p;
+        BoxedResultFuture<'p, Self::Builder, Self::Error>;
 
     fn start_connect(params: &C) -> Self::ConnectFuture<'_> {
-        async {
+        Box::pin(async {
             connect_to_sql_database(params).await?;
             Ok(SqlDatabaseBuilder)
-        }
+        })
     }
 }
 
@@ -40,17 +43,16 @@ where
     M: FnOnce(&'static sea_orm::DatabaseConnection) -> Fut,
     Fut: Future<Output = Result<(), Self::Error>> + 'p,
 {
-    type MigrateFuture =
-        impl Future<Output = Result<Self::Builder, Self::Error>> + 'p;
+    type MigrateFuture = BoxedResultFuture<'p, Self::Builder, Self::Error>;
 
     fn apply_migration(
         builder: Self::Builder, params: M,
     ) -> Self::MigrateFuture {
-        async {
+        Box::pin(async {
             let db = get_sql_database();
             params(db).await?;
             Ok(builder)
-        }
+        })
     }
 }
 

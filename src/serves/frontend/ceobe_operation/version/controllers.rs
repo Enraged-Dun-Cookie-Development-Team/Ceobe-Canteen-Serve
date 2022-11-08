@@ -1,9 +1,9 @@
 use std::time::Duration;
 
-use axum_prehandle::{PreHandling, PreRespHandling};
+use checker::CheckExtract;
 use mongo_migration::mongo_connection::MongoConnect;
 use orm_migrate::sql_connection::SqlConnect;
-use resp_result::RespResult;
+use resp_result::{resp_try, FlagWrap};
 
 use super::{
     error::FlagVersionRespResult,
@@ -25,59 +25,54 @@ impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
     pub async fn app_version(
         db: SqlConnect,
-        PreHandling(AppVersion { version }): PreRespHandling<
-            OptionAppVersionCheckerPretreat,
-        >,
+        CheckExtract(AppVersion { version }, _): OptionAppVersionCheckerPretreat,
         mut modify: modify_cache::CheckModify,
     ) -> FlagVersionRespResult<AppVersionView> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_max_age(Duration::from_secs(60 * 60));
 
-        match version {
+        resp_try(async {
+
+            let (data,extra) = modify.check_modify(
+                match version {
             Some(version) => {
-                let (data, extra) = modify.check_modify(
-                    CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(&db,&version).await?
-                )?;
-                RespResult::ok(data.map(Into::into)).with_flags(extra)
-            }
-            None => {
-                let (data, extra) = modify.check_modify(
-                    CeobeOperationAppVersionSqlOperate::get_newest_app_version_info(&db).await?
-                )?;
-                RespResult::ok(data.map(Into::into)).with_flags(extra)
-            }
-        }
+                    CeobeOperationAppVersionSqlOperate::get_app_version_info_by_version(&db,&version).await
+                }
+                None => {
+                    CeobeOperationAppVersionSqlOperate::get_newest_app_version_info(&db).await
+                }
+            }?
+        )?;
+        Ok(FlagWrap::new(data.map(Into::into),extra))
+    }).await
     }
 
     // 获取插件端对应版本信息
     pub async fn plugin_version(
         db: MongoConnect,
-        PreHandling(version): PreRespHandling<
-            OptionPluginVersionCheckerPretreat,
-        >,
+        CheckExtract(version, _): OptionPluginVersionCheckerPretreat,
         mut modify: modify_cache::CheckModify,
     ) -> FlagVersionRespResult<PluginVersionView> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_max_age(Duration::from_secs(60 * 60));
 
         let version = version.version;
-        match version {
-            Some(version) => {
-                let (data, extra) = modify.check_modify(
+
+        resp_try(async {
+            let (data, extra) = modify.check_modify(match version {
+                Some(version) => {
                     PluginDbOperation::get_plugin_version_info_by_version(
                         &db, version,
                     )
-                    .await?,
-                )?;
-                RespResult::ok(data.map(Into::into)).with_flags(extra)
-            }
-            None => {
-                let (data, extra) = modify.check_modify(
+                    .await
+                }
+                None => {
                     PluginDbOperation::get_newest_plugin_version_info(&db)
-                        .await?,
-                )?;
-                RespResult::ok(data.map(Into::into)).with_flags(extra)
-            }
-        }
+                        .await
+                }
+            }?)?;
+            Ok(FlagWrap::new(data.map(Into::into), extra))
+        })
+        .await
     }
 }

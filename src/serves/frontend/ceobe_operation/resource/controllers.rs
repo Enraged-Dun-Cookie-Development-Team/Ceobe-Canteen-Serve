@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use orm_migrate::sql_connection::SqlConnect;
-use resp_result::RespResult;
+use resp_result::{resp_try, FlagWrap};
 
 use super::{error::FlagResourceRespResult, view::Resource};
 use crate::{
@@ -17,14 +17,17 @@ impl CeobeOperationResourceFrontend {
             .cache_headers
             .get_control()
             .set_max_age(Duration::from_secs(60 * 60));
+        resp_try(async {
+            let (data, extra) = modify.check_modify(
+                CeobeOperationResourceSqlOperate::get_resource(
+                    &db,
+                    |raa, cd| Resource::from((raa, cd)),
+                )
+                .await?,
+            )?;
 
-        let (data, extra) = modify.check_modify(
-            CeobeOperationResourceSqlOperate::get_resource(&db, |raa, cd| {
-                Resource::from((raa, cd))
-            })
-            .await?,
-        )?;
-
-        RespResult::ok(data).with_flags(extra)
+            Ok(FlagWrap::new(data, extra))
+        })
+        .await
     }
 }

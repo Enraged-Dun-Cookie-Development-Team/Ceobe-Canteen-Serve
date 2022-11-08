@@ -1,7 +1,8 @@
-use std::future::Future;
-
-use database_traits::initial::{
-    DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
+use database_traits::{
+    initial::{
+        DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
+    },
+    BoxedResultFuture,
 };
 use redis::RedisError;
 
@@ -20,13 +21,13 @@ where
     C: config::DbConnectConfig + 'static,
 {
     type ConnectFuture<'p> =
-        impl Future<Output = Result<Self::Builder, Self::Error>> + 'p;
+        BoxedResultFuture<'p, Self::Builder, Self::Error>;
 
     fn start_connect(params: &C) -> Self::ConnectFuture<'_> {
-        async {
+        Box::pin(async {
             connect_to_redis_database(params).await?;
             Ok(RedisDatabaseBuilder)
-        }
+        })
     }
 }
 
