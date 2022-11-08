@@ -1,29 +1,26 @@
-use std::io;
+use tracing::Subscriber;
+use tracing_subscriber::{fmt::format, registry::LookupSpan, Layer};
 
-use fern::colors::{Color, ColoredLevelConfig};
+use super::TimeFormat;
 
 pub struct LogToStdout;
 
 impl LogToStdout {
-    pub fn init() -> fern::Dispatch {
-        let color = ColoredLevelConfig::new()
-            .error(Color::BrightRed)
-            .info(Color::Green)
-            .debug(Color::Yellow)
-            .trace(Color::Blue)
-            .warn(Color::BrightMagenta);
+    pub fn init<S>() -> impl Layer<S>
+    where
+        S: Subscriber + for<'a> LookupSpan<'a>,
+    {
+        let layer = tracing_subscriber::fmt::layer().event_format(
+            format()
+                .pretty()
+                .with_ansi(true)
+                .with_level(true)
+                .with_timer(TimeFormat)
+                .with_source_location(true)
+                .with_thread_ids(true)
+                .with_thread_names(true),
+        );
 
-        fern::Dispatch::new()
-            .format(move |out, message, record| {
-                out.finish(format_args!(
-                    "{time} | {level:<5} - [{local}] => {message}",
-                    time = chrono::Local::now().format("%Y-%m-%d %H:%M:%S"),
-                    // level
-                    level = color.color(record.level()),
-                    // local
-                    local = record.target(),
-                ))
-            })
-            .chain(io::stdout())
+        layer
     }
 }

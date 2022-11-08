@@ -1,30 +1,50 @@
-use fern::Dispatch;
-use log::LevelFilter;
+use tracing::{Level, Subscriber};
+use tracing_subscriber::{
+    layer::Layered, prelude::__tracing_subscriber_SubscriberExt,
+    registry::LookupSpan, util::SubscriberInitExt, EnvFilter, Layer,
+    Registry,
+};
 
 use crate::{LogToFile, LogToStdout};
 
-pub struct LogInit(Dispatch);
+pub struct LogInit<S>(S);
 pub trait GetLogLevel {
-    fn get_level(&self) -> LevelFilter { LevelFilter::Trace }
+    fn get_level(&self) -> Level {
+        Level::TRACE
+    }
 }
 
-impl LogInit {
+impl LogInit<Layered<EnvFilter, Registry>> {
     pub fn new<C: GetLogLevel>(cfg: &C) -> Self {
-        Self(Dispatch::new().level(cfg.get_level()))
+        Self(
+            tracing_subscriber::registry().with(
+                EnvFilter::builder()
+                    .with_default_directive(cfg.get_level().into())
+                    .parse_lossy(""),
+            ),
+        )
     }
-
+}
+impl<S> LogInit<S>
+where
+    S: Subscriber,
+    for<'a> S: LookupSpan<'a>,
+{
     pub fn log_to_file<C: crate::FileLoggerInfo>(
         self, cfg: &C,
-    ) -> Result<Self, crate::error::Error> {
-        Ok(Self(self.0.chain(LogToFile::init(cfg)?)))
+    ) -> Result<LogInit<Layered<impl Layer<S>, S>>, crate::error::Error> {
+        Ok(LogInit(self.0.with(LogToFile::init(cfg)?)))
     }
 
-    pub fn log_to_stdout(self) -> Self {
-        Self(self.0.chain(LogToStdout::init()))
+    pub fn log_to_stdout(self) -> LogInit<Layered<impl Layer<S>, S>> {
+        LogInit(self.0.with(LogToStdout::init()))
     }
 
-    pub fn apply(self) -> Result<(), crate::error::Error> {
-        self.0.apply()?;
+    pub fn apply(self) -> Result<(), crate::error::Error>
+    where
+        S: SubscriberInitExt,
+    {
+        self.0.try_init()?;
         Ok(())
     }
 }

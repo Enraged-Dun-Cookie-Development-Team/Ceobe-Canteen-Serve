@@ -10,16 +10,22 @@ pub use log_to::{
 
 #[cfg(test)]
 mod test {
+    use tracing::{debug, error, info, trace, warn};
+    use tracing_subscriber::{
+        prelude::__tracing_subscriber_SubscriberExt, registry,
+        util::SubscriberInitExt,
+    };
+
     use crate::LogToStdout;
 
     #[test]
     fn test() {
-        LogToStdout::init().apply().unwrap();
+        registry().with(LogToStdout::init()).init();
 
-        log::info!("AAA");
-        log::error!("AAA");
-        log::warn!("AAA");
-        log::trace!("AAA");
-        log::debug!("AAA");
+        info!("AAA");
+        error!("AAA");
+        warn!("AAA");
+        trace!("AAA");
+        debug!("AAA");
     }
 }
