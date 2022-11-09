@@ -1,6 +1,7 @@
 use std::{
     fs::{File, OpenOptions},
-    io::{self, BufWriter, Write},
+    io::{self, BufWriter},
+    sync::Mutex,
 };
 
 use tracing::Subscriber;
@@ -39,7 +40,6 @@ impl LogToFile {
 pub trait FileLoggerInfo {
     fn log_file(&self) -> &str;
 }
-use parking_lot::{Mutex, MutexGuard};
 struct LoggerFile(Mutex<BufWriter<File>>);
 
 impl LoggerFile {
@@ -51,31 +51,7 @@ impl LoggerFile {
 }
 
 impl<'writer> MakeWriter<'writer> for LoggerFile {
-    type Writer = BufWriterGuard<'writer>;
+    type Writer = <Mutex<BufWriter<File>> as MakeWriter<'writer>>::Writer;
 
-    fn make_writer(&'writer self) -> Self::Writer {
-        BufWriterGuard(self.0.lock())
-    }
-}
-
-struct BufWriterGuard<'writer>(MutexGuard<'writer, BufWriter<File>>);
-
-impl<'writer> Write for BufWriterGuard<'writer> {
-    fn write(&mut self, buf: &[u8]) -> io::Result<usize> { self.0.write(buf) }
-
-    fn flush(&mut self) -> io::Result<()> { self.0.flush() }
-
-    fn write_vectored(
-        &mut self, bufs: &[io::IoSlice<'_>],
-    ) -> io::Result<usize> {
-        self.0.write_vectored(bufs)
-    }
-
-    fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
-        self.0.write_all(buf)
-    }
-
-    fn write_fmt(&mut self, fmt: std::fmt::Arguments<'_>) -> io::Result<()> {
-        self.0.write_fmt(fmt)
-    }
+    fn make_writer(&'writer self) -> Self::Writer { self.0.make_writer() }
 }
