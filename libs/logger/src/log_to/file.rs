@@ -61,13 +61,9 @@ impl<'writer> MakeWriter<'writer> for LoggerFile {
 struct BufWriterGuard<'writer>(MutexGuard<'writer, BufWriter<File>>);
 
 impl<'writer> Write for BufWriterGuard<'writer> {
-    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        self.0.write(buf)
-    }
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> { self.0.write(buf) }
 
-    fn flush(&mut self) -> io::Result<()> {
-        self.0.flush()
-    }
+    fn flush(&mut self) -> io::Result<()> { self.0.flush() }
 
     fn write_vectored(
         &mut self, bufs: &[io::IoSlice<'_>],
