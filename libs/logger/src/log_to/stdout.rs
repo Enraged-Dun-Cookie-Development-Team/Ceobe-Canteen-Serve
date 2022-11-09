@@ -12,7 +12,7 @@ impl LogToStdout {
     {
         tracing_subscriber::fmt::layer().event_format(
             format()
-                .pretty()
+
                 .with_ansi(true)
                 .with_level(true)
                 .with_timer(TimeFormat)
