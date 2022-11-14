@@ -5,7 +5,7 @@ use sql_connection::{
     },
     sea_orm::Set,
 };
-use tracing::instrument;
+use tracing::{info, instrument};
 
 use super::{OperateResult, UserSqlOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
@@ -34,6 +34,11 @@ impl UserSqlOperate {
         D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
         D::Transaction<'db>: ConnectionTrait,
     {
+        info!(
+            user.name = username,
+            user.password.encoded = encoded_pwd,
+            user.auth_level = ?auth_level
+        );
         let ctx = db.get_transaction().await?;
 
         Self::add_user_with_encoded_password_db(

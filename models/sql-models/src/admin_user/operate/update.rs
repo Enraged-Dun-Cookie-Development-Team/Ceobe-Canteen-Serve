@@ -7,7 +7,7 @@ use sea_orm::{
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
-use tracing::instrument;
+use tracing::{info, instrument};
 
 use super::{OperateError, OperateResult, UserSqlOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
@@ -21,6 +21,7 @@ impl UserSqlOperate {
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
         D::Transaction<'db>: ConnectionTrait,
     {
+        info!(user.id = uid, user.new.name = new_name);
         let ctx = db.get_transaction().await?;
 
         // check user name exist
@@ -46,6 +47,7 @@ impl UserSqlOperate {
         ctx.submit().await?;
         Ok(())
     }
+
     #[instrument(ret, skip_all)]
     pub async fn update_user_password<'db, D, Verify, Encode, Map, Err, T>(
         db: &'db D, uid: i32, new_pwd: String, old_pwd: String,
@@ -60,6 +62,7 @@ impl UserSqlOperate {
         T: Debug,
         Err: Debug,
     {
+        info!(user.id = uid);
         let ctx = db.get_transaction().await?;
 
         let user = Self::find_user_by_id_raw(uid, &ctx).await?;
@@ -106,6 +109,7 @@ impl UserSqlOperate {
         D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
         D::Transaction<'db>: ConnectionTrait,
     {
+        info!(user.id = uid, user.new.auth_level = ?new_auth);
         let db = db.get_transaction().await?;
 
         let mut user = Self::find_user_by_id_raw(uid, &db)

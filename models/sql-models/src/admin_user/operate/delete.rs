@@ -1,6 +1,6 @@
 use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
-use tracing::instrument;
+use tracing::{instrument, info};
 
 use super::{OperateResult, UserSqlOperate};
 use crate::admin_user::models::user;
@@ -15,6 +15,7 @@ impl UserSqlOperate {
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
+        info!(user.id = uid);
         let db = db.get_connect()?;
 
         user::Entity::delete_by_id(uid).exec(db).await?;

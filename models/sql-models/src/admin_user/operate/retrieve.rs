@@ -1,4 +1,4 @@
-use std::fmt::Debug;
+use std::{fmt::Debug, ops::Deref};
 
 use super::{OperateError, OperateResult, UserSqlOperate};
 use crate::admin_user::models::user;
@@ -7,11 +7,12 @@ use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
     EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
 };
+use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
 use tap::TapFallible;
-use tracing::{instrument, Span};
+use tracing::{info, instrument, Span};
 
 impl UserSqlOperate {
     pub async fn query_one_user_raw(
@@ -67,6 +68,7 @@ impl UserSqlOperate {
         T: Debug,
         E: Debug,
     {
+        info!(user.name = name);
         let ctx = db.get_transaction().await?;
 
         let user = Self::find_user_by_name_raw(name, &ctx).await?;
@@ -96,6 +98,7 @@ impl UserSqlOperate {
         E: Debug,
         T: Debug,
     {
+        info!(user.id = uid, user.password.version = token_version);
         let db = db.get_connect()?;
 
         let user = Self::find_user_by_id_raw(uid, db).await?;
@@ -106,7 +109,7 @@ impl UserSqlOperate {
             Ok(Err(error()))
         }
     }
-    #[instrument(skip(db), fields(list.len))]
+    #[instrument(skip(db))]
     /// 分页获取用户列表
     pub async fn find_user_list<'db, D>(
         db: &'db D, page_size: PageSize,
@@ -115,6 +118,10 @@ impl UserSqlOperate {
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
+        info!(
+            userList.page.num = page_size.page.deref(),
+            userList.page.size = page_size.size.deref()
+        );
         let db = db.get_connect()?;
         Ok(user::Entity::find()
             .select_only()
@@ -126,7 +133,12 @@ impl UserSqlOperate {
             .all(db)
             .await?)
         .tap_ok(|list| {
-            Span::current().record("list.len", list.len());
+            Span::current()
+            .in_scope(||{
+                let list = list.iter().map(|user|(&user.username)).collect::<SmallVec<[_;4]>>();
+                info!(userList.len = list.len(),  userList.usernames = ?list );
+            })
+            ;
         })
     }
 
