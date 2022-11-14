@@ -9,7 +9,6 @@ reqwest = { workspace = true }
 axum = { workspace = true }
 http = "0.2"
 jwt = "0.16.0"
-log = { version = "0", optional = true }
 url = { workspace = true }
 bcrypt = "0.13"
 mongodb = { workspace = true }
