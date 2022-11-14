@@ -75,10 +75,12 @@ impl CeobeOperationVideoSqlOperate {
                             )
                         })
                     }
-                    None => ActiveModel::from_video_data_with_order(
-                        video,
-                        order as i32,
-                    ),
+                    None => {
+                        ActiveModel::from_video_data_with_order(
+                            video,
+                            order as i32,
+                        )
+                    }
                 }
             })
             .pipe(iter)

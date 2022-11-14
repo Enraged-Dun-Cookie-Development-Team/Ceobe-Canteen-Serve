@@ -1,9 +1,12 @@
 use axum_starter::ServerPrepare;
-use bootstrap::{init::{
-    component_init::{BackendAuthConfig, RResultConfig},
-    db_init::{MongoDbConnect, MysqlDbConnect},
-    service_init::{graceful_shutdown, RouteV1, RouterFallback},
-}, midllewares::tracing_request::tracing_request};
+use bootstrap::{
+    init::{
+        component_init::{BackendAuthConfig, RResultConfig},
+        db_init::{MongoDbConnect, MysqlDbConnect},
+        service_init::{graceful_shutdown, RouteV1, RouterFallback},
+    },
+    midllewares::tracing_request::tracing_request,
+};
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, qiniu_secret::QiniuUploadConfig,

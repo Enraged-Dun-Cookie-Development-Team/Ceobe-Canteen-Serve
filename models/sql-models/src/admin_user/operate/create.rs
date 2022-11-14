@@ -25,6 +25,7 @@ impl UserSqlOperate {
         user_active.save(db).await?;
         Ok(())
     }
+
     #[instrument(skip(db), ret)]
     pub async fn add_user_with_encoded_password<'db, D>(
         db: &'db D, username: String, encoded_pwd: String,

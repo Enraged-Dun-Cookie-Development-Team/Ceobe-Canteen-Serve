@@ -75,6 +75,7 @@ impl CeobeOperationResourceSqlOperate {
 
         Ok(resp_stream)
     }
+
     #[instrument(
         skip_all,
         fields(

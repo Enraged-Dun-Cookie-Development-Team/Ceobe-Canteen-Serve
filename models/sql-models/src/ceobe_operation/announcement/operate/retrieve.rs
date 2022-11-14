@@ -62,7 +62,7 @@ impl CeobeOperationAnnouncementSqlOperate {
         .await?
         .try_collect()
         .await?)
-        .tap_ok(|list:&Vec<_>| {
+        .tap_ok(|list: &Vec<_>| {
             Span::current().record("announcement.len", list.len());
         })
     }

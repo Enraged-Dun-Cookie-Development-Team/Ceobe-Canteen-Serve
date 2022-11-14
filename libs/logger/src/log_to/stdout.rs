@@ -49,9 +49,7 @@ pub struct BufferStdout(Mutex<BufWriter<Stdout>>);
 impl<'writer> MakeWriter<'writer> for BufferStdout {
     type Writer = <Mutex<BufWriter<Stdout>> as MakeWriter<'writer>>::Writer;
 
-    fn make_writer(&'writer self) -> Self::Writer {
-        self.0.make_writer()
-    }
+    fn make_writer(&'writer self) -> Self::Writer { self.0.make_writer() }
 }
 
 impl Default for BufferStdout {

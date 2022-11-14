@@ -25,7 +25,8 @@ impl CeobeOperationAppVersionSqlOperate {
         // 判断版本是否已存在
         if Self::is_exist_app_version(&version_info.version, db).await? {
             Err(OperateError::AppVersionIdExist(version_info.version))
-        } else {
+        }
+        else {
             ActiveModel::create_app_version(version_info)
                 .pipe(|active| active.insert(db))
                 .await?

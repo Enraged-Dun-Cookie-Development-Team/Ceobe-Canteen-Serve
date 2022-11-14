@@ -1,7 +1,5 @@
 use std::{fmt::Debug, ops::Deref};
 
-use super::{OperateError, OperateResult, UserSqlOperate};
-use crate::admin_user::models::user;
 use page_size::{database::OffsetLimit, request::PageSize};
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
@@ -13,6 +11,9 @@ use sql_connection::database_traits::get_connect::{
 };
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
+
+use super::{OperateError, OperateResult, UserSqlOperate};
+use crate::admin_user::models::user;
 
 impl UserSqlOperate {
     pub async fn query_one_user_raw(
@@ -105,10 +106,12 @@ impl UserSqlOperate {
 
         if user.num_pwd_change == token_version {
             Ok(Ok(ok_mapper(user)))
-        } else {
+        }
+        else {
             Ok(Err(error()))
         }
     }
+
     #[instrument(skip(db))]
     /// 分页获取用户列表
     pub async fn find_user_list<'db, D>(
