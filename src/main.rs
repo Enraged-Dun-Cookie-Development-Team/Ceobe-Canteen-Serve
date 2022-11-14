@@ -1,9 +1,9 @@
 use axum_starter::ServerPrepare;
-use bootstrap::init::{
+use bootstrap::{init::{
     component_init::{BackendAuthConfig, RResultConfig},
     db_init::{MongoDbConnect, MysqlDbConnect},
     service_init::{graceful_shutdown, RouteV1, RouterFallback},
-};
+}, midllewares::tracing_request::tracing_request};
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, qiniu_secret::QiniuUploadConfig,
@@ -54,8 +54,8 @@ async fn main() {
         .append(RouteV1)
         .append(RouterFallback)
         .with_global_middleware(CatchPanicLayer::custom(serve_panic))
-        .with_global_middleware(TraceLayer::new_for_http())
         .with_global_middleware(CompressionLayer::new())
+        .with_global_middleware(tracing_request())
         .append_fn(graceful_shutdown)
         .prepare_start()
         .await
