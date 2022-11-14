@@ -3,11 +3,18 @@ use bytes::Bytes;
 use futures::io::Cursor;
 use mime::APPLICATION_OCTET_STREAM;
 use smallstr::SmallString;
+use tracing::instrument;
 
 use super::ResponsePayload;
 use crate::{error, PayloadContent, PayloadLocal, Uploader};
 
 impl Uploader {
+    #[instrument(skip_all, fields(
+        content_type = field.content_type(),
+        qiniu.bucket = local.bucket(),
+        qiniu.obj = local.obj_name(),
+        qiniu.file = local.file_name()
+    ))]
     pub async fn upload_field<'a>(
         &self, field: axum::extract::multipart::Field<'a>,
         local: impl PayloadLocal,

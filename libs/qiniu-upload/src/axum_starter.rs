@@ -26,7 +26,6 @@ where
         .build();
 
     info!(
-        qiniu.uploader = "Ready",
         qiniu.uploader.buckets = ?uploader.managers.keys()
     );
     Ok(SetExtension::arc(uploader))
@@ -39,7 +38,9 @@ pub struct QiniuUploader {
 impl Deref for QiniuUploader {
     type Target = Uploader;
 
-    fn deref(&self) -> &Self::Target { &self.inner }
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 
 impl<B> FromRequest<B> for QiniuUploader {

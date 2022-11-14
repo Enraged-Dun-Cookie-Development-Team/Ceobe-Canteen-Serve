@@ -1,6 +1,7 @@
 use futures::io::Cursor;
 use mime::Mime;
 use serde::Serialize;
+use tracing::instrument;
 
 use super::{
     payload::{PayloadContent, PayloadLocal},
@@ -9,6 +10,14 @@ use super::{
 use crate::{error, Uploader};
 
 impl Uploader {
+    #[instrument(
+        skip_all,
+        fields(
+            qiniu.bucket = payload.bucket(),
+            qiniu.obj = payload.obj_name(),
+            qiniu.file = payload.file_name()
+        )
+    )]
     pub async fn upload_json(
         &self, payload: impl JsonPayload + PayloadLocal,
     ) -> Result<ResponsePayload, error::Error> {

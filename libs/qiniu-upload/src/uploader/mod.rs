@@ -8,6 +8,7 @@ use std::{collections::HashMap, fmt::Debug};
 use futures::Future;
 use qiniu_upload_manager::AutoUploaderObjectParams;
 use smallstr::SmallString;
+use tracing::info;
 pub use upload_json::JsonPayload;
 
 pub use self::{
@@ -63,6 +64,12 @@ impl Uploader {
             .async_upload_reader(Box::pin(payload.payload()?), params)
             .await?;
         let response = serde_json::from_value::<ResponsePayload>(response)?;
+
+        info!(
+            qiniu.response.hash = response.hash,
+            qiniu.response.key = response.key
+        );
+
         Ok(response)
     }
 }
