@@ -13,7 +13,6 @@ use configs::{
 use figment::providers::{Format, Json, Toml, Yaml};
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
-    trace::TraceLayer,
 };
 
 use crate::error::serve_panic;

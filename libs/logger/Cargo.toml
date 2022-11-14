@@ -8,5 +8,6 @@ edition = "2021"
 chrono = { workspace = true }
 fern = { version = "0.6.1", features = ["chrono", "colored"] }
 thiserror = { workspace = true }
-tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3.16", features = ["env-filter", "json"] }
 tracing = { workspace = true }
+tap.workspace = true
