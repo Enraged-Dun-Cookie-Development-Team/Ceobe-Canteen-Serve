@@ -23,6 +23,7 @@ modify-cache = {path = "../../libs/modify-cache"}
 page_size = {path = "../../libs/page_size"}
 tap = { workspace = true }
 tracing = {workspace = true}
+smallvec = "1.10.0"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }

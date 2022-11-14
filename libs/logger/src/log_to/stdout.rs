@@ -11,7 +11,7 @@ impl LogToStdout {
         S: Subscriber + for<'a> LookupSpan<'a>,
     {
         tracing_subscriber::fmt::layer().event_format(
-            format()
+            format().pretty()
                 .with_ansi(true)
                 .with_level(true)
                 .with_timer(TimeFormat)
