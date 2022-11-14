@@ -9,6 +9,7 @@ use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
 use tap::{Pipe, Tap};
+use tracing::instrument;
 
 use super::{CeobeOperationVideoSqlOperate, OperateResult};
 use crate::{
@@ -34,6 +35,7 @@ impl CeobeOperationVideoSqlOperate {
         Ok(resp.rows_affected)
     }
 
+    #[instrument(skip_all, ret, fields(videos.len = videos.len()))]
     pub async fn update_all<'db, D>(
         db: &'db D, videos: Vec<CeobeOpVideo>,
     ) -> OperateResult<()>
@@ -73,12 +75,10 @@ impl CeobeOperationVideoSqlOperate {
                             )
                         })
                     }
-                    None => {
-                        ActiveModel::from_video_data_with_order(
-                            video,
-                            order as i32,
-                        )
-                    }
+                    None => ActiveModel::from_video_data_with_order(
+                        video,
+                        order as i32,
+                    ),
                 }
             })
             .pipe(iter)

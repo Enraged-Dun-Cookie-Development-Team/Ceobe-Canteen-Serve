@@ -22,6 +22,7 @@ status-err = { path = "../../libs/status-err" }
 modify-cache = {path = "../../libs/modify-cache"}
 page_size = {path = "../../libs/page_size"}
 tap = { workspace = true }
+tracing = {workspace = true}
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }

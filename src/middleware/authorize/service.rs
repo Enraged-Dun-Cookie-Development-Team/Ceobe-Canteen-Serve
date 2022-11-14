@@ -99,7 +99,7 @@ where
                 user.id,
                 user.num_pwd_change,
                 |user| user,
-                AuthorizeError::TOkenInvalid,
+                ||AuthorizeError::TOkenInvalid,
             )
             .await
             .pipe(|org| (org, req))

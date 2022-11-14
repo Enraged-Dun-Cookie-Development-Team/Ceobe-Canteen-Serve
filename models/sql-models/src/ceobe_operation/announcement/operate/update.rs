@@ -2,6 +2,7 @@ use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
+use tracing::instrument;
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::ceobe_operation::announcement::{
@@ -9,6 +10,10 @@ use crate::ceobe_operation::announcement::{
     models::model_announcement::{self, ActiveModel},
 };
 impl CeobeOperationAnnouncementSqlOperate {
+    #[instrument(
+        skip(db, announcements), ret,
+        fields(announcement.len = announcements.len())
+    )]
     pub async fn update_all<'d, D>(
         db: &'d D, announcements: Vec<CeobeOpAnnouncement>,
     ) -> OperateResult<()>

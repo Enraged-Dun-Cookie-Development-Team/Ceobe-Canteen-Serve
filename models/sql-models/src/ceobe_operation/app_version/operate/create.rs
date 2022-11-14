@@ -1,6 +1,7 @@
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::Pipe;
+use tracing::instrument;
 
 use super::{
     CeobeOperationAppVersionSqlOperate, OperateError, OperateResult,
@@ -12,6 +13,7 @@ use crate::ceobe_operation::app_version::{
 };
 
 impl CeobeOperationAppVersionSqlOperate {
+    #[instrument(skip(db), ret)]
     pub async fn create_one_version<'db, D>(
         db: &'db D, version_info: CeobeOperationAppVersion,
     ) -> OperateResult<()>
@@ -23,8 +25,7 @@ impl CeobeOperationAppVersionSqlOperate {
         // 判断版本是否已存在
         if Self::is_exist_app_version(&version_info.version, db).await? {
             Err(OperateError::AppVersionIdExist(version_info.version))
-        }
-        else {
+        } else {
             ActiveModel::create_app_version(version_info)
                 .pipe(|active| active.insert(db))
                 .await?

@@ -4,6 +4,8 @@ use sea_orm::{
     EntityTrait, QueryFilter, QueryOrder, StreamTrait,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use tap::TapFallible;
+use tracing::{instrument, Span};
 
 use super::{CeobeOperationVideoSqlOperate, OperateResult};
 use crate::{
@@ -41,6 +43,7 @@ impl CeobeOperationVideoSqlOperate {
         Self::find_by_filter_raw(filter, db).await
     }
 
+    #[instrument(skip(db), fields(video.len))]
     pub async fn find_all_not_delete<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<model_video::Model>>
@@ -54,5 +57,8 @@ impl CeobeOperationVideoSqlOperate {
             .await?
             .try_collect()
             .await?)
+        .tap_ok(|list: &Vec<_>| {
+            Span::current().record("video.len", list.len());
+        })
     }
 }

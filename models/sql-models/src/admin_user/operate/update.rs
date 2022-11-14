@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use sea_orm::{
     sea_query::IntoCondition, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DbErr, IntoActiveModel, Set,
@@ -5,11 +7,13 @@ use sea_orm::{
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
+use tracing::instrument;
 
 use super::{OperateError, OperateResult, UserSqlOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
 
 impl UserSqlOperate {
+    #[instrument(ret, skip(db))]
     pub async fn update_user_name<'db, D>(
         db: &'db D, uid: i32, new_name: String,
     ) -> OperateResult<()>
@@ -42,7 +46,7 @@ impl UserSqlOperate {
         ctx.submit().await?;
         Ok(())
     }
-
+    #[instrument(ret, skip_all)]
     pub async fn update_user_password<'db, D, Verify, Encode, Map, Err, T>(
         db: &'db D, uid: i32, new_pwd: String, old_pwd: String,
         verify: Verify, encode: Encode, mapping: Map,
@@ -53,6 +57,8 @@ impl UserSqlOperate {
         Map: Fn(user::Model) -> T,
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
         D::Transaction<'db>: ConnectionTrait,
+        T: Debug,
+        Err: Debug,
     {
         let ctx = db.get_transaction().await?;
 
@@ -92,6 +98,7 @@ impl UserSqlOperate {
     }
 
     // 更新用户权限
+    #[instrument(ret, skip(db))]
     pub async fn update_user_auth<'db, D>(
         db: &'db D, uid: i32, new_auth: AuthLevel,
     ) -> OperateResult<()>

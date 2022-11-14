@@ -1,10 +1,12 @@
 use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use tracing::instrument;
 
 use super::{OperateResult, UserSqlOperate};
 use crate::admin_user::models::user;
 
 impl UserSqlOperate {
+    #[instrument(skip(db), ret)]
     // 删除一个用户
     pub async fn delete_one_user<'db, D>(
         db: &'db D, uid: i32,

@@ -5,6 +5,7 @@ use sql_connection::{
     },
     sea_orm::Set,
 };
+use tracing::instrument;
 
 use super::{OperateResult, UserSqlOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
@@ -24,7 +25,7 @@ impl UserSqlOperate {
         user_active.save(db).await?;
         Ok(())
     }
-
+    #[instrument(skip(db), ret)]
     pub async fn add_user_with_encoded_password<'db, D>(
         db: &'db D, username: String, encoded_pwd: String,
         auth_level: AuthLevel,

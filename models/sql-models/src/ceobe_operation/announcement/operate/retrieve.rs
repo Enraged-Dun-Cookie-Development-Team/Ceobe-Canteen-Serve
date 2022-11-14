@@ -4,6 +4,8 @@ use sea_orm::{
     EntityTrait, QueryFilter, QueryOrder, StreamTrait,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use tap::TapFallible;
+use tracing::{instrument, Span};
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::{
@@ -45,6 +47,7 @@ impl CeobeOperationAnnouncementSqlOperate {
         .await
     }
 
+    #[instrument(skip(db), fields(announcement.len))]
     pub async fn find_all_not_delete<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<model_announcement::Model>>
@@ -59,5 +62,8 @@ impl CeobeOperationAnnouncementSqlOperate {
         .await?
         .try_collect()
         .await?)
+        .tap_ok(|list:&Vec<_>| {
+            Span::current().record("announcement.len", list.len());
+        })
     }
 }

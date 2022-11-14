@@ -7,6 +7,7 @@ use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
 use tap::Pipe;
+use tracing::{instrument, Span};
 
 use super::{CeobeOperationResourceSqlOperate, OperateError};
 use crate::{
@@ -74,7 +75,13 @@ impl CeobeOperationResourceSqlOperate {
 
         Ok(resp_stream)
     }
-
+    #[instrument(
+        skip_all,
+        fields(
+            resource.countdown.len,
+            resource.all_available
+        )
+    )]
     pub async fn get_resource<'db, D, F, T>(
         db: &'db D, map: F,
     ) -> Result<T, OperateError>
@@ -95,6 +102,9 @@ impl CeobeOperationResourceSqlOperate {
 
         db.submit().await?;
 
+        Span::current()
+            .record("resource.countdown.len", countdown.len())
+            .record("resource.all_available", tracing::field::debug(&raa));
         Ok(map(raa, countdown))
     }
 }
