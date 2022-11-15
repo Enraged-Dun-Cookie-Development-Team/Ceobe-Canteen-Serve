@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use axum_starter::ServerPrepare;
 use bootstrap::{
     init::{
@@ -13,7 +15,7 @@ use configs::{
     resp_result_config::RespResultConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use figment::providers::{Format, Json, Toml, Yaml};
+use figment::providers::{Format, Json, Toml, Yaml, Env};
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
@@ -31,12 +33,23 @@ mod utils;
 
 extern crate serde;
 
-#[tokio::main]
-async fn main() {
+
+fn main(){
+    let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
+    #[cfg(debug_assertions)]
+    dotenv::dotenv().ok();
+    
+    rt.block_on(main_task());
+
+    std::thread::sleep(Duration::from_millis(500))
+}
+
+async fn main_task() {
     let config: GlobalConfig = figment::Figment::new()
         .merge(Toml::file(CONFIG_FILE_TOML))
         .merge(Json::file(CONFIG_FILE_JSON))
         .merge(Yaml::file(CONFIG_FILE_YAML))
+        .merge(Env::prefixed("CEOBE_"))
         .extract()
         .expect("配置文件解析失败");
 

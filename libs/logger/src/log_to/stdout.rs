@@ -1,7 +1,4 @@
-use std::{
-    io::{stdout, BufWriter, Stdout},
-    sync::Mutex,
-};
+use std::io::{stdout, Stdout, StdoutLock};
 
 use tap::Pipe;
 use tracing::Subscriber;
@@ -23,7 +20,7 @@ impl LogToStdout {
         tracing_subscriber::fmt::layer()
             .event_format(
                 format()
-                    .pretty()
+                    // .pretty()
                     .with_ansi(true)
                     .with_level(true)
                     .with_timer(TimeFormat)
@@ -32,31 +29,25 @@ impl LogToStdout {
                     .with_thread_names(true),
             )
             .pipe(|layer| {
-                #[cfg(not(debug_assertions))]
-                {
-                    layer.with_writer(BufferStdout::default())
-                }
-                #[cfg(debug_assertions)]
-                {
-                    layer
-                }
+
+                layer.with_writer(BufferStdout::default())
+
             })
     }
 }
 
-pub struct BufferStdout(Mutex<BufWriter<Stdout>>);
+pub struct BufferStdout(Stdout);
 
 impl<'writer> MakeWriter<'writer> for BufferStdout {
-    type Writer = <Mutex<BufWriter<Stdout>> as MakeWriter<'writer>>::Writer;
+    type Writer = StdoutLock<'writer>;
 
-    fn make_writer(&'writer self) -> Self::Writer { self.0.make_writer() }
+    fn make_writer(&'writer self) -> Self::Writer {
+        self.0.lock()
+    }
 }
 
 impl Default for BufferStdout {
     fn default() -> Self {
-        Self(Mutex::new(BufWriter::with_capacity(
-            32 * 1024 * 1024,
-            stdout(),
-        )))
+        Self(stdout())
     }
 }

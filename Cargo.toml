@@ -65,7 +65,7 @@ ceobe-qiniu-upload = { version = "0.1.0", path = "libs/qiniu-upload" }
 # else
 chrono = { workspace = true, features = ["serde"] }
 # config
-figment = { version = "0.10", features = ["yaml", "json", "toml"] }
+figment = { version = "0.10", features = ["yaml", "json", "toml", "env"] }
 futures = { workspace = true }
 hex = "0.4"
 hmac = "0.12.1"
@@ -95,6 +95,8 @@ url = { workspace = true }
 urlencoding = { workspace = true }
 axum-macros = "0.2.3"
 tracing = { workspace = true }
+
+dotenv = "0.15"
 
 [dependencies.tokio]
 workspace = true
