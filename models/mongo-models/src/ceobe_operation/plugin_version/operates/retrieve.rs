@@ -1,5 +1,6 @@
 use mongo_connection::MongoDbCollectionTrait;
 use mongodb::{bson::doc, options::FindOneOptions};
+use tracing::{info, instrument};
 
 use super::{OperateError, OperateResult, PluginDbOperation};
 use crate::ceobe_operation::plugin_version::models::{
@@ -7,12 +8,14 @@ use crate::ceobe_operation::plugin_version::models::{
 };
 
 impl PluginDbOperation {
+    #[instrument(skip(db), ret)]
     pub async fn get_plugin_version_info_by_version<'db, D>(
         db: &'db D, version: Version,
     ) -> OperateResult<PluginVersion>
     where
         D: MongoDbCollectionTrait<'db, PluginVersion>,
     {
+        info!(plugin.version = %version);
         let collection = db.get_collection()?;
         let filter = doc! {
             "version.major": version.major,
@@ -25,12 +28,14 @@ impl PluginDbOperation {
             .ok_or(OperateError::VersionNotFind(version))
     }
 
+    #[instrument(skip(db), ret)]
     pub async fn get_newest_plugin_version_info<'db, D>(
         db: &'db D,
     ) -> OperateResult<PluginVersion>
     where
         D: MongoDbCollectionTrait<'db, PluginVersion>,
     {
+        info!(plugin.version = "latest");
         let collection = db.get_collection()?;
         collection
             .doing(|collection|
