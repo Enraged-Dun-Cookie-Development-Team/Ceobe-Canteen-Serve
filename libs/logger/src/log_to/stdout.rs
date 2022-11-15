@@ -28,11 +28,7 @@ impl LogToStdout {
                     .with_thread_ids(true)
                     .with_thread_names(true),
             )
-            .pipe(|layer| {
-
-                layer.with_writer(BufferStdout::default())
-
-            })
+            .pipe(|layer| layer.with_writer(BufferStdout::default()))
     }
 }
 
@@ -41,13 +37,9 @@ pub struct BufferStdout(Stdout);
 impl<'writer> MakeWriter<'writer> for BufferStdout {
     type Writer = StdoutLock<'writer>;
 
-    fn make_writer(&'writer self) -> Self::Writer {
-        self.0.lock()
-    }
+    fn make_writer(&'writer self) -> Self::Writer { self.0.lock() }
 }
 
 impl Default for BufferStdout {
-    fn default() -> Self {
-        Self(stdout())
-    }
+    fn default() -> Self { Self(stdout()) }
 }

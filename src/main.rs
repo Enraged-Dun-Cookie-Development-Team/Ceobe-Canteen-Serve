@@ -15,7 +15,7 @@ use configs::{
     resp_result_config::RespResultConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use figment::providers::{Format, Json, Toml, Yaml, Env};
+use figment::providers::{Env, Format, Json, Toml, Yaml};
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
@@ -33,12 +33,11 @@ mod utils;
 
 extern crate serde;
 
-
-fn main(){
+fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
     #[cfg(debug_assertions)]
     dotenv::dotenv().ok();
-    
+
     rt.block_on(main_task());
 
     std::thread::sleep(Duration::from_millis(500))
