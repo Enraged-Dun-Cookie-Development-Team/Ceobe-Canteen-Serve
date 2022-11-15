@@ -1,5 +1,4 @@
 use qiniu_upload_manager::AutoUploaderObjectParams;
-
 use tracing::{info, instrument};
 
 use super::ResponsePayload;

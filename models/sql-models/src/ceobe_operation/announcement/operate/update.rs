@@ -2,7 +2,7 @@ use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
-use tracing::{instrument, info};
+use tracing::{info, instrument};
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::ceobe_operation::announcement::{

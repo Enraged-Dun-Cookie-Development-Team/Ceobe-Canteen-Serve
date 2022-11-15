@@ -63,21 +63,23 @@ impl MansionDataMongoOperate {
         collection: &CollectionGuard<Mid>,
     ) -> OperateResult<Vec<String>> {
         Ok(collection
-            .doing(|collection| async move {
-                let mut vec = collection
-                    .find(
-                        filter,
-                        FindOptions::builder()
-                            .projection(doc! {"id":1i32})
-                            .sort(doc! {"id.main_id":1,"id.minor_id":1})
-                            .build(),
-                    )
-                    .await?;
-                let mut res = Vec::new();
-                while let Some(v) = vec.next().await {
-                    res.push(v?);
+            .doing(|collection| {
+                async move {
+                    let mut vec = collection
+                        .find(
+                            filter,
+                            FindOptions::builder()
+                                .projection(doc! {"id":1i32})
+                                .sort(doc! {"id.main_id":1,"id.minor_id":1})
+                                .build(),
+                        )
+                        .await?;
+                    let mut res = Vec::new();
+                    while let Some(v) = vec.next().await {
+                        res.push(v?);
+                    }
+                    Ok(res)
                 }
-                Ok(res)
             })
             .await?
             .into_iter()
@@ -95,7 +97,7 @@ impl MansionDataMongoOperate {
         Self::get_mansion_id_list_by_filter(None, &collection.with_mapping())
             .await
     }
-    
+
     #[instrument(skip_all)]
     /// 根据时间获取以来的大厦id列表
     /// params： time 往前多少时间
