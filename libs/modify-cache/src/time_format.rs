@@ -43,8 +43,8 @@ mod test {
         assert_eq!(
             time,
             NaiveDateTime::new(
-                NaiveDate::from_ymd(2015, 10, 21),
-                NaiveTime::from_hms(7, 28, 0)
+                NaiveDate::from_ymd_opt(2015, 10, 21).unwrap(),
+                NaiveTime::from_hms_opt(7, 28, 0).unwrap()
             )
         );
 
@@ -53,8 +53,8 @@ mod test {
     #[test]
     fn test_to() {
         let time = NaiveDateTime::new(
-            NaiveDate::from_ymd(2015, 10, 21),
-            NaiveTime::from_hms(7, 28, 0),
+            NaiveDate::from_ymd_opt(2015, 10, 21).unwrap(),
+            NaiveTime::from_hms_opt(7, 28, 0).unwrap(),
         );
 
         let v = to_request_header(&time).unwrap();
