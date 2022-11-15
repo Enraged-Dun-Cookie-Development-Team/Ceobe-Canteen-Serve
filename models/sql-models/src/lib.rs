@@ -16,7 +16,7 @@ pub fn get_now_naive_date_time_value() -> Value {
 }
 
 pub fn get_zero_data_time() -> NaiveDateTime {
-    NaiveDateTime::from_timestamp(0, 0)
+    NaiveDateTime::from_timestamp_opt(0, 0).unwrap()
 }
 
 pub fn get_now_naive_date_time() -> NaiveDateTime {
