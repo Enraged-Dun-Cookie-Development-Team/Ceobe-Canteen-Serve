@@ -3,9 +3,11 @@ use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
     EntityTrait, QueryFilter, QueryOrder, StreamTrait,
 };
+use smallstr::SmallString;
+use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
-use tap::TapFallible;
-use tracing::{instrument, Span};
+use tap::{Tap, TapFallible};
+use tracing::{info, instrument};
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::{
@@ -47,7 +49,7 @@ impl CeobeOperationAnnouncementSqlOperate {
         .await
     }
 
-    #[instrument(skip(db), fields(announcement.len))]
+    #[instrument(skip(db))]
     pub async fn find_all_not_delete<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<model_announcement::Model>>
@@ -63,7 +65,23 @@ impl CeobeOperationAnnouncementSqlOperate {
         .try_collect()
         .await?)
         .tap_ok(|list: &Vec<_>| {
-            Span::current().record("announcement.len", list.len());
+            let contents = list
+                .iter()
+                .map(|model| &model.content)
+                .map(|content| {
+                    content
+                        .chars()
+                        .take(11)
+                        .collect::<SmallString<[u8; 14]>>()
+                        .tap_mut(|s| {
+                            if content.len() > 11 {
+                                s.push_str("...")
+                            }
+                        })
+                })
+                .collect::<SmallVec<[_; 8]>>();
+
+            info!(list.contents = ?contents);
         })
     }
 }

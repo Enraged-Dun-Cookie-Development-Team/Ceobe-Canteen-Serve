@@ -9,7 +9,7 @@ use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
 use tap::{Pipe, Tap};
-use tracing::instrument;
+use tracing::{instrument, info};
 
 use super::{CeobeOperationVideoSqlOperate, OperateResult};
 use crate::{
@@ -32,6 +32,7 @@ impl CeobeOperationVideoSqlOperate {
             )
             .exec(db)
             .await?;
+        info!(softDelete.effect = resp.rows_affected);
         Ok(resp.rows_affected)
     }
 
@@ -61,6 +62,8 @@ impl CeobeOperationVideoSqlOperate {
         .try_collect::<HashMap<_, _>>()
         .await?;
 
+        info!(existVideos.bv = ?exist_data.keys());
+
         // 更新或者插入视频信息
         videos
             .into_iter()
@@ -75,12 +78,10 @@ impl CeobeOperationVideoSqlOperate {
                             )
                         })
                     }
-                    None => {
-                        ActiveModel::from_video_data_with_order(
-                            video,
-                            order as i32,
-                        )
-                    }
+                    None => ActiveModel::from_video_data_with_order(
+                        video,
+                        order as i32,
+                    ),
                 }
             })
             .pipe(iter)

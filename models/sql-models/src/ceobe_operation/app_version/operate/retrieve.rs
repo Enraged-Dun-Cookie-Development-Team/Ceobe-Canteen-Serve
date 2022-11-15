@@ -3,7 +3,8 @@ use sea_orm::{
     QueryOrder,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
-use tracing::instrument;
+use tap::TapFallible;
+use tracing::{info, instrument};
 
 use super::{
     CeobeOperationAppVersionSqlOperate, OperateError, OperateResult,
@@ -19,6 +20,7 @@ impl CeobeOperationAppVersionSqlOperate {
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
+        info!(app.version = version.as_ref());
         model_app_version::Entity::find()
             .filter(model_app_version::Column::Version.eq(version.as_ref()))
             .one(db.get_connect()?)
@@ -41,5 +43,6 @@ impl CeobeOperationAppVersionSqlOperate {
             .one(db.get_connect()?)
             .await?
             .ok_or(OperateError::NotAppVersion)
+            .tap_ok(|version| info!(newestVersion.version = version.version))
     }
 }

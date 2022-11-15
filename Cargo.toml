@@ -23,7 +23,7 @@ axum = { version = "0.5", features = ["multipart"] }
 axum-starter = { version = "0.4.0", features = ["logger"] }
 chrono = "0.4"
 futures = "0.3"
-tracing = { version = "0.1", features = ["log"] }
+tracing = { version = "0.1" }
 mongodb = "2"
 once_cell = "1"
 reqwest = { version = "0.11", default-features = false, features = [

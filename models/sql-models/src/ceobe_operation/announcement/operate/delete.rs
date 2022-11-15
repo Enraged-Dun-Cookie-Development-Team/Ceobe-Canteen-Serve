@@ -1,6 +1,7 @@
 use sea_orm::{
     sea_query::Expr, ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter,
 };
+use tracing::info;
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::{
@@ -22,6 +23,8 @@ impl CeobeOperationAnnouncementSqlOperate {
             )
             .exec(db)
             .await?;
+
+        info!(softDelete.effect = resp.rows_affected);
         Ok(resp.rows_affected)
     }
 }
