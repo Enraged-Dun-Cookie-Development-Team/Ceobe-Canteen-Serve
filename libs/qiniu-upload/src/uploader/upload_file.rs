@@ -1,4 +1,5 @@
 use qiniu_upload_manager::AutoUploaderObjectParams;
+
 use tracing::{info, instrument};
 
 use super::ResponsePayload;
@@ -14,6 +15,13 @@ impl Uploader {
     pub async fn upload_file(
         &self, payload: impl PayloadLocal + FilePayload,
     ) -> Result<ResponsePayload, error::Error> {
+        info!(
+            filename = ?payload.file_path().as_ref(),
+            qiniu.uploader.bucket = payload.bucket(),
+            qiniu.uploader.obj = payload.obj_name(),
+            qiniu.uploader.file = payload.file_name()
+        );
+
         let auto_uploader = self
             .managers
             .get(payload.bucket())
