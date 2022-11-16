@@ -24,7 +24,6 @@ impl LogToStdout {
                     .with_ansi(true)
                     .with_level(true)
                     .with_timer(TimeFormat)
-                    .with_source_location(true)
                     .with_thread_ids(true)
                     .with_thread_names(true),
             )

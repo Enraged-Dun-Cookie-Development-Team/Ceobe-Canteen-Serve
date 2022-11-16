@@ -29,7 +29,7 @@ once_cell = "1"
 reqwest = { version = "0.11", default-features = false, features = [
     "rustls-tls"
 ] }
-resp-result = { version = "0.5.0", features = ["axum-full"] }
+resp-result = { version = "0.5", features = ["axum-full"] }
 sea-orm = { version = "0.9", default-features = false, features = [
     "sqlx-mysql",
     "runtime-tokio-rustls",
@@ -47,7 +47,7 @@ tokio = { version = "1", features = [
     "time",
     "signal"
 ] }
-typed-builder = "0.10"
+typed-builder = "0.11"
 url = { version = "2", features = ["serde"] }
 urlencoding = "2.1.0"
 
