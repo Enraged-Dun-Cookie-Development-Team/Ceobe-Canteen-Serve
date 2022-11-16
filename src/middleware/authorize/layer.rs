@@ -1,13 +1,14 @@
-use std::marker::PhantomData;
-
 use axum::{body::Body, response::Response};
 use http::Request;
 use tower::{Layer, Service};
+use tower_http::auth::{
+    AsyncRequireAuthorization, AsyncRequireAuthorizationLayer,
+};
 
-use super::AuthorizeService;
+use super::service::{self, AdminAuthorize};
 use crate::utils::user_authorize::auth_level::AuthLevelVerify;
 
-pub struct AuthorizeLayer<L: AuthLevelVerify>(PhantomData<L>);
+pub struct AuthorizeLayer<L: AuthLevelVerify>(InnerLayer<L>);
 
 impl<S, L> Layer<S> for AuthorizeLayer<L>
 where
@@ -15,16 +16,14 @@ where
     S::Error: Send + 'static,
     L: AuthLevelVerify,
 {
-    type Service = AuthorizeService<S, L>;
+    type Service = AsyncRequireAuthorization<S, AdminAuthorize<L>>;
 
-    fn layer(&self, inner: S) -> Self::Service {
-        AuthorizeService {
-            inner,
-            _pha: PhantomData,
-        }
-    }
+    fn layer(&self, inner: S) -> Self::Service { self.0.layer(inner) }
 }
 
 impl<L: AuthLevelVerify> AuthorizeLayer<L> {
-    pub fn new() -> Self { Self(PhantomData) }
+    pub fn new() -> Self { Self(InnerLayer::new(AdminAuthorize::default())) }
 }
+
+type InnerLayer<L> =
+    AsyncRequireAuthorizationLayer<service::AdminAuthorize<L>>;

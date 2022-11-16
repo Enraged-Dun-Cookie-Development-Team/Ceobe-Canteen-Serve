@@ -69,7 +69,7 @@ mod test {
         };
 
         let token = user.clone().generate().unwrap();
-        let valid_user = decrypt_token(token).unwrap();
+        let valid_user = decrypt_token(&token).unwrap();
 
         assert_eq!(user, valid_user);
     }

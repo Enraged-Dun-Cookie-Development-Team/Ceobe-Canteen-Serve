@@ -87,7 +87,8 @@ tower-http = { version = "0.3", features = [
     "trace",
     "catch-panic",
     "set-header",
-    "compression-full"
+    "compression-full",
+    "auth"
 ] }
 typed-builder = { workspace = true }
 # web
@@ -95,8 +96,8 @@ url = { workspace = true }
 urlencoding = { workspace = true }
 axum-macros = "0.2.3"
 tracing = { workspace = true }
-
 dotenv = "0.15"
+tracing-unwrap = { version = "0.10.0", features = ["log-location"] }
 
 [dependencies.tokio]
 workspace = true

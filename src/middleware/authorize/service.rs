@@ -1,291 +1,106 @@
-use std::{
-    marker::{PhantomData, PhantomPinned},
-    mem::take,
-    pin::Pin,
-    task::{Context, Poll},
-};
+use std::marker::PhantomData;
 
 use axum::{
-    body::Body,
+    body::{Body, BoxBody},
     extract::{FromRequest, RequestParts},
     response::{IntoResponse, Response},
 };
-use futures::{future::BoxFuture, Future};
+use futures::future::BoxFuture;
 use http::Request;
 use orm_migrate::{
     sql_connection::SqlConnect,
-    sql_models::admin_user::{
-        models::user,
-        operate::{OperateError, UserSqlOperate},
-    },
+    sql_models::admin_user::operate::{OperateError, UserSqlOperate},
 };
-use pin_project::pin_project;
-use resp_result::{Nil, RespResult};
-use tap::Pipe;
-use tower::Service;
-use tracing::log;
+use resp_result::RespResult;
+use tap::Tap;
+use tower_http::auth::AsyncAuthorizeRequest;
+use tracing::{info, warn, Instrument};
+use tracing_unwrap::{OptionExt, ResultExt};
 
 use super::{error::AuthorizeError, AuthorizeInfo};
 use crate::utils::user_authorize::{
     auth_level::{AuthLevelVerify, UnacceptableAuthorizationLevelError},
     config::get_authorize_information,
-    decrypt_token,
+    decrypt_token, User,
 };
+pub struct AdminAuthorize<L>(PhantomData<L>);
 
-pub struct AuthorizeService<S, L> {
-    pub(super) inner: S,
-    pub(super) _pha: PhantomData<L>,
+impl<L> Clone for AdminAuthorize<L> {
+    fn clone(&self) -> Self { Self::default() }
 }
 
-impl<S: Clone, L> Clone for AuthorizeService<S, L> {
-    fn clone(&self) -> Self {
-        Self {
-            inner: self.inner.clone(),
-            _pha: PhantomData,
-        }
-    }
+impl<L> Default for AdminAuthorize<L> {
+    fn default() -> Self { Self(PhantomData) }
 }
 
-impl<S, L> Service<Request<Body>> for AuthorizeService<S, L>
-where
-    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
-    S::Error: Send + 'static,
-    L: AuthLevelVerify,
-{
-    type Error = S::Error;
-    type Future = AuthorizeFut<S, L>;
-    type Response = S::Response;
+impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
+    type Future = BoxFuture<'static, Result<Request<Body>, Response>>;
+    type RequestBody = Body;
+    type ResponseBody = BoxBody;
 
-    fn poll_ready(
-        &mut self, cx: &mut Context<'_>,
-    ) -> Poll<Result<(), Self::Error>> {
-        self.inner.poll_ready(cx)
-    }
+    fn authorize(&mut self, request: Request<Body>) -> Self::Future {
+        Box::pin(async move {
+            let result = 'auth: {
+                let Some(token) = get_authorize_information(&request) else{
+                    break 'auth Err(AuthorizeError::TokenNotFound)
+                };
 
-    fn call(&mut self, req: Request<Body>) -> Self::Future {
-        // 1 get req head
-        log::info!("鉴权-> 从请求头中加载用户登录信息");
-        let token = match get_authorize_information(&req) {
-            Some(header) => header,
-            None => {
-                log::error!("获取用户登录信息失败");
-                return AuthorizeFutState::new_error(
-                    AuthorizeError::TokenNotFound,
+                let User { id, num_pwd_change } = match decrypt_token(&token).map_err(AuthorizeError::from){
+                    Ok(user) => user,
+                    Err(err) => break 'auth Err(err)
+                };
+
+                let mut part = RequestParts::new(request);
+                let db = SqlConnect::from_request(&mut part).await.unwrap();
+
+                let req = part
+                    .try_into_request()
+                    .expect_or_log("Sql Data using Request Body");
+
+                let user = match UserSqlOperate::find_user_with_version_verify(
+                    &db,
+                    id,
+                    num_pwd_change,
+                    |user| user,
+                    || AuthorizeError::TOkenInvalid,
                 )
-                .into();
-            }
-        };
+                .await
+                .map_err(|err| {
+                    let OperateError::UserNotExist = err else {
+                        return AuthorizeError::from(err);
+                    };
+                    AuthorizeError::TokenInfoNotFound
+                })
+                .and_then(|v| v){
+                    Ok(user) => user,
+                    Err(err)=>break 'auth Err(err)
+                };
 
-        log::info!("鉴权-> 解析用户登录信息");
-        // parse token
-        let user = match decrypt_token(token).map_err(AuthorizeError::from) {
-            Ok(v) => v,
-            Err(err) => {
-                log::error!("解析用户信息失败");
-                return AuthorizeFutState::new_error(err).into();
-            }
-        };
+                let verify@true = L::verify(&user.auth) else {
+                    warn!(
+                        admin.name = user.username,
+                        admin.auth_level = ?user.auth,
+                        admin.has_permission = false,
+                        auth_name = L::auth_name(),
+                        uri = %req.uri()
+                    );
+                    break 'auth Err(AuthorizeError::AuthorizeLevel(UnacceptableAuthorizationLevelError::new(L::auth_name())));
+                };
 
-        log::info!("鉴权-> 查询并确认用户信息");
-        // query database
-        let query_db_fut = Box::pin(async move {
-            let mut part = RequestParts::new(req);
-            let db = SqlConnect::from_request(&mut part).await.unwrap();
-            let req = part
-                .try_into_request()
-                .expect("Fetch Sql Database Using the body");
-            UserSqlOperate::find_user_with_version_verify(
-                &db,
-                user.id,
-                user.num_pwd_change,
-                |user| user,
-                || AuthorizeError::TOkenInvalid,
-            )
-            .await
-            .pipe(|org| (org, req))
-        });
+                info!(
+                    admin.name = user.username,
+                    admin.auth_level = ?user.auth,
+                    permission.accept = verify
+                );
 
-        AuthorizeFutState::new_db_query(query_db_fut, self.inner.clone())
-            .into()
-    }
-}
+                Ok(req.tap_mut(|req| {
+                    req.extensions_mut()
+                        .insert(AuthorizeInfo(user))
+                        .expect_none_or_log("Authorize Layer Exist")
+                }))
+            }.map_err(|err|RespResult::<(), _>::Err(err).into_response());
 
-fn error_resp(err: AuthorizeError) -> Response {
-    RespResult::<Nil, _>::err(err).into_response()
-}
-
-pub struct AuthorizeFut<S, L>
-where
-    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
-    S::Error: Send + 'static,
-    L: AuthLevelVerify,
-{
-    state: AuthorizeFutState<S>,
-    _pha_auth_level: PhantomData<L>,
-    __pha: PhantomPinned,
-}
-
-impl<S, L> From<AuthorizeFutState<S>> for AuthorizeFut<S, L>
-where
-    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
-    S::Error: Send + 'static,
-    L: AuthLevelVerify,
-{
-    fn from(state: AuthorizeFutState<S>) -> Self {
-        Self {
-            state,
-            _pha_auth_level: PhantomData,
-            __pha: PhantomPinned,
-        }
-    }
-}
-
-type QueryDbWithReqFuture = BoxFuture<
-    'static,
-    (
-        Result<Result<user::Model, AuthorizeError>, OperateError>,
-        // for next step
-        Request<Body>,
-    ),
->;
-
-#[pin_project(project = EnumProj)]
-pub enum AuthorizeFutState<S>
-where
-    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
-    S::Error: Send + 'static,
-{
-    // step 1 get request header(sync)
-    // parse token
-    // step 2 query database (async)
-    QueryDatabase(
-        // query db fut
-        QueryDbWithReqFuture,
-        S,
-    ),
-    // set user info in to request
-    // inner fut
-    Inner(#[pin] S::Future),
-
-    // something wrong
-    Error(S::Response),
-}
-
-impl<S> AuthorizeFutState<S>
-where
-    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
-    S::Error: Send + 'static,
-{
-    fn new_error(err: impl Into<AuthorizeError>) -> Self {
-        Self::Error(RespResult::<Nil, _>::err(err.into()).into_response())
-    }
-
-    fn new_inner(fut: S::Future) -> Self { Self::Inner(fut) }
-
-    fn new_db_query(box_future: QueryDbWithReqFuture, service: S) -> Self {
-        Self::QueryDatabase(box_future, service)
-    }
-}
-
-impl<S, L> Future for AuthorizeFut<S, L>
-where
-    S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
-    S::Error: Send + 'static,
-    L: AuthLevelVerify,
-{
-    type Output = Result<S::Response, S::Error>;
-
-    fn poll(
-        self: Pin<&mut Self>, cx: &mut Context<'_>,
-    ) -> Poll<Self::Output> {
-        // get mut of self , make sure self never move
-        let mut state = unsafe {
-            Pin::new_unchecked(&mut self.get_unchecked_mut().state)
-        };
-        // pinned the state then project in match
-        let next = match state.as_mut().project() {
-            // query database
-            EnumProj::QueryDatabase(fut, inner) => {
-                match fut.as_mut().poll(cx) {
-                    // query finish
-                    Poll::Ready((resp, mut req)) => {
-                        match resp
-                            .map_err(|err| {
-                                match err {
-                                    OperateError::UserNotExist => {
-                                        AuthorizeError::TokenInfoNotFound
-                                    }
-                                    err => AuthorizeError::UserDbOperate(err),
-                                }
-                            })
-                            .pipe(|resp| {
-                                match resp {
-                                    Ok(Ok(v)) => Ok(v),
-                                    Ok(Err(e)) | Err(e) => Err(e),
-                                }
-                            }) {
-                            // ok go ahead
-                            Ok(model) => {
-                                log::debug!(
-                                    "鉴权-> 用户信息查询完成, \
-                                     检查权限等级是否匹配"
-                                );
-                                // verify user authorize level
-                                if !L::verify(&model.auth) {
-                                    return Poll::Ready(Ok(error_resp(UnacceptableAuthorizationLevelError::new(L::auth_name()).into())));
-                                }
-
-                                log::debug!(
-                                    "鉴权-> 鉴权通过! \
-                                     将用户信息添加到Request"
-                                );
-
-                                // set to req
-                                req.extensions_mut()
-                                    .insert(AuthorizeInfo(model));
-                                // next fut
-                                // take req
-                                log::debug!("鉴权-> 执行内部service");
-                                let mut fut = inner.call(req);
-                                // poll next
-                                match unsafe { Pin::new_unchecked(&mut fut) }
-                                    .poll(cx)
-                                {
-                                    Poll::Ready(v) => {
-                                        return Poll::Ready(v);
-                                    }
-                                    Poll::Pending => {
-                                        log::debug!(
-                                            "鉴权-> 内部Service未完成, \
-                                             状态切换"
-                                        );
-                                    }
-                                }
-                                AuthorizeFutState::new_inner(fut)
-                            }
-                            // error return
-                            Err(error) => {
-                                log::error!(
-                                    "鉴权-> 用户信息查询时出现异常 {}",
-                                    error
-                                );
-                                let resp = error_resp(error);
-                                return Poll::Ready(Ok(resp));
-                            }
-                        }
-                    }
-                    // not finish yet waiting
-                    Poll::Pending => return Poll::Pending,
-                }
-            }
-            EnumProj::Inner(fut) => return fut.poll(cx),
-            EnumProj::Error(err) => {
-                log::error!("鉴权-> 出现异常");
-                let err = take(err);
-                return Poll::Ready(Ok(err));
-            }
-        };
-        state.set(next);
-        Poll::Pending
+            result
+        }.instrument(tracing::info_span!("authorization")))
     }
 }

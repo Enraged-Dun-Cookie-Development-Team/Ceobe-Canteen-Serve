@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 use axum::body::Body;
 use hmac::{digest::KeyInit, Hmac};
 use http::Request;
@@ -66,10 +68,9 @@ pub fn get_header_name() -> &'static str {
     config.header
 }
 
-pub fn get_authorize_information(req: &Request<Body>) -> Option<String> {
+pub fn get_authorize_information(req: &Request<Body>) -> Option<Cow<str>> {
     req.headers()
         .get(get_header_name())
         .and_then(|v| v.to_str().ok())
         .and_then(|s| urlencoding::decode(s).ok())
-        .map(|s| s.into_owned())
 }
