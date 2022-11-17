@@ -8,7 +8,7 @@ pub trait DbConnectConfig: serde::de::DeserializeOwned {
 
 #[derive(Debug, serde::Deserialize)]
 pub struct RedisDbConfig {
-    password: String,
+    password: Option<String>,
     #[serde(default = "host_default")]
     host: String,
     #[serde(default = "port_default")]
@@ -20,7 +20,7 @@ pub struct RedisDbConfig {
 impl DbConnectConfig for RedisDbConfig {
     fn scheme(&self) -> &str { "redis" }
 
-    fn password(&self) -> Option<&str> { Some(&self.password) }
+    fn password(&self) -> Option<&str> { self.password.as_deref() }
 
     fn host(&self) -> &str { &self.host }
 
