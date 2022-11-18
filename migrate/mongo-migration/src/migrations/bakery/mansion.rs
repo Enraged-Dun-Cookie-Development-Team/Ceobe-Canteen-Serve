@@ -12,9 +12,7 @@ pub struct Migration;
 impl MigrationTrait for Migration {
     type Model = ModelMansion;
 
-    fn name(&self) -> &'static str {
-        "bakery_mansion"
-    }
+    fn name(&self) -> &'static str { "bakery_mansion" }
 
     #[instrument(name = "migrate of mansion", skip_all)]
     async fn migrate(

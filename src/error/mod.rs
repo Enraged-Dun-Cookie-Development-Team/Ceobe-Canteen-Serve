@@ -7,7 +7,7 @@ use axum::{
 use http::Request;
 use resp_result::RespResult;
 use status_err::ErrPrefix;
-use tracing::{instrument, warn, error};
+use tracing::{error, instrument, warn};
 
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
@@ -146,9 +146,11 @@ pub fn serve_panic(
 ) -> http::Response<BoxBody> {
     let detail = if let Some(msg) = error.downcast_ref::<String>() {
         msg.as_str()
-    } else if let Some(msg) = error.downcast_ref::<&str>() {
+    }
+    else if let Some(msg) = error.downcast_ref::<&str>() {
         *msg
-    } else {
+    }
+    else {
         "Unknown panic message"
     };
 
