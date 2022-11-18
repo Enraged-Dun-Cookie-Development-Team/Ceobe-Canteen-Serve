@@ -24,8 +24,6 @@ impl LogToStdout {
                     .with_ansi(true)
                     .with_level(true)
                     .with_timer(TimeFormat)
-                    .with_thread_ids(true)
-                    .with_thread_names(true),
             )
             .pipe(|layer| layer.with_writer(BufferStdout::default()))
     }
