@@ -110,6 +110,7 @@ impl UserAuthBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db, body))]
     pub async fn login(
         db: SqlConnect,
@@ -128,9 +129,11 @@ impl UserAuthBackend {
                         PasswordEncoder::verify(src, &dst)
                     })
                 },
-                |user| User {
-                    id: user.id,
-                    num_pwd_change: user.num_pwd_change,
+                |user| {
+                    User {
+                        id: user.id,
+                        num_pwd_change: user.num_pwd_change,
+                    }
                 },
             )
             .await??;
@@ -144,6 +147,7 @@ impl UserAuthBackend {
         })
         .await
     }
+
     #[instrument(ret, skip_all)]
     pub async fn get_info(
         AuthorizeInfo(user): AuthorizeInfo,
@@ -157,6 +161,7 @@ impl UserAuthBackend {
 
         Ok(user_info).into()
     }
+
     #[instrument(ret, skip(db, user))]
     pub async fn change_username(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
@@ -174,6 +179,7 @@ impl UserAuthBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
@@ -198,9 +204,11 @@ impl UserAuthBackend {
                     PasswordEncoder::encode(Cow::Borrowed(pwd))
                         .map(|pwd| pwd.to_string())
                 },
-                |user| User {
-                    id: user.id,
-                    num_pwd_change: user.num_pwd_change,
+                |user| {
+                    User {
+                        id: user.id,
+                        num_pwd_change: user.num_pwd_change,
+                    }
                 },
             )
             .await??;
@@ -214,6 +222,7 @@ impl UserAuthBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     // 获取用户列表
     pub async fn user_list(
@@ -236,6 +245,7 @@ impl UserAuthBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     // 修改用户权限
     pub async fn change_auth(
@@ -252,6 +262,7 @@ impl UserAuthBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     // 删除用户
     pub async fn delete_one_user(

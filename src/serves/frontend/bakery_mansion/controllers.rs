@@ -34,6 +34,7 @@ impl BakeryMansionFrontend {
         })
         .await
     }
+
     #[instrument(skip(db, modify))]
     pub async fn get_all_id(
         db: MongoConnect, mut modify: modify_cache::CheckModify,

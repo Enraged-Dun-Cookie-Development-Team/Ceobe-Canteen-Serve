@@ -53,6 +53,7 @@ impl CeobeOperationVideo {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     pub async fn list_all(db: SqlConnect) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
@@ -64,6 +65,7 @@ impl CeobeOperationVideo {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     pub async fn update_list(
         db: SqlConnect, CheckExtract(videos, _): UpdateVideoCheck,

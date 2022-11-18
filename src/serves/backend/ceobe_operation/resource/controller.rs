@@ -28,6 +28,7 @@ impl CeobeOpResource {
             .map_err(Into::into)
             .into()
     }
+
     #[instrument(ret, skip(db))]
     pub async fn get_resource(db: SqlConnect) -> ResourceRResult<Resource> {
         let resp =

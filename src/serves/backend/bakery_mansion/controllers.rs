@@ -47,6 +47,7 @@ impl BakeryMansionBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     pub async fn get_mansion(
         db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
@@ -58,6 +59,7 @@ impl BakeryMansionBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     pub async fn get_recent_id(
         db: MongoConnect,
@@ -71,6 +73,7 @@ impl BakeryMansionBackend {
         })
         .await
     }
+
     #[instrument(ret, skip(db))]
     pub async fn remove_mansion(
         db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,

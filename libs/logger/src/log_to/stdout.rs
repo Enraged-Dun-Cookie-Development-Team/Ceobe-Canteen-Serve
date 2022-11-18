@@ -23,7 +23,7 @@ impl LogToStdout {
                     // .pretty()
                     .with_ansi(true)
                     .with_level(true)
-                    .with_timer(TimeFormat)
+                    .with_timer(TimeFormat),
             )
             .pipe(|layer| layer.with_writer(BufferStdout::default()))
     }

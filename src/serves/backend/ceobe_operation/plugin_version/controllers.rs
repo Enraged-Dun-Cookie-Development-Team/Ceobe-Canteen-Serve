@@ -16,7 +16,7 @@ type PluginVersionPreChecker =
     JsonCheckExtract<PluginVersionChecker, CeobeOperationPluginVersionError>;
 
 impl CeobeOpVersion {
-    #[instrument(ret,skip(db))]
+    #[instrument(ret, skip(db))]
     pub async fn update_plugin(
         db: MongoConnect, CheckExtract(version, _): PluginVersionPreChecker,
     ) -> PluginRespResult<()> {
