@@ -16,6 +16,7 @@ use orm_migrate::{
 };
 use reqwest::Url;
 use resp_result::{resp_try, rtry, RespResult};
+use tracing::instrument;
 
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},
@@ -37,6 +38,7 @@ type UpdateVideoCheck = JsonCheckExtract<
 >;
 
 impl CeobeOperationVideo {
+    #[instrument(ret)]
     pub async fn get_video_detail(
         CheckExtract(BvQuery { bv }, _): BvQueryCheck,
     ) -> VideoRespResult<String> {
@@ -51,7 +53,7 @@ impl CeobeOperationVideo {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     pub async fn list_all(db: SqlConnect) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
             Ok(CeobeOperationVideoSqlOperate::find_all_not_delete(&db)
@@ -62,7 +64,7 @@ impl CeobeOperationVideo {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     pub async fn update_list(
         db: SqlConnect, CheckExtract(videos, _): UpdateVideoCheck,
     ) -> VideoRespResult<()> {

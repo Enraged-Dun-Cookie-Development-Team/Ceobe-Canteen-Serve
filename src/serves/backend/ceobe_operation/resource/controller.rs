@@ -7,6 +7,7 @@ use orm_migrate::{
     },
 };
 use resp_result::{rtry, RespResult};
+use tracing::instrument;
 
 use super::{
     error::{ResourceError, ResourceRResult},
@@ -18,6 +19,7 @@ type ResourceUploadCheck =
     JsonCheckExtract<CeobeOperationResourceChecker, ResourceError>;
 
 impl CeobeOpResource {
+    #[instrument(ret, skip(db))]
     pub async fn upload_resource(
         db: SqlConnect, CheckExtract(resource, _): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
@@ -26,7 +28,7 @@ impl CeobeOpResource {
             .map_err(Into::into)
             .into()
     }
-
+    #[instrument(ret, skip(db))]
     pub async fn get_resource(db: SqlConnect) -> ResourceRResult<Resource> {
         let resp =
             CeobeOperationResourceSqlOperate::get_resource(&db, |raa, cd| {

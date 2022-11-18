@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use orm_migrate::sql_connection::SqlConnect;
 use resp_result::{resp_try, FlagWrap};
+use tracing::instrument;
 
 use super::{
     error::FlagVideoRespResult,
@@ -13,6 +14,7 @@ use crate::{
 };
 
 impl CeobeOperationVideoFrontend {
+    #[instrument(skip(db, modify), name = "list all video")]
     pub async fn list_all(
         db: SqlConnect, mut modify: modify_cache::CheckModify,
     ) -> FlagVideoRespResult<Vec<VideoItem>> {

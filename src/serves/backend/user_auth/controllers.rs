@@ -14,7 +14,7 @@ use orm_migrate::{
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use resp_result::{resp_try, rtry};
-use tracing::log;
+use tracing::{instrument, log};
 
 use super::{
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
@@ -44,6 +44,7 @@ crate::quick_struct! {
 }
 
 impl UserAuthBackend {
+    #[instrument(ret, skip(db, query))]
     pub async fn create_user(
         db: SqlConnect,
         query: QueryCheckExtract<NoCheck<NewUserAuthLevel>, AdminUserError>,
@@ -109,7 +110,7 @@ impl UserAuthBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db, body))]
     pub async fn login(
         db: SqlConnect,
         CheckExtract(body, _): JsonCheckExtract<
@@ -127,11 +128,9 @@ impl UserAuthBackend {
                         PasswordEncoder::verify(src, &dst)
                     })
                 },
-                |user| {
-                    User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
-                    }
+                |user| User {
+                    id: user.id,
+                    num_pwd_change: user.num_pwd_change,
                 },
             )
             .await??;
@@ -145,7 +144,7 @@ impl UserAuthBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip_all)]
     pub async fn get_info(
         AuthorizeInfo(user): AuthorizeInfo,
     ) -> AdminUserRResult<UserInfo> {
@@ -158,7 +157,7 @@ impl UserAuthBackend {
 
         Ok(user_info).into()
     }
-
+    #[instrument(ret, skip(db, user))]
     pub async fn change_username(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
         CheckExtract(username, _): UsernamePretreatment,
@@ -175,7 +174,7 @@ impl UserAuthBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db, user))]
     pub async fn change_password(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
         CheckExtract(body, _): JsonCheckExtract<
@@ -199,11 +198,9 @@ impl UserAuthBackend {
                     PasswordEncoder::encode(Cow::Borrowed(pwd))
                         .map(|pwd| pwd.to_string())
                 },
-                |user| {
-                    User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
-                    }
+                |user| User {
+                    id: user.id,
+                    num_pwd_change: user.num_pwd_change,
                 },
             )
             .await??;
@@ -217,7 +214,7 @@ impl UserAuthBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     // 获取用户列表
     pub async fn user_list(
         db: SqlConnect, CheckExtract(page_size, _): PageSizePretreatment,
@@ -239,7 +236,7 @@ impl UserAuthBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     // 修改用户权限
     pub async fn change_auth(
         db: SqlConnect,
@@ -255,7 +252,7 @@ impl UserAuthBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     // 删除用户
     pub async fn delete_one_user(
         db: SqlConnect,

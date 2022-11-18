@@ -4,6 +4,7 @@ use checker::CheckExtract;
 use mongo_migration::mongo_connection::MongoConnect;
 use orm_migrate::sql_connection::SqlConnect;
 use resp_result::{resp_try, FlagWrap};
+use tracing::instrument;
 
 use super::{
     error::FlagVersionRespResult,
@@ -23,6 +24,7 @@ use crate::{
 
 impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
+    #[instrument(skip(db, modify))]
     pub async fn app_version(
         db: SqlConnect,
         CheckExtract(AppVersion { version }, _): OptionAppVersionCheckerPretreat,
@@ -48,6 +50,7 @@ impl CeobeOperationVersionFrontend {
     }
 
     // 获取插件端对应版本信息
+    #[instrument(skip(db, modify))]
     pub async fn plugin_version(
         db: MongoConnect,
         CheckExtract(version, _): OptionPluginVersionCheckerPretreat,

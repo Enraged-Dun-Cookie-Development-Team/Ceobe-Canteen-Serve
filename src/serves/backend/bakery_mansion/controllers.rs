@@ -5,7 +5,7 @@ use mongo_migration::{
     mongo_models::bakery::mansion::operate::MansionDataMongoOperate,
 };
 use resp_result::resp_try;
-use tracing::log;
+use tracing::{instrument, log};
 
 use super::{
     models::{
@@ -20,6 +20,7 @@ use crate::{
 };
 
 impl BakeryMansionBackend {
+    #[instrument(ret)]
     pub async fn save_mansion(
         db: MongoConnect,
         CheckExtract(mid, ..): OptionMidCheckerPretreatment,
@@ -46,7 +47,7 @@ impl BakeryMansionBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     pub async fn get_mansion(
         db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
@@ -57,7 +58,7 @@ impl BakeryMansionBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     pub async fn get_recent_id(
         db: MongoConnect,
     ) -> MansionRResult<Vec<String>> {
@@ -70,7 +71,7 @@ impl BakeryMansionBackend {
         })
         .await
     }
-
+    #[instrument(ret, skip(db))]
     pub async fn remove_mansion(
         db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {

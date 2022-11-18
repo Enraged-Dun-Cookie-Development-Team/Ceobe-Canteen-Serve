@@ -5,6 +5,7 @@ use mongo_migration::{
     mongo_models::bakery::mansion::operate::MansionDataMongoOperate,
 };
 use resp_result::{resp_try, FlagWrap};
+use tracing::instrument;
 
 use super::{
     models::MidCheckerPretreatment, view::MansionIds, FlagMansionRResult,
@@ -15,6 +16,7 @@ use crate::{
 };
 
 impl BakeryMansionFrontend {
+    #[instrument(skip(db, modify))]
     pub async fn get_mansion_with_time(
         db: MongoConnect, CheckExtract(mid, _): MidCheckerPretreatment,
         mut modify: modify_cache::CheckModify,
@@ -32,7 +34,7 @@ impl BakeryMansionFrontend {
         })
         .await
     }
-
+    #[instrument(skip(db, modify))]
     pub async fn get_all_id(
         db: MongoConnect, mut modify: modify_cache::CheckModify,
     ) -> FlagMansionRResult<Vec<String>> {

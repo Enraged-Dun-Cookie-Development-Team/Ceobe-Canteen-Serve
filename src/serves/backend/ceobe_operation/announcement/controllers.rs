@@ -13,6 +13,7 @@ use orm_migrate::{
     },
 };
 use resp_result::resp_try;
+use tracing::instrument;
 
 use super::{
     error::{AnnouncementRespResult, CeobeOperationAnnouncementError},
@@ -31,6 +32,7 @@ type UpdateAnnouncementCheck = JsonCheckExtract<
 
 impl CeobeOperationAnnouncement {
     // 获取公告列表
+    #[instrument(ret,skip(db))]
     pub async fn get_announcement_list(
         db: SqlConnect,
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
@@ -48,6 +50,7 @@ impl CeobeOperationAnnouncement {
         .await
     }
 
+    #[instrument(ret,skip(db))]
     // 更新公告列表
     pub async fn update_announcement_list(
         db: SqlConnect,

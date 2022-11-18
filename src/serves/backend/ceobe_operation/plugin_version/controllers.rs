@@ -7,6 +7,7 @@ use mongo_migration::{
     },
 };
 use resp_result::resp_try;
+use tracing::instrument;
 
 use super::error::{CeobeOperationPluginVersionError, PluginRespResult};
 use crate::router::CeobeOpVersion;
@@ -15,6 +16,7 @@ type PluginVersionPreChecker =
     JsonCheckExtract<PluginVersionChecker, CeobeOperationPluginVersionError>;
 
 impl CeobeOpVersion {
+    #[instrument(ret,skip(db))]
     pub async fn update_plugin(
         db: MongoConnect, CheckExtract(version, _): PluginVersionPreChecker,
     ) -> PluginRespResult<()> {

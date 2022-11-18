@@ -4,7 +4,7 @@ use serde::Serialize;
 
 use crate::request::PageSize;
 
-#[derive(Serialize)]
+#[derive(Serialize,Debug)]
 pub struct PageInfo {
     #[serde(flatten)]
     page_size: PageSize,
@@ -13,7 +13,7 @@ pub struct PageInfo {
 }
 
 /// 列表与分页信息
-#[derive(Serialize)]
+#[derive(Serialize,Debug)]
 pub struct ListWithPageInfo<T>
 where
     T: Serialize,
