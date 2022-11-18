@@ -1,4 +1,7 @@
-use std::time::Duration;
+use std::{
+    io::{stdout, Write},
+    time::Duration,
+};
 
 use axum_starter::ServerPrepare;
 use bootstrap::{
@@ -19,6 +22,7 @@ use figment::providers::{Env, Format, Json, Toml, Yaml};
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
+use tracing_unwrap::ResultExt;
 
 use crate::error::serve_panic;
 
@@ -39,7 +43,7 @@ fn main() {
     dotenv::dotenv().ok();
 
     rt.block_on(main_task());
-
+    stdout().flush().expect_or_log("failure to flush stdout");
     std::thread::sleep(Duration::from_millis(500))
 }
 
