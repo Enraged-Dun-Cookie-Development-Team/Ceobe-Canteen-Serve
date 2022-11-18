@@ -14,7 +14,7 @@ use orm_migrate::{
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use resp_result::{resp_try, rtry};
-use tracing::{instrument, log};
+use tracing::{debug, instrument};
 
 use super::{
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
@@ -77,10 +77,8 @@ impl UserAuthBackend {
                 md5.update(&rand_password);
                 let rand_password = md5.finalize();
                 let rand_password = hex::encode(rand_password);
-                log::debug!(
-                    "新建用户密码通过MD5加密后是： {:?}",
-                    rand_password
-                );
+
+                debug!(newUser.password.md5 = rand_password);
                 rand_password
             };
 
@@ -129,11 +127,9 @@ impl UserAuthBackend {
                         PasswordEncoder::verify(src, &dst)
                     })
                 },
-                |user| {
-                    User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
-                    }
+                |user| User {
+                    id: user.id,
+                    num_pwd_change: user.num_pwd_change,
                 },
             )
             .await??;
@@ -204,11 +200,9 @@ impl UserAuthBackend {
                     PasswordEncoder::encode(Cow::Borrowed(pwd))
                         .map(|pwd| pwd.to_string())
                 },
-                |user| {
-                    User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
-                    }
+                |user| User {
+                    id: user.id,
+                    num_pwd_change: user.num_pwd_change,
                 },
             )
             .await??;

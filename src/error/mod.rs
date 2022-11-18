@@ -7,7 +7,7 @@ use axum::{
 use http::Request;
 use resp_result::RespResult;
 use status_err::ErrPrefix;
-use tracing::log;
+use tracing::{instrument, warn, error};
 
 #[macro_export]
 /// 1. 辅助构造枚举形式的Error,  
@@ -128,26 +128,30 @@ status_err::status_error! {
 
 status_err::resp_error_impl!(NotAnError);
 
+#[instrument(name = "router-not-found")]
 pub async fn not_exist(
     req: Request<Body>,
 ) -> RespResult<(), RouteNotExistError> {
-    log::error!("路由未找到 `{}` {}", req.uri(), &req.method());
+    warn!(
+        route.exist = false,
+        request.uri = ?req.uri(),
+        request.method = ?&req.method()
+    );
     RespResult::err(RouteNotExistError)
 }
 
+#[instrument(skip_all)]
 pub fn serve_panic(
     error: Box<dyn Any + Send + 'static>,
 ) -> http::Response<BoxBody> {
     let detail = if let Some(msg) = error.downcast_ref::<String>() {
         msg.as_str()
-    }
-    else if let Some(msg) = error.downcast_ref::<&str>() {
+    } else if let Some(msg) = error.downcast_ref::<&str>() {
         *msg
-    }
-    else {
+    } else {
         "Unknown panic message"
     };
 
-    log::error!("服务器发生未预期panic : {}", detail);
+    error!(unexpectedPanic.detail = detail);
     RespResult::<(), _>::err(ServicePanic).into_response()
 }

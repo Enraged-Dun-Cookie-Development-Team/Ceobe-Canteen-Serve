@@ -50,6 +50,7 @@ tokio = { version = "1", features = [
 typed-builder = "0.11"
 url = { version = "2", features = ["serde"] }
 urlencoding = "2.1.0"
+tracing-unwrap = { version = "0.10.0", features = ["log-location"] }
 
 [dependencies]
 # Xss
@@ -97,7 +98,7 @@ urlencoding = { workspace = true }
 axum-macros = "0.2.3"
 tracing = { workspace = true }
 dotenv = "0.15"
-tracing-unwrap = { version = "0.10.0", features = ["log-location"] }
+tracing-unwrap = { workspace = true }
 
 [dependencies.tokio]
 workspace = true

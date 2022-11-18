@@ -2,7 +2,7 @@ use std::any::TypeId;
 
 use async_trait::async_trait;
 use mongodb::{Collection, Database};
-use tracing::log;
+use tracing::{info, instrument};
 
 use super::manager::Manager;
 
@@ -12,16 +12,16 @@ pub trait MigratorTrait {
         &self, manage: &mut Manager<'_>,
     ) -> Result<(), mongodb::error::Error>;
 
+    #[instrument(name = "mongodb-migrating", skip_all)]
     async fn register<D: DbManager + Send + Sync + 'static>(
         &self, mut db_manage: D,
     ) -> Result<D, mongodb::error::Error> {
         let mut manager = Manager::new(db_manage.get_db()).await?;
 
-        log::info!("开始执行 Migrate MongoDb");
         self.migrating(&mut manager).await?;
 
         let collects = manager.done();
-        log::info!("执行 Migrate MongoDb 完成");
+        info!("执行 Migrate MongoDb 完成");
 
         db_manage.extent_collections(collects);
         Ok(db_manage)

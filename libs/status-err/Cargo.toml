@@ -32,8 +32,7 @@ path = "../range-limit"
 
 [dependencies.resp-result]
 workspace = true
-default-features = false
-features = ["extra-error", "log"]
+features = ["extra-error"]
 
 [dependencies.checker]
 path = "../checker"

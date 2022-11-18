@@ -12,7 +12,7 @@ crate::quick_trait! {
         crate::trait_field!{*token_header:String=String::from("Token")}
     }
 }
-use tracing::log;
+use tracing::warn;
 
 static LOCAL_CONFIG: OnceCell<LocalAuthConfig> = OnceCell::new();
 
@@ -53,7 +53,7 @@ pub(super) fn set_auth_config<C: AuthConfig>(cfg: &C) {
 
 fn get_local_config() -> &'static LocalAuthConfig {
     LOCAL_CONFIG.get_or_init(|| {
-        log::warn!("Auth模块配置文件未配置，将使用默认配置信息");
+        warn!(auth.config.set = false, auth.config = "Default");
         LocalAuthConfig::default()
     })
 }

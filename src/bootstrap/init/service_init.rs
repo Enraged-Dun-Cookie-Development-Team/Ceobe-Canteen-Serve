@@ -6,7 +6,7 @@ use axum_starter::{
     PreparedEffect,
 };
 use futures::FutureExt;
-use tracing::log;
+use tracing::info;
 
 use crate::{error::not_exist, router};
 
@@ -24,6 +24,6 @@ fn router_fallback() -> impl PreparedEffect {
 
 pub async fn graceful_shutdown() -> impl PreparedEffect {
     SetGraceful::new(tokio::signal::ctrl_c().map(|_| {
-        log::info!("收到退出信号");
+        info!(signal.exit = true);
     }))
 }
