@@ -11,6 +11,7 @@ use http::{
     StatusCode,
 };
 use resp_result::{ExtraFlag, ExtraFlags};
+use tracing::warn;
 
 use crate::{
     cache_ctrl::CacheHeaders,
@@ -37,7 +38,7 @@ impl FromRequest<Body> for CheckModify {
         // if not get or head , default none;
         Ok(
             if req.method() != Method::GET && req.method() != Method::HEAD {
-                log::warn!("不是`GET` 或者 `HEAD` 方法,不获取任何内容");
+                warn!(request.method = %req.method(), "Skipping");
                 Self {
                     ctrl_header: ControlHeaders::None,
                     cache_headers: Default::default(),

@@ -1,7 +1,8 @@
 use sea_orm::{
     ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect,
 };
-use tap::Pipe;
+use tap::{Pipe, Tap};
+use tracing::info;
 
 use super::{
     AppVersionCounts, CeobeOperationAppVersionSqlOperate, OperateResult,
@@ -21,6 +22,12 @@ impl CeobeOperationAppVersionSqlOperate {
             .await?
             .unwrap()
             .pipe(|AppVersionCounts { count }| count != 0)
+            .tap(|result| {
+                info!(
+                    version = version.as_ref(),
+                    result = if *result { "Exist" } else { "Not Exist" }
+                )
+            })
             .pipe(Ok)
     }
 }

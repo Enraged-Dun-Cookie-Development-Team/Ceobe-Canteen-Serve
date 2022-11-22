@@ -25,4 +25,4 @@ nom = "7"
 # status error
 status-err = { path = "../../libs/status-err" }
 #log
-log = { workspace = true }
+tracing = { workspace = true }

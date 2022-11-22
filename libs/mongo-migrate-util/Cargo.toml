@@ -5,10 +5,10 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-log = { workspace = true }
 tap = { workspace = true }
 dashmap = "5"
 mongodb = { workspace = true }
 typed-builder = { workspace = true }
 serde = { workspace = true }
 async-trait = { workspace = true }
+tracing = { workspace = true }

@@ -17,9 +17,11 @@ impl MongoConnectBuilder {
         let client = init_mongodb(format_url(cfg).as_str()).await?;
 
         let default_db = client.default_database();
-        log::info!(
-            "默认数据库为 {:?}",
-            Into::<Option<&Database>>::into(&default_db).map(|db| db.name())
+
+        tracing::info!(
+            mongodb.database.default =
+                Into::<Option<&Database>>::into(&default_db)
+                    .map(|db| db.name())
         );
 
         let db = default_db.map(|db| DatabaseBuilder::new(db, client));
@@ -42,7 +44,6 @@ impl MongoConnectBuilder {
 }
 
 async fn init_mongodb(url: &str) -> Result<MongoClient, MongoErr> {
-    log::info!("连接到Mongodb");
     let mut copts = ClientOptions::parse(url).await?;
     copts.app_name = Some("CeobeCanteen".into());
 
@@ -61,6 +62,6 @@ fn format_url(cfg: &impl DbConnectConfig) -> String {
         cfg.name()
     );
 
-    log::info!("Connect to Mongo {}", s);
+    tracing::info!(mongodb.URL = s);
     s
 }

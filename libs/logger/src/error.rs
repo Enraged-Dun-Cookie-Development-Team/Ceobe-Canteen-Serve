@@ -1,9 +1,11 @@
 use std::io;
 
+use tracing_subscriber::util::TryInitError;
+
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
     Io(#[from] io::Error),
     #[error(transparent)]
-    SetLog(#[from] log::SetLoggerError),
+    TracingInit(#[from] TryInitError),
 }

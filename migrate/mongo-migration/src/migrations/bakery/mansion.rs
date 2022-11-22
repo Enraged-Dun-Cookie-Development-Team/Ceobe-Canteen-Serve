@@ -4,6 +4,7 @@ const MANSION_CREATE_TIME_IDX_NAME: &str = "mansion_create_time_idx";
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::bakery::mansion::preludes::*;
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
+use tracing::{info, instrument};
 
 pub struct Migration;
 
@@ -13,10 +14,11 @@ impl MigrationTrait for Migration {
 
     fn name(&self) -> &'static str { "bakery_mansion" }
 
+    #[instrument(name = "migrate of mansion", skip_all)]
     async fn migrate(
         &self, mut mansion: CollectManage<Self>,
     ) -> Result<(), mongodb::error::Error> {
-        log::info!("注册 {} Index", MANSION_IDX_NAME);
+        info!(mansion.migrate.createIndex.name = MANSION_IDX_NAME);
         mansion
             .create_idx_if_not_exist(
                 IndexModel::builder()
@@ -35,7 +37,9 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
-        log::info!("注册 {} Index", MANSION_IDX_NAME);
+        info!(
+            mansion.migrate.createIndex.name = MANSION_CREATE_TIME_IDX_NAME
+        );
         mansion
             .create_idx_if_not_exist(
                 IndexModel::builder()

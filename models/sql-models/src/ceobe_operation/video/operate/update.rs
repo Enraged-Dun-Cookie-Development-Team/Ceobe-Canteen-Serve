@@ -9,6 +9,7 @@ use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
 use tap::{Pipe, Tap};
+use tracing::{info, instrument};
 
 use super::{CeobeOperationVideoSqlOperate, OperateResult};
 use crate::{
@@ -31,9 +32,11 @@ impl CeobeOperationVideoSqlOperate {
             )
             .exec(db)
             .await?;
+        info!(softDelete.effect = resp.rows_affected);
         Ok(resp.rows_affected)
     }
 
+    #[instrument(skip_all, ret, fields(videos.len = videos.len()))]
     pub async fn update_all<'db, D>(
         db: &'db D, videos: Vec<CeobeOpVideo>,
     ) -> OperateResult<()>
@@ -58,6 +61,8 @@ impl CeobeOperationVideoSqlOperate {
         .map_ok(|model| (model.bv.clone(), model))
         .try_collect::<HashMap<_, _>>()
         .await?;
+
+        info!(existVideos.bv = ?exist_data.keys());
 
         // 更新或者插入视频信息
         videos

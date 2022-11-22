@@ -1,5 +1,5 @@
-use chrono::NaiveDateTime;
 use sea_orm_migration::prelude::*;
+use sql_models::get_zero_data_time;
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -54,7 +54,7 @@ impl MigrationTrait for Migration {
                     .date_time()
                     .not_null()
                     .default(Value::ChronoDateTime(
-                        Box::new(NaiveDateTime::from_timestamp(0, 0)).into(),
+                        Box::new(get_zero_data_time()).into(),
                     )),
             );
         table.index(

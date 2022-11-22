@@ -1,8 +1,16 @@
+use std::{
+    io::{stdout, Write},
+    time::Duration,
+};
+
 use axum_starter::ServerPrepare;
-use bootstrap::init::{
-    component_init::{BackendAuthConfig, RResultConfig},
-    db_init::{MongoDbConnect, MysqlDbConnect},
-    service_init::{graceful_shutdown, RouteV1, RouterFallback},
+use bootstrap::{
+    init::{
+        component_init::{BackendAuthConfig, RResultConfig},
+        db_init::{MongoDbConnect, MysqlDbConnect},
+        service_init::{graceful_shutdown, RouteV1, RouterFallback},
+    },
+    midllewares::tracing_request::tracing_request,
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
@@ -10,11 +18,11 @@ use configs::{
     resp_result_config::RespResultConfig, GlobalConfig, CONFIG_FILE_JSON,
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use figment::providers::{Format, Json, Toml, Yaml};
+use figment::providers::{Env, Format, Json, Toml, Yaml};
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
-    trace::TraceLayer,
 };
+use tracing_unwrap::ResultExt;
 
 use crate::error::serve_panic;
 
@@ -29,12 +37,22 @@ mod utils;
 
 extern crate serde;
 
-#[tokio::main]
-async fn main() {
+fn main() {
+    let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
+    #[cfg(debug_assertions)]
+    dotenv::dotenv().ok();
+
+    rt.block_on(main_task());
+    stdout().flush().expect_or_log("failure to flush stdout");
+    std::thread::sleep(Duration::from_millis(500))
+}
+
+async fn main_task() {
     let config: GlobalConfig = figment::Figment::new()
         .merge(Toml::file(CONFIG_FILE_TOML))
         .merge(Json::file(CONFIG_FILE_JSON))
         .merge(Yaml::file(CONFIG_FILE_YAML))
+        .merge(Env::prefixed("CEOBE_"))
         .extract()
         .expect("配置文件解析失败");
 
@@ -54,8 +72,8 @@ async fn main() {
         .append(RouteV1)
         .append(RouterFallback)
         .with_global_middleware(CatchPanicLayer::custom(serve_panic))
-        .with_global_middleware(TraceLayer::new_for_http())
         .with_global_middleware(CompressionLayer::new())
+        .with_global_middleware(tracing_request())
         .append_fn(graceful_shutdown)
         .prepare_start()
         .await

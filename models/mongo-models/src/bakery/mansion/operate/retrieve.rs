@@ -8,6 +8,7 @@ use mongodb::{
     options::FindOptions,
 };
 use tap::Tap;
+use tracing::{info, instrument};
 
 use super::{MansionDataMongoOperate, OperateError, OperateResult};
 use crate::bakery::mansion::{
@@ -37,28 +38,21 @@ impl MansionDataMongoOperate {
             .await
     }
 
+    #[instrument(skip(db), ret)]
     /// 获取单一大厦信息
     /// params：mid 大厦id
     pub async fn get_mansion_by_id<'db>(
         db: &'db impl MongoDbCollectionTrait<'db, ModelMansion>,
         mid: &MansionId,
     ) -> OperateResult<ModelMansion> {
-        let collection = db.get_collection()?.tap(|c| {
-            log::info!("Get MongoDb Collection {:?}", c.namespace())
-        });
+        info!(findMansion.id = %mid);
+
+        let collection = db.get_collection()?;
         collection
-            .tap(|c| {
-                log::info!(
-                    "Start find Mansion Data {:?}, mid = {}",
-                    c.namespace(),
-                    mid
-                )
-            })
             .doing(|collection| {
                 collection.find_one(mid.into_id_filter(), None)
             })
-            .await
-            .tap(|re| log::info!("Task  Done is ok :{}", re.is_ok()))?
+            .await?
             .ok_or(OperateError::MansionNotFound)
     }
 
@@ -90,9 +84,11 @@ impl MansionDataMongoOperate {
             .await?
             .into_iter()
             .map(|id| id.id.to_string())
-            .collect())
+            .collect::<Vec<_>>()
+            .tap(|list| info!(mansionList.ids = ?list)))
     }
 
+    #[instrument(skip_all)]
     /// 无条件获取大厦id列表
     pub async fn get_all_mansion_id_list<'db>(
         db: &'db impl MongoDbCollectionTrait<'db, ModelMansion>,
@@ -102,12 +98,23 @@ impl MansionDataMongoOperate {
             .await
     }
 
+    #[instrument(skip_all)]
     /// 根据时间获取以来的大厦id列表
     /// params： time 往前多少时间
     pub async fn get_mansion_id_list_by_time<'db>(
         db: &'db impl MongoDbCollectionTrait<'db, ModelMansion>,
         time: Duration,
     ) -> OperateResult<Vec<String>> {
+        info!(
+            mansionList.recentTime = format!(
+                "{}days {} h {} m {} s",
+                time.num_days(),
+                time.num_hours(),
+                time.num_minutes(),
+                time.num_seconds()
+            )
+        );
+
         let collection = db.get_collection()?;
 
         let now = Local::now().naive_local() - time;

@@ -7,6 +7,7 @@ use orm_migrate::{
     },
 };
 use resp_result::resp_try;
+use tracing::instrument;
 
 use super::error::{AppRespResult, CeobeOperationAppVersionError};
 use crate::router::CeobeOpVersion;
@@ -18,6 +19,7 @@ type CreateAppVersionCheck = JsonCheckExtract<
 
 impl CeobeOpVersion {
     // 新增一个app版本
+    #[instrument(ret, skip(db))]
     pub async fn create_app_version(
         db: SqlConnect, CheckExtract(version, ..): CreateAppVersionCheck,
     ) -> AppRespResult<()> {

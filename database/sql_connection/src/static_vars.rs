@@ -3,12 +3,14 @@ use sea_orm::{
     ConnectOptions, Database, DatabaseConnection, DatabaseTransaction, DbErr,
     TransactionTrait,
 };
+use tracing::{info, instrument};
 
 use crate::config::{DbConnectConfig, DbOptionsConfig};
 
 static SQL_DATABASE_CONNECTION: OnceCell<DatabaseConnection> =
     OnceCell::new();
 
+#[instrument(skip(config))]
 pub async fn connect_to_sql_database<C>(config: &C) -> Result<(), DbErr>
 where
     C: DbConnectConfig + DbOptionsConfig,
@@ -23,7 +25,12 @@ where
         name = config.name()
     );
 
-    log::info!("准备连接到数据库: {}", db_url);
+    info!(
+        mysql.url = db_url,
+        mysql.max_conn = ?config.max_conn(),
+        mysql.min_conn = ?config.min_conn(),
+        mysql.sqlx.log = config.sql_logger()
+    );
 
     let mut db_options = ConnectOptions::new(db_url);
     if let Some(max_conn) = config.max_conn() {

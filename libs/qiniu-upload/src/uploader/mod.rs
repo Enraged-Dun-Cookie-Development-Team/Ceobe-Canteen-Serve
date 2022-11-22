@@ -1,19 +1,19 @@
 mod builder;
-mod field;
-mod file_upload;
 mod payload;
+mod upload_field;
+mod upload_file;
 mod upload_json;
 use std::{collections::HashMap, fmt::Debug};
 
 use futures::Future;
 use qiniu_upload_manager::AutoUploaderObjectParams;
 use smallstr::SmallString;
+use tracing::info;
 pub use upload_json::JsonPayload;
 
 pub use self::{
     builder::{ManagedUploader, UploaderBuilder},
-    field::ByteUploader,
-    payload::{FilePayload, PayloadContent, PayloadLocal},
+    payload::{ByteUploader, FilePayload, PayloadContent, PayloadLocal},
 };
 use crate::{error, SecretConfig};
 #[derive(Debug)]
@@ -45,6 +45,13 @@ impl Uploader {
     pub async fn upload(
         &self, payload: impl PayloadLocal + PayloadContent,
     ) -> Result<ResponsePayload, error::Error> {
+        info!(
+            content_type = %payload.content_type(),
+            qiniu.uploader.bucket = payload.bucket(),
+            qiniu.uploader.obj = payload.obj_name(),
+            qiniu.uploader.file = payload.file_name(),
+        );
+
         let auto_uploader = self
             .managers
             .get(payload.bucket())
@@ -63,6 +70,12 @@ impl Uploader {
             .async_upload_reader(Box::pin(payload.payload()?), params)
             .await?;
         let response = serde_json::from_value::<ResponsePayload>(response)?;
+
+        info!(
+            qiniu.response.hash = response.hash,
+            qiniu.response.key = response.key
+        );
+
         Ok(response)
     }
 }

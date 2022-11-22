@@ -5,6 +5,7 @@ use mongo_migration::{
     mongo_models::bakery::mansion::operate::MansionDataMongoOperate,
 };
 use resp_result::resp_try;
+use tracing::{debug, instrument};
 
 use super::{
     models::{
@@ -19,6 +20,7 @@ use crate::{
 };
 
 impl BakeryMansionBackend {
+    #[instrument(ret)]
     pub async fn save_mansion(
         db: MongoConnect,
         CheckExtract(mid, ..): OptionMidCheckerPretreatment,
@@ -30,13 +32,18 @@ impl BakeryMansionBackend {
 
             match mid {
                 Some(mid) => {
-                    log::info!("MansionId已提供 => 更新模式");
-
+                    debug!(
+                        mansion.id.provide = true,
+                        mansion.saveMode = "Update"
+                    );
                     MansionDataMongoOperate::update_mansion(&db, mid, data)
                         .await?;
                 }
                 None => {
-                    log::info!("MansionId未提供 => 新建模式");
+                    debug!(
+                        mansion.id.provide = false,
+                        mansion.saveMode = "Create"
+                    );
                     MansionDataMongoOperate::create_mansion_data(&db, data)
                         .await?;
                 }
@@ -46,6 +53,7 @@ impl BakeryMansionBackend {
         .await
     }
 
+    #[instrument(ret, skip(db))]
     pub async fn get_mansion(
         db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
@@ -57,6 +65,7 @@ impl BakeryMansionBackend {
         .await
     }
 
+    #[instrument(ret, skip(db))]
     pub async fn get_recent_id(
         db: MongoConnect,
     ) -> MansionRResult<Vec<String>> {
@@ -70,6 +79,7 @@ impl BakeryMansionBackend {
         .await
     }
 
+    #[instrument(ret, skip(db))]
     pub async fn remove_mansion(
         db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {

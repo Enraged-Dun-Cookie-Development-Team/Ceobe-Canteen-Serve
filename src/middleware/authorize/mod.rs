@@ -11,6 +11,16 @@ mod service;
 
 pub struct AuthorizeInfo(pub user::Model);
 
+impl std::fmt::Debug for AuthorizeInfo {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("AuthorizeInfo")
+            .field("name", &self.0.username)
+            .field("auth_level", &self.0.auth)
+            .field("token_version", &self.0.num_pwd_change)
+            .finish()
+    }
+}
+
 #[async_trait]
 impl<B: Send> FromRequest<B> for AuthorizeInfo {
     type Rejection = RespResult<Nil, AuthorizeError>;
@@ -28,4 +38,4 @@ impl<B: Send> FromRequest<B> for AuthorizeInfo {
 }
 
 pub use layer::AuthorizeLayer;
-pub use service::AuthorizeService;
+pub use service::AdminAuthorize;

@@ -2,6 +2,7 @@ use std::{collections::HashSet, ops::Deref};
 
 use mongodb::{options::CreateIndexOptions, Collection, IndexModel};
 use tap::Tap;
+use tracing::info;
 
 use crate::MigrationTrait;
 
@@ -68,11 +69,10 @@ impl<M: MigrationTrait> CollectManage<M> {
                 .await?
                 .index_name
                 .tap(|idx_name| {
-                    log::info!(
-                        "指针 {:?} 创建完成 {:?}",
-                        idx_name,
-                        self.collect.name()
-                    )
+                    info!(
+                        collection = self.collect.name(),
+                        collection.index = idx_name,
+                    );
                 });
 
             // add new idx to idx set

@@ -2,6 +2,7 @@ use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
+use tracing::{info, instrument};
 
 use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
 use crate::ceobe_operation::announcement::{
@@ -9,6 +10,7 @@ use crate::ceobe_operation::announcement::{
     models::model_announcement::{self, ActiveModel},
 };
 impl CeobeOperationAnnouncementSqlOperate {
+    #[instrument(skip(db, announcements), ret)]
     pub async fn update_all<'d, D>(
         db: &'d D, announcements: Vec<CeobeOpAnnouncement>,
     ) -> OperateResult<()>
@@ -16,6 +18,8 @@ impl CeobeOperationAnnouncementSqlOperate {
         D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'd,
         D::Transaction<'d>: ConnectionTrait,
     {
+        info!(announcements.update.size = announcements.len());
+
         let db = db.get_transaction().await?;
         // 所有先前的数据都设置为删除
         Self::all_soft_remove(&db).await?;

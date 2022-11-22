@@ -7,6 +7,7 @@ use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
 use tap::Pipe;
+use tracing::{info, instrument};
 
 use super::{CeobeOperationResourceSqlOperate, OperateError};
 use crate::{
@@ -18,6 +19,7 @@ use crate::{
 };
 
 impl CeobeOperationResourceSqlOperate {
+    #[instrument(ret, skip_all)]
     pub async fn get_resource_all_available<'db, D>(
         db: &'db D,
     ) -> Result<ResourceAllAvailable, OperateError>
@@ -50,10 +52,10 @@ impl CeobeOperationResourceSqlOperate {
         if resp_stream.next().await.is_some() {
             Err(OperateError::MultiAllAvailable)?;
         }
-
         Ok(data)
     }
 
+    #[instrument(skip_all)]
     pub async fn get_all_countdown<'db, D>(
         db: &'db D,
     ) -> Result<Vec<Countdown>, OperateError>
@@ -69,12 +71,20 @@ impl CeobeOperationResourceSqlOperate {
             .into_model::<Countdown>()
             .stream(db)
             .await?
-            .try_collect()
+            .try_collect::<Vec<_>>()
             .await?;
 
+        info!(countdown.size = resp_stream.len());
         Ok(resp_stream)
     }
 
+    #[instrument(
+        skip_all,
+        fields(
+            resource.countdown.len,
+            resource.all_available
+        )
+    )]
     pub async fn get_resource<'db, D, F, T>(
         db: &'db D, map: F,
     ) -> Result<T, OperateError>

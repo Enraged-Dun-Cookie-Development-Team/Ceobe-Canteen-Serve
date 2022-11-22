@@ -7,7 +7,7 @@ use super::auth_level::AuthLevel;
 #[sea_orm(table_name = "admin_user")]
 #[sub_model(
     all(name = "VerifiedUser", extra(derive(sea_orm::FromQueryResult))),
-    none(name = "UserList", extra(derive(sea_orm::FromQueryResult)))
+    none(name = "UserList", extra(derive(Debug, sea_orm::FromQueryResult)))
 )]
 pub struct Model {
     #[sea_orm(primary_key)]

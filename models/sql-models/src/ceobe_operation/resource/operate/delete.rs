@@ -3,6 +3,7 @@ use sea_orm::{
     sea_query::Expr, ColumnTrait, Condition, ConnectionTrait, EntityTrait,
     QueryFilter,
 };
+use tracing::info;
 
 use super::{CeobeOperationResourceSqlOperate, OperateError};
 use crate::{
@@ -16,7 +17,7 @@ impl CeobeOperationResourceSqlOperate {
     pub async fn soft_remove(
         db: &impl ConnectionTrait, now: NaiveDateTime, ty: ResourceType,
     ) -> Result<(), OperateError> {
-        model_resource::Entity::update_many()
+        let resp = model_resource::Entity::update_many()
             .filter(
                 Condition::all()
                     .add(
@@ -30,7 +31,7 @@ impl CeobeOperationResourceSqlOperate {
             .col_expr(model_resource::Column::DeleteAt, Expr::value(now))
             .exec(db)
             .await?;
-
+        info!(softDelete.effect = resp.rows_affected);
         Ok(())
     }
 }

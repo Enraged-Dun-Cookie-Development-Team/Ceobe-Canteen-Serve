@@ -3,6 +3,7 @@ use sea_orm::{ConnectionTrait, DbErr};
 use sql_connection::database_traits::get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
 };
+use tracing::{info, instrument};
 
 use super::{CeobeOperationResourceSqlOperate, OperateError};
 use crate::ceobe_operation::resource::{
@@ -11,6 +12,13 @@ use crate::ceobe_operation::resource::{
 };
 
 impl CeobeOperationResourceSqlOperate {
+    #[instrument(
+        skip_all, ret,
+        fields(
+            resource.all_available = ?resource.resource_all_available,
+            resource.countdown.len = resource.countdown.as_ref().map(Vec::len)
+        )
+    )]
     pub async fn update_resource<'db, D>(
         db: &'db D, resource: CeobeOperationResource,
     ) -> Result<(), OperateError>
@@ -22,6 +30,12 @@ impl CeobeOperationResourceSqlOperate {
     {
         let db = db.get_transaction().await?;
         let now = Local::now().naive_local();
+
+        info!(
+            updateResource.allAvailable = ?resource.resource_all_available,
+            updateResource.countdown.size = resource.countdown.as_deref().map(<[_]>::len)
+        );
+
         // soft remove old resource
         if resource.countdown.is_some() {
             Self::soft_remove(&db, now, ResourceType::Countdown).await?;

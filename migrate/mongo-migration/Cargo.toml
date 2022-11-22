@@ -10,7 +10,7 @@ mongodb = { workspace = true }
 async-trait = { workspace = true }
 serde = { workspace = true }
 typed-builder = { workspace = true }
-log = { workspace = true }
+tracing = { workspace = true }
 
 [dependencies.mongo-models]
 path = "../../models/mongo-models"

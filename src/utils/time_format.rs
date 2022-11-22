@@ -32,7 +32,7 @@ mod test {
     #[test]
     // #[should_panic]
     fn test_naive_format() {
-        let time = NaiveDate::from_ymd(2022, 1, 21);
+        let time = NaiveDate::from_ymd_opt(2022, 1, 21).unwrap();
         let format = time.format(DATE_FORMAT).to_string();
         println!("{format}")
     }

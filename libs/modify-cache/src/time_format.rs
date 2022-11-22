@@ -1,5 +1,6 @@
 use chrono::NaiveDateTime;
 use http::HeaderValue;
+use tracing::info;
 
 use crate::error::VerifyResult;
 
@@ -8,7 +9,10 @@ const MODIFY_TIME_FORMAT: &str = "%a, %d %b %Y %H:%M:%S GMT";
 pub(crate) fn from_request_head(
     header: &HeaderValue,
 ) -> VerifyResult<NaiveDateTime> {
-    log::info!("取得请求头\"If-Modified-Since\"信息 {header:?}");
+    info!(
+        header.name = "If-Modified-Since",
+        header.value = ?header
+    );
     let data_time = header.to_str()?;
     Ok(NaiveDateTime::parse_from_str(
         data_time,
@@ -39,8 +43,8 @@ mod test {
         assert_eq!(
             time,
             NaiveDateTime::new(
-                NaiveDate::from_ymd(2015, 10, 21),
-                NaiveTime::from_hms(7, 28, 0)
+                NaiveDate::from_ymd_opt(2015, 10, 21).unwrap(),
+                NaiveTime::from_hms_opt(7, 28, 0).unwrap()
             )
         );
 
@@ -49,8 +53,8 @@ mod test {
     #[test]
     fn test_to() {
         let time = NaiveDateTime::new(
-            NaiveDate::from_ymd(2015, 10, 21),
-            NaiveTime::from_hms(7, 28, 0),
+            NaiveDate::from_ymd_opt(2015, 10, 21).unwrap(),
+            NaiveTime::from_hms_opt(7, 28, 0).unwrap(),
         );
 
         let v = to_request_header(&time).unwrap();

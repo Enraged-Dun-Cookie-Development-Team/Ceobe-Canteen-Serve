@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use orm_migrate::sql_connection::SqlConnect;
 use resp_result::{resp_try, FlagWrap};
+use tracing::instrument;
 
 use super::{error::FlagResourceRespResult, view::Resource};
 use crate::{
@@ -10,6 +11,7 @@ use crate::{
 };
 
 impl CeobeOperationResourceFrontend {
+    #[instrument(skip(db, modify))]
     pub async fn resource_list(
         db: SqlConnect, mut modify: modify_cache::CheckModify,
     ) -> FlagResourceRespResult<Resource> {

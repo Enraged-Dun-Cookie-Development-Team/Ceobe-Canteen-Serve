@@ -4,6 +4,7 @@ use orm_migrate::{
     sql_models::ceobe_operation::announcement::operate::CeobeOperationAnnouncementSqlOperate,
 };
 use resp_result::{resp_try, FlagWrap};
+use tracing::instrument;
 
 use super::{
     error::FlagAnnouncementRespResult,
@@ -13,6 +14,7 @@ use crate::router::CeobeOperationAnnouncementFrontend;
 
 impl CeobeOperationAnnouncementFrontend {
     // 获取公告列表
+    #[instrument(skip(db, modify))]
     pub async fn get_announcement_list(
         db: SqlConnect, mut modify: modify_cache::CheckModify,
     ) -> FlagAnnouncementRespResult<Vec<AnnouncementItem>> {
