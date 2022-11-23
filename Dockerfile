@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.2
-FROM rustlang/rust:nightly AS build
+FROM rustlang/rust AS build
 WORKDIR /usr/src/app
 COPY . .
 RUN cargo build --release
