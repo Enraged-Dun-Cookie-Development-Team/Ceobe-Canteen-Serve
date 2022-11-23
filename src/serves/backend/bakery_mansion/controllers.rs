@@ -72,7 +72,7 @@ impl BakeryMansionBackend {
         resp_try(async {
             Ok(MansionDataMongoOperate::get_mansion_id_list_by_time(
                 &db,
-                Duration::days(60),
+                Duration::days(90),
             )
             .await?)
         })
