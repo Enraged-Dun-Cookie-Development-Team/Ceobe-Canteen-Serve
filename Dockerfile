@@ -18,5 +18,5 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   --mount=type=cache,target=/var/lib/apt,sharing=locked \
   apt update && apt-get --no-install-recommends install -y ca-certificates
 WORKDIR /var/canteen-server
-COPY --from=build /app/target/release/server /usr/local/bin/canteen-server
+COPY --from=builder /app/target/release/server /usr/local/bin/canteen-server
 CMD ["sh", "-c", "canteen-server"]
