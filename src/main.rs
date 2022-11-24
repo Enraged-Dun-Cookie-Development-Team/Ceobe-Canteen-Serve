@@ -52,7 +52,7 @@ async fn main_task() {
         .merge(Toml::file(CONFIG_FILE_TOML))
         .merge(Json::file(CONFIG_FILE_JSON))
         .merge(Yaml::file(CONFIG_FILE_YAML))
-        .merge(Env::prefixed("CEOBE_"))
+        .merge(Env::prefixed("CEOBE_").split("__"))
         .extract()
         .expect("配置文件解析失败");
 
