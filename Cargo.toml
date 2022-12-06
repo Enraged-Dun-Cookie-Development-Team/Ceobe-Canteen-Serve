@@ -20,6 +20,7 @@ members = ["libs/*", "./models/*", "./migrate/*", "./database/*", "./macros/*"]
 ahash = "0.8"
 async-trait = "0.1"
 axum = { version = "0.6", features = ["multipart", "macros"] }
+axum-core = "0.3"
 axum-starter = { version = "0.5", features = ["logger"] }
 chrono = "0.4"
 futures = "0.3"
@@ -51,6 +52,7 @@ typed-builder = "0.11"
 url = { version = "2", features = ["serde"] }
 urlencoding = "2.1.0"
 tracing-unwrap = { version = "0.10.0", features = ["log-location"] }
+http = "0.2"
 
 [dependencies]
 # Xss
@@ -59,6 +61,7 @@ ammonia = "3"
 async-trait = { workspace = true }
 # axum
 axum = { workspace = true, features = ["headers"] }
+http = { workspace = true }
 axum-starter = { workspace = true }
 # db
 bson = { version = "2.1.0", features = ["chrono-0_4"] }
@@ -70,7 +73,6 @@ figment = { version = "0.10", features = ["yaml", "json", "toml", "env"] }
 futures = { workspace = true }
 hex = "0.4"
 hmac = "0.12.1"
-http = "0.2"
 http-body = "0.4"
 #encrypt
 jwt = "0.16.0"
