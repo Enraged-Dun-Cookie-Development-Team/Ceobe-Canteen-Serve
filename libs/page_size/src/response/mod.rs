@@ -8,8 +8,8 @@ use crate::request::PageSize;
 pub struct PageInfo {
     #[serde(flatten)]
     page_size: PageSize,
-    total_count: usize,
-    total_page: usize,
+    total_count: u64,
+    total_page: u64,
 }
 
 /// 列表与分页信息
@@ -27,7 +27,7 @@ where
     Self::Item: Serialize,
 {
     fn with_page_info(
-        self, page_size: PageSize, count: usize,
+        self, page_size: PageSize, count: u64,
     ) -> ListWithPageInfo<Self::Item>;
 }
 
@@ -38,7 +38,7 @@ where
 {
     /// 将列表，与分页信息存入一个结构体
     fn with_page_info(
-        self, page_size: PageSize, count: usize,
+        self, page_size: PageSize, count: u64,
     ) -> ListWithPageInfo<Self::Item> {
         ListWithPageInfo {
             list: self.into_iter().collect(),
@@ -46,7 +46,7 @@ where
                 page_size,
                 total_count: count,
                 total_page: (count as f64 / *page_size.size.deref() as f64)
-                    .ceil() as usize,
+                    .ceil() as u64,
             },
         }
     }
