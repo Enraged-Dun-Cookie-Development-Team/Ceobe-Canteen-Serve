@@ -23,6 +23,7 @@ macro_rules! new_auth_level {
             )*
         ]
     } => {
+        #[derive(Debug, Clone)]
         $v struct $name;
 
         impl $crate::utils::user_authorize::auth_level::AuthLevelVerify for $name{
