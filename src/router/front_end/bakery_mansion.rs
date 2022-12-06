@@ -2,7 +2,7 @@ use axum::{routing::get, Router};
 
 pub struct BakeryMansionFrontend;
 
-pub(super) fn bakery_mansion_router() -> Router {
+pub(super) fn bakery_mansion_router<S:Clone + Send +Sync>() -> Router<S> {
     Router::new()
         .route(
             "/mansionInfo",

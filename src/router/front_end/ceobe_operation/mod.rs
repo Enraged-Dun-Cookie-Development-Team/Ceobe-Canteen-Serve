@@ -14,7 +14,7 @@ pub use resource::CeobeOperationResourceFrontend;
 pub use version::CeobeOperationVersionFrontend;
 pub use video::CeobeOperationVideoFrontend;
 
-pub(super) fn ceobe_operation_router() -> Router {
+pub(super) fn ceobe_operation_router<S:Clone + Send +Sync>() -> Router<S> {
     Router::new()
         .nest("/video", video_router())
         .nest("/announcement", announcement_router())
