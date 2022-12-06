@@ -17,8 +17,8 @@ impl MigrationTrait for Migration {
             .col(
                 ColumnDef::new(Ty)
                     .enumeration(
-                        "resource_type",
-                        ["resource_all_available", "countdown"],
+                        ResourceType::Name,
+                        [ResourceType::AllAvailable, ResourceType::Countdown], // ["resource_all_available", "countdown"],
                     )
                     .not_null()
                     .default("countdown"),
@@ -85,4 +85,26 @@ enum CeobeOperationResource {
     CreateAt,
     ModifyAt,
     DeleteAt,
+}
+
+#[derive(Debug, Iden)]
+enum ResourceType {
+    #[iden(rename = "resource_type")]
+    Name,
+    #[iden(rename = "resource_all_available")]
+    AllAvailable,
+    #[iden(rename = "countdown")]
+    Countdown,
+}
+
+#[cfg(test)]
+mod test {
+    use super::ResourceType;
+    use sea_orm_migration::prelude::Iden;
+    #[test]
+    fn test() {
+        println!("{:?}", ResourceType::Name.to_string());
+        println!("{:?}", ResourceType::AllAvailable.to_string());
+        println!("{:?}", ResourceType::Countdown.to_string());
+    }
 }
