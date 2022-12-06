@@ -1,21 +1,23 @@
 use std::{convert::Infallible, ops::Deref, sync::Arc};
 
-use axum_core::extract::FromRequest;
-use axum_starter::{extension::SetExtension, prepare, PreparedEffect};
+use axum::{
+    extract::{FromRef, FromRequestParts},
+    http::request::Parts,
+};
+
+use axum_starter::{prepare, state::AddState};
 use futures::future::ok;
 use tracing::{info, instrument};
 
-use crate::{
-    GetBucket, SecretConfig, Uploader, UploaderBuilder, UploaderNotFound,
-};
+use crate::{GetBucket, SecretConfig, Uploader, UploaderBuilder};
 
-#[prepare(box QiniuUpload 'c)]
+#[prepare(box QiniuUpload? 'c)]
 #[instrument(skip(qiniu_config))]
 fn init_this<'c, C>(
     qiniu_config: &'c C,
-) -> Result<impl PreparedEffect, crate::Error>
+) -> Result<AddState<Arc<Uploader>>, crate::Error>
 where
-    C: SecretConfig + GetBucket,
+    C: SecretConfig + GetBucket + 'static,
 {
     let uploader = Uploader::builder(qiniu_config);
 
@@ -28,7 +30,7 @@ where
     info!(
         qiniu.uploader.buckets = ?uploader.managers.keys()
     );
-    Ok(SetExtension::arc(uploader))
+    Ok(AddState::new(Arc::new(uploader)))
 }
 
 pub struct QiniuUploader {
@@ -38,14 +40,20 @@ pub struct QiniuUploader {
 impl Deref for QiniuUploader {
     type Target = Uploader;
 
-    fn deref(&self) -> &Self::Target { &self.inner }
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
 }
 
-impl<B> FromRequest<B> for QiniuUploader {
+impl<S> FromRequestParts<S> for QiniuUploader
+where
+    S: Send + Sync,
+    Arc<Uploader>: FromRef<S>,
+{
     type Rejection = Infallible;
 
-    fn from_request<'life0, 'async_trait>(
-        req: &'life0 mut axum_core::extract::RequestParts<B>,
+    fn from_request_parts<'life0, 'life1, 'async_trait>(
+        _parts: &'life0 mut Parts, state: &'life1 S,
     ) -> core::pin::Pin<
         Box<
             dyn core::future::Future<Output = Result<Self, Self::Rejection>>
@@ -55,15 +63,11 @@ impl<B> FromRequest<B> for QiniuUploader {
     >
     where
         'life0: 'async_trait,
+        'life1: 'async_trait,
         Self: 'async_trait,
     {
         Box::pin(ok(QiniuUploader {
-            inner: req
-                .extensions()
-                .get::<Arc<Uploader>>()
-                .ok_or(UploaderNotFound)
-                .expect("Uploader Not found")
-                .to_owned(),
+            inner: FromRef::from_ref(state),
         }))
     }
 }

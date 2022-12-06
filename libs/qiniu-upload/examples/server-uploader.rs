@@ -1,12 +1,20 @@
-use std::net::{Ipv4Addr, SocketAddr};
+use std::{
+    net::{Ipv4Addr, SocketAddr},
+    sync::Arc,
+};
 
-use axum::{extract::Multipart, routing::post};
+use axum::{
+    body::HttpBody,
+    extract::{FromRef, Multipart},
+    routing::post,
+};
 use axum_starter::{
-    prepare, router::Route, LoggerInitialization, PreparedEffect,
-    ServeAddress, ServerPrepare,
+    prepare, router::Route, FromStateCollector, LoggerInitialization,
+    PrepareRouteEffect, ServeAddress, ServerPrepare,
 };
 use ceobe_qiniu_upload::{
     GetBucket, PayloadLocal, QiniuUpload, QiniuUploader, SecretConfig,
+    Uploader,
 };
 use log::SetLoggerError;
 #[tokio::main]
@@ -19,14 +27,20 @@ async fn main() {
     ServerPrepare::with_config(config)
         .init_logger()
         .expect("init error failure")
-        .append(QiniuUpload::<_, Config>)
-        .append(Router)
+        .prepare_state(QiniuUpload::<_, Config>)
+        .prepare_route(Router)
+        .convert_state::<State>()
         .prepare_start()
         .await
         .expect("Prepare Error")
         .launch()
         .await
         .expect("Server Error");
+}
+
+#[derive(Debug, FromStateCollector, FromRef, Clone)]
+struct State {
+    uploader: Arc<Uploader>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -39,7 +53,9 @@ struct Config {
 impl LoggerInitialization for Config {
     type Error = SetLoggerError;
 
-    fn init_logger(&self) -> Result<(), Self::Error> { simple_logger::init() }
+    fn init_logger(&self) -> Result<(), Self::Error> {
+        simple_logger::init()
+    }
 }
 
 impl ServeAddress for Config {
@@ -56,19 +72,32 @@ impl GetBucket for Config {
     where
         Self: 'i;
 
-    fn get_buckets(&self) -> Self::Iterator<'_> { self.buckets.iter() }
+    fn get_buckets(&self) -> Self::Iterator<'_> {
+        self.buckets.iter()
+    }
 }
 
 impl SecretConfig for Config {
-    fn access_key(&self) -> &str { &self.access }
+    fn access_key(&self) -> &str {
+        &self.access
+    }
 
-    fn secret_key(&self) -> &str { &self.secret }
+    fn secret_key(&self) -> &str {
+        &self.secret
+    }
 }
 
 impl axum_starter::ConfigureServerEffect for Config {}
 
 #[prepare(Router)]
-fn router() -> impl PreparedEffect {
+fn router<S, B>() -> impl PrepareRouteEffect<S, B>
+where
+    B: Send + Sync + 'static + HttpBody,
+    S: Send + Sync + 'static + Clone,
+    Arc<Uploader>: FromRef<S>,
+    axum::body::Bytes: From<<B as HttpBody>::Data>,
+    <B as HttpBody>::Error: std::error::Error + Send + Sync,
+{
     Route::new("/api/v1/upload", post(upload_img))
 }
 
@@ -118,9 +147,13 @@ struct Local {
 }
 
 impl PayloadLocal for Local {
-    fn bucket(&self) -> &str { &self.bucket }
+    fn bucket(&self) -> &str {
+        &self.bucket
+    }
 
-    fn obj_name(&self) -> &str { &self.obj_name }
+    fn obj_name(&self) -> &str {
+        &self.obj_name
+    }
 
     fn file_name(&self) -> &str {
         self.filename.as_deref().unwrap_or(&self.obj_name)
