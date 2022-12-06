@@ -1,20 +1,17 @@
 use std::{error::Error as StdError, future::Future};
 
-pub use axum::{
-    body::Body,
-    extract::{FromRequest, RequestParts},
-};
-
-pub trait GetDatabaseConnect: FromRequest<Body> {
-    type Error: std::error::Error;
+pub use axum_core::extract::FromRequestParts;
+pub use http::request::Parts;
+pub trait GetDatabaseConnect {
+    type Error: StdError;
     type Connect<'s>: 's
     where
         Self: 's;
 
     fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error>;
 }
-pub trait GetMutDatabaseConnect: FromRequest<Body> {
-    type Error: std::error::Error;
+pub trait GetMutDatabaseConnect {
+    type Error: StdError;
     type Connect<'s>: 's
     where
         Self: 's;
