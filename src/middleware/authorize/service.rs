@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use axum::{
     body::{Body, BoxBody},
-    extract::{FromRequest, RequestParts},
+    extract::FromRequestParts,
     response::{IntoResponse, Response},
 };
 use futures::future::BoxFuture;
@@ -15,7 +15,7 @@ use resp_result::RespResult;
 use tap::Tap;
 use tower_http::auth::AsyncAuthorizeRequest;
 use tracing::{info, warn, Instrument};
-use tracing_unwrap::{OptionExt, ResultExt};
+use tracing_unwrap::OptionExt;
 
 use super::{error::AuthorizeError, AuthorizeInfo};
 use crate::utils::user_authorize::{
@@ -26,11 +26,15 @@ use crate::utils::user_authorize::{
 pub struct AdminAuthorize<L>(PhantomData<L>);
 
 impl<L> Clone for AdminAuthorize<L> {
-    fn clone(&self) -> Self { Self::default() }
+    fn clone(&self) -> Self {
+        Self::default()
+    }
 }
 
 impl<L> Default for AdminAuthorize<L> {
-    fn default() -> Self { Self(PhantomData) }
+    fn default() -> Self {
+        Self(PhantomData)
+    }
 }
 
 impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
@@ -50,13 +54,10 @@ impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
                     Err(err) => break 'auth Err(err)
                 };
 
-                let mut part = RequestParts::new(request);
-                let db = SqlConnect::from_request(&mut part).await.unwrap();
+                let (mut parts,body )= request.into_parts();
+                let db = SqlConnect::from_request_parts(&mut parts,&()).await.unwrap();
 
-                let req = part
-                    .try_into_request()
-                    .expect_or_log("Sql Data using Request Body");
-
+                let req = Request::from_parts(parts,body);
                 let user = match UserSqlOperate::find_user_with_version_verify(
                     &db,
                     id,
