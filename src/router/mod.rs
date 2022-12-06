@@ -12,11 +12,9 @@ pub use front_end::{
     CeobeOperationVideoFrontend,
 };
 
-use crate::error::not_exist;
-
 use self::{back_end::back_end_router, front_end::front_end_router};
 
-pub fn root_route<S:Clone + Send +Sync+ 'static>() -> Router<S> {
+pub fn root_route<S: Clone + Send + Sync + 'static>() -> Router<S> {
     Router::new()
         .nest("/canteen", front_end_router())
         .nest("/admin", back_end_router())

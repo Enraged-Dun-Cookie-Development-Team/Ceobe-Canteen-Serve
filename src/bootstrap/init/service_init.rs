@@ -1,9 +1,8 @@
-use axum::handler::Handler;
+use axum::body::Body;
 use axum_starter::{
-    graceful::SetGraceful,
     prepare,
     router::{Fallback, Nest},
-    PreparedEffect,
+    PrepareRouteEffect,
 };
 use futures::FutureExt;
 use tracing::info;
@@ -12,18 +11,27 @@ use crate::{error::not_exist, router};
 
 /// 配置router
 #[prepare(RouteV1)]
-fn router_v1() -> impl PreparedEffect {
+fn router_v1<S>() -> impl PrepareRouteEffect<S, Body>
+where
+    S: Send + Sync + 'static + Clone,
+{
     Nest::new("/api/v1", router::root_route())
 }
 
 /// 配置Fallback
 #[prepare(RouterFallback)]
-fn router_fallback() -> impl PreparedEffect {
-    Fallback::new(not_exist.into_service())
+fn router_fallback<S, B>() -> impl PrepareRouteEffect<S, B>
+where
+    S: Send + Sync + 'static + Clone,
+    B: Send + Sync + http_body::Body + 'static,
+{
+    Fallback::new(not_exist)
 }
 
-pub async fn graceful_shutdown() -> impl PreparedEffect {
-    SetGraceful::new(tokio::signal::ctrl_c().map(|_| {
-        info!(signal.exit = true);
-    }))
+pub async fn graceful_shutdown() {
+    tokio::signal::ctrl_c()
+        .map(|_| {
+            info!(signal.exit = true);
+        })
+        .await
 }

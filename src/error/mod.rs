@@ -1,10 +1,7 @@
 use std::any::Any;
 
-use axum::{
-    body::{Body, BoxBody},
-    response::IntoResponse,
-};
-use http::Request;
+use axum::{body::BoxBody, extract::OriginalUri, response::IntoResponse};
+use http::Method;
 use resp_result::RespResult;
 use status_err::ErrPrefix;
 use tracing::{error, instrument, warn};
@@ -130,12 +127,12 @@ status_err::resp_error_impl!(NotAnError);
 
 #[instrument(name = "router-not-found")]
 pub async fn not_exist(
-    req: Request<Body>,
+    OriginalUri(uri): OriginalUri, method: Method,
 ) -> RespResult<(), RouteNotExistError> {
     warn!(
         route.exist = false,
-        request.uri = ?req.uri(),
-        request.method = ?&req.method()
+        request.uri = ?uri,
+        request.method = ?method
     );
     RespResult::err(RouteNotExistError)
 }
@@ -146,11 +143,9 @@ pub fn serve_panic(
 ) -> http::Response<BoxBody> {
     let detail = if let Some(msg) = error.downcast_ref::<String>() {
         msg.as_str()
-    }
-    else if let Some(msg) = error.downcast_ref::<&str>() {
+    } else if let Some(msg) = error.downcast_ref::<&str>() {
         *msg
-    }
-    else {
+    } else {
         "Unknown panic message"
     };
 
