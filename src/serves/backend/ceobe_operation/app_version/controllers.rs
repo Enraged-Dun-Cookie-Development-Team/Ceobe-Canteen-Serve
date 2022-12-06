@@ -21,7 +21,7 @@ impl CeobeOpVersion {
     // 新增一个app版本
     #[instrument(ret, skip(db))]
     pub async fn create_app_version(
-        db: SqlConnect, CheckExtract(version, ..): CreateAppVersionCheck,
+        db: SqlConnect, CheckExtract(version): CreateAppVersionCheck,
     ) -> AppRespResult<()> {
         resp_try(async {
             CeobeOperationAppVersionSqlOperate::create_one_version(
