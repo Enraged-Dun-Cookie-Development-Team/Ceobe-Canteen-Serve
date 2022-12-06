@@ -19,15 +19,11 @@ where
 {
     type Service = AsyncRequireAuthorization<S, AdminAuthorize<L>>;
 
-    fn layer(&self, inner: S) -> Self::Service {
-        self.0.layer(inner)
-    }
+    fn layer(&self, inner: S) -> Self::Service { self.0.layer(inner) }
 }
 
 impl<L: AuthLevelVerify> AuthorizeLayer<L> {
-    pub fn new() -> Self {
-        Self(InnerLayer::new(AdminAuthorize::default()))
-    }
+    pub fn new() -> Self { Self(InnerLayer::new(AdminAuthorize::default())) }
 }
 
 type InnerLayer<L> =

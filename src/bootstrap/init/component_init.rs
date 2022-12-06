@@ -1,4 +1,4 @@
-use axum_starter::{prepare};
+use axum_starter::prepare;
 use resp_result::ConfigTrait;
 
 use crate::utils::user_authorize::{self, config::AuthConfig};

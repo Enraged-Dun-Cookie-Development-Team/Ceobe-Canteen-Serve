@@ -49,7 +49,7 @@ impl CeobeOperationVideoSqlOperate {
     ) -> OperateResult<Vec<model_video::Model>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
-         D::Connect<'db>: ConnectionTrait + StreamTrait,
+        D::Connect<'db>: ConnectionTrait + StreamTrait,
     {
         let db = db.get_connect()?;
 

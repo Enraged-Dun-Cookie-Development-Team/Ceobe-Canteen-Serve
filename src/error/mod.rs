@@ -143,9 +143,11 @@ pub fn serve_panic(
 ) -> http::Response<BoxBody> {
     let detail = if let Some(msg) = error.downcast_ref::<String>() {
         msg.as_str()
-    } else if let Some(msg) = error.downcast_ref::<&str>() {
+    }
+    else if let Some(msg) = error.downcast_ref::<&str>() {
         *msg
-    } else {
+    }
+    else {
         "Unknown panic message"
     };
 

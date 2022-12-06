@@ -1,6 +1,6 @@
 mod layer;
 use async_trait::async_trait;
-use axum::extract::{FromRequestParts};
+use axum::extract::FromRequestParts;
 use http::request::Parts;
 use orm_migrate::sql_models::admin_user::models::user;
 use resp_result::{Nil, RespResult};

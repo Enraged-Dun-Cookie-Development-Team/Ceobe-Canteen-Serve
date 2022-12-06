@@ -26,15 +26,11 @@ use crate::utils::user_authorize::{
 pub struct AdminAuthorize<L>(PhantomData<L>);
 
 impl<L> Clone for AdminAuthorize<L> {
-    fn clone(&self) -> Self {
-        Self::default()
-    }
+    fn clone(&self) -> Self { Self::default() }
 }
 
 impl<L> Default for AdminAuthorize<L> {
-    fn default() -> Self {
-        Self(PhantomData)
-    }
+    fn default() -> Self { Self(PhantomData) }
 }
 
 impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {

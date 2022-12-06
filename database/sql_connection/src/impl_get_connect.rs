@@ -6,8 +6,8 @@ use std::{
 
 use database_traits::{
     get_connect::{
-        FromRequestParts, GetDatabaseConnect, GetDatabaseTransaction,
-        Parts, TransactionOps,
+        FromRequestParts, GetDatabaseConnect, GetDatabaseTransaction, Parts,
+        TransactionOps,
     },
     BoxedResultSendFuture,
 };
@@ -87,15 +87,11 @@ impl TransactionOps for SqlTransaction {
 impl Deref for SqlTransaction {
     type Target = DatabaseTransaction;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl DerefMut for SqlTransaction {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
+    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0 }
 }
 
 impl ConnectionTrait for SqlTransaction {
@@ -251,6 +247,7 @@ impl TransactionTrait for SqlTransaction {
         'life0: 'async_trait,
         Self: 'async_trait,
     {
-        self.0.transaction_with_config(callback, isolation_level, access_mode)
+        self.0
+            .transaction_with_config(callback, isolation_level, access_mode)
     }
 }

@@ -1,8 +1,8 @@
-use core::{future::Future, pin::Pin, marker::Send};
+use core::{future::Future, marker::Send, pin::Pin};
 use std::convert::Infallible;
 
 use database_traits::get_connect::{
-     FromRequestParts, GetMutDatabaseConnect, Parts,
+    FromRequestParts, GetMutDatabaseConnect, Parts,
 };
 use redis::aio::ConnectionManager;
 

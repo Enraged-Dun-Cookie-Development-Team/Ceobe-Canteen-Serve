@@ -53,8 +53,7 @@ impl CeobeOperationAnnouncement {
     #[instrument(ret, skip(db))]
     // 更新公告列表
     pub async fn update_announcement_list(
-        db: SqlConnect,
-        CheckExtract(announcements): UpdateAnnouncementCheck,
+        db: SqlConnect, CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
             CeobeOperationAnnouncementSqlOperate::update_all(

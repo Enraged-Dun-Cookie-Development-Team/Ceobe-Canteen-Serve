@@ -5,11 +5,9 @@ use axum::{
     http::{request::Parts, Request},
     Form, Json,
 };
-use resp_result::{Nil, RespError, RespResult};
+use resp_result::{Nil, RespError, RespResult, ToInner};
 
 use crate::{Checker as DataChecker, LiteArgs};
-
-use resp_result::ToInner;
 
 pub struct CheckExtract<Previous, C, E>(
     pub <C::Checker as DataChecker>::Checked,
@@ -87,6 +85,7 @@ where
     E: RespError,
 {
     type Rejection = RespResult<Nil, E>;
+
     fn from_request<'life0, 'async_trait>(
         req: Request<B>, state: &'life0 S,
     ) -> core::pin::Pin<

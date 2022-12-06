@@ -53,9 +53,7 @@ struct Config {
 impl LoggerInitialization for Config {
     type Error = SetLoggerError;
 
-    fn init_logger(&self) -> Result<(), Self::Error> {
-        simple_logger::init()
-    }
+    fn init_logger(&self) -> Result<(), Self::Error> { simple_logger::init() }
 }
 
 impl ServeAddress for Config {
@@ -72,19 +70,13 @@ impl GetBucket for Config {
     where
         Self: 'i;
 
-    fn get_buckets(&self) -> Self::Iterator<'_> {
-        self.buckets.iter()
-    }
+    fn get_buckets(&self) -> Self::Iterator<'_> { self.buckets.iter() }
 }
 
 impl SecretConfig for Config {
-    fn access_key(&self) -> &str {
-        &self.access
-    }
+    fn access_key(&self) -> &str { &self.access }
 
-    fn secret_key(&self) -> &str {
-        &self.secret
-    }
+    fn secret_key(&self) -> &str { &self.secret }
 }
 
 impl axum_starter::ConfigureServerEffect for Config {}
@@ -147,13 +139,9 @@ struct Local {
 }
 
 impl PayloadLocal for Local {
-    fn bucket(&self) -> &str {
-        &self.bucket
-    }
+    fn bucket(&self) -> &str { &self.bucket }
 
-    fn obj_name(&self) -> &str {
-        &self.obj_name
-    }
+    fn obj_name(&self) -> &str { &self.obj_name }
 
     fn file_name(&self) -> &str {
         self.filename.as_deref().unwrap_or(&self.obj_name)

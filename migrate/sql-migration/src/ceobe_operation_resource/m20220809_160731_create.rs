@@ -99,8 +99,9 @@ enum ResourceType {
 
 #[cfg(test)]
 mod test {
-    use super::ResourceType;
     use sea_orm_migration::prelude::Iden;
+
+    use super::ResourceType;
     #[test]
     fn test() {
         println!("{:?}", ResourceType::Name.to_string());
