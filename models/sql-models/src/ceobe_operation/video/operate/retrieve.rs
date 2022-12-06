@@ -20,7 +20,7 @@ impl CeobeOperationVideoSqlOperate {
     >
     where
         'db: 'r,
-        C: ConnectionTrait + StreamTrait<'db> + Send,
+        C: ConnectionTrait + StreamTrait + Send,
     {
         Ok(model_video::Entity::find()
             .filter(filter)
@@ -35,7 +35,7 @@ impl CeobeOperationVideoSqlOperate {
         impl Stream<Item = Result<model_video::Model, DbErr>> + 'r,
     >
     where
-        C: ConnectionTrait + StreamTrait<'db> + Send,
+        C: ConnectionTrait + StreamTrait + Send,
     {
         let filter = Condition::all()
             .add(filter.into_condition())
@@ -49,7 +49,7 @@ impl CeobeOperationVideoSqlOperate {
     ) -> OperateResult<Vec<model_video::Model>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
-        for<'stream> D::Connect<'db>: ConnectionTrait + StreamTrait<'stream>,
+         D::Connect<'db>: ConnectionTrait + StreamTrait,
     {
         let db = db.get_connect()?;
 

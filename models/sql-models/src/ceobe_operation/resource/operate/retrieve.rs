@@ -24,7 +24,7 @@ impl CeobeOperationResourceSqlOperate {
         db: &'db D,
     ) -> Result<ResourceAllAvailable, OperateError>
     where
-        D: ConnectionTrait + StreamTrait<'db>,
+        D: ConnectionTrait + StreamTrait,
     {
         // finding raa
         let mut resp_stream = model_resource::Entity::find()
@@ -60,7 +60,7 @@ impl CeobeOperationResourceSqlOperate {
         db: &'db D,
     ) -> Result<Vec<Countdown>, OperateError>
     where
-        D: ConnectionTrait + StreamTrait<'db>,
+        D: ConnectionTrait + StreamTrait,
     {
         let resp_stream = model_resource::Entity::find()
             .filter(
@@ -93,7 +93,7 @@ impl CeobeOperationResourceSqlOperate {
         D: GetDatabaseConnect<Error = DbErr>
             + GetDatabaseTransaction
             + 'static,
-        D::Transaction<'db>: ConnectionTrait + for<'s> StreamTrait<'s>,
+        D::Transaction<'db>: ConnectionTrait + StreamTrait,
     {
         let db = db.get_transaction().await?;
         let (raa, countdown) = join(

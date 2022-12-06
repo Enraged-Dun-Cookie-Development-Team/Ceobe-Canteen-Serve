@@ -44,8 +44,7 @@ impl CeobeOperationVideoSqlOperate {
         D: GetDatabaseConnect<Error = DbErr>
             + GetDatabaseTransaction
             + 'static,
-        for<'stream> D::Transaction<'db>:
-            ConnectionTrait + StreamTrait<'stream>,
+        D::Transaction<'db>: ConnectionTrait + StreamTrait,
     {
         let db = db.get_transaction().await?;
         // 所有先前的数据都设置为删除
@@ -78,12 +77,10 @@ impl CeobeOperationVideoSqlOperate {
                             )
                         })
                     }
-                    None => {
-                        ActiveModel::from_video_data_with_order(
-                            video,
-                            order as i32,
-                        )
-                    }
+                    None => ActiveModel::from_video_data_with_order(
+                        video,
+                        order as i32,
+                    ),
                 }
             })
             .pipe(iter)
