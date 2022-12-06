@@ -10,7 +10,7 @@ use crate::{
 
 pub struct BakeryMansionBackend;
 
-pub(super) fn bakery_mansion_router<S:Clone + Send +Sync>() -> Router<S> {
+pub(super) fn bakery_mansion_router<S:Clone + Send +Sync+ 'static>() -> Router<S> {
     Router::new()
         .route("/upload", post(BakeryMansionBackend::save_mansion))
         .route("/getInfo", get(BakeryMansionBackend::get_mansion))
