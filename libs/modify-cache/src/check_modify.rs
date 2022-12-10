@@ -1,13 +1,11 @@
 use std::convert::Infallible;
 
 use async_trait::async_trait;
-use axum::{
-    body::Body,
-    extract::{FromRequest, OriginalUri, RequestParts},
-};
+use axum::extract::{FromRequestParts, OriginalUri};
 use http::{
     header::{CONTENT_TYPE, ETAG, LAST_MODIFIED},
     method::Method,
+    request::Parts,
     StatusCode,
 };
 use resp_result::{ExtraFlag, ExtraFlags};
@@ -27,25 +25,26 @@ pub struct CheckModify {
 }
 
 #[async_trait]
-impl FromRequest<Body> for CheckModify {
+impl<S: Send + Sync> FromRequestParts<S> for CheckModify {
     type Rejection = Infallible;
 
-    async fn from_request(
-        req: &mut RequestParts<Body>,
+    async fn from_request_parts(
+        parts: &mut Parts, state: &S,
     ) -> Result<Self, Self::Rejection> {
-        let OriginalUri(uri) = OriginalUri::from_request(req).await?;
+        let OriginalUri(uri) =
+            OriginalUri::from_request_parts(parts, state).await?;
 
         // if not get or head , default none;
         Ok(
-            if req.method() != Method::GET && req.method() != Method::HEAD {
-                warn!(request.method = %req.method(), "Skipping");
+            if parts.method != Method::GET && parts.method != Method::HEAD {
+                warn!(request.method = %parts.method, "Skipping");
                 Self {
                     ctrl_header: ControlHeaders::None,
                     cache_headers: Default::default(),
                 }
             }
             else {
-                let header = req.headers();
+                let header = &parts.headers;
                 let ctrl_header = header
                     .get(http::header::IF_NONE_MATCH)
                     .and_then(|v| v.to_str().ok())

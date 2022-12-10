@@ -40,7 +40,7 @@ type UpdateVideoCheck = JsonCheckExtract<
 impl CeobeOperationVideo {
     #[instrument(ret)]
     pub async fn get_video_detail(
-        CheckExtract(BvQuery { bv }, _): BvQueryCheck,
+        CheckExtract(BvQuery { bv }): BvQueryCheck,
     ) -> VideoRespResult<String> {
         resp_try(async {
             let url = Url::parse_with_params(
@@ -68,7 +68,7 @@ impl CeobeOperationVideo {
 
     #[instrument(ret, skip(db))]
     pub async fn update_list(
-        db: SqlConnect, CheckExtract(videos, _): UpdateVideoCheck,
+        db: SqlConnect, CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
         rtry!(CeobeOperationVideoSqlOperate::update_all(&db, videos).await);
         RespResult::ok(())

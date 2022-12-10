@@ -1,6 +1,7 @@
 use super::AuthLevelVerify;
 use crate::models::sql::models::auth_level::AuthLevel;
 
+#[derive(Clone)]
 pub struct Chef;
 
 impl AuthLevelVerify for Chef {
@@ -10,6 +11,7 @@ impl AuthLevelVerify for Chef {
         matches!(token_auth, &AuthLevel::Chef)
     }
 }
+#[derive(Clone)]
 pub struct Cooker;
 
 impl AuthLevelVerify for Cooker {
@@ -20,6 +22,7 @@ impl AuthLevelVerify for Cooker {
     }
 }
 
+#[derive(Clone)]
 pub struct Architect;
 
 impl AuthLevelVerify for Architect {
@@ -29,7 +32,7 @@ impl AuthLevelVerify for Architect {
         matches!(token_auth, &AuthLevel::Architect)
     }
 }
-
+#[derive(Clone)]
 pub struct Any;
 
 impl AuthLevelVerify for Any {
@@ -37,7 +40,7 @@ impl AuthLevelVerify for Any {
 
     fn verify(_: &AuthLevel) -> bool { true }
 }
-
+#[derive(Clone)]
 pub struct Nil;
 
 impl AuthLevelVerify for Nil {

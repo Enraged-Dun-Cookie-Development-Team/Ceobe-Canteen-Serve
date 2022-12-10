@@ -21,7 +21,7 @@ type ResourceUploadCheck =
 impl CeobeOpResource {
     #[instrument(ret, skip(db))]
     pub async fn upload_resource(
-        db: SqlConnect, CheckExtract(resource, _): ResourceUploadCheck,
+        db: SqlConnect, CheckExtract(resource): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
         CeobeOperationResourceSqlOperate::update_resource(&db, resource)
             .await

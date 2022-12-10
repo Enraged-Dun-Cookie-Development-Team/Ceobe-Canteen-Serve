@@ -18,7 +18,7 @@ use crate::{
 impl BakeryMansionFrontend {
     #[instrument(skip(db, modify))]
     pub async fn get_mansion_with_time(
-        db: MongoConnect, CheckExtract(mid, _): MidCheckerPretreatment,
+        db: MongoConnect, CheckExtract(mid): MidCheckerPretreatment,
         mut modify: modify_cache::CheckModify,
     ) -> FlagMansionRResult<ViewMansionWithTime> {
         resp_try(async {

@@ -149,7 +149,7 @@ impl UserSqlOperate {
     /// 获取用户总数
     pub async fn get_user_total_number<'db, D>(
         db: &'db D,
-    ) -> OperateResult<usize>
+    ) -> OperateResult<u64>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,

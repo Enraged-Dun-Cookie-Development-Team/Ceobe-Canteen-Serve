@@ -1,13 +1,13 @@
-use axum_starter::{prepare, PreparedEffect};
+use axum_starter::prepare;
 use resp_result::ConfigTrait;
 
 use crate::utils::user_authorize::{self, config::AuthConfig};
 
 /// rresult配置
-#[prepare(RResultConfig 'arg)]
+#[prepare(RResultConfig? 'arg)]
 fn resp_conf<C>(
     resp_result: &'arg C,
-) -> Result<impl PreparedEffect, resp_result::SetRespResultConfigureError>
+) -> Result<(), resp_result::SetRespResultConfigureError>
 where
     C: ConfigTrait,
 {

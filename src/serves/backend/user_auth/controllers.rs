@@ -1,9 +1,7 @@
 use std::borrow::Cow;
 
-use checker::{
-    prefabs::no_check::NoCheck, CheckExtract, JsonCheckExtract,
-    QueryCheckExtract,
-};
+use axum::{extract::Query, Json};
+use checker::CheckExtract;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
@@ -13,7 +11,7 @@ use orm_migrate::{
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use resp_result::{resp_try, rtry};
+use resp_result::{resp_try, rtry, MapReject};
 use tracing::{debug, instrument};
 
 use super::{
@@ -44,14 +42,15 @@ crate::quick_struct! {
 }
 
 impl UserAuthBackend {
-    #[instrument(ret, skip(db, query))]
+    #[instrument(ret, skip(db, permission))]
     pub async fn create_user(
         db: SqlConnect,
-        query: QueryCheckExtract<NoCheck<NewUserAuthLevel>, AdminUserError>,
+        MapReject(NewUserAuthLevel { permission }): MapReject<
+            Query<NewUserAuthLevel>,
+            AdminUserError,
+        >,
     ) -> AdminUserRResult<CreateUser> {
         resp_try(async {
-            let permission = query.0.permission;
-
             // 生成随机用户名密码
             let rand_username: String = {
                 thread_rng()
@@ -112,10 +111,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db, body))]
     pub async fn login(
         db: SqlConnect,
-        CheckExtract(body, _): JsonCheckExtract<
-            NoCheck<UserLogin>,
-            AdminUserError,
-        >,
+        MapReject(body): MapReject<Json<UserLogin>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
             let token_info = UserSqlOperate::find_user_and_verify_pwd(
@@ -163,7 +159,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db, user))]
     pub async fn change_username(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
-        CheckExtract(username, _): UsernamePretreatment,
+        CheckExtract(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         resp_try(async {
             let id = user.id;
@@ -181,10 +177,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
         db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
-        CheckExtract(body, _): JsonCheckExtract<
-            NoCheck<ChangePassword>,
-            AdminUserError,
-        >,
+        MapReject(body): MapReject<Json<ChangePassword>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
             let id = user.id;
@@ -224,7 +217,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 获取用户列表
     pub async fn user_list(
-        db: SqlConnect, CheckExtract(page_size, _): PageSizePretreatment,
+        db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         resp_try(async {
             // 获取用户列表
@@ -248,10 +241,7 @@ impl UserAuthBackend {
     // 修改用户权限
     pub async fn change_auth(
         db: SqlConnect,
-        CheckExtract(body, _): JsonCheckExtract<
-            NoCheck<ChangeAuthReq>,
-            AdminUserError,
-        >,
+        MapReject(body): MapReject<Json<ChangeAuthReq>, AdminUserError>,
     ) -> AdminUserRResult<()> {
         resp_try(async {
             let ChangeAuthReq { id, auth } = body;
@@ -265,10 +255,7 @@ impl UserAuthBackend {
     // 删除用户
     pub async fn delete_one_user(
         db: SqlConnect,
-        CheckExtract(body, _): JsonCheckExtract<
-            NoCheck<DeleteOneUserReq>,
-            AdminUserError,
-        >,
+        MapReject(body): MapReject<Json<DeleteOneUserReq>, AdminUserError>,
     ) -> AdminUserRResult<()> {
         let uid = body.id;
         rtry!(UserSqlOperate::delete_one_user(&db, uid).await);

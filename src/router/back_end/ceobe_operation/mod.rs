@@ -20,7 +20,8 @@ pub use resource::CeobeOpResource;
 pub use version::CeobeOpVersion;
 pub use video::CeobeOperationVideo;
 
-pub(super) fn ceobe_operation_router() -> Router {
+pub(super) fn ceobe_operation_router<S: Clone + Send + Sync + 'static>(
+) -> Router<S> {
     Router::new()
         .nest("/announcement", announcement_router())
         .nest("/video", video_router())

@@ -8,6 +8,7 @@ use tower_http::auth::{
 use super::service::{self, AdminAuthorize};
 use crate::utils::user_authorize::auth_level::AuthLevelVerify;
 
+#[derive(Clone)]
 pub struct AuthorizeLayer<L: AuthLevelVerify>(InnerLayer<L>);
 
 impl<S, L> Layer<S> for AuthorizeLayer<L>

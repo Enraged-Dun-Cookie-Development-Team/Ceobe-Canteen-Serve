@@ -9,6 +9,7 @@ use bootstrap::{
         component_init::{BackendAuthConfig, RResultConfig},
         db_init::{MongoDbConnect, MysqlDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
+        State,
     },
     midllewares::tracing_request::tracing_request,
 };
@@ -60,21 +61,22 @@ async fn main_task() {
         .init_logger()
         .expect("日志初始化失败")
         // components
-        .append(RResultConfig::<_, RespResultConfig>)
-        .append(BackendAuthConfig::<_, AuthConfig>)
-        .append(QiniuUpload::<_, QiniuUploadConfig>)
+        .prepare(RResultConfig::<_, RespResultConfig>)
+        .prepare(BackendAuthConfig::<_, AuthConfig>)
+        .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
         // database
-        .append_concurrent(|set| {
-            set.join(MysqlDbConnect).join(MongoDbConnect)
-            // .join(RedisDbConnect)
+        .prepare_concurrent(|set| {
+            set.join_state(MysqlDbConnect).join_state(MongoDbConnect)
+            // .join_state(RedisDbConnect)
         })
         // router
-        .append(RouteV1)
-        .append(RouterFallback)
-        .with_global_middleware(CatchPanicLayer::custom(serve_panic))
-        .with_global_middleware(CompressionLayer::new())
-        .with_global_middleware(tracing_request())
-        .append_fn(graceful_shutdown)
+        .prepare_route(RouteV1)
+        .prepare_route(RouterFallback)
+        .layer(CatchPanicLayer::custom(serve_panic))
+        .layer(CompressionLayer::new())
+        .layer(tracing_request())
+        .graceful_shutdown(graceful_shutdown())
+        .convert_state::<State>()
         .prepare_start()
         .await
         .expect("准备启动服务异常")

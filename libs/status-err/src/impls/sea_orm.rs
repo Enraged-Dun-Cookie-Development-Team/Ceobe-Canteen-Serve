@@ -6,11 +6,6 @@ impl StatusErr for sea_orm::DbErr {
     }
 
     #[inline]
-    fn http_code(&self) -> http::StatusCode {
-        http::StatusCode::INTERNAL_SERVER_ERROR
-    }
-
-    #[inline]
     fn prefix(&self) -> ErrPrefix { ErrPrefix::SEA_ORM }
 
     #[inline]
@@ -24,6 +19,17 @@ impl StatusErr for sea_orm::DbErr {
             sea_orm::DbErr::Type(_) => 0x00_06,
             sea_orm::DbErr::Json(_) => 0x00_07,
             sea_orm::DbErr::Migration(_) => 0x00_08,
+            sea_orm::DbErr::ConnectionAcquire => 0x00_09,
+            sea_orm::DbErr::TryIntoErr { .. } => 0x00_0A,
+            sea_orm::DbErr::ConvertFromU64(_) => 0x00_0B,
+            sea_orm::DbErr::UnpackInsertId => 0x00_0C,
+            sea_orm::DbErr::UpdateGetPrimaryKey => 0x00_0D,
+            sea_orm::DbErr::AttrNotSet(_) => 0x00_0E,
         }
+    }
+
+    #[inline]
+    fn http_code(&self) -> http::StatusCode {
+        http::StatusCode::INTERNAL_SERVER_ERROR
     }
 }

@@ -6,10 +6,7 @@ pub mod qiniu_secret;
 pub mod resp_result_config;
 use std::net::SocketAddr;
 
-use axum_starter::{
-    ConfigureServerEffect, LoggerInitialization, Provider, ServeAddress,
-    ServerEffect,
-};
+use axum_starter::{Configure, Provider};
 use mongo_migration::mongo_connection::MongoDbConfig;
 use orm_migrate::sql_connection::DbConfig;
 use serde::Deserialize;
@@ -27,7 +24,12 @@ pub const CONFIG_FILE_TOML: &str = "./Config.toml";
 pub const CONFIG_FILE_JSON: &str = "./Config.json";
 pub const CONFIG_FILE_YAML: &str = "./Config.yaml";
 
-#[derive(Debug, Deserialize, Provider)]
+#[derive(Debug, Deserialize, Provider, Configure)]
+#[conf(
+    address(provide),
+    logger(func = "|this|this.logger.init_log()", error = "::logger::Error"),
+    server
+)]
 pub struct GlobalConfig {
     /// 数据库连接相关配置
     #[serde(alias = "db")]
@@ -63,21 +65,3 @@ pub struct GlobalConfig {
     #[provider(transparent, ref)]
     pub qiniu_secret: QiniuUploadConfig,
 }
-
-impl LoggerInitialization for GlobalConfig {
-    type Error = ::logger::Error;
-
-    fn init_logger(&self) -> Result<(), Self::Error> {
-        self.logger.init_log()
-    }
-}
-
-impl ServeAddress for GlobalConfig {
-    type Address = SocketAddr;
-
-    fn get_address(&self) -> Self::Address { self.provide() }
-}
-
-impl ServerEffect for GlobalConfig {}
-
-impl ConfigureServerEffect for GlobalConfig {}

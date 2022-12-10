@@ -18,7 +18,7 @@ type PluginVersionPreChecker =
 impl CeobeOpVersion {
     #[instrument(ret, skip(db))]
     pub async fn update_plugin(
-        db: MongoConnect, CheckExtract(version, _): PluginVersionPreChecker,
+        db: MongoConnect, CheckExtract(version): PluginVersionPreChecker,
     ) -> PluginRespResult<()> {
         resp_try(async {
             PluginDbOperation::update_new(&db, version).await?;

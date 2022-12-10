@@ -27,7 +27,7 @@ impl CeobeOperationVersionFrontend {
     #[instrument(skip(db, modify))]
     pub async fn app_version(
         db: SqlConnect,
-        CheckExtract(AppVersion { version }, _): OptionAppVersionCheckerPretreat,
+        CheckExtract(AppVersion { version }): OptionAppVersionCheckerPretreat,
         mut modify: modify_cache::CheckModify,
     ) -> FlagVersionRespResult<AppVersionView> {
         let ctrl = modify.cache_headers.get_control();
@@ -53,7 +53,7 @@ impl CeobeOperationVersionFrontend {
     #[instrument(skip(db, modify))]
     pub async fn plugin_version(
         db: MongoConnect,
-        CheckExtract(version, _): OptionPluginVersionCheckerPretreat,
+        CheckExtract(version): OptionPluginVersionCheckerPretreat,
         mut modify: modify_cache::CheckModify,
     ) -> FlagVersionRespResult<PluginVersionView> {
         let ctrl = modify.cache_headers.get_control();

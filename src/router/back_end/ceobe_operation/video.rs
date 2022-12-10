@@ -6,7 +6,7 @@ use tower::limit::ConcurrencyLimitLayer;
 
 pub struct CeobeOperationVideo;
 
-pub(super) fn video_router() -> Router {
+pub(super) fn video_router<S: Clone + Send + Sync + 'static>() -> Router<S> {
     Router::new()
         .route(
             "/detail",

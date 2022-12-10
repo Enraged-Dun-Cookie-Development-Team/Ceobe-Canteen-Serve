@@ -1,6 +1,7 @@
 mod layer;
 use async_trait::async_trait;
-use axum::extract::{FromRequest, RequestParts};
+use axum::extract::FromRequestParts;
+use http::request::Parts;
 use orm_migrate::sql_models::admin_user::models::user;
 use resp_result::{Nil, RespResult};
 
@@ -22,18 +23,20 @@ impl std::fmt::Debug for AuthorizeInfo {
 }
 
 #[async_trait]
-impl<B: Send> FromRequest<B> for AuthorizeInfo {
+impl<S> FromRequestParts<S> for AuthorizeInfo
+where
+    S: Send + Sync,
+{
     type Rejection = RespResult<Nil, AuthorizeError>;
 
-    async fn from_request(
-        req: &mut RequestParts<B>,
+    async fn from_request_parts(
+        parts: &mut Parts, _state: &S,
     ) -> Result<Self, Self::Rejection> {
-        let v = req
-            .extensions_mut()
+        Ok(parts
+            .extensions
             .remove::<Self>()
             .ok_or(AuthorizeError::NoAuthorizeLayer)
-            .map_err(RespResult::err)?;
-        Ok(v)
+            .map_err(RespResult::err)?)
     }
 }
 

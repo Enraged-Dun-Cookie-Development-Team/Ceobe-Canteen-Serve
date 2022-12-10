@@ -23,7 +23,7 @@ impl CeobeOperationAnnouncementSqlOperate {
     >
     where
         'db: 'r,
-        C: ConnectionTrait + StreamTrait<'db> + Send,
+        C: ConnectionTrait + StreamTrait + Send,
     {
         Ok(model_announcement::Entity::find()
             .filter(filter)
@@ -38,7 +38,7 @@ impl CeobeOperationAnnouncementSqlOperate {
         impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 'r,
     >
     where
-        C: ConnectionTrait + StreamTrait<'db> + Send,
+        C: ConnectionTrait + StreamTrait + Send,
     {
         Self::find_by_filter_raw(
             Condition::all().add(filter.into_condition()).add(
@@ -55,7 +55,7 @@ impl CeobeOperationAnnouncementSqlOperate {
     ) -> OperateResult<Vec<model_announcement::Model>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait + for<'s> StreamTrait<'s>,
+        D::Connect<'db>: ConnectionTrait + StreamTrait,
     {
         Ok(Self::find_by_filter_not_delete_raw(
             Condition::all(),

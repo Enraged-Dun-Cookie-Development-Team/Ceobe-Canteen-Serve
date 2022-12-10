@@ -11,4 +11,5 @@ initial = []
 get-connect = []
 
 [dependencies]
-axum = { workspace = true }
+axum-core = { workspace = true }
+http = { workspace = true }
