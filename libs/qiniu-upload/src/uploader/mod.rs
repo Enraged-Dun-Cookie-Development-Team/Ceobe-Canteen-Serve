@@ -3,11 +3,10 @@ mod payload;
 mod upload_field;
 mod upload_file;
 mod upload_json;
-use std::{collections::HashMap, fmt::Debug};
+use std::fmt::Debug;
 
 use futures::Future;
 use qiniu_upload_manager::AutoUploaderObjectParams;
-use smallstr::SmallString;
 use tracing::info;
 pub use upload_json::JsonPayload;
 
@@ -18,26 +17,24 @@ pub use self::{
 use crate::{error, SecretConfig};
 #[derive(Debug)]
 pub struct Uploader {
-    pub(crate) managers:
-        HashMap<SmallString<[u8; 64]>, ManagedUploader, ahash::RandomState>,
+    pub(crate) uploader: ManagedUploader,
 }
 
 impl Uploader {
-    pub fn builder(secret: &impl SecretConfig) -> builder::UploaderBuilder {
-        UploaderBuilder::new(secret)
+    pub fn builder(
+        secret: &impl SecretConfig, name: &(impl AsRef<str> + ?Sized),
+    ) -> builder::UploaderBuilder {
+        UploaderBuilder::new(secret, name)
     }
 
-    pub async fn custom_upload<'l, L, F, Fut, O>(
-        &self, local: &'l L, handle: F,
+    pub async fn custom_upload<'l, F, Fut, O>(
+        &self, handle: F,
     ) -> Result<O, error::Error>
     where
-        L: PayloadLocal,
         F: for<'r> FnOnce(&'r ManagedUploader) -> Fut,
         Fut: Future<Output = Result<O, error::Error>> + 'l,
     {
-        let manager = self.managers.get(local.bucket()).ok_or_else(|| {
-            error::Error::BucketNotInManage(local.bucket().into())
-        })?;
+        let manager = &self.uploader;
 
         handle(manager).await
     }
@@ -47,18 +44,11 @@ impl Uploader {
     ) -> Result<ResponsePayload, error::Error> {
         info!(
             content_type = %payload.content_type(),
-            qiniu.uploader.bucket = payload.bucket(),
             qiniu.uploader.obj = payload.obj_name(),
             qiniu.uploader.file = payload.file_name(),
         );
 
-        let auto_uploader = self
-            .managers
-            .get(payload.bucket())
-            .ok_or_else(|| {
-                error::Error::BucketNotInManage(payload.bucket().into())
-            })?
-            .get_default_upload();
+        let auto_uploader = self.uploader.get_default_upload();
 
         let params = AutoUploaderObjectParams::builder()
             .object_name(payload.obj_name())
@@ -80,7 +70,7 @@ impl Uploader {
     }
 }
 
-#[derive(Debug, serde::Deserialize,serde::Serialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct ResponsePayload {
     pub hash: String,
     pub key: String,

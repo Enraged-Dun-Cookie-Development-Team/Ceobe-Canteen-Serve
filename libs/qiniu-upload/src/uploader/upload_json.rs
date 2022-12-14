@@ -13,7 +13,6 @@ impl Uploader {
     #[instrument(
         skip_all,
         fields(
-            qiniu.bucket = payload.bucket(),
             qiniu.obj = payload.obj_name(),
             qiniu.file = payload.file_name()
         )
@@ -56,7 +55,6 @@ impl<P> JsonUpload<P> {
 }
 
 impl<P: PayloadLocal> PayloadLocal for JsonUpload<P> {
-    fn bucket(&self) -> &str { self.payload.bucket() }
 
     fn obj_name(&self) -> &str { self.payload.obj_name() }
 

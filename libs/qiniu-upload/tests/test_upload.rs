@@ -39,19 +39,14 @@ fn read_config() -> SecretConfigure {
 async fn test_json_upload() {
     let cfg = read_config();
     let u = {
-        let t = Uploader::builder(&cfg)
-            .add_bucket("frozen-string")
-            .expect("Bucket Used")
-            .build();
+        let t = Uploader::builder(&cfg, "frozen-string").build();
         t
     };
 
     struct J(Value, &'static str);
 
     impl PayloadLocal for J {
-        fn bucket(&self) -> &str {
-            "frozen-string"
-        }
+
 
         fn obj_name(&self) -> &str {
             self.1
@@ -103,19 +98,14 @@ async fn test_json_upload() {
 async fn test_file_upload() {
     let cfg = read_config();
     let u = {
-        let t = Uploader::builder(&cfg)
-            .add_bucket("frozen-string")
-            .expect("Bucket Used")
-            .build();
+        let t = Uploader::builder(&cfg, "frozen-string").build();
         t
     };
 
     struct J;
 
     impl PayloadLocal for J {
-        fn bucket(&self) -> &str {
-            "frozen-string"
-        }
+
 
         fn obj_name(&self) -> &str {
             "foo_json_file"

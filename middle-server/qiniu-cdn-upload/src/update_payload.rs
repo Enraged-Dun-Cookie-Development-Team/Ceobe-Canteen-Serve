@@ -2,11 +2,10 @@
 
 
 
-use crate::{update_source::UploadSource, upload_bucket::UploadBucket};
+use crate::{update_source::UploadSource};
 
 /// 上传对象上传位置
 pub trait UploadPayload {
-    type Bucket: UploadBucket + 'static;
     type Source: UploadSource + 'static;
 
     /// 上传位置的目录， 相同类型上传位置相同

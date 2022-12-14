@@ -10,8 +10,6 @@ use smallstr::SmallString;
 use crate::error;
 
 pub trait PayloadLocal {
-    fn bucket(&self) -> &str;
-
     fn obj_name(&self) -> &str;
 
     fn file_name(&self) -> &str { self.obj_name() }
@@ -85,7 +83,6 @@ impl<L> PayloadLocal for ByteUploader<L>
 where
     L: PayloadLocal,
 {
-    fn bucket(&self) -> &str { self.local.bucket() }
 
     fn obj_name(&self) -> &str { self.local.obj_name() }
 

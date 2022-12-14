@@ -4,11 +4,9 @@ use ceobe_qiniu_upload::{
 use mime::Mime;
 use update_payload::UploadPayload;
 use update_source::UploadSource;
-use upload_bucket::UploadBucket;
 
 /// 上传是数据的目标位置
 pub mod update_payload;
-pub mod upload_bucket;
 
 /// 上传的数据来源相关trait
 pub mod update_source;
@@ -74,22 +72,9 @@ where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-    fn bucket(&self) -> &str {
-        <L::Bucket as UploadBucket>::BUCKET_NAME
-    }
+
 
     fn obj_name(&self) -> &str {
         self.full_name.as_str()
     }
-}
-
-pub struct Bucket;
-
-impl UploadBucket for Bucket {
-    #[cfg(debug_assertions)]
-    const BUCKET_NAME: &'static str = "frozen-string";
-
-    // TODO: 生产环境Bucket
-    #[cfg(not(debug_assertions))]
-    const BUCKET_NAME: &'static str = "ceobe";
 }

@@ -7,7 +7,6 @@ use crate::{error, FilePayload, PayloadLocal, Uploader};
 impl Uploader {
     #[instrument(skip_all, fields(
         filename = ?payload.file_path().as_ref(),
-        qiniu.bucket = payload.bucket(),
         qiniu.obj = payload.obj_name(),
         qiniu.file = payload.file_name()
     ))]
@@ -16,17 +15,12 @@ impl Uploader {
     ) -> Result<ResponsePayload, error::Error> {
         info!(
             filename = ?payload.file_path().as_ref(),
-            qiniu.uploader.bucket = payload.bucket(),
             qiniu.uploader.obj = payload.obj_name(),
             qiniu.uploader.file = payload.file_name()
         );
 
         let auto_uploader = self
-            .managers
-            .get(payload.bucket())
-            .ok_or_else(|| {
-                error::Error::BucketNotInManage(payload.bucket().into())
-            })?
+            .uploader
             .get_default_upload();
 
         let param = AutoUploaderObjectParams::builder()

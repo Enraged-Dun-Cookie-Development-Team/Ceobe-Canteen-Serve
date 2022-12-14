@@ -30,7 +30,6 @@ pub use front_end::{
 use futures::{io::Cursor, stream::IntoAsyncRead, Future, TryStreamExt};
 use qiniu_cdn_upload::{
     update_payload::UploadPayload, update_source::UploadSource,
-    upload_bucket::UploadBucket, Bucket,
 };
 
 pub type ServerRoute = Router<State>;
@@ -73,7 +72,7 @@ async fn upload(
     let v = qiniu_cdn_upload::upload(
         &uploader,
         source,
-        ImagePayload::<Bucket, ImageSource>(PhantomData, "AAA".to_string()),
+        ImagePayload::<ImageSource>(PhantomData, "AAA".to_string()),
     )
     .await
     .map_err(|err| err.to_string())?;
@@ -81,15 +80,12 @@ async fn upload(
     Ok(axum::Json(v))
 }
 
-struct ImagePayload<Bucket, Source>(PhantomData<(Bucket, Source)>, String);
+struct ImagePayload<Source>(PhantomData<Source>, String);
 
-impl<Bucket, Source> UploadPayload for ImagePayload<Bucket, Source>
+impl<Bucket, Source> UploadPayload for ImagePayload<Source>
 where
-    Bucket: UploadBucket + 'static,
     Source: UploadSource + 'static,
 {
-    type Bucket = Bucket;
-
     type Source = Source;
 
     const DIR: &'static str = "image";
