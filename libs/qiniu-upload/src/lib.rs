@@ -12,3 +12,5 @@ pub use uploader::{
 };
 
 pub use crate::axum_starter::{QiniuUpload, QiniuUploader};
+pub use mime;
+pub use mime_guess;

@@ -15,58 +15,61 @@ pub mod update_source;
 
 pub async fn upload<Payload>(
     uploader: &Uploader,
-    payload: <Payload::Source as UploadSource>::Payload<'_>, local: Payload,
+    source: <Payload::Source as UploadSource>::Source<'_>, local: Payload,
 ) -> Result<ResponsePayload, Error>
 where
     Payload: update_payload::UploadPayload,
     <Payload::Source as UploadSource>::Error: Into<Error>,
 {
-    let upload = UploadWrap::<_>::new(payload, local);
+    let upload = UploadWrap::<_>::new(source, local)
+        .await
+        .map_err(Into::into)?;
     Ok(uploader.upload(upload).await?)
 }
 
-struct UploadWrap<'r, L>
+struct UploadWrap<L>
 where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-    payload: <L::Source as update_source::UploadSource>::Payload<'r>,
-    inner: L,
+    content_type: Mime,
+    payload: <L::Source as update_source::UploadSource>::Read,
+    full_name:String
 }
 
-impl<'r, L> UploadWrap<'r, L>
+impl<L> UploadWrap<L>
 where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-    fn new(
-        payload: <L::Source as UploadSource>::Payload<'r>, local: L,
-    ) -> Self {
-        Self {
-            payload,
-            inner: local,
-        }
+    async fn new(
+        payload: <L::Source as UploadSource>::Source<'_>, local: L,
+    ) -> Result<Self, <L::Source as UploadSource>::Error> {
+        Ok(Self {
+            content_type: <L::Source as UploadSource>::content_type(&payload),
+            payload: <L::Source as UploadSource>::read_data(payload).await?,
+            full_name:local.full_name()
+        })
     }
 }
 
-impl<'r, L> PayloadContent for UploadWrap<'r, L>
+impl<L> PayloadContent for UploadWrap<L>
 where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
     fn content_type(&self) -> Mime {
-        <L::Source as UploadSource>::content_type(&self.payload)
+        self.content_type.clone()
     }
 
     type Payload = <L::Source as UploadSource>::Read;
 
-    fn payload(mut self) -> Result<Self::Payload, Error> {
-        <L::Source as UploadSource>::read_data(&mut self.payload)
-            .map_err(Into::into)
+    fn payload(self) -> Result<Self::Payload, Error> {
+        Ok(self.payload)
     }
 }
 
-impl<'r, L> PayloadLocal for UploadWrap<'r, L>
+impl<L> PayloadLocal for UploadWrap<L>
 where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
@@ -76,6 +79,17 @@ where
     }
 
     fn obj_name(&self) -> &str {
-        self.inner.obj_name()
+        self.full_name.as_str()
     }
+}
+
+pub struct Bucket;
+
+impl UploadBucket for Bucket {
+    #[cfg(debug_assertions)]
+    const BUCKET_NAME: &'static str = "frozen-string";
+
+    // TODO: 生产环境Bucket
+    #[cfg(not(debug_assertions))]
+    const BUCKET_NAME: &'static str = "ceobe";
 }

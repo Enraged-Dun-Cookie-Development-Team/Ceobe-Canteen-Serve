@@ -109,6 +109,7 @@ axum-macros = "0.3"
 tracing = { workspace = true }
 dotenv = "0.15"
 tracing-unwrap = { workspace = true }
+qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 
 [dependencies.tokio]
 workspace = true

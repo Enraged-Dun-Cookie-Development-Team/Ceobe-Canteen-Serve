@@ -80,7 +80,7 @@ impl Uploader {
     }
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize,serde::Serialize)]
 pub struct ResponsePayload {
     pub hash: String,
     pub key: String,
