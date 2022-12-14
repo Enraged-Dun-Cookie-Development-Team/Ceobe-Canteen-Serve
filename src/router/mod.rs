@@ -12,9 +12,13 @@ pub use front_end::{
     CeobeOperationVideoFrontend,
 };
 
+pub type ServerRoute = Router<State>;
+
+use crate::bootstrap::init::State;
+
 use self::{back_end::back_end_router, front_end::front_end_router};
 
-pub fn root_route<S: Clone + Send + Sync + 'static>() -> Router<S> {
+pub fn root_route() -> ServerRoute {
     Router::new()
         .nest("/canteen", front_end_router())
         .nest("/admin", back_end_router())

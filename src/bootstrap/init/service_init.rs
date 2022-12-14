@@ -9,11 +9,11 @@ use tracing::info;
 
 use crate::{error::not_exist, router};
 
+use super::State;
+
 /// 配置router
 #[prepare(RouteV1)]
-fn router_v1<S>() -> impl PrepareRouteEffect<S, Body>
-where
-    S: Send + Sync + 'static + Clone,
+fn router_v1() -> impl PrepareRouteEffect<State, Body>
 {
     Nest::new("/api/v1", router::root_route())
 }
