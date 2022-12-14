@@ -1,4 +1,3 @@
-use std::slice::Iter;
 
 use ceobe_qiniu_upload::{GetBucket, SecretConfig};
 use serde::Deserialize;
@@ -7,7 +6,6 @@ use serde::Deserialize;
 pub struct QiniuUploadConfig {
     access_key: String,
     secret_key: String,
-    #[serde(default)]
     bucket: String,
 }
 

@@ -4,37 +4,35 @@ mod front_end;
 use std::{marker::PhantomData, pin::Pin};
 
 use axum::{
-    body::{Bytes, StreamBody},
+    body::Bytes,
     extract::{
         multipart::{Field, MultipartError},
-        BodyStream, Multipart,
+        Multipart,
     },
-    headers::ContentType,
     routing::{get, post},
-    Router, TypedHeader,
+    Router,
 };
 pub use back_end::{
     BakeryMansionBackend, CeobeOpResource, CeobeOpVersion,
     CeobeOperationAnnouncement, CeobeOperationVideo, UserAuthBackend,
 };
 use ceobe_qiniu_upload::{
-    mime::APPLICATION_OCTET_STREAM, mime_guess::Mime, PayloadContent,
-    PayloadLocal, QiniuUploader, ResponsePayload,
+    mime::APPLICATION_OCTET_STREAM, mime_guess::Mime, QiniuUploader,
+    ResponsePayload,
 };
-use figment::providers::Json;
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
     CeobeOperationVideoFrontend,
 };
-use futures::{io::Cursor, stream::IntoAsyncRead, Future, TryStreamExt};
+use futures::{io::Cursor, Future};
 use qiniu_cdn_upload::{
     update_payload::UploadPayload, update_source::UploadSource,
 };
 
 pub type ServerRoute = Router<State>;
 
-use crate::bootstrap::{self, init::State};
+use crate::bootstrap::init::State;
 
 use self::{back_end::back_end_router, front_end::front_end_router};
 
@@ -58,15 +56,13 @@ pub fn root_route() -> ServerRoute {
         .route("/upload", post(upload))
 }
 
-#[axum_macros::debug_handler]
 async fn upload(
-    _: axum::extract::State<bootstrap::init::State>, uploader: QiniuUploader,
-    mut file: Multipart,
+    uploader: QiniuUploader, mut file: Multipart,
 ) -> Result<axum::Json<ResponsePayload>, String> {
     let source = file
         .next_field()
         .await
-        .map_err(|err| err.to_string())?
+        .map_err(|err| format!("load field error {:?}", err))?
         .ok_or("No field".to_string())?;
 
     let v = qiniu_cdn_upload::upload(
@@ -75,14 +71,14 @@ async fn upload(
         ImagePayload::<ImageSource>(PhantomData, "AAA".to_string()),
     )
     .await
-    .map_err(|err| err.to_string())?;
+    .map_err(|err| format!("{:?}", err))?;
 
     Ok(axum::Json(v))
 }
 
 struct ImagePayload<Source>(PhantomData<Source>, String);
 
-impl<Bucket, Source> UploadPayload for ImagePayload<Source>
+impl<Source> UploadPayload for ImagePayload<Source>
 where
     Source: UploadSource + 'static,
 {

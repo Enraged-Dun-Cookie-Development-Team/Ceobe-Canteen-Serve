@@ -79,20 +79,20 @@ async fn test_json_upload() {
         .await
         .expect("Upload error");
     println!("{:?}", v);
-    let v = u
-        .upload_json(J(
-            json! {
-                {
-                    "name" : "value3",
-                    "name" : "value4",
-                    "type" : 2
-                }
-            },
-            "data/Data B",
-        ))
-        .await
-        .expect("Upload error");
-    println!("{:?}", v)
+    // let v = u
+    //     .upload_json(J(
+    //         json! {
+    //             {
+    //                 "name" : "value3",
+    //                 "name" : "value4",
+    //                 "type" : 2
+    //             }
+    //         },
+    //         "data/Data B",
+    //     ))
+    //     .await
+    //     .expect("Upload error");
+    // println!("{:?}", v)
 }
 #[tokio::test]
 async fn test_file_upload() {
