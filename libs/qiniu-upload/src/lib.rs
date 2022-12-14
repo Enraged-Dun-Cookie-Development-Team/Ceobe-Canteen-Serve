@@ -8,7 +8,7 @@ pub use config::{GetBucket, SecretConfig};
 pub use error::{Error, UploaderNotFound};
 pub use uploader::{
     ByteUploader, FilePayload, JsonPayload, ManagedUploader, PayloadContent,
-    PayloadLocal, Uploader, UploaderBuilder,
+    PayloadLocal, Uploader, UploaderBuilder,ResponsePayload
 };
 
 pub use crate::axum_starter::{QiniuUpload, QiniuUploader};
