@@ -5,8 +5,7 @@ use axum::{
 
 pub struct CeobeOperationAnnouncement;
 
-pub(super) fn announcement_router<S: Clone + Send + Sync + 'static>(
-) -> Router<S> {
+pub(super) fn announcement_router() -> crate::router::ServerRoute {
     Router::new()
         .route(
             "/get",

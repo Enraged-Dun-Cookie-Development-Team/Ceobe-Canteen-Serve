@@ -5,7 +5,7 @@ use axum::{
 
 pub struct CeobeOpResource;
 
-pub fn resource_router<S: Clone + Send + Sync + 'static>() -> Router<S> {
+pub fn resource_router() -> crate::router::ServerRoute {
     Router::new()
         .route("/submitList", post(CeobeOpResource::upload_resource))
         .route("/list", get(CeobeOpResource::get_resource))

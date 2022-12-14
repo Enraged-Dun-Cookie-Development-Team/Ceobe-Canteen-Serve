@@ -1,9 +1,10 @@
 use axum::{routing::get, Router};
 
+use crate::router::ServerRoute;
+
 pub struct BakeryMansionFrontend;
 
-pub(super) fn bakery_mansion_router<S: Clone + Send + Sync + 'static>(
-) -> Router<S> {
+pub(super) fn bakery_mansion_router() -> ServerRoute {
     Router::new()
         .route(
             "/mansionInfo",
