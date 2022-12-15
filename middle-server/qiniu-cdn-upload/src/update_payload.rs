@@ -1,8 +1,4 @@
-
-
-
-
-use crate::{update_source::UploadSource};
+use crate::update_source::UploadSource;
 
 /// 上传对象上传位置
 pub trait UploadPayload {
@@ -14,7 +10,8 @@ pub trait UploadPayload {
     /// 上传对象的对象名称（Key）
     fn obj_name(&self) -> &str;
 
-    /// 通过 [UploadLocal::DIR] 与 [UploadLocal::obj_name] 合成上传使用的完整object name
+    /// 通过 [UploadLocal::DIR] 与 [UploadLocal::obj_name]
+    /// 合成上传使用的完整object name
     fn full_name(&self) -> String {
         format!("{}/{}", Self::DIR, self.obj_name())
     }

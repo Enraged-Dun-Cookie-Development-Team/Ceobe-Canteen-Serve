@@ -17,7 +17,6 @@ use ceobe_qiniu_upload::{
     GetBucket, QiniuUpload, QiniuUploadState, QiniuUploader, ResponsePayload,
     SecretConfig,
 };
-
 use futures::FutureExt;
 use qiniu_cdn_upload::{
     update_payload::UploadPayload,
@@ -47,9 +46,7 @@ async fn upload(
 struct ImagePayload<Source>(PhantomData<Source>, String);
 
 impl<Source> ImagePayload<Source> {
-    fn new() -> Self {
-        Self(PhantomData, uuid::Uuid::new_v4().to_string())
-    }
+    fn new() -> Self { Self(PhantomData, uuid::Uuid::new_v4().to_string()) }
 }
 
 impl<Source> UploadPayload for ImagePayload<Source>
@@ -60,9 +57,7 @@ where
 
     const DIR: &'static str = "image";
 
-    fn obj_name(&self) -> &str {
-        self.1.as_str()
-    }
+    fn obj_name(&self) -> &str { self.1.as_str() }
 }
 
 #[prepare(Router)]
@@ -72,11 +67,13 @@ fn set_route() -> impl PrepareRouteEffect<State, Body> {
 
 #[prepare(Fallback)]
 fn fall_back() -> impl PrepareRouteEffect<State, Body> {
-    Fallback::new(|| async {
-        (
-            StatusCode::BAD_REQUEST,
-            Html(r#"请前往 <a herf = "/upload">/upload</a>"#),
-        )
+    Fallback::new(|| {
+        async {
+            (
+                StatusCode::BAD_REQUEST,
+                Html(r#"请前往 <a herf = "/upload">/upload</a>"#),
+            )
+        }
     })
 }
 
@@ -106,10 +103,10 @@ async fn server() {
         .expect("服务器异常");
 }
 
-use log::Level::Debug;
-use log::SetLoggerError;
-use simple_logger::init_with_level;
 use std::net::Ipv4Addr;
+
+use log::{Level::Debug, SetLoggerError};
+use simple_logger::init_with_level;
 use tokio::{runtime, signal::ctrl_c};
 
 #[derive(Debug, Default, Provider, Configure)]
@@ -143,21 +140,15 @@ pub struct QiniuConfig {
 }
 
 impl GetBucket for QiniuConfig {
-    fn get_bucket(&self) -> &str {
-        &self.bucket
-    }
+    fn get_bucket(&self) -> &str { &self.bucket }
 }
 
 impl SecretConfig for QiniuConfig {
-    fn access_key(&self) -> &str {
-        &self.access
-    }
+    fn access_key(&self) -> &str { &self.access }
 
-    fn secret_key(&self) -> &str {
-        &self.secret
-    }
+    fn secret_key(&self) -> &str { &self.secret }
 }
 
-//impl `Default` and associate function `new` for
+// impl `Default` and associate function `new` for
 // [QiniuConfig]
 include!("../../../qiniu_info.meta");

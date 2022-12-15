@@ -5,6 +5,5 @@ pub trait SecretConfig {
 
 /// 实现获取Bucket
 pub trait GetBucket {
-
     fn get_bucket(&self) -> &str;
 }

@@ -65,7 +65,6 @@ impl ServeAddress for Config {
 }
 
 impl GetBucket for Config {
-
     fn get_bucket(&self) -> &str { self.buckets.as_str() }
 }
 
@@ -107,10 +106,7 @@ async fn upload_img(
         .ok_or("Payload info field not found")?;
     let filename = field.file_name().map(ToOwned::to_owned);
 
-    let local = Local {
-        obj_name,
-        filename,
-    };
+    let local = Local { obj_name, filename };
 
     qiniu
         .upload_field(field, local)
@@ -126,7 +122,6 @@ struct Local {
 }
 
 impl PayloadLocal for Local {
-
     fn obj_name(&self) -> &str { &self.obj_name }
 
     fn file_name(&self) -> &str {

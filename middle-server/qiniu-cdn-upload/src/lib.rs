@@ -22,7 +22,7 @@ where
     let upload = UploadWrap::<_>::new(source, local)
         .await
         .map_err(Into::into)?;
-    Ok(uploader.upload(upload).await?)
+    uploader.upload(upload).await
 }
 
 struct UploadWrap<L>
@@ -32,7 +32,7 @@ where
 {
     content_type: Mime,
     payload: <L::Source as update_source::UploadSource>::Read,
-    full_name:String
+    full_name: String,
 }
 
 impl<L> UploadWrap<L>
@@ -46,7 +46,7 @@ where
         Ok(Self {
             content_type: <L::Source as UploadSource>::content_type(&payload),
             payload: <L::Source as UploadSource>::read_data(payload).await?,
-            full_name:local.full_name()
+            full_name: local.full_name(),
         })
     }
 }
@@ -56,15 +56,11 @@ where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-    fn content_type(&self) -> Mime {
-        self.content_type.clone()
-    }
-
     type Payload = <L::Source as UploadSource>::Read;
 
-    fn payload(self) -> Result<Self::Payload, Error> {
-        Ok(self.payload)
-    }
+    fn content_type(&self) -> Mime { self.content_type.clone() }
+
+    fn payload(self) -> Result<Self::Payload, Error> { Ok(self.payload) }
 }
 
 impl<L> PayloadLocal for UploadWrap<L>
@@ -72,9 +68,5 @@ where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-
-
-    fn obj_name(&self) -> &str {
-        self.full_name.as_str()
-    }
+    fn obj_name(&self) -> &str { self.full_name.as_str() }
 }

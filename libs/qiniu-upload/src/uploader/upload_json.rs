@@ -55,7 +55,6 @@ impl<P> JsonUpload<P> {
 }
 
 impl<P: PayloadLocal> PayloadLocal for JsonUpload<P> {
-
     fn obj_name(&self) -> &str { self.payload.obj_name() }
 
     fn file_name(&self) -> &str { self.payload.file_name() }

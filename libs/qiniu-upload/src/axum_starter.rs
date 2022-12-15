@@ -34,9 +34,7 @@ pub struct QiniuUploader {
 impl Deref for QiniuUploader {
     type Target = Uploader;
 
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
+    fn deref(&self) -> &Self::Target { &self.inner }
 }
 
 impl<S> FromRequestParts<S> for QiniuUploader

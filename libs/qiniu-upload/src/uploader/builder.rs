@@ -17,7 +17,7 @@ impl UploaderBuilder {
             Credential::new(secret.access_key(), secret.secret_key());
         let manage = UploadManager::builder(
             UploadTokenSigner::new_credential_provider(
-                credential.clone(),
+                credential,
                 name.as_ref(),
                 Duration::from_secs(3600),
             ),
@@ -47,11 +47,7 @@ impl ManagedUploader {
         Self { default, manage }
     }
 
-    pub fn get_default_upload(&self) -> &AutoUploader {
-        &self.default
-    }
+    pub fn get_default_upload(&self) -> &AutoUploader { &self.default }
 
-    pub fn get_manage(&self) -> &UploadManager {
-        &self.manage
-    }
+    pub fn get_manage(&self) -> &UploadManager { &self.manage }
 }

@@ -1,10 +1,11 @@
+use std::{error::Error as StdError, fmt::Debug, pin::Pin};
+
 use axum::{
     body::Bytes,
     extract::multipart::{Field, MultipartError},
 };
 use futures::{io::Cursor, AsyncRead, Future};
 use mime::{Mime, APPLICATION_OCTET_STREAM};
-use std::{error::Error as StdError, fmt::Debug, pin::Pin};
 
 /// 上传七牛云的数据的数据源
 pub trait UploadSource {
@@ -30,15 +31,12 @@ pub trait UploadSource {
 pub struct FieldSource;
 
 impl UploadSource for FieldSource {
-    type Source<'r> = Field<'r>;
-
-    type Read = Cursor<Bytes>;
-
     type Error = MultipartError;
-
+    type Read = Cursor<Bytes>;
     type ReadFuture<'f> = Pin<
         Box<dyn Future<Output = Result<Self::Read, Self::Error>> + Send + 'f>,
     >;
+    type Source<'r> = Field<'r>;
 
     fn read_data(payload: Self::Source<'_>) -> Self::ReadFuture<'_> {
         Box::pin(async move {

@@ -14,8 +14,7 @@ use self::{
     ceobe_operation::ceobe_operation_router, user_auth::user_auth_router,
 };
 
-pub(super) fn back_end_router() -> crate::router::ServerRoute
-{
+pub(super) fn back_end_router() -> crate::router::ServerRoute {
     Router::new()
         .nest("/user", user_auth_router())
         .nest("/mansion", bakery_mansion_router())

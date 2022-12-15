@@ -19,9 +19,7 @@ impl Uploader {
             qiniu.uploader.file = payload.file_name()
         );
 
-        let auto_uploader = self
-            .uploader
-            .get_default_upload();
+        let auto_uploader = self.uploader.get_default_upload();
 
         let param = AutoUploaderObjectParams::builder()
             .object_name(payload.obj_name())

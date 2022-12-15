@@ -11,10 +11,8 @@ use self::{
     bakery_mansion::bakery_mansion_router,
     ceobe_operation::ceobe_operation_router,
 };
-
 use super::ServerRoute;
-pub(super) fn front_end_router() -> ServerRoute
-{
+pub(super) fn front_end_router() -> ServerRoute {
     Router::new()
         .nest("/bakery", bakery_mansion_router())
         .nest("/operate", ceobe_operation_router())

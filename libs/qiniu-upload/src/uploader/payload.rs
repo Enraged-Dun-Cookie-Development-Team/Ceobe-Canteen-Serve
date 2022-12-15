@@ -83,7 +83,6 @@ impl<L> PayloadLocal for ByteUploader<L>
 where
     L: PayloadLocal,
 {
-
     fn obj_name(&self) -> &str { self.local.obj_name() }
 
     fn file_name(&self) -> &str { self.local.obj_name() }

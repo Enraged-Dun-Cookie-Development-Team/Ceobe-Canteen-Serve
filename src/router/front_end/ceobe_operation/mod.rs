@@ -1,12 +1,11 @@
 mod resource;
 use axum::Router;
 
-use crate::router::ServerRoute;
-
 use self::{
     announcement::announcement_router, resource::resource_router,
     version::version_router, video::video_router,
 };
+use crate::router::ServerRoute;
 
 mod announcement;
 mod version;

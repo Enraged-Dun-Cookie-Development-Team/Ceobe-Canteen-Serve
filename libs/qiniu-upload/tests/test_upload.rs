@@ -13,13 +13,9 @@ pub struct SecretConfigure {
 }
 
 impl SecretConfig for SecretConfigure {
-    fn access_key(&self) -> &str {
-        &self.access_key
-    }
+    fn access_key(&self) -> &str { &self.access_key }
 
-    fn secret_key(&self) -> &str {
-        &self.secret_key
-    }
+    fn secret_key(&self) -> &str { &self.secret_key }
 }
 
 fn read_config() -> SecretConfigure {
@@ -46,23 +42,15 @@ async fn test_json_upload() {
     struct J(Value, &'static str);
 
     impl PayloadLocal for J {
+        fn obj_name(&self) -> &str { self.1 }
 
-
-        fn obj_name(&self) -> &str {
-            self.1
-        }
-
-        fn file_name(&self) -> &str {
-            self.1
-        }
+        fn file_name(&self) -> &str { self.1 }
     }
 
     impl JsonPayload for J {
         type Payload = Value;
 
-        fn payload(self) -> Self::Payload {
-            self.0
-        }
+        fn payload(self) -> Self::Payload { self.0 }
     }
 
     let v = u
@@ -105,19 +93,13 @@ async fn test_file_upload() {
     struct J;
 
     impl PayloadLocal for J {
-
-
-        fn obj_name(&self) -> &str {
-            "foo_json_file"
-        }
+        fn obj_name(&self) -> &str { "foo_json_file" }
     }
 
     impl FilePayload for J {
         type Path = str;
 
-        fn file_path(&self) -> &Self::Path {
-            "./test_payloads/test.json"
-        }
+        fn file_path(&self) -> &Self::Path { "./test_payloads/test.json" }
     }
 
     let v = u.upload_file(J).await.expect("Upload error");

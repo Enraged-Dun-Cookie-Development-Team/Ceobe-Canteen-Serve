@@ -6,7 +6,6 @@ pub use back_end::{
     BakeryMansionBackend, CeobeOpResource, CeobeOpVersion,
     CeobeOperationAnnouncement, CeobeOperationVideo, UserAuthBackend,
 };
-
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
@@ -15,9 +14,8 @@ pub use front_end::{
 
 pub type ServerRoute = Router<State>;
 
-use crate::bootstrap::init::State;
-
 use self::{back_end::back_end_router, front_end::front_end_router};
+use crate::bootstrap::init::State;
 
 pub fn root_route() -> ServerRoute {
     Router::new()

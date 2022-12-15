@@ -10,8 +10,7 @@ use crate::{
 
 pub struct UserAuthBackend;
 
-pub(super) fn user_auth_router() -> crate::router::ServerRoute
-{
+pub(super) fn user_auth_router() -> crate::router::ServerRoute {
     Router::new()
         .route("/create", post(UserAuthBackend::create_user))
         .route("/userList", get(UserAuthBackend::user_list))
