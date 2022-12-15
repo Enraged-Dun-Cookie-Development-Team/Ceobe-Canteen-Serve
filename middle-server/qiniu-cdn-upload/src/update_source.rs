@@ -22,12 +22,14 @@ pub trait UploadSource {
         + 'f
         + Send;
 
+    /// 从 [Self::Source] 中获取payload, 可能为异步
     fn read_data(payload: Self::Source<'_>) -> Self::ReadFuture<'_>;
 
     /// 上传数据的content type
     fn content_type(payload: &Self::Source<'_>) -> Mime;
 }
 
+/// 来自 `Multipart` 的待上传数据源
 pub struct FieldSource;
 
 impl UploadSource for FieldSource {
