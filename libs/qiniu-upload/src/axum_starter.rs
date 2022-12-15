@@ -10,6 +10,8 @@ use tracing::{info, instrument};
 
 use crate::{GetBucket, SecretConfig, Uploader};
 
+pub type QiniuUploadState = Arc<Uploader>;
+
 #[prepare(box QiniuUpload? 'c)]
 #[instrument(skip(qiniu_config))]
 fn init_this<'c, C>(

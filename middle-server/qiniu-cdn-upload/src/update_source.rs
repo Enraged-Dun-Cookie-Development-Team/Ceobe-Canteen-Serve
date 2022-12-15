@@ -1,6 +1,10 @@
-use futures::{AsyncRead, Future};
-use mime::Mime;
-use std::{error::Error as StdError, fmt::Debug};
+use axum::{
+    body::Bytes,
+    extract::multipart::{Field, MultipartError},
+};
+use futures::{io::Cursor, AsyncRead, Future};
+use mime::{Mime, APPLICATION_OCTET_STREAM};
+use std::{error::Error as StdError, fmt::Debug, pin::Pin};
 
 /// 上传七牛云的数据的数据源
 pub trait UploadSource {
@@ -13,10 +17,40 @@ pub trait UploadSource {
     /// 提取上传数据时的异常
     type Error: StdError;
 
-    type ReadFuture<'f>: Future<Output = Result<Self::Read, Self::Error>> + 'f + Send;
+    type ReadFuture<'f>: Future<Output = Result<Self::Read, Self::Error>>
+        + 'f
+        + Send;
 
     fn read_data(payload: Self::Source<'_>) -> Self::ReadFuture<'_>;
 
     /// 上传数据的content type
     fn content_type(payload: &Self::Source<'_>) -> Mime;
+}
+
+pub struct FieldSource;
+
+impl UploadSource for FieldSource {
+    type Source<'r> = Field<'r>;
+
+    type Read = Cursor<Bytes>;
+
+    type Error = MultipartError;
+
+    type ReadFuture<'f> = Pin<
+        Box<dyn Future<Output = Result<Self::Read, Self::Error>> + Send + 'f>,
+    >;
+
+    fn read_data(payload: Self::Source<'_>) -> Self::ReadFuture<'_> {
+        Box::pin(async move {
+            let body = payload.bytes().await?;
+            Ok(Cursor::new(body))
+        })
+    }
+
+    fn content_type(payload: &Self::Source<'_>) -> Mime {
+        payload
+            .content_type()
+            .and_then(|v| v.parse().ok())
+            .unwrap_or(APPLICATION_OCTET_STREAM)
+    }
 }

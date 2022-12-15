@@ -11,6 +11,6 @@ pub use uploader::{
     PayloadLocal, Uploader, UploaderBuilder,ResponsePayload
 };
 
-pub use crate::axum_starter::{QiniuUpload, QiniuUploader};
+pub use crate::axum_starter::{QiniuUpload, QiniuUploader,QiniuUploadState};
 pub use mime;
 pub use mime_guess;
