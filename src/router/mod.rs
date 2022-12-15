@@ -4,7 +4,7 @@ mod front_end;
 use axum::{routing::get, Router};
 pub use back_end::{
     BakeryMansionBackend, CeobeOpResource, CeobeOpVersion,
-    CeobeOperationAnnouncement, CeobeOperationVideo, UserAuthBackend,
+    CeobeOperationAnnouncement, CeobeOperationVideo, UserAuthBackend,FetcherConfigControllers
 };
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
