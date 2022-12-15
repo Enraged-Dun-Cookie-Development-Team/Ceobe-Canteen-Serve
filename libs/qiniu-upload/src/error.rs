@@ -8,7 +8,6 @@ pub enum Error {
         prefix = "ErrPrefix::QI_NIU",
         err_code = 0x0001,
         resp_msg = "上传七牛云时出现异常"
-
     ))]
     QiniuHttp(#[from] ResponseError),
     #[error(transparent)]

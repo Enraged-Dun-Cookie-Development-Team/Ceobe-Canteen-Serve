@@ -8,12 +8,12 @@ pub use ceobe_operation::{
     CeobeOpResource, CeobeOpVersion, CeobeOperationAnnouncement,
     CeobeOperationVideo,
 };
-pub use user_auth::UserAuthBackend;
 pub use fetcher::FetcherConfigControllers;
+pub use user_auth::UserAuthBackend;
+
 use self::{
     bakery_mansion::bakery_mansion_router,
     ceobe_operation::ceobe_operation_router, user_auth::user_auth_router,
-
 };
 
 pub(super) fn back_end_router() -> crate::router::ServerRoute {

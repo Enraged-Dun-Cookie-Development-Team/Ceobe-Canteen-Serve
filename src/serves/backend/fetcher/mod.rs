@@ -8,12 +8,11 @@ mod controller {
     use ceobe_qiniu_upload::QiniuUploader;
     use qiniu_cdn_upload::upload;
 
-    use crate::router::FetcherConfigControllers;
-
     use super::{
         error::FieldNotExist, utils::DataSourceAvatarPayload, view::AvatarId,
         FetcherResult,
     };
+    use crate::router::FetcherConfigControllers;
 
     impl FetcherConfigControllers {
         pub async fn upload_avatar(
@@ -54,10 +53,11 @@ mod view {
 }
 
 mod error {
-    use crate::error_generate;
     use axum::extract::multipart::{MultipartError, MultipartRejection};
     use ceobe_qiniu_upload::Error as QiniuError;
     use status_err::{ErrPrefix, StatusErr};
+
+    use crate::error_generate;
     error_generate! {
         pub FetcherError
 
@@ -72,13 +72,9 @@ mod error {
     pub struct FieldNotExist;
 
     impl StatusErr for FieldNotExist {
-        fn prefix(&self) -> status_err::ErrPrefix {
-            ErrPrefix::CHECKER
-        }
+        fn prefix(&self) -> status_err::ErrPrefix { ErrPrefix::CHECKER }
 
-        fn code(&self) -> u16 {
-            0x0011
-        }
+        fn code(&self) -> u16 { 0x0011 }
     }
 }
 
@@ -91,9 +87,7 @@ mod utils {
     pub struct DataSourceAvatarPayload(String);
 
     impl DataSourceAvatarPayload {
-        pub fn new() -> Self {
-            Self(Uuid::new_v4().to_string())
-        }
+        pub fn new() -> Self { Self(Uuid::new_v4().to_string()) }
     }
 
     impl UploadPayload for DataSourceAvatarPayload {
@@ -101,8 +95,6 @@ mod utils {
 
         const DIR: &'static str = "data-source-avatar";
 
-        fn obj_name(&self) -> &str {
-            &self.0
-        }
+        fn obj_name(&self) -> &str { &self.0 }
     }
 }

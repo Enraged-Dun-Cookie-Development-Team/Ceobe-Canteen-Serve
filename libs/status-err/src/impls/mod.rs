@@ -80,11 +80,11 @@ status_error!(
 use serde_json::Error as JsonError;
 
 status_error!(
-    JsonError[
-        ErrPrefix::CHECKER,
-        0x00_04
-        ]->"`Json`请求解析异常"
-    );
+JsonError[
+    ErrPrefix::CHECKER,
+    0x00_04
+    ]->"`Json`请求解析异常"
+);
 
 status_error!(
 JsonRejection[
@@ -110,7 +110,7 @@ bincode::Error[
     0x00_0C
     ] -> "`Bincode` 序列化/反序列化异常 "
 );
-use axum::extract::multipart::{MultipartRejection,MultipartError};
+use axum::extract::multipart::{MultipartError, MultipartRejection};
 status_error!(
     MultipartRejection[
         ErrPrefix::CHECKER,
