@@ -8,9 +8,13 @@ pub use thiserror::Error as ThisError;
 
 pub trait StatusErr: std::error::Error {
     #[inline]
-    fn information(&self) -> Cow<'_, str> { format!("{self}").into() }
+    fn information(&self) -> Cow<'_, str> {
+        format!("{self}").into()
+    }
 
-    fn respond_msg(&self) -> Cow<'_, str> { self.information() }
+    fn respond_msg(&self) -> Cow<'_, str> {
+        self.information()
+    }
     /// 异常码
     /// 用于唯一标记某一类型异常
     fn prefix(&self) -> ErrPrefix;
@@ -22,7 +26,9 @@ pub trait StatusErr: std::error::Error {
     }
     /// 对应的http状态码
     #[inline]
-    fn http_code(&self) -> HttpCode { self.status().http_code() }
+    fn http_code(&self) -> HttpCode {
+        self.status().http_code()
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -57,6 +63,8 @@ impl ErrPrefix {
     pub const SERVE: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
     /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', HttpCode::UNAUTHORIZED);
+    /// 七牛云上传异常
+    pub const QI_NIU: Self = Self('Q', HttpCode::BAD_REQUEST);
 
     #[inline]
     pub const fn new(sign: char, status: HttpCode) -> Self {
@@ -64,8 +72,12 @@ impl ErrPrefix {
     }
 
     #[inline]
-    pub fn into_inner(self) -> char { self.0 }
+    pub fn into_inner(self) -> char {
+        self.0
+    }
 
     #[inline]
-    pub fn get_status(&self) -> http::StatusCode { self.1 }
+    pub fn get_status(&self) -> http::StatusCode {
+        self.1
+    }
 }

@@ -18,6 +18,7 @@ qiniu-upload-token = "0.2.0"
 serde = { workspace = true }
 serde_json = { workspace = true }
 smallstr = "0.3.0"
+status-err = { version = "0.1.0", path = "../status-err" }
 thiserror = { workspace = true }
 tracing = { workspace = true }
 
