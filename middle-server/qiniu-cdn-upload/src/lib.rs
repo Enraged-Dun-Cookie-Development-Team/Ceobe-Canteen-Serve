@@ -13,10 +13,13 @@ pub mod update_source;
 
 /// 通用七牛云上传接口
 ///
-/// - `uploader`: [`&Uploader`](Uploader) 七牛云上传器，可以通过 [`QiniuUploader`](ceobe_qiniu_upload::QiniuUploader)
+/// - `uploader`: [`&Uploader`](Uploader) 七牛云上传器，可以通过
+///   [`QiniuUploader`](ceobe_qiniu_upload::QiniuUploader)
 /// 解引用获得
-/// - `source`: 原始待上传信息，可以从中获得待上传的内容和待上传的 `Content-Type`
-/// - `payload`: 指定荷载的信息，包括 上传七牛云的路径，如何从source 获取上传内容和`Content-Type`
+/// - `source`: 原始待上传信息，可以从中获得待上传的内容和待上传的
+///   `Content-Type`
+/// - `payload`: 指定荷载的信息，包括 上传七牛云的路径，如何从source
+///   获取上传内容和`Content-Type`
 ///
 /// # Errors
 ///
@@ -72,13 +75,9 @@ where
 {
     type Payload = <L::Source as UploadSource>::Read;
 
-    fn content_type(&self) -> Mime {
-        self.content_type.clone()
-    }
+    fn content_type(&self) -> Mime { self.content_type.clone() }
 
-    fn payload(self) -> Result<Self::Payload, Error> {
-        Ok(self.payload)
-    }
+    fn payload(self) -> Result<Self::Payload, Error> { Ok(self.payload) }
 }
 
 impl<L> PayloadLocal for UploadWrap<L>
@@ -86,7 +85,5 @@ where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-    fn obj_name(&self) -> &str {
-        self.full_name.as_str()
-    }
+    fn obj_name(&self) -> &str { self.full_name.as_str() }
 }

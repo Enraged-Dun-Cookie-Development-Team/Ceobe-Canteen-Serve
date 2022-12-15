@@ -1,7 +1,6 @@
 use axum::extract::multipart::MultipartError;
 use qiniu_upload_manager::apis::http_client::ResponseError;
 
-
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
     #[error(transparent)]
