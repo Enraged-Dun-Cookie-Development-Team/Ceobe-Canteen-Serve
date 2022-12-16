@@ -27,7 +27,6 @@ pub mod update_source;
 /// 1. 上传数据到七牛云时出现异常
 /// 2. json 序列化/反序列化异常
 /// 3. 读取 Multipart 时异常
-/// 4. 其他用户异常
 pub async fn upload<Payload>(
     uploader: &Uploader,
     source: <Payload::Source as UploadSource>::Source<'_>, payload: Payload,
