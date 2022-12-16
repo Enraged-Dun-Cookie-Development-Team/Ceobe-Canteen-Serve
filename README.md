@@ -40,7 +40,7 @@
   | `http_listen`/ `http` | `port` | 否 | `u16` | http 监听的 port | 默认为`8000` |
   | `qiniu`/ `qiniu_secret` | `access_key` | 是 | `String` | 七牛云的 Access Key | |
   | `qiniu`/ `qiniu_secret` | `secret_key` | 是 | `String` | 七牛云的 Secret Key | |
-  | `qiniu`/ `qiniu_secret` | `buckets`/`bucket_list` | 否 | `Vec<String>` | 所有要使用的 Bucket(篮子) | 默认为空 |
+  | `qiniu`/ `qiniu_secret` | `bucket` | 是 | `String` | 所有要使用的 Bucket(篮子) | 必填 |
   | `redis` | `password` | 是 | `String` | Redis 进行数据库连接使用的用户密码 | 无 |
   | `redis` | `host` | 否 | `String` | Redis 进行数据库连接使用的 host | 默认为`localhost`|
   | `redis` | `port` | 否 | `u16` | Redis 进行数据库连接使用的端口 | 默认为`6379` |
