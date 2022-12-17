@@ -4,7 +4,9 @@ use super::FetcherGlobalConfig;
 
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str { "m20221217_155049_fetcher_global_config_create" }
+    fn name(&self) -> &str {
+        "m20221217_155049_fetcher_global_config_create"
+    }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -31,6 +33,7 @@ impl MigrationTrait for Migration {
                     .string_len(64)
                     .not_null(),
             );
+        table.character_set("utf8mb4").collate("utf8mb4_general_ci");
         manager.create_table(table).await?;
         Ok(())
     }

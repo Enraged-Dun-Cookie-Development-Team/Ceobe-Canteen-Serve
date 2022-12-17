@@ -1,1 +1,2 @@
 pub mod m20220724_090218_new_video_model;
+pub mod m20221218_001928_charset_and_collate;

@@ -1,6 +1,6 @@
 use sea_orm_migration::prelude::*;
 
-use super::FetcherDatasouceConfig;
+use super::FetcherDatasourceConfig;
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -13,62 +13,63 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = sea_query::Table::create();
         table
-            .table(FetcherDatasouceConfig::Table)
+            .table(FetcherDatasourceConfig::Table)
             .if_not_exists()
             .col(
-                ColumnDef::new(FetcherDatasouceConfig::Id)
+                ColumnDef::new(FetcherDatasourceConfig::Id)
                     .integer()
                     .auto_increment()
                     .primary_key()
                     .not_null(),
             )
             .col(
-                ColumnDef::new(FetcherDatasouceConfig::Platform)
+                ColumnDef::new(FetcherDatasourceConfig::Platform)
                     .string_len(64)
                     .not_null(),
             )
             .col(
-                ColumnDef::new(FetcherDatasouceConfig::Datasource)
+                ColumnDef::new(FetcherDatasourceConfig::Datasource)
                     .string_len(64)
                     .not_null(),
             )
             .col(
-                ColumnDef::new(FetcherDatasouceConfig::Nickname)
+                ColumnDef::new(FetcherDatasourceConfig::Nickname)
                     .string_len(16)
                     .unique_key()
                     .not_null(),
             )
             .col(
-                ColumnDef::new(FetcherDatasouceConfig::Avatar)
+                ColumnDef::new(FetcherDatasourceConfig::Avatar)
                     .string_len(256)
                     .not_null(),
             )
             .col(
-                ColumnDef::new(FetcherDatasouceConfig::Config)
+                ColumnDef::new(FetcherDatasourceConfig::Config)
                     .text()
                     .not_null()
                     .default("{}"),
             )
             .col(
-                ColumnDef::new(FetcherDatasouceConfig::UniqueId)
+                ColumnDef::new(FetcherDatasourceConfig::UniqueId)
                     .uuid()
                     .not_null(),
             );
         table.index(
             Index::create()
-                .col(FetcherDatasouceConfig::Platform)
-                .col(FetcherDatasouceConfig::Nickname)
-                .col(FetcherDatasouceConfig::Config)
+                .col(FetcherDatasourceConfig::Platform)
+                .col(FetcherDatasourceConfig::Nickname)
+                .col(FetcherDatasourceConfig::Config)
                 .name("single-datasource")
                 .unique(),
         );
+        table.character_set("utf8mb4").collate("utf8mb4_general_ci");
         manager.create_table(table).await?;
         Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = sea_query::Table::drop();
-        table.table(FetcherDatasouceConfig::Table);
+        table.table(FetcherDatasourceConfig::Table);
         manager.drop_table(table).await?;
 
         Ok(())
