@@ -1,3 +1,4 @@
+mod fetcher_config;
 mod fetcher_global_config;
 mod fetcher_datasource_config;
 mod fetcher_platform_config;
@@ -28,6 +29,7 @@ impl MigratorTrait for Migrator {
             fetcher_platform_config::m20221217_155027_create::Migration
             fetcher_datasource_config::m20221217_155038_create::Migration
             fetcher_global_config::m20221217_155049_create::Migration
+            fetcher_config::m20221217_155140_create::Migration
         ]
     }
 }
