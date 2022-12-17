@@ -1,3 +1,4 @@
+mod fetcher_global_config;
 mod fetcher_datasource_config;
 mod fetcher_platform_config;
 mod ceobe_operation_announcement;
@@ -26,6 +27,7 @@ impl MigratorTrait for Migrator {
             ceobe_operation_resource::m20220809_160731_create::Migration
             fetcher_platform_config::m20221217_155027_create::Migration
             fetcher_datasource_config::m20221217_155038_create::Migration
+            fetcher_global_config::m20221217_155049_create::Migration
         ]
     }
 }
