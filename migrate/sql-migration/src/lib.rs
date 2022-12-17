@@ -1,3 +1,4 @@
+mod fetcher_platform_config;
 mod ceobe_operation_announcement;
 mod ceobe_operation_app_version;
 mod ceobe_operation_resource;
@@ -22,6 +23,7 @@ impl MigratorTrait for Migrator {
             ceobe_operation_video::m20220724_090218_new_video_model::Migration
             ceobe_operation_app_version::m20220803_104932_create::Migration
             ceobe_operation_resource::m20220809_160731_create::Migration
+            fetcher_platform_config::m20221217_155027_create::Migration
         ]
     }
 }
