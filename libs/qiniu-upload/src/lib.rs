@@ -6,9 +6,11 @@ mod uploader;
 
 pub use config::{GetBucket, SecretConfig};
 pub use error::{Error, UploaderNotFound};
+pub use mime;
+pub use mime_guess;
 pub use uploader::{
     ByteUploader, FilePayload, JsonPayload, ManagedUploader, PayloadContent,
-    PayloadLocal, Uploader, UploaderBuilder,
+    PayloadLocal, ResponsePayload, Uploader, UploaderBuilder,
 };
 
-pub use crate::axum_starter::{QiniuUpload, QiniuUploader};
+pub use crate::axum_starter::{QiniuUpload, QiniuUploadState, QiniuUploader};

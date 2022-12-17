@@ -51,6 +51,8 @@ impl ErrPrefix {
     pub const NO_ERR: Self = Self('0', HttpCode::OK);
     ///  类型钻换时出现的异常
     pub const PARSE: Self = Self('P', HttpCode::BAD_REQUEST);
+    /// 七牛云上传异常
+    pub const QI_NIU: Self = Self('Q', HttpCode::BAD_REQUEST);
     /// 数据库产生的异常
     pub const SEA_ORM: Self = Self('D', HttpCode::INTERNAL_SERVER_ERROR);
     /// actix 框架产生的异常

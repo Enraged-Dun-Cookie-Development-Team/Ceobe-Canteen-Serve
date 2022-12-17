@@ -4,7 +4,8 @@ mod front_end;
 use axum::{routing::get, Router};
 pub use back_end::{
     BakeryMansionBackend, CeobeOpResource, CeobeOpVersion,
-    CeobeOperationAnnouncement, CeobeOperationVideo, UserAuthBackend,
+    CeobeOperationAnnouncement, CeobeOperationVideo,
+    FetcherConfigControllers, UserAuthBackend,
 };
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
@@ -12,9 +13,12 @@ pub use front_end::{
     CeobeOperationVideoFrontend,
 };
 
-use self::{back_end::back_end_router, front_end::front_end_router};
+pub type ServerRoute = Router<State>;
 
-pub fn root_route<S: Clone + Send + Sync + 'static>() -> Router<S> {
+use self::{back_end::back_end_router, front_end::front_end_router};
+use crate::bootstrap::init::State;
+
+pub fn root_route() -> ServerRoute {
     Router::new()
         .nest("/canteen", front_end_router())
         .nest("/admin", back_end_router())

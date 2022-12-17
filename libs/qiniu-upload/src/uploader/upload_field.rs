@@ -6,7 +6,6 @@ use crate::{error, PayloadLocal, Uploader};
 impl Uploader {
     #[instrument(skip_all, fields(
         content_type = field.content_type(),
-        qiniu.bucket = local.bucket(),
         qiniu.obj = local.obj_name(),
         qiniu.file = local.file_name()
     ))]

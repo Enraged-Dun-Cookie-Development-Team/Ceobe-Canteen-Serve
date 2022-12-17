@@ -9,7 +9,6 @@ use bootstrap::{
         component_init::{BackendAuthConfig, RResultConfig},
         db_init::{MongoDbConnect, MysqlDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
-        State,
     },
     midllewares::tracing_request::tracing_request,
 };
@@ -76,7 +75,7 @@ async fn main_task() {
         .layer(CompressionLayer::new())
         .layer(tracing_request())
         .graceful_shutdown(graceful_shutdown())
-        .convert_state::<State>()
+        .convert_state()
         .prepare_start()
         .await
         .expect("准备启动服务异常")

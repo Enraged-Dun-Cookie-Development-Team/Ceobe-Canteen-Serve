@@ -5,6 +5,7 @@ use self::{
     announcement::announcement_router, resource::resource_router,
     version::version_router, video::video_router,
 };
+use crate::router::ServerRoute;
 
 mod announcement;
 mod version;
@@ -14,8 +15,7 @@ pub use resource::CeobeOperationResourceFrontend;
 pub use version::CeobeOperationVersionFrontend;
 pub use video::CeobeOperationVideoFrontend;
 
-pub(super) fn ceobe_operation_router<S: Clone + Send + Sync + 'static>(
-) -> Router<S> {
+pub(super) fn ceobe_operation_router() -> ServerRoute {
     Router::new()
         .nest("/video", video_router())
         .nest("/announcement", announcement_router())

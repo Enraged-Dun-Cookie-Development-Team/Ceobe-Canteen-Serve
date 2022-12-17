@@ -77,6 +77,15 @@ status_error!(
     0x00_01
     ] ->"范围检查未通过"
 );
+use serde_json::Error as JsonError;
+
+status_error!(
+JsonError[
+    ErrPrefix::CHECKER,
+    0x00_04
+    ]->"`Json`请求解析异常"
+);
+
 status_error!(
 JsonRejection[
     ErrPrefix::CHECKER,
@@ -100,6 +109,20 @@ bincode::Error[
     ErrPrefix::CHECKER,
     0x00_0C
     ] -> "`Bincode` 序列化/反序列化异常 "
+);
+use axum::extract::multipart::{MultipartError, MultipartRejection};
+status_error!(
+    MultipartRejection[
+        ErrPrefix::CHECKER,
+        0x000F
+    ] -> "获取`MultiPart`异常 "
+);
+
+status_error!(
+    MultipartError[
+        ErrPrefix::CHECKER,
+        0x000F
+    ] -> "解析`MultiPart`异常 "
 );
 
 // authorized prefix

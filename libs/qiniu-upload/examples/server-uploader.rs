@@ -47,7 +47,7 @@ struct State {
 struct Config {
     secret: String,
     access: String,
-    buckets: Vec<String>,
+    buckets: String,
 }
 
 impl LoggerInitialization for Config {
@@ -65,12 +65,7 @@ impl ServeAddress for Config {
 }
 
 impl GetBucket for Config {
-    type BucketName = String;
-    type Iterator<'i> = std::slice::Iter<'i, String>
-    where
-        Self: 'i;
-
-    fn get_buckets(&self) -> Self::Iterator<'_> { self.buckets.iter() }
+    fn get_bucket(&self) -> &str { self.buckets.as_str() }
 }
 
 impl SecretConfig for Config {
@@ -103,13 +98,6 @@ async fn upload_img(
         .map_err(|e| e.to_string())?
         .ok_or("File info field not found")?;
     let obj_name = obj_name.text().await.map_err(|e| e.to_string())?;
-    // bucket name
-    let bucket = payload
-        .next_field()
-        .await
-        .map_err(|e| e.to_string())?
-        .ok_or("Bucket info field not found")?;
-    let bucket = bucket.text().await.map_err(|e| e.to_string())?;
 
     let field = payload
         .next_field()
@@ -118,11 +106,7 @@ async fn upload_img(
         .ok_or("Payload info field not found")?;
     let filename = field.file_name().map(ToOwned::to_owned);
 
-    let local = Local {
-        obj_name,
-        bucket,
-        filename,
-    };
+    let local = Local { obj_name, filename };
 
     qiniu
         .upload_field(field, local)
@@ -134,13 +118,10 @@ async fn upload_img(
 
 struct Local {
     obj_name: String,
-    bucket: String,
     filename: Option<String>,
 }
 
 impl PayloadLocal for Local {
-    fn bucket(&self) -> &str { &self.bucket }
-
     fn obj_name(&self) -> &str { &self.obj_name }
 
     fn file_name(&self) -> &str {

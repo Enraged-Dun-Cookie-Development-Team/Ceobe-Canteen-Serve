@@ -14,7 +14,14 @@ strip = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [workspace]
-members = ["libs/*", "./models/*", "./migrate/*", "./database/*", "./macros/*"]
+members = [
+    "libs/*",
+    "./models/*",
+    "./migrate/*",
+    "./database/*",
+    "./macros/*",
+    "./middle-server/*"
+]
 
 [workspace.dependencies]
 ahash = "0.8"
@@ -23,6 +30,7 @@ axum = { version = "0.6", features = ["multipart", "macros"] }
 axum-core = "0.3"
 axum-starter = { version = "0.5", features = ["logger"] }
 chrono = "0.4"
+ceobe-qiniu-upload = { version = "0.1.0", path = "libs/qiniu-upload" }
 futures = "0.3"
 tracing = { version = "0.1" }
 mongodb = "2"
@@ -61,12 +69,11 @@ ammonia = "3"
 async-trait = { workspace = true }
 # axum
 axum = { workspace = true, features = ["headers"] }
-
 http = { workspace = true }
 axum-starter = { workspace = true }
 # db
 bson = { version = "2.1.0", features = ["chrono-0_4"] }
-ceobe-qiniu-upload = { version = "0.1.0", path = "libs/qiniu-upload" }
+ceobe-qiniu-upload = { workspace = true }
 # else
 chrono = { workspace = true, features = ["serde"] }
 # config
@@ -102,6 +109,8 @@ axum-macros = "0.3"
 tracing = { workspace = true }
 dotenv = "0.15"
 tracing-unwrap = { workspace = true }
+qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
+uuid = { version = "1.2.2", features = ["v4"] }
 
 [dependencies.tokio]
 workspace = true

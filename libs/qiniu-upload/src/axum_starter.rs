@@ -8,7 +8,9 @@ use axum_starter::{prepare, state::AddState};
 use futures::future::ok;
 use tracing::{info, instrument};
 
-use crate::{GetBucket, SecretConfig, Uploader, UploaderBuilder};
+use crate::{GetBucket, SecretConfig, Uploader};
+
+pub type QiniuUploadState = Arc<Uploader>;
 
 #[prepare(box QiniuUpload? 'c)]
 #[instrument(skip(qiniu_config))]
@@ -18,17 +20,10 @@ fn init_this<'c, C>(
 where
     C: SecretConfig + GetBucket + 'static,
 {
-    let uploader = Uploader::builder(qiniu_config);
+    let bucket_name = &qiniu_config.get_bucket();
+    let uploader = Uploader::builder(qiniu_config, bucket_name).build();
 
-    let uploader = qiniu_config
-        .get_buckets()
-        .into_iter()
-        .try_fold(uploader, UploaderBuilder::add_bucket)?
-        .build();
-
-    info!(
-        qiniu.uploader.buckets = ?uploader.managers.keys()
-    );
+    info!(qiniu.uploader.buckets = bucket_name);
     Ok(AddState::new(Arc::new(uploader)))
 }
 

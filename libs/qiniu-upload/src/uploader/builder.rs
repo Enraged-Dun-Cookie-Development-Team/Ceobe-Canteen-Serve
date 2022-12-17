@@ -1,53 +1,36 @@
-use std::{collections::HashMap, time::Duration};
+use std::time::Duration;
 
 use qiniu_upload_manager::{AutoUploader, UploadManager, UploadTokenSigner};
 use qiniu_upload_token::credential::Credential;
-use smallstr::SmallString;
 
-use crate::{error, SecretConfig};
+use crate::SecretConfig;
 
 pub struct UploaderBuilder {
-    /// 认证信息
-    credential: Credential,
-    managers:
-        HashMap<SmallString<[u8; 64]>, ManagedUploader, ahash::RandomState>,
+    uploader: ManagedUploader,
 }
 
 impl UploaderBuilder {
-    pub fn new(secret: &impl SecretConfig) -> Self {
-        Self {
-            credential: Credential::new(
-                secret.access_key(),
-                secret.secret_key(),
+    pub fn new(
+        secret: &impl SecretConfig, name: &(impl AsRef<str> + ?Sized),
+    ) -> Self {
+        let credential =
+            Credential::new(secret.access_key(), secret.secret_key());
+        let manage = UploadManager::builder(
+            UploadTokenSigner::new_credential_provider(
+                credential,
+                name.as_ref(),
+                Duration::from_secs(3600),
             ),
-            managers: HashMap::with_hasher(ahash::RandomState::new()),
+        )
+        .build();
+        Self {
+            uploader: ManagedUploader::new(manage),
         }
-    }
-
-    /// 新建储存空间
-    pub fn add_bucket(
-        mut self, name: &(impl AsRef<str> + ?Sized),
-    ) -> Result<Self, error::Error> {
-        // 如果空间存在则直接返回UploaderBuilder
-        if !self.managers.contains_key(name.as_ref()) {
-            let manage = UploadManager::builder(
-                UploadTokenSigner::new_credential_provider(
-                    self.credential.clone(),
-                    name.as_ref(),
-                    Duration::from_secs(3600),
-                ),
-            )
-            .build();
-
-            self.managers
-                .insert(name.as_ref().into(), ManagedUploader::new(manage));
-        }
-        Ok(self)
     }
 
     pub fn build(self) -> super::Uploader {
         crate::Uploader {
-            managers: self.managers,
+            uploader: self.uploader,
         }
     }
 }

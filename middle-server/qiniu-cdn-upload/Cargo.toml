@@ -1,0 +1,18 @@
+[package]
+name = "qiniu-cdn-upload"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+axum = { workspace = true }
+ceobe-qiniu-upload = { workspace = true }
+futures = { workspace = true }
+mime = "0.3.16"
+
+[dev-dependencies]
+axum-starter = { workspace = true }
+log = "0.4.17"
+simple_logger = "4.0.0"
+tokio = { workspace = true }
+uuid = { version = "1.2.2", features = ["v4"] }
