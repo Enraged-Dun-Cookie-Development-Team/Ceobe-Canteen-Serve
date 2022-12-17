@@ -1,8 +1,6 @@
-
 use sea_orm_migration::prelude::*;
 
 use super::FetcherGlobalConfig;
-
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -12,25 +10,27 @@ impl MigrationName for Migration {
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut table = sea_query::Table::create();
-        table.table(FetcherGlobalConfig::Table).if_not_exists()
-        .col(
-            ColumnDef::new(FetcherGlobalConfig::Id)
-                .integer()
-                .auto_increment()
-                .primary_key()
-                .not_null(),
-        )
-        .col(
-            ColumnDef::new(FetcherGlobalConfig::Key)
-            .string_len(64)
-            .unique_key()
-            .not_null()
-        )
-        .col(
-            ColumnDef::new(FetcherGlobalConfig::Value)
-            .string_len(64)
-            .not_null()
-        );
+        table
+            .table(FetcherGlobalConfig::Table)
+            .if_not_exists()
+            .col(
+                ColumnDef::new(FetcherGlobalConfig::Id)
+                    .integer()
+                    .auto_increment()
+                    .primary_key()
+                    .not_null(),
+            )
+            .col(
+                ColumnDef::new(FetcherGlobalConfig::Key)
+                    .string_len(64)
+                    .unique_key()
+                    .not_null(),
+            )
+            .col(
+                ColumnDef::new(FetcherGlobalConfig::Value)
+                    .string_len(64)
+                    .not_null(),
+            );
         manager.create_table(table).await?;
         Ok(())
     }

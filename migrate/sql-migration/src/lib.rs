@@ -1,10 +1,10 @@
-mod fetcher_config;
-mod fetcher_global_config;
-mod fetcher_datasource_config;
-mod fetcher_platform_config;
 mod ceobe_operation_announcement;
 mod ceobe_operation_app_version;
 mod ceobe_operation_resource;
+mod fetcher_config;
+mod fetcher_datasource_config;
+mod fetcher_global_config;
+mod fetcher_platform_config;
 
 mod admin;
 mod ceobe_operation_video;

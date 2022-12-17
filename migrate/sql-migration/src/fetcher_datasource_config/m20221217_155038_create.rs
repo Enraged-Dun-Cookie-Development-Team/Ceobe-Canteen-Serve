@@ -52,15 +52,15 @@ impl MigrationTrait for Migration {
             .col(
                 ColumnDef::new(FetcherDatasouceConfig::UniqueId)
                     .uuid()
-                    .not_null()
+                    .not_null(),
             );
         table.index(
             Index::create()
-            .col(FetcherDatasouceConfig::Platform)
-            .col(FetcherDatasouceConfig::Nickname)
-            .col(FetcherDatasouceConfig::Config)
-            .name("single-datasource")
-            .unique(),
+                .col(FetcherDatasouceConfig::Platform)
+                .col(FetcherDatasouceConfig::Nickname)
+                .col(FetcherDatasouceConfig::Config)
+                .name("single-datasource")
+                .unique(),
         );
         manager.create_table(table).await?;
         Ok(())
