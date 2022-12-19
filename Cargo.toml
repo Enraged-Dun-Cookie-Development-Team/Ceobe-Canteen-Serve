@@ -20,7 +20,8 @@ members = [
     "./migrate/*",
     "./database/*",
     "./macros/*",
-    "./middle-server/*"
+    "./middle-server/*",
+    "./logic/*"
 ]
 
 [workspace.dependencies]
@@ -158,3 +159,6 @@ path = "./libs/page_size"
 
 [dependencies.redis_connection]
 path = "./database/redis_connection"
+
+[dependencies.fetcher_logic]
+path = "./logic/fetcher_logic"
