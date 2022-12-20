@@ -13,7 +13,7 @@ use sql_models::{
 };
 
 // 从数据库获取json的key和value，拼接成json格式返回
-pub async fn get_global_config<'db, D>(db: &'db D) -> LogicResult<Value>
+pub async fn get_global_configs<'db, D>(db: &'db D) -> LogicResult<Value>
 where
     D: GetDatabaseConnect<Error = DbErr> + 'static,
     D::Connect<'db>: ConnectionTrait,
