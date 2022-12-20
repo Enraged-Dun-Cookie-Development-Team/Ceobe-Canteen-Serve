@@ -12,5 +12,9 @@ pub fn fetcher_config() -> ServerRoute {
             "/uploadAvatar",
             post(FetcherConfigControllers::upload_avatar),
         )
+        .route(
+            "/uploadGlobalConfig",
+            post(FetcherConfigControllers::upload_global_config),
+        )
         .route_layer(AuthorizeLayer::<Chef>::new())
 }
