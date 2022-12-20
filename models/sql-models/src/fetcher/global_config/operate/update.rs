@@ -1,6 +1,7 @@
 use sea_orm::{
     sea_query, ConnectionTrait, DbErr, EntityTrait
 };
+use tracing::instrument;
 use crate::fetcher::global_config::operate::update::model_global_config::ActiveModel;
 
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
@@ -13,6 +14,7 @@ use crate::fetcher::global_config::{
 use super::{FetcherGlobalConfigSqlOperate, OperateResult};
 
 impl FetcherGlobalConfigSqlOperate {
+    #[instrument(ret, skip(db))]
     pub async fn create_or_update<'db, D>(
         db: &'db D, configs: Vec<FetcherGlobalConfig>,
     ) -> OperateResult<()>
