@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 serde_json = { workspace = true}
 thiserror = { workspace = true }
+status-err = { path = "../../libs/status-err" }
 
 [dependencies.sql-models]
 path = "../../models/sql-models"

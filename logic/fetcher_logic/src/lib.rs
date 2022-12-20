@@ -1,2 +1,2 @@
 pub mod implement;
-mod error;
+pub mod error;
