@@ -1,4 +1,4 @@
-use axum::{routing::post, Router};
+use axum::{routing::post, routing::get, Router};
 
 use crate::{
     middleware::authorize::AuthorizeLayer, router::ServerRoute,
@@ -14,7 +14,11 @@ pub fn fetcher_config() -> ServerRoute {
         )
         .route(
             "/uploadGlobalConfig",
-            post(FetcherConfigControllers::upload_global_config),
+            post(FetcherConfigControllers::upload_global_configs),
+        )
+        .route(
+            "/getGlobalConfig",
+            get(FetcherConfigControllers::get_global_configs),
         )
         .route_layer(AuthorizeLayer::<Chef>::new())
 }
