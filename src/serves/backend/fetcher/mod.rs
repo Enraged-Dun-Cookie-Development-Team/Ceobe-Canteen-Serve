@@ -1,3 +1,4 @@
+pub mod global_configs;
 use resp_result::RespResult;
 
 use self::error::FetcherError;
