@@ -1,5 +1,3 @@
-
-use chrono::Local;
 use sea_orm::{ entity::prelude::*, Set };
 
 
@@ -8,6 +6,12 @@ use sea_orm::{ entity::prelude::*, Set };
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
+    pub platfrom: String, 
+    pub datasource: String,
+    pub nickname: String,
+    pub avatar: String,
+    pub config: String,
+    pub unique_id: Uuid
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
