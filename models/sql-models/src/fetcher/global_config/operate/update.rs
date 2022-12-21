@@ -2,7 +2,7 @@ use sea_orm::{
     sea_query, ConnectionTrait, DbErr, EntityTrait
 };
 use tracing::instrument;
-use crate::fetcher::global_config::operate::update::model_global_config::ActiveModel;
+use crate::fetcher::global_config::models::model_global_config::ActiveModel;
 
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 
