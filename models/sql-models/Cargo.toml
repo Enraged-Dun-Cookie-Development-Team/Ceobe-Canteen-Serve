@@ -14,7 +14,7 @@ futures =  { workspace = true }
 sub-model = { workspace = true }
 serde =  { workspace = true }
 url = { workspace = true }
-sea-orm =  { workspace = true,features = ["with-chrono"]}
+sea-orm =  { workspace = true,features = ["with-chrono", "with-uuid"]}
 checker = { path = "../../libs/checker" }
 range-limit = { path = "../../libs/range-limit" }
 sql_connection = { path = "../../database/sql_connection" }
@@ -22,9 +22,10 @@ status-err = { path = "../../libs/status-err" }
 modify-cache = {path = "../../libs/modify-cache"}
 page_size = {path = "../../libs/page_size"}
 tap = { workspace = true }
-tracing = {workspace = true}
+tracing = { workspace = true }
 smallvec = "1.10.0"
 smallstr = "0.3.0"
+uuid = { workspace = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }

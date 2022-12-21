@@ -62,6 +62,7 @@ url = { version = "2", features = ["serde"] }
 urlencoding = "2.1.0"
 tracing-unwrap = { version = "0.10.0", features = ["log-location"] }
 http = "0.2"
+uuid = { version = "1.2.2", features = ["v4"] }
 
 [dependencies]
 # Xss
@@ -111,7 +112,7 @@ tracing = { workspace = true }
 dotenv = "0.15"
 tracing-unwrap = { workspace = true }
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
-uuid = { version = "1.2.2", features = ["v4"] }
+uuid = { workspace = true }
 
 [dependencies.tokio]
 workspace = true
