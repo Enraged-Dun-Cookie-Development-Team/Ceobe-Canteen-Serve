@@ -1,8 +1,10 @@
+pub mod verify;
 pub mod create;
 pub mod update;
 pub mod retrieve;
 pub mod delete;
 
+use sea_orm::FromQueryResult;
 use thiserror::Error;
 use status_err::{ErrPrefix, StatusErr};
 
@@ -18,3 +20,9 @@ pub enum OperateError {
 
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
+
+// 查询平台个数
+#[derive(FromQueryResult)]
+struct PlatformCounts {
+    pub(crate) count: i64,
+}
