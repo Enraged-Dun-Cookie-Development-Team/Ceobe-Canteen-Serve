@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use page_size::{request::PageSize, database::OffsetLimit};
-use sea_orm::{DbErr, ConnectionTrait, EntityTrait};
+use sea_orm::{DbErr, ConnectionTrait, EntityTrait, QuerySelect};
 use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
@@ -41,22 +41,26 @@ impl FetcherPlatformConfigSqlOperate {
     }
 
     #[instrument(skip(db))]
-    /// 获取全部平台列表
+    /// 获取全部平台type_id列表
     pub async fn find_platform_list<'db, D>(
         db: &'db D
-    ) -> OperateResult<Vec<model_platform_config::Model>>
+    ) -> OperateResult<Vec<String>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         let db = db.get_connect()?;
         Ok(model_platform_config::Entity::find()
-            .into_model::<model_platform_config::Model>()
+            .select_only()
+            .column(model_platform_config::Column::TypeId)
             .all(db)
-            .await?).tap_ok(|list| {
+            .await?
+            .into_iter()
+            .map(|item| item.type_id)
+            .collect::<Vec<String>>()
+            ).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
-                    let list = list.iter().map(|platform|(&platform.type_id)).collect::<SmallVec<[_;4]>>();
                     info!(platformList.len = list.len(),  platformList.platform.pType = ?list );
                 });
             })
