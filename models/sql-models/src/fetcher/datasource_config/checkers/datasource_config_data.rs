@@ -14,7 +14,7 @@ type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 #[derive(Debug, TypedBuilder)]
 pub struct FetcherDatasourceConfig {
     pub id: Option<i32>,
-    pub platfrom: String, 
+    pub platform: String, 
     pub datasource: String,
     pub nickname: String,
     pub avatar: Url,
@@ -29,7 +29,7 @@ pub struct FetcherDatasourceConfig {
 #[derive(Debug,serde::Deserialize)]
 pub struct FetcherDatasourceConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
-    pub platfrom: MaxLimitString<64>, 
+    pub platform: MaxLimitString<64>, 
     pub datasource: MaxLimitString<64>,
     pub nickname: MaxLimitString<16>,
     pub avatar: UrlChecker,
@@ -45,7 +45,7 @@ impl model_datasource_config::ActiveModel {
     pub(in crate::fetcher::datasource_config) fn datasource_config_into_active_model(
         FetcherDatasourceConfig {
             id,
-            platfrom,
+            platform,
             datasource,
             nickname,
             avatar,
@@ -57,8 +57,14 @@ impl model_datasource_config::ActiveModel {
                 Some(id) => Set(id),
                 None => NotSet,
             },
-            platfrom: Set(platfrom),
-            datasource: Set(datasource),
+            platform: match id {
+                Some(_) => NotSet,
+                None => Set(platform),
+            },
+            datasource: match id {
+                Some(_) => NotSet,
+                None => Set(datasource),
+            },
             nickname: Set(nickname),
             avatar: Set(avatar.to_string()),
             config: Set(config),
