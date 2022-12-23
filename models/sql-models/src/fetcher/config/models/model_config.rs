@@ -9,11 +9,13 @@ use crate::get_zero_data_time;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    
-    /// field for soft delete
-    pub(in crate::fetcher::config) create_at: DateTime,
-    pub(in crate::fetcher::config) modify_at: DateTime,
-    pub(in crate::fetcher::config) delete_at: DateTime,
+    pub live_number: i8,
+    pub fetcher_count: i8,
+    pub group_name: String,
+    pub platform: String,
+    pub datasource_id: i32,
+    pub interval: i32,
+    pub interval_by_time_range: String,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -26,27 +28,4 @@ impl RelationTrait for Relation {
 impl ActiveModelBehavior for ActiveModel {}
 
 impl ActiveModel {
-    // 软删除
-    pub fn soft_remove(&mut self) {
-        let now = Local::now().naive_local();
-        self.delete_at = Set(now);
-    }
-
-    // 还原删除
-    pub fn soft_recover(&mut self) {
-        self.delete_at = Set(get_zero_data_time())
-    }
-
-    // 新建操作
-    pub fn now_create(&mut self) {
-        let now = Local::now().naive_local();
-        self.create_at = Set(now);
-        self.modify_at = Set(now);
-    }
-
-    // 更新操作
-    pub fn now_modify(&mut self) {
-        let now = Local::now().naive_local();
-        self.modify_at = Set(now);
-    }
 }
