@@ -44,8 +44,14 @@ impl model_platform_config::ActiveModel {
                 Some(id) => Set(id),
                 None => NotSet,
             },
-            type_id: Set(type_id),
-            platform_name: Set(platform_name),
+            type_id: match id {
+                Some(_) => NotSet,
+                None => Set(type_id),
+            },
+            platform_name: match id {
+                Some(_) => NotSet,
+                None => Set(platform_name),
+            },
             min_request_interval: Set(min_request_interval),
         }
     }

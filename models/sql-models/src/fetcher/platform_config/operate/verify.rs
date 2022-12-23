@@ -8,7 +8,7 @@ use super::{FetcherPlatformConfigSqlOperate, PlatformCounts, OperateResult};
 impl FetcherPlatformConfigSqlOperate {
     // 查询时候存在type_id的平台
     pub async fn is_platform_exist(
-        db: &impl ConnectionTrait, type_id: String
+        db: &impl ConnectionTrait, type_id: &str
     ) -> OperateResult<bool> {
         let resp = model_platform_config::Entity::find()
             .filter(model_platform_config::Column::TypeId.eq(type_id))
