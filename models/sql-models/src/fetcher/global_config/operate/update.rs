@@ -29,8 +29,7 @@ impl FetcherGlobalConfigSqlOperate {
             .enumerate()
             .map(|(_, config)| {
                 ActiveModel::global_config_into_active_model(config)
-            })
-            .collect::<Vec<_>>();
+            });
 
         // 存在则更新，不存在则创建
         model_global_config::Entity::insert_many(config_list)

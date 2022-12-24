@@ -10,7 +10,7 @@ use super::{FetcherConfigSqlOperate, OperateResult};
 impl FetcherConfigSqlOperate {
     #[instrument(skip(db), ret)]
     // 根据平台删除相关配置
-    pub async fn delete_fetcher_configs_by_platform<'db, D>(
+    pub async fn delete_fetcher_configs_by_platform<'db>(
         db: &impl ConnectionTrait, platform: String,
     ) -> OperateResult<()> {
         info!(fetcherConfig.platform = platform);
@@ -25,7 +25,7 @@ impl FetcherConfigSqlOperate {
 
     #[instrument(skip(db), ret)]
     // 根据数据源id删除相关配置
-    pub async fn delete_fetcher_configs_by_datasource_id<'db, D>(
+    pub async fn delete_fetcher_configs_by_datasource_id<'db>(
         db: &impl ConnectionTrait, did: i32,
     ) -> OperateResult<()> {
         info!(fetcherConfig.did = did);
