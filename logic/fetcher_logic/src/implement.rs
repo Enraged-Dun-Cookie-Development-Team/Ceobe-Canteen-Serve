@@ -1,8 +1,15 @@
 use crate::error::LogicResult;
+use checker::{Checker, CheckRequire};
+use checker::prefabs::no_check::NoCheck;
+use range_limit::RangeBoundLimit;
+use range_limit::limits::max_limit::MaxLimit;
 use serde_json::{Map, Value};
+use sql_models::fetcher::global_config::checkers::global_config_data::{FetcherGlobalConfigUncheck, FetcherGlobalConfigVecChecker};
 use sql_models::{
     fetcher::global_config::{
-        checkers::global_config_data::FetcherGlobalConfig,
+        checkers::global_config_data::{
+            FetcherGlobalConfig, FetcherGlobalConfigChecker,
+        },
         models::model_global_config::Model,
         operate::FetcherGlobalConfigSqlOperate,
     },
@@ -41,13 +48,14 @@ where
     D::Connect<'db>: ConnectionTrait,
 {
     // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串
-    let vec = config
+    let vec: Vec<FetcherGlobalConfigUncheck> = config
         .into_iter()
-        .map(|(key, value)| FetcherGlobalConfig {
-                key: key.to_string(),
-                value: value.to_string(),
-            })
-            .collect();
-    FetcherGlobalConfigSqlOperate::create_or_update(db, vec).await?;
+        .map(|(key, value)| FetcherGlobalConfigUncheck {
+            key: CheckRequire::new_with_no_checker(key),
+            value: CheckRequire::new_with_no_checker(value.to_string()),
+        })
+        .collect();
+    let configs = FetcherGlobalConfigVecChecker::check(((),()), vec).await?;
+    FetcherGlobalConfigSqlOperate::create_or_update(db, configs).await?;
     Ok(())
 }

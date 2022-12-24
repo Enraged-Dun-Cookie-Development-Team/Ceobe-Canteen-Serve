@@ -1,13 +1,18 @@
 
-use sql_models::fetcher::global_config::operate::OperateError;
+use sql_models::fetcher::global_config::{operate::OperateError, checkers::CheckError};
 use status_err::StatusErr;
 use thiserror::Error;
 
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
-    #[error("数据库操作异常: {0}")]
-    DbOperateError(#[from] OperateError),
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    OperateError(#[from] OperateError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    CheckErr(#[from] CheckError)
 }
 
 #[allow(dead_code)]

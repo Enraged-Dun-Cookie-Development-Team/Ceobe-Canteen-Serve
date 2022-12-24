@@ -38,6 +38,11 @@ where
     }
 
     #[inline]
+    pub fn new_with_no_checker(unchecked: D::Unchecked) -> Self {
+        CheckRequire(unchecked)
+    }
+
+    #[inline]
     pub fn checking(self, args: D::Args) -> D::Fut { D::check(args, self.0) }
 }
 

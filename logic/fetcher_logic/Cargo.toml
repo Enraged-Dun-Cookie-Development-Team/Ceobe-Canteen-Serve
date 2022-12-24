@@ -9,6 +9,10 @@ edition = "2021"
 serde_json = { workspace = true}
 thiserror = { workspace = true }
 status-err = { path = "../../libs/status-err" }
+range-limit = { path = "../../libs/range-limit" }
 
 [dependencies.sql-models]
 path = "../../models/sql-models"
+
+[dependencies.checker]
+path = "../../libs/checker"

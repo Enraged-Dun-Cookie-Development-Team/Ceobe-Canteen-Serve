@@ -1,5 +1,5 @@
 
-use checker::check_obj;
+use checker::{check_obj, prefabs::collect_checkers::iter_checkers::IntoIterChecker};
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
@@ -41,3 +41,5 @@ impl model_global_config::ActiveModel {
         }
     }
 }
+
+pub type FetcherGlobalConfigVecChecker = IntoIterChecker<Vec<FetcherGlobalConfigUncheck>, FetcherGlobalConfigChecker, Vec<FetcherGlobalConfig>>;
