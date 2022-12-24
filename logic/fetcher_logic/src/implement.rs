@@ -55,6 +55,7 @@ where
             value: CheckRequire::new_with_no_checker(value.to_string()),
         })
         .collect();
+    // 验证传入数据库数据的合法性
     let configs = FetcherGlobalConfigVecChecker::check(((),()), vec).await?;
     FetcherGlobalConfigSqlOperate::create_or_update(db, configs).await?;
     Ok(())

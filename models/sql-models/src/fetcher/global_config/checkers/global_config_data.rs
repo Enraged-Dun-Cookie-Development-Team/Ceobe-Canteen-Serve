@@ -42,4 +42,5 @@ impl model_global_config::ActiveModel {
     }
 }
 
+// 用于验证FetcherGlobalConfig数组
 pub type FetcherGlobalConfigVecChecker = IntoIterChecker<Vec<FetcherGlobalConfigUncheck>, FetcherGlobalConfigChecker, Vec<FetcherGlobalConfig>>;
