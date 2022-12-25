@@ -23,6 +23,8 @@ use sql_models::{
 };
 use page_size::request::PageSize;
 
+
+// 分页获取获取平台信息并且附带该平台下有无数据源
 pub async fn get_platform_list_with_has_datasource<'db, D>(db: &'db D, page_size: PageSize) -> LogicResult<Vec<PlatformWithHasDatasource>> 
 where
     D: GetDatabaseConnect<Error = DbErr> + 'static,
