@@ -1,4 +1,4 @@
-use axum::{routing::post, routing::get, Router};
+use axum::{routing::get, routing::post, Router};
 
 use crate::{
     middleware::authorize::AuthorizeLayer, router::ServerRoute,
@@ -11,6 +11,10 @@ pub fn fetcher_config() -> ServerRoute {
         .route(
             "/uploadAvatar",
             post(FetcherConfigControllers::upload_avatar),
+        )
+        .route(
+            "/platformList",
+            get(FetcherConfigControllers::get_platform_list),
         )
         .route(
             "/uploadGlobalConfig",
