@@ -21,6 +21,10 @@ pub fn fetcher_config() -> ServerRoute {
             post(FetcherConfigControllers::create_platform_config),
         )
         .route(
+            "/updatePlatform",
+            post(FetcherConfigControllers::update_platform_config),
+        )
+        .route(
             "/deletePlatform",
             delete(FetcherConfigControllers::delete_platform_config),
         )

@@ -47,14 +47,14 @@ impl FetcherConfigControllers {
         Ok(()).into()
     }
 
-    // }
-
-    // #[instrument(ret, skip(db))]
-    // pub fn update_platform_config(
-    //     db: SqlConnect,
-    // ) -> PlatformConfigRResult<()> {
-
-    // }
+    #[instrument(ret, skip(db))]
+    pub async fn update_platform_config(
+        db: SqlConnect,
+        CheckExtract(platform_config): FetcherPlatformCheck
+    ) -> PlatformConfigRResult<()> {
+        rtry!(FetcherPlatformConfigSqlOperate::update_platform_config(&db, platform_config).await);
+        Ok(()).into()
+    }
 
     #[instrument(ret, skip(db))]
     pub async fn delete_platform_config(
