@@ -29,6 +29,10 @@ pub fn fetcher_config() -> ServerRoute {
             delete(FetcherConfigControllers::delete_platform_config),
         )
         .route(
+            "/getPlatformAndDatasourceOption",
+            get(FetcherConfigControllers::get_platform_and_datasource_list),
+        )
+        .route(
             "/uploadGlobalConfig",
             post(FetcherConfigControllers::upload_global_configs),
         )
