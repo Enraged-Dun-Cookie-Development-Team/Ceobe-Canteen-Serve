@@ -25,3 +25,9 @@ type OperateResult<T> = Result<T, OperateError>;
 struct DatasourceCounts {
     pub(crate) count: i64,
 }
+
+#[derive(FromQueryResult)]
+struct PlatformDatasourceCounts {
+    pub(crate) platform: String,
+    pub(crate) count: i32,
+}

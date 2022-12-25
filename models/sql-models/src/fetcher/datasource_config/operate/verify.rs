@@ -1,10 +1,20 @@
-use sea_orm::{Statement, ConnectionTrait, DbErr, EntityTrait, DbBackend, DatabaseBackend};
+use std::collections::HashMap;
+
+use sea_orm::{
+    sea_query::Cond, ColumnTrait, Condition, ConnectionTrait,
+    DatabaseBackend, DbBackend, DbErr, EntityTrait, QueryFilter, QuerySelect,
+    Statement,
+};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
-use crate::fetcher::datasource_config::models::model_datasource_config;
+use crate::fetcher::datasource_config::{
+    models::model_datasource_config, operate::PlatformDatasourceCounts,
+};
 
-use super::{FetcherDatasourceConfigSqlOperate, OperateResult, DatasourceCounts};
+use super::{
+    DatasourceCounts, FetcherDatasourceConfigSqlOperate, OperateResult,
+};
 
 impl FetcherDatasourceConfigSqlOperate {
     // 验证id数组是否都存在
@@ -25,15 +35,49 @@ impl FetcherDatasourceConfigSqlOperate {
 
         let db = db.get_connect()?;
         let resp = model_datasource_config::Entity::find()
-            .from_raw_sql(Statement::from_string(
-                DatabaseBackend::MySql,
-                sql
-            ))
+            .from_raw_sql(Statement::from_string(DatabaseBackend::MySql, sql))
             .into_model::<DatasourceCounts>()
             .one(db)
             .await?
             .unwrap();
 
         Ok(resp.count == 0)
+    }
+
+    // 验证平台下是否还有数据源
+    #[instrument(ret, skip(db))]
+    pub async fn has_datasource_from_platforms<'db, D>(
+        db: &'db D, platforms: Vec<String>,
+    ) -> OperateResult<HashMap<String, bool>>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D::Connect<'db>: ConnectionTrait,
+    {
+        let mut condition = Cond::any();
+        for platform in platforms {
+            condition = condition
+                .add(model_datasource_config::Column::Platform.eq(platform))
+        }
+
+        let db = db.get_connect()?;
+        let resp = model_datasource_config::Entity::find()
+            .select_only()
+            .column_as(model_datasource_config::Column::Id.count(), "count")
+            .column(model_datasource_config::Column::Platform)
+            .filter(condition)
+            .group_by(model_datasource_config::Column::Platform)
+            .into_model::<PlatformDatasourceCounts>()
+            .all(db)
+            .await?;
+
+        let mut exist_map = HashMap::new();
+        for platform_datasource in resp {
+            exist_map.insert(
+                platform_datasource.platform,
+                platform_datasource.count != 0,
+            );
+        }
+
+        Ok(exist_map)
     }
 }
