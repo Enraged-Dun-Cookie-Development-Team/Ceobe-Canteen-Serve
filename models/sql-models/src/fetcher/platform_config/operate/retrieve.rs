@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use page_size::{request::PageSize, database::OffsetLimit};
-use sea_orm::{DbErr, ConnectionTrait, EntityTrait, QuerySelect};
+use sea_orm::{DbErr, ConnectionTrait, EntityTrait, QuerySelect, PaginatorTrait};
 use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
@@ -64,5 +64,18 @@ impl FetcherPlatformConfigSqlOperate {
                     info!(platformList.len = list.len(),  platformList.platform.pType = ?list );
                 });
             })
+    }
+
+    #[instrument(skip(db), ret)]
+    /// 获取用户总数
+    pub async fn get_platform_total_number<'db, D>(
+        db: &'db D,
+    ) -> OperateResult<u64>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
+    {
+        let db = db.get_connect()?;
+        model_platform_config::Entity::find().count(db).await.map_err(Into::into)
     }
 }
