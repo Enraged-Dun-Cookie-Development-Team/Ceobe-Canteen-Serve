@@ -1,3 +1,4 @@
+pub mod view;
 use checker::QueryCheckExtract;
 use page_size::request::PageSizeChecker;
 

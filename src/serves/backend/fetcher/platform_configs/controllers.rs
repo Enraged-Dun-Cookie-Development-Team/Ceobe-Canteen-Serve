@@ -1,5 +1,5 @@
 use crate::serves::backend::fetcher::platform_configs::error::PlatformConfigRResult;
-use axum::debug_handler;
+use axum::{debug_handler, Json};
 use checker::CheckExtract;
 use futures::{future, TryFutureExt};
 use orm_migrate::{
@@ -10,12 +10,12 @@ use orm_migrate::{
     },
 };
 use page_size::response::{ListWithPageInfo, GenerateListWithPageInfo};
-use resp_result::resp_try;
+use resp_result::{resp_try, MapReject, rtry};
 use tracing::instrument;
 
 use crate::router::FetcherConfigControllers;
 
-use super::PageSizePretreatment;
+use super::{PageSizePretreatment, view::DeleteOnePlatform, error::PlatformConfigError};
 
 impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
@@ -52,10 +52,13 @@ impl FetcherConfigControllers {
 
     // }
 
-    // #[instrument(ret, skip(db))]
-    // pub fn delete_platform_config(
-    //     db: SqlConnect,
-    // ) -> PlatformConfigRResult<()> {
-        
-    // }
+    #[instrument(ret, skip(db))]
+    pub async fn delete_platform_config(
+        db: SqlConnect,
+        MapReject(body): MapReject<Json<DeleteOnePlatform>, PlatformConfigError>,
+    ) -> PlatformConfigRResult<()> {
+        let pid = body.id;
+        rtry!(FetcherPlatformConfigSqlOperate::delete_one_platform_config(&db, pid).await);
+        Ok(()).into()
+    }
 }

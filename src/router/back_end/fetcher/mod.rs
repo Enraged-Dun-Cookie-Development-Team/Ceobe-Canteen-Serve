@@ -1,4 +1,4 @@
-use axum::{routing::get, routing::post, Router};
+use axum::{routing::{get, delete}, routing::post, Router};
 
 use crate::{
     middleware::authorize::AuthorizeLayer, router::ServerRoute,
@@ -15,6 +15,10 @@ pub fn fetcher_config() -> ServerRoute {
         .route(
             "/platformList",
             get(FetcherConfigControllers::get_platform_list),
+        )
+        .route(
+            "/deletePlatform",
+            delete(FetcherConfigControllers::delete_platform_config),
         )
         .route(
             "/uploadGlobalConfig",
