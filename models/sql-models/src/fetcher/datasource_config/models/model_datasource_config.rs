@@ -6,6 +6,7 @@ use sub_model::SubModel;
 #[sub_model(
     all(name = "BackendDatasource", extra(derive(sea_orm::FromQueryResult))),
     none(name = "FrontendDatasource", extra(derive(sea_orm::FromQueryResult))),
+    none(name = "SingleDatasourceInfo", extra(derive(sea_orm::FromQueryResult))),
     none(name = "DataSourceForFetcherConfig", extra(derive(sea_orm::FromQueryResult))),
 )]
 pub struct Model {
@@ -13,6 +14,7 @@ pub struct Model {
     #[sub_model(want("DataSourceForFetcherConfig"))]
     pub id: i32,
     pub platform: String, 
+    #[sub_model(want("SingleDatasourceInfo"))]
     pub datasource: String,
     #[sub_model(want("FrontendDatasource"))]
     #[sub_model(want("DataSourceForFetcherConfig"))]

@@ -1,5 +1,5 @@
 use std::ops::Deref;
-
+use crate::fetcher::platform_config::operate::retrieve::model_platform_config::SinglePlatformInfo;
 use page_size::{request::PageSize, database::OffsetLimit};
 use sea_orm::{DbErr, ConnectionTrait, EntityTrait, QuerySelect, PaginatorTrait};
 use smallvec::SmallVec;
@@ -53,6 +53,7 @@ impl FetcherPlatformConfigSqlOperate {
         Ok(model_platform_config::Entity::find()
             .select_only()
             .column(model_platform_config::Column::TypeId)
+            .into_model::<SinglePlatformInfo>()
             .all(db)
             .await?
             .into_iter()

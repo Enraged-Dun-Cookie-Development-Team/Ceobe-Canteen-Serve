@@ -10,11 +10,13 @@ use sub_model::SubModel;
             has_datasource(ty = "bool", from = "Default::default")
         ),
         extra(derive(serde::Serialize, Debug))   
-    )
+    ),
+    none(name = "SinglePlatformInfo", extra(derive(sea_orm::FromQueryResult)))
 )]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
+    #[sub_model(want("SinglePlatformInfo"))]
     pub type_id: String,
     pub platform_name: String,
     pub min_request_interval: i32,

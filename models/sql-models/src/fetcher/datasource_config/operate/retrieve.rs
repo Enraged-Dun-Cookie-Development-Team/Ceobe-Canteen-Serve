@@ -1,6 +1,6 @@
 
 use std::ops::Deref;
-
+use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::SingleDatasourceInfo;
 use page_size::{request::PageSize, database::OffsetLimit};
 use sea_orm::{ConnectionTrait, DbErr, EntityTrait, QuerySelect, QueryFilter, ColumnTrait};
 use smallvec::SmallVec;
@@ -91,6 +91,7 @@ impl FetcherDatasourceConfigSqlOperate {
             .select_only()
             .column(model_datasource_config::Column::Datasource)
             .group_by(model_datasource_config::Column::Datasource)
+            .into_model::<SingleDatasourceInfo>()
             .all(db)
             .await?
             .into_iter()
