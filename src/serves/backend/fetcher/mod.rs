@@ -1,3 +1,4 @@
+pub mod datasource_configs;
 pub mod platform_configs;
 pub mod global_configs;
 use resp_result::RespResult;
