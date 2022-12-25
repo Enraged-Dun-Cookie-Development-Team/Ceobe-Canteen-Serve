@@ -15,7 +15,7 @@ use tracing::instrument;
 
 use crate::router::FetcherConfigControllers;
 
-use super::{PageSizePretreatment, view::DeleteOnePlatform, error::PlatformConfigError};
+use super::{PageSizePretreatment, view::DeleteOnePlatform, error::PlatformConfigError, FetcherPlatformCheck};
 
 impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
@@ -38,10 +38,14 @@ impl FetcherConfigControllers {
         .await
     }
 
-    // #[instrument(ret, skip(db))]
-    // pub fn create_platform_config(
-    //     db: SqlConnect,
-    // ) -> PlatformConfigRResult<()> {
+    #[instrument(ret, skip(db))]
+    pub async fn create_platform_config(
+        db: SqlConnect,
+        CheckExtract(platform_config): FetcherPlatformCheck
+    ) -> PlatformConfigRResult<()> {
+        rtry!(FetcherPlatformConfigSqlOperate::create_platform_config(&db, platform_config).await);
+        Ok(()).into()
+    }
 
     // }
 

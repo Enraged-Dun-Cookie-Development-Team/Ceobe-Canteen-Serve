@@ -17,6 +17,10 @@ pub fn fetcher_config() -> ServerRoute {
             get(FetcherConfigControllers::get_platform_list),
         )
         .route(
+            "/createPlatform",
+            post(FetcherConfigControllers::create_platform_config),
+        )
+        .route(
             "/deletePlatform",
             delete(FetcherConfigControllers::delete_platform_config),
         )
