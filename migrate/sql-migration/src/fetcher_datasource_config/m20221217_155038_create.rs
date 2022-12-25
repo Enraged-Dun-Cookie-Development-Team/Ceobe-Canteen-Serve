@@ -57,7 +57,7 @@ impl MigrationTrait for Migration {
         table.index(
             Index::create()
                 .col(FetcherDatasourceConfig::Platform)
-                .col(FetcherDatasourceConfig::Nickname)
+                .col(FetcherDatasourceConfig::Datasource)
                 .col(FetcherDatasourceConfig::Config)
                 .name("single-datasource")
                 .unique(),
