@@ -4,7 +4,10 @@ use checker::prefabs::no_check::NoCheck;
 use range_limit::RangeBoundLimit;
 use range_limit::limits::max_limit::MaxLimit;
 use serde_json::{Map, Value};
+use sql_models::fetcher::datasource_config::operate::FetcherDatasourceConfigSqlOperate;
 use sql_models::fetcher::global_config::checkers::global_config_data::{FetcherGlobalConfigUncheck, FetcherGlobalConfigVecChecker};
+use sql_models::fetcher::platform_config::models::model_platform_config::PlatformWithHasDatasource;
+use sql_models::fetcher::platform_config::operate::FetcherPlatformConfigSqlOperate;
 use sql_models::{
     fetcher::global_config::{
         checkers::global_config_data::{
@@ -18,6 +21,29 @@ use sql_models::{
         sea_orm::{ConnectionTrait, DbErr},
     },
 };
+use page_size::request::PageSize;
+
+pub async fn get_platform_list_with_has_datasource<'db, D>(db: &'db D, page_size: PageSize) -> LogicResult<Vec<PlatformWithHasDatasource>> 
+where
+    D: GetDatabaseConnect<Error = DbErr> + 'static,
+    D::Connect<'db>: ConnectionTrait,
+{
+    // 分页查询平台列表 
+    let platform_list = FetcherPlatformConfigSqlOperate::find_platform_list_by_page_size(db, page_size).await?;
+    let platforms = platform_list.iter().map(|platform_item| platform_item.type_id.clone()).collect();
+    // 查询map
+    let platform_datasource_exist_map = FetcherDatasourceConfigSqlOperate::has_datasource_from_platforms(db, platforms).await?;
+    
+    let resp = platform_list.into_iter().map(|platform_item| PlatformWithHasDatasource {
+        id: platform_item.id,
+        type_id: platform_item.type_id.clone(),
+        platform_name: platform_item.platform_name,
+        min_request_interval: platform_item.min_request_interval,
+        has_datasource: platform_datasource_exist_map.contains_key(&platform_item.type_id),
+    }).collect();
+
+    Ok(resp)
+}
 
 // 从数据库获取json的key和value，拼接成json格式返回
 pub async fn get_global_configs<'db, D>(db: &'db D) -> LogicResult<Value>

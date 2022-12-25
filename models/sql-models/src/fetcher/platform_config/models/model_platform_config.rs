@@ -1,7 +1,17 @@
 use sea_orm::{ entity::prelude::* };
+use sub_model::SubModel;
 
-#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
+#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_platform_config")]
+#[sub_model(
+    all(
+        name = "PlatformWithHasDatasource",
+        extra_field(
+            has_datasource(ty = "bool", from = "Default::default")
+        ),
+        extra(derive(serde::Serialize, Debug))   
+    )
+)]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
