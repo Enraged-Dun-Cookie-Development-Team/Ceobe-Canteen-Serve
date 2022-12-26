@@ -1,5 +1,6 @@
 use std::ops::Deref;
-use crate::fetcher::platform_config::operate::retrieve::model_platform_config::SinglePlatformInfo;
+use crate::fetcher::platform_config::operate::retrieve::model_platform_config::PlatformBasicInfo;
+use crate::fetcher::platform_config::operate::retrieve::model_platform_config::PlatformType;
 use page_size::{request::PageSize, database::OffsetLimit};
 use sea_orm::{DbErr, ConnectionTrait, EntityTrait, QuerySelect, PaginatorTrait};
 use smallvec::SmallVec;
@@ -43,7 +44,7 @@ impl FetcherPlatformConfigSqlOperate {
     #[instrument(skip(db))]
     /// 获取全部平台type_id列表
     pub async fn find_platform_list<'db, D>(
-        db: &'db D
+        db: &'db D,
     ) -> OperateResult<Vec<String>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
@@ -53,7 +54,7 @@ impl FetcherPlatformConfigSqlOperate {
         Ok(model_platform_config::Entity::find()
             .select_only()
             .column(model_platform_config::Column::TypeId)
-            .into_model::<SinglePlatformInfo>()
+            .into_model::<PlatformType>()
             .all(db)
             .await?
             .into_iter()
@@ -63,6 +64,31 @@ impl FetcherPlatformConfigSqlOperate {
                 Span::current()
                 .in_scope(||{
                     info!(platformList.len = list.len(),  platformList.platform.pType = ?list );
+                });
+            })
+    }
+
+    #[instrument(skip(db))]
+    /// 获取全部平台基础信息列表
+    pub async fn find_platform_list_with_basic_info<'db, D>(
+        db: &'db D,
+    ) -> OperateResult<Vec<PlatformBasicInfo>>
+    where
+        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D::Connect<'db>: ConnectionTrait,
+    {
+        let db = db.get_connect()?;
+        Ok(model_platform_config::Entity::find()
+            .select_only()
+            .column(model_platform_config::Column::TypeId)
+            .column(model_platform_config::Column::PlatformName)
+            .into_model::<PlatformBasicInfo>()
+            .all(db)
+            .await?).tap_ok(|list| {
+                Span::current()
+                    .in_scope(||{
+                    let list = list.iter().map(|platform|(&platform.platform_name)).collect::<SmallVec<[_;4]>>();
+                    info!(platformList.len = list.len(),  platformList.platform.name = ?list );
                 });
             })
     }
@@ -77,6 +103,9 @@ impl FetcherPlatformConfigSqlOperate {
         D::Connect<'db>: ConnectionTrait,
     {
         let db = db.get_connect()?;
-        model_platform_config::Entity::find().count(db).await.map_err(Into::into)
+        model_platform_config::Entity::find()
+            .count(db)
+            .await
+            .map_err(Into::into)
     }
 }

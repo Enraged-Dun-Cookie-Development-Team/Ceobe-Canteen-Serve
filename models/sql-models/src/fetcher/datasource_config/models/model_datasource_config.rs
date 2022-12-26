@@ -16,8 +16,7 @@ pub struct Model {
     pub platform: String, 
     #[sub_model(want("SingleDatasourceInfo"))]
     pub datasource: String,
-    #[sub_model(want("FrontendDatasource"))]
-    #[sub_model(want("DataSourceForFetcherConfig"))]
+    #[sub_model(want("DataSourceForFetcherConfig"), want("FrontendDatasource"))]
     pub nickname: String,
     #[sub_model(want("FrontendDatasource"))]
     pub avatar: String,
