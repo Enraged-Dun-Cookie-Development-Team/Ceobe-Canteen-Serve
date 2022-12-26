@@ -1,11 +1,22 @@
-
-use sql_models::fetcher::global_config::{operate::OperateError as GlobalConfigOperateError, checkers::CheckError as GlobalConfigCheckError};
-use sql_models::fetcher::datasource_config::{operate::OperateError as DatasourceConfigOperateError, checkers::CheckError as DatasourceConfigCheckError};
-use sql_models::fetcher::platform_config::{operate::OperateError as PlatformConfigOperateError, checkers::CheckError as PlatformConfigCheckError};
-use sql_models::fetcher::config::{operate::OperateError as FetcherConfigOperateError, checkers::CheckError as FetcherConfigCheckError};
-use status_err::{StatusErr, ErrPrefix};
+use sql_models::fetcher::config::{
+    checkers::CheckError as FetcherConfigCheckError,
+    operate::OperateError as FetcherConfigOperateError,
+};
+use sql_models::fetcher::datasource_config::{
+    checkers::CheckError as DatasourceConfigCheckError,
+    operate::OperateError as DatasourceConfigOperateError,
+};
+use sql_models::fetcher::global_config::{
+    checkers::CheckError as GlobalConfigCheckError,
+    operate::OperateError as GlobalConfigOperateError,
+};
+use sql_models::fetcher::platform_config::{
+    checkers::CheckError as PlatformConfigCheckError,
+    operate::OperateError as PlatformConfigOperateError,
+};
+use sql_models::sql_connection::sea_orm;
+use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
-
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
@@ -42,11 +53,11 @@ pub enum LogicError {
     FetcherConfigCheckError(#[from] FetcherConfigCheckError),
 
     #[error("该平台不存在")]
-    #[status_err(err(
-        err_code = 0x00_13,
-        prefix = "ErrPrefix::CHECKER"
-    ))]
+    #[status_err(err(err_code = 0x00_13, prefix = "ErrPrefix::CHECKER"))]
     NoPlatform,
+
+    #[error("查询数据库异常: {0}")]
+    Db(#[from] sea_orm::DbErr),
 }
 
 #[allow(dead_code)]
