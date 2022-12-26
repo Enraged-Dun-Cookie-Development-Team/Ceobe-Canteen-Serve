@@ -1,4 +1,4 @@
-use orm_migrate::sql_models::fetcher::datasource_config::models::model_datasource_config::BackendDatasource;
+use orm_migrate::sql_models::fetcher::datasource_config::models::model_datasource_config::{BackendDatasource, DataSourceForFetcherConfig};
 use serde_json::Value;
 use uuid::Uuid;
 
@@ -26,6 +26,16 @@ crate::quick_struct!{
     pub DatasourceId {
         id: i32
     }
+
+    pub DatasourcePlatformFilter {
+        type_id: String
+    }
+
+    pub DatasourceWithNameResp {
+        id: i32
+        nickname: String
+        config: Value
+    }
 }
 
 impl From<BackendDatasource> for DatasourceList {
@@ -45,6 +55,22 @@ impl From<BackendDatasource> for DatasourceList {
             datasource,
             nickname,
             avatar,
+            config: serde_json::from_str(&config).unwrap(),
+        }
+    }
+}
+
+impl From<DataSourceForFetcherConfig> for DatasourceWithNameResp {
+    fn from(
+        DataSourceForFetcherConfig {
+            id,
+            nickname,
+            config,
+        }: DataSourceForFetcherConfig,
+    ) -> Self {
+        Self {
+            id,
+            nickname,
             config: serde_json::from_str(&config).unwrap(),
         }
     }

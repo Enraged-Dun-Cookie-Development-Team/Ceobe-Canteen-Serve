@@ -6,9 +6,9 @@ use page_size::response::{ListWithPageInfo, GenerateListWithPageInfo};
 use resp_result::{resp_try, rtry};
 use resp_result::MapReject;
 use tracing::instrument;
-use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::{DatasourceListFilterCond, DatasourceId}, FetcherDatasourceCheck};
+use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::{DatasourceListFilterCond, DatasourceId, DatasourcePlatformFilter}, FetcherDatasourceCheck};
 
-use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::view::{PlatformAndDatasourceArray, DatasourceList}};
+use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::view::{PlatformAndDatasourceArray, DatasourceList, DatasourceWithNameResp}};
 
 impl FetcherConfigControllers {
     // 获取平台与数据源类型列表
@@ -90,4 +90,18 @@ impl FetcherConfigControllers {
          rtry!(fetcher_logic::implement::delete_datasource_by_id(&db, datasource.id).await);
          Ok(()).into()
      }
+
+    // 获取数据源配置全列表(包含id、名字、config)
+    #[instrument(ret, skip(db))]
+    pub async fn get_datasource_name_list(
+        db: SqlConnect,
+        MapReject(filter): MapReject<Query<DatasourcePlatformFilter>, DatasourceConfigError>
+    ) -> DatasourceConfigRResult<Vec<DatasourceWithNameResp>> {
+        resp_try(async {
+            let list = FetcherDatasourceConfigSqlOperate::find_datasource_list_by_platform(&db, filter.type_id).await?;
+            let resp = list.into_iter().map(Into::into).collect();
+            Ok(resp)
+        })
+        .await
+    }
 }
