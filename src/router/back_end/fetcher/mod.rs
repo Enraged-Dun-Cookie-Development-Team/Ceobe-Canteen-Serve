@@ -60,5 +60,9 @@ pub fn fetcher_config() -> ServerRoute {
             "/allPlatformList",
             get(FetcherConfigControllers::get_platform_all_list_with_basic_info),
         )
+        .route(
+            "/getAllDatasourceList",
+            get(FetcherConfigControllers::get_datasource_name_list),
+        )
         .route_layer(AuthorizeLayer::<Chef>::new())
 }
