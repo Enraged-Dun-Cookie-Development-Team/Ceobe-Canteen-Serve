@@ -68,7 +68,7 @@ impl FetcherPlatformConfigSqlOperate {
     }
 
     #[instrument(skip(db), ret)]
-    /// 获取用户总数
+    /// 获取平台总数
     pub async fn get_platform_total_number<'db, D>(
         db: &'db D,
     ) -> OperateResult<u64>

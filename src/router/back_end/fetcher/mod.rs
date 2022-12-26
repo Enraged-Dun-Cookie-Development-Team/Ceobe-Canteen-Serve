@@ -33,6 +33,10 @@ pub fn fetcher_config() -> ServerRoute {
             get(FetcherConfigControllers::get_platform_and_datasource_list),
         )
         .route(
+            "/getDatasourceList",
+            get(FetcherConfigControllers::get_datasource_list),
+        )
+        .route(
             "/uploadGlobalConfig",
             post(FetcherConfigControllers::upload_global_configs),
         )

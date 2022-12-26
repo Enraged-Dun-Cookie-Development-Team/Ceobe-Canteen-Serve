@@ -4,7 +4,7 @@ use sub_model::SubModel;
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_config")]
 #[sub_model(
-    all(name = "BackendDatasource", extra(derive(sea_orm::FromQueryResult))),
+    all(name = "BackendDatasource", extra(derive(sea_orm::FromQueryResult, serde::Serialize, Debug))),
     none(name = "FrontendDatasource", extra(derive(sea_orm::FromQueryResult))),
     none(name = "SingleDatasourceInfo", extra(derive(sea_orm::FromQueryResult))),
     none(name = "DataSourceForFetcherConfig", extra(derive(sea_orm::FromQueryResult))),
