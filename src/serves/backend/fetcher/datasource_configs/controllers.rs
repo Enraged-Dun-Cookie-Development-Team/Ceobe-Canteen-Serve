@@ -8,7 +8,7 @@ use resp_result::MapReject;
 use tracing::instrument;
 use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::DatasourceListFilterCond};
 
-use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::view::PlatformAndDatasourceArray};
+use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::view::{PlatformAndDatasourceArray, DatasourceList}};
 
 impl FetcherConfigControllers {
     // 获取平台与数据源类型列表
@@ -43,7 +43,7 @@ impl FetcherConfigControllers {
             Query<DatasourceListFilterCond>,
             DatasourceConfigError,
         >,
-    ) -> DatasourceConfigRResult<ListWithPageInfo<BackendDatasource>> {
+    ) -> DatasourceConfigRResult<ListWithPageInfo<DatasourceList>> {
         resp_try(async {
             // 获取数据源列表
             let datasource_list = FetcherDatasourceConfigSqlOperate::find_datasource_list_by_page_size(&db, page_size, filter_cond.platform.clone(), filter_cond.datasource.clone());
@@ -53,7 +53,8 @@ impl FetcherConfigControllers {
             // 异步获取
             let (datasource_list, count) = future::join(datasource_list, count).await;
 
-            let resp = datasource_list?.with_page_info(page_size, count?);
+            let datasource_list = datasource_list?.into_iter().map(Into::into).collect::<Vec<DatasourceList>>();
+            let resp = datasource_list.with_page_info(page_size, count?);
 
             Ok(resp)
         })
