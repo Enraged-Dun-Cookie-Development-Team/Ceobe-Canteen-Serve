@@ -22,6 +22,10 @@ crate::quick_struct!{
         avatar: String
         config: Value
     }
+
+    pub DatasourceId {
+        id: i32
+    }
 }
 
 impl From<BackendDatasource> for DatasourceList {

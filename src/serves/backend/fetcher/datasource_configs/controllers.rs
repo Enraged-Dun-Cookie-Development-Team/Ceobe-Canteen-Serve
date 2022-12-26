@@ -6,7 +6,7 @@ use page_size::response::{ListWithPageInfo, GenerateListWithPageInfo};
 use resp_result::{resp_try, rtry};
 use resp_result::MapReject;
 use tracing::instrument;
-use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::DatasourceListFilterCond, FetcherDatasourceCheck};
+use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::{DatasourceListFilterCond, DatasourceId}, FetcherDatasourceCheck};
 
 use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::view::{PlatformAndDatasourceArray, DatasourceList}};
 
@@ -80,4 +80,14 @@ impl FetcherConfigControllers {
         rtry!(FetcherDatasourceConfigSqlOperate::update_platform_config(&db, datasource_config).await);
         Ok(()).into()
     }
+
+     // 删除数据源配置
+     #[instrument(ret, skip(db))]
+     pub async fn delete_datasource_config(
+         db: SqlConnect,
+         MapReject(datasource): MapReject<Json<DatasourceId>, DatasourceConfigError>
+     ) -> DatasourceConfigRResult<()> {
+         rtry!(fetcher_logic::implement::delete_datasource_by_id(&db, datasource.id).await);
+         Ok(()).into()
+     }
 }
