@@ -37,6 +37,14 @@ pub fn fetcher_config() -> ServerRoute {
             get(FetcherConfigControllers::get_datasource_list),
         )
         .route(
+            "/createDatasource",
+            post(FetcherConfigControllers::create_datasource_config),
+        )
+        .route(
+            "/updateDatasource",
+            post(FetcherConfigControllers::update_datasource_config),
+        )
+        .route(
             "/uploadGlobalConfig",
             post(FetcherConfigControllers::upload_global_configs),
         )

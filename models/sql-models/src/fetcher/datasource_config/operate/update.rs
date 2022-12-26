@@ -21,7 +21,7 @@ impl FetcherDatasourceConfigSqlOperate {
             config.id = config.id,
             datasource.name = config.nickname,
             datasource.avatar = config.avatar.to_string(),
-            datasouce.config = config.config,
+            datasouce.config = config.config.to_string(),
         );
 
         let db = db.get_connect()?;

@@ -3,10 +3,10 @@ use checker::CheckExtract;
 use futures::future;
 use orm_migrate::{sql_models::fetcher::{platform_config::operate::FetcherPlatformConfigSqlOperate, datasource_config::{checkers::datasource_config_data::FetcherDatasourceConfig, operate::FetcherDatasourceConfigSqlOperate, models::model_datasource_config::{Model, BackendDatasource}}}, sql_connection::SqlConnect};
 use page_size::response::{ListWithPageInfo, GenerateListWithPageInfo};
-use resp_result::resp_try;
+use resp_result::{resp_try, rtry};
 use resp_result::MapReject;
 use tracing::instrument;
-use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::DatasourceListFilterCond};
+use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::DatasourceListFilterCond, FetcherDatasourceCheck};
 
 use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::view::{PlatformAndDatasourceArray, DatasourceList}};
 
@@ -59,5 +59,25 @@ impl FetcherConfigControllers {
             Ok(resp)
         })
         .await
+    }
+
+    // 上传数据源配置
+    #[instrument(ret, skip(db))]
+    pub async fn create_datasource_config(
+        db: SqlConnect,
+        CheckExtract(datasource_config): FetcherDatasourceCheck
+    ) -> DatasourceConfigRResult<()> {
+        rtry!(fetcher_logic::implement::create_datasource_config(&db, datasource_config).await);
+        Ok(()).into()
+    }
+
+    // 更新数据源配置
+    #[instrument(ret, skip(db))]
+    pub async fn update_datasource_config(
+        db: SqlConnect,
+        CheckExtract(datasource_config): FetcherDatasourceCheck
+    ) -> DatasourceConfigRResult<()> {
+        rtry!(FetcherDatasourceConfigSqlOperate::update_platform_config(&db, datasource_config).await);
+        Ok(()).into()
     }
 }

@@ -1,4 +1,5 @@
-use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect, Statement, DatabaseBackend};
+use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect, Statement, DatabaseBackend, DbErr};
+use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 
 use crate::fetcher::{platform_config::models::model_platform_config, datasource_config::models::model_datasource_config};
 use super::{FetcherPlatformConfigSqlOperate, PlatformCounts, OperateResult};
@@ -10,6 +11,27 @@ impl FetcherPlatformConfigSqlOperate {
     pub async fn is_platform_exist(
         db: &impl ConnectionTrait, type_id: &str
     ) -> OperateResult<bool> {
+        let resp = model_platform_config::Entity::find()
+            .filter(model_platform_config::Column::TypeId.eq(type_id))
+            .select_only()
+            .column_as(model_platform_config::Column::Id.count(), "count")
+            .into_model::<PlatformCounts>()
+            .one(db)
+            .await?
+            .unwrap();
+
+        Ok(resp.count != 0)
+    }
+
+     // 查询是否存在type_id的平台
+    pub async fn is_platform_exist_with_raw_db<'db, D>(
+        db: &'db D, type_id: &str
+    ) -> OperateResult<bool>
+    where
+    D: GetDatabaseConnect<Error = DbErr> + 'static,
+    D::Connect<'db>: ConnectionTrait,
+    {
+        let db = db.get_connect()?;
         let resp = model_platform_config::Entity::find()
             .filter(model_platform_config::Column::TypeId.eq(type_id))
             .select_only()

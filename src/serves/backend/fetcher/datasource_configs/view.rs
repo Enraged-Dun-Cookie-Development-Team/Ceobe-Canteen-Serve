@@ -1,5 +1,6 @@
 use orm_migrate::sql_models::fetcher::datasource_config::models::model_datasource_config::BackendDatasource;
 use serde_json::Value;
+use uuid::Uuid;
 
 
 crate::quick_struct!{

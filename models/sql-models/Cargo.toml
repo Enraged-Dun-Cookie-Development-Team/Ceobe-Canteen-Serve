@@ -13,6 +13,7 @@ chrono = {  workspace = true, features = ["serde"] }
 futures =  { workspace = true }
 sub-model = { workspace = true }
 serde =  { workspace = true }
+serde_json = { workspace = true }
 url = { workspace = true }
 sea-orm =  { workspace = true,features = ["with-chrono", "with-uuid"]}
 checker = { path = "../../libs/checker" }

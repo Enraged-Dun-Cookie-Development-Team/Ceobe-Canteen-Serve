@@ -5,6 +5,7 @@ use sea_orm::{Unset, ActiveValue::NotSet, Set};
 use typed_builder::TypedBuilder;
 use url::Url;
 use uuid::Uuid;
+use serde_json::Value;
 
 use super::CheckError;
 use crate::fetcher::datasource_config::models::model_datasource_config;
@@ -18,7 +19,7 @@ pub struct FetcherDatasourceConfig {
     pub datasource: String,
     pub nickname: String,
     pub avatar: Url,
-    pub config: String,
+    pub config: Value,
 }
 
 #[check_obj(
@@ -33,7 +34,7 @@ pub struct FetcherDatasourceConfigChecker {
     pub datasource: MaxLimitString<64>,
     pub nickname: MaxLimitString<16>,
     pub avatar: UrlChecker,
-    pub config: NoCheck<String>,
+    pub config: NoCheck<Value>,
 }
 
 impl model_datasource_config::ActiveModel {
@@ -67,7 +68,7 @@ impl model_datasource_config::ActiveModel {
             },
             nickname: Set(nickname),
             avatar: Set(avatar.to_string()),
-            config: Set(config),
+            config: Set(config.to_string()),
             unique_id: match id {
                 Some(_) => NotSet,
                 None => Set(Uuid::new_v4()),

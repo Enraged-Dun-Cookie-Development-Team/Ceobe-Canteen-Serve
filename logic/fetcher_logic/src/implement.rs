@@ -1,9 +1,10 @@
-use crate::error::LogicResult;
+use crate::error::{LogicResult, LogicError};
 use checker::{Checker, CheckRequire};
 use checker::prefabs::no_check::NoCheck;
 use range_limit::RangeBoundLimit;
 use range_limit::limits::max_limit::MaxLimit;
 use serde_json::{Map, Value};
+use sql_models::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
 use sql_models::fetcher::datasource_config::operate::FetcherDatasourceConfigSqlOperate;
 use sql_models::fetcher::global_config::checkers::global_config_data::{FetcherGlobalConfigUncheck, FetcherGlobalConfigVecChecker};
 use sql_models::fetcher::platform_config::models::model_platform_config::PlatformWithHasDatasource;
@@ -45,6 +46,22 @@ where
     }).collect();
 
     Ok(resp)
+}
+
+// 新建数据源配置
+pub async fn create_datasource_config<'db, D>(db: &'db D, datasource_config: FetcherDatasourceConfig) -> LogicResult<()>
+where
+    D: GetDatabaseConnect<Error = DbErr> + 'static,
+    D::Connect<'db>: ConnectionTrait,
+{
+    // 验证平台存在
+    if FetcherPlatformConfigSqlOperate::is_platform_exist_with_raw_db(db, &datasource_config.platform).await? {
+        // 创建数据源
+        FetcherDatasourceConfigSqlOperate::create_database_config(db, datasource_config).await?;
+    } else {
+        return Err(LogicError::NoPlatform);
+    }
+    Ok(())
 }
 
 // 从数据库获取json的key和value，拼接成json格式返回
