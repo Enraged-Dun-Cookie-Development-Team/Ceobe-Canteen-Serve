@@ -5,7 +5,7 @@ use futures::{future, TryFutureExt};
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::fetcher::platform_config::{
-        models::model_platform_config::PlatformWithHasDatasource,
+        models::model_platform_config::{PlatformWithHasDatasource, PlatformBasicInfo},
         operate::FetcherPlatformConfigSqlOperate,
     },
 };
@@ -64,5 +64,13 @@ impl FetcherConfigControllers {
         let pid = body.id;
         rtry!(FetcherPlatformConfigSqlOperate::delete_one_platform_config(&db, pid).await);
         Ok(()).into()
+    }
+
+    #[instrument(skip(db))]
+    // 获取全部平台列表
+    pub async fn get_platform_all_list_with_basic_info(
+        db: SqlConnect
+    ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
+        Ok(rtry!(FetcherPlatformConfigSqlOperate::find_platform_list_with_basic_info(&db).await)).into()
     }
 }
