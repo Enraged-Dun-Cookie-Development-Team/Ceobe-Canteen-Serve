@@ -45,6 +45,10 @@ pub fn fetcher_config() -> ServerRoute {
             post(FetcherConfigControllers::update_datasource_config),
         )
         .route(
+            "/deleteDatasource",
+            delete(FetcherConfigControllers::delete_datasource_config),
+        )
+        .route(
             "/uploadGlobalConfig",
             post(FetcherConfigControllers::upload_global_configs),
         )
