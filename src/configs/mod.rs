@@ -9,6 +9,7 @@ use std::net::SocketAddr;
 use axum_starter::{Configure, Provider};
 use mongo_migration::mongo_connection::MongoDbConfig;
 use orm_migrate::sql_connection::DbConfig;
+use redis_connection::RedisDbConfig;
 use serde::Deserialize;
 
 use self::{
@@ -38,8 +39,8 @@ pub struct GlobalConfig {
     #[serde(alias = "mongo")]
     #[provider(transparent, ref)]
     pub mongodb: MongoDbConfig,
-    // #[provider(transparent, ref)]
-    // pub redis: RedisDbConfig,
+    #[provider(transparent, ref)]
+    pub redis: RedisDbConfig,
     /// 日志文件相关配置
     #[serde(alias = "log")]
     #[provider(transparent, ref)]

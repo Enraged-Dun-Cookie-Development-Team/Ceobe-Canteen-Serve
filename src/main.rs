@@ -7,7 +7,7 @@ use axum_starter::ServerPrepare;
 use bootstrap::{
     init::{
         component_init::{BackendAuthConfig, RResultConfig},
-        db_init::{MongoDbConnect, MysqlDbConnect},
+        db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
     midllewares::tracing_request::tracing_request,
@@ -65,8 +65,7 @@ async fn main_task() {
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
         // database
         .prepare_concurrent(|set| {
-            set.join_state(MysqlDbConnect).join_state(MongoDbConnect)
-            // .join_state(RedisDbConnect)
+            set.join_state(MysqlDbConnect).join_state(MongoDbConnect).join_state(RedisDbConnect)
         })
         // router
         .prepare_route(RouteV1)
