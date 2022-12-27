@@ -8,7 +8,7 @@ edition = "2021"
 once_cell = { workspace = true }
 serde = { workspace = true }
 database_traits = { path = "../database_traits" }
-redis = { version = "0.22", features = [
+redis = { workspace = true, features = [
     "tokio-comp",
     "ahash",
     "connection-manager"
