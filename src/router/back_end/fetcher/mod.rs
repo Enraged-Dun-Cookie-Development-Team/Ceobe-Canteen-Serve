@@ -64,5 +64,9 @@ pub fn fetcher_config() -> ServerRoute {
             "/getAllDatasourceList",
             get(FetcherConfigControllers::get_datasource_name_list),
         )
+        .route(
+            "/getFetcherLiveNumber",
+            get(FetcherConfigControllers::get_fetcher_max_live_number),
+        )
         .route_layer(AuthorizeLayer::<Chef>::new())
 }
