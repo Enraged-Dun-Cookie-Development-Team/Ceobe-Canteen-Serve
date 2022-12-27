@@ -3,6 +3,8 @@ use checker::{Checker, CheckRequire};
 use checker::prefabs::no_check::NoCheck;
 use range_limit::RangeBoundLimit;
 use range_limit::limits::max_limit::MaxLimit;
+use redis::{aio::ConnectionLike, AsyncCommands, RedisError};
+use redis_global::redis_key;
 use serde_json::{Map, Value};
 use sql_models::fetcher::config::operate::FetcherConfigSqlOperate;
 use sql_models::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
@@ -10,7 +12,7 @@ use sql_models::fetcher::datasource_config::operate::FetcherDatasourceConfigSqlO
 use sql_models::fetcher::global_config::checkers::global_config_data::{FetcherGlobalConfigUncheck, FetcherGlobalConfigVecChecker};
 use sql_models::fetcher::platform_config::models::model_platform_config::PlatformWithHasDatasource;
 use sql_models::fetcher::platform_config::operate::FetcherPlatformConfigSqlOperate;
-use sql_models::sql_connection::database_traits::get_connect::{GetDatabaseTransaction, TransactionOps};
+use sql_models::sql_connection::database_traits::get_connect::{GetDatabaseTransaction, TransactionOps, GetMutDatabaseConnect};
 use sql_models::{
     fetcher::global_config::{
         checkers::global_config_data::{
@@ -161,4 +163,21 @@ where
     // TODO：告诉调度器哪个平台更新了
 
     Ok(())
+}
+
+// 获取蹲饼器最大存活数量
+pub async fn get_cookie_fetcher_max_live_number<'client, C>(client: &'client mut C) -> LogicResult<i8>
+where
+    C: GetMutDatabaseConnect<Error = RedisError> + 'client,
+    C::Connect<'client>: AsyncCommands
+{
+    let con = client.mut_connect()?;
+    let mut live_number = 0;
+    // 判断redis key存在
+    if con.exists(redis_key::fetcher::COOKIE_FETCHER_CONFIG_LIVE_NUMBER).await? {
+        // 获取key的值
+        live_number = con.get(redis_key::fetcher::COOKIE_FETCHER_CONFIG_LIVE_NUMBER).await?;
+    }
+    
+    Ok(live_number)
 }

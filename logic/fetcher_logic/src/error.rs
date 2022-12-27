@@ -1,3 +1,4 @@
+use redis::RedisError;
 use sql_models::fetcher::config::{
     checkers::CheckError as FetcherConfigCheckError,
     operate::OperateError as FetcherConfigOperateError,
@@ -58,6 +59,9 @@ pub enum LogicError {
 
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
+
+    #[error("Redis异常: {0}")]
+    Redis(#[from] RedisError),
 }
 
 #[allow(dead_code)]

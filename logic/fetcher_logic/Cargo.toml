@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 serde_json = { workspace = true}
 thiserror = { workspace = true }
+redis = { workspace = true }
 status-err = { path = "../../libs/status-err" }
 range-limit = { path = "../../libs/range-limit" }
 page_size = {path = "../../libs/page_size"}
@@ -17,3 +18,6 @@ path = "../../models/sql-models"
 
 [dependencies.checker]
 path = "../../libs/checker"
+
+[dependencies.redis_global]
+path = "../../global/redis_global"
