@@ -1,5 +1,6 @@
 mod mongodb;
 mod sea_orm;
+mod redis;
 use std::{convert::Infallible, num::ParseIntError};
 
 use axum::extract::rejection::{

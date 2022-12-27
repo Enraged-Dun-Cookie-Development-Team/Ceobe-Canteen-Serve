@@ -59,6 +59,9 @@ impl ErrPrefix {
     pub const SERVE: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
     /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', HttpCode::UNAUTHORIZED);
+    /// Redis 数据库异常
+    pub const REDIS_DB: Self =
+        Self::new('R', HttpCode::INTERNAL_SERVER_ERROR);
 
     #[inline]
     pub const fn new(sign: char, status: HttpCode) -> Self {

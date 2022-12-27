@@ -13,6 +13,7 @@ url = { workspace = true }
 bcrypt = "0.13"
 mongodb = { workspace = true }
 chrono = { workspace = true }
+redis = { workspace = true}
 bincode = "1"
 # marco
 status-err-derive = { path = "../../macros/status-err-derive" }
