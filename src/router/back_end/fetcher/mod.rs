@@ -68,5 +68,13 @@ pub fn fetcher_config() -> ServerRoute {
             "/getFetcherLiveNumber",
             get(FetcherConfigControllers::get_fetcher_max_live_number),
         )
+        .route(
+            "/uploadFetcherConfig",
+            post(FetcherConfigControllers::upload_fetchers_configs),
+        )
+        .route(
+            "/getFetcherConfigList",
+            get(FetcherConfigControllers::get_fetchers_configs),
+        )
         .route_layer(AuthorizeLayer::<Chef>::new())
 }
