@@ -9,8 +9,10 @@ pub struct Group {
     pub ty: String,
     pub datasource: Vec<i32>,
     #[builder(default = None)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interval: Option<i32>,
     #[builder(default = Value::Null)]
+    #[serde(default, skip_serializing_if = "Value::is_null")]
     pub interval_by_time_range: Value
 }
 
