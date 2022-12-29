@@ -13,3 +13,4 @@ enum FetcherConfig {
     Interval,
     IntervalByTimeRange,
 }
+pub mod m20221228_232347_alter_default;

@@ -1,9 +1,9 @@
+mod fetcher_config;
 mod ceobe_operation_announcement;
 mod ceobe_operation_video;
 mod ceobe_operation_resource;
 mod ceobe_operation_app_version;
 mod admin;
-mod fetcher_config;
 mod fetcher_datasource_config;
 mod fetcher_global_config;
 mod fetcher_platform_config;
@@ -35,6 +35,7 @@ impl MigratorTrait for Migrator {
             ceobe_operation_resource::m20221218_001918_charset_and_collate::Migration
             ceobe_operation_video::m20221218_001928_charset_and_collate::Migration
             ceobe_operation_announcement::m20221218_002839_charset_and_collate::Migration
+            fetcher_config::m20221228_232347_alter_default::Migration
         ]
     }
 }
