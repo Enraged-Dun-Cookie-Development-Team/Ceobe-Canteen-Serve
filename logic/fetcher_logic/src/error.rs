@@ -62,6 +62,9 @@ pub enum LogicError {
 
     #[error("Redis异常: {0}")]
     Redis(#[from] RedisError),
+
+    #[error("Json 反/序列化失败 {0}")]
+    Json(#[from] serde_json::Error),
 }
 
 #[allow(dead_code)]

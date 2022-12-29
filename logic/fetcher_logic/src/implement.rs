@@ -181,3 +181,47 @@ where
     
     Ok(live_number)
 }
+
+// 上传蹲饼器配置
+pub async fn upload_cookie_fetcher_configs<'db, D>(
+    db: &'db D, configs: Vec<BackFetcherConfig>,
+) -> LogicResult<()>
+where
+    D: GetDatabaseTransaction<Error = DbErr> + GetDatabaseConnect<Error = DbErr> + 'static,
+    D::Transaction<'db>: ConnectionTrait,
+    D::Connect<'db>: ConnectionTrait,
+{
+    let mut config_in_db_uncheck: Vec<FetcherConfigUncheck> = Vec::<FetcherConfigUncheck>::new();
+
+    for BackFetcherConfig{number, server} in configs {
+        for (count, Server{ groups }) in server.into_iter().enumerate() {
+            for Group{ name, ty, datasource, interval, interval_by_time_range } in groups {
+                for id in datasource {
+                    config_in_db_uncheck.push(FetcherConfigUncheck{
+                        live_number: CheckRequire::new_with_no_checker(number),
+                        fetcher_count: CheckRequire::new_with_no_checker(count as i8 +1),
+                        group_name: CheckRequire::new_with_no_checker(name.clone()),
+                        platform: CheckRequire::new_with_no_checker(ty.clone()),
+                        datasource_id: CheckRequire::new_with_no_checker(id),
+                        interval: CheckRequire::new_with_no_checker(interval),
+                        interval_by_time_range: CheckRequire::new_with_no_checker(interval_by_time_range.clone()),
+                    })
+                }
+            }
+        }
+    }
+    // 验证传入数据库数据的合法性
+    let configs_in_db: Vec<FetcherConfig> = FetcherConfigVecChecker::check(((), (), (), (), (), (), ()), config_in_db_uncheck).await?;
+    if configs_in_db.is_empty() {
+        return Ok(());
+    }
+    let platform = configs_in_db[0].platform.clone();
+    if FetcherPlatformConfigSqlOperate::is_platform_exist(db.get_connect()?, &platform).await? {
+        FetcherConfigSqlOperate::create_configs_by_platform(db, platform, configs_in_db).await?;
+        // TODO：告诉调度器哪个平台更新了
+    } else {
+        return Err(LogicError::NoPlatform);
+    }
+
+    Ok(())
+}
