@@ -16,15 +16,11 @@ pub trait RequireFields {
 pub struct JsonObjectChecker<Fields: RequireFields>(PhantomData<Fields>);
 
 impl<Fields: RequireFields> Checker for JsonObjectChecker<Fields> {
-    type Unchecked = serde_json::Value;
-
     type Args = ();
-
     type Checked = String;
-
     type Err = serde_json::Error;
-
     type Fut = Ready<Result<String, Self::Err>>;
+    type Unchecked = serde_json::Value;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let s = uncheck.to_string();
@@ -45,9 +41,7 @@ impl<'de, Fields: RequireFields> Deserialize<'de>
         struct CheckerVisiter<Fields: RequireFields>(PhantomData<Fields>);
 
         impl<Fields: RequireFields> Default for CheckerVisiter<Fields> {
-            fn default() -> Self {
-                Self(PhantomData)
-            }
+            fn default() -> Self { Self(PhantomData) }
         }
 
         impl<'de, Fields: RequireFields> Visitor<'de> for CheckerVisiter<Fields> {
@@ -108,6 +102,7 @@ impl<'de> Deserialize<'de> for Any {
             ) -> std::fmt::Result {
                 write!(formatter, "cannot visit")
             }
+
             fn visit_bool<E>(self, _: bool) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
@@ -132,24 +127,28 @@ impl<'de> Deserialize<'de> for Any {
             {
                 Ok(Any)
             }
+
             fn visit_byte_buf<E>(self, _: Vec<u8>) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_bytes<E>(self, _: &[u8]) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_char<E>(self, _: char) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_enum<A>(self, data: A) -> Result<Self::Value, A::Error>
             where
                 A: serde::de::EnumAccess<'de>,
@@ -157,48 +156,56 @@ impl<'de> Deserialize<'de> for Any {
                 let (v, _) = data.variant::<Any>()?;
                 Ok(v)
             }
+
             fn visit_f32<E>(self, _: f32) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_f64<E>(self, _: f64) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_i128<E>(self, _: i128) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_i16<E>(self, _: i16) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_i32<E>(self, _: i32) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_i64<E>(self, _: i64) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_i8<E>(self, _: i8) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
             where
                 A: serde::de::MapAccess<'de>,
@@ -222,6 +229,7 @@ impl<'de> Deserialize<'de> for Any {
             {
                 Ok(Any)
             }
+
             fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
             where
                 A: serde::de::SeqAccess<'de>,
@@ -229,36 +237,42 @@ impl<'de> Deserialize<'de> for Any {
                 while let Some(_) = seq.next_element::<Any>()? {}
                 Ok(Any)
             }
+
             fn visit_some<D>(self, _: D) -> Result<Self::Value, D::Error>
             where
                 D: serde::Deserializer<'de>,
             {
                 Ok(Any)
             }
+
             fn visit_str<E>(self, _: &str) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_string<E>(self, _: String) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_u128<E>(self, _: u128) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_u16<E>(self, _: u16) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
                 Ok(Any)
             }
+
             fn visit_u32<E>(self, _: u32) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
@@ -272,6 +286,7 @@ impl<'de> Deserialize<'de> for Any {
             {
                 Ok(Any)
             }
+
             fn visit_u8<E>(self, _: u8) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
@@ -293,18 +308,15 @@ impl<'de> Deserialize<'de> for Any {
 mod test {
     use serde_json::json;
 
-    use crate::LiteChecker;
-
     use super::{JsonObjectChecker, RequireFields};
+    use crate::LiteChecker;
 
     struct TestFields;
 
     impl RequireFields for TestFields {
         type Iter = [&'static str; 2];
 
-        fn get_field_iter() -> Self::Iter {
-            ["foo", "bar"]
-        }
+        fn get_field_iter() -> Self::Iter { ["foo", "bar"] }
     }
 
     #[test]
