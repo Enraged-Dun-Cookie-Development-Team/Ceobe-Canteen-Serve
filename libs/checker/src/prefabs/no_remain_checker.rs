@@ -14,18 +14,21 @@ impl<const RHS: u64> RefChecker for NoRemainChecker<RHS> {
 
     fn ref_checker(_: Self::Args, target: &Self::Target) -> Self::Fut {
         let rem = target.rem(RHS);
-        ready(if rem == 0 {
-            Ok(())
-        } else {
-            Err(HasRem {
-                origin: *target,
-                rem,
-            })
-        })
+        ready(
+            if rem == 0 {
+                Ok(())
+            }
+            else {
+                Err(HasRem {
+                    origin: *target,
+                    rem,
+                })
+            },
+        )
     }
 }
 
-#[derive(Debug, thiserror::Error, PartialEq)]
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
 #[error("`{origin}` Has Rem for `{DIV}` with `{rem}`")]
 pub struct HasRem<const DIV: u64> {
     origin: u64,
@@ -34,9 +37,8 @@ pub struct HasRem<const DIV: u64> {
 
 #[cfg(test)]
 mod test {
-    use crate::RefChecker;
-
     use super::{HasRem, NoRemainChecker};
+    use crate::RefChecker;
 
     #[test]
     fn test() {
