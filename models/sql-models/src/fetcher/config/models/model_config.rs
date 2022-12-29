@@ -14,8 +14,8 @@ pub struct Model {
     pub group_name: String,
     pub platform: String,
     pub datasource_id: i32,
-    pub interval: i32,
-    pub interval_by_time_range: String,
+    pub interval: Option<i32>,
+    pub interval_by_time_range: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
