@@ -1,7 +1,8 @@
 
-use checker::{check_obj, prefabs::no_check::NoCheck};
+use checker::{check_obj, prefabs::{no_check::NoCheck, option_checker::OptionChecker, collect_checkers::iter_checkers::IntoIterChecker}};
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
-use sea_orm::Set;
+use sea_orm::{Set, ActiveValue::NotSet};
+use serde_json::Value;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
@@ -16,8 +17,8 @@ pub struct FetcherConfig {
     pub group_name: String,
     pub platform: String,
     pub datasource_id: i32,
-    pub interval: i32,
-    pub interval_by_time_range: String,
+    pub interval: Option<i32>,
+    pub interval_by_time_range: Value,
 }
 
 #[check_obj(
@@ -32,8 +33,8 @@ pub struct FetcherConfigChecker {
     pub group_name: MaxLimitString<16>,
     pub platform: MaxLimitString<64>,
     pub datasource_id: NoCheck<i32>,
-    pub interval: NoCheck<i32>,
-    pub interval_by_time_range: NoCheck<String>,
+    pub interval: OptionChecker<NoCheck<i32>>,
+    pub interval_by_time_range: NoCheck<Value>,
 }
 
 impl model_config::ActiveModel {
@@ -54,9 +55,18 @@ impl model_config::ActiveModel {
             group_name: Set(group_name),
             platform: Set(platform),
             datasource_id: Set(datasource_id),
-            interval: Set(interval),
-            interval_by_time_range: Set(interval_by_time_range),
+            interval: match interval  {
+                Some(value) => Set(Some(value)),
+                None => NotSet
+            },
+            interval_by_time_range: match interval_by_time_range  {
+                Value::Null => NotSet,
+                _ => Set(Some(interval_by_time_range.to_string()))
+            },
             ..Default::default()
         }
     }
 }
+
+// 用于验证FetcherConfig数组
+pub type FetcherConfigVecChecker = IntoIterChecker<Vec<FetcherConfigUncheck>, FetcherConfigChecker, Vec<FetcherConfig>>;
