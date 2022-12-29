@@ -1,4 +1,8 @@
+use std::collections::HashMap;
+use std::ops::Deref;
+
 use crate::error::{LogicResult, LogicError};
+use crate::view::{BackFetcherConfig, Server, Group};
 use checker::{Checker, CheckRequire};
 use checker::prefabs::no_check::NoCheck;
 use range_limit::RangeBoundLimit;
@@ -6,7 +10,9 @@ use range_limit::limits::max_limit::MaxLimit;
 use redis::{aio::ConnectionLike, AsyncCommands, RedisError};
 use redis_global::redis_key;
 use serde_json::{Map, Value};
+use sql_models::fetcher::config::checkers::config_data::{FetcherConfigUncheck, FetcherConfigVecChecker, FetcherConfig};
 use sql_models::fetcher::config::operate::FetcherConfigSqlOperate;
+use sql_models::fetcher::config::models::model_config::Model as FetcherConfigModel;
 use sql_models::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
 use sql_models::fetcher::datasource_config::operate::FetcherDatasourceConfigSqlOperate;
 use sql_models::fetcher::global_config::checkers::global_config_data::{FetcherGlobalConfigUncheck, FetcherGlobalConfigVecChecker};
@@ -224,4 +230,67 @@ where
     }
 
     Ok(())
+}
+
+// 上传蹲饼器配置
+pub async fn get_cookie_fetcher_configs<'db, D>(
+    db: &'db D, platform: String,
+) -> LogicResult<Vec<BackFetcherConfig>>
+where
+    D: GetDatabaseConnect<Error = DbErr> + 'static,
+    D::Connect<'db>: ConnectionTrait,
+{
+    let configs_in_db =FetcherConfigSqlOperate::find_single_platform_config_list(db, platform).await?;
+
+    let mut configs = Vec::<BackFetcherConfig>::new();
+    let mut configs_temp = HashMap::<i8, HashMap<i8, HashMap<String, Group>>>::new();
+    for FetcherConfigModel { id: _, live_number, fetcher_count, group_name, platform, datasource_id, interval, interval_by_time_range, } in configs_in_db {
+        if None == configs_temp.get(&live_number) {
+            configs_temp.insert(live_number, HashMap::<i8, HashMap<String, Group>>::new());
+        }
+        if None == configs_temp.get(&live_number).unwrap().get(&(fetcher_count-1)) {
+            configs_temp.get_mut(&live_number).unwrap().insert(fetcher_count-1, HashMap::<String, Group>::new());
+        }
+        if None == configs_temp.get(&live_number).unwrap().get(&(fetcher_count-1)).unwrap().get(&group_name) {
+            configs_temp.get_mut(&live_number).unwrap().get_mut(&(fetcher_count-1)).unwrap().insert(group_name.clone(), Group {
+                name: group_name,
+                ty: platform,
+                datasource: vec![datasource_id],
+                interval,
+                interval_by_time_range: match interval_by_time_range {
+                    Some(str) => serde_json::from_str(&str)?,
+                    None => Value::Null,
+                },
+            });
+        } else {
+            if let Some(group) = configs_temp.get_mut(&live_number).unwrap().get_mut(&(fetcher_count-1)).unwrap().get_mut(&group_name) {
+                group.datasource.push(datasource_id);
+            }
+        }
+    }
+    for (live_number, server) in configs_temp.iter() {
+        let mut servers_temp =  Vec::<Server>::new();
+        for i in 1..(*live_number+1) {
+            let mut groups_temp = Vec::<Group>::new();
+            if None == server.get(&(i - 1)) {
+                // 如果没有的话，就去创建一个空的push进行
+            } else {
+                // 如果不为空 继续map循环
+                for group in server.get(&(i - 1)).unwrap().values() {
+                    groups_temp.push(group.clone());
+                }
+            }
+            servers_temp.push(Server {
+                groups: groups_temp,
+            });
+        }
+        configs.push(BackFetcherConfig {
+            number: live_number.clone(),
+            server: servers_temp,
+        });
+    }
+
+    // TODO
+
+    Ok(configs)
 }
