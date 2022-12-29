@@ -7,24 +7,24 @@ use crate::RefChecker;
 pub struct NoRemain<const RHS: u64>;
 
 impl<const RHS: u64> RefChecker for NoRemain<RHS> {
-    type Target = u64;
-
-    type Err = HasRem<RHS>;
-
     type Args = ();
-
+    type Err = HasRem<RHS>;
     type Fut = Ready<Result<(), Self::Err>>;
+    type Target = u64;
 
     fn ref_checker(_: Self::Args, target: &Self::Target) -> Self::Fut {
         let rem = target.rem(RHS);
-        ready(if rem == 0 {
-            Ok(())
-        } else {
-            Err(HasRem {
-                origin: *target,
-                rem,
-            })
-        })
+        ready(
+            if rem == 0 {
+                Ok(())
+            }
+            else {
+                Err(HasRem {
+                    origin: *target,
+                    rem,
+                })
+            },
+        )
     }
 }
 

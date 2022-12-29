@@ -210,7 +210,7 @@ impl<'de> Deserialize<'de> for Any {
             where
                 A: serde::de::MapAccess<'de>,
             {
-                while let Some(_) = map.next_entry::<Any, Any>()? {}
+                while map.next_entry::<Any, Any>()?.is_some() {}
                 Ok(Any)
             }
 
@@ -234,7 +234,7 @@ impl<'de> Deserialize<'de> for Any {
             where
                 A: serde::de::SeqAccess<'de>,
             {
-                while let Some(_) = seq.next_element::<Any>()? {}
+                while seq.next_element::<Any>()?.is_some() {}
                 Ok(Any)
             }
 
