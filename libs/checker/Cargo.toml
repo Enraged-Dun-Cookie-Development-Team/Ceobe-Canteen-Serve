@@ -15,10 +15,12 @@ num-traits = "0.2"
 async-trait = { workspace = true }
 axum = { workspace = true }
 resp-result = { workspace = true }
+serde_json = { workspace = true }
+ahash={workspace = true}
 
 [dependencies.range-limit]
 path = "../range-limit"
 
 [dev-dependencies]
-tokio = { workspace = true }
+tokio = { workspace = true ,features = ["full"]}
 typed-builder = { workspace = true }
