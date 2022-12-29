@@ -1,11 +1,8 @@
-
-use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
-use tracing::{instrument, info};
-
-use crate::fetcher::datasource_config::models::model_datasource_config;
+use sea_orm::{ConnectionTrait, EntityTrait};
+use tracing::{info, instrument};
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
+use crate::fetcher::datasource_config::models::model_datasource_config;
 
 impl FetcherDatasourceConfigSqlOperate {
     #[instrument(skip(db), ret)]
@@ -14,7 +11,9 @@ impl FetcherDatasourceConfigSqlOperate {
         db: &impl ConnectionTrait, did: i32,
     ) -> OperateResult<()> {
         info!(datasource.id = did);
-        model_datasource_config::Entity::delete_by_id(did).exec(db).await?;
+        model_datasource_config::Entity::delete_by_id(did)
+            .exec(db)
+            .await?;
 
         Ok(())
     }

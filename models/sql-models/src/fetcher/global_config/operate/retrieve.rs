@@ -2,9 +2,8 @@ use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
-use crate::fetcher::global_config::models::model_global_config;
-
 use super::{FetcherGlobalConfigSqlOperate, OperateResult};
+use crate::fetcher::global_config::models::model_global_config;
 
 impl FetcherGlobalConfigSqlOperate {
     #[instrument(ret, skip_all)]

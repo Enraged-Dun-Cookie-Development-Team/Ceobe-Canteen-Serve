@@ -1,20 +1,11 @@
-use crate::router::FetcherConfigControllers;
-use axum::{body::Body, Json};
-use checker::{CheckExtract, JsonCheckExtract};
-use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::fetcher::global_config::checkers::global_config_data::{
-        FetcherGlobalConfig, FetcherGlobalConfigChecker,
-    },
-};
+use axum::Json;
+use orm_migrate::sql_connection::SqlConnect;
 use resp_result::{rtry, MapReject, RespResult};
 use serde_json::{Map, Value};
 use tracing::instrument;
 
 use super::error::{GlobalConfigError, GlobalConfigRResult};
-
-type FetcherGlobalConfigUploadCheck =
-    JsonCheckExtract<FetcherGlobalConfigChecker, GlobalConfigError>;
+use crate::router::FetcherConfigControllers;
 
 impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]

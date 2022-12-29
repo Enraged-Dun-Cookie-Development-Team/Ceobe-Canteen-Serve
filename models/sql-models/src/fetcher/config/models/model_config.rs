@@ -1,8 +1,4 @@
-
-use chrono::Local;
-use sea_orm::{ entity::prelude::*, Set };
-
-use crate::get_zero_data_time;
+use sea_orm::entity::prelude::*;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "fetcher_config")]
@@ -27,5 +23,4 @@ impl RelationTrait for Relation {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-impl ActiveModel {
-}
+impl ActiveModel {}

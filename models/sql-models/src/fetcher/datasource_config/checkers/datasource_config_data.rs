@@ -1,11 +1,16 @@
-
-use checker::{check_obj, prefabs::{option_checker::OptionChecker, url_checker::UrlChecker, no_check::NoCheck}};
-use range_limit::{RangeBoundLimit, limits::max_limit::MaxLimit};
-use sea_orm::{Unset, ActiveValue::NotSet, Set};
+use checker::{
+    check_obj,
+    prefabs::{
+        no_check::NoCheck, option_checker::OptionChecker,
+        url_checker::UrlChecker,
+    },
+};
+use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
+use sea_orm::{ActiveValue::NotSet, Set};
+use serde_json::Value;
 use typed_builder::TypedBuilder;
 use url::Url;
 use uuid::Uuid;
-use serde_json::Value;
 
 use super::CheckError;
 use crate::fetcher::datasource_config::models::model_datasource_config;
@@ -15,7 +20,7 @@ type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 #[derive(Debug, TypedBuilder)]
 pub struct FetcherDatasourceConfig {
     pub id: Option<i32>,
-    pub platform: String, 
+    pub platform: String,
     pub datasource: String,
     pub nickname: String,
     pub avatar: Url,
@@ -27,10 +32,10 @@ pub struct FetcherDatasourceConfig {
     checked = FetcherDatasourceConfig,
     error = CheckError
 )]
-#[derive(Debug,serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct FetcherDatasourceConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
-    pub platform: MaxLimitString<64>, 
+    pub platform: MaxLimitString<64>,
     pub datasource: MaxLimitString<64>,
     pub nickname: MaxLimitString<16>,
     pub avatar: UrlChecker,
@@ -39,7 +44,7 @@ pub struct FetcherDatasourceConfigChecker {
 
 impl model_datasource_config::ActiveModel {
     /// FetcherDatasourceConfig转ActiveModel
-    /// 
+    ///
     /// id:
     ///     - 如果id为null，则为新增，uuid新建
     ///     - 如果id有值，这更改，uuid为空

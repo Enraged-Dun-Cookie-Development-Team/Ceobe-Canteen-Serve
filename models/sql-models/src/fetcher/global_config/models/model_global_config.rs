@@ -1,13 +1,12 @@
 use sea_orm::entity::prelude::*;
 
-
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "fetcher_global_config")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub key: String,
-    pub value: String
+    pub value: String,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -19,6 +18,4 @@ impl RelationTrait for Relation {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-impl ActiveModel {
-
-}
+impl ActiveModel {}

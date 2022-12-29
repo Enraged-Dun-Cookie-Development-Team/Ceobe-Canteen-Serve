@@ -9,10 +9,8 @@ mod controllers;
 mod error;
 
 // 上传平台验证
-type FetcherPlatformCheck = JsonCheckExtract<
-    FetcherPlatformConfigChecker,
-    PlatformConfigError,
->;
+type FetcherPlatformCheck =
+    JsonCheckExtract<FetcherPlatformConfigChecker, PlatformConfigError>;
 
 type PageSizePretreatment =
     QueryCheckExtract<PageSizeChecker, PlatformConfigError>;

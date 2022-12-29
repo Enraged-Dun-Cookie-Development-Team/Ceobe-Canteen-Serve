@@ -2,9 +2,8 @@ pub mod datasource_config_data;
 
 use std::convert::Infallible;
 
+use status_err::StatusErr;
 use thiserror::Error;
-
-use status_err::{ErrPrefix, StatusErr, HttpCode};
 pub use CheckError::*;
 
 #[derive(Debug, Error, StatusErr)]

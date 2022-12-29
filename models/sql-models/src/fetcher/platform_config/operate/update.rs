@@ -1,16 +1,12 @@
-use crate::fetcher::platform_config::checkers::platform_config_data::{FetcherPlatformConfigChecker, FetcherPlatformConfig};
-use crate::fetcher::platform_config::models::model_platform_config::Model;
-use crate::fetcher::platform_config::models::model_platform_config::{
-    self, ActiveModel,
-};
-use crate::fetcher::platform_config::operate::OperateResult;
-use sea_orm::{
-    ActiveModelTrait, ConnectionTrait, DbErr, IntoActiveModel, Set,
-};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
 use super::FetcherPlatformConfigSqlOperate;
+use crate::fetcher::platform_config::{
+    checkers::platform_config_data::FetcherPlatformConfig,
+    models::model_platform_config::ActiveModel, operate::OperateResult,
+};
 
 impl FetcherPlatformConfigSqlOperate {
     // 更新平台配置到数据库

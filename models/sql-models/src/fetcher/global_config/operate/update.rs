@@ -1,17 +1,12 @@
-use sea_orm::{
-    sea_query, ConnectionTrait, DbErr, EntityTrait
-};
-use tracing::instrument;
-use crate::fetcher::global_config::models::model_global_config::ActiveModel;
-
+use sea_orm::{sea_query, ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
-
-use crate::fetcher::global_config::{
-    checkers::global_config_data::FetcherGlobalConfig,
-    models::model_global_config,
-};
+use tracing::instrument;
 
 use super::{FetcherGlobalConfigSqlOperate, OperateResult};
+use crate::fetcher::global_config::{
+    checkers::global_config_data::FetcherGlobalConfig,
+    models::{model_global_config, model_global_config::ActiveModel},
+};
 
 impl FetcherGlobalConfigSqlOperate {
     #[instrument(ret, skip(db))]
@@ -24,10 +19,8 @@ impl FetcherGlobalConfigSqlOperate {
     {
         let db = db.get_connect()?;
         // 转换configs成Vec<ActiveModel>
-        let config_list = configs
-            .into_iter()
-            .enumerate()
-            .map(|(_, config)| {
+        let config_list =
+            configs.into_iter().enumerate().map(|(_, config)| {
                 ActiveModel::global_config_into_active_model(config)
             });
 
@@ -35,10 +28,8 @@ impl FetcherGlobalConfigSqlOperate {
         model_global_config::Entity::insert_many(config_list)
             .on_conflict(
                 sea_query::OnConflict::new()
-                .update_column(
-                    model_global_config::Column::Value,
-                )
-                .to_owned(),
+                    .update_column(model_global_config::Column::Value)
+                    .to_owned(),
             )
             .exec(db)
             .await?;

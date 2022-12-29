@@ -1,19 +1,17 @@
 use std::collections::HashMap;
 
 use sea_orm::{
-    sea_query::Cond, ColumnTrait, Condition, ConnectionTrait,
-    DatabaseBackend, DbBackend, DbErr, EntityTrait, QueryFilter, QuerySelect,
-    Statement,
+    sea_query::Cond, ColumnTrait, ConnectionTrait, DatabaseBackend, DbErr,
+    EntityTrait, QueryFilter, QuerySelect, Statement,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
-use crate::fetcher::datasource_config::{
-    models::model_datasource_config, operate::PlatformDatasourceCounts,
-};
-
 use super::{
     DatasourceCounts, FetcherDatasourceConfigSqlOperate, OperateResult,
+};
+use crate::fetcher::datasource_config::{
+    models::model_datasource_config, operate::PlatformDatasourceCounts,
 };
 
 impl FetcherDatasourceConfigSqlOperate {
@@ -31,7 +29,11 @@ impl FetcherDatasourceConfigSqlOperate {
             sql.push_str(&format!(r#" select {id} as id from dual union"#));
         }
         sql = sql.trim_end_matches("union").to_string();
-        sql.push_str(&format!(r#") B left join fetcher_datasource_config on fetcher_datasource_config.id = B.id where fetcher_datasource_config.id is null;"#));
+        sql.push_str(
+            ") B left join fetcher_datasource_config on \
+             fetcher_datasource_config.id = B.id where \
+             fetcher_datasource_config.id is null;",
+        );
 
         let db = db.get_connect()?;
         let resp = model_datasource_config::Entity::find()

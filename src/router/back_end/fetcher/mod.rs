@@ -1,4 +1,7 @@
-use axum::{routing::{get, delete}, routing::post, Router};
+use axum::{
+    routing::{delete, get, post},
+    Router,
+};
 
 use crate::{
     middleware::authorize::AuthorizeLayer, router::ServerRoute,

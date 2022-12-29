@@ -1,12 +1,14 @@
-use crate::fetcher::config::operate::create::model_config::ActiveModel;
-use crate::fetcher::config::{
-    checkers::config_data::FetcherConfig, models::model_config,
-};
 use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
-use sql_connection::database_traits::get_connect::{GetDatabaseTransaction, TransactionOps};
+use sql_connection::database_traits::get_connect::{
+    GetDatabaseTransaction, TransactionOps,
+};
 use tracing::{info, instrument};
 
 use super::{FetcherConfigSqlOperate, OperateResult};
+use crate::fetcher::config::{
+    checkers::config_data::FetcherConfig, models::model_config,
+    operate::create::model_config::ActiveModel,
+};
 
 impl FetcherConfigSqlOperate {
     #[instrument(skip(db))]
@@ -21,11 +23,9 @@ impl FetcherConfigSqlOperate {
         info!(fetcherConfig.platform = platform,);
 
         // model数组转换activeModel数组
-        let active_models = configs
-            .into_iter()
-            .map(|config| {
-                ActiveModel::fetcher_config_into_active_model(config)
-            });
+        let active_models = configs.into_iter().map(|config| {
+            ActiveModel::fetcher_config_into_active_model(config)
+        });
 
         let ctx = db.get_transaction().await?;
 

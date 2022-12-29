@@ -1,27 +1,34 @@
-use crate::serves::backend::fetcher::platform_configs::error::PlatformConfigRResult;
-use axum::{debug_handler, Json};
+use axum::Json;
 use checker::CheckExtract;
-use futures::{future, TryFutureExt};
+use futures::future;
 use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::fetcher::platform_config::{
-        models::model_platform_config::{PlatformWithHasDatasource, PlatformBasicInfo},
+        models::model_platform_config::{
+            PlatformBasicInfo, PlatformWithHasDatasource,
+        },
         operate::FetcherPlatformConfigSqlOperate,
     },
 };
-use page_size::response::{ListWithPageInfo, GenerateListWithPageInfo};
-use resp_result::{resp_try, MapReject, rtry};
+use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use resp_result::{resp_try, rtry, MapReject};
 use tracing::instrument;
 
-use crate::router::FetcherConfigControllers;
-
-use super::{PageSizePretreatment, view::DeleteOnePlatform, error::PlatformConfigError, FetcherPlatformCheck};
+use super::{
+    error::PlatformConfigError, view::DeleteOnePlatform,
+    FetcherPlatformCheck, PageSizePretreatment,
+};
+use crate::{
+    router::FetcherConfigControllers,
+    serves::backend::fetcher::platform_configs::error::PlatformConfigRResult,
+};
 
 impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     pub async fn get_platform_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
-    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformWithHasDatasource>> {
+    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformWithHasDatasource>>
+    {
         resp_try(async {
             // 获取平台列表
             let platform_list = fetcher_logic::implement::get_platform_list_with_has_datasource(&db, page_size);
@@ -40,36 +47,54 @@ impl FetcherConfigControllers {
 
     #[instrument(ret, skip(db))]
     pub async fn create_platform_config(
-        db: SqlConnect,
-        CheckExtract(platform_config): FetcherPlatformCheck
+        db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
-        rtry!(FetcherPlatformConfigSqlOperate::create_platform_config(&db, platform_config).await);
+        rtry!(
+            FetcherPlatformConfigSqlOperate::create_platform_config(
+                &db,
+                platform_config
+            )
+            .await
+        );
         Ok(()).into()
     }
 
     #[instrument(ret, skip(db))]
     pub async fn update_platform_config(
-        db: SqlConnect,
-        CheckExtract(platform_config): FetcherPlatformCheck
+        db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
-        rtry!(FetcherPlatformConfigSqlOperate::update_platform_config(&db, platform_config).await);
+        rtry!(
+            FetcherPlatformConfigSqlOperate::update_platform_config(
+                &db,
+                platform_config
+            )
+            .await
+        );
         Ok(()).into()
     }
 
     #[instrument(ret, skip(db))]
     pub async fn delete_platform_config(
         db: SqlConnect,
-        MapReject(body): MapReject<Json<DeleteOnePlatform>, PlatformConfigError>,
+        MapReject(body): MapReject<
+            Json<DeleteOnePlatform>,
+            PlatformConfigError,
+        >,
     ) -> PlatformConfigRResult<()> {
         let pid = body.id;
-        rtry!(FetcherPlatformConfigSqlOperate::delete_one_platform_config(&db, pid).await);
+        rtry!(
+            FetcherPlatformConfigSqlOperate::delete_one_platform_config(
+                &db, pid
+            )
+            .await
+        );
         Ok(()).into()
     }
 
     #[instrument(skip(db))]
     // 获取全部平台列表
     pub async fn get_platform_all_list_with_basic_info(
-        db: SqlConnect
+        db: SqlConnect,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
         Ok(rtry!(FetcherPlatformConfigSqlOperate::find_platform_list_with_basic_info(&db).await)).into()
     }

@@ -1,17 +1,21 @@
 use std::ops::Deref;
-use crate::fetcher::platform_config::operate::retrieve::model_platform_config::PlatformBasicInfo;
-use crate::fetcher::platform_config::operate::retrieve::model_platform_config::PlatformType;
-use page_size::{request::PageSize, database::OffsetLimit};
-use sea_orm::{DbErr, ConnectionTrait, EntityTrait, QuerySelect, PaginatorTrait};
+
+use page_size::{database::OffsetLimit, request::PageSize};
+use sea_orm::{
+    ConnectionTrait, DbErr, EntityTrait, PaginatorTrait, QuerySelect,
+};
 use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
-use super::OperateResult;
-use tracing::{instrument, info, Span};
+use tracing::{info, instrument, Span};
 
-use crate::fetcher::platform_config::models::model_platform_config;
-
-use super::FetcherPlatformConfigSqlOperate;
+use super::{FetcherPlatformConfigSqlOperate, OperateResult};
+use crate::fetcher::platform_config::{
+    models::model_platform_config,
+    operate::retrieve::model_platform_config::{
+        PlatformBasicInfo, PlatformType,
+    },
+};
 
 impl FetcherPlatformConfigSqlOperate {
     #[instrument(skip(db))]

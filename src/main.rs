@@ -65,7 +65,9 @@ async fn main_task() {
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
         // database
         .prepare_concurrent(|set| {
-            set.join_state(MysqlDbConnect).join_state(MongoDbConnect).join_state(RedisDbConnect)
+            set.join_state(MysqlDbConnect)
+                .join_state(MongoDbConnect)
+                .join_state(RedisDbConnect)
         })
         // router
         .prepare_route(RouteV1)

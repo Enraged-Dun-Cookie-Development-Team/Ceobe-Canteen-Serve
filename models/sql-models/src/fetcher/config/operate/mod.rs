@@ -1,10 +1,10 @@
 pub mod create;
-pub mod retrieve;
 pub mod delete;
+pub mod retrieve;
 pub mod verify;
 
+use status_err::StatusErr;
 use thiserror::Error;
-use status_err::{ErrPrefix, StatusErr};
 
 pub struct FetcherConfigSqlOperate;
 

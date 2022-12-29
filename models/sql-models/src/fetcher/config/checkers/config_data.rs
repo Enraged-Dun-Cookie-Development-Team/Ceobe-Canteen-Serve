@@ -1,7 +1,12 @@
-
-use checker::{check_obj, prefabs::{no_check::NoCheck, option_checker::OptionChecker, collect_checkers::iter_checkers::IntoIterChecker}};
+use checker::{
+    check_obj,
+    prefabs::{
+        collect_checkers::iter_checkers::IntoIterChecker, no_check::NoCheck,
+        option_checker::OptionChecker,
+    },
+};
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
-use sea_orm::{Set, ActiveValue::NotSet};
+use sea_orm::Set;
 use serde_json::Value;
 use typed_builder::TypedBuilder;
 
@@ -26,7 +31,7 @@ pub struct FetcherConfig {
     checked = FetcherConfig,
     error = CheckError
 )]
-#[derive(Debug,serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct FetcherConfigChecker {
     pub live_number: NoCheck<i8>,
     pub fetcher_count: NoCheck<i8>,
@@ -38,7 +43,7 @@ pub struct FetcherConfigChecker {
 }
 
 impl model_config::ActiveModel {
-    pub(in crate::fetcher::config) fn fetcher_config_into_active_model (
+    pub(in crate::fetcher::config) fn fetcher_config_into_active_model(
         FetcherConfig {
             live_number,
             fetcher_count,
@@ -47,21 +52,21 @@ impl model_config::ActiveModel {
             datasource_id,
             interval,
             interval_by_time_range,
-        }: FetcherConfig
-    )-> Self {
+        }: FetcherConfig,
+    ) -> Self {
         Self {
             live_number: Set(live_number),
             fetcher_count: Set(fetcher_count),
             group_name: Set(group_name),
             platform: Set(platform),
             datasource_id: Set(datasource_id),
-            interval: match interval  {
+            interval: match interval {
                 Some(value) => Set(Some(value)),
-                None => Set(None)
+                None => Set(None),
             },
-            interval_by_time_range: match interval_by_time_range  {
+            interval_by_time_range: match interval_by_time_range {
                 Value::Null => Set(None),
-                _ => Set(Some(interval_by_time_range.to_string()))
+                _ => Set(Some(interval_by_time_range.to_string())),
             },
             ..Default::default()
         }
@@ -69,4 +74,8 @@ impl model_config::ActiveModel {
 }
 
 // 用于验证FetcherConfig数组
-pub type FetcherConfigVecChecker = IntoIterChecker<Vec<FetcherConfigUncheck>, FetcherConfigChecker, Vec<FetcherConfig>>;
+pub type FetcherConfigVecChecker = IntoIterChecker<
+    Vec<FetcherConfigUncheck>,
+    FetcherConfigChecker,
+    Vec<FetcherConfig>,
+>;

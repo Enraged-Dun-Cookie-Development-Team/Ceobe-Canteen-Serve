@@ -1,7 +1,9 @@
-
-use checker::{check_obj, prefabs::{no_check::NoCheck, option_checker::OptionChecker}};
-use range_limit::{RangeBoundLimit, limits::max_limit::MaxLimit};
-use sea_orm::{Set, ActiveValue::NotSet};
+use checker::{
+    check_obj,
+    prefabs::{no_check::NoCheck, option_checker::OptionChecker},
+};
+use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
+use sea_orm::{ActiveValue::NotSet, Set};
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
@@ -14,7 +16,7 @@ pub struct FetcherPlatformConfig {
     pub id: Option<i32>,
     pub type_id: String,
     pub platform_name: String,
-    pub min_request_interval: i32
+    pub min_request_interval: i32,
 }
 
 #[check_obj(
@@ -27,7 +29,7 @@ pub struct FetcherPlatformConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
     pub type_id: MaxLimitString<64>,
     pub platform_name: MaxLimitString<64>,
-    pub min_request_interval: NoCheck<i32>
+    pub min_request_interval: NoCheck<i32>,
 }
 
 impl model_platform_config::ActiveModel {

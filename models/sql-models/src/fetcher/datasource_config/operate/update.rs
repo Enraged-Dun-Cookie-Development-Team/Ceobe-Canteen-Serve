@@ -1,11 +1,12 @@
-
-use sea_orm::{ConnectionTrait, DbErr, IntoActiveModel, ActiveModelTrait};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
-use tracing::{instrument, info};
-use crate::fetcher::datasource_config::models::model_datasource_config::ActiveModel;
-use crate::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
+use tracing::{info, instrument};
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
+use crate::fetcher::datasource_config::{
+    checkers::datasource_config_data::FetcherDatasourceConfig,
+    models::model_datasource_config::ActiveModel,
+};
 
 impl FetcherDatasourceConfigSqlOperate {
     // 更新数据配置到数据库

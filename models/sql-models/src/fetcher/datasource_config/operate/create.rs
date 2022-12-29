@@ -1,17 +1,12 @@
-use std::any::Any;
-
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
-use crate::fetcher::datasource_config::models::model_datasource_config::ActiveModel;
-use crate::fetcher::platform_config::operate::FetcherPlatformConfigSqlOperate;
-use crate::fetcher::{
-    datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig,
-    platform_config::checkers::platform_config_data::FetcherPlatformConfig,
+use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
+use crate::fetcher::datasource_config::{
+    checkers::datasource_config_data::FetcherDatasourceConfig,
+    models::model_datasource_config::ActiveModel,
 };
-
-use super::{FetcherDatasourceConfigSqlOperate, OperateError, OperateResult};
 
 impl FetcherDatasourceConfigSqlOperate {
     // 保存数据源配置到数据库

@@ -4,9 +4,7 @@ use super::FetcherGlobalConfig;
 
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str {
-        "m20221217_155049_fetcher_global_config_create"
-    }
+    fn name(&self) -> &str { "m20221217_155049_fetcher_global_config_create" }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {

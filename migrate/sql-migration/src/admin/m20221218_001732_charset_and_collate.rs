@@ -1,11 +1,11 @@
-use sea_orm_migration::{prelude::*, sea_orm::{Statement, ConnectionTrait}};
-
+use sea_orm_migration::{
+    prelude::*,
+    sea_orm::{ConnectionTrait, Statement},
+};
 
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str {
-        "m20221218_001732_admin_charset_and_collate"
-    }
+    fn name(&self) -> &str { "m20221218_001732_admin_charset_and_collate" }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {

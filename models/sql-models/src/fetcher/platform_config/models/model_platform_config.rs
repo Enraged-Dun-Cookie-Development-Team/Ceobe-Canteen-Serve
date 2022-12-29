@@ -1,4 +1,4 @@
-use sea_orm::{ entity::prelude::* };
+use sea_orm::entity::prelude::*;
 use sub_model::SubModel;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
@@ -6,13 +6,14 @@ use sub_model::SubModel;
 #[sub_model(
     all(
         name = "PlatformWithHasDatasource",
-        extra_field(
-            has_datasource(ty = "bool", from = "Default::default")
-        ),
-        extra(derive(serde::Serialize, Debug))   
+        extra_field(has_datasource(ty = "bool", from = "Default::default")),
+        extra(derive(serde::Serialize, Debug))
     ),
     none(name = "PlatformType", extra(derive(sea_orm::FromQueryResult))),
-    none(name = "PlatformBasicInfo", extra(derive(sea_orm::FromQueryResult, serde::Serialize)))
+    none(
+        name = "PlatformBasicInfo",
+        extra(derive(sea_orm::FromQueryResult, serde::Serialize))
+    )
 )]
 pub struct Model {
     #[sea_orm(primary_key)]

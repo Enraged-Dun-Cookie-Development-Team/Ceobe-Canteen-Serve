@@ -1,4 +1,7 @@
-use sea_orm_migration::{prelude::*, sea_orm::{Statement, ConnectionTrait}};
+use sea_orm_migration::{
+    prelude::*,
+    sea_orm::{ConnectionTrait, Statement},
+};
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -18,7 +21,7 @@ impl MigrationTrait for Migration {
         );
 
         manager.get_connection().execute(stmt).await?;
-        Ok(())    
+        Ok(())
     }
 
     async fn down(&self, _manager: &SchemaManager) -> Result<(), DbErr> {

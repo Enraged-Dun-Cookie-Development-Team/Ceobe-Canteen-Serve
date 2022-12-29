@@ -1,11 +1,8 @@
-use crate::fetcher::config::models::model_config::{self, Entity};
-use sea_orm::{
-    ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
-    TransactionTrait,
-};
+use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
 use tracing::{info, instrument};
 
 use super::{FetcherConfigSqlOperate, OperateResult};
+use crate::fetcher::config::models::model_config;
 
 impl FetcherConfigSqlOperate {
     #[instrument(skip(db), ret)]

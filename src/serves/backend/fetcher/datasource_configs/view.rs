@@ -1,9 +1,7 @@
 use orm_migrate::sql_models::fetcher::datasource_config::models::model_datasource_config::{BackendDatasource, DataSourceForFetcherConfig};
 use serde_json::Value;
-use uuid::Uuid;
 
-
-crate::quick_struct!{
+crate::quick_struct! {
     pub PlatformAndDatasourceArray {
         platform_list: Vec<String>
         datasource_list: Vec<String>

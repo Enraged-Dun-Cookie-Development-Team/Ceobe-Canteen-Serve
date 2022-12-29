@@ -1,10 +1,13 @@
-
-use sea_orm_migration::{prelude::*, sea_orm::{Statement, ConnectionTrait}};
-
+use sea_orm_migration::{
+    prelude::*,
+    sea_orm::{ConnectionTrait, Statement},
+};
 
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str { "m20221218_001756_ceobe_operation_app_version_charset_and_collate" }
+    fn name(&self) -> &str {
+        "m20221218_001756_ceobe_operation_app_version_charset_and_collate"
+    }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -18,7 +21,7 @@ impl MigrationTrait for Migration {
         );
 
         manager.get_connection().execute(stmt).await?;
-        Ok(())    
+        Ok(())
     }
 
     async fn down(&self, _manager: &SchemaManager) -> Result<(), DbErr> {

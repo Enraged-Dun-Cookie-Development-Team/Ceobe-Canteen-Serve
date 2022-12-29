@@ -1,33 +1,54 @@
-use axum::{Json, extract::Query};
+use axum::{extract::Query, Json};
 use checker::CheckExtract;
 use futures::future;
-use orm_migrate::{sql_models::fetcher::{platform_config::operate::FetcherPlatformConfigSqlOperate, datasource_config::{checkers::datasource_config_data::FetcherDatasourceConfig, operate::FetcherDatasourceConfigSqlOperate, models::model_datasource_config::{Model, BackendDatasource}}}, sql_connection::SqlConnect};
-use page_size::response::{ListWithPageInfo, GenerateListWithPageInfo};
-use resp_result::{resp_try, rtry};
-use resp_result::MapReject;
+use orm_migrate::{
+    sql_connection::SqlConnect,
+    sql_models::fetcher::{
+        datasource_config::operate::FetcherDatasourceConfigSqlOperate,
+        platform_config::operate::FetcherPlatformConfigSqlOperate,
+    },
+};
+use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use resp_result::{resp_try, rtry, MapReject};
 use tracing::instrument;
-use super::{error::{DatasourceConfigRResult, DatasourceConfigError}, PageSizePretreatment, view::{DatasourceListFilterCond, DatasourceId, DatasourcePlatformFilter}, FetcherDatasourceCheck};
 
-use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::view::{PlatformAndDatasourceArray, DatasourceList, DatasourceWithNameResp}};
+use super::{
+    error::{DatasourceConfigError, DatasourceConfigRResult},
+    view::{
+        DatasourceId, DatasourceListFilterCond, DatasourcePlatformFilter,
+    },
+    FetcherDatasourceCheck, PageSizePretreatment,
+};
+use crate::{
+    router::FetcherConfigControllers,
+    serves::backend::fetcher::datasource_configs::view::{
+        DatasourceList, DatasourceWithNameResp, PlatformAndDatasourceArray,
+    },
+};
 
 impl FetcherConfigControllers {
     // 获取平台与数据源类型列表
     #[instrument(ret, skip(db))]
     pub async fn get_platform_and_datasource_list(
-        db: SqlConnect
+        db: SqlConnect,
     ) -> DatasourceConfigRResult<PlatformAndDatasourceArray> {
         resp_try(async {
             // 获取平台列表
-            let platform_list = FetcherPlatformConfigSqlOperate::find_platform_list(&db);
+            let platform_list =
+                FetcherPlatformConfigSqlOperate::find_platform_list(&db);
 
             // 获取数据源数量
-            let datasource_list = FetcherDatasourceConfigSqlOperate::find_datasource_type_list(&db);
+            let datasource_list =
+                FetcherDatasourceConfigSqlOperate::find_datasource_type_list(
+                    &db,
+                );
             // 异步获取
-            let (platform_list, datasource_list) = future::join(platform_list, datasource_list).await;
+            let (platform_list, datasource_list) =
+                future::join(platform_list, datasource_list).await;
 
             let resp = PlatformAndDatasourceArray {
                 platform_list: datasource_list?,
-                datasource_list: platform_list?
+                datasource_list: platform_list?,
             };
 
             Ok(resp)
@@ -65,9 +86,15 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     pub async fn create_datasource_config(
         db: SqlConnect,
-        CheckExtract(datasource_config): FetcherDatasourceCheck
+        CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
-        rtry!(fetcher_logic::implement::create_datasource_config(&db, datasource_config).await);
+        rtry!(
+            fetcher_logic::implement::create_datasource_config(
+                &db,
+                datasource_config
+            )
+            .await
+        );
         Ok(()).into()
     }
 
@@ -75,27 +102,45 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     pub async fn update_datasource_config(
         db: SqlConnect,
-        CheckExtract(datasource_config): FetcherDatasourceCheck
+        CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
-        rtry!(FetcherDatasourceConfigSqlOperate::update_platform_config(&db, datasource_config).await);
+        rtry!(
+            FetcherDatasourceConfigSqlOperate::update_platform_config(
+                &db,
+                datasource_config
+            )
+            .await
+        );
         Ok(()).into()
     }
 
-     // 删除数据源配置
-     #[instrument(ret, skip(db))]
-     pub async fn delete_datasource_config(
-         db: SqlConnect,
-         MapReject(datasource): MapReject<Json<DatasourceId>, DatasourceConfigError>
-     ) -> DatasourceConfigRResult<()> {
-         rtry!(fetcher_logic::implement::delete_datasource_by_id(&db, datasource.id).await);
-         Ok(()).into()
-     }
+    // 删除数据源配置
+    #[instrument(ret, skip(db))]
+    pub async fn delete_datasource_config(
+        db: SqlConnect,
+        MapReject(datasource): MapReject<
+            Json<DatasourceId>,
+            DatasourceConfigError,
+        >,
+    ) -> DatasourceConfigRResult<()> {
+        rtry!(
+            fetcher_logic::implement::delete_datasource_by_id(
+                &db,
+                datasource.id
+            )
+            .await
+        );
+        Ok(()).into()
+    }
 
     // 获取数据源配置全列表(包含id、名字、config)
     #[instrument(ret, skip(db))]
     pub async fn get_datasource_name_list(
         db: SqlConnect,
-        MapReject(filter): MapReject<Query<DatasourcePlatformFilter>, DatasourceConfigError>
+        MapReject(filter): MapReject<
+            Query<DatasourcePlatformFilter>,
+            DatasourceConfigError,
+        >,
     ) -> DatasourceConfigRResult<Vec<DatasourceWithNameResp>> {
         resp_try(async {
             let list = FetcherDatasourceConfigSqlOperate::find_datasource_list_by_platform(&db, filter.type_id).await?;

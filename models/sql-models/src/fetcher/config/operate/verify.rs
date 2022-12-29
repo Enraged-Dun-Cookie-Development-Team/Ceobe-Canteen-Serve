@@ -1,6 +1,3 @@
-
 use super::FetcherConfigSqlOperate;
 
-impl FetcherConfigSqlOperate {
-    
-}
+impl FetcherConfigSqlOperate {}

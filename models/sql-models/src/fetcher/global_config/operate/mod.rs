@@ -1,5 +1,5 @@
-pub mod update;
 pub mod retrieve;
+pub mod update;
 
 use status_err::StatusErr;
 use thiserror::Error;

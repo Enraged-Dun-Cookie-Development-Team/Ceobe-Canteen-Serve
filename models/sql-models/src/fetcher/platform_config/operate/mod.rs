@@ -1,12 +1,12 @@
-pub mod verify;
 pub mod create;
-pub mod update;
-pub mod retrieve;
 pub mod delete;
+pub mod retrieve;
+pub mod update;
+pub mod verify;
 
 use sea_orm::FromQueryResult;
+use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
-use status_err::{ErrPrefix, StatusErr, HttpCode};
 
 pub struct FetcherPlatformConfigSqlOperate;
 
