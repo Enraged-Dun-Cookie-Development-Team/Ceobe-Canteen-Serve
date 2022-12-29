@@ -57,10 +57,10 @@ impl model_config::ActiveModel {
             datasource_id: Set(datasource_id),
             interval: match interval  {
                 Some(value) => Set(Some(value)),
-                None => NotSet
+                None => Set(None)
             },
             interval_by_time_range: match interval_by_time_range  {
-                Value::Null => NotSet,
+                Value::Null => Set(None),
                 _ => Set(Some(interval_by_time_range.to_string()))
             },
             ..Default::default()
