@@ -24,8 +24,9 @@ impl FetcherConfigControllers {
     // 上传蹲饼器配置
     #[instrument(ret, skip(db))]
     pub async fn upload_fetchers_configs(
-        db: SqlConnect,
+        db: SqlConnect, MapReject(configs): MapReject<Json<Vec<BackFetcherConfig>>, FetcherConfigError>
     ) -> FetcherConfigRResult<()> {
+        rtry!(fetcher_logic::implement::upload_cookie_fetcher_configs(&db, configs).await);
         Ok(()).into()
     }
 }
