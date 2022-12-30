@@ -148,10 +148,10 @@ status_error!(
 );
 
 use checker::prefabs::{
-    json_obj_check::JsonObjError, no_remainder_checker::HasRem,
+    json_obj_check::JsonObjError, no_remainder_checker::HasRemError,
 };
 
-impl<const RHS: u64> StatusErr for HasRem<RHS> {
+impl<const RHS: u64> StatusErr for HasRemError<RHS> {
     fn prefix(&self) -> ErrPrefix { ErrPrefix::CHECKER }
 
     fn code(&self) -> u16 { 0x0014 }
