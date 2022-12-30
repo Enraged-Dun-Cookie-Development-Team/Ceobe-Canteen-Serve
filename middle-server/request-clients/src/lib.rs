@@ -1,2 +1,2 @@
-pub mod error;
 pub mod bili_client;
+pub mod error;

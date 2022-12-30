@@ -4,7 +4,6 @@ use axum_core::extract::{FromRef, FromRequestParts};
 use bytes::Bytes;
 use futures::future::ok;
 use sql_models::ceobe_operation::video::checkers::bv::Bv;
-
 use tokio::sync::{mpsc, oneshot};
 
 use crate::error::ChannelClose;
@@ -51,15 +50,14 @@ impl QueryBiliVideo {
         Self { sender }
     }
 
-
     /// 给定 BV 号，通过BV号获取对应的视频信息，
     /// 该接口500ms内多次执行将会阻塞到每500ms发送一次请求
     ///
     /// # Errors
     ///
-    /// This function will return an error if 
+    /// This function will return an error if
     /// 1. 独立协程管道非正常关闭
-    /// 2. reqwest::Error
+    /// 2. [reqwest::Error] 请求异常
     pub async fn fetch(
         &self, bv: Bv,
     ) -> Result<Result<Bytes, reqwest::Error>, ChannelClose> {

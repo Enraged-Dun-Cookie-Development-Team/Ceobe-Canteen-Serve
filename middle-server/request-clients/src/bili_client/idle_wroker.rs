@@ -4,13 +4,17 @@ use bytes::Bytes;
 use futures::TryFutureExt;
 use reqwest::Client;
 use sql_models::ceobe_operation::video::checkers::bv::Bv;
-use tokio::{sync::{mpsc, oneshot}, spawn, task::yield_now};
+use tokio::{
+    spawn,
+    sync::{mpsc, oneshot},
+    task::yield_now,
+};
 use url::Url;
 
 /// 独立执行的请求client.
-/// 
+///
 /// bilibili 接口专用
-/// 
+///
 /// 每次发送间隔为 500ms
 pub(super) async fn idle_client(
     base_url: Url, client: Client,

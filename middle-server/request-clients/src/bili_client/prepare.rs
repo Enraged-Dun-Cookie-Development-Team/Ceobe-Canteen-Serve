@@ -1,7 +1,8 @@
-use super::{idle_wroker::idle_client, sender::QueryBiliVideo};
 use axum_starter::{prepare, state::AddState};
 use tokio::{spawn, sync::mpsc};
 use url::Url;
+
+use super::{idle_wroker::idle_client, sender::QueryBiliVideo};
 
 #[prepare(box BiliClientPrepare?)]
 pub fn prepare_bili_client() -> Result<AddState<QueryBiliVideo>, PrepareError>
