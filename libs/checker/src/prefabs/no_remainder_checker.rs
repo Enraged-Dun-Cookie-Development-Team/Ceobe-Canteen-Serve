@@ -4,9 +4,10 @@ use futures::future::{ready, Ready};
 
 use crate::RefChecker;
 
-pub struct NoRemainChecker<const RHS: u64>;
 
-impl<const RHS: u64> RefChecker for NoRemainChecker<RHS> {
+pub struct NoRemainderChecker<const RHS: u64>;
+
+impl<const RHS: u64> RefChecker for NoRemainderChecker<RHS> {
     type Args = ();
     type Err = HasRem<RHS>;
     type Fut = Ready<Result<(), Self::Err>>;
@@ -37,17 +38,17 @@ pub struct HasRem<const DIV: u64> {
 
 #[cfg(test)]
 mod test {
-    use super::{HasRem, NoRemainChecker};
+    use super::{HasRem, NoRemainderChecker};
     use crate::RefChecker;
 
     #[test]
     fn test() {
         let a = 1111000;
-        let _ = NoRemainChecker::<1000>::ref_checker((), &a)
+        let _ = NoRemainderChecker::<1000>::ref_checker((), &a)
             .into_inner()
             .unwrap();
 
-        let r = NoRemainChecker::<10000>::ref_checker((), &a).into_inner();
+        let r = NoRemainderChecker::<10000>::ref_checker((), &a).into_inner();
         assert_eq!(
             Err(HasRem::<10000> {
                 origin: a,
