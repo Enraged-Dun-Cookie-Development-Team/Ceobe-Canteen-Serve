@@ -11,7 +11,7 @@ use crate::fetcher::config::{
 };
 
 impl FetcherConfigSqlOperate {
-    #[instrument(skip(db))]
+    #[instrument(skip(db, configs))]
     /// 新建单一平台蹲饼配置
     pub async fn create_configs_by_platform<'db, D>(
         db: &'db D, platform: String, configs: Vec<FetcherConfig>,

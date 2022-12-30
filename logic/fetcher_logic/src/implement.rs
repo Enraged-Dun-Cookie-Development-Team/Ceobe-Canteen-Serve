@@ -58,11 +58,12 @@ where
             db, page_size,
         )
         .await?;
+    // 获取平台的type的数组
     let platforms = platform_list
         .iter()
         .map(|platform_item| platform_item.type_id.clone())
         .collect();
-    // 查询map
+    // 查询哪些平台下有数据源
     let platform_datasource_exist_map =
         FetcherDatasourceConfigSqlOperate::has_datasource_from_platforms(
             db, platforms,
@@ -196,7 +197,7 @@ where
 {
     let con = client.mut_connect()?;
     let mut live_number = 0;
-    // 判断redis key存在
+    // 判断redis key存在，如果不存在则默认没有蹲饼器
     if con
         .exists(redis_key::fetcher::COOKIE_FETCHER_CONFIG_LIVE_NUMBER)
         .await?
@@ -224,6 +225,7 @@ where
     let mut config_in_db_uncheck: Vec<FetcherConfigUncheck> =
         Vec::<FetcherConfigUncheck>::new();
 
+    // 将上传数据格式换成unchecked结构体
     for BackFetcherConfig { number, server } in configs {
         for (count, Server { groups }) in server.into_iter().enumerate() {
             for Group {
@@ -268,6 +270,10 @@ where
     if configs_in_db.is_empty() {
         return Ok(());
     }
+
+    // TODO： 判断所有数据源是否存在
+
+    // 判断平台是否存在
     let platform = configs_in_db[0].platform.clone();
     if FetcherPlatformConfigSqlOperate::is_platform_exist(
         db.get_connect()?,
@@ -290,7 +296,7 @@ where
     Ok(())
 }
 
-// 上传蹲饼器配置
+// 获取蹲饼器配置
 pub async fn get_cookie_fetcher_configs<'db, D>(
     db: &'db D, platform: String,
 ) -> LogicResult<Vec<BackFetcherConfig>>
@@ -391,8 +397,6 @@ where
             server: servers_temp,
         });
     }
-
-    // TODO
 
     Ok(configs)
 }

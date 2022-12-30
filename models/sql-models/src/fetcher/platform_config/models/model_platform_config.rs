@@ -19,10 +19,10 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     #[sub_model(want("PlatformType"), want("PlatformBasicInfo"))]
-    pub type_id: String,
+    pub type_id: String, // 平台type
     #[sub_model(want("PlatformBasicInfo"))]
-    pub platform_name: String,
-    pub min_request_interval: i32,
+    pub platform_name: String, // 平台名字
+    pub min_request_interval: i32, // 最小蹲饼间隔
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

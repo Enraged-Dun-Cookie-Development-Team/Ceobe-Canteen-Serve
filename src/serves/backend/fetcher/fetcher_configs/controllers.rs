@@ -32,7 +32,7 @@ impl FetcherConfigControllers {
     }
 
     // 上传蹲饼器配置
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, configs))]
     pub async fn upload_fetchers_configs(
         db: SqlConnect,
         MapReject(configs): MapReject<
@@ -50,7 +50,7 @@ impl FetcherConfigControllers {
     }
 
     // 根据平台获取蹲饼器配置
-    #[instrument(ret, skip(db))]
+    #[instrument(skip(db))]
     pub async fn get_fetchers_configs(
         db: SqlConnect,
         MapReject(platform): MapReject<

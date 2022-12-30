@@ -9,6 +9,7 @@ use crate::fetcher::global_config::{
 };
 
 impl FetcherGlobalConfigSqlOperate {
+    // 创建或者更新蹲饼器全局配置
     #[instrument(ret, skip(db))]
     pub async fn create_or_update<'db, D>(
         db: &'db D, configs: Vec<FetcherGlobalConfig>,

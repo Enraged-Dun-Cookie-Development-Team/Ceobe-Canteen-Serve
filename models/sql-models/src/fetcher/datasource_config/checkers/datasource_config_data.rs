@@ -39,7 +39,7 @@ pub struct FetcherDatasourceConfigChecker {
     pub datasource: MaxLimitString<64>,
     pub nickname: MaxLimitString<16>,
     pub avatar: UrlChecker,
-    pub config: NoCheck<Value>,
+    pub config: NoCheck<Value>, // TODO: Value改成Value object
 }
 
 impl model_datasource_config::ActiveModel {

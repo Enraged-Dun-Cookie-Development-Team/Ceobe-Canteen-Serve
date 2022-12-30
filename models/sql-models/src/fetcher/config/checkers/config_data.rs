@@ -38,8 +38,8 @@ pub struct FetcherConfigChecker {
     pub group_name: MaxLimitString<16>,
     pub platform: MaxLimitString<64>,
     pub datasource_id: NoCheck<i32>,
-    pub interval: OptionChecker<NoCheck<i32>>,
-    pub interval_by_time_range: NoCheck<Value>,
+    pub interval: OptionChecker<NoCheck<i32>>,  // TODO: 检查时候能被1000整除 
+    pub interval_by_time_range: NoCheck<Value>, // TODO: 检查时候能被映射到一个特殊数组对象中
 }
 
 impl model_config::ActiveModel {

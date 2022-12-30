@@ -25,20 +25,20 @@ pub struct Model {
     #[sea_orm(primary_key)]
     #[sub_model(want("DataSourceForFetcherConfig"))]
     pub id: i32,
-    pub platform: String,
+    pub platform: String, // 平台type
     #[sub_model(want("SingleDatasourceInfo"))]
-    pub datasource: String,
+    pub datasource: String, // 数据源type
     #[sub_model(
         want("DataSourceForFetcherConfig"),
         want("FrontendDatasource")
     )]
-    pub nickname: String,
+    pub nickname: String, // 数据源名字
     #[sub_model(want("FrontendDatasource"))]
-    pub avatar: String,
+    pub avatar: String,  // 数据源头像
     #[sub_model(want("DataSourceForFetcherConfig"))]
-    pub config: String,
+    pub config: String, // 数据源配置
     #[sub_model(ignore("BackendDatasource"), want("FrontendDatasource"))]
-    pub unique_id: Uuid,
+    pub unique_id: Uuid,  // 数据源uuid，给用户端使用
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
