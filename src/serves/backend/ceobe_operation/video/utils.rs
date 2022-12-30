@@ -8,8 +8,9 @@ use axum::{
 use axum_starter::{prepare, state::AddState};
 use futures::{future::ok, TryFutureExt};
 use orm_migrate::sql_models::ceobe_operation::video::checkers::bv::Bv;
+use reqwest::Client;
 use status_err::ErrPrefix;
-use tokio::sync::{mpsc, oneshot};
+use tokio::{sync::{mpsc, oneshot}, spawn, task::yield_now};
 
 #[prepare(box BiliClient?)]
 pub fn prepare_bili_client() -> Result<AddState<QueryBiliVideo>, PrepareError>
@@ -23,27 +24,35 @@ pub fn prepare_bili_client() -> Result<AddState<QueryBiliVideo>, PrepareError>
 
     let base_url =
         Url::parse("https://api.bilibili.com/x/web-interface/view")?;
-    let (send, mut recv) = mpsc::channel::<(
-        Bv,
-        oneshot::Sender<Result<Bytes, reqwest::Error>>,
-    )>(8);
+    let (send, recv) = mpsc::channel(8);
 
-    tokio::spawn(async move {
-        let mut interval = tokio::time::interval(Duration::from_millis(500));
-        while let Some((bv, feedback)) = recv.recv().await {
-            let mut url = base_url.clone();
-            url.query_pairs_mut()
-                .clear()
-                .append_pair("bvid", bv.as_str());
-            let v =
-                client.get(url).send().and_then(|resp| resp.bytes()).await;
-
-            feedback.send(v).ok();
-            interval.tick().await;
-        }
-    });
+    spawn(idle_bili_client(base_url, client, recv));
 
     Ok(AddState::new(QueryBiliVideo { sender: send }))
+}
+
+async fn idle_bili_client(
+    base_url: Url, client: Client,
+    mut recv: mpsc::Receiver<(
+        Bv,
+        oneshot::Sender<Result<Bytes, reqwest::Error>>,
+    )>,
+) {
+    let mut interval = tokio::time::interval(Duration::from_millis(500));
+    while let Some((bv, feedback)) = recv.recv().await {
+        let mut url = base_url.clone();
+        url.query_pairs_mut()
+            .clear()
+            .append_pair("bvid", bv.as_str());
+
+        let request = client.get(url).send().and_then(|resp| resp.bytes());
+        spawn(async move {
+            feedback.send(request.await).ok();
+        });
+        yield_now().await;
+
+        interval.tick().await;
+    }
 }
 
 #[derive(Debug, thiserror::Error)]

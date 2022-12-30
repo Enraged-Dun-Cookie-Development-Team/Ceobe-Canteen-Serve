@@ -15,12 +15,12 @@ use orm_migrate::{
     },
 };
 use resp_result::{resp_try, rtry, RespResult};
-use tracing::instrument;
+use tracing::{event, instrument, Level};
 
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},
     view::VideoItem,
-     QueryBiliVideo,
+    QueryBiliVideo,
 };
 use crate::router::CeobeOperationVideo;
 
@@ -37,13 +37,13 @@ type UpdateVideoCheck = JsonCheckExtract<
 >;
 
 impl CeobeOperationVideo {
-    #[instrument(ret)]
+    #[instrument(skip(query))]
     pub async fn get_video_detail(
-        CheckExtract(BvQuery { bv }): BvQueryCheck,
-        query:QueryBiliVideo
+        CheckExtract(BvQuery { bv }): BvQueryCheck, query: QueryBiliVideo,
     ) -> VideoRespResult<String> {
         resp_try(async {
-            let body  = query.get_bili_video(bv).await??;
+            let body = query.get_bili_video(bv).await??;
+            event!(Level::INFO, response.len = body.len());
             Ok(String::from_utf8(body.to_vec())?)
         })
         .await
