@@ -35,6 +35,8 @@ pub struct CheckRefFut<S: RefChecker> {
     data: *const S::Target,
 }
 
+unsafe impl<S: RefChecker> Send for CheckRefFut<S> {}
+
 impl<S: RefChecker> Future for CheckRefFut<S> {
     type Output = Result<S::Target, S::Err>;
 
