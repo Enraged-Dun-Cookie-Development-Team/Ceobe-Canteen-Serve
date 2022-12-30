@@ -12,5 +12,5 @@ pub mod service_init;
 #[derive(Debug, Clone, FromRef, FromStateCollector)]
 pub struct State {
     qiniu: Arc<ceobe_qiniu_upload::Uploader>,
-    bili:QueryBiliVideo
+    bili: QueryBiliVideo,
 }

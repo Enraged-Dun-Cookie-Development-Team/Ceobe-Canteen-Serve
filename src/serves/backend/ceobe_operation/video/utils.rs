@@ -10,7 +10,11 @@ use futures::{future::ok, TryFutureExt};
 use orm_migrate::sql_models::ceobe_operation::video::checkers::bv::Bv;
 use reqwest::Client;
 use status_err::ErrPrefix;
-use tokio::{sync::{mpsc, oneshot}, spawn, task::yield_now};
+use tokio::{
+    spawn,
+    sync::{mpsc, oneshot},
+    task::yield_now,
+};
 
 #[prepare(box BiliClient?)]
 pub fn prepare_bili_client() -> Result<AddState<QueryBiliVideo>, PrepareError>
@@ -18,7 +22,7 @@ pub fn prepare_bili_client() -> Result<AddState<QueryBiliVideo>, PrepareError>
     let client = reqwest::Client::builder()
         .user_agent(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) \
-         Gecko/20100101 Firefox/102.0",
+             Gecko/20100101 Firefox/102.0",
         )
         .build()?;
 
@@ -111,11 +115,7 @@ impl QueryBiliVideo {
 pub struct ChannelClose;
 
 impl status_err::StatusErr for ChannelClose {
-    fn prefix(&self) -> status_err::ErrPrefix {
-        ErrPrefix::SERVE
-    }
+    fn prefix(&self) -> status_err::ErrPrefix { ErrPrefix::SERVE }
 
-    fn code(&self) -> u16 {
-        0x0002
-    }
+    fn code(&self) -> u16 { 0x0002 }
 }
