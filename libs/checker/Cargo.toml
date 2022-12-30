@@ -16,8 +16,8 @@ async-trait = { workspace = true }
 axum = { workspace = true }
 resp-result = { workspace = true }
 serde_json = { workspace = true }
-ahash = { workspace = true }
 thiserror = { workspace = true }
+smallvec = "1.10.0"
 
 [dependencies.range-limit]
 path = "../range-limit"
