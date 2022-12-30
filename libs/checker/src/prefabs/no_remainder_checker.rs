@@ -8,7 +8,7 @@ pub struct NoRemainderChecker<const RHS: u64>;
 
 impl<const RHS: u64> RefChecker for NoRemainderChecker<RHS> {
     type Args = ();
-    type Err = HasRem<RHS>;
+    type Err = HasRemError<RHS>;
     type Fut = Ready<Result<(), Self::Err>>;
     type Target = u64;
 
@@ -19,7 +19,7 @@ impl<const RHS: u64> RefChecker for NoRemainderChecker<RHS> {
                 Ok(())
             }
             else {
-                Err(HasRem {
+                Err(HasRemError {
                     origin: *target,
                     rem,
                 })
@@ -29,15 +29,15 @@ impl<const RHS: u64> RefChecker for NoRemainderChecker<RHS> {
 }
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
-#[error("`{origin}` Has Rem for `{DIV}` with `{rem}`")]
-pub struct HasRem<const DIV: u64> {
+#[error("{origin} 无法被 {DIV} 整除，余数{rem}")]
+pub struct HasRemError<const DIV: u64> {
     origin: u64,
     rem: u64,
 }
 
 #[cfg(test)]
 mod test {
-    use super::{HasRem, NoRemainderChecker};
+    use super::{HasRemError, NoRemainderChecker};
     use crate::RefChecker;
 
     #[test]
@@ -49,7 +49,7 @@ mod test {
 
         let r = NoRemainderChecker::<10000>::ref_checker((), &a).into_inner();
         assert_eq!(
-            Err(HasRem::<10000> {
+            Err(HasRemError::<10000> {
                 origin: a,
                 rem: a % 10000
             }),
