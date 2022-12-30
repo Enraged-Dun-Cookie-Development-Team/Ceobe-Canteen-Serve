@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use axum_macros::FromRef;
 use axum_starter::FromStateCollector;
+use request_clients::bili_client::QueryBiliVideo;
 
-use crate::serves::backend::ceobe_operation::video::QueryBiliVideo;
 
 pub mod component_init;
 pub mod db_init;

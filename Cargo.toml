@@ -111,6 +111,7 @@ dotenv = "0.15"
 tracing-unwrap = { workspace = true }
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 uuid = { version = "1.2.2", features = ["v4"] }
+request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 
 [dependencies.tokio]
 workspace = true

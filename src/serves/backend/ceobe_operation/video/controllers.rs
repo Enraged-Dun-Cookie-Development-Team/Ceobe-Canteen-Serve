@@ -14,13 +14,13 @@ use orm_migrate::{
         operate::CeobeOperationVideoSqlOperate,
     },
 };
+use request_clients::bili_client::QueryBiliVideo;
 use resp_result::{resp_try, rtry, RespResult};
 use tracing::{event, instrument, Level};
 
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},
     view::VideoItem,
-    QueryBiliVideo,
 };
 use crate::router::CeobeOperationVideo;
 
@@ -42,7 +42,7 @@ impl CeobeOperationVideo {
         CheckExtract(BvQuery { bv }): BvQueryCheck, query: QueryBiliVideo,
     ) -> VideoRespResult<String> {
         resp_try(async {
-            let body = query.get_bili_video(bv).await??;
+            let body = query.fetch(bv).await??;
             event!(Level::INFO, response.len = body.len());
             Ok(String::from_utf8(body.to_vec())?)
         })
