@@ -1,6 +1,6 @@
 use checker::{
     check_obj,
-    prefabs::{no_check::NoCheck, option_checker::OptionChecker},
+    prefabs::{no_check::NoCheck, option_checker::OptionChecker, no_remainder_checker::NoRemainderChecker},
 };
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use sea_orm::{ActiveValue::NotSet, Set};
@@ -16,7 +16,7 @@ pub struct FetcherPlatformConfig {
     pub id: Option<i32>,
     pub type_id: String,
     pub platform_name: String,
-    pub min_request_interval: i32,
+    pub min_request_interval: u64,
 }
 
 #[check_obj(
@@ -29,7 +29,7 @@ pub struct FetcherPlatformConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
     pub type_id: MaxLimitString<64>,
     pub platform_name: MaxLimitString<64>,
-    pub min_request_interval: NoCheck<i32>, /* TODO: 检查时候能被1000整除 */
+    pub min_request_interval: NoRemainderChecker<1000>,
 }
 
 impl model_platform_config::ActiveModel {

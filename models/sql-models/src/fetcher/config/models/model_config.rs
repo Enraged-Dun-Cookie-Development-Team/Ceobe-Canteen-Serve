@@ -10,7 +10,7 @@ pub struct Model {
     pub group_name: String,    // 蹲饼组名字
     pub platform: String,      // 蹲饼相关平台
     pub datasource_id: i32,    // 数据源id
-    pub interval: Option<i32>, // 组内蹲饼间隔
+    pub interval: Option<u64>, // 组内蹲饼间隔
     pub interval_by_time_range: Option<String>, // 组内蹲饼时间段间隔
 }
 

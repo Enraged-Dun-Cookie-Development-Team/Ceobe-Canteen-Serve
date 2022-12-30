@@ -2,7 +2,7 @@ use checker::{
     check_obj,
     prefabs::{
         collect_checkers::iter_checkers::IntoIterChecker, no_check::NoCheck,
-        option_checker::OptionChecker,
+        option_checker::OptionChecker, no_remainder_checker::NoRemainderChecker,
     },
 };
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
@@ -22,7 +22,7 @@ pub struct FetcherConfig {
     pub group_name: String,
     pub platform: String,
     pub datasource_id: i32,
-    pub interval: Option<i32>,
+    pub interval: Option<u64>,
     pub interval_by_time_range: Value,
 }
 
@@ -38,8 +38,8 @@ pub struct FetcherConfigChecker {
     pub group_name: MaxLimitString<16>,
     pub platform: MaxLimitString<64>,
     pub datasource_id: NoCheck<i32>,
-    pub interval: OptionChecker<NoCheck<i32>>, /* TODO: 检查时候能被1000整除 */
-    pub interval_by_time_range: NoCheck<Value>, /* TODO: 检查时候能被映射到一个特殊数组对象中 */
+    pub interval: OptionChecker<NoRemainderChecker<1000>>,
+    pub interval_by_time_range: NoCheck<Value>, 
 }
 
 impl model_config::ActiveModel {

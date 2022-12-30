@@ -1,6 +1,7 @@
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
+use tracing_unwrap::ResultExt;
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
 use crate::fetcher::datasource_config::{
@@ -23,7 +24,7 @@ impl FetcherDatasourceConfigSqlOperate {
             datasource.datasource = config.datasource,
             datasource.name = config.nickname,
             datasource.avatar = config.avatar.to_string(),
-            datasouce.config = config.config.to_string(),
+            datasouce.config = serde_json::to_string(&config.config).expect_or_log("config为非法json格式"),
         );
         let db = db.get_connect()?;
         let datasource_config_active =

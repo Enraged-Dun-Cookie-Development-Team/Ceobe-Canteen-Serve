@@ -22,7 +22,7 @@ pub struct Model {
     pub type_id: String, // 平台type
     #[sub_model(want("PlatformBasicInfo"))]
     pub platform_name: String, // 平台名字
-    pub min_request_interval: i32, // 最小蹲饼间隔
+    pub min_request_interval: u64, // 最小蹲饼间隔
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

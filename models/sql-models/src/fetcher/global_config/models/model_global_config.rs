@@ -1,6 +1,5 @@
 use sea_orm::entity::prelude::*;
 
-// TODO: 多存个类型吧 挺好
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "fetcher_global_config")]
 pub struct Model {

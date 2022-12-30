@@ -128,7 +128,7 @@ where
     let mut map = Map::new();
     // 转成map格式
     for Model { key, value, id: _ } in global_config_kv.into_iter() {
-        map.insert(key, Value::String(value));
+        map.insert(key, serde_json::from_str(&value)?);
     }
     // 转成json格式
     let obj = Value::Object(map);
@@ -254,7 +254,7 @@ where
                         interval: CheckRequire::new_with_no_checker(interval),
                         interval_by_time_range:
                             CheckRequire::new_with_no_checker(
-                                interval_by_time_range.clone(),
+                                serde_json::to_value(&interval_by_time_range)?
                             ),
                     })
                 }
@@ -363,7 +363,7 @@ where
                         interval,
                         interval_by_time_range: match interval_by_time_range {
                             Some(str) => serde_json::from_str(&str)?,
-                            None => Value::Null,
+                            None => None,
                         },
                     },
                 );

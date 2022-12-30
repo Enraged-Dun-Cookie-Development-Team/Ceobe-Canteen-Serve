@@ -14,10 +14,16 @@ pub struct Group {
     pub datasource: Vec<i32>,
     #[builder(default = None)]
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub interval: Option<i32>,
-    #[builder(default = Value::Null)]
-    #[serde(default, skip_serializing_if = "Value::is_null")]
-    pub interval_by_time_range: Value,
+    pub interval: Option<u64>,
+    #[builder(default = None)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub interval_by_time_range: Option<Vec<TimeRange>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, PartialEq, Eq,)]
+pub struct TimeRange {
+    pub time_range: Vec<String>,
+    pub interval: u64
 }
 
 /// 至今为止最大存活数量

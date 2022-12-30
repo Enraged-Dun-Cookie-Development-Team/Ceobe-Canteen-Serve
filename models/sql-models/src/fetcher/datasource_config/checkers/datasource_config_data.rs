@@ -7,7 +7,8 @@ use checker::{
 };
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use sea_orm::{ActiveValue::NotSet, Set};
-use serde_json::Value;
+use serde_json::{Value, Map};
+use tracing_unwrap::ResultExt;
 use typed_builder::TypedBuilder;
 use url::Url;
 use uuid::Uuid;
@@ -24,7 +25,7 @@ pub struct FetcherDatasourceConfig {
     pub datasource: String,
     pub nickname: String,
     pub avatar: Url,
-    pub config: Value,
+    pub config: Map<String, Value>,
 }
 
 #[check_obj(
@@ -39,7 +40,7 @@ pub struct FetcherDatasourceConfigChecker {
     pub datasource: MaxLimitString<64>,
     pub nickname: MaxLimitString<16>,
     pub avatar: UrlChecker,
-    pub config: NoCheck<Value>, // TODO: Value改成Value object
+    pub config: NoCheck<Map<String, Value>>,
 }
 
 impl model_datasource_config::ActiveModel {
@@ -73,7 +74,7 @@ impl model_datasource_config::ActiveModel {
             },
             nickname: Set(nickname),
             avatar: Set(avatar.to_string()),
-            config: Set(config.to_string()),
+            config: Set(serde_json::to_string(&config).expect_or_log("config为非法json格式")),
             unique_id: match id {
                 Some(_) => NotSet,
                 None => Set(Uuid::new_v4()),
