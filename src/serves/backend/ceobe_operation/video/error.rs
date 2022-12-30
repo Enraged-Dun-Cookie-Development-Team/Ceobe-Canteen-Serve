@@ -6,6 +6,8 @@ use resp_result::RespResult;
 
 use crate::{error_generate, utils::user_authorize::error::AuthError};
 
+use super::utils::ChannelClose;
+
 error_generate! {
     pub CeobeOperationVideoError
 
@@ -17,6 +19,7 @@ error_generate! {
     Query = QueryRejection
     Check = video::checkers::CheckError
     DbOperate = video::operate::OperateError
+    ChannelCLose = ChannelClose
 }
 
 pub(super) type VideoRespResult<T> = RespResult<T, CeobeOperationVideoError>;

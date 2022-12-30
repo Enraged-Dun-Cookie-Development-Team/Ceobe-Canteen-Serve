@@ -14,14 +14,13 @@ use orm_migrate::{
         operate::CeobeOperationVideoSqlOperate,
     },
 };
-use reqwest::Url;
 use resp_result::{resp_try, rtry, RespResult};
 use tracing::instrument;
 
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},
     view::VideoItem,
-    REQUEST_CLIENT,
+     QueryBiliVideo,
 };
 use crate::router::CeobeOperationVideo;
 
@@ -41,14 +40,10 @@ impl CeobeOperationVideo {
     #[instrument(ret)]
     pub async fn get_video_detail(
         CheckExtract(BvQuery { bv }): BvQueryCheck,
+        query:QueryBiliVideo
     ) -> VideoRespResult<String> {
         resp_try(async {
-            let url = Url::parse_with_params(
-                "https://api.bilibili.com/x/web-interface/view",
-                &[("bvid", bv)],
-            )?;
-
-            let body = REQUEST_CLIENT.get(url).send().await?.bytes().await?;
+            let body  = query.get_bili_video(bv).await??;
             Ok(String::from_utf8(body.to_vec())?)
         })
         .await
