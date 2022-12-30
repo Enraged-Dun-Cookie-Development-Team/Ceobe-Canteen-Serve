@@ -1,4 +1,4 @@
-use std::collections::{HashMap, BTreeSet};
+use std::{collections::{HashMap, BTreeSet}, fmt::{Display, Debug}};
 
 use sea_orm::{
     sea_query::Cond, ColumnTrait, ConnectionTrait, DatabaseBackend, DbErr,
@@ -17,15 +17,17 @@ use crate::fetcher::datasource_config::{
 impl FetcherDatasourceConfigSqlOperate {
     // 验证id数组是否都存在
     #[instrument(ret, skip(db))]
-    pub async fn has_all_datasource_ids<'db, D>(
-        db: &'db D, ids: Vec<i32>,
+    pub async fn has_all_datasource_ids<'db, D, T>(
+        db: &'db D, ids: T,
     ) -> OperateResult<bool>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
+        T: IntoIterator<Item = i32> + Debug,
+        T::Item: Display,
     {
         let mut sql = String::from("select count(B.id) from (");
-        for id in ids {
+        for id in ids.into_iter() {
             sql.push_str(&format!(r#" select {id} as id from dual union"#));
         }
         sql = sql.trim_end_matches("union").to_string();

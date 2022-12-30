@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, BTreeSet};
 
 use checker::{CheckRequire, Checker};
 use page_size::request::PageSize;
@@ -225,6 +225,8 @@ where
     let mut config_in_db_uncheck: Vec<FetcherConfigUncheck> =
         Vec::<FetcherConfigUncheck>::new();
 
+    let mut all_datasources_set = BTreeSet::new();
+
     // 将上传数据格式换成unchecked结构体
     for BackFetcherConfig { number, server } in configs {
         for (count, Server { groups }) in server.into_iter().enumerate() {
@@ -237,6 +239,9 @@ where
             } in groups
             {
                 for id in datasource {
+                    if !all_datasources_set.contains(&id) {
+                        all_datasources_set.insert(id);
+                    }
                     config_in_db_uncheck.push(FetcherConfigUncheck {
                         live_number: CheckRequire::new_with_no_checker(
                             number,
@@ -271,15 +276,13 @@ where
         return Ok(());
     }
 
-    // TODO：判断所有数据源是否存在
-
     // 判断平台是否存在
     let platform = configs_in_db[0].platform.clone();
-    if FetcherPlatformConfigSqlOperate::is_platform_exist(
+    if FetcherPlatformConfigSqlOperate::is_platform_exist (
         db.get_connect()?,
         &platform,
     )
-    .await?
+    .await? && FetcherDatasourceConfigSqlOperate::has_all_datasource_ids(db,all_datasources_set).await? 
     {
         FetcherConfigSqlOperate::create_configs_by_platform(
             db,
