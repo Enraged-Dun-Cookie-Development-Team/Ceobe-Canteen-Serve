@@ -1,5 +1,9 @@
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
+use fetcher_logic::view::{
+    DatasourceList, DatasourceListFilterCondReq, DatasourceWithNameResp,
+    OneIdReq, PlatformAndDatasourceArrayResp, PlatformFilterReq,
+};
 use futures::future;
 use orm_migrate::{
     sql_connection::SqlConnect,
@@ -14,24 +18,16 @@ use tracing::instrument;
 
 use super::{
     error::{DatasourceConfigError, DatasourceConfigRResult},
-    view::{
-        DatasourceId, DatasourceListFilterCond, DatasourcePlatformFilter,
-    },
     FetcherDatasourceCheck, PageSizePretreatment,
 };
-use crate::{
-    router::FetcherConfigControllers,
-    serves::backend::fetcher::datasource_configs::view::{
-        DatasourceList, DatasourceWithNameResp, PlatformAndDatasourceArray,
-    },
-};
+use crate::router::FetcherConfigControllers;
 
 impl FetcherConfigControllers {
     // 获取平台与数据源类型列表
     #[instrument(ret, skip(db))]
     pub async fn get_platform_and_datasource_list(
         db: SqlConnect,
-    ) -> DatasourceConfigRResult<PlatformAndDatasourceArray> {
+    ) -> DatasourceConfigRResult<PlatformAndDatasourceArrayResp> {
         resp_try(async {
             // 获取平台列表
             let platform_list =
@@ -46,7 +42,7 @@ impl FetcherConfigControllers {
             let (platform_list, datasource_list) =
                 future::join(platform_list, datasource_list).await;
 
-            let resp = PlatformAndDatasourceArray {
+            let resp = PlatformAndDatasourceArrayResp {
                 platform_list: datasource_list?,
                 datasource_list: platform_list?,
             };
@@ -61,7 +57,7 @@ impl FetcherConfigControllers {
     pub async fn get_datasource_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
         MapReject(filter_cond): MapReject<
-            Query<DatasourceListFilterCond>,
+            Query<DatasourceListFilterCondReq>,
             DatasourceConfigError,
         >,
     ) -> DatasourceConfigRResult<ListWithPageInfo<DatasourceList>> {
@@ -119,7 +115,7 @@ impl FetcherConfigControllers {
     pub async fn delete_datasource_config(
         db: SqlConnect,
         MapReject(datasource): MapReject<
-            Json<DatasourceId>,
+            Json<OneIdReq>,
             DatasourceConfigError,
         >,
     ) -> DatasourceConfigRResult<()> {
@@ -138,7 +134,7 @@ impl FetcherConfigControllers {
     pub async fn get_datasource_name_list(
         db: SqlConnect,
         MapReject(filter): MapReject<
-            Query<DatasourcePlatformFilter>,
+            Query<PlatformFilterReq>,
             DatasourceConfigError,
         >,
     ) -> DatasourceConfigRResult<Vec<DatasourceWithNameResp>> {

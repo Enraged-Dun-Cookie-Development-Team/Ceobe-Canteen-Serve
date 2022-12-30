@@ -8,7 +8,6 @@ use self::error::DatasourceConfigError;
 
 mod controllers;
 mod error;
-mod view;
 
 type PageSizePretreatment =
     QueryCheckExtract<PageSizeChecker, DatasourceConfigError>;

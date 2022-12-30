@@ -34,11 +34,11 @@ pub struct Model {
     )]
     pub nickname: String, // 数据源名字
     #[sub_model(want("FrontendDatasource"))]
-    pub avatar: String,  // 数据源头像
+    pub avatar: String, // 数据源头像
     #[sub_model(want("DataSourceForFetcherConfig"))]
     pub config: String, // 数据源配置
     #[sub_model(ignore("BackendDatasource"), want("FrontendDatasource"))]
-    pub unique_id: Uuid,  // 数据源uuid，给用户端使用
+    pub unique_id: Uuid, // 数据源uuid，给用户端使用
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

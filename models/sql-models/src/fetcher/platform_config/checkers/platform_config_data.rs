@@ -29,7 +29,7 @@ pub struct FetcherPlatformConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
     pub type_id: MaxLimitString<64>,
     pub platform_name: MaxLimitString<64>,
-    pub min_request_interval: NoCheck<i32>, // TODO: 检查时候能被1000整除 
+    pub min_request_interval: NoCheck<i32>, /* TODO: 检查时候能被1000整除 */
 }
 
 impl model_platform_config::ActiveModel {

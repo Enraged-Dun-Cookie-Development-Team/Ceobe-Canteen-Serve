@@ -6,8 +6,8 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub key: String, // 键
-    pub value: String,  // 值
+    pub key: String,   // 键
+    pub value: String, // 值
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

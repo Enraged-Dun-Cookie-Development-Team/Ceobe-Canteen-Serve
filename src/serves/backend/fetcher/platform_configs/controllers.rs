@@ -1,5 +1,6 @@
 use axum::Json;
 use checker::CheckExtract;
+use fetcher_logic::view::OneIdReq;
 use futures::future;
 use orm_migrate::{
     sql_connection::SqlConnect,
@@ -15,8 +16,7 @@ use resp_result::{resp_try, rtry, MapReject};
 use tracing::instrument;
 
 use super::{
-    error::PlatformConfigError, view::DeleteOnePlatform,
-    FetcherPlatformCheck, PageSizePretreatment,
+    error::PlatformConfigError, FetcherPlatformCheck, PageSizePretreatment,
 };
 use crate::{
     router::FetcherConfigControllers,
@@ -80,10 +80,7 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     pub async fn delete_platform_config(
         db: SqlConnect,
-        MapReject(body): MapReject<
-            Json<DeleteOnePlatform>,
-            PlatformConfigError,
-        >,
+        MapReject(body): MapReject<Json<OneIdReq>, PlatformConfigError>,
     ) -> PlatformConfigRResult<()> {
         let pid = body.id;
         rtry!(
