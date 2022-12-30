@@ -19,6 +19,7 @@ use configs::{
     CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
+use serves::backend::ceobe_operation::video::BiliClient;
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
@@ -63,6 +64,7 @@ async fn main_task() {
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
+        .prepare_state(BiliClient)
         // database
         .prepare_concurrent(|set| {
             set.join_state(MysqlDbConnect).join_state(MongoDbConnect)
