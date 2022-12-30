@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, BTreeSet};
 
 use sea_orm::{
     sea_query::Cond, ColumnTrait, ConnectionTrait, DatabaseBackend, DbErr,
@@ -50,7 +50,7 @@ impl FetcherDatasourceConfigSqlOperate {
     #[instrument(ret, skip(db))]
     pub async fn has_datasource_from_platforms<'db, D>(
         db: &'db D, platforms: Vec<String>,
-    ) -> OperateResult<HashMap<String, bool>>
+    ) -> OperateResult<BTreeSet<String>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
@@ -72,12 +72,9 @@ impl FetcherDatasourceConfigSqlOperate {
             .all(db)
             .await?;
 
-        let mut exist_map = HashMap::new();
+        let mut exist_map = BTreeSet::new();
         for platform_datasource in resp {
-            exist_map.insert(
-                platform_datasource.platform,
-                platform_datasource.count != 0,
-            );
+            exist_map.insert(platform_datasource.platform);
         }
 
         Ok(exist_map)

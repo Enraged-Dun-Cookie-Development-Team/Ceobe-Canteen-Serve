@@ -79,7 +79,7 @@ where
                 platform_name: platform_item.platform_name,
                 min_request_interval: platform_item.min_request_interval,
                 has_datasource: platform_datasource_exist_map
-                    .contains_key(&platform_item.type_id),
+                    .contains(&platform_item.type_id),
             }
         })
         .collect();
@@ -271,7 +271,7 @@ where
         return Ok(());
     }
 
-    // TODO： 判断所有数据源是否存在
+    // TODO：判断所有数据源是否存在
 
     // 判断平台是否存在
     let platform = configs_in_db[0].platform.clone();
