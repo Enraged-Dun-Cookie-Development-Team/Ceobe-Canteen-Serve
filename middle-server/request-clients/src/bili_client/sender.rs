@@ -9,6 +9,7 @@ use tokio::sync::{mpsc, oneshot};
 
 use crate::error::ChannelClose;
 
+/// 获取bili 视频信息支持类型
 #[derive(Debug, Clone)]
 pub struct QueryBiliVideo {
     sender:
@@ -50,13 +51,22 @@ impl QueryBiliVideo {
         Self { sender }
     }
 
+
+    /// 给定 BV 号，通过BV号获取对应的视频信息，
+    /// 该接口500ms内多次执行将会阻塞到每500ms发送一次请求
+    ///
+    /// # Errors
+    ///
+    /// This function will return an error if 
+    /// 1. 独立协程管道非正常关闭
+    /// 2. reqwest::Error
     pub async fn fetch(
         &self, bv: Bv,
     ) -> Result<Result<Bytes, reqwest::Error>, ChannelClose> {
         let (rx, tx) = oneshot::channel();
-
+        // 将bv 和 回调 一起发送
         self.sender.send((bv, rx)).await.map_err(|_| ChannelClose)?;
-
+        // 等待回调返回
         tx.await.map_err(|_| ChannelClose)
     }
 }
