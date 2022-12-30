@@ -29,7 +29,7 @@ impl<const RHS: u64> RefChecker for NoRemainderChecker<RHS> {
 }
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
-#[error("`{origin}` Has Rem for `{DIV}` with `{rem}`")]
+#[error("{origin} 无法被 {DIV} 整除，余数{rem}")]
 pub struct HasRem<const DIV: u64> {
     origin: u64,
     rem: u64,

@@ -8,7 +8,7 @@ use axum::extract::rejection::{
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use http::StatusCode;
 
-use crate::{status_error, ErrPrefix};
+use crate::{status_error, ErrPrefix, StatusErr};
 
 // io prefix
 status_error!(
@@ -145,4 +145,25 @@ status_error!(
         ErrPrefix::CHECKER,
         0x00_0E
     ] -> "预期为0值取得非0值"
+);
+
+use checker::prefabs::{
+    json_obj_check::JsonObjError, no_remainder_checker::HasRem,
+};
+
+impl<const RHS: u64> StatusErr for HasRem<RHS> {
+    fn prefix(&self) -> ErrPrefix {
+        ErrPrefix::CHECKER
+    }
+
+    fn code(&self) -> u16 {
+        0x0014
+    }
+}
+
+status_error!(
+    JsonObjError[
+        ErrPrefix::CHECKER,
+        0x0014
+    ]->"Json 对象不符合预期"
 );
