@@ -1,8 +1,8 @@
 pub mod config_data;
 
 use std::convert::Infallible;
-use checker::prefabs::no_remainder_checker::HasRemError;
 
+use checker::prefabs::no_remainder_checker::HasRemError;
 use status_err::StatusErr;
 use thiserror::Error;
 pub use CheckError::*;
@@ -13,7 +13,7 @@ pub enum CheckError {
     LengthExceed(#[from] range_limit::Error),
 
     #[error("无法被{0}整除")]
-    HasRem(#[from] HasRemError<1000>)
+    HasRem(#[from] HasRemError<1000>),
 }
 
 impl From<Infallible> for CheckError {

@@ -1,4 +1,4 @@
-use std::collections::{HashMap, BTreeSet};
+use std::collections::{BTreeSet, HashMap};
 
 use checker::{CheckRequire, Checker};
 use page_size::request::PageSize;
@@ -259,7 +259,9 @@ where
                         interval: CheckRequire::new_with_no_checker(interval),
                         interval_by_time_range:
                             CheckRequire::new_with_no_checker(
-                                serde_json::to_value(&interval_by_time_range)?
+                                serde_json::to_value(
+                                    &interval_by_time_range,
+                                )?,
                             ),
                     })
                 }
@@ -278,11 +280,16 @@ where
 
     // 判断平台是否存在
     let platform = configs_in_db[0].platform.clone();
-    if FetcherPlatformConfigSqlOperate::is_platform_exist (
+    if FetcherPlatformConfigSqlOperate::is_platform_exist(
         db.get_connect()?,
         &platform,
     )
-    .await? && FetcherDatasourceConfigSqlOperate::has_all_datasource_ids(db,all_datasources_set).await? 
+    .await?
+        && FetcherDatasourceConfigSqlOperate::has_all_datasource_ids(
+            db,
+            all_datasources_set,
+        )
+        .await?
     {
         FetcherConfigSqlOperate::create_configs_by_platform(
             db,

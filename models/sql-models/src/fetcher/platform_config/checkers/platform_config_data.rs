@@ -1,6 +1,9 @@
 use checker::{
     check_obj,
-    prefabs::{no_check::NoCheck, option_checker::OptionChecker, no_remainder_checker::NoRemainderChecker},
+    prefabs::{
+        no_check::NoCheck, no_remainder_checker::NoRemainderChecker,
+        option_checker::OptionChecker,
+    },
 };
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use sea_orm::{ActiveValue::NotSet, Set};

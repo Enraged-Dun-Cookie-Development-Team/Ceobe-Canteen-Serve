@@ -2,7 +2,8 @@ use checker::{
     check_obj,
     prefabs::{
         collect_checkers::iter_checkers::IntoIterChecker, no_check::NoCheck,
-        option_checker::OptionChecker, no_remainder_checker::NoRemainderChecker,
+        no_remainder_checker::NoRemainderChecker,
+        option_checker::OptionChecker,
     },
 };
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
@@ -39,7 +40,7 @@ pub struct FetcherConfigChecker {
     pub platform: MaxLimitString<64>,
     pub datasource_id: NoCheck<i32>,
     pub interval: OptionChecker<NoRemainderChecker<1000>>,
-    pub interval_by_time_range: NoCheck<Value>, 
+    pub interval_by_time_range: NoCheck<Value>,
 }
 
 impl model_config::ActiveModel {

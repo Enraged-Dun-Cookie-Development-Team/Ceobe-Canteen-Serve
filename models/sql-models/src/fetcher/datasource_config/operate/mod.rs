@@ -26,7 +26,6 @@ struct DatasourceCounts {
 }
 
 #[derive(FromQueryResult)]
-struct PlatformDatasourceCounts {
+struct PlatformDatasource {
     pub(crate) platform: String,
-    pub(crate) count: i32,
 }

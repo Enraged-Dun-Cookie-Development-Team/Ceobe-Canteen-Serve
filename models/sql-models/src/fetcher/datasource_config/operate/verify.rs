@@ -1,4 +1,7 @@
-use std::{collections::{HashMap, BTreeSet}, fmt::{Display, Debug}};
+use std::{
+    collections::BTreeSet,
+    fmt::{Debug, Display},
+};
 
 use sea_orm::{
     sea_query::Cond, ColumnTrait, ConnectionTrait, DatabaseBackend, DbErr,
@@ -11,7 +14,7 @@ use super::{
     DatasourceCounts, FetcherDatasourceConfigSqlOperate, OperateResult,
 };
 use crate::fetcher::datasource_config::{
-    models::model_datasource_config, operate::PlatformDatasourceCounts,
+    models::model_datasource_config, operate::PlatformDatasource,
 };
 
 impl FetcherDatasourceConfigSqlOperate {
@@ -66,11 +69,10 @@ impl FetcherDatasourceConfigSqlOperate {
         let db = db.get_connect()?;
         let resp = model_datasource_config::Entity::find()
             .select_only()
-            .column_as(model_datasource_config::Column::Id.count(), "count")
             .column(model_datasource_config::Column::Platform)
             .filter(condition)
             .group_by(model_datasource_config::Column::Platform)
-            .into_model::<PlatformDatasourceCounts>()
+            .into_model::<PlatformDatasource>()
             .all(db)
             .await?;
 

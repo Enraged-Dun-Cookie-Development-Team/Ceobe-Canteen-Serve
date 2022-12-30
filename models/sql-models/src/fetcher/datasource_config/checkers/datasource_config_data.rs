@@ -7,7 +7,7 @@ use checker::{
 };
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use sea_orm::{ActiveValue::NotSet, Set};
-use serde_json::{Value, Map};
+use serde_json::{Map, Value};
 use tracing_unwrap::ResultExt;
 use typed_builder::TypedBuilder;
 use url::Url;
@@ -74,7 +74,8 @@ impl model_datasource_config::ActiveModel {
             },
             nickname: Set(nickname),
             avatar: Set(avatar.to_string()),
-            config: Set(serde_json::to_string(&config).expect_or_log("config为非法json格式")),
+            config: Set(serde_json::to_string(&config)
+                .expect_or_log("config为非法json格式")),
             unique_id: match id {
                 Some(_) => NotSet,
                 None => Set(Uuid::new_v4()),

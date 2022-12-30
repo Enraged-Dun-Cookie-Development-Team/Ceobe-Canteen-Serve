@@ -20,10 +20,12 @@ pub struct Group {
     pub interval_by_time_range: Option<Vec<TimeRange>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, PartialEq, Eq,)]
+#[derive(
+    Debug, Clone, Serialize, Deserialize, TypedBuilder, PartialEq, Eq,
+)]
 pub struct TimeRange {
     pub time_range: Vec<String>,
-    pub interval: u64
+    pub interval: u64,
 }
 
 /// 至今为止最大存活数量

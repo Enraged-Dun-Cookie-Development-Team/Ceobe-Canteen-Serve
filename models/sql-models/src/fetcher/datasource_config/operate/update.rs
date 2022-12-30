@@ -23,7 +23,8 @@ impl FetcherDatasourceConfigSqlOperate {
             config.id = config.id,
             datasource.name = config.nickname,
             datasource.avatar = config.avatar.to_string(),
-            datasouce.config = serde_json::to_string(&config.config).expect_or_log("config为非法json格式"),
+            datasouce.config = serde_json::to_string(&config.config)
+                .expect_or_log("config为非法json格式"),
         );
 
         let db = db.get_connect()?;
