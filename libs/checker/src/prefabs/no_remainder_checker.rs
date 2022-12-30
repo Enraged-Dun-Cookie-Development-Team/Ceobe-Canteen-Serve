@@ -4,7 +4,6 @@ use futures::future::{ready, Ready};
 
 use crate::RefChecker;
 
-
 pub struct NoRemainderChecker<const RHS: u64>;
 
 impl<const RHS: u64> RefChecker for NoRemainderChecker<RHS> {
