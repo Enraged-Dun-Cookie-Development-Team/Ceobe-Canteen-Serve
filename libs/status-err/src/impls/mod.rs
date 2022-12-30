@@ -152,13 +152,9 @@ use checker::prefabs::{
 };
 
 impl<const RHS: u64> StatusErr for HasRem<RHS> {
-    fn prefix(&self) -> ErrPrefix {
-        ErrPrefix::CHECKER
-    }
+    fn prefix(&self) -> ErrPrefix { ErrPrefix::CHECKER }
 
-    fn code(&self) -> u16 {
-        0x0014
-    }
+    fn code(&self) -> u16 { 0x0014 }
 }
 
 status_error!(
