@@ -1,7 +1,6 @@
 use std::{collections::BTreeSet, marker::PhantomData};
 
 use futures::future::{ready, Ready};
-
 use serde_json::Value;
 use smallvec::SmallVec;
 
@@ -66,19 +65,18 @@ pub enum JsonObjError {
 
 #[cfg(test)]
 mod test {
-    use super::{JsonObjError, JsonObjectChecker, RequireFields};
-    use crate::LiteChecker;
     use serde_json::json;
     use smallvec::SmallVec;
+
+    use super::{JsonObjError, JsonObjectChecker, RequireFields};
+    use crate::LiteChecker;
 
     struct TestFields;
 
     impl RequireFields for TestFields {
         type Iter = [&'static str; 2];
 
-        fn get_field_iter() -> Self::Iter {
-            ["foo", "bar"]
-        }
+        fn get_field_iter() -> Self::Iter { ["foo", "bar"] }
     }
 
     #[test]
