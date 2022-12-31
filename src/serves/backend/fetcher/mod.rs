@@ -27,7 +27,7 @@ mod controller {
                 let resp =
                     upload(&uploader, field, DataSourceAvatarPayload::new())
                         .await
-                        .map(Into::into)?;
+                        .map(|resp| AvatarId::from_resp(resp, &uploader))?;
 
                 Ok(resp)
             })
@@ -37,17 +37,22 @@ mod controller {
 }
 
 mod view {
-    use ceobe_qiniu_upload::ResponsePayload;
+    use ceobe_qiniu_upload::{QiniuUploader, ResponsePayload};
     use serde::Serialize;
 
     #[derive(Debug, Serialize)]
     pub struct AvatarId {
-        path: String,
+        url: String,
     }
 
-    impl From<ResponsePayload> for AvatarId {
-        fn from(ResponsePayload { key, .. }: ResponsePayload) -> Self {
-            Self { path: key }
+    impl AvatarId {
+        pub(super) fn from_resp(
+            ResponsePayload { key, .. }: ResponsePayload,
+            uploader: &QiniuUploader,
+        ) -> Self {
+            Self {
+                url: uploader.concat_url(key),
+            }
         }
     }
 }
@@ -72,9 +77,13 @@ mod error {
     pub struct FieldNotExist;
 
     impl StatusErr for FieldNotExist {
-        fn prefix(&self) -> status_err::ErrPrefix { ErrPrefix::CHECKER }
+        fn prefix(&self) -> status_err::ErrPrefix {
+            ErrPrefix::CHECKER
+        }
 
-        fn code(&self) -> u16 { 0x0011 }
+        fn code(&self) -> u16 {
+            0x0011
+        }
     }
 }
 
@@ -87,7 +96,9 @@ mod utils {
     pub struct DataSourceAvatarPayload(String);
 
     impl DataSourceAvatarPayload {
-        pub fn new() -> Self { Self(Uuid::new_v4().to_string()) }
+        pub fn new() -> Self {
+            Self(Uuid::new_v4().to_string())
+        }
     }
 
     impl UploadPayload for DataSourceAvatarPayload {
@@ -95,6 +106,8 @@ mod utils {
 
         const DIR: &'static str = "data-source-avatar";
 
-        fn obj_name(&self) -> &str { &self.0 }
+        fn obj_name(&self) -> &str {
+            &self.0
+        }
     }
 }
