@@ -27,7 +27,7 @@ mod controller {
                 let resp =
                     upload(&uploader, field, DataSourceAvatarPayload::new())
                         .await
-                        .map(Into::into)?;
+                        .map(|resp| AvatarId::from_resp(resp, &uploader))?;
 
                 Ok(resp)
             })
@@ -37,17 +37,22 @@ mod controller {
 }
 
 mod view {
-    use ceobe_qiniu_upload::ResponsePayload;
+    use ceobe_qiniu_upload::{QiniuUploader, ResponsePayload};
     use serde::Serialize;
 
     #[derive(Debug, Serialize)]
     pub struct AvatarId {
-        path: String,
+        url: String,
     }
 
-    impl From<ResponsePayload> for AvatarId {
-        fn from(ResponsePayload { key, .. }: ResponsePayload) -> Self {
-            Self { path: key }
+    impl AvatarId {
+        pub(super) fn from_resp(
+            ResponsePayload { key, .. }: ResponsePayload,
+            uploader: &QiniuUploader,
+        ) -> Self {
+            Self {
+                url: uploader.concat_url(key),
+            }
         }
     }
 }
