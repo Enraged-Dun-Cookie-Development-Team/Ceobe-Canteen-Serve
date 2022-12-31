@@ -14,8 +14,8 @@ use axum_starter::{
     ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    GetBucket, QiniuUpload, QiniuUploadState, QiniuUploader, ResponsePayload,
-    SecretConfig,
+    BaseUrl, GetBucket, QiniuBaseUrl, QiniuUpload, QiniuUploadState,
+    QiniuUploader, ResponsePayload, SecretConfig,
 };
 use futures::FutureExt;
 use qiniu_cdn_upload::{
@@ -130,6 +130,7 @@ struct Config {
 #[derive(Debug, Clone, FromStateCollector, FromRef)]
 pub struct State {
     uploader: QiniuUploadState,
+    qiniu_base_url: QiniuBaseUrl,
 }
 
 #[derive(Debug)]
@@ -137,6 +138,12 @@ pub struct QiniuConfig {
     secret: String,
     access: String,
     bucket: String,
+}
+
+impl BaseUrl for QiniuConfig {
+    fn get_base_url(&self) -> url::Url {
+        "http://www.bilibil.com/".parse().unwrap()
+    }
 }
 
 impl GetBucket for QiniuConfig {

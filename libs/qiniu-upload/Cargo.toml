@@ -21,6 +21,8 @@ smallstr = "0.3.0"
 status-err = { version = "0.1.0", path = "../status-err" }
 thiserror = { workspace = true }
 tracing = { workspace = true }
+tracing-unwrap.workspace = true
+url.workspace = true
 
 [dev-dependencies]
 log = "0.4.17"
