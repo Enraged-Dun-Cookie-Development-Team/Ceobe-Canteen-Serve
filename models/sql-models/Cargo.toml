@@ -5,29 +5,30 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
-once_cell =  { workspace = true }
+once_cell = { workspace = true }
 regex = "1"
 thiserror = { workspace = true }
-typed-builder =  { workspace = true }
-chrono = {  workspace = true, features = ["serde"] }
-futures =  { workspace = true }
+typed-builder = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+futures = { workspace = true }
 sub-model = { workspace = true }
-serde =  { workspace = true }
+serde = { workspace = true }
 serde_json = { workspace = true }
 url = { workspace = true }
-sea-orm =  { workspace = true,features = ["with-chrono", "with-uuid"]}
+sea-orm = { workspace = true, features = ["with-chrono", "with-uuid"] }
 checker = { path = "../../libs/checker" }
 range-limit = { path = "../../libs/range-limit" }
 sql_connection = { path = "../../database/sql_connection" }
 status-err = { path = "../../libs/status-err" }
-modify-cache = {path = "../../libs/modify-cache"}
-page_size = {path = "../../libs/page_size"}
+modify-cache = { path = "../../libs/modify-cache" }
+page_size = { path = "../../libs/page_size" }
 tap = { workspace = true }
 tracing = { workspace = true }
-smallvec = "1.10.0"
-smallstr = "0.3.0"
+smallvec = { workspace = true }
+smallstr = { workspace = true }
 uuid = { workspace = true }
 tracing-unwrap = { workspace = true }
+sea-query = { workspace = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }
