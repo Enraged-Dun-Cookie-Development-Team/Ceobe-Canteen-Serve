@@ -116,16 +116,12 @@ fn gen_query_verfy_all_datasource_id_exist(
         {
             // 取出第一个做base
             let mut query = Query::select();
-            query
-                .expr_as(Expr::val(first), TempTable::Id)
-                .from(Alias::new("DUAL"));
+            query.expr_as(Expr::val(first), TempTable::Id);
             // 剩下的union上, 使用去重union, select from DUAL
             query.unions(ids.into_iter().map(|idx| {
                 (UnionType::Distinct, {
                     let mut union_query = Query::select();
-                    union_query
-                        .expr_as(Expr::val(idx), TempTable::Id)
-                        .from(Alias::new("DUAL"));
+                    union_query.expr_as(Expr::val(idx), TempTable::Id);
                     union_query
                 })
             }));
