@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Deserializer};
 use serde_json::Value;
 use sql_models::fetcher::datasource_config::models::model_datasource_config::{DataSourceForFetcherConfig, BackendDatasource};
 use typed_builder::TypedBuilder;
@@ -67,7 +67,9 @@ pub struct PlatformAndDatasourceArrayResp {
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DatasourceListFilterCondReq {
+    #[serde(deserialize_with = "empty_change_to_none")]
     pub platform: Option<String>,
+    #[serde(deserialize_with = "empty_change_to_none")]
     pub datasource: Option<String>,
 }
 
@@ -124,4 +126,20 @@ impl From<DataSourceForFetcherConfig> for DatasourceWithNameResp {
             config: serde_json::from_str(&config).unwrap(),
         }
     }
+}
+
+fn empty_change_to_none<'de, D: Deserializer<'de>>(
+    d: D,
+) -> Result<Option<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = Option::<String>::deserialize(d)?;
+    Ok(match value {
+        Some(s) => match s.as_str() {
+            "" => None,
+            _ => Some(s),
+        },
+        None => None,
+    })
 }

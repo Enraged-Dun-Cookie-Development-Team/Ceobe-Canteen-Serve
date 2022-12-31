@@ -43,8 +43,8 @@ impl FetcherConfigControllers {
                 future::join(platform_list, datasource_list).await;
 
             let resp = PlatformAndDatasourceArrayResp {
-                platform_list: datasource_list?,
-                datasource_list: platform_list?,
+                platform_list: platform_list?,
+                datasource_list: datasource_list?,
             };
 
             Ok(resp)
