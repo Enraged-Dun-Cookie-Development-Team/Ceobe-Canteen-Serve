@@ -135,11 +135,8 @@ where
     D: Deserializer<'de>,
 {
     let value = Option::<String>::deserialize(d)?;
-    Ok(match value {
-        Some(s) => match s.as_str() {
-            "" => None,
-            _ => Some(s),
-        },
-        None => None,
+    Ok(match value.as_deref() {
+        Some("") |None => None,
+        _ => value,
     })
 }
