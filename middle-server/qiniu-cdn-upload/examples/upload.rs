@@ -14,8 +14,8 @@ use axum_starter::{
     ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    GetBucket, QiniuUpload, QiniuUploadState, QiniuUploader, ResponsePayload,
-    SecretConfig,
+    BaseUrl, GetBucket, QiniuBaseUrl, QiniuUpload, QiniuUploadState,
+    QiniuUploader, ResponsePayload, SecretConfig,
 };
 use futures::FutureExt;
 use qiniu_cdn_upload::{
@@ -46,7 +46,9 @@ async fn upload(
 struct ImagePayload<Source>(PhantomData<Source>, String);
 
 impl<Source> ImagePayload<Source> {
-    fn new() -> Self { Self(PhantomData, uuid::Uuid::new_v4().to_string()) }
+    fn new() -> Self {
+        Self(PhantomData, uuid::Uuid::new_v4().to_string())
+    }
 }
 
 impl<Source> UploadPayload for ImagePayload<Source>
@@ -57,7 +59,9 @@ where
 
     const DIR: &'static str = "image";
 
-    fn obj_name(&self) -> &str { self.1.as_str() }
+    fn obj_name(&self) -> &str {
+        self.1.as_str()
+    }
 }
 
 #[prepare(Router)]
@@ -67,13 +71,11 @@ fn set_route() -> impl PrepareRouteEffect<State, Body> {
 
 #[prepare(Fallback)]
 fn fall_back() -> impl PrepareRouteEffect<State, Body> {
-    Fallback::new(|| {
-        async {
-            (
-                StatusCode::BAD_REQUEST,
-                Html(r#"请前往 <a herf = "/upload">/upload</a>"#),
-            )
-        }
+    Fallback::new(|| async {
+        (
+            StatusCode::BAD_REQUEST,
+            Html(r#"请前往 <a herf = "/upload">/upload</a>"#),
+        )
     })
 }
 
@@ -130,6 +132,7 @@ struct Config {
 #[derive(Debug, Clone, FromStateCollector, FromRef)]
 pub struct State {
     uploader: QiniuUploadState,
+    qiniu_base_url: QiniuBaseUrl,
 }
 
 #[derive(Debug)]
@@ -139,14 +142,26 @@ pub struct QiniuConfig {
     bucket: String,
 }
 
+impl BaseUrl for QiniuConfig {
+    fn get_base_url(&self) -> url::Url {
+        "http://www.bilibil.com/".parse().unwrap()
+    }
+}
+
 impl GetBucket for QiniuConfig {
-    fn get_bucket(&self) -> &str { &self.bucket }
+    fn get_bucket(&self) -> &str {
+        &self.bucket
+    }
 }
 
 impl SecretConfig for QiniuConfig {
-    fn access_key(&self) -> &str { &self.access }
+    fn access_key(&self) -> &str {
+        &self.access
+    }
 
-    fn secret_key(&self) -> &str { &self.secret }
+    fn secret_key(&self) -> &str {
+        &self.secret
+    }
 }
 
 // impl `Default` and associate function `new` for

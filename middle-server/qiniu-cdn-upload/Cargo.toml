@@ -11,6 +11,7 @@ futures = { workspace = true }
 mime = "0.3.16"
 
 [dev-dependencies]
+url.workspace = true
 axum-starter = { workspace = true }
 log = "0.4.17"
 simple_logger = "4.0.0"

@@ -13,10 +13,11 @@ use axum_starter::{
     PrepareRouteEffect, ServeAddress, ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    GetBucket, PayloadLocal, QiniuUpload, QiniuUploader, SecretConfig,
-    Uploader,
+    GetBucket, PayloadLocal, QiniuBaseUrl, QiniuUpload, QiniuUploader,
+    SecretConfig, Uploader, BaseUrl,
 };
 use log::SetLoggerError;
+use url::Url;
 #[tokio::main]
 async fn main() {
     let path = std::fs::read_to_string("./qiniu_example.json")
@@ -41,6 +42,7 @@ async fn main() {
 #[derive(Debug, FromStateCollector, FromRef, Clone)]
 struct State {
     uploader: Arc<Uploader>,
+    qiniu_base: QiniuBaseUrl,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -50,10 +52,18 @@ struct Config {
     buckets: String,
 }
 
+impl BaseUrl for Config {
+    fn get_base_url(&self)->Url {
+        "http://static.forzenstring.top/".parse().unwrap()
+    }
+}
+
 impl LoggerInitialization for Config {
     type Error = SetLoggerError;
 
-    fn init_logger(&self) -> Result<(), Self::Error> { simple_logger::init() }
+    fn init_logger(&self) -> Result<(), Self::Error> {
+        simple_logger::init()
+    }
 }
 
 impl ServeAddress for Config {
@@ -65,13 +75,19 @@ impl ServeAddress for Config {
 }
 
 impl GetBucket for Config {
-    fn get_bucket(&self) -> &str { self.buckets.as_str() }
+    fn get_bucket(&self) -> &str {
+        self.buckets.as_str()
+    }
 }
 
 impl SecretConfig for Config {
-    fn access_key(&self) -> &str { &self.access }
+    fn access_key(&self) -> &str {
+        &self.access
+    }
 
-    fn secret_key(&self) -> &str { &self.secret }
+    fn secret_key(&self) -> &str {
+        &self.secret
+    }
 }
 
 impl axum_starter::ConfigureServerEffect for Config {}
@@ -82,6 +98,7 @@ where
     B: Send + Sync + 'static + HttpBody,
     S: Send + Sync + 'static + Clone,
     Arc<Uploader>: FromRef<S>,
+    QiniuBaseUrl: FromRef<S>,
     axum::body::Bytes: From<<B as HttpBody>::Data>,
     <B as HttpBody>::Error: std::error::Error + Send + Sync,
 {
@@ -122,7 +139,9 @@ struct Local {
 }
 
 impl PayloadLocal for Local {
-    fn obj_name(&self) -> &str { &self.obj_name }
+    fn obj_name(&self) -> &str {
+        &self.obj_name
+    }
 
     fn file_name(&self) -> &str {
         self.filename.as_deref().unwrap_or(&self.obj_name)
