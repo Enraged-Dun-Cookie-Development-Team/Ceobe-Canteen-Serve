@@ -21,7 +21,6 @@ impl MigrationTrait for Migration {
             .value(FetcherConfig::IntervalByTimeRange, Keyword(Null))
             .and_where(Expr::col(FetcherConfig::IntervalByTimeRange).eq("[]"))
             .to_owned();
-        print!("{:?}", update.to_string(MysqlQueryBuilder));
         manager.alter_table(al).await?;
         manager.exec_stmt(update).await?;
 

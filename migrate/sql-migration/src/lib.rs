@@ -35,6 +35,8 @@ impl MigratorTrait for Migrator {
             ceobe_operation_video::m20221218_001928_charset_and_collate::Migration
             ceobe_operation_announcement::m20221218_002839_charset_and_collate::Migration
             fetcher_config::m20221228_232347_alter_default::Migration
+            fetcher_config::m20221231_150609_alter_interval::Migration
+            fetcher_platform_config::m20221231_150609_alter_min_interval::Migration
         ]
     }
 }

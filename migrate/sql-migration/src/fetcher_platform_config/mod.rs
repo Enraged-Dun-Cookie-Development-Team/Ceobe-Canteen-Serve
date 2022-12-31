@@ -10,3 +10,4 @@ enum FetcherPlatformConfig {
     PlatformName,
     MinRequestInterval,
 }
+pub mod m20221231_150609_alter_min_interval;
