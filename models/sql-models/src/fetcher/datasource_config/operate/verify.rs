@@ -8,7 +8,7 @@ use sea_orm::{
     ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
     QuerySelect,
 };
-use sea_query::{Alias, SelectStatement, UnionType};
+use sea_query::{SelectStatement, UnionType};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
