@@ -46,12 +46,12 @@ mod view {
 
     #[derive(Debug, Serialize)]
     pub struct AvatarId {
-        path: String,
+        url: String,
     }
 
     impl From<ResponsePayload> for AvatarId {
         fn from(ResponsePayload { key, .. }: ResponsePayload) -> Self {
-            Self { path: key }
+            Self { url: key }
         }
     }
 }
