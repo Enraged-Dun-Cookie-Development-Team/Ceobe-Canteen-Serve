@@ -13,8 +13,8 @@ use axum_starter::{
     PrepareRouteEffect, ServeAddress, ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    GetBucket, PayloadLocal, QiniuBaseUrl, QiniuUpload, QiniuUploader,
-    SecretConfig, Uploader, BaseUrl,
+    BaseUrl, GetBucket, PayloadLocal, QiniuBaseUrl, QiniuUpload,
+    QiniuUploader, SecretConfig, Uploader,
 };
 use log::SetLoggerError;
 use url::Url;
@@ -53,7 +53,7 @@ struct Config {
 }
 
 impl BaseUrl for Config {
-    fn get_base_url(&self)->Url {
+    fn get_base_url(&self) -> Url {
         "http://static.forzenstring.top/".parse().unwrap()
     }
 }
@@ -61,9 +61,7 @@ impl BaseUrl for Config {
 impl LoggerInitialization for Config {
     type Error = SetLoggerError;
 
-    fn init_logger(&self) -> Result<(), Self::Error> {
-        simple_logger::init()
-    }
+    fn init_logger(&self) -> Result<(), Self::Error> { simple_logger::init() }
 }
 
 impl ServeAddress for Config {
@@ -75,19 +73,13 @@ impl ServeAddress for Config {
 }
 
 impl GetBucket for Config {
-    fn get_bucket(&self) -> &str {
-        self.buckets.as_str()
-    }
+    fn get_bucket(&self) -> &str { self.buckets.as_str() }
 }
 
 impl SecretConfig for Config {
-    fn access_key(&self) -> &str {
-        &self.access
-    }
+    fn access_key(&self) -> &str { &self.access }
 
-    fn secret_key(&self) -> &str {
-        &self.secret
-    }
+    fn secret_key(&self) -> &str { &self.secret }
 }
 
 impl axum_starter::ConfigureServerEffect for Config {}
@@ -139,9 +131,7 @@ struct Local {
 }
 
 impl PayloadLocal for Local {
-    fn obj_name(&self) -> &str {
-        &self.obj_name
-    }
+    fn obj_name(&self) -> &str { &self.obj_name }
 
     fn file_name(&self) -> &str {
         self.filename.as_deref().unwrap_or(&self.obj_name)

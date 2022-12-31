@@ -47,10 +47,10 @@ impl QiniuUploader {
 }
 
 #[cfg(test)]
-mod test{
+mod test {
     use url::Url;
     #[test]
-    fn test_url_concat(){
+    fn test_url_concat() {
         let mut url = Url::parse("https://example.net").unwrap();
         url.set_path("a/bb");
 
@@ -58,13 +58,10 @@ mod test{
     }
 }
 
-
 impl Deref for QiniuUploader {
     type Target = Uploader;
 
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
+    fn deref(&self) -> &Self::Target { &self.inner }
 }
 
 impl<S> FromRequestParts<S> for QiniuUploader

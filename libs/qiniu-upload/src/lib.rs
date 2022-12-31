@@ -4,7 +4,7 @@ mod error;
 mod config;
 mod uploader;
 
-pub use config::{GetBucket, SecretConfig,BaseUrl};
+pub use config::{BaseUrl, GetBucket, SecretConfig};
 pub use error::{Error, UploaderNotFound};
 pub use mime;
 pub use mime_guess;
@@ -13,4 +13,6 @@ pub use uploader::{
     PayloadLocal, ResponsePayload, Uploader, UploaderBuilder,
 };
 
-pub use crate::axum_starter::{QiniuUpload, QiniuUploadState, QiniuUploader,QiniuBaseUrl};
+pub use crate::axum_starter::{
+    QiniuBaseUrl, QiniuUpload, QiniuUploadState, QiniuUploader,
+};

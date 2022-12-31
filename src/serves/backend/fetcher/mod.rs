@@ -77,13 +77,9 @@ mod error {
     pub struct FieldNotExist;
 
     impl StatusErr for FieldNotExist {
-        fn prefix(&self) -> status_err::ErrPrefix {
-            ErrPrefix::CHECKER
-        }
+        fn prefix(&self) -> status_err::ErrPrefix { ErrPrefix::CHECKER }
 
-        fn code(&self) -> u16 {
-            0x0011
-        }
+        fn code(&self) -> u16 { 0x0011 }
     }
 }
 
@@ -96,9 +92,7 @@ mod utils {
     pub struct DataSourceAvatarPayload(String);
 
     impl DataSourceAvatarPayload {
-        pub fn new() -> Self {
-            Self(Uuid::new_v4().to_string())
-        }
+        pub fn new() -> Self { Self(Uuid::new_v4().to_string()) }
     }
 
     impl UploadPayload for DataSourceAvatarPayload {
@@ -106,8 +100,6 @@ mod utils {
 
         const DIR: &'static str = "data-source-avatar";
 
-        fn obj_name(&self) -> &str {
-            &self.0
-        }
+        fn obj_name(&self) -> &str { &self.0 }
     }
 }

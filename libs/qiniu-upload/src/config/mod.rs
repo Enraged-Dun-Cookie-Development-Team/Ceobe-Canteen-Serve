@@ -1,6 +1,5 @@
 use url::Url;
 
-
 pub trait SecretConfig {
     fn access_key(&self) -> &str;
     fn secret_key(&self) -> &str;
@@ -12,5 +11,5 @@ pub trait GetBucket {
 }
 
 pub trait BaseUrl {
-    fn get_base_url(&self)->Url;
+    fn get_base_url(&self) -> Url;
 }

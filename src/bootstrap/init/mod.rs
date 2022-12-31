@@ -11,5 +11,5 @@ pub mod service_init;
 #[derive(Debug, Clone, FromRef, FromStateCollector)]
 pub struct State {
     qiniu: Arc<ceobe_qiniu_upload::Uploader>,
-    qiniu_base_url :QiniuBaseUrl
+    qiniu_base_url: QiniuBaseUrl,
 }

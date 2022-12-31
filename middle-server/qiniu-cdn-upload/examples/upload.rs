@@ -46,9 +46,7 @@ async fn upload(
 struct ImagePayload<Source>(PhantomData<Source>, String);
 
 impl<Source> ImagePayload<Source> {
-    fn new() -> Self {
-        Self(PhantomData, uuid::Uuid::new_v4().to_string())
-    }
+    fn new() -> Self { Self(PhantomData, uuid::Uuid::new_v4().to_string()) }
 }
 
 impl<Source> UploadPayload for ImagePayload<Source>
@@ -59,9 +57,7 @@ where
 
     const DIR: &'static str = "image";
 
-    fn obj_name(&self) -> &str {
-        self.1.as_str()
-    }
+    fn obj_name(&self) -> &str { self.1.as_str() }
 }
 
 #[prepare(Router)]
@@ -71,11 +67,13 @@ fn set_route() -> impl PrepareRouteEffect<State, Body> {
 
 #[prepare(Fallback)]
 fn fall_back() -> impl PrepareRouteEffect<State, Body> {
-    Fallback::new(|| async {
-        (
-            StatusCode::BAD_REQUEST,
-            Html(r#"请前往 <a herf = "/upload">/upload</a>"#),
-        )
+    Fallback::new(|| {
+        async {
+            (
+                StatusCode::BAD_REQUEST,
+                Html(r#"请前往 <a herf = "/upload">/upload</a>"#),
+            )
+        }
     })
 }
 
@@ -149,19 +147,13 @@ impl BaseUrl for QiniuConfig {
 }
 
 impl GetBucket for QiniuConfig {
-    fn get_bucket(&self) -> &str {
-        &self.bucket
-    }
+    fn get_bucket(&self) -> &str { &self.bucket }
 }
 
 impl SecretConfig for QiniuConfig {
-    fn access_key(&self) -> &str {
-        &self.access
-    }
+    fn access_key(&self) -> &str { &self.access }
 
-    fn secret_key(&self) -> &str {
-        &self.secret
-    }
+    fn secret_key(&self) -> &str { &self.secret }
 }
 
 // impl `Default` and associate function `new` for
