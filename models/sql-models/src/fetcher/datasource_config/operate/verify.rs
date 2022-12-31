@@ -22,7 +22,7 @@ use crate::fetcher::datasource_config::{
 
 impl FetcherDatasourceConfigSqlOperate {
     // 验证id数组是否都存在
-    // #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db))]
     pub async fn has_all_datasource_ids<'db, D, T>(
         db: &'db D, ids: T,
     ) -> OperateResult<bool>
