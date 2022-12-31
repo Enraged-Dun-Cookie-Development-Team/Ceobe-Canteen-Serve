@@ -59,8 +59,8 @@ impl Uploader {
         let response = auto_uploader
             .async_upload_reader(Box::pin(payload.payload()?), params)
             .await?;
-        let response = serde_json::from_value::<ResponsePayload>(response)?;
-
+        let mut response = serde_json::from_value::<ResponsePayload>(response)?;
+        response.key = String::from("http://test-cdn.ceobecanteen.top/") + &response.key; // TODO: 从配置读取url到这边进行替换
         info!(
             qiniu.response.hash = response.hash,
             qiniu.response.key = response.key
