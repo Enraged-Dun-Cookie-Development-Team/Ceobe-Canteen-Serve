@@ -26,7 +26,7 @@ pub struct Model {
     #[sub_model(want("DataSourceForFetcherConfig"))]
     pub id: i32,
     pub platform: String, // 平台type
-    #[sub_model(want("SingleDatasourceInfo"))]
+    #[sub_model(want("SingleDatasourceInfo"), want("DataSourceForFetcherConfig"))]
     pub datasource: String, // 数据源type
     #[sub_model(
         want("DataSourceForFetcherConfig"),

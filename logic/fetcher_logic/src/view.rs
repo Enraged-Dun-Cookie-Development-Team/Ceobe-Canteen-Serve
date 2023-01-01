@@ -9,8 +9,7 @@ use typed_builder::TypedBuilder;
 )]
 pub struct Group {
     pub name: String,
-    #[serde(rename = "type", alias = "type")]
-    pub ty: String,
+    pub platform: String,
     pub datasource: Vec<i32>,
     #[builder(default = None)]
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -86,6 +85,7 @@ pub struct DatasourceList {
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DatasourceWithNameResp {
     pub id: i32,
+    pub datasource: String,
     pub nickname: String,
     pub config: Value,
 }
@@ -118,12 +118,14 @@ impl From<DataSourceForFetcherConfig> for DatasourceWithNameResp {
             id,
             nickname,
             config,
+            datasource,
         }: DataSourceForFetcherConfig,
     ) -> Self {
         Self {
             id,
             nickname,
             config: serde_json::from_str(&config).unwrap(),
+            datasource
         }
     }
 }
