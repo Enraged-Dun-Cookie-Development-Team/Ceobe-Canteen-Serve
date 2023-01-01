@@ -72,13 +72,15 @@ where
 
     let resp = platform_list
         .into_iter()
-        .map(|platform_item| PlatformWithHasDatasource {
-            id: platform_item.id,
-            type_id: platform_item.type_id.clone(),
-            platform_name: platform_item.platform_name,
-            min_request_interval: platform_item.min_request_interval,
-            has_datasource: platform_datasource_exist_map
-                .contains(&platform_item.type_id),
+        .map(|platform_item| {
+            PlatformWithHasDatasource {
+                id: platform_item.id,
+                type_id: platform_item.type_id.clone(),
+                platform_name: platform_item.platform_name,
+                min_request_interval: platform_item.min_request_interval,
+                has_datasource: platform_datasource_exist_map
+                    .contains(&platform_item.type_id),
+            }
         })
         .collect();
 
@@ -106,7 +108,8 @@ where
             datasource_config,
         )
         .await?;
-    } else {
+    }
+    else {
         return Err(LogicError::NoPlatform);
     }
     Ok(())
@@ -143,9 +146,11 @@ where
     // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串
     let vec: Vec<FetcherGlobalConfigUncheck> = config
         .into_iter()
-        .map(|(key, value)| FetcherGlobalConfigUncheck {
-            key: key.require_check(),
-            value: value.to_string().require_check(),
+        .map(|(key, value)| {
+            FetcherGlobalConfigUncheck {
+                key: key.require_check(),
+                value: value.to_string().require_check(),
+            }
         })
         .collect();
     // 验证传入数据库数据的合法性
@@ -284,7 +289,8 @@ where
         )
         .await?;
         // TODO：告诉调度器哪个平台更新了
-    } else {
+    }
+    else {
         return Err(LogicError::NoPlatform);
     }
 
@@ -362,7 +368,8 @@ where
                         },
                     },
                 );
-        } else if let Some(group) = configs_temp
+        }
+        else if let Some(group) = configs_temp
             .get_mut(&live_number)
             .unwrap()
             .get_mut(&(fetcher_count - 1))
