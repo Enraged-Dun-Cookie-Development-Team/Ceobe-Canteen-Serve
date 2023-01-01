@@ -1,6 +1,6 @@
 use std::collections::{BTreeSet, HashMap};
 
-use checker::{CheckRequire, Checker};
+use checker::{Checker, ToCheckRequire};
 use page_size::request::PageSize;
 use redis::{AsyncCommands, RedisError};
 use redis_global::redis_key;
@@ -72,15 +72,13 @@ where
 
     let resp = platform_list
         .into_iter()
-        .map(|platform_item| {
-            PlatformWithHasDatasource {
-                id: platform_item.id,
-                type_id: platform_item.type_id.clone(),
-                platform_name: platform_item.platform_name,
-                min_request_interval: platform_item.min_request_interval,
-                has_datasource: platform_datasource_exist_map
-                    .contains(&platform_item.type_id),
-            }
+        .map(|platform_item| PlatformWithHasDatasource {
+            id: platform_item.id,
+            type_id: platform_item.type_id.clone(),
+            platform_name: platform_item.platform_name,
+            min_request_interval: platform_item.min_request_interval,
+            has_datasource: platform_datasource_exist_map
+                .contains(&platform_item.type_id),
         })
         .collect();
 
@@ -108,8 +106,7 @@ where
             datasource_config,
         )
         .await?;
-    }
-    else {
+    } else {
         return Err(LogicError::NoPlatform);
     }
     Ok(())
@@ -146,11 +143,9 @@ where
     // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串
     let vec: Vec<FetcherGlobalConfigUncheck> = config
         .into_iter()
-        .map(|(key, value)| {
-            FetcherGlobalConfigUncheck {
-                key: CheckRequire::new_with_no_checker(key),
-                value: CheckRequire::new_with_no_checker(value.to_string()),
-            }
+        .map(|(key, value)| FetcherGlobalConfigUncheck {
+            key: key.require_check(),
+            value: value.to_string().require_check(),
         })
         .collect();
     // 验证传入数据库数据的合法性
@@ -243,26 +238,17 @@ where
                         all_datasources_set.insert(id);
                     }
                     config_in_db_uncheck.push(FetcherConfigUncheck {
-                        live_number: CheckRequire::new_with_no_checker(
-                            number,
-                        ),
-                        fetcher_count: CheckRequire::new_with_no_checker(
-                            count as i8 + 1,
-                        ),
-                        group_name: CheckRequire::new_with_no_checker(
-                            name.clone(),
-                        ),
-                        platform: CheckRequire::new_with_no_checker(
-                            platform.clone(),
-                        ),
-                        datasource_id: CheckRequire::new_with_no_checker(id),
-                        interval: CheckRequire::new_with_no_checker(interval),
-                        interval_by_time_range:
-                            CheckRequire::new_with_no_checker(
-                                serde_json::to_value(
-                                    &interval_by_time_range,
-                                )?,
-                            ),
+                        live_number: number.require_check(),
+                        fetcher_count: (count as i8 + 1).require_check(),
+                        group_name: name.clone().require_check(),
+                        platform: platform.clone().require_check(),
+
+                        datasource_id: id.require_check(),
+                        interval: interval.require_check(),
+                        interval_by_time_range: serde_json::to_value(
+                            &interval_by_time_range,
+                        )?
+                        .require_check(),
                     })
                 }
             }
@@ -298,8 +284,7 @@ where
         )
         .await?;
         // TODO：告诉调度器哪个平台更新了
-    }
-    else {
+    } else {
         return Err(LogicError::NoPlatform);
     }
 
@@ -377,8 +362,7 @@ where
                         },
                     },
                 );
-        }
-        else if let Some(group) = configs_temp
+        } else if let Some(group) = configs_temp
             .get_mut(&live_number)
             .unwrap()
             .get_mut(&(fetcher_count - 1))
