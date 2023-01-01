@@ -15,6 +15,6 @@ pub use check_prehandle::{
 };
 pub use checker_impls::CheckRefFut;
 pub use lite_args::LiteArgs;
-pub use require_check::CheckRequire;
+pub use require_check::{CheckRequire, ToCheckRequire};
 
 pub use crate::checker::{Checker, LiteChecker, RefChecker};

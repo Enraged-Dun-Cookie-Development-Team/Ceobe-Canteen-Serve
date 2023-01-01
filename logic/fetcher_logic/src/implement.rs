@@ -1,6 +1,6 @@
 use std::collections::{BTreeSet, HashMap};
 
-use checker::{CheckRequire, Checker};
+use checker::{Checker, ToCheckRequire};
 use page_size::request::PageSize;
 use redis::{AsyncCommands, RedisError};
 use redis_global::redis_key;
@@ -148,8 +148,8 @@ where
         .into_iter()
         .map(|(key, value)| {
             FetcherGlobalConfigUncheck {
-                key: CheckRequire::new_with_no_checker(key),
-                value: CheckRequire::new_with_no_checker(value.to_string()),
+                key: key.require_check(),
+                value: value.to_string().require_check(),
             }
         })
         .collect();
@@ -243,26 +243,17 @@ where
                         all_datasources_set.insert(id);
                     }
                     config_in_db_uncheck.push(FetcherConfigUncheck {
-                        live_number: CheckRequire::new_with_no_checker(
-                            number,
-                        ),
-                        fetcher_count: CheckRequire::new_with_no_checker(
-                            count as i8 + 1,
-                        ),
-                        group_name: CheckRequire::new_with_no_checker(
-                            name.clone(),
-                        ),
-                        platform: CheckRequire::new_with_no_checker(
-                            platform.clone(),
-                        ),
-                        datasource_id: CheckRequire::new_with_no_checker(id),
-                        interval: CheckRequire::new_with_no_checker(interval),
-                        interval_by_time_range:
-                            CheckRequire::new_with_no_checker(
-                                serde_json::to_value(
-                                    &interval_by_time_range,
-                                )?,
-                            ),
+                        live_number: number.require_check(),
+                        fetcher_count: (count as i8 + 1).require_check(),
+                        group_name: name.clone().require_check(),
+                        platform: platform.clone().require_check(),
+
+                        datasource_id: id.require_check(),
+                        interval: interval.require_check(),
+                        interval_by_time_range: serde_json::to_value(
+                            &interval_by_time_range,
+                        )?
+                        .require_check(),
                     })
                 }
             }
