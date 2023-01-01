@@ -23,9 +23,9 @@ impl FetcherConfigSqlOperate {
         info!(fetcherConfig.platform = platform,);
 
         // model数组转换activeModel数组
-        let active_models = configs.into_iter().map(|config| {
-            ActiveModel::fetcher_config_into_active_model(config)
-        });
+        let active_models = configs.into_iter().map(
+            ActiveModel::fetcher_config_into_active_model
+        );
 
         let ctx = db.get_transaction().await?;
 
