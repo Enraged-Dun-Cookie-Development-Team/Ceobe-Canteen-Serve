@@ -37,6 +37,9 @@ impl MigratorTrait for Migrator {
             fetcher_config::m20221228_232347_alter_default::Migration
             fetcher_config::m20221231_150609_alter_interval::Migration
             fetcher_platform_config::m20221231_150609_alter_min_interval::Migration
+            fetcher_datasource_config::m20221231_200206_alter_nickname::Migration
+            fetcher_config::m20221231_205557_alter_group_name::Migration
+            fetcher_config::m20230101_013601_create_index::Migration
         ]
     }
 }
