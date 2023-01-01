@@ -8,7 +8,7 @@ use sea_orm::{
     ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
     QuerySelect,
 };
-use sea_query::{SelectStatement, UnionType};
+use sea_query::{SelectStatement, UnionType, Alias};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
@@ -109,7 +109,7 @@ fn gen_query_verfy_all_datasource_id_exist(
     let mut query = Query::select();
 
     // select count (B.id)
-    query.expr(Expr::tbl(TempTable::Table, TempTable::Id).count());
+    query.expr_as(Expr::tbl(TempTable::Table, TempTable::Id).count(), Alias::new("count"));
 
     // from ()
     query.from_subquery(
