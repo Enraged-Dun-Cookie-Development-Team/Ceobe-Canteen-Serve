@@ -125,7 +125,7 @@ impl From<DataSourceForFetcherConfig> for DatasourceWithNameResp {
             id,
             nickname,
             config: serde_json::from_str(&config).unwrap(),
-            datasource
+            datasource,
         }
     }
 }
@@ -138,7 +138,7 @@ where
 {
     let value = Option::<String>::deserialize(d)?;
     Ok(match value.as_deref() {
-        Some("") |None => None,
+        Some("") | None => None,
         _ => value,
     })
 }

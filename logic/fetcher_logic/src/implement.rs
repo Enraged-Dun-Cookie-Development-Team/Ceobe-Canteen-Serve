@@ -368,7 +368,7 @@ where
                     group_name.clone(),
                     Group {
                         name: group_name,
-                        platform: platform,
+                        platform,
                         datasource: vec![datasource_id],
                         interval,
                         interval_by_time_range: match interval_by_time_range {

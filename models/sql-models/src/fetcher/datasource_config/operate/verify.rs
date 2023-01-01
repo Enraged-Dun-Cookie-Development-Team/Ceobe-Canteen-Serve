@@ -8,7 +8,7 @@ use sea_orm::{
     ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
     QuerySelect,
 };
-use sea_query::{SelectStatement, UnionType, Alias};
+use sea_query::{Alias, SelectStatement, UnionType};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
@@ -39,8 +39,8 @@ impl FetcherDatasourceConfigSqlOperate {
         let query = gen_query_verfy_all_datasource_id_exist(first, ids);
         // let mut sql = String::from("select count(B.id) from (");
         // for id in ids.into_iter() {
-        //     sql.push_str(&format!(r#" select {id} as id from dual union"#));
-        // }
+        //     sql.push_str(&format!(r#" select {id} as id from dual
+        // union"#)); }
         // sql = sql.trim_end_matches("union").to_string();
         // sql.push_str(
         //     ") B left join fetcher_datasource_config on \
@@ -109,7 +109,10 @@ fn gen_query_verfy_all_datasource_id_exist(
     let mut query = Query::select();
 
     // select count (B.id)
-    query.expr_as(Expr::tbl(TempTable::Table, TempTable::Id).count(), Alias::new("count"));
+    query.expr_as(
+        Expr::tbl(TempTable::Table, TempTable::Id).count(),
+        Alias::new("count"),
+    );
 
     // from ()
     query.from_subquery(

@@ -38,7 +38,9 @@ pub struct FetcherDatasourceConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
     pub platform: MaxLimitString<64>,
     pub datasource: MaxLimitString<64>,
-    pub nickname: MaxLimitString<64>, // TODO: MaxLimit兼容字符长度判断，包括中文，与数据库同步长度，数据库长度为32
+    pub nickname: MaxLimitString<64>, /* TODO: MaxLimit兼容字符长度判断，
+                                       * 包括中文，与数据库同步长度，
+                                       * 数据库长度为32 */
     pub avatar: UrlChecker,
     pub config: NoCheck<Map<String, Value>>,
 }
