@@ -232,7 +232,7 @@ where
         for (count, Server { groups }) in server.into_iter().enumerate() {
             for Group {
                 name,
-                ty,
+                platform,
                 datasource,
                 interval,
                 interval_by_time_range,
@@ -253,7 +253,7 @@ where
                             name.clone(),
                         ),
                         platform: CheckRequire::new_with_no_checker(
-                            ty.clone(),
+                            platform.clone(),
                         ),
                         datasource_id: CheckRequire::new_with_no_checker(id),
                         interval: CheckRequire::new_with_no_checker(interval),
@@ -368,7 +368,7 @@ where
                     group_name.clone(),
                     Group {
                         name: group_name,
-                        ty: platform,
+                        platform: platform,
                         datasource: vec![datasource_id],
                         interval,
                         interval_by_time_range: match interval_by_time_range {
@@ -388,6 +388,10 @@ where
             group.datasource.push(datasource_id);
         }
     }
+
+    // 对configs_temp根据key排序
+    let mut configs_temp = Vec::from_iter(configs_temp);
+    configs_temp.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
     for (live_number, server) in configs_temp.iter() {
         let mut servers_temp = Vec::<Server>::new();
         for i in 1..(*live_number + 1) {
