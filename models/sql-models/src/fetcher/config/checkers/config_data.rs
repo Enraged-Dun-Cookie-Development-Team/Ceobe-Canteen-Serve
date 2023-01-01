@@ -36,7 +36,7 @@ pub struct FetcherConfig {
 pub struct FetcherConfigChecker {
     pub live_number: NoCheck<i8>,
     pub fetcher_count: NoCheck<i8>,
-    pub group_name: MaxLimitString<16>,
+    pub group_name: MaxLimitString<64>,
     pub platform: MaxLimitString<64>,
     pub datasource_id: NoCheck<i32>,
     pub interval: OptionChecker<NoRemainderChecker<1000>>,

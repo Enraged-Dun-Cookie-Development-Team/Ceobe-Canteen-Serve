@@ -83,9 +83,6 @@ impl FetcherPlatformConfigSqlOperate {
     {
         let db = db.get_connect()?;
         Ok(model_platform_config::Entity::find()
-            .select_only()
-            .column(model_platform_config::Column::TypeId)
-            .column(model_platform_config::Column::PlatformName)
             .into_model::<PlatformBasicInfo>()
             .all(db)
             .await?).tap_ok(|list| {
