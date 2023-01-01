@@ -36,7 +36,7 @@ impl FetcherConfigControllers {
 
             // 获取平台数量
             let count = FetcherPlatformConfigSqlOperate::get_platform_total_number(&db);
-            // 异步获取
+            // 并发执行
             let (platform_list, count) = future::join(platform_list, count).await;
 
             let resp = platform_list?.with_page_info(page_size, count?);
