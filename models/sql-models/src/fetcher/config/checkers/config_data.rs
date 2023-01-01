@@ -36,7 +36,7 @@ pub struct FetcherConfig {
 pub struct FetcherConfigChecker {
     pub live_number: NoCheck<i8>,
     pub fetcher_count: NoCheck<i8>,
-    pub group_name: MaxLimitString<64>,
+    pub group_name: MaxLimitString<64>, // TODO: MaxLimit兼容字符长度判断，包括中文，与数据库同步长度，数据库长度为32
     pub platform: MaxLimitString<64>,
     pub datasource_id: NoCheck<i32>,
     pub interval: OptionChecker<NoRemainderChecker<1000>>,
