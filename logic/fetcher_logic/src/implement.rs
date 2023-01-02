@@ -41,6 +41,7 @@ use sql_models::{
 
 use crate::{
     error::{LogicError, LogicResult},
+    utils::CreateAndGet,
     view::{BackFetcherConfig, Group, Server},
 };
 
@@ -72,15 +73,13 @@ where
 
     let resp = platform_list
         .into_iter()
-        .map(|platform_item| {
-            PlatformWithHasDatasource {
-                id: platform_item.id,
-                type_id: platform_item.type_id.clone(),
-                platform_name: platform_item.platform_name,
-                min_request_interval: platform_item.min_request_interval,
-                has_datasource: platform_datasource_exist_map
-                    .contains(&platform_item.type_id),
-            }
+        .map(|platform_item| PlatformWithHasDatasource {
+            id: platform_item.id,
+            type_id: platform_item.type_id.clone(),
+            platform_name: platform_item.platform_name,
+            min_request_interval: platform_item.min_request_interval,
+            has_datasource: platform_datasource_exist_map
+                .contains(&platform_item.type_id),
         })
         .collect();
 
@@ -108,8 +107,7 @@ where
             datasource_config,
         )
         .await?;
-    }
-    else {
+    } else {
         return Err(LogicError::NoPlatform);
     }
     Ok(())
@@ -146,11 +144,9 @@ where
     // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串
     let vec: Vec<FetcherGlobalConfigUncheck> = config
         .into_iter()
-        .map(|(key, value)| {
-            FetcherGlobalConfigUncheck {
-                key: key.require_check(),
-                value: value.to_string().require_check(),
-            }
+        .map(|(key, value)| FetcherGlobalConfigUncheck {
+            key: key.require_check(),
+            value: value.to_string().require_check(),
         })
         .collect();
     // 验证传入数据库数据的合法性
@@ -198,14 +194,9 @@ where
     let con = client.mut_connect()?;
     let mut live_number = 0;
     // 判断redis key存在，如果不存在则默认没有蹲饼器
-    if con
-        .exists(FetcherConfigKey::LIVE_NUMBER)
-        .await?
-    {
+    if con.exists(FetcherConfigKey::LIVE_NUMBER).await? {
         // 获取key的值
-        live_number = con
-            .get(FetcherConfigKey::LIVE_NUMBER)
-            .await?;
+        live_number = con.get(FetcherConfigKey::LIVE_NUMBER).await?;
     }
 
     Ok(live_number)
@@ -289,8 +280,7 @@ where
         )
         .await?;
         // TODO：告诉调度器哪个平台更新了
-    }
-    else {
+    } else {
         return Err(LogicError::NoPlatform);
     }
 
@@ -325,59 +315,18 @@ where
         interval_by_time_range,
     } in configs_in_db
     {
-        if configs_temp.get(&live_number).is_none() {
-            configs_temp.insert(
-                live_number,
-                HashMap::<i8, HashMap<String, Group>>::new(),
-            );
-        }
-        if configs_temp
-            .get(&live_number)
-            .unwrap()
-            .get(&(fetcher_count - 1))
-            .is_none()
-        {
-            configs_temp
-                .get_mut(&live_number)
-                .unwrap()
-                .insert(fetcher_count - 1, HashMap::<String, Group>::new());
-        }
-        if configs_temp
-            .get(&live_number)
-            .unwrap()
-            .get(&(fetcher_count - 1))
-            .unwrap()
-            .get(&group_name)
-            .is_none()
-        {
-            configs_temp
-                .get_mut(&live_number)
-                .unwrap()
-                .get_mut(&(fetcher_count - 1))
-                .unwrap()
-                .insert(
-                    group_name.clone(),
-                    Group {
-                        name: group_name,
-                        platform,
-                        datasource: vec![datasource_id],
-                        interval,
-                        interval_by_time_range: match interval_by_time_range {
-                            Some(str) => serde_json::from_str(&str)?,
-                            None => None,
-                        },
-                    },
-                );
-        }
-        else if let Some(group) = configs_temp
-            .get_mut(&live_number)
-            .unwrap()
-            .get_mut(&(fetcher_count - 1))
-            .unwrap()
-            .get_mut(&group_name)
-        {
-            group.datasource.push(datasource_id);
-        }
+        let server_temp =
+            configs_temp.get_mut_or_default(live_number)
+            .get_mut_or_default(fetcher_count - 1);
+
+        let group  = server_temp.get_or_try_create_with::<_, serde_json::Error>(group_name.clone(), || Ok(Group{
+            name:group_name,
+            platform,
+            datasource: vec![],
+            interval,
+            interval_by_time_range: interval_by_time_range.map(|str| serde_json::from_str(&str)).transpose()?,
+        }))?;
+        group.datasource.push(datasource_id);
     }
 
     // 对configs_temp根据key排序
