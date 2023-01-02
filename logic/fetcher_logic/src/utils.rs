@@ -1,13 +1,13 @@
 use std::{collections::{HashMap, hash_map::RandomState}, hash::{BuildHasher, Hash}};
 use std::collections::hash_map::Entry::{Vacant, Occupied};
-pub(super) trait CreateAndGet<K, V> {
+pub(super) trait GetOrCreate<K, V> {
     fn get_mut_or_create(&mut self, key: K, value: V) -> &mut V;
     fn get_mut_or_default(&mut self, key: K) -> &mut V where V: Default;
     fn get_mut_or_create_with<F: FnOnce() -> V>(&mut self, key: K, default:F) -> &mut V;
     fn get_or_try_create_with<F: FnOnce() -> Result<V, E>, E>(&mut self, key: K, default:F) -> Result<&mut V, E>;
 }
 
-impl<Q: std::hash::Hash + std::cmp::Eq, V, R:BuildHasher> CreateAndGet<Q, V> for HashMap<Q, V, R> {
+impl<Q: std::hash::Hash + std::cmp::Eq, V, R:BuildHasher> GetOrCreate<Q, V> for HashMap<Q, V, R> {
     fn get_mut_or_create(&mut self, key: Q, value: V) -> &mut V {
         self.entry(key).or_insert(value)
     }

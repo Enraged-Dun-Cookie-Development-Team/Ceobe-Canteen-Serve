@@ -41,7 +41,7 @@ use sql_models::{
 
 use crate::{
     error::{LogicError, LogicResult},
-    utils::CreateAndGet,
+    utils::GetOrCreate,
     view::{BackFetcherConfig, Group, Server},
 };
 
