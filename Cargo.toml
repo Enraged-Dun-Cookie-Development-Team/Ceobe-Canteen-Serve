@@ -67,7 +67,11 @@ urlencoding = "2.1.0"
 tracing-unwrap = { version = "0.10.0", features = ["log-location"] }
 http = "0.2"
 uuid = { version = "1.2.2", features = ["v4"] }
-redis = { version = "0.22" }
+redis = { version = "0.22", features = [
+    "tokio-comp",
+    "ahash",
+    "connection-manager"
+] }
 
 [dependencies]
 # Xss
@@ -109,7 +113,7 @@ tower-http = { version = "0.3", features = [
     "auth"
 ] }
 typed-builder = { workspace = true }
-url.workspace = true
+url = { workspace = true }
 urlencoding = { workspace = true }
 axum-macros = "0.3"
 tracing = { workspace = true }
