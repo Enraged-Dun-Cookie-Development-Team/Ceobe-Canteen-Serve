@@ -10,7 +10,7 @@ use crate::models::mongo::plugin_version::check::CheckError as PluginCheckError;
 
 use super::error::CeobeOperationVersionError;
 
-// 用于app版本请求参数
+/// 用于app版本请求参数
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct AppVersion {
     pub version: Option<String>,
@@ -28,7 +28,7 @@ pub struct OptionAppVersionChecker {
 pub type OptionAppVersionCheckerPretreat =
     QueryCheckExtract<OptionAppVersionChecker, CeobeOperationVersionError>;
 
-// 用于插件版本请求参数
+/// 用于插件版本请求参数
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct PluginVersion {
     pub version: Option<Version>,

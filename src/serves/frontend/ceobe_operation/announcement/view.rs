@@ -53,7 +53,7 @@ mod test {
     }
 }
 
-// 用于请求头缓存信息生成
+/// 用于请求头缓存信息生成
 pub struct AnnouncementItems(pub(super) Vec<AnnouncementItem>);
 impl AnnouncementItems {
     pub(super) fn into_inner(

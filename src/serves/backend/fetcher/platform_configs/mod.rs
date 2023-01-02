@@ -7,7 +7,7 @@ use self::error::PlatformConfigError;
 mod controllers;
 mod error;
 
-// 上传平台验证
+/// 上传平台验证
 type FetcherPlatformCheck =
     JsonCheckExtract<FetcherPlatformConfigChecker, PlatformConfigError>;
 

@@ -29,7 +29,7 @@ pub enum OperateError {
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
 
-// 查询平台个数
+/// 查询平台个数
 #[derive(FromQueryResult)]
 struct PlatformCounts {
     pub(crate) count: i64,

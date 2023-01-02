@@ -44,7 +44,7 @@ use crate::{
     view::{BackFetcherConfig, Group, Server},
 };
 
-// 分页获取获取平台信息并且附带该平台下有无数据源
+/// 分页获取获取平台信息并且附带该平台下有无数据源
 pub async fn get_platform_list_with_has_datasource<'db, D>(
     db: &'db D, page_size: PageSize,
 ) -> LogicResult<Vec<PlatformWithHasDatasource>>
@@ -87,7 +87,7 @@ where
     Ok(resp)
 }
 
-// 新建数据源配置
+/// 新建数据源配置
 pub async fn create_datasource_config<'db, D>(
     db: &'db D, datasource_config: FetcherDatasourceConfig,
 ) -> LogicResult<()>
@@ -115,7 +115,7 @@ where
     Ok(())
 }
 
-// 从数据库获取json的key和value，拼接成json格式返回
+/// 从数据库获取json的key和value，拼接成json格式返回
 pub async fn get_global_configs<'db, D>(db: &'db D) -> LogicResult<Value>
 where
     D: GetDatabaseConnect<Error = DbErr> + 'static,
@@ -135,7 +135,7 @@ where
     Ok(obj)
 }
 
-// 接收来自controller的json格式
+/// 接收来自controller的json格式
 pub async fn set_global_config<'db, D>(
     db: &'db D, config: Map<String, Value>,
 ) -> LogicResult<()>
@@ -159,7 +159,7 @@ where
     Ok(())
 }
 
-// 删除一个数据源
+/// 删除一个数据源
 pub async fn delete_datasource_by_id<'db, D>(
     db: &'db D, id: i32,
 ) -> LogicResult<()>
@@ -187,7 +187,7 @@ where
     Ok(())
 }
 
-// 获取蹲饼器最大存活数量
+/// 获取蹲饼器最大存活数量
 pub async fn get_cookie_fetcher_max_live_number<'client, C>(
     client: &'client mut C,
 ) -> LogicResult<i8>
@@ -211,7 +211,7 @@ where
     Ok(live_number)
 }
 
-// 上传蹲饼器配置
+/// 上传蹲饼器配置
 pub async fn upload_cookie_fetcher_configs<'db, D>(
     db: &'db D, configs: Vec<BackFetcherConfig>,
 ) -> LogicResult<()>
@@ -297,7 +297,7 @@ where
     Ok(())
 }
 
-// 获取蹲饼器配置
+/// 获取蹲饼器配置
 pub async fn get_cookie_fetcher_configs<'db, D>(
     db: &'db D, platform: String,
 ) -> LogicResult<Vec<BackFetcherConfig>>

@@ -16,7 +16,7 @@ pub struct FetcherGlobalConfig {
     pub value: String,
 }
 
-// 对上传数据进行校验
+/// 对上传数据进行校验
 #[check_obj(
     uncheck = FetcherGlobalConfigUncheck,
     checked = FetcherGlobalConfig,
@@ -40,7 +40,7 @@ impl model_global_config::ActiveModel {
     }
 }
 
-// 用于验证FetcherGlobalConfig数组
+/// 用于验证FetcherGlobalConfig数组
 pub type FetcherGlobalConfigVecChecker = IntoIterChecker<
     Vec<FetcherGlobalConfigUncheck>,
     FetcherGlobalConfigChecker,

@@ -11,7 +11,7 @@ use http::StatusCode;
 
 use crate::{status_error, ErrPrefix, StatusErr};
 
-// io prefix
+/// io prefix
 status_error!(
     std::io::Error
     [
@@ -19,7 +19,7 @@ status_error!(
         0x0001:StatusCode::INTERNAL_SERVER_ERROR
     ] -> "IO时出现异常"
 );
-// parse prefix
+/// parse prefix
 status_error!(
 url::ParseError[
     ErrPrefix::PARSE,
@@ -65,7 +65,7 @@ status_error!(
     ] -> "非法 Http 请求头内容"
 );
 
-// check prefix
+/// check prefix
 status_error!(
 Infallible[
     ErrPrefix::CHECKER,
@@ -126,7 +126,7 @@ status_error!(
     ] -> "解析`MultiPart`异常 "
 );
 
-// authorized prefix
+/// authorized prefix
 status_error!(
     bcrypt::BcryptError[
         ErrPrefix::UNAUTHORIZED,

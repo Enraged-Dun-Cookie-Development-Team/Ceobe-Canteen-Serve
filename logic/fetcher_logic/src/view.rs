@@ -52,7 +52,7 @@ pub struct PlatformFilterReq {
     pub type_id: String,
 }
 
-// 映射单个id
+/// 映射单个id
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct OneIdReq {
     pub id: i32,

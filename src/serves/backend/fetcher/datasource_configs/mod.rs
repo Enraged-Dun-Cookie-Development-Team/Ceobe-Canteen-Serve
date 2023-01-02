@@ -12,6 +12,6 @@ mod error;
 type PageSizePretreatment =
     QueryCheckExtract<PageSizeChecker, DatasourceConfigError>;
 
-// 上传数据源验证
+/// 上传数据源验证
 type FetcherDatasourceCheck =
     JsonCheckExtract<FetcherDatasourceConfigChecker, DatasourceConfigError>;

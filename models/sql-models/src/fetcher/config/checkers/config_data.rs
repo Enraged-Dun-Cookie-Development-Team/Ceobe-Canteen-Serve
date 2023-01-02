@@ -74,7 +74,7 @@ impl model_config::ActiveModel {
     }
 }
 
-// 用于验证FetcherConfig数组
+/// 用于验证FetcherConfig数组
 pub type FetcherConfigVecChecker = IntoIterChecker<
     Vec<FetcherConfigUncheck>,
     FetcherConfigChecker,
