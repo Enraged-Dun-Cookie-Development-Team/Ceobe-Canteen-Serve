@@ -3,7 +3,7 @@ use std::collections::{BTreeSet, HashMap};
 use checker::{Checker, ToCheckRequire};
 use page_size::request::PageSize;
 use redis::{AsyncCommands, RedisError};
-use redis_global::redis_key;
+use redis_global::redis_key::{self, fetcher::FetcherConfigKey};
 use serde_json::{Map, Value};
 use sql_models::{
     fetcher::{
@@ -199,12 +199,12 @@ where
     let mut live_number = 0;
     // 判断redis key存在，如果不存在则默认没有蹲饼器
     if con
-        .exists(redis_key::fetcher::COOKIE_FETCHER_CONFIG_LIVE_NUMBER)
+        .exists(FetcherConfigKey::LIVE_NUMBER)
         .await?
     {
         // 获取key的值
         live_number = con
-            .get(redis_key::fetcher::COOKIE_FETCHER_CONFIG_LIVE_NUMBER)
+            .get(FetcherConfigKey::LIVE_NUMBER)
             .await?;
     }
 
