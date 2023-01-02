@@ -44,20 +44,14 @@ impl model_platform_config::ActiveModel {
             min_request_interval,
         }: FetcherPlatformConfig,
     ) -> Self {
-        Self {
-            id: match id {
-                Some(id) => Set(id),
-                None => NotSet,
-            },
-            type_id: match id {
-                Some(_) => NotSet,
-                None => Set(type_id),
-            },
-            platform_name: match id {
-                Some(_) => NotSet,
-                None => Set(platform_name),
-            },
-            min_request_interval: Set(min_request_interval),
-        }
+            let mut this = Self::default();
+            if let Some(id) = id {
+                this.id = Set(id);
+            }else {
+                this.type_id = Set(type_id);
+                this.platform_name = Set(platform_name);
+            }
+            this.min_request_interval= Set(min_request_interval);
+        this
     }
 }

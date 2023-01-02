@@ -18,12 +18,15 @@ use sub_model::SubModel;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
+    /// 平台type
     #[sub_model(want("PlatformType"), want("PlatformBasicInfo"))]
-    pub type_id: String, // 平台type
+    pub type_id: String, 
+    /// 平台名字
     #[sub_model(want("PlatformBasicInfo"))]
-    pub platform_name: String, // 平台名字
+    pub platform_name: String, 
+    /// 最小蹲饼间隔
     #[sub_model(want("PlatformBasicInfo"))]
-    pub min_request_interval: u64, // 最小蹲饼间隔
+    pub min_request_interval: u64, 
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

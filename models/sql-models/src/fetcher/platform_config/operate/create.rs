@@ -9,7 +9,7 @@ use crate::fetcher::platform_config::{
 };
 
 impl FetcherPlatformConfigSqlOperate {
-    // 保存平台配置到数据库
+    /// 保存平台配置到数据库
     #[instrument(ret, skip(db))]
     pub async fn create_platform_config<'db, D>(
         db: &'db D, config: FetcherPlatformConfig,

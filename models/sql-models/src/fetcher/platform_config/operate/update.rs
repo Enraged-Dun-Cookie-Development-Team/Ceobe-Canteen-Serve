@@ -9,7 +9,7 @@ use crate::fetcher::platform_config::{
 };
 
 impl FetcherPlatformConfigSqlOperate {
-    // 更新平台配置到数据库
+    /// 更新平台配置到数据库
     #[instrument(ret, skip(db))]
     pub async fn update_platform_config<'db, D>(
         db: &'db D, config: FetcherPlatformConfig,
@@ -29,7 +29,6 @@ impl FetcherPlatformConfigSqlOperate {
         let platform_config_active =
             ActiveModel::platform_config_into_active_model(config);
         platform_config_active
-            .into_active_model()
             .update(db)
             .await?;
 

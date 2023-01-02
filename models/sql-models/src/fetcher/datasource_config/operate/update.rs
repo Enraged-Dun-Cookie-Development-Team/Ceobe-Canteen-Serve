@@ -10,7 +10,7 @@ use crate::fetcher::datasource_config::{
 };
 
 impl FetcherDatasourceConfigSqlOperate {
-    // 更新数据配置到数据库
+    /// 更新数据配置到数据库
     #[instrument(ret, skip(db))]
     pub async fn update_platform_config<'db, D>(
         db: &'db D, config: FetcherDatasourceConfig,
@@ -23,8 +23,7 @@ impl FetcherDatasourceConfigSqlOperate {
             config.id = config.id,
             datasource.name = config.nickname,
             datasource.avatar = config.avatar.to_string(),
-            datasouce.config = serde_json::to_string(&config.config)
-                .expect_or_log("config为非法json格式"),
+            datasouce.config = ?config.config
         );
 
         let db = db.get_connect()?;

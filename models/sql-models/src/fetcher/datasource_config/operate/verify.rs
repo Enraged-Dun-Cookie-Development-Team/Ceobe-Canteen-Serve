@@ -6,7 +6,7 @@ use std::{
 use sea_orm::{
     sea_query::{Cond, Expr, Query},
     ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
-    QuerySelect,
+    QuerySelect, Condition,
 };
 use sea_query::{Alias, SelectStatement, UnionType};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
@@ -21,7 +21,7 @@ use crate::fetcher::datasource_config::{
 };
 
 impl FetcherDatasourceConfigSqlOperate {
-    // 验证id数组是否都存在
+    /// 验证id数组是否都存在
     #[instrument(ret, skip(db))]
     pub async fn has_all_datasource_ids<'db, D, T>(
         db: &'db D, ids: T,
@@ -62,7 +62,7 @@ impl FetcherDatasourceConfigSqlOperate {
         Ok(resp.count == 0)
     }
 
-    // 验证平台下是否还有数据源
+    /// 验证平台下是否还有数据源
     #[instrument(ret, skip(db))]
     pub async fn has_datasource_from_platforms<'db, D>(
         db: &'db D, platforms: Vec<String>,
@@ -71,25 +71,17 @@ impl FetcherDatasourceConfigSqlOperate {
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
-        let mut condition = Cond::any();
-        for platform in platforms {
-            condition = condition.add(Column::Platform.eq(platform))
-        }
-
         let db = db.get_connect()?;
         let resp = Entity::find()
             .select_only()
             .column(Column::Platform)
-            .filter(condition)
+            .filter(Column::Platform.is_in(platforms))
             .group_by(Column::Platform)
             .into_model::<PlatformDatasource>()
             .all(db)
             .await?;
 
-        let mut exist_map = BTreeSet::new();
-        for platform_datasource in resp {
-            exist_map.insert(platform_datasource.platform);
-        }
+        let exist_map = BTreeSet::from_iter(resp.into_iter().map(|item| item.platform));
 
         Ok(exist_map)
     }

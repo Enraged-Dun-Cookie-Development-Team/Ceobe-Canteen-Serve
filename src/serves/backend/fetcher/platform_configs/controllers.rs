@@ -24,7 +24,7 @@ use crate::{
 };
 
 impl FetcherConfigControllers {
-    // 分页获取平台列表
+    /// 分页获取平台列表
     #[instrument(ret, skip(db))]
     pub async fn get_platform_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
@@ -46,7 +46,7 @@ impl FetcherConfigControllers {
         .await
     }
 
-    // 创建一个平台配置
+    /// 创建一个平台配置
     #[instrument(ret, skip(db))]
     pub async fn create_platform_config(
         db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
@@ -61,7 +61,7 @@ impl FetcherConfigControllers {
         Ok(()).into()
     }
 
-    // 更新一个平台配置
+    /// 更新一个平台配置
     #[instrument(ret, skip(db))]
     pub async fn update_platform_config(
         db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
@@ -76,7 +76,7 @@ impl FetcherConfigControllers {
         Ok(()).into()
     }
 
-    // 删除平台配置
+    /// 删除平台配置
     #[instrument(ret, skip(db))]
     pub async fn delete_platform_config(
         db: SqlConnect,
@@ -93,10 +93,10 @@ impl FetcherConfigControllers {
     }
 
     #[instrument(skip(db))]
-    // 获取全部平台列表
+    /// 获取全部平台列表
     pub async fn get_platform_all_list_with_basic_info(
         db: SqlConnect,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
-        Ok(rtry!(FetcherPlatformConfigSqlOperate::find_platform_list_with_basic_info(&db).await)).into()
+        Ok(rtry!(FetcherPlatformConfigSqlOperate::find_all_platform_list_with_basic_info(&db).await)).into()
     }
 }

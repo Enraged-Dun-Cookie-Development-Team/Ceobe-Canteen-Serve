@@ -2,8 +2,8 @@ use std::ops::Deref;
 
 use page_size::{database::OffsetLimit, request::PageSize};
 use sea_orm::{
-    ColumnTrait, ConnectionTrait, DbErr, EntityTrait, PaginatorTrait,
-    QueryFilter, QuerySelect,
+    ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait,
+    PaginatorTrait, QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
@@ -34,24 +34,23 @@ impl FetcherDatasourceConfigSqlOperate {
             datasourceList.filter.datasource = datasource,
         );
         let db = db.get_connect()?;
-        let mut db_session = model_datasource_config::Entity::find();
-        // 判断是否有传入值，来增加筛选项
-        if let Some(platform_str) = platform {
-            db_session = db_session.filter(
-                model_datasource_config::Column::Platform.eq(platform_str),
-            );
-        }
-        if let Some(datasource_str) = datasource {
-            db_session = db_session.filter(
-                model_datasource_config::Column::Datasource
-                    .eq(datasource_str),
-            );
-        }
-        let result = db_session
+        let result = model_datasource_config::Entity::find()
+            .filter(
+                Condition::all()
+                    .add_option(platform.map(|platform_str| {
+                        model_datasource_config::Column::Platform
+                            .eq(platform_str)
+                    }))
+                    .add_option(datasource.map(|datasource_str| {
+                        model_datasource_config::Column::Datasource
+                            .eq(datasource_str)
+                    })),
+            )
             .offset_limit(page_size)
             .into_model::<model_datasource_config::BackendDatasource>()
             .all(db)
             .await?;
+
         Ok(result).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
@@ -89,7 +88,7 @@ impl FetcherDatasourceConfigSqlOperate {
     #[instrument(skip(db))]
     /// 获取全部数据源类型列表（如：B站动态、B站视频、网易云专辑、
     /// 网易云歌手等）
-    pub async fn find_datasource_type_list<'db, D>(
+    pub async fn find_all_datasource_type_list<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<String>>
     where
@@ -125,19 +124,20 @@ impl FetcherDatasourceConfigSqlOperate {
         D::Connect<'db>: ConnectionTrait,
     {
         let db = db.get_connect()?;
-        let mut db_session = model_datasource_config::Entity::find();
-        // 判断是否有传入值，来增加筛选项
-        if let Some(platform_str) = platform {
-            db_session = db_session.filter(
-                model_datasource_config::Column::Platform.eq(platform_str),
-            );
-        }
-        if let Some(datasource_str) = datasource {
-            db_session = db_session.filter(
-                model_datasource_config::Column::Datasource
-                    .eq(datasource_str),
-            );
-        }
-        db_session.count(db).await.map_err(Into::into)
+        model_datasource_config::Entity::find()
+            .filter(
+                Condition::all()
+                    .add_option(platform.map(|platform_str| {
+                        model_datasource_config::Column::Platform
+                            .eq(platform_str)
+                    }))
+                    .add_option(datasource.map(|datasource_str| {
+                        model_datasource_config::Column::Datasource
+                            .eq(datasource_str)
+                    })),
+            )
+            .count(db)
+            .await
+            .map_err(Into::into)
     }
 }

@@ -11,7 +11,7 @@ use super::error::{FetcherConfigError, FetcherConfigRResult};
 use crate::router::FetcherConfigControllers;
 
 impl FetcherConfigControllers {
-    // 获取到目前为止最大存活蹲饼器数量
+    /// 获取到目前为止最大存活蹲饼器数量
     #[instrument(ret, skip(client))]
     pub async fn get_fetcher_max_live_number(
         mut client: RedisConnect,
@@ -31,7 +31,7 @@ impl FetcherConfigControllers {
         .await
     }
 
-    // 上传蹲饼器配置
+    /// 上传蹲饼器配置
     #[instrument(ret, skip(db, configs))]
     pub async fn upload_fetchers_configs(
         db: SqlConnect,
@@ -49,11 +49,11 @@ impl FetcherConfigControllers {
         Ok(()).into()
     }
 
-    // 根据平台获取蹲饼器配置
+    /// 根据平台获取蹲饼器配置
     #[instrument(skip(db))]
     pub async fn get_fetchers_configs(
         db: SqlConnect,
-        MapReject(platform): MapReject<
+        MapReject(PlatformFilterReq{ type_id }): MapReject<
             Query<PlatformFilterReq>,
             FetcherConfigError,
         >,
@@ -61,7 +61,7 @@ impl FetcherConfigControllers {
         Ok(rtry!(
             fetcher_logic::implement::get_cookie_fetcher_configs(
                 &db,
-                platform.type_id
+                type_id
             )
             .await
         ))

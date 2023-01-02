@@ -8,7 +8,7 @@ use super::error::{GlobalConfigError, GlobalConfigRResult};
 use crate::router::FetcherConfigControllers;
 
 impl FetcherConfigControllers {
-    // 更新蹲饼器全局变量
+    /// 更新蹲饼器全局变量
     #[instrument(ret, skip(db))]
     pub async fn upload_global_configs(
         db: SqlConnect,
@@ -23,7 +23,7 @@ impl FetcherConfigControllers {
             .into()
     }
 
-    // 获取蹲饼器全局变量
+    /// 获取蹲饼器全局变量
     #[instrument(ret, skip(db))]
     pub async fn get_global_configs(
         db: SqlConnect,

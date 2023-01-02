@@ -23,7 +23,7 @@ use super::{
 use crate::router::FetcherConfigControllers;
 
 impl FetcherConfigControllers {
-    // 获取平台与数据源类型列表
+    /// 获取平台与数据源类型列表
     #[instrument(ret, skip(db))]
     pub async fn get_platform_and_datasource_list(
         db: SqlConnect,
@@ -35,7 +35,7 @@ impl FetcherConfigControllers {
 
             // 获取数据源数量
             let datasource_list =
-                FetcherDatasourceConfigSqlOperate::find_datasource_type_list(
+                FetcherDatasourceConfigSqlOperate::find_all_datasource_type_list(
                     &db,
                 );
             // 异步获取
@@ -52,7 +52,7 @@ impl FetcherConfigControllers {
         .await
     }
 
-    // 获取数据源列表
+    /// 获取数据源列表
     #[instrument(ret, skip(db))]
     pub async fn get_datasource_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
@@ -78,7 +78,7 @@ impl FetcherConfigControllers {
         .await
     }
 
-    // 上传数据源配置
+    /// 上传数据源配置
     #[instrument(ret, skip(db))]
     pub async fn create_datasource_config(
         db: SqlConnect,
@@ -129,7 +129,7 @@ impl FetcherConfigControllers {
         Ok(()).into()
     }
 
-    // 获取数据源配置全列表(包含id、名字、config)
+    /// 获取数据源配置全列表(包含id、名字、config)
     #[instrument(ret, skip(db))]
     pub async fn get_datasource_name_list(
         db: SqlConnect,

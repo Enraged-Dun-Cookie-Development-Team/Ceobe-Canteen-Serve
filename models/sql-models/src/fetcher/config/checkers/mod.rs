@@ -12,7 +12,7 @@ pub enum CheckError {
     #[error("范围超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),
 
-    #[error("无法被{0}整除")]
+    #[error(transparent)]
     HasRem(#[from] HasRemError<1000>),
 }
 

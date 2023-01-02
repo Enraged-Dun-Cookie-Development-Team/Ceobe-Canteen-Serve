@@ -5,8 +5,10 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub key: String,   // 键
-    pub value: String, // 值
+    /// 键
+    pub key: String,
+    /// 值
+    pub value: String,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

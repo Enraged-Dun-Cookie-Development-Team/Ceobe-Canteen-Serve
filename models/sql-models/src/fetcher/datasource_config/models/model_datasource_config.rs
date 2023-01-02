@@ -22,33 +22,41 @@ use sub_model::SubModel;
     )
 )]
 pub struct Model {
+    /// 平台type
     #[sea_orm(primary_key)]
     #[sub_model(want("DataSourceForFetcherConfig"))]
     pub id: i32,
-    pub platform: String, // 平台type
+    pub platform: String,
+    /// 数据源type
     #[sub_model(
         want("SingleDatasourceInfo"),
         want("DataSourceForFetcherConfig")
     )]
-    pub datasource: String, // 数据源type
+    pub datasource: String,
+    /// 数据源名字
     #[sub_model(
         want("DataSourceForFetcherConfig"),
         want("FrontendDatasource")
     )]
-    pub nickname: String, // 数据源名字
+    pub nickname: String,
+    /// 数据源头像
     #[sub_model(want("FrontendDatasource"))]
-    pub avatar: String, // 数据源头像
+    pub avatar: String,
+    /// 数据源配置
     #[sub_model(want("DataSourceForFetcherConfig"))]
-    pub config: String, // 数据源配置
+    pub config: String,
+    /// 数据源uuid，给用户端使用
     #[sub_model(ignore("BackendDatasource"), want("FrontendDatasource"))]
-    pub unique_id: Uuid, // 数据源uuid，给用户端使用
+    pub unique_id: Uuid,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
 pub enum Relation {}
 
 impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef { panic!("No Relate") }
+    fn def(&self) -> RelationDef {
+        panic!("No Relate")
+    }
 }
 
 impl ActiveModelBehavior for ActiveModel {}

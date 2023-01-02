@@ -6,7 +6,7 @@ use crate::fetcher::config::models::model_config;
 
 impl FetcherConfigSqlOperate {
     #[instrument(skip(db), ret)]
-    // 根据平台删除相关配置
+    /// 根据平台删除相关配置
     pub async fn delete_fetcher_configs_by_platform<'db>(
         db: &impl ConnectionTrait, platform: String,
     ) -> OperateResult<()> {
@@ -21,7 +21,7 @@ impl FetcherConfigSqlOperate {
     }
 
     #[instrument(skip(db), ret)]
-    // 根据数据源id删除相关配置
+    /// 根据数据源id删除相关配置
     pub async fn delete_fetcher_configs_by_datasource_id<'db>(
         db: &impl ConnectionTrait, did: i32,
     ) -> OperateResult<()> {

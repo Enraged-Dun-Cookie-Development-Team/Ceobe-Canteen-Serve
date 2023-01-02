@@ -74,7 +74,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db))]
     /// 获取全部平台基础信息列表
-    pub async fn find_platform_list_with_basic_info<'db, D>(
+    pub async fn find_all_platform_list_with_basic_info<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<PlatformBasicInfo>>
     where
