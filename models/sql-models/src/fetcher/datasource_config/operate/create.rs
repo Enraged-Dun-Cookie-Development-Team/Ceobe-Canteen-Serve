@@ -1,7 +1,6 @@
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
-use tracing_unwrap::ResultExt;
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
 use crate::fetcher::datasource_config::{

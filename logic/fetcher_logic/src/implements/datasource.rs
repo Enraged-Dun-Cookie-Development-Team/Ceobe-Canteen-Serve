@@ -1,11 +1,24 @@
-use crate::implements::FetcherConfigLogic;
-use crate::error::{LogicResult, LogicError};
-use sql_models::fetcher::config::operate::FetcherConfigSqlOperate;
-use sql_models::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
-use sql_models::fetcher::datasource_config::operate::FetcherDatasourceConfigSqlOperate;
-use sql_models::fetcher::platform_config::operate::FetcherPlatformConfigSqlOperate;
-use sql_models::sql_connection::database_traits::get_connect::{GetDatabaseConnect, GetDatabaseTransaction, TransactionOps};
-use sql_models::sql_connection::sea_orm::{ConnectionTrait, DbErr};
+use sql_models::{
+    fetcher::{
+        config::operate::FetcherConfigSqlOperate,
+        datasource_config::{
+            checkers::datasource_config_data::FetcherDatasourceConfig,
+            operate::FetcherDatasourceConfigSqlOperate,
+        },
+        platform_config::operate::FetcherPlatformConfigSqlOperate,
+    },
+    sql_connection::{
+        database_traits::get_connect::{
+            GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+        },
+        sea_orm::{ConnectionTrait, DbErr},
+    },
+};
+
+use crate::{
+    error::{LogicError, LogicResult},
+    implements::FetcherConfigLogic,
+};
 
 impl FetcherConfigLogic {
     /// 新建数据源配置
@@ -29,7 +42,8 @@ impl FetcherConfigLogic {
                 datasource_config,
             )
             .await?;
-        } else {
+        }
+        else {
             return Err(LogicError::NoPlatform);
         }
         Ok(())

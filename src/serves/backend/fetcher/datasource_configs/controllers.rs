@@ -1,10 +1,12 @@
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
-use fetcher_logic::view::{
-    DatasourceList, DatasourceListFilterCondReq, DatasourceWithNameResp,
-    OneIdReq, PlatformAndDatasourceArrayResp, PlatformFilterReq,
+use fetcher_logic::{
+    implements::FetcherConfigLogic,
+    view::{
+        DatasourceList, DatasourceListFilterCondReq, DatasourceWithNameResp,
+        OneIdReq, PlatformAndDatasourceArrayResp, PlatformFilterReq,
+    },
 };
-use fetcher_logic::implements::FetcherConfigLogic;
 use futures::future;
 use orm_migrate::{
     sql_connection::SqlConnect,
@@ -121,11 +123,8 @@ impl FetcherConfigControllers {
         >,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            FetcherConfigLogic::delete_datasource_by_id(
-                &db,
-                datasource.id
-            )
-            .await
+            FetcherConfigLogic::delete_datasource_by_id(&db, datasource.id)
+                .await
         );
         Ok(()).into()
     }

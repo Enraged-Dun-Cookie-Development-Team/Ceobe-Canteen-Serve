@@ -1,8 +1,8 @@
 use axum::{extract::Query, Json};
-use fetcher_logic::view::{
-    BackFetcherConfig, MaxLiveNumberResp, PlatformFilterReq,
+use fetcher_logic::{
+    implements::FetcherConfigLogic,
+    view::{BackFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
-use fetcher_logic::implements::FetcherConfigLogic;
 use orm_migrate::sql_connection::SqlConnect;
 use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
@@ -42,10 +42,8 @@ impl FetcherConfigControllers {
         >,
     ) -> FetcherConfigRResult<()> {
         rtry!(
-            FetcherConfigLogic::upload_cookie_fetcher_configs(
-                &db, configs
-            )
-            .await
+            FetcherConfigLogic::upload_cookie_fetcher_configs(&db, configs)
+                .await
         );
         Ok(()).into()
     }
@@ -54,17 +52,14 @@ impl FetcherConfigControllers {
     #[instrument(skip(db))]
     pub async fn get_fetchers_configs(
         db: SqlConnect,
-        MapReject(PlatformFilterReq{ type_id }): MapReject<
+        MapReject(PlatformFilterReq { type_id }): MapReject<
             Query<PlatformFilterReq>,
             FetcherConfigError,
         >,
     ) -> FetcherConfigRResult<Vec<BackFetcherConfig>> {
         Ok(rtry!(
-            FetcherConfigLogic::get_cookie_fetcher_configs(
-                &db,
-                type_id
-            )
-            .await
+            FetcherConfigLogic::get_cookie_fetcher_configs(&db, type_id)
+                .await
         ))
         .into()
     }

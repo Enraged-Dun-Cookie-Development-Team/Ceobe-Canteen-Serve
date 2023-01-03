@@ -6,7 +6,7 @@ use checker::{
     },
 };
 use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
-use sea_orm::{ActiveValue::NotSet, Set};
+use sea_orm::Set;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
@@ -44,14 +44,15 @@ impl model_platform_config::ActiveModel {
             min_request_interval,
         }: FetcherPlatformConfig,
     ) -> Self {
-            let mut this = Self::default();
-            if let Some(id) = id {
-                this.id = Set(id);
-            }else {
-                this.type_id = Set(type_id);
-                this.platform_name = Set(platform_name);
-            }
-            this.min_request_interval= Set(min_request_interval);
+        let mut this = Self::default();
+        if let Some(id) = id {
+            this.id = Set(id);
+        }
+        else {
+            this.type_id = Set(type_id);
+            this.platform_name = Set(platform_name);
+        }
+        this.min_request_interval = Set(min_request_interval);
         this
     }
 }

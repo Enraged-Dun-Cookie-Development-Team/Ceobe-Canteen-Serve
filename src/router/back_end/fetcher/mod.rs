@@ -1,18 +1,17 @@
-mod global;
-mod detail;
 pub mod datasource;
+mod detail;
+mod global;
 mod platform;
-use axum::{
-    routing::{delete, get, post},
-    Router,
-};
+use axum::{routing::post, Router};
 
+use self::{
+    datasource::fetcher_datasource_config, detail::fetcher_detail_config,
+    global::fetcher_global_config, platform::fetcher_platform_config,
+};
 use crate::{
     middleware::authorize::AuthorizeLayer, router::ServerRoute,
     utils::user_authorize::auth_level::prefabs::Chef,
 };
-
-use self::{platform::fetcher_platform_config, datasource::fetcher_datasource_config, global::fetcher_global_config, detail::fetcher_detail_config};
 pub struct FetcherConfigControllers;
 
 pub fn fetcher_config() -> ServerRoute {

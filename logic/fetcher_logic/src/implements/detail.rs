@@ -1,13 +1,34 @@
 use std::collections::{BTreeSet, HashMap};
 
-use checker::ToCheckRequire;
-use redis::{RedisError, AsyncCommands};
+use checker::{Checker, ToCheckRequire};
+use redis::{AsyncCommands, RedisError};
 use redis_global::redis_key::fetcher::FetcherConfigKey;
-use sql_models::{sql_connection::{database_traits::get_connect::{GetMutDatabaseConnect, GetDatabaseTransaction, GetDatabaseConnect}, sea_orm::{DbErr, ConnectionTrait}}, fetcher::{config::{checkers::config_data::{FetcherConfig, FetcherConfigVecChecker}, operate::FetcherConfigSqlOperate}, platform_config::operate::FetcherPlatformConfigSqlOperate, datasource_config::operate::FetcherDatasourceConfigSqlOperate}};
-use sql_models::fetcher::config::{checkers::config_data::FetcherConfigUncheck , models::model_config::Model as FetcherConfigModel,};
-use crate::{error::{LogicResult, LogicError}, view::{BackFetcherConfig, Server, Group}, utils::GetOrCreate};
-use checker::Checker;
+use sql_models::{
+    fetcher::{
+        config::{
+            checkers::config_data::{
+                FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
+            },
+            models::model_config::Model as FetcherConfigModel,
+            operate::FetcherConfigSqlOperate,
+        },
+        datasource_config::operate::FetcherDatasourceConfigSqlOperate,
+        platform_config::operate::FetcherPlatformConfigSqlOperate,
+    },
+    sql_connection::{
+        database_traits::get_connect::{
+            GetDatabaseConnect, GetDatabaseTransaction, GetMutDatabaseConnect,
+        },
+        sea_orm::{ConnectionTrait, DbErr},
+    },
+};
+
 use super::FetcherConfigLogic;
+use crate::{
+    error::{LogicError, LogicResult},
+    utils::GetOrCreate,
+    view::{BackFetcherConfig, Group, Server},
+};
 
 impl FetcherConfigLogic {
     /// 获取蹲饼器最大存活数量
@@ -108,7 +129,8 @@ impl FetcherConfigLogic {
             )
             .await?;
             // TODO：告诉调度器哪个平台更新了
-        } else {
+        }
+        else {
             return Err(LogicError::NoPlatform);
         }
 

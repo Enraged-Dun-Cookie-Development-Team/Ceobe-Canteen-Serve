@@ -4,9 +4,9 @@ use std::{
 };
 
 use sea_orm::{
-    sea_query::{Cond, Expr, Query},
+    sea_query::{Expr, Query},
     ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
-    QuerySelect, Condition,
+    QuerySelect,
 };
 use sea_query::{Alias, SelectStatement, UnionType};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
@@ -81,7 +81,8 @@ impl FetcherDatasourceConfigSqlOperate {
             .all(db)
             .await?;
 
-        let exist_map = BTreeSet::from_iter(resp.into_iter().map(|item| item.platform));
+        let exist_map =
+            BTreeSet::from_iter(resp.into_iter().map(|item| item.platform));
 
         Ok(exist_map)
     }

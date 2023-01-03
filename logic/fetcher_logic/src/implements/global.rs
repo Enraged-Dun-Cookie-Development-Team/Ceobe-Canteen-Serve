@@ -1,11 +1,21 @@
-use checker::ToCheckRequire;
+use checker::{Checker, ToCheckRequire};
 use serde_json::{Map, Value};
-use sql_models::{sql_connection::{database_traits::get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, DbErr}}, fetcher::global_config::{operate::FetcherGlobalConfigSqlOperate, checkers::global_config_data::FetcherGlobalConfigVecChecker, models::model_global_config::Model}};
-use sql_models::fetcher::global_config::checkers::global_config_data::FetcherGlobalConfigUncheck;
-use crate::error::LogicResult;
-use checker::Checker;
+use sql_models::{
+    fetcher::global_config::{
+        checkers::global_config_data::{
+            FetcherGlobalConfigUncheck, FetcherGlobalConfigVecChecker,
+        },
+        models::model_global_config::Model,
+        operate::FetcherGlobalConfigSqlOperate,
+    },
+    sql_connection::{
+        database_traits::get_connect::GetDatabaseConnect,
+        sea_orm::{ConnectionTrait, DbErr},
+    },
+};
 
 use super::FetcherConfigLogic;
+use crate::error::LogicResult;
 
 impl FetcherConfigLogic {
     /// 从数据库获取json的key和value，拼接成json格式返回
@@ -39,9 +49,11 @@ impl FetcherConfigLogic {
         // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串
         let vec: Vec<FetcherGlobalConfigUncheck> = config
             .into_iter()
-            .map(|(key, value)| FetcherGlobalConfigUncheck {
-                key: key.require_check(),
-                value: value.to_string().require_check(),
+            .map(|(key, value)| {
+                FetcherGlobalConfigUncheck {
+                    key: key.require_check(),
+                    value: value.to_string().require_check(),
+                }
             })
             .collect();
         // 验证传入数据库数据的合法性

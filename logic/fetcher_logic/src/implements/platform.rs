@@ -1,6 +1,19 @@
-use sql_models::{fetcher::{datasource_config::operate::FetcherDatasourceConfigSqlOperate, platform_config::{models::model_platform_config::PlatformWithHasDatasource, operate::FetcherPlatformConfigSqlOperate}}, sql_connection::{database_traits::get_connect::GetDatabaseConnect, sea_orm::{DbErr, ConnectionTrait}}};
-use crate::{implements::FetcherConfigLogic, error::LogicResult};
 use page_size::request::PageSize;
+use sql_models::{
+    fetcher::{
+        datasource_config::operate::FetcherDatasourceConfigSqlOperate,
+        platform_config::{
+            models::model_platform_config::PlatformWithHasDatasource,
+            operate::FetcherPlatformConfigSqlOperate,
+        },
+    },
+    sql_connection::{
+        database_traits::get_connect::GetDatabaseConnect,
+        sea_orm::{ConnectionTrait, DbErr},
+    },
+};
+
+use crate::{error::LogicResult, implements::FetcherConfigLogic};
 
 impl FetcherConfigLogic {
     /// 分页获取获取平台信息并且附带该平台下有无数据源
@@ -31,13 +44,15 @@ impl FetcherConfigLogic {
 
         let resp = platform_list
             .into_iter()
-            .map(|platform_item| PlatformWithHasDatasource {
-                id: platform_item.id,
-                type_id: platform_item.type_id.clone(),
-                platform_name: platform_item.platform_name,
-                min_request_interval: platform_item.min_request_interval,
-                has_datasource: platform_datasource_exist_map
-                    .contains(&platform_item.type_id),
+            .map(|platform_item| {
+                PlatformWithHasDatasource {
+                    id: platform_item.id,
+                    type_id: platform_item.type_id.clone(),
+                    platform_name: platform_item.platform_name,
+                    min_request_interval: platform_item.min_request_interval,
+                    has_datasource: platform_datasource_exist_map
+                        .contains(&platform_item.type_id),
+                }
             })
             .collect();
 

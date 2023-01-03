@@ -1,16 +1,13 @@
 use sea_orm::{
-    ColumnTrait, ConnectionTrait, DatabaseBackend, DbErr, EntityTrait,
-    QueryFilter, QuerySelect, Statement,
+    ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
+    QuerySelect,
 };
 use sea_query::{Alias, Expr, Query, SelectStatement};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 
 use super::{FetcherPlatformConfigSqlOperate, OperateResult, PlatformCounts};
 use crate::fetcher::{
-    datasource_config::{
-        checkers::datasource_config_data::FetcherDatasourceConfig,
-        models::model_datasource_config,
-    },
+    datasource_config::models::model_datasource_config,
     platform_config::models::model_platform_config,
 };
 
