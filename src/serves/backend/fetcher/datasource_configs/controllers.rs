@@ -4,6 +4,7 @@ use fetcher_logic::view::{
     DatasourceList, DatasourceListFilterCondReq, DatasourceWithNameResp,
     OneIdReq, PlatformAndDatasourceArrayResp, PlatformFilterReq,
 };
+use fetcher_logic::implements::FetcherConfigLogic;
 use futures::future;
 use orm_migrate::{
     sql_connection::SqlConnect,
@@ -85,7 +86,7 @@ impl FetcherConfigControllers {
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            fetcher_logic::implement::create_datasource_config(
+            FetcherConfigLogic::create_datasource_config(
                 &db,
                 datasource_config
             )
@@ -120,7 +121,7 @@ impl FetcherConfigControllers {
         >,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            fetcher_logic::implement::delete_datasource_by_id(
+            FetcherConfigLogic::delete_datasource_by_id(
                 &db,
                 datasource.id
             )

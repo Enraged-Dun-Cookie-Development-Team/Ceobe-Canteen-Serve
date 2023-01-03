@@ -1,4 +1,5 @@
 use axum::Json;
+use fetcher_logic::implements::FetcherConfigLogic;
 use orm_migrate::sql_connection::SqlConnect;
 use resp_result::{rtry, MapReject, RespResult};
 use serde_json::{Map, Value};
@@ -17,7 +18,7 @@ impl FetcherConfigControllers {
             GlobalConfigError,
         >,
     ) -> GlobalConfigRResult<()> {
-        fetcher_logic::implement::set_global_config(&db, global_config)
+        FetcherConfigLogic::set_global_config(&db, global_config)
             .await
             .map_err(Into::into)
             .into()
@@ -28,7 +29,7 @@ impl FetcherConfigControllers {
     pub async fn get_global_configs(
         db: SqlConnect,
     ) -> GlobalConfigRResult<Value> {
-        let resp = fetcher_logic::implement::get_global_configs(&db).await;
+        let resp = FetcherConfigLogic::get_global_configs(&db).await;
         RespResult::ok(rtry!(resp))
     }
 }

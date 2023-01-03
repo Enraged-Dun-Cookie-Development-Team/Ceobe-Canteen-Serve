@@ -2,6 +2,7 @@ use axum::{extract::Query, Json};
 use fetcher_logic::view::{
     BackFetcherConfig, MaxLiveNumberResp, PlatformFilterReq,
 };
+use fetcher_logic::implements::FetcherConfigLogic;
 use orm_migrate::sql_connection::SqlConnect;
 use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
@@ -18,7 +19,7 @@ impl FetcherConfigControllers {
     ) -> FetcherConfigRResult<MaxLiveNumberResp> {
         resp_try(async {
             let number =
-                fetcher_logic::implement::get_cookie_fetcher_max_live_number(
+                FetcherConfigLogic::get_cookie_fetcher_max_live_number(
                     &mut client,
                 )
                 .await?;
@@ -41,7 +42,7 @@ impl FetcherConfigControllers {
         >,
     ) -> FetcherConfigRResult<()> {
         rtry!(
-            fetcher_logic::implement::upload_cookie_fetcher_configs(
+            FetcherConfigLogic::upload_cookie_fetcher_configs(
                 &db, configs
             )
             .await
@@ -59,7 +60,7 @@ impl FetcherConfigControllers {
         >,
     ) -> FetcherConfigRResult<Vec<BackFetcherConfig>> {
         Ok(rtry!(
-            fetcher_logic::implement::get_cookie_fetcher_configs(
+            FetcherConfigLogic::get_cookie_fetcher_configs(
                 &db,
                 type_id
             )

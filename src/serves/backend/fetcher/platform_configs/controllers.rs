@@ -1,6 +1,6 @@
 use axum::Json;
 use checker::CheckExtract;
-use fetcher_logic::view::OneIdReq;
+use fetcher_logic::{view::OneIdReq, implements::FetcherConfigLogic};
 use futures::future;
 use orm_migrate::{
     sql_connection::SqlConnect,
@@ -32,7 +32,7 @@ impl FetcherConfigControllers {
     {
         resp_try(async {
             // 获取平台列表
-            let platform_list = fetcher_logic::implement::get_platform_list_with_has_datasource(&db, page_size);
+            let platform_list = FetcherConfigLogic::get_platform_list_with_has_datasource(&db, page_size);
 
             // 获取平台数量
             let count = FetcherPlatformConfigSqlOperate::get_platform_total_number(&db);
