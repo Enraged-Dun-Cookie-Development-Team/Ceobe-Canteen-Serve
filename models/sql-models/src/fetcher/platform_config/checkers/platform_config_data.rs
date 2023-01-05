@@ -28,7 +28,7 @@ pub struct FetcherPlatformConfig {
 pub struct FetcherPlatformConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
     pub type_id: StrMaxCharLenChecker<String, 64>,
-    pub platform_name: StrMaxCharLenChecker<String, 64>,
+    pub platform_name: StrMaxCharLenChecker<String, 16>,
     pub min_request_interval: NoRemainderChecker<1000>,
 }
 
