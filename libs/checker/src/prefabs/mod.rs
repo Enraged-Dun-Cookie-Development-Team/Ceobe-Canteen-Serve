@@ -5,4 +5,5 @@ pub mod no_check;
 pub mod no_remainder_checker;
 pub mod num_check;
 pub mod option_checker;
+pub mod str_len_checker;
 pub mod url_checker;
