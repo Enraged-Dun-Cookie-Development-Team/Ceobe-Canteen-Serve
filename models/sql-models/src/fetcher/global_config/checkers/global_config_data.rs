@@ -1,14 +1,11 @@
 use checker::{
-    check_obj, prefabs::collect_checkers::iter_checkers::IntoIterChecker,
+    check_obj, prefabs::{collect_checkers::iter_checkers::IntoIterChecker, str_len_checker::StrMaxCharLenChecker},
 };
-use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
 use crate::fetcher::global_config::models::model_global_config;
-
-type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
 #[derive(Debug, TypedBuilder)]
 pub struct FetcherGlobalConfig {
@@ -24,8 +21,8 @@ pub struct FetcherGlobalConfig {
 )]
 #[derive(serde::Deserialize, Debug)]
 pub struct FetcherGlobalConfigChecker {
-    pub key: MaxLimitString<64>,
-    pub value: MaxLimitString<64>,
+    pub key: StrMaxCharLenChecker<String, 64>,
+    pub value: StrMaxCharLenChecker<String, 64>,
 }
 
 impl model_global_config::ActiveModel {

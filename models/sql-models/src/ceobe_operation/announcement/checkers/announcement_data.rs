@@ -1,9 +1,8 @@
 use checker::{
     check_gen,
-    prefabs::{date_time_format::DateTimeFormatChecker, no_check::NoCheck},
+    prefabs::{date_time_format::DateTimeFormatChecker, no_check::NoCheck, str_len_checker::{StrMaxCharLenChecker}},
 };
 use chrono::NaiveDateTime;
-use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 
@@ -27,8 +26,8 @@ pub struct CeobeOpAnnouncement {
 pub struct CeobeOpAnnouncementChecker {
     pub start_time: DateTimeFormatChecker,
     pub over_time: DateTimeFormatChecker,
-    pub content: MaxRangeLimit<String, 4096>,
-    pub img_url: MaxRangeLimit<String, 256>,
+    pub content: StrMaxCharLenChecker<String, 4096>,
+    pub img_url: StrMaxCharLenChecker<String, 256>,
     pub notice: NoCheck<bool>,
 }
 

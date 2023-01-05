@@ -1,6 +1,5 @@
-use checker::prefabs::date_time_format::DateTimeFormatChecker;
+use checker::prefabs::{date_time_format::DateTimeFormatChecker, str_len_checker::{StrMaxCharLenChecker}};
 use chrono::NaiveDateTime;
-use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
 use serde::Deserialize;
 use typed_builder::TypedBuilder;
@@ -27,9 +26,9 @@ pub struct CountdownCheck {
 #[derive(Debug, Deserialize)]
 pub struct CountdownChecker {
     #[serde(alias = "text")]
-    message: MaxRangeLimit<String, 255>,
+    message: StrMaxCharLenChecker<String, 255>,
     #[serde(alias = "remark")]
-    banner_info: MaxRangeLimit<String, 255>,
+    banner_info: StrMaxCharLenChecker<String, 255>,
     #[serde(alias = "time")]
     countdown_end: DateTimeFormatChecker,
     start_time: DateTimeFormatChecker,

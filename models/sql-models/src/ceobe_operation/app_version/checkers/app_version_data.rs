@@ -1,5 +1,4 @@
-use checker::prefabs::no_check::NoCheck;
-use range_limit::limits::max_limit::MaxRangeLimit;
+use checker::prefabs::{no_check::NoCheck, str_len_checker::{StrMaxCharLenChecker}};
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 
@@ -27,7 +26,7 @@ pub struct CeobeOperationAppVersionChecker {
     pub version: AppVersionChecker,
     pub force: NoCheck<bool>,
     pub last_force_version: AppVersionChecker,
-    pub description: MaxRangeLimit<String, 4096>,
+    pub description: StrMaxCharLenChecker<String, 4096>,
 }
 
 impl model_app_version::ActiveModel {

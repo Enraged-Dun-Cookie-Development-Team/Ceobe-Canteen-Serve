@@ -2,17 +2,14 @@ use checker::{
     check_obj,
     prefabs::{
         no_check::NoCheck, no_remainder_checker::NoRemainderChecker,
-        option_checker::OptionChecker,
+        option_checker::OptionChecker, str_len_checker::StrMaxCharLenChecker,
     },
 };
-use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
 use crate::fetcher::platform_config::models::model_platform_config;
-
-type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
 #[derive(Debug, TypedBuilder)]
 pub struct FetcherPlatformConfig {
@@ -30,8 +27,8 @@ pub struct FetcherPlatformConfig {
 #[derive(serde::Deserialize, Debug)]
 pub struct FetcherPlatformConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
-    pub type_id: MaxLimitString<64>,
-    pub platform_name: MaxLimitString<64>,
+    pub type_id: StrMaxCharLenChecker<String, 64>,
+    pub platform_name: StrMaxCharLenChecker<String, 64>,
     pub min_request_interval: NoRemainderChecker<1000>,
 }
 

@@ -1,11 +1,10 @@
 use checker::{
     check_gen,
     prefabs::{
-        date_time_format::DateTimeFormatChecker, url_checker::UrlChecker,
+        date_time_format::DateTimeFormatChecker, url_checker::UrlChecker, str_len_checker::StrMaxCharLenChecker,
     },
 };
 use chrono::NaiveDateTime;
-use range_limit::limits::max_limit::MaxRangeLimit;
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 use url::Url;
@@ -36,8 +35,8 @@ pub struct CeobeOpVideoChecker {
     pub bv: BvChecker,
     pub start_time: DateTimeFormatChecker,
     pub over_time: DateTimeFormatChecker,
-    pub title: MaxRangeLimit<String, 256>,
-    pub author: MaxRangeLimit<String, 128>,
+    pub title: StrMaxCharLenChecker<String, 256>,
+    pub author: StrMaxCharLenChecker<String, 128>,
     pub video_link: UrlChecker,
     #[serde(alias = "cover_img")]
     pub cover_image: UrlChecker,
