@@ -6,7 +6,7 @@ use range_limit::{
         double_end_limit::DoubleEndLimit, fix_size::FixedSize,
         max_limit::MaxLimit, min_limit::MinLimit,
     },
-    RangeBound, Error,
+    Error, RangeBound,
 };
 
 use crate::RefChecker;
@@ -19,16 +19,16 @@ where
     S: Deref<Target = str> + 'static,
     Bound: RangeBound + 'static;
 
-    /// 检查字符串最大字符长度
+/// 检查字符串最大字符长度
 pub type StrMaxCharLenChecker<S, const M: usize> =
     StrCharLenChecker<S, MaxLimit<M>>;
-    /// 检查字符串最小字符长度
+/// 检查字符串最小字符长度
 pub type StrMinCharLenChecker<S, const M: usize> =
     StrCharLenChecker<S, MinLimit<M>>;
-    /// 检查字符串严格长度
+/// 检查字符串严格长度
 pub type StrFixedCharLenChecker<S, const SIZE: usize> =
     StrCharLenChecker<S, FixedSize<SIZE>>;
-    /// 检查字符串字符长度是否在指定范围内
+/// 检查字符串字符长度是否在指定范围内
 pub type StrCharLenRangeChecker<S, const L: usize, const U: usize> =
     StrCharLenChecker<S, DoubleEndLimit<L, U>>;
 
@@ -37,13 +37,10 @@ where
     S: Deref<Target = str> + 'static,
     Bound: RangeBound + 'static,
 {
-    type Target = S;
-
-    type Err = Error;
-
     type Args = ();
-
+    type Err = Error;
     type Fut = Ready<Result<(), Self::Err>>;
+    type Target = S;
 
     fn ref_checker(_: Self::Args, target: &Self::Target) -> Self::Fut {
         let size = target.chars().count();

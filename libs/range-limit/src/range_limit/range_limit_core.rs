@@ -38,9 +38,7 @@ impl<T: Display, Rb> Display for RangeBoundLimit<T, Rb> {
 impl<T, Rb> Deref for RangeBoundLimit<T, Rb> {
     type Target = T;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl<P, T, Rb> RangeBoundLimit<P, Rb>
@@ -59,13 +57,9 @@ impl<T: Measurable, Rb: RangeBound> RangeBoundLimit<T, Rb> {
         Self::handle_arms(Rb::match_range(value.size()), value.size(), value)
     }
 
-    pub fn into(self) -> T {
-        self.0
-    }
+    pub fn into(self) -> T { self.0 }
 }
 
 impl<T: Measurable, Rb> Measurable for RangeBoundLimit<T, Rb> {
-    fn size(&self) -> usize {
-        self.0.size()
-    }
+    fn size(&self) -> usize { self.0.size() }
 }

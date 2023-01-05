@@ -16,7 +16,7 @@ pub enum SizeStatus {
 }
 
 impl SizeStatus {
-    pub fn to_result(self,size:usize) -> Result<(),error::Error> {
+    pub fn to_result(self, size: usize) -> Result<(), error::Error> {
         match self {
             SizeStatus::Ok => Ok(()),
             SizeStatus::TooLarge(require) => {
