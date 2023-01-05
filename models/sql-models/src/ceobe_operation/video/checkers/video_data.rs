@@ -1,7 +1,8 @@
 use checker::{
     check_gen,
     prefabs::{
-        date_time_format::DateTimeFormatChecker, url_checker::UrlChecker, str_len_checker::StrMaxCharLenChecker,
+        date_time_format::DateTimeFormatChecker,
+        str_len_checker::StrMaxCharLenChecker, url_checker::UrlChecker,
     },
 };
 use chrono::NaiveDateTime;

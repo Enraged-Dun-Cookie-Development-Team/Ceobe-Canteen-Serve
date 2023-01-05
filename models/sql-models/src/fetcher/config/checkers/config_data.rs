@@ -3,7 +3,7 @@ use checker::{
     prefabs::{
         collect_checkers::iter_checkers::IntoIterChecker, no_check::NoCheck,
         no_remainder_checker::NoRemainderChecker,
-        option_checker::OptionChecker, str_len_checker::{StrMaxCharLenChecker},
+        option_checker::OptionChecker, str_len_checker::StrMaxCharLenChecker,
     },
 };
 use sea_orm::Set;

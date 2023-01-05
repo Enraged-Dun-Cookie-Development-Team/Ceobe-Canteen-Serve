@@ -1,5 +1,9 @@
 use checker::{
-    check_obj, prefabs::{collect_checkers::iter_checkers::IntoIterChecker, str_len_checker::StrMaxCharLenChecker},
+    check_obj,
+    prefabs::{
+        collect_checkers::iter_checkers::IntoIterChecker,
+        str_len_checker::StrMaxCharLenChecker,
+    },
 };
 use sea_orm::Set;
 use typed_builder::TypedBuilder;

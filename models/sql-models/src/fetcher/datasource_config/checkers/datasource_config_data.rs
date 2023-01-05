@@ -2,7 +2,7 @@ use checker::{
     check_obj,
     prefabs::{
         no_check::NoCheck, option_checker::OptionChecker,
-        url_checker::UrlChecker, str_len_checker::StrMaxCharLenChecker,
+        str_len_checker::StrMaxCharLenChecker, url_checker::UrlChecker,
     },
 };
 use sea_orm::{ActiveValue::NotSet, Set};
@@ -35,7 +35,7 @@ pub struct FetcherDatasourceConfigChecker {
     pub id: OptionChecker<NoCheck<i32>>,
     pub platform: StrMaxCharLenChecker<String, 64>,
     pub datasource: StrMaxCharLenChecker<String, 64>,
-    pub nickname: StrMaxCharLenChecker<String, 32>, 
+    pub nickname: StrMaxCharLenChecker<String, 32>,
     pub avatar: UrlChecker,
     pub config: NoCheck<Map<String, Value>>,
 }

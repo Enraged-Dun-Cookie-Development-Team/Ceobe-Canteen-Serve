@@ -1,4 +1,7 @@
-use checker::prefabs::{date_time_format::DateTimeFormatChecker, str_len_checker::{StrMaxCharLenChecker}};
+use checker::prefabs::{
+    date_time_format::DateTimeFormatChecker,
+    str_len_checker::StrMaxCharLenChecker,
+};
 use chrono::NaiveDateTime;
 use sea_orm::Set;
 use serde::Deserialize;

@@ -1,4 +1,4 @@
-use checker::{check_gen, prefabs::str_len_checker::{StrMaxCharLenChecker}};
+use checker::{check_gen, prefabs::str_len_checker::StrMaxCharLenChecker};
 use typed_builder::TypedBuilder;
 
 use super::CheckError;

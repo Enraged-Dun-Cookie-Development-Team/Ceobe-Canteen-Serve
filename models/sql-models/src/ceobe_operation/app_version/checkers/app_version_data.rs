@@ -1,4 +1,6 @@
-use checker::prefabs::{no_check::NoCheck, str_len_checker::{StrMaxCharLenChecker}};
+use checker::prefabs::{
+    no_check::NoCheck, str_len_checker::StrMaxCharLenChecker,
+};
 use sea_orm::Set;
 use typed_builder::TypedBuilder;
 

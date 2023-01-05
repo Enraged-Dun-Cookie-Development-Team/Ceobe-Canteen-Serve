@@ -1,6 +1,9 @@
 use checker::{
     check_gen,
-    prefabs::{date_time_format::DateTimeFormatChecker, no_check::NoCheck, str_len_checker::{StrMaxCharLenChecker}},
+    prefabs::{
+        date_time_format::DateTimeFormatChecker, no_check::NoCheck,
+        str_len_checker::StrMaxCharLenChecker,
+    },
 };
 use chrono::NaiveDateTime;
 use sea_orm::Set;
