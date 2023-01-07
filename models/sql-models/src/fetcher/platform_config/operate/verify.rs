@@ -1,61 +1,64 @@
-use sea_orm::{
-    ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
-    QuerySelect,
-};
+use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
 use sea_query::{Alias, Expr, Query, SelectStatement};
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use sql_connection::ext_traits::{
+    check_all_exist::AllExist, select_count::SelectCount,
+};
 
 use super::{FetcherPlatformConfigSqlOperate, OperateResult, PlatformCounts};
 use crate::fetcher::{
     datasource_config::models::model_datasource_config,
-    platform_config::models::model_platform_config,
+    platform_config::models::model_platform_config::{
+        self,
+        Column::{Id, TypeId},
+        Entity,
+    },
 };
 
 impl FetcherPlatformConfigSqlOperate {
-    /// 查询是否存在type_id的平台
-    pub async fn is_platform_exist(
-        db: &impl ConnectionTrait, type_id: &str,
+    pub async fn all_exist_by_type_ids(
+        db: &impl ConnectionTrait, type_ids: impl IntoIterator<Item = &str>,
     ) -> OperateResult<bool> {
-        let resp = model_platform_config::Entity::find()
-            .filter(model_platform_config::Column::TypeId.eq(type_id))
-            .select_only()
-            .column_as(model_platform_config::Column::Id.count(), "count")
-            .into_model::<PlatformCounts>()
+        let mut iter = type_ids.into_iter();
+        let Some(first) = iter.next()else{
+            return Ok(true);
+        };
+
+        let count = Entity::find()
+            .all_exist(
+                Entity,
+                TypeId,
+                first,
+                iter,
+                &db.get_database_backend(),
+            )
             .one(db)
             .await?
-            .unwrap();
+            .unwrap()
+            .take();
 
-        Ok(resp.count != 0)
+        Ok(count)
     }
 
     /// 查询是否存在type_id的平台
-    pub async fn is_platform_exist_with_raw_db<'db, D>(
-        db: &'db D, type_id: &str,
-    ) -> OperateResult<bool>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait,
-    {
-        let db = db.get_connect()?;
-        let resp = model_platform_config::Entity::find()
-            .filter(model_platform_config::Column::TypeId.eq(type_id))
-            .select_only()
-            .column_as(model_platform_config::Column::Id.count(), "count")
-            .into_model::<PlatformCounts>()
-            .one(db)
+    pub async fn exist_by_type_id(
+        db: &impl ConnectionTrait, type_id: &str,
+    ) -> OperateResult<bool> {
+        let count = Entity::find()
+            .filter(TypeId.eq(type_id))
+            .select_count(Id, db)
             .await?
-            .unwrap();
+            .is_empty();
 
-        Ok(resp.count != 0)
+        Ok(!count)
     }
 
     /// 查询id的平台下时候有数据源
     pub async fn has_datasource_with_id(
         db: &impl ConnectionTrait, pid: i32,
     ) -> OperateResult<bool> {
-        let query = gen_query_verfy_has_datasource_with_id(pid);
+        let query = gen_query_verify_has_datasource_with_id(pid);
 
-        let resp = model_platform_config::Entity::find()
+        let resp = Entity::find()
             .from_raw_sql(sea_orm::StatementBuilder::build(
                 &query,
                 &db.get_database_backend(),
@@ -70,7 +73,7 @@ impl FetcherPlatformConfigSqlOperate {
 }
 
 /// 生成Statement 为 检查给定的id的平台下时候有数据源
-fn gen_query_verfy_has_datasource_with_id(pid: i32) -> SelectStatement {
+fn gen_query_verify_has_datasource_with_id(pid: i32) -> SelectStatement {
     let mut query = Query::select();
 
     // select count (fetcher_datasource_config.id) as count
@@ -84,16 +87,12 @@ fn gen_query_verfy_has_datasource_with_id(pid: i32) -> SelectStatement {
     );
 
     // from ()
-    query.from(model_platform_config::Entity);
+    query.from(Entity);
 
     // join
     query.left_join(
         model_datasource_config::Entity,
-        Expr::tbl(
-            model_platform_config::Entity,
-            model_platform_config::Column::TypeId,
-        )
-        .equals(
+        Expr::tbl(Entity, model_platform_config::Column::TypeId).equals(
             model_datasource_config::Entity,
             model_datasource_config::Column::Platform,
         ),
@@ -101,11 +100,7 @@ fn gen_query_verfy_has_datasource_with_id(pid: i32) -> SelectStatement {
 
     // where
     query.and_where(
-        Expr::tbl(
-            model_platform_config::Entity,
-            model_platform_config::Column::Id,
-        )
-        .eq(pid),
+        Expr::tbl(Entity, model_platform_config::Column::Id).eq(pid),
     );
 
     query
@@ -113,14 +108,31 @@ fn gen_query_verfy_has_datasource_with_id(pid: i32) -> SelectStatement {
 
 #[cfg(test)]
 mod test {
+    use sea_orm::Select;
     use sea_query::MySqlQueryBuilder;
+    use sql_connection::ext_traits::check_all_exist::AllExist;
 
-    use super::gen_query_verfy_has_datasource_with_id;
+    use crate::fetcher::platform_config::models::model_platform_config;
+
+    use super::gen_query_verify_has_datasource_with_id;
     #[test]
     fn test_gen_sql() {
-        let query = gen_query_verfy_has_datasource_with_id(8);
+        let query = gen_query_verify_has_datasource_with_id(8);
         let sql_str = query.to_string(MySqlQueryBuilder::default());
 
         println!("{sql_str}")
+    }
+    #[test]
+    fn test_all_exist() {
+        let query = Select::gen_statement(
+            model_platform_config::Entity,
+            model_platform_config::Column::TypeId,
+            "a",
+            ["b", "v", "d"],
+            &sea_orm::DatabaseBackend::MySql,
+        )
+        .to_string();
+
+        println!("{query}")
     }
 }
