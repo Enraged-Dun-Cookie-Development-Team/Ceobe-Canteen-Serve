@@ -1,7 +1,4 @@
-use std::{
-    collections::BTreeSet,
-    fmt::{Debug, Display},
-};
+use std::{collections::BTreeSet, fmt::Debug};
 
 use sea_orm::{
     sea_query::{Expr, Query},
@@ -23,32 +20,17 @@ use crate::fetcher::datasource_config::{
 impl FetcherDatasourceConfigSqlOperate {
     /// 验证id数组是否都存在
     #[instrument(ret, skip(db))]
-    pub async fn has_all_datasource_ids<'db, D, T>(
-        db: &'db D, ids: T,
+    pub async fn all_exist_by_id<T>(
+        db: &impl ConnectionTrait, ids: T,
     ) -> OperateResult<bool>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait,
         T: IntoIterator<Item = i32> + Debug,
-        T::Item: Display,
     {
         let mut ids = ids.into_iter();
         let Some(first) = ids.next() else{
             return Ok(true);
         };
-        let query = gen_query_verfy_all_datasource_id_exist(first, ids);
-        // let mut sql = String::from("select count(B.id) from (");
-        // for id in ids.into_iter() {
-        //     sql.push_str(&format!(r#" select {id} as id from dual
-        // union"#)); }
-        // sql = sql.trim_end_matches("union").to_string();
-        // sql.push_str(
-        //     ") B left join fetcher_datasource_config on \
-        //      fetcher_datasource_config.id = B.id where \
-        //      fetcher_datasource_config.id is null;",
-        // );
-
-        let db = db.get_connect()?;
+        let query = gen_query_verify_all_datasource_id_exist(first, ids);
         let resp = Entity::find()
             .from_raw_sql(sea_orm::StatementBuilder::build(
                 &query,
@@ -89,7 +71,7 @@ impl FetcherDatasourceConfigSqlOperate {
 }
 
 /// 生成Statement 为 检查给定的 datasourece Id 是否均存在.
-fn gen_query_verfy_all_datasource_id_exist(
+fn gen_query_verify_all_datasource_id_exist(
     first: i32, ids: impl IntoIterator<Item = i32>,
 ) -> SelectStatement {
     // 临时表信息
@@ -142,11 +124,11 @@ fn gen_query_verfy_all_datasource_id_exist(
 mod test {
     use sea_query::MySqlQueryBuilder;
 
-    use super::gen_query_verfy_all_datasource_id_exist;
+    use super::gen_query_verify_all_datasource_id_exist;
     #[test]
     fn test_gen_sql() {
         let query =
-            gen_query_verfy_all_datasource_id_exist(0, [1, 2, 3, 4, 56, 7]);
+            gen_query_verify_all_datasource_id_exist(0, [1, 2, 3, 4, 56, 7]);
         let sql_str = query.to_string(MySqlQueryBuilder::default());
 
         println!("{sql_str}")
