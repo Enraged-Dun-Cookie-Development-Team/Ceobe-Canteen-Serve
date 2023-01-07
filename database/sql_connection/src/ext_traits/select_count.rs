@@ -21,7 +21,7 @@ pub trait SelectCount {
 }
 
 impl<E: EntityTrait> SelectCount for Select<E> {
-    type CountFuture<'db> = Pin<Box<dyn Future<Output = Result<Count,sea_orm::DbErr>>+'db>>
+    type CountFuture<'db> = Pin<Box<dyn Future<Output = Result<Count,sea_orm::DbErr>>+'db + Send >>
     where
         Self: 'db;
 

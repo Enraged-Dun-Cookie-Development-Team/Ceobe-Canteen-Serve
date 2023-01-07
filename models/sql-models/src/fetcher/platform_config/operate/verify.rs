@@ -1,3 +1,4 @@
+use futures::Future;
 use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
 use sea_query::{Alias, Expr, Query, SelectStatement};
 use sql_connection::ext_traits::{
@@ -15,28 +16,34 @@ use crate::fetcher::{
 };
 
 impl FetcherPlatformConfigSqlOperate {
-    pub async fn all_exist_by_type_ids(
-        db: &impl ConnectionTrait, type_ids: impl IntoIterator<Item = &str>,
-    ) -> OperateResult<bool> {
-        let mut iter = type_ids.into_iter();
-        let Some(first) = iter.next()else{
-            return Ok(true);
+    pub fn all_exist_by_type_ids<'db, I>(
+        db: &'db impl ConnectionTrait, type_ids: I,
+    ) -> impl Future<Output = OperateResult<bool>> + Send + 'db
+    where
+        <I as IntoIterator>::IntoIter: std::marker::Send,
+        I: IntoIterator<Item = &'db str> + Send + 'db,
+    {
+        async {
+            let mut iter = type_ids.into_iter();
+            let Some(first) = iter.next()else{
+                return Ok(true);
         };
 
-        let count = Entity::find()
-            .all_exist(
-                Entity,
-                TypeId,
-                first,
-                iter,
-                &db.get_database_backend(),
-            )
-            .one(db)
-            .await?
-            .unwrap()
-            .take();
+            let count = Entity::find()
+                .all_exist(
+                    Entity,
+                    TypeId,
+                    first,
+                    iter,
+                    &db.get_database_backend(),
+                )
+                .one(db)
+                .await?
+                .unwrap()
+                .take();
 
-        Ok(count)
+            Ok(count)
+        }
     }
 
     /// 查询是否存在type_id的平台

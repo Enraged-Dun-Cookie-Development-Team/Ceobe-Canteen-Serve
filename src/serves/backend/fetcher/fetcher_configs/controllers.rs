@@ -1,7 +1,7 @@
 use axum::{extract::Query, Json};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
-    view::{BackFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
+    view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
 use orm_migrate::sql_connection::SqlConnect;
 use redis_connection::RedisConnect;
@@ -19,10 +19,7 @@ impl FetcherConfigControllers {
     ) -> FetcherConfigRResult<MaxLiveNumberResp> {
         resp_try(async {
             let number =
-                FetcherConfigLogic::get_cookie_fetcher_max_live_number(
-                    &mut client,
-                )
-                .await?;
+                FetcherConfigLogic::get_max_live_number(&mut client).await?;
             let resp = MaxLiveNumberResp {
                 fetcher_live_number: number,
             };
@@ -33,19 +30,19 @@ impl FetcherConfigControllers {
     }
 
     /// 上传蹲饼器配置
-    #[instrument(ret, skip(db, configs))]
+    // #[instrument(ret, skip(db, configs))]
     pub async fn upload_fetchers_configs(
         db: SqlConnect,
         MapReject(configs): MapReject<
-            Json<Vec<BackFetcherConfig>>,
+            Json<Vec<BackEndFetcherConfig>>,
             FetcherConfigError,
         >,
     ) -> FetcherConfigRResult<()> {
-        rtry!(
-            FetcherConfigLogic::upload_cookie_fetcher_configs(&db, configs)
-                .await
-        );
-        Ok(()).into()
+        resp_try(async move {
+            FetcherConfigLogic::upload_multi(&db, configs).await?;
+            Ok(())
+        })
+        .await
     }
 
     /// 根据平台获取蹲饼器配置
@@ -56,10 +53,9 @@ impl FetcherConfigControllers {
             Query<PlatformFilterReq>,
             FetcherConfigError,
         >,
-    ) -> FetcherConfigRResult<Vec<BackFetcherConfig>> {
+    ) -> FetcherConfigRResult<Vec<BackEndFetcherConfig>> {
         Ok(rtry!(
-            FetcherConfigLogic::get_cookie_fetcher_configs(&db, type_id)
-                .await
+            FetcherConfigLogic::get_by_platform(&db, &type_id).await
         ))
         .into()
     }

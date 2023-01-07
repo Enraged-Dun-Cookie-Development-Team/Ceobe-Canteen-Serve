@@ -91,7 +91,7 @@ impl FetcherConfigControllers {
     ) -> PlatformConfigRResult<()> {
         let pid = body.id;
         rtry!(
-            FetcherPlatformConfigSqlOperate::delete_one_platform_config(
+            FetcherPlatformConfigSqlOperate::delete_one(
                 &db, pid
             )
             .await

@@ -83,18 +83,15 @@ impl FetcherConfigControllers {
 
     /// 上传数据源配置
     #[instrument(ret, skip(db))]
+    // #[axum::debug_handler]
     pub async fn create_datasource_config(
         db: SqlConnect,
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
-        rtry!(
-            FetcherConfigLogic::create_datasource_config(
-                &db,
-                datasource_config
-            )
-            .await
-        );
-        Ok(()).into()
+        resp_try(async {
+            FetcherConfigLogic::create_datasource_config(&db,datasource_config).await?;
+            Ok(())
+        }).await
     }
 
     // 更新数据源配置
