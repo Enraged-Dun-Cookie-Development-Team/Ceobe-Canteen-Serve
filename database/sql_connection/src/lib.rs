@@ -1,5 +1,5 @@
-pub mod ext_traits;
 mod config;
+pub mod ext_traits;
 mod impl_get_connect;
 mod impl_initial;
 mod static_vars;

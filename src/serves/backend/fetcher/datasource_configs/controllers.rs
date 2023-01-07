@@ -89,9 +89,14 @@ impl FetcherConfigControllers {
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         resp_try(async {
-            FetcherConfigLogic::create_datasource_config(&db,datasource_config).await?;
+            FetcherConfigLogic::create_datasource_config(
+                &db,
+                datasource_config,
+            )
+            .await?;
             Ok(())
-        }).await
+        })
+        .await
     }
 
     // 更新数据源配置

@@ -8,12 +8,9 @@ use crate::fetcher::platform_config::{
 };
 
 impl FetcherPlatformConfigSqlOperate {
-
     #[instrument(skip(db), ret)]
     /// 删除一个平台
-    pub async fn delete_one<'db, D>(
-        db: &'db D, pid: i32,
-    ) -> OperateResult<()>
+    pub async fn delete_one<'db, D>(db: &'db D, pid: i32) -> OperateResult<()>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,

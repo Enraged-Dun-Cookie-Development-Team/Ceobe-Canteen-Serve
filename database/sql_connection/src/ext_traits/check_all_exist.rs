@@ -33,6 +33,8 @@ pub trait AllExist<E: EntityTrait> {
 }
 
 impl<E: EntityTrait> AllExist<E> for Select<E> {
+    type RetSelector = SelectorRaw<SelectModel<CountZero>>;
+
     fn gen_statement<C, V>(
         entity: E, primary: C, first: V, values: impl IntoIterator<Item = V>,
         db: &DbBackend,
@@ -44,8 +46,6 @@ impl<E: EntityTrait> AllExist<E> for Select<E> {
         let state = gen_statement(entity, primary, first, values);
         StatementBuilder::build(&state, db)
     }
-
-    type RetSelector = SelectorRaw<SelectModel<CountZero>>;
 
     fn all_exist<C, V>(
         self, entity: E, primary: C, first: V,
@@ -98,7 +98,8 @@ fn gen_statement(
 
     // join
     // lefe join  与目标表left join
-    // 根据left join 的特性，如果 给的序列的ID 在数据库中不存在，那么 就会 填充Null
+    // 根据left join 的特性，如果 给的序列的ID 在数据库中不存在，那么 就会
+    // 填充Null
     query.left_join(
         entity,
         Expr::tbl(entity, pk).equals(TempTable::Table, TempTable::Id),

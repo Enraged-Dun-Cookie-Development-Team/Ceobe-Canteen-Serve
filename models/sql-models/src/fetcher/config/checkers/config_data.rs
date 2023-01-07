@@ -70,13 +70,11 @@ pub struct FetcherCount(i8);
 impl FetcherCount {
     pub fn new(count: i8) -> Self {
         // enum 从 0 开始， 数据库记录里面从1 开始
-        //从外部进入 +1
+        // 从外部进入 +1
         Self(count + 1)
     }
 
-    pub fn take(self) -> i8 {
-        self.0
-    }
+    pub fn take(self) -> i8 { self.0 }
 }
 
 impl IntoActiveModel<model_config::ActiveModel> for FetcherConfig {

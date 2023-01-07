@@ -90,12 +90,7 @@ impl FetcherConfigControllers {
         MapReject(body): MapReject<Json<OneIdReq>, PlatformConfigError>,
     ) -> PlatformConfigRResult<()> {
         let pid = body.id;
-        rtry!(
-            FetcherPlatformConfigSqlOperate::delete_one(
-                &db, pid
-            )
-            .await
-        );
+        rtry!(FetcherPlatformConfigSqlOperate::delete_one(&db, pid).await);
         Ok(()).into()
     }
 

@@ -1,5 +1,4 @@
 use sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel};
-
 use tracing::instrument;
 
 use super::{FetcherConfigSqlOperate, OperateResult};

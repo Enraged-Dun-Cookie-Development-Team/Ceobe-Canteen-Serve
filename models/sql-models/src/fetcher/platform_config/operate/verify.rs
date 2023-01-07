@@ -16,6 +16,7 @@ use crate::fetcher::{
 };
 
 impl FetcherPlatformConfigSqlOperate {
+    #[allow(clippy::manual_async_fn)]
     pub fn all_exist_by_type_ids<'db, I>(
         db: &'db impl ConnectionTrait, type_ids: I,
     ) -> impl Future<Output = OperateResult<bool>> + Send + 'db
@@ -119,9 +120,8 @@ mod test {
     use sea_query::MySqlQueryBuilder;
     use sql_connection::ext_traits::check_all_exist::AllExist;
 
-    use crate::fetcher::platform_config::models::model_platform_config;
-
     use super::gen_query_verify_has_datasource_with_id;
+    use crate::fetcher::platform_config::models::model_platform_config;
     #[test]
     fn test_gen_sql() {
         let query = gen_query_verify_has_datasource_with_id(8);

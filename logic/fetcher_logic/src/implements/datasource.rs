@@ -38,11 +38,8 @@ impl FetcherConfigLogic {
         .await?
         {
             // 创建数据源
-            FetcherDatasourceConfigSqlOperate::create(
-                db,
-                datasource_config,
-            )
-            .await?;
+            FetcherDatasourceConfigSqlOperate::create(db, datasource_config)
+                .await?;
         }
         else {
             return Err(LogicError::PlatformNotFound);
@@ -62,15 +59,9 @@ impl FetcherConfigLogic {
         let ctx = db.get_transaction().await?;
 
         // 删除蹲饼器配置中的所有有datasource_id的配置
-        FetcherConfigSqlOperate::delete_by_datasource_id(
-            &ctx, id,
-        )
-        .await?;
+        FetcherConfigSqlOperate::delete_by_datasource_id(&ctx, id).await?;
         // 删除数据源
-        FetcherDatasourceConfigSqlOperate::delete_one(
-            &ctx, id,
-        )
-        .await?;
+        FetcherDatasourceConfigSqlOperate::delete_one(&ctx, id).await?;
 
         // 提交事务
         ctx.submit().await?;

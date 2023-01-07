@@ -46,7 +46,8 @@ impl FetcherConfigLogic {
         {
             // 获取key的值
             con.get(FetcherConfigKey::LIVE_NUMBER).await?
-        } else {
+        }
+        else {
             0
         };
 
@@ -108,14 +109,12 @@ impl FetcherConfigLogic {
         // 判断平台是否存在
         let ctx = db.get_transaction().await?;
 
-        if 
-        FetcherPlatformConfigSqlOperate::all_exist_by_type_ids(
+        if FetcherPlatformConfigSqlOperate::all_exist_by_type_ids(
             &ctx,
             upload_config.iter().map(|v| v.platform.as_str()),
         )
         .await?
-            && 
-            FetcherDatasourceConfigSqlOperate::all_exist_by_id(
+            && FetcherDatasourceConfigSqlOperate::all_exist_by_id(
                 &ctx,
                 all_data_sources_set,
             )
@@ -127,9 +126,11 @@ impl FetcherConfigLogic {
             )
             .await?;
 
-            FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
+            FetcherConfigSqlOperate::create_multi(&ctx, upload_config)
+                .await?;
             // TODO:告诉调度器哪个平台更新了
-        } else {
+        }
+        else {
             Err(LogicError::PlatformNotFound)?;
         }
         ctx.submit().await?;
