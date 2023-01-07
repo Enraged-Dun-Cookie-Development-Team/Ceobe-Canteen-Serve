@@ -29,22 +29,23 @@ impl FetcherConfigLogic {
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
+        let db = db.get_connect()?;
         // 验证平台存在
-        if FetcherPlatformConfigSqlOperate::is_platform_exist_with_raw_db(
+        if FetcherPlatformConfigSqlOperate::exist_by_type_id(
             db,
             &datasource_config.platform,
         )
         .await?
         {
             // 创建数据源
-            FetcherDatasourceConfigSqlOperate::create_database_config(
+            FetcherDatasourceConfigSqlOperate::create(
                 db,
                 datasource_config,
             )
             .await?;
         }
         else {
-            return Err(LogicError::NoPlatform);
+            return Err(LogicError::PlatformNotFound);
         }
         Ok(())
     }
@@ -61,12 +62,12 @@ impl FetcherConfigLogic {
         let ctx = db.get_transaction().await?;
 
         // 删除蹲饼器配置中的所有有datasource_id的配置
-        FetcherConfigSqlOperate::delete_fetcher_configs_by_datasource_id(
+        FetcherConfigSqlOperate::delete_by_datasource_id(
             &ctx, id,
         )
         .await?;
         // 删除数据源
-        FetcherDatasourceConfigSqlOperate::delete_one_datasource_config(
+        FetcherDatasourceConfigSqlOperate::delete_one(
             &ctx, id,
         )
         .await?;
