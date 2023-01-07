@@ -59,7 +59,7 @@ pub enum LogicError {
 
     #[error("该平台不存在")]
     #[status_err(err(err_code = 0x00_13, prefix = "ErrPrefix::CHECKER"))]
-    NoPlatform,
+    PlatformNotFound,
 
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
