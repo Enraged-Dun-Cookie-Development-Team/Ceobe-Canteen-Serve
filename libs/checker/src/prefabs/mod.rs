@@ -1,3 +1,4 @@
+pub mod post_checker;
 pub mod collect_checkers;
 pub mod date_time_format;
 pub mod json_obj_check;
