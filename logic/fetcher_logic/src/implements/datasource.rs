@@ -18,6 +18,7 @@ use sql_models::{
 use crate::{
     error::{LogicError, LogicResult},
     implements::FetcherConfigLogic,
+    utils::TrueOrError,
 };
 
 impl FetcherConfigLogic {
@@ -31,19 +32,15 @@ impl FetcherConfigLogic {
     {
         let db = db.get_connect()?;
         // 验证平台存在
-        if FetcherPlatformConfigSqlOperate::exist_by_type_id(
+        FetcherPlatformConfigSqlOperate::exist_by_type_id(
             db,
             &datasource_config.platform,
         )
         .await?
-        {
-            // 创建数据源
-            FetcherDatasourceConfigSqlOperate::create(db, datasource_config)
-                .await?;
-        }
-        else {
-            return Err(LogicError::PlatformNotFound);
-        }
+        .true_or_with(|| LogicError::PlatformNotFound)?;
+        // 创建数据源
+        FetcherDatasourceConfigSqlOperate::create(db, datasource_config)
+            .await?;
         Ok(())
     }
 
@@ -52,7 +49,7 @@ impl FetcherConfigLogic {
         db: &'db D, id: i32,
     ) -> LogicResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
         D::Transaction<'db>: ConnectionTrait,
     {
         // 开事务

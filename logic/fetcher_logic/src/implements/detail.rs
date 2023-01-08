@@ -1,5 +1,6 @@
 use std::collections::{BTreeSet, HashMap};
 
+use checker::prefabs::post_checker::PostChecker;
 use redis::{AsyncCommands, RedisError};
 use redis_global::redis_key::fetcher::FetcherConfigKey;
 use sql_models::{
@@ -25,8 +26,9 @@ use sql_models::{
 
 use super::FetcherConfigLogic;
 use crate::{
+    checkers::check_platform_same::PlatformSameChecker,
     error::{LogicError, LogicResult},
-    utils::GetOrCreate,
+    utils::{GetOrCreate, TrueOrError},
     view::{BackEndFetcherConfig, Group, Server},
 };
 
@@ -46,8 +48,7 @@ impl FetcherConfigLogic {
         {
             // 获取key的值
             con.get(FetcherConfigKey::LIVE_NUMBER).await?
-        }
-        else {
+        } else {
             0
         };
 
@@ -97,42 +98,44 @@ impl FetcherConfigLogic {
                 }
             }
         }
-        if upload_configs_uncheck.is_empty() {
-            return Ok(());
-        }
+
+        type FetcherConfigSliceChecker = PostChecker<
+            FetcherConfigVecChecker,
+            // 追加检查，确认所有的platform 全部一致
+            PlatformSameChecker,
+            LogicError,
+        >;
+
         use checker::LiteChecker;
         // 验证传入数据库数据的合法性
         let upload_config: Vec<FetcherConfig> =
-            FetcherConfigVecChecker::lite_check(upload_configs_uncheck)
+            FetcherConfigSliceChecker::lite_check(upload_configs_uncheck)
                 .await?;
+        // 取出第一个，如果没有，那将无效果，返回
+        let Some(platform) = upload_config.first().map(FetcherConfig::get_platform_type_id) else{
+            return Ok(());
+        };
 
-        // 判断平台是否存在
         let ctx = db.get_transaction().await?;
 
-        if FetcherPlatformConfigSqlOperate::all_exist_by_type_ids(
-            &ctx,
-            upload_config.iter().map(|v| v.platform.as_str()),
-        )
-        .await?
-            && FetcherDatasourceConfigSqlOperate::all_exist_by_id(
+        let platform_exist =
+            FetcherPlatformConfigSqlOperate::exist_by_type_id(&ctx, platform)
+                .await?;
+        let all_datasource_exist =
+            FetcherDatasourceConfigSqlOperate::all_exist_by_id(
                 &ctx,
                 all_data_sources_set,
             )
-            .await?
-        {
-            FetcherConfigSqlOperate::delete_by_all_platform(
-                &ctx,
-                upload_config.iter().map(|config| config.platform.as_str()),
-            )
             .await?;
 
-            FetcherConfigSqlOperate::create_multi(&ctx, upload_config)
-                .await?;
-            // TODO:告诉调度器哪个平台更新了
-        }
-        else {
-            Err(LogicError::PlatformNotFound)?;
-        }
+        // 指定平台与数据源均存在
+        (platform_exist && all_datasource_exist)
+            .true_or_with(|| LogicError::PlatformNotFound)?;
+        // 清除指定 platform 下全部 config
+        FetcherConfigSqlOperate::delete_by_platform(&ctx, platform).await?;
+        // 创建config
+        FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
+        // TODO:告诉调度器哪个平台更新了
         ctx.submit().await?;
         Ok(())
     }
