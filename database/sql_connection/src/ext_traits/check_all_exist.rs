@@ -13,50 +13,50 @@ enum TempTable {
     Id,
 }
 
-pub trait AllExist<E: EntityTrait> {
-    fn gen_statement<C, V>(
-        entity: E, primary: C, first: V, values: impl IntoIterator<Item = V>,
-        db: &DbBackend,
-    ) -> Statement
-    where
-        C: ColumnTrait,
-        V: Into<Value>;
-
-    type RetSelector;
-    fn all_exist<C, V>(
-        self, entity: E, primary: C, first: V,
-        values: impl IntoIterator<Item = V>, db: &DbBackend,
-    ) -> Self::RetSelector
-    where
-        C: ColumnTrait,
-        V: Into<Value>;
-}
-
-impl<E: EntityTrait> AllExist<E> for Select<E> {
-    type RetSelector = SelectorRaw<SelectModel<CountZero>>;
-
-    fn gen_statement<C, V>(
-        entity: E, primary: C, first: V, values: impl IntoIterator<Item = V>,
-        db: &DbBackend,
+pub trait QueryAllExist<E: EntityTrait> {
+    fn gen_statement<C, V, I>(
+        entity: E, primary: C, first: V, values: I, db: &DbBackend,
     ) -> Statement
     where
         C: ColumnTrait,
         V: Into<Value>,
+        I: IntoIterator<Item = V>;
+
+    type RetSelector;
+    fn all_exist<C, V, I>(
+        self, entity: E, primary: C, first: V, residual: I, db: &DbBackend,
+    ) -> Self::RetSelector
+    where
+        C: ColumnTrait + Send,
+        V: Into<Value> + Send,
+        I: IntoIterator<Item = V> + Send;
+}
+
+impl<E: EntityTrait> QueryAllExist<E> for Select<E> {
+    type RetSelector = SelectorRaw<SelectModel<CountZero>>;
+
+    fn gen_statement<C, V, I>(
+        entity: E, primary: C, first: V, values: I, db: &DbBackend,
+    ) -> Statement
+    where
+        C: ColumnTrait,
+        V: Into<Value>,
+        I: IntoIterator<Item = V>,
     {
         let state = gen_statement(entity, primary, first, values);
         StatementBuilder::build(&state, db)
     }
 
-    fn all_exist<C, V>(
-        self, entity: E, primary: C, first: V,
-        values: impl IntoIterator<Item = V>, db: &DbBackend,
+    fn all_exist<C, V, I>(
+        self, entity: E, primary: C, first: V, residual: I, db: &DbBackend,
     ) -> Self::RetSelector
     where
-        C: ColumnTrait,
-        V: Into<Value>,
+        C: ColumnTrait + Send,
+        V: Into<Value> + Send,
+        I: IntoIterator<Item = V> + Send,
     {
         self.from_raw_sql(Self::gen_statement(
-            entity, primary, first, values, db,
+            entity, primary, first, residual, db,
         ))
         .into_model::<CountZero>()
     }
@@ -71,10 +71,7 @@ fn gen_statement(
     // select count (B.id)
     // 对所有希望存在但是不存在的行进行计数，
     // 如果为 0 那就 全部都存在
-    query.expr_as(
-        Expr::tbl(TempTable::Table, TempTable::Id).count(),
-        Alias::new(COUNT_NAME),
-    );
+    query.expr_as(Expr::asterisk().count(), Alias::new(COUNT_NAME));
 
     // from ()
     query.from_subquery(
