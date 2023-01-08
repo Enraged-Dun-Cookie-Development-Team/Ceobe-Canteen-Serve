@@ -20,7 +20,7 @@ use crate::fetcher::platform_config::{
 impl FetcherPlatformConfigSqlOperate {
     #[instrument(skip(db))]
     /// 分页获取全部平台列表
-    pub async fn find_with_paginator<'db, D>(
+    pub async fn find_all_with_paginator<'db, D>(
         db: &'db D, page_size: PageSize,
     ) -> OperateResult<Vec<model_platform_config::Model>>
     where
@@ -33,7 +33,7 @@ impl FetcherPlatformConfigSqlOperate {
         );
         let db = db.get_connect()?;
         Ok(model_platform_config::Entity::find()
-            .offset_limit(page_size)
+            .with_pagination(page_size)
             .all(db)
             .await?).tap_ok(|list| {
                 Span::current()

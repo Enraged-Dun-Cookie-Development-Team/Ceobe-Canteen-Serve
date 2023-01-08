@@ -1,8 +1,5 @@
-use futures::Future;
 use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
-use sql_connection::ext_traits::{
-    check_all_exist::QueryAllExist, select_count::QueryCountByColumn,
-};
+use sql_connection::ext_traits::select_count::QueryCountByColumn;
 
 use super::{FetcherPlatformConfigSqlOperate, OperateResult};
 use crate::fetcher::{
@@ -15,37 +12,6 @@ use crate::fetcher::{
 };
 
 impl FetcherPlatformConfigSqlOperate {
-    #[allow(clippy::manual_async_fn)]
-    pub fn all_exist_by_type_ids<'db, I>(
-        db: &'db impl ConnectionTrait, type_ids: I,
-    ) -> impl Future<Output = OperateResult<bool>> + Send + 'db
-    where
-        <I as IntoIterator>::IntoIter: std::marker::Send,
-        I: IntoIterator<Item = &'db str> + Send + 'db,
-    {
-        async {
-            let mut iter = type_ids.into_iter();
-            let Some(first) = iter.next()else{
-                return Ok(true);
-        };
-
-            let count = Entity::find()
-                .all_exist(
-                    Entity,
-                    TypeId,
-                    first,
-                    iter,
-                    &db.get_database_backend(),
-                )
-                .one(db)
-                .await?
-                .unwrap()
-                .take();
-
-            Ok(count)
-        }
-    }
-
     /// 查询是否存在type_id的平台
     pub async fn exist_by_type_id(
         db: &impl ConnectionTrait, type_id: &str,

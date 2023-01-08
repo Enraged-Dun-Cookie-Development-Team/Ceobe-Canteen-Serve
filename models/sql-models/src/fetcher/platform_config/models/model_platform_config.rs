@@ -7,7 +7,7 @@ use crate::fetcher::datasource_config::models::model_datasource_config;
 #[sea_orm(table_name = "fetcher_platform_config")]
 #[sub_model(
     all(
-        name = "PlatformWithHasDatasource",
+        name = "PlatformHasDatasource",
         extra_field(has_datasource(ty = "bool", from = "Default::default")),
         extra(derive(serde::Serialize, Debug))
     ),
