@@ -51,3 +51,23 @@ impl<Q: std::hash::Hash + std::cmp::Eq, V, R: BuildHasher> GetOrCreate<Q, V>
         }
     }
 }
+
+/// 将 [`bool`](bool) 映射到 [`Result<(), E>`](Result<(),E>)
+pub trait TrueOrError: Sized {
+    #[inline]
+    fn true_or<E>(self, e: E) -> Result<(), E> {
+        <Self as TrueOrError>::true_or_with(self, || e)
+    }
+
+    fn true_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E>;
+}
+
+impl TrueOrError for bool {
+    #[inline]
+    fn true_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E> {
+        match self {
+            true => Ok(()),
+            false => Err(f()),
+        }
+    }
+}
