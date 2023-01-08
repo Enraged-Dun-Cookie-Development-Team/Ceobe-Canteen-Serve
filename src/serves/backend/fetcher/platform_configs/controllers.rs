@@ -6,7 +6,7 @@ use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::fetcher::platform_config::{
         models::model_platform_config::{
-            PlatformBasicInfo, PlatformWithHasDatasource,
+            PlatformBasicInfo, PlatformHasDatasource,
         },
         operate::FetcherPlatformConfigSqlOperate,
     },
@@ -28,12 +28,12 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     pub async fn get_platform_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
-    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformWithHasDatasource>>
+    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformHasDatasource>>
     {
         resp_try(async {
             // 获取平台列表
             let platform_list =
-                FetcherConfigLogic::get_platform_list_with_has_datasource(
+                FetcherConfigLogic::get_all_platform_having_datasource_with_paginator(
                     &db, page_size,
                 );
 

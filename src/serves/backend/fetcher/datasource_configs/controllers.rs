@@ -38,7 +38,7 @@ impl FetcherConfigControllers {
 
             // 获取数据源数量
             let datasource_list =
-                FetcherDatasourceConfigSqlOperate::find_all_datasource_type_list(
+                FetcherDatasourceConfigSqlOperate::find_all_type(
                     &db,
                 );
             // 异步获取
@@ -66,10 +66,10 @@ impl FetcherConfigControllers {
     ) -> DatasourceConfigRResult<ListWithPageInfo<DatasourceList>> {
         resp_try(async {
             // 获取数据源列表
-            let datasource_list = FetcherDatasourceConfigSqlOperate::find_datasource_list_by_page_size(&db, page_size, filter_cond.platform.clone(), filter_cond.datasource.clone());
+            let datasource_list = FetcherDatasourceConfigSqlOperate::find_all_with_paginator(&db, page_size, filter_cond.platform.clone(), filter_cond.datasource.clone());
 
             // 获取数据源数量
-            let count = FetcherDatasourceConfigSqlOperate::get_datasource_total_number(&db, filter_cond.platform, filter_cond.datasource);
+            let count = FetcherDatasourceConfigSqlOperate::count(&db, filter_cond.platform, filter_cond.datasource);
             // 异步获取
             let (datasource_list, count) = future::join(datasource_list, count).await;
 
@@ -106,7 +106,7 @@ impl FetcherConfigControllers {
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            FetcherDatasourceConfigSqlOperate::update_platform_config(
+            FetcherDatasourceConfigSqlOperate::update(
                 &db,
                 datasource_config
             )
@@ -141,7 +141,7 @@ impl FetcherConfigControllers {
         >,
     ) -> DatasourceConfigRResult<Vec<DatasourceWithNameResp>> {
         resp_try(async {
-            let list = FetcherDatasourceConfigSqlOperate::find_datasource_list_by_platform(&db, filter.type_id).await?;
+            let list = FetcherDatasourceConfigSqlOperate::find_by_platform(&db, &filter.type_id).await?;
             let resp = list.into_iter().map(Into::into).collect();
             Ok(resp)
         })
