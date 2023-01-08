@@ -38,10 +38,7 @@ impl FetcherConfigControllers {
                 );
 
             // 获取平台数量
-            let count =
-                FetcherPlatformConfigSqlOperate::count_all(
-                    &db,
-                );
+            let count = FetcherPlatformConfigSqlOperate::count_all(&db);
             // 并发执行
             let (platform_list, count) =
                 future::join(platform_list, count).await;
@@ -59,11 +56,8 @@ impl FetcherConfigControllers {
         db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            FetcherPlatformConfigSqlOperate::create(
-                &db,
-                platform_config
-            )
-            .await
+            FetcherPlatformConfigSqlOperate::create(&db, platform_config)
+                .await
         );
         Ok(()).into()
     }
@@ -74,11 +68,8 @@ impl FetcherConfigControllers {
         db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            FetcherPlatformConfigSqlOperate::update(
-                &db,
-                platform_config
-            )
-            .await
+            FetcherPlatformConfigSqlOperate::update(&db, platform_config)
+                .await
         );
         Ok(()).into()
     }
@@ -99,6 +90,9 @@ impl FetcherConfigControllers {
     pub async fn get_platform_all_list_with_basic_info(
         db: SqlConnect,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
-        Ok(rtry!(FetcherPlatformConfigSqlOperate::find_all_basic_info(&db).await)).into()
+        Ok(rtry!(
+            FetcherPlatformConfigSqlOperate::find_all_basic_info(&db).await
+        ))
+        .into()
     }
 }

@@ -50,10 +50,9 @@ pub trait QueryCountByColumn: Sized {
 }
 
 impl<E: EntityTrait> QueryCountByColumn for Select<E> {
+    type Select = Self;
     type Selector<Count: sea_orm::FromQueryResult> =
         Selector<SelectModel<Count>>;
-
-    type Select = Self;
 
     fn select_count_by_colum<C>(self, col: C) -> Self::Select
     where
@@ -77,18 +76,13 @@ impl<E: EntityTrait> QueryCountByColumn for Select<E> {
 pub struct ColumnExpr(Expr);
 
 impl ColumnExpr {
-    fn count(self) -> SimpleExpr {
-        self.0.count()
-    }
+    fn count(self) -> SimpleExpr { self.0.count() }
+
     /// count (*)
     /// 可参考 [Expr::asterisk]
-    pub fn asterisk() -> Self {
-        Self(Expr::asterisk())
-    }
+    pub fn asterisk() -> Self { Self(Expr::asterisk()) }
 }
 
 impl<C: ColumnTrait> From<C> for ColumnExpr {
-    fn from(col: C) -> Self {
-        Self(col.into_expr())
-    }
+    fn from(col: C) -> Self { Self(col.into_expr()) }
 }

@@ -1,6 +1,5 @@
 use futures::Future;
 use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
-
 use sql_connection::ext_traits::{
     check_all_exist::QueryAllExist, select_count::QueryCountByColumn,
 };

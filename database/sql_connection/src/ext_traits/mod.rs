@@ -9,21 +9,15 @@ const COUNT_NAME: &str = "count";
 pub struct Count(pub u64);
 
 impl Count {
-    pub fn is_empty(&self) -> bool {
-        self == 0u64
-    }
+    pub fn is_empty(&self) -> bool { self == 0u64 }
 }
 
 impl PartialEq<u64> for Count {
-    fn eq(&self, other: &u64) -> bool {
-        &self.0 == other
-    }
+    fn eq(&self, other: &u64) -> bool { &self.0 == other }
 }
 
 impl PartialEq<u64> for &Count {
-    fn eq(&self, other: &u64) -> bool {
-        &self.0 == other
-    }
+    fn eq(&self, other: &u64) -> bool { &self.0 == other }
 }
 
 impl FromQueryResult for Count {
@@ -40,9 +34,7 @@ impl FromQueryResult for Count {
 pub struct CountZero(pub bool);
 
 impl CountZero {
-    pub fn take(self) -> bool {
-        self.0
-    }
+    pub fn take(self) -> bool { self.0 }
 }
 
 impl FromQueryResult for CountZero {
@@ -66,7 +58,5 @@ impl FromQueryResult for CountNonZero {
 }
 
 impl CountNonZero {
-    pub fn take(self) -> bool {
-        self.0
-    }
+    pub fn take(self) -> bool { self.0 }
 }

@@ -3,9 +3,7 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
 use super::{FetcherPlatformConfigSqlOperate, OperateResult};
-use crate::fetcher::platform_config::{
-    checkers::platform_config_data::FetcherPlatformConfig,
-};
+use crate::fetcher::platform_config::checkers::platform_config_data::FetcherPlatformConfig;
 
 impl FetcherPlatformConfigSqlOperate {
     /// 保存平台配置到数据库

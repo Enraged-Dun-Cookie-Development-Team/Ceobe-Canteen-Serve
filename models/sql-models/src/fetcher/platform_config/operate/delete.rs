@@ -24,7 +24,8 @@ impl FetcherPlatformConfigSqlOperate {
                 .exec(db)
                 .await?;
             Ok(())
-        } else {
+        }
+        else {
             Err(OperateError::NoDeletePlatformHasDatasource)
         }
     }

@@ -39,7 +39,8 @@ impl IntoActiveModel<ActiveModel> for FetcherPlatformConfig {
         };
         if let Some(id) = self.id.map(Set) {
             active.id = id
-        } else {
+        }
+        else {
             active.type_id = Set(self.type_id);
             active.platform_name = Set(self.platform_name);
         }

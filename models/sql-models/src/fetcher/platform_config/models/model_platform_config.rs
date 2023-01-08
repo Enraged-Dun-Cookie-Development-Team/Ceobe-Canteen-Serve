@@ -33,24 +33,21 @@ pub struct Model {
 
 #[derive(Debug, Clone, Copy, EnumIter)]
 pub enum Relation {
-    DataSource
+    DataSource,
 }
-
-
 
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Relation::DataSource => Entity::has_many(model_datasource_config::Entity).into(),
+            Relation::DataSource => {
+                Entity::has_many(model_datasource_config::Entity).into()
+            }
         }
     }
 }
 
 impl Related<model_datasource_config::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::DataSource.def()
-    }
+    fn to() -> RelationDef { Relation::DataSource.def() }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-

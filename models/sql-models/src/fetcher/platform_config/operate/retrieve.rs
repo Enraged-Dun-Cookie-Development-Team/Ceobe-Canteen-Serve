@@ -46,9 +46,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db))]
     /// 获取全部平台type_id列表
-    pub async fn find_all<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<Vec<String>>
+    pub async fn find_all<'db, D>(db: &'db D) -> OperateResult<Vec<String>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
@@ -95,9 +93,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db), ret)]
     /// 获取平台总数
-    pub async fn count_all<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<u64>
+    pub async fn count_all<'db, D>(db: &'db D) -> OperateResult<u64>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,

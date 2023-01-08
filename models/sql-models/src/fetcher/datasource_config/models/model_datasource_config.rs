@@ -71,9 +71,7 @@ impl RelationTrait for Relation {
 }
 
 impl Related<model_platform_config::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::PlatForm.def()
-    }
+    fn to() -> RelationDef { Relation::PlatForm.def() }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
