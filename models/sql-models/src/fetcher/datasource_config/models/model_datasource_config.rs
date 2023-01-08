@@ -1,6 +1,8 @@
 use sea_orm::entity::prelude::*;
 use sub_model::SubModel;
 
+use crate::fetcher::platform_config::models::model_platform_config;
+
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_config")]
 #[sub_model(
@@ -51,10 +53,27 @@ pub struct Model {
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
-pub enum Relation {}
+pub enum Relation {
+    PlatForm,
+}
 
 impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef { panic!("No Relate") }
+    fn def(&self) -> RelationDef {
+        match self {
+            Relation::PlatForm => {
+                Entity::belongs_to(model_platform_config::Entity)
+                    .from(Column::Platform)
+                    .to(model_platform_config::Column::TypeId)
+                    .into()
+            }
+        }
+    }
+}
+
+impl Related<model_platform_config::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::PlatForm.def()
+    }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
