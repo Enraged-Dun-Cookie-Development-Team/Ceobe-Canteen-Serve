@@ -131,7 +131,7 @@ impl UserSqlOperate {
             .column(user::Column::Id)
             .column(user::Column::Username)
             .column(user::Column::Auth)
-            .offset_limit(page_size)
+            .with_pagination(page_size)
             .into_model::<user::UserList>()
             .all(db)
             .await?)
