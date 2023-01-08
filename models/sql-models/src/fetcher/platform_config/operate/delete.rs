@@ -19,15 +19,13 @@ impl FetcherPlatformConfigSqlOperate {
         let db = db.get_connect()?;
 
         // 获取平台的type，比对数据源表时候有平台的相关数据源
-        if !Self::has_datasource_with_id(db, pid).await? {
+        if !Self::has_datasource_by_id(db, pid).await? {
             model_platform_config::Entity::delete_by_id(pid)
                 .exec(db)
                 .await?;
+            Ok(())
+        } else {
+            Err(OperateError::NoDeletePlatformHasDatasource)
         }
-        else {
-            return Err(OperateError::NoDeletePlatformHasDatasource);
-        }
-
-        Ok(())
     }
 }

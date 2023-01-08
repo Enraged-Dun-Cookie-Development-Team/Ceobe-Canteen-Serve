@@ -20,7 +20,7 @@ use crate::fetcher::platform_config::{
 impl FetcherPlatformConfigSqlOperate {
     #[instrument(skip(db))]
     /// 分页获取全部平台列表
-    pub async fn find_platform_list_by_page_size<'db, D>(
+    pub async fn find_with_paginator<'db, D>(
         db: &'db D, page_size: PageSize,
     ) -> OperateResult<Vec<model_platform_config::Model>>
     where
@@ -34,7 +34,6 @@ impl FetcherPlatformConfigSqlOperate {
         let db = db.get_connect()?;
         Ok(model_platform_config::Entity::find()
             .offset_limit(page_size)
-            .into_model::<model_platform_config::Model>()
             .all(db)
             .await?).tap_ok(|list| {
                 Span::current()
@@ -47,7 +46,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db))]
     /// 获取全部平台type_id列表
-    pub async fn find_platform_list<'db, D>(
+    pub async fn find_all<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<String>>
     where
@@ -74,7 +73,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db))]
     /// 获取全部平台基础信息列表
-    pub async fn find_all_platform_list_with_basic_info<'db, D>(
+    pub async fn find_all_basic_info<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<PlatformBasicInfo>>
     where
@@ -96,7 +95,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db), ret)]
     /// 获取平台总数
-    pub async fn get_platform_total_number<'db, D>(
+    pub async fn count_all<'db, D>(
         db: &'db D,
     ) -> OperateResult<u64>
     where

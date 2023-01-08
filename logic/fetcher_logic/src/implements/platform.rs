@@ -26,7 +26,7 @@ impl FetcherConfigLogic {
     {
         // 分页查询平台列表
         let platform_list =
-            FetcherPlatformConfigSqlOperate::find_platform_list_by_page_size(
+            FetcherPlatformConfigSqlOperate::find_with_paginator(
                 db, page_size,
             )
             .await?;

@@ -34,7 +34,7 @@ impl FetcherConfigControllers {
         resp_try(async {
             // 获取平台列表
             let platform_list =
-                FetcherPlatformConfigSqlOperate::find_platform_list(&db);
+                FetcherPlatformConfigSqlOperate::find_all(&db);
 
             // 获取数据源数量
             let datasource_list =
