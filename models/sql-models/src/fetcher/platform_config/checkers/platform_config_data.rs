@@ -5,11 +5,10 @@ use checker::{
         option_checker::OptionChecker, str_len_checker::StrMaxCharLenChecker,
     },
 };
-use sea_orm::Set;
+use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 
-use super::CheckError;
-use crate::fetcher::platform_config::models::model_platform_config;
+use super::{super::models::model_platform_config::ActiveModel, CheckError};
 
 #[derive(Debug, TypedBuilder)]
 pub struct FetcherPlatformConfig {
@@ -32,24 +31,19 @@ pub struct FetcherPlatformConfigChecker {
     pub min_request_interval: NoRemainderChecker<1000>,
 }
 
-impl model_platform_config::ActiveModel {
-    pub(in crate::fetcher::platform_config) fn platform_config_into_active_model(
-        FetcherPlatformConfig {
-            id,
-            type_id,
-            platform_name,
-            min_request_interval,
-        }: FetcherPlatformConfig,
-    ) -> Self {
-        let mut this = Self::default();
-        if let Some(id) = id {
-            this.id = Set(id);
+impl IntoActiveModel<ActiveModel> for FetcherPlatformConfig {
+    fn into_active_model(self) -> ActiveModel {
+        let mut active = ActiveModel {
+            min_request_interval: Set(self.min_request_interval),
+            ..Default::default()
+        };
+        if let Some(id) = self.id.map(Set) {
+            active.id = id
+        } else {
+            active.type_id = Set(self.type_id);
+            active.platform_name = Set(self.platform_name);
         }
-        else {
-            this.type_id = Set(type_id);
-            this.platform_name = Set(platform_name);
-        }
-        this.min_request_interval = Set(min_request_interval);
-        this
+
+        active
     }
 }
