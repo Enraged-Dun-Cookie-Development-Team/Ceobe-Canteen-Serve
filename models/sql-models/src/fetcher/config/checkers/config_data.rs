@@ -24,6 +24,12 @@ pub struct FetcherConfig {
     pub interval: Option<u64>,
     pub interval_by_time_range: Value,
 }
+
+impl FetcherConfig {
+    pub fn get_platform_type_id(&self)->&str{
+        &self.platform
+    }
+}
 use ::checker::ToCheckRequire;
 #[check_obj(
     uncheck = FetcherConfigUncheck,

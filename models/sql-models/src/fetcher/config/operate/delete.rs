@@ -20,18 +20,6 @@ impl FetcherConfigSqlOperate {
         Ok(())
     }
 
-    /// 根据平台删除相关配置,但是有多个平台
-    pub async fn delete_by_all_platform(
-        db: &impl ConnectionTrait, platforms: impl IntoIterator<Item = &str>,
-    ) -> OperateResult<()> {
-        model_config::Entity::delete_many()
-            .filter(model_config::Column::Platform.is_in(platforms))
-            .exec(db)
-            .await?;
-
-        Ok(())
-    }
-
     #[instrument(skip(db), ret)]
     /// 根据数据源id删除相关配置
     pub async fn delete_by_datasource_id(
