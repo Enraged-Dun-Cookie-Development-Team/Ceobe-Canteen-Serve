@@ -1,11 +1,8 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
 use tracing::{info, instrument};
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
-use crate::fetcher::datasource_config::{
-    checkers::datasource_config_data::FetcherDatasourceConfig,
-    models::model_datasource_config::ActiveModel,
-};
+use crate::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
 
 impl FetcherDatasourceConfigSqlOperate {
     /// 保存数据源配置到数据库
@@ -20,9 +17,7 @@ impl FetcherDatasourceConfigSqlOperate {
             datasource.avatar = config.avatar.to_string(),
             datasouce.config = ?config.config
         );
-        let datasource_config_active =
-            ActiveModel::datasource_config_into_active_model(config);
-        datasource_config_active.save(db).await?;
+        config.into_active_model().save(db).await?;
 
         Ok(())
     }

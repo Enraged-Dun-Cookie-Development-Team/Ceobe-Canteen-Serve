@@ -12,17 +12,19 @@ use tracing::{info, instrument, Span};
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
 use crate::fetcher::datasource_config::{
-    models::model_datasource_config,
+    models::model_datasource_config::{
+        self, BackendDatasource, Column, DataSourceForFetcherConfig, Entity,
+    },
     operate::retrieve::model_datasource_config::SingleDatasourceInfo,
 };
 
 impl FetcherDatasourceConfigSqlOperate {
     #[instrument(skip(db))]
     /// 分页获取全部数据源列表
-    pub async fn find_datasource_list_by_page_size<'db, D>(
+    pub async fn find_all_with_paginator<'db, D>(
         db: &'db D, page_size: PageSize, platform: Option<String>,
         datasource: Option<String>,
-    ) -> OperateResult<Vec<model_datasource_config::BackendDatasource>>
+    ) -> OperateResult<Vec<BackendDatasource>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
@@ -34,20 +36,18 @@ impl FetcherDatasourceConfigSqlOperate {
             datasourceList.filter.datasource = datasource,
         );
         let db = db.get_connect()?;
-        let result = model_datasource_config::Entity::find()
+        let result = Entity::find()
             .filter(
                 Condition::all()
                     .add_option(platform.map(|platform_str| {
-                        model_datasource_config::Column::Platform
-                            .eq(platform_str)
+                        Column::Platform.eq(platform_str)
                     }))
                     .add_option(datasource.map(|datasource_str| {
-                        model_datasource_config::Column::Datasource
-                            .eq(datasource_str)
+                        Column::Datasource.eq(datasource_str)
                     })),
             )
-            .offset_limit(page_size)
-            .into_model::<model_datasource_config::BackendDatasource>()
+            .with_pagination(page_size)
+            .into_model::<BackendDatasource>()
             .all(db)
             .await?;
 
@@ -62,9 +62,9 @@ impl FetcherDatasourceConfigSqlOperate {
 
     #[instrument(skip(db))]
     /// 获取单个平台下的全部数据源列表
-    pub async fn find_datasource_list_by_platform<'db, D>(
-        db: &'db D, platform: String,
-    ) -> OperateResult<Vec<model_datasource_config::DataSourceForFetcherConfig>>
+    pub async fn find_by_platform<'db, D>(
+        db: &'db D, platform: &str,
+    ) -> OperateResult<Vec<DataSourceForFetcherConfig>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
@@ -72,9 +72,9 @@ impl FetcherDatasourceConfigSqlOperate {
         info!(datasourceList.platform = platform,);
         let db = db.get_connect()?;
 
-        Ok(model_datasource_config::Entity::find()
-            .filter(model_datasource_config::Column::Platform.eq(platform))
-            .into_model::<model_datasource_config::DataSourceForFetcherConfig>()
+        Ok(Entity::find()
+            .filter(Column::Platform.eq(platform))
+            .into_model::<DataSourceForFetcherConfig>()
             .all(db)
             .await?).tap_ok(|list| {
                 Span::current()
@@ -88,7 +88,7 @@ impl FetcherDatasourceConfigSqlOperate {
     #[instrument(skip(db))]
     /// 获取全部数据源类型列表（如：B站动态、B站视频、网易云专辑、
     /// 网易云歌手等）
-    pub async fn find_all_datasource_type_list<'db, D>(
+    pub async fn find_all_type<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<String>>
     where
@@ -96,10 +96,10 @@ impl FetcherDatasourceConfigSqlOperate {
         D::Connect<'db>: ConnectionTrait,
     {
         let db = db.get_connect()?;
-        Ok(model_datasource_config::Entity::find()
+        Ok(Entity::find()
             .select_only()
-            .column(model_datasource_config::Column::Datasource)
-            .group_by(model_datasource_config::Column::Datasource)
+            .column(Column::Datasource)
+            .group_by(Column::Datasource)
             .into_model::<SingleDatasourceInfo>()
             .all(db)
             .await?
@@ -116,7 +116,7 @@ impl FetcherDatasourceConfigSqlOperate {
 
     #[instrument(skip(db), ret)]
     /// 获取数据源总数
-    pub async fn get_datasource_total_number<'db, D>(
+    pub async fn count<'db, D>(
         db: &'db D, platform: Option<String>, datasource: Option<String>,
     ) -> OperateResult<u64>
     where
@@ -124,16 +124,14 @@ impl FetcherDatasourceConfigSqlOperate {
         D::Connect<'db>: ConnectionTrait,
     {
         let db = db.get_connect()?;
-        model_datasource_config::Entity::find()
+        Entity::find()
             .filter(
                 Condition::all()
                     .add_option(platform.map(|platform_str| {
-                        model_datasource_config::Column::Platform
-                            .eq(platform_str)
+                        Column::Platform.eq(platform_str)
                     }))
                     .add_option(datasource.map(|datasource_str| {
-                        model_datasource_config::Column::Datasource
-                            .eq(datasource_str)
+                        Column::Datasource.eq(datasource_str)
                     })),
             )
             .count(db)

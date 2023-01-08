@@ -21,11 +21,6 @@ pub enum OperateError {
 type OperateResult<T> = Result<T, OperateError>;
 
 #[derive(FromQueryResult)]
-struct DatasourceCounts {
-    pub(crate) count: i64,
-}
-
-#[derive(FromQueryResult)]
 struct PlatformDatasource {
     pub(crate) platform: String,
 }
