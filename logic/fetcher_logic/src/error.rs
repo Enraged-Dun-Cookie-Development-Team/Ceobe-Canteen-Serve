@@ -70,7 +70,7 @@ pub enum LogicError {
     #[error("Json 反/序列化失败 {0}")]
     Json(#[from] serde_json::Error),
     #[error("Platform 不一致")]
-    #[status_err(err(err_code = 0x00_16, prefix = "ErrPrefix::CHECKER"))]
+    #[status_err(err(err_code = 0x00_16u16, prefix = "ErrPrefix::CHECKER"))]
     PlatFromNotSame,
 }
 

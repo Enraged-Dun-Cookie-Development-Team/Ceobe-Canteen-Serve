@@ -28,8 +28,7 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     pub async fn get_platform_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
-    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformHasDatasource>>
-    {
+    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformHasDatasource>> {
         resp_try(async {
             // 获取平台列表
             let platform_list =

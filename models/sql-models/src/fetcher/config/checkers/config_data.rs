@@ -26,9 +26,7 @@ pub struct FetcherConfig {
 }
 
 impl FetcherConfig {
-    pub fn get_platform_type_id(&self)->&str{
-        &self.platform
-    }
+    pub fn get_platform_type_id(&self) -> &str { &self.platform }
 }
 use ::checker::ToCheckRequire;
 #[check_obj(

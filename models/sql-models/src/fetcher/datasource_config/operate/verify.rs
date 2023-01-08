@@ -4,7 +4,6 @@ use sea_orm::{
     ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
     QuerySelect,
 };
-
 use sql_connection::{
     database_traits::get_connect::GetDatabaseConnect,
     ext_traits::{check_all_exist::QueryAllExist, CountZero},

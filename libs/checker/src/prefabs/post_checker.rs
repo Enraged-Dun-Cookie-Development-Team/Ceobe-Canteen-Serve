@@ -9,7 +9,7 @@ use pin_project::pin_project;
 
 use crate::{Checker, RefChecker};
 /// 追加checker
-/// 
+///
 /// 执行完成 `C::check` 后使用 `P::ref_check` 进行追加checker
 pub struct PostChecker<C, P, E>(PhantomData<(C, P, E)>);
 
@@ -20,15 +20,11 @@ where
     E: From<C::Err>,
     E: From<P::Err>,
 {
-    type Unchecked = C::Unchecked;
-
     type Args = (C::Args, P::Args);
-
     type Checked = C::Checked;
-
     type Err = E;
-
     type Fut = PostCheckFut<C, P, E>;
+    type Unchecked = C::Unchecked;
 
     fn check(
         (c_args, p_args): Self::Args, uncheck: Self::Unchecked,

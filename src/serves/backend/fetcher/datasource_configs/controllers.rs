@@ -38,9 +38,7 @@ impl FetcherConfigControllers {
 
             // 获取数据源数量
             let datasource_list =
-                FetcherDatasourceConfigSqlOperate::find_all_type(
-                    &db,
-                );
+                FetcherDatasourceConfigSqlOperate::find_all_type(&db);
             // 异步获取
             let (platform_list, datasource_list) =
                 future::join(platform_list, datasource_list).await;
@@ -66,14 +64,28 @@ impl FetcherConfigControllers {
     ) -> DatasourceConfigRResult<ListWithPageInfo<DatasourceList>> {
         resp_try(async {
             // 获取数据源列表
-            let datasource_list = FetcherDatasourceConfigSqlOperate::find_all_with_paginator(&db, page_size, filter_cond.platform.clone(), filter_cond.datasource.clone());
+            let datasource_list =
+                FetcherDatasourceConfigSqlOperate::find_all_with_paginator(
+                    &db,
+                    page_size,
+                    filter_cond.platform.clone(),
+                    filter_cond.datasource.clone(),
+                );
 
             // 获取数据源数量
-            let count = FetcherDatasourceConfigSqlOperate::count(&db, filter_cond.platform, filter_cond.datasource);
+            let count = FetcherDatasourceConfigSqlOperate::count(
+                &db,
+                filter_cond.platform,
+                filter_cond.datasource,
+            );
             // 异步获取
-            let (datasource_list, count) = future::join(datasource_list, count).await;
+            let (datasource_list, count) =
+                future::join(datasource_list, count).await;
 
-            let datasource_list = datasource_list?.into_iter().map(Into::into).collect::<Vec<DatasourceList>>();
+            let datasource_list = datasource_list?
+                .into_iter()
+                .map(Into::into)
+                .collect::<Vec<DatasourceList>>();
             let resp = datasource_list.with_page_info(page_size, count?);
 
             Ok(resp)
@@ -106,11 +118,8 @@ impl FetcherConfigControllers {
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            FetcherDatasourceConfigSqlOperate::update(
-                &db,
-                datasource_config
-            )
-            .await
+            FetcherDatasourceConfigSqlOperate::update(&db, datasource_config)
+                .await
         );
         Ok(()).into()
     }
@@ -141,7 +150,11 @@ impl FetcherConfigControllers {
         >,
     ) -> DatasourceConfigRResult<Vec<DatasourceWithNameResp>> {
         resp_try(async {
-            let list = FetcherDatasourceConfigSqlOperate::find_by_platform(&db, &filter.type_id).await?;
+            let list = FetcherDatasourceConfigSqlOperate::find_by_platform(
+                &db,
+                &filter.type_id,
+            )
+            .await?;
             let resp = list.into_iter().map(Into::into).collect();
             Ok(resp)
         })
