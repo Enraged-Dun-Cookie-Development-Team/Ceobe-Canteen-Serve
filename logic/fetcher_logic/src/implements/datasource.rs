@@ -15,12 +15,11 @@ use sql_models::{
     },
 };
 
+use super::DatasourceConfig;
 use crate::{
     error::{LogicError, LogicResult},
     utils::TrueOrError,
 };
-
-use super::DatasourceConfig;
 
 impl DatasourceConfig {
     /// 新建数据源配置

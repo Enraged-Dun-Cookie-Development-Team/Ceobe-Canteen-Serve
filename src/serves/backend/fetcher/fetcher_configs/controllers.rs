@@ -1,6 +1,6 @@
 use axum::{extract::Query, Json};
 use fetcher_logic::{
-    implements::{FetcherConfigLogic, SuperLogic, DetailConfig},
+    implements::{DetailConfig, FetcherConfigLogic, SuperLogic},
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
 use orm_migrate::sql_connection::SqlConnect;
@@ -42,7 +42,7 @@ impl FetcherConfigControllers {
     ) -> FetcherConfigRResult<()> {
         resp_try(async move {
             FetcherConfigLogic
-            .sub_logic::<DetailConfig>()
+                .sub_logic::<DetailConfig>()
                 .upload_multi(&db, configs)
                 .await?;
             Ok(())
@@ -61,7 +61,7 @@ impl FetcherConfigControllers {
     ) -> FetcherConfigRResult<Vec<BackEndFetcherConfig>> {
         Ok(rtry!(
             FetcherConfigLogic
-            .sub_logic::<DetailConfig>()
+                .sub_logic::<DetailConfig>()
                 .get_by_platform(&db, &type_id)
                 .await
         ))

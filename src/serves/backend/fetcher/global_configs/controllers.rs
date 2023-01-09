@@ -1,5 +1,7 @@
 use axum::Json;
-use fetcher_logic::implements::{FetcherConfigLogic, SuperLogic, GlobalConfig};
+use fetcher_logic::implements::{
+    FetcherConfigLogic, GlobalConfig, SuperLogic,
+};
 use orm_migrate::sql_connection::SqlConnect;
 use resp_result::MapReject;
 use serde_json::{Map, Value};

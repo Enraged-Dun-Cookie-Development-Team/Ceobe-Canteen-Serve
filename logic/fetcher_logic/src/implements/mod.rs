@@ -1,5 +1,5 @@
 use core::{future::Future, marker::Send};
-use std::{convert::Infallible, marker::PhantomData};
+use std::convert::Infallible;
 
 use axum_core::extract::FromRequestParts;
 use futures::future::ok;
@@ -52,34 +52,26 @@ pub struct DetailConfig;
 impl SubLogic for DetailConfig {
     type Parent = FetcherConfigLogic;
 
-    fn from_parent(_: &Self::Parent) -> &Self {
-        &DetailConfig
-    }
+    fn from_parent(_: &Self::Parent) -> &Self { &DetailConfig }
 }
 pub struct DatasourceConfig;
 
 impl SubLogic for DatasourceConfig {
     type Parent = FetcherConfigLogic;
 
-    fn from_parent(_: &Self::Parent) -> &Self {
-        &DatasourceConfig
-    }
+    fn from_parent(_: &Self::Parent) -> &Self { &DatasourceConfig }
 }
 pub struct PlatformConfig;
 
 impl SubLogic for PlatformConfig {
     type Parent = FetcherConfigLogic;
 
-    fn from_parent(_parent: &Self::Parent) -> &Self {
-        &PlatformConfig
-    }
+    fn from_parent(_parent: &Self::Parent) -> &Self { &PlatformConfig }
 }
 pub struct GlobalConfig;
 
 impl SubLogic for GlobalConfig {
     type Parent = FetcherConfigLogic;
 
-    fn from_parent(_parent: &Self::Parent) -> &Self {
-        &GlobalConfig
-    }
+    fn from_parent(_parent: &Self::Parent) -> &Self { &GlobalConfig }
 }

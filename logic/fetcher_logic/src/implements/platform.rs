@@ -13,9 +13,8 @@ use sql_models::{
     },
 };
 
-use crate::error::LogicResult;
-
 use super::PlatformConfig;
+use crate::error::LogicResult;
 
 impl PlatformConfig {
     /// 分页获取获取平台信息并且附带该平台下有无数据源

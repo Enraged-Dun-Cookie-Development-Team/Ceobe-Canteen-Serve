@@ -22,9 +22,7 @@ use crate::error::LogicResult;
 
 impl GlobalConfig {
     /// 从数据库获取json的key和value，拼接成json格式返回
-    pub async fn get_all<'db, D>(
-        &self, db: &'db D,
-    ) -> LogicResult<Value>
+    pub async fn get_all<'db, D>(&self, db: &'db D) -> LogicResult<Value>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
