@@ -24,7 +24,7 @@ use sql_models::{
     },
 };
 
-use super::FetcherConfigLogic;
+use super::DetailConfig;
 use crate::{
     checkers::check_platform_same::PlatformSameChecker,
     error::{LogicError, LogicResult},
@@ -32,10 +32,10 @@ use crate::{
     view::{BackEndFetcherConfig, Group, Server},
 };
 
-impl FetcherConfigLogic {
+impl DetailConfig {
     /// 获取蹲饼器最大存活数量
     pub async fn get_max_live_number<'client, C>(
-        client: &'client mut C,
+        &self, client: &'client mut C,
     ) -> LogicResult<i8>
     where
         C: GetMutDatabaseConnect<Error = RedisError> + 'client,
@@ -48,8 +48,7 @@ impl FetcherConfigLogic {
         {
             // 获取key的值
             con.get(FetcherConfigKey::LIVE_NUMBER).await?
-        }
-        else {
+        } else {
             0
         };
 
@@ -58,7 +57,8 @@ impl FetcherConfigLogic {
 
     /// 上传蹲饼器配置
     pub async fn upload_multi<'db, D>(
-        db: &'db D, configs: impl IntoIterator<Item = BackEndFetcherConfig>,
+        &self, db: &'db D,
+        configs: impl IntoIterator<Item = BackEndFetcherConfig>,
     ) -> LogicResult<()>
     where
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
@@ -143,7 +143,7 @@ impl FetcherConfigLogic {
 
     /// 获取蹲饼器配置
     pub async fn get_by_platform<'db, D>(
-        db: &'db D, platform: &str,
+        &self, db: &'db D, platform: &str,
     ) -> LogicResult<Vec<BackEndFetcherConfig>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,

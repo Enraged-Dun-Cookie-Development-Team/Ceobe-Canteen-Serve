@@ -13,12 +13,14 @@ use sql_models::{
     },
 };
 
-use crate::{error::LogicResult, implements::FetcherConfigLogic};
+use crate::error::LogicResult;
 
-impl FetcherConfigLogic {
+use super::PlatformConfig;
+
+impl PlatformConfig {
     /// 分页获取获取平台信息并且附带该平台下有无数据源
-    pub async fn get_all_platform_having_datasource_with_paginator<'db, D>(
-        db: &'db D, page_size: PageSize,
+    pub async fn get_all_having_datasource_with_paginator<'db, D>(
+        &self, db: &'db D, page_size: PageSize,
     ) -> LogicResult<Vec<PlatformHasDatasource>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,

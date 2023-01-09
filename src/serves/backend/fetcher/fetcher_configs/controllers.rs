@@ -1,6 +1,6 @@
 use axum::{extract::Query, Json};
 use fetcher_logic::{
-    implements::FetcherConfigLogic,
+    implements::{FetcherConfigLogic, SuperLogic, DetailConfig},
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
 use orm_migrate::sql_connection::SqlConnect;
@@ -18,8 +18,10 @@ impl FetcherConfigControllers {
         mut client: RedisConnect,
     ) -> FetcherConfigRResult<MaxLiveNumberResp> {
         resp_try(async {
-            let number =
-                FetcherConfigLogic::get_max_live_number(&mut client).await?;
+            let number = FetcherConfigLogic
+                .sub_logic::<DetailConfig>()
+                .get_max_live_number(&mut client)
+                .await?;
             let resp = MaxLiveNumberResp {
                 fetcher_live_number: number,
             };
@@ -39,7 +41,10 @@ impl FetcherConfigControllers {
         >,
     ) -> FetcherConfigRResult<()> {
         resp_try(async move {
-            FetcherConfigLogic::upload_multi(&db, configs).await?;
+            FetcherConfigLogic
+            .sub_logic::<DetailConfig>()
+                .upload_multi(&db, configs)
+                .await?;
             Ok(())
         })
         .await
@@ -55,7 +60,10 @@ impl FetcherConfigControllers {
         >,
     ) -> FetcherConfigRResult<Vec<BackEndFetcherConfig>> {
         Ok(rtry!(
-            FetcherConfigLogic::get_by_platform(&db, &type_id).await
+            FetcherConfigLogic
+            .sub_logic::<DetailConfig>()
+                .get_by_platform(&db, &type_id)
+                .await
         ))
         .into()
     }

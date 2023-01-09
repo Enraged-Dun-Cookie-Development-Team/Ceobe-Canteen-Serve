@@ -17,14 +17,15 @@ use sql_models::{
 
 use crate::{
     error::{LogicError, LogicResult},
-    implements::FetcherConfigLogic,
     utils::TrueOrError,
 };
 
-impl FetcherConfigLogic {
+use super::DatasourceConfig;
+
+impl DatasourceConfig {
     /// 新建数据源配置
-    pub async fn create_datasource_config<'db, D>(
-        db: &'db D, datasource_config: FetcherDatasourceConfig,
+    pub async fn create<'db, D>(
+        &self, db: &'db D, datasource_config: FetcherDatasourceConfig,
     ) -> LogicResult<()>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
@@ -45,8 +46,8 @@ impl FetcherConfigLogic {
     }
 
     /// 删除一个数据源
-    pub async fn delete_datasource_by_id<'db, D>(
-        db: &'db D, id: i32,
+    pub async fn delete_by_id<'db, D>(
+        &self, db: &'db D, id: i32,
     ) -> LogicResult<()>
     where
         D: GetDatabaseTransaction<Error = DbErr> + 'db,

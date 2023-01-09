@@ -1,7 +1,7 @@
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
 use fetcher_logic::{
-    implements::FetcherConfigLogic,
+    implements::{FetcherConfigLogic, SuperLogic, DatasourceConfig},
     view::{
         DatasourceList, DatasourceListFilterCondReq, DatasourceWithNameResp,
         OneIdReq, PlatformAndDatasourceArrayResp, PlatformFilterReq,
@@ -101,11 +101,10 @@ impl FetcherConfigControllers {
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         resp_try(async {
-            FetcherConfigLogic::create_datasource_config(
-                &db,
-                datasource_config,
-            )
-            .await?;
+            FetcherConfigLogic
+                .sub_logic::<DatasourceConfig>()
+                .create(&db, datasource_config)
+                .await?;
             Ok(())
         })
         .await
@@ -134,7 +133,9 @@ impl FetcherConfigControllers {
         >,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            FetcherConfigLogic::delete_datasource_by_id(&db, datasource.id)
+            FetcherConfigLogic
+            .sub_logic::<DatasourceConfig>()
+                .delete_by_id(&db, datasource.id)
                 .await
         );
         Ok(()).into()

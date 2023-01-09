@@ -17,12 +17,14 @@ use sql_models::{
     },
 };
 
-use super::FetcherConfigLogic;
+use super::GlobalConfig;
 use crate::error::LogicResult;
 
-impl FetcherConfigLogic {
+impl GlobalConfig {
     /// 从数据库获取json的key和value，拼接成json格式返回
-    pub async fn get_global_configs<'db, D>(db: &'db D) -> LogicResult<Value>
+    pub async fn get_all<'db, D>(
+        &self, db: &'db D,
+    ) -> LogicResult<Value>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
@@ -41,8 +43,8 @@ impl FetcherConfigLogic {
     }
 
     /// 接收来自controller的json格式
-    pub async fn set_global_config<'db, D>(
-        db: &'db D, config: Map<String, Value>,
+    pub async fn set<'db, D>(
+        &self, db: &'db D, config: Map<String, Value>,
     ) -> LogicResult<()>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,

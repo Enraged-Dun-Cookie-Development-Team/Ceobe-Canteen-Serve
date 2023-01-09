@@ -1,6 +1,9 @@
 use axum::Json;
 use checker::CheckExtract;
-use fetcher_logic::{implements::FetcherConfigLogic, view::OneIdReq};
+use fetcher_logic::{
+    implements::{FetcherConfigLogic, PlatformConfig, SuperLogic},
+    view::OneIdReq,
+};
 use futures::future;
 use orm_migrate::{
     sql_connection::SqlConnect,
@@ -25,22 +28,23 @@ use crate::{
 
 impl FetcherConfigControllers {
     /// 分页获取平台列表
-    #[instrument(ret, skip(db))]
+    // #[instrument(ret, skip(db))]
     pub async fn get_platform_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
     ) -> PlatformConfigRResult<ListWithPageInfo<PlatformHasDatasource>> {
+        let logic = FetcherConfigLogic;
+        let platform_list_fut = logic
+            .sub_logic::<PlatformConfig>()
+            .get_all_having_datasource_with_paginator(&db, page_size);
         resp_try(async {
             // 获取平台列表
-            let platform_list =
-                FetcherConfigLogic::get_all_platform_having_datasource_with_paginator(
-                    &db, page_size,
-                );
-
             // 获取平台数量
-            let count = FetcherPlatformConfigSqlOperate::count_all(&db);
             // 并发执行
-            let (platform_list, count) =
-                future::join(platform_list, count).await;
+            let (platform_list, count) = future::join(
+                platform_list_fut,
+                FetcherPlatformConfigSqlOperate::count_all(&db),
+            )
+            .await;
 
             let resp = platform_list?.with_page_info(page_size, count?);
 
