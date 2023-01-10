@@ -7,21 +7,26 @@ use std::{
 use futures::{ready, Future};
 use pin_project::pin_project;
 
-use crate::{Checker, RefChecker};
+use crate::Checker;
 /// 追加checker
 ///
 /// 执行完成 `C::check` 后使用 `P::ref_check` 进行追加checker
-pub struct PostChecker<C, P, E>(PhantomData<(C, P, E)>);
+pub struct PostChecker<C, P, E>(PhantomData<(C, P, E)>)
+where
+    C: Checker,
+    P: Checker<Unchecked = C::Checked>,
+    E: From<C::Err>,
+    E: From<P::Err>;
 
 impl<C, P, E> Checker for PostChecker<C, P, E>
 where
     C: Checker,
-    P: RefChecker<Target = C::Checked>,
+    P: Checker<Unchecked = C::Checked>,
     E: From<C::Err>,
     E: From<P::Err>,
 {
     type Args = (C::Args, P::Args);
-    type Checked = C::Checked;
+    type Checked = P::Checked;
     type Err = E;
     type Fut = PostCheckFut<C, P, E>;
     type Unchecked = C::Unchecked;
@@ -37,7 +42,7 @@ where
 pub enum PostCheckFut<C, P, E>
 where
     C: Checker,
-    P: RefChecker,
+    P: Checker<Unchecked = C::Checked>,
     E: From<C::Err>,
     E: From<P::Err>,
 {
@@ -48,7 +53,7 @@ where
 impl<C, P, E> PostCheckFut<C, P, E>
 where
     C: Checker,
-    P: RefChecker,
+    P: Checker<Unchecked = C::Checked>,
     E: From<C::Err>,
     E: From<P::Err>,
 {
@@ -60,11 +65,11 @@ where
 impl<C, P, E> Future for PostCheckFut<C, P, E>
 where
     C: Checker,
-    P: RefChecker<Target = C::Checked>,
+    P: Checker<Unchecked = C::Checked>,
     E: From<C::Err>,
     E: From<P::Err>,
 {
-    type Output = Result<C::Checked, E>;
+    type Output = Result<P::Checked, E>;
 
     fn poll(
         mut self: Pin<&mut Self>, cx: &mut Context<'_>,
@@ -95,7 +100,7 @@ where
                         // if ready return
                         Poll::Ready(result.map_err(E::from))
                     }
-                    err @ Err(_) => Poll::Ready(err),
+                    Err(err) => Poll::Ready(Err(err)),
                 }
             }
             ProjEnum::PostChecker(fut) => {
