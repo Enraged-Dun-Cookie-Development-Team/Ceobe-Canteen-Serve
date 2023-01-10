@@ -83,7 +83,6 @@ impl FetcherCount {
 
 impl IntoActiveModel<model_config::ActiveModel> for FetcherConfig {
     fn into_active_model(self) -> model_config::ActiveModel {
-        const DEFAULT_INTERVAL_BY_TIME_RANGE: &str = "[]";
 
         let mut active = model_config::ActiveModel {
             live_number: Set(self.live_number),
@@ -96,8 +95,8 @@ impl IntoActiveModel<model_config::ActiveModel> for FetcherConfig {
         };
 
         let interval_time_range = match self.interval_by_time_range {
-            Value::Null => String::from(DEFAULT_INTERVAL_BY_TIME_RANGE),
-            value => value.to_string(),
+            Value::Null => None,
+            value => Some(value.to_string()),
         };
 
         active.interval_by_time_range = Set(interval_time_range);

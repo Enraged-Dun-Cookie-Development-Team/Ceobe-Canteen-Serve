@@ -18,7 +18,7 @@ pub struct Model {
     /// 组内蹲饼间隔
     pub interval: Option<u64>,
     /// 组内蹲饼时间段间隔
-    pub interval_by_time_range: String,
+    pub interval_by_time_range: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
