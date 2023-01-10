@@ -60,7 +60,6 @@ impl MigrationTrait for Migration {
             );
         table.index(
             Index::create()
-                .col(FetcherDatasourceConfig::Platform)
                 .col(FetcherDatasourceConfig::Datasource)
                 .col(FetcherDatasourceConfig::DbUniqueKey)
                 .name("single-datasource")
