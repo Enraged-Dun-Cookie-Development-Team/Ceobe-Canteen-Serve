@@ -26,9 +26,7 @@ pub struct FetcherConfig {
 }
 
 impl FetcherConfig {
-    pub fn get_platform_type_id(&self) -> &str {
-        &self.platform
-    }
+    pub fn get_platform_type_id(&self) -> &str { &self.platform }
 }
 use ::checker::ToCheckRequire;
 #[check_obj(
@@ -80,9 +78,7 @@ impl FetcherCount {
         Self(count + 1)
     }
 
-    pub fn take(self) -> i8 {
-        self.0
-    }
+    pub fn take(self) -> i8 { self.0 }
 }
 
 impl IntoActiveModel<model_config::ActiveModel> for FetcherConfig {

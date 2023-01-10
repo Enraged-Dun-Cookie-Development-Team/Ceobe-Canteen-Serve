@@ -40,8 +40,7 @@ impl MigrationTrait for Migration {
         al.table(FetcherConfig::Table).modify_column(
             ColumnDef::new(FetcherConfig::IntervalByTimeRange)
                 .text()
-                .not_null()
-                ,
+                .not_null(),
         );
 
         manager.exec_stmt(update).await?;

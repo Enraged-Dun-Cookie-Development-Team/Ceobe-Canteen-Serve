@@ -49,8 +49,7 @@ impl MigrationTrait for Migration {
             .col(
                 ColumnDef::new(FetcherConfig::IntervalByTimeRange)
                     .text()
-                    .not_null()
-                    ,
+                    .not_null(),
             );
         table.character_set("utf8mb4").collate("utf8mb4_general_ci");
         manager.create_table(table).await?;
