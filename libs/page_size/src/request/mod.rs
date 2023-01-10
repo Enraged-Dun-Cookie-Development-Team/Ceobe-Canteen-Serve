@@ -36,7 +36,7 @@ mod test {
     use serde::Deserialize;
     use typed_builder::TypedBuilder;
 
-    use super::{Paginator, PageSizeChecker};
+    use super::{PageSizeChecker, Paginator};
 
     #[derive(Debug, TypedBuilder)]
     #[allow(dead_code)]

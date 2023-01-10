@@ -1,7 +1,10 @@
 use sea_orm::entity::prelude::*;
 use sub_model::SubModel;
 
-use crate::fetcher::{platform_config::models::model_platform_config, datasource_config::checkers::DatasourceUnique};
+use crate::fetcher::{
+    datasource_config::checkers::DatasourceUnique,
+    platform_config::models::model_platform_config,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_config")]
@@ -51,7 +54,8 @@ pub struct Model {
     #[sub_model(ignore("BackendDatasource"), want("FrontendDatasource"))]
     pub unique_id: Uuid,
     /// 数据库使用的Unique Key
-    pub db_unique_key:DatasourceUnique
+    #[sub_model(ignore("BackendDatasource"))]
+    pub db_unique_key: DatasourceUnique,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

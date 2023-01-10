@@ -1,5 +1,4 @@
 use sea_orm::{TryGetable, Value};
-
 use sea_query::ValueType;
 use serde::{Deserialize, Serialize};
 
@@ -25,27 +24,17 @@ impl ValueType for DatasourceUnique {
         <u64 as ValueType>::try_from(v).map(Into::into)
     }
 
-    fn type_name() -> String {
-        u64::type_name()
-    }
+    fn type_name() -> String { u64::type_name() }
 
-    fn array_type() -> sea_query::ArrayType {
-        u64::array_type()
-    }
+    fn array_type() -> sea_query::ArrayType { u64::array_type() }
 
-    fn column_type() -> sea_query::ColumnType {
-        u64::column_type()
-    }
+    fn column_type() -> sea_query::ColumnType { u64::column_type() }
 }
 
 impl From<u64> for DatasourceUnique {
-    fn from(v: u64) -> Self {
-        Self { identify: v }
-    }
+    fn from(v: u64) -> Self { Self { identify: v } }
 }
 
 impl Into<Value> for DatasourceUnique {
-    fn into(self) -> Value {
-        Value::BigUnsigned(Some(self.identify))
-    }
+    fn into(self) -> Value { Value::BigUnsigned(Some(self.identify)) }
 }

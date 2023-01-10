@@ -4,8 +4,7 @@ pub mod unique_key_checker;
 
 use std::convert::Infallible;
 
-use status_err::ErrPrefix;
-use status_err::StatusErr;
+use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 pub use CheckError::*;
 
@@ -23,13 +22,12 @@ pub enum CheckError {
 }
 
 impl From<Infallible> for CheckError {
-    fn from(_: Infallible) -> Self {
-        unreachable!("enter Infallible error")
-    }
+    fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
 }
 
 pub use datasource_config_data::{
-    FetcherDatasourceConfigUncheck, PreCheckFetcherDatasourceConfigChecker,FetcherDatasourceConfigChecker
+    FetcherDatasourceConfigChecker, FetcherDatasourceConfigUncheck,
+    PreCheckFetcherDatasourceConfigChecker,
 };
 pub use unique_key::DatasourceUnique;
 pub use unique_key_checker::{

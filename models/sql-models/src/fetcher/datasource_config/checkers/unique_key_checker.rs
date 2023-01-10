@@ -31,15 +31,11 @@ pub struct FetcherDatasourceConfig {
 pub struct UniqueKeyChecker;
 
 impl Checker for UniqueKeyChecker {
-    type Unchecked = PreCheckFetcherDatasourceConfig;
-
     type Args = ();
-
     type Checked = FetcherDatasourceConfig;
-
     type Err = super::CheckError;
-
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
+    type Unchecked = PreCheckFetcherDatasourceConfig;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         let unique_key = uncheck.unique_key;
