@@ -3,7 +3,7 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
-use crate::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
+use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 
 impl FetcherDatasourceConfigSqlOperate {
     /// 更新数据配置到数据库

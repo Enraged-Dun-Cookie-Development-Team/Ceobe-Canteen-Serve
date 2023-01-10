@@ -2,7 +2,7 @@ use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
 use tracing::{info, instrument};
 
 use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
-use crate::fetcher::datasource_config::checkers::datasource_config_data::FetcherDatasourceConfig;
+use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 
 impl FetcherDatasourceConfigSqlOperate {
     /// 保存数据源配置到数据库
