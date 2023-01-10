@@ -35,6 +35,8 @@ impl From<u64> for DatasourceUnique {
     fn from(v: u64) -> Self { Self { identify: v } }
 }
 
-impl Into<Value> for DatasourceUnique {
-    fn into(self) -> Value { Value::BigUnsigned(Some(self.identify)) }
+impl From<DatasourceUnique> for Value {
+    fn from(val: DatasourceUnique) -> Self {
+        Value::BigUnsigned(Some(val.identify))
+    }
 }

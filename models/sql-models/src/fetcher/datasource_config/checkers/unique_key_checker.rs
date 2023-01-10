@@ -13,7 +13,7 @@ pub struct PreCheckFetcherDatasourceConfig {
     pub datasource: String,
     pub nickname: String,
     pub avatar: Url,
-    pub unique_key: String,
+    pub unique_key: Option<String>,
     pub config: Map<String, serde_json::Value>,
 }
 
@@ -38,26 +38,33 @@ impl Checker for UniqueKeyChecker {
     type Unchecked = PreCheckFetcherDatasourceConfig;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        let unique_key = uncheck.unique_key;
-
         ready('checker: {
+            // if not provide unique key using 0
+            let Some(unique_key) = uncheck.unique_key else{
+                break 'checker Ok(DatasourceUnique::from(0));
+            };
+
+            // try get the unique for number
             let Some(serde_json::Value::Number(number))= uncheck.config.get(&unique_key)else{
                 break 'checker Err(super::CheckError::UniqueKeyInValid(unique_key))
             };
-
+            // get u64
             let Some(identify) = number.as_u64() else{
                 break 'checker Err(super::CheckError::UniqueKeyInValid(unique_key))
             };
 
-            Ok(FetcherDatasourceConfig::builder()
-                .id(uncheck.id)
-                .avatar(uncheck.avatar)
-                .config(uncheck.config)
-                .datasource(uncheck.datasource)
-                .platform(uncheck.platform)
-                .nickname(uncheck.nickname)
-                .unique_key(DatasourceUnique::from(identify))
-                .build())
-        })
+            Ok(
+                DatasourceUnique::from(identify)
+                )
+        }.map(|unique|{
+            FetcherDatasourceConfig::builder()
+            .id(uncheck.id)
+            .avatar(uncheck.avatar)
+            .config(uncheck.config)
+            .datasource(uncheck.datasource)
+            .platform(uncheck.platform)
+            .nickname(uncheck.nickname).unique_key(unique)
+            .build()
+        }))
     }
 }
