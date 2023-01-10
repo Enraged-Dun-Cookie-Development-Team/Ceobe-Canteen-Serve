@@ -55,7 +55,7 @@ impl MigrationTrait for Migration {
             )
             .col(
                 ColumnDef::new(FetcherDatasourceConfig::DbUniqueKey)
-                    .big_unsigned()
+                    .string_len(64)
                     .not_null(),
             );
         table.index(
