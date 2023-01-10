@@ -43,9 +43,9 @@ impl TryFrom<models::model_config::Model> for Group {
             platform,
             data_source: vec![],
             interval,
-            interval_by_time_range: interval_by_time_range
-                .map(|str| serde_json::from_str(&str))
-                .transpose()?,
+            interval_by_time_range: serde_json::from_str(
+                &interval_by_time_range,
+            )?,
         })
     }
 }

@@ -41,7 +41,7 @@ impl MigrationTrait for Migration {
             ColumnDef::new(FetcherConfig::IntervalByTimeRange)
                 .text()
                 .not_null()
-                .default("[]"),
+                ,
         );
 
         manager.exec_stmt(update).await?;

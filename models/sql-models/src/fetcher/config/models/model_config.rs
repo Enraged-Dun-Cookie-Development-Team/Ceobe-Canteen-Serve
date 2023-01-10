@@ -18,16 +18,16 @@ pub struct Model {
     /// 组内蹲饼间隔
     pub interval: Option<u64>,
     /// 组内蹲饼时间段间隔
-    pub interval_by_time_range: Option<String>,
+    pub interval_by_time_range: String,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
 pub enum Relation {}
 
 impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef { panic!("No Relate") }
+    fn def(&self) -> RelationDef {
+        panic!("No Relate")
+    }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-
-impl ActiveModel {}
