@@ -8,14 +8,14 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 #[derive(Copy, Clone, Debug, TypedBuilder, Serialize)]
-pub struct PageSize {
+pub struct Paginator {
     pub page: NonZeroUnsigned<usize>,
     pub size: NonZeroUnsigned<usize>,
 }
 
 #[check_obj(
     uncheck = PageSizeUncheck,
-    checked = PageSize,
+    checked = Paginator,
     error = NonZeroUnsignedError
 )]
 #[derive(Debug, Deserialize)]
@@ -36,14 +36,14 @@ mod test {
     use serde::Deserialize;
     use typed_builder::TypedBuilder;
 
-    use super::{PageSize, PageSizeChecker};
+    use super::{Paginator, PageSizeChecker};
 
     #[derive(Debug, TypedBuilder)]
     #[allow(dead_code)]
     struct TestChecked {
         a: i32,
         b: String,
-        test_page_size: PageSize,
+        test_page_size: Paginator,
     }
 
     #[derive(Debug)]

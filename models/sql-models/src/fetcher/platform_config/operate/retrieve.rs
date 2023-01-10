@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use page_size::{database::OffsetLimit, request::PageSize};
+use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{
     ConnectionTrait, DbErr, EntityTrait, PaginatorTrait, QuerySelect,
 };
@@ -21,7 +21,7 @@ impl FetcherPlatformConfigSqlOperate {
     #[instrument(skip(db))]
     /// 分页获取全部平台列表
     pub async fn find_all_with_paginator<'db, D>(
-        db: &'db D, page_size: PageSize,
+        db: &'db D, page_size: Paginator,
     ) -> OperateResult<Vec<model_platform_config::Model>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,

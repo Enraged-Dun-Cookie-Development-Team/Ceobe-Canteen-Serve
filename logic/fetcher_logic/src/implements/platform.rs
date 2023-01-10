@@ -1,4 +1,4 @@
-use page_size::request::PageSize;
+use page_size::request::Paginator;
 use sql_models::{
     fetcher::{
         datasource_config::operate::FetcherDatasourceConfigSqlOperate,
@@ -18,7 +18,7 @@ use crate::{error::LogicResult, implements::FetcherConfigLogic};
 impl FetcherConfigLogic {
     /// 分页获取获取平台信息并且附带该平台下有无数据源
     pub async fn get_all_platform_having_datasource_with_paginator<'db, D>(
-        db: &'db D, page_size: PageSize,
+        db: &'db D, page_size: Paginator,
     ) -> LogicResult<Vec<PlatformHasDatasource>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,

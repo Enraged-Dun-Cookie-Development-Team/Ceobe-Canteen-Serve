@@ -166,7 +166,7 @@ impl FetcherConfigLogic {
                 .get_mut_or_default(live_number)
                 .get_mut_or_default(fetcher_count - 1);
 
-            let group = server_temp.get_or_try_create_with(
+            let group = server_temp.get_mut_or_try_create_with(
                 config.group_name.to_owned(),
                 || Group::try_from(config),
             )?;

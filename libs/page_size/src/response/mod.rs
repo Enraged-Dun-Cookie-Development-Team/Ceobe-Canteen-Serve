@@ -2,12 +2,12 @@ use std::ops::Deref;
 
 use serde::Serialize;
 
-use crate::request::PageSize;
+use crate::request::Paginator;
 
 #[derive(Serialize, Debug)]
 pub struct PageInfo {
     #[serde(flatten)]
-    page_size: PageSize,
+    page_size: Paginator,
     total_count: u64,
     total_page: u64,
 }
@@ -27,7 +27,7 @@ where
     Self::Item: Serialize,
 {
     fn with_page_info(
-        self, page_size: PageSize, count: u64,
+        self, page_size: Paginator, count: u64,
     ) -> ListWithPageInfo<Self::Item>;
 }
 
@@ -38,7 +38,7 @@ where
 {
     /// 将列表，与分页信息存入一个结构体
     fn with_page_info(
-        self, page_size: PageSize, count: u64,
+        self, page_size: Paginator, count: u64,
     ) -> ListWithPageInfo<Self::Item> {
         ListWithPageInfo {
             list: self.into_iter().collect(),
