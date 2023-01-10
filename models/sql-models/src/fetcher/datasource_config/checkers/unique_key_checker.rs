@@ -41,20 +41,16 @@ impl Checker for UniqueKeyChecker {
         ready('checker: {
             // if not provide unique key using 0
             let Some(unique_key) = uncheck.unique_key else{
-                break 'checker Ok(DatasourceUnique::from(0));
+                break 'checker Ok(DatasourceUnique::from("-".to_string()));
             };
 
             // try get the unique for number
-            let Some(serde_json::Value::Number(number))= uncheck.config.get(&unique_key)else{
-                break 'checker Err(super::CheckError::UniqueKeyInValid(unique_key))
-            };
-            // get u64
-            let Some(identify) = number.as_u64() else{
+            let Some(serde_json::Value::String(identify))= uncheck.config.get(&unique_key)else{
                 break 'checker Err(super::CheckError::UniqueKeyInValid(unique_key))
             };
 
             Ok(
-                DatasourceUnique::from(identify)
+                DatasourceUnique::from(identify.to_owned())
                 )
         }.map(|unique|{
             FetcherDatasourceConfig::builder()
