@@ -12,8 +12,10 @@ use sql_connection::ext_traits::active_or_set::ActiveOrSet;
 use tracing_unwrap::ResultExt;
 use uuid::Uuid;
 
-pub use super::FetcherDatasourceConfig;
-use super::{CheckError, PreCheckFetcherDatasourceConfig, UniqueKeyChecker};
+use super::{
+    unique_key_checker::PreCheckFetcherDatasourceConfig, CheckError,
+    FetcherDatasourceConfig, UniqueKeyChecker,
+};
 use crate::fetcher::datasource_config::models::model_datasource_config::ActiveModel;
 #[check_obj(
     uncheck = FetcherDatasourceConfigUncheck,

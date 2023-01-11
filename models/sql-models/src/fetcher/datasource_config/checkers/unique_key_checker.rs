@@ -1,6 +1,9 @@
-use checker::Checker;
+use checker::{
+    prefabs::str_len_checker::StrMaxCharLenChecker, Checker, RefChecker,
+};
 use futures::future::{ready, Ready};
-use serde_json::Map;
+
+use serde_json::{Map, Value};
 use typed_builder::TypedBuilder;
 use url::Url;
 
@@ -8,13 +11,13 @@ use super::DatasourceUnique;
 
 #[derive(Debug, TypedBuilder)]
 pub struct PreCheckFetcherDatasourceConfig {
-    pub id: Option<i32>,
-    pub platform: String,
-    pub datasource: String,
-    pub nickname: String,
-    pub avatar: Url,
-    pub unique_key: Option<String>,
-    pub config: Map<String, serde_json::Value>,
+    id: Option<i32>,
+    platform: String,
+    datasource: String,
+    nickname: String,
+    avatar: Url,
+    unique_key: Option<String>,
+    config: Map<String, Value>,
 }
 
 #[derive(Debug, TypedBuilder)]
@@ -25,7 +28,7 @@ pub struct FetcherDatasourceConfig {
     pub nickname: String,
     pub avatar: Url,
     pub unique_key: DatasourceUnique,
-    pub config: Map<String, serde_json::Value>,
+    pub config: Map<String, Value>,
 }
 
 pub struct UniqueKeyChecker;
@@ -41,18 +44,24 @@ impl Checker for UniqueKeyChecker {
         ready('checker: {
             // if not provide unique key using 0
             let Some(unique_key) = uncheck.unique_key else{
-                break 'checker Ok(DatasourceUnique::from("-".to_string()));
+                break 'checker Ok("-")
             };
 
             // try get the unique for number
-            let Some(serde_json::Value::String(identify))= uncheck.config.get(&unique_key)else{
+            let Some(Value::String(identify))= uncheck.config.get(&unique_key) else{
                 break 'checker Err(super::CheckError::UniqueKeyInValid(unique_key))
             };
 
+            if let Err(err)= StrMaxCharLenChecker::<_,64>::ref_checker((),identify).into_inner(){
+                break 'checker Err(err.into())
+            }
+
             Ok(
-                DatasourceUnique::from(identify.to_owned())
+                identify.as_str()
                 )
-        }.map(|unique|{
+        }
+        .map(ToOwned::to_owned)
+        .map(|unique|{
             FetcherDatasourceConfig::builder()
             .id(uncheck.id)
             .avatar(uncheck.avatar)

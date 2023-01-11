@@ -2,7 +2,7 @@ use sql_models::{
     fetcher::{
         config::operate::FetcherConfigSqlOperate,
         datasource_config::{
-            checkers::datasource_config_data::FetcherDatasourceConfig,
+            checkers::FetcherDatasourceConfig,
             operate::FetcherDatasourceConfigSqlOperate,
         },
         platform_config::operate::FetcherPlatformConfigSqlOperate,

@@ -1,6 +1,6 @@
-pub mod datasource_config_data;
-pub mod unique_key;
-pub mod unique_key_checker;
+mod datasource_config_data;
+mod unique_key;
+mod unique_key_checker;
 
 use std::convert::Infallible;
 
@@ -16,7 +16,7 @@ pub enum CheckError {
     #[error("Url格式异常 {0}")]
     Url(#[from] url::ParseError),
 
-    #[error("Datasource Unique key[{0:?}] 未找到或非u64")]
+    #[error("Datasource Unique key[{0:?}] 未找到")]
     #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x0017u16))]
     UniqueKeyInValid(String),
 }
@@ -27,10 +27,9 @@ impl From<Infallible> for CheckError {
 
 pub use datasource_config_data::{
     FetcherDatasourceConfigChecker, FetcherDatasourceConfigUncheck,
-    PreCheckFetcherDatasourceConfigChecker,
 };
 pub use unique_key::DatasourceUnique;
 pub use unique_key_checker::{
-    FetcherDatasourceConfig, PreCheckFetcherDatasourceConfig,
+    FetcherDatasourceConfig,
     UniqueKeyChecker,
 };
