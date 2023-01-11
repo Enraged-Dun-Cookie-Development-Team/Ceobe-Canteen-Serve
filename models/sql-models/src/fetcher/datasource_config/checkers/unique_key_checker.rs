@@ -2,7 +2,6 @@ use checker::{
     prefabs::str_len_checker::StrMaxCharLenChecker, Checker, RefChecker,
 };
 use futures::future::{ready, Ready};
-
 use serde_json::{Map, Value};
 use typed_builder::TypedBuilder;
 use url::Url;

@@ -83,7 +83,6 @@ impl FetcherCount {
 
 impl IntoActiveModel<model_config::ActiveModel> for FetcherConfig {
     fn into_active_model(self) -> model_config::ActiveModel {
-
         let mut active = model_config::ActiveModel {
             live_number: Set(self.live_number),
             fetcher_count: Set(self.fetcher_count.take()),

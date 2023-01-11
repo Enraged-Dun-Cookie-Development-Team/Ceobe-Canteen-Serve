@@ -29,7 +29,4 @@ pub use datasource_config_data::{
     FetcherDatasourceConfigChecker, FetcherDatasourceConfigUncheck,
 };
 pub use unique_key::DatasourceUnique;
-pub use unique_key_checker::{
-    FetcherDatasourceConfig,
-    UniqueKeyChecker,
-};
+pub use unique_key_checker::{FetcherDatasourceConfig, UniqueKeyChecker};
