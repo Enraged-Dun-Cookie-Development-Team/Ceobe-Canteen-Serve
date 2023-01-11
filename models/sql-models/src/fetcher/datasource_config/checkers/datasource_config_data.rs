@@ -29,7 +29,7 @@ pub struct PreCheckFetcherDatasourceConfigChecker {
     pub datasource: StrMaxCharLenChecker<String, 64>,
     pub nickname: StrMaxCharLenChecker<String, 32>,
     pub avatar: UrlChecker,
-    pub unique_key: OptionChecker<StrMaxCharLenChecker<String, 64>>,
+    pub unique_key: OptionChecker<NoCheck<String>>,
     pub config: NoCheck<Map<String, Value>>,
 }
 
