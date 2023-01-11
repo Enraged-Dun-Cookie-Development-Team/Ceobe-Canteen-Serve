@@ -1,11 +1,13 @@
 use sea_orm::entity::prelude::*;
 use sub_model::SubModel;
 
+use crate::fetcher::datasource_config::models::model_datasource_config;
+
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_platform_config")]
 #[sub_model(
     all(
-        name = "PlatformWithHasDatasource",
+        name = "PlatformHasDatasource",
         extra_field(has_datasource(ty = "bool", from = "Default::default")),
         extra(derive(serde::Serialize, Debug))
     ),
@@ -30,12 +32,22 @@ pub struct Model {
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
-pub enum Relation {}
+pub enum Relation {
+    DataSource,
+}
 
 impl RelationTrait for Relation {
-    fn def(&self) -> RelationDef { panic!("No Relate") }
+    fn def(&self) -> RelationDef {
+        match self {
+            Relation::DataSource => {
+                Entity::has_many(model_datasource_config::Entity).into()
+            }
+        }
+    }
+}
+
+impl Related<model_datasource_config::Entity> for Entity {
+    fn to() -> RelationDef { Relation::DataSource.def() }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
-
-impl ActiveModel {}

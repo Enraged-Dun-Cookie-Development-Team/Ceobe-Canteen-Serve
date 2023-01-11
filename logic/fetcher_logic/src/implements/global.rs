@@ -1,9 +1,12 @@
-use checker::{Checker, ToCheckRequire};
+use checker::{
+    prefabs::collect_checkers::iter_checkers::IntoIterChecker, LiteChecker,
+    ToCheckRequire,
+};
 use serde_json::{Map, Value};
 use sql_models::{
     fetcher::global_config::{
         checkers::global_config_data::{
-            FetcherGlobalConfigUncheck, FetcherGlobalConfigVecChecker,
+            FetcherGlobalConfigChecker, FetcherGlobalConfigUncheck,
         },
         models::model_global_config::Model,
         operate::FetcherGlobalConfigSqlOperate,
@@ -26,16 +29,15 @@ impl FetcherConfigLogic {
     {
         // 获取数据库configs：Vec<Model>
         let global_config_kv =
-            FetcherGlobalConfigSqlOperate::get_all_global_configs(db).await?;
+            FetcherGlobalConfigSqlOperate::get_all(db).await?;
 
-        let mut map = Map::new();
+        let mut map = Map::with_capacity(global_config_kv.len());
         // 转成map格式
-        for Model { key, value, id: _ } in global_config_kv.into_iter() {
+        for Model { key, value, .. } in global_config_kv {
             map.insert(key, serde_json::from_str(&value)?);
         }
         // 转成json格式
-        let obj = Value::Object(map);
-        Ok(obj)
+        Ok(Value::Object(map))
     }
 
     /// 接收来自controller的json格式
@@ -47,18 +49,15 @@ impl FetcherConfigLogic {
         D::Connect<'db>: ConnectionTrait,
     {
         // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串
-        let vec: Vec<FetcherGlobalConfigUncheck> = config
-            .into_iter()
-            .map(|(key, value)| {
-                FetcherGlobalConfigUncheck {
-                    key: key.require_check(),
-                    value: value.to_string().require_check(),
-                }
-            })
-            .collect();
+        let vec = config.into_iter().map(|(key, value)| {
+            FetcherGlobalConfigUncheck {
+                key: key.require_check(),
+                value: value.to_string().require_check(),
+            }
+        });
         // 验证传入数据库数据的合法性
         let configs =
-            FetcherGlobalConfigVecChecker::check(((), ()), vec).await?;
+            IntoIterChecker::<_,FetcherGlobalConfigChecker,Vec<_>>::lite_check(vec).await?;
         FetcherGlobalConfigSqlOperate::create_or_update(db, configs).await?;
         Ok(())
     }

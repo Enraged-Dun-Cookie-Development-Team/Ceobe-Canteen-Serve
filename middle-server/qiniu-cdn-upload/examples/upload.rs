@@ -156,6 +156,6 @@ impl SecretConfig for QiniuConfig {
     fn secret_key(&self) -> &str { &self.secret }
 }
 
-/// impl `Default` and associate function `new` for
-/// [QiniuConfig]
+// impl `Default` and associate function `new` for
+// [QiniuConfig]
 include!("../../../qiniu_info.meta");

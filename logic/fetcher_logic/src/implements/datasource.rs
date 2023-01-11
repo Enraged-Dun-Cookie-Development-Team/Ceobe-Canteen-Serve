@@ -2,7 +2,7 @@ use sql_models::{
     fetcher::{
         config::operate::FetcherConfigSqlOperate,
         datasource_config::{
-            checkers::datasource_config_data::FetcherDatasourceConfig,
+            checkers::FetcherDatasourceConfig,
             operate::FetcherDatasourceConfigSqlOperate,
         },
         platform_config::operate::FetcherPlatformConfigSqlOperate,
@@ -18,6 +18,7 @@ use sql_models::{
 use crate::{
     error::{LogicError, LogicResult},
     implements::FetcherConfigLogic,
+    utils::TrueOrError,
 };
 
 impl FetcherConfigLogic {
@@ -29,23 +30,17 @@ impl FetcherConfigLogic {
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
+        let db = db.get_connect()?;
         // 验证平台存在
-        if FetcherPlatformConfigSqlOperate::is_platform_exist_with_raw_db(
+        FetcherPlatformConfigSqlOperate::exist_by_type_id(
             db,
             &datasource_config.platform,
         )
         .await?
-        {
-            // 创建数据源
-            FetcherDatasourceConfigSqlOperate::create_database_config(
-                db,
-                datasource_config,
-            )
+        .true_or_with(|| LogicError::PlatformNotFound)?;
+        // 创建数据源
+        FetcherDatasourceConfigSqlOperate::create(db, datasource_config)
             .await?;
-        }
-        else {
-            return Err(LogicError::NoPlatform);
-        }
         Ok(())
     }
 
@@ -54,22 +49,16 @@ impl FetcherConfigLogic {
         db: &'db D, id: i32,
     ) -> LogicResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
         D::Transaction<'db>: ConnectionTrait,
     {
         // 开事务
         let ctx = db.get_transaction().await?;
 
         // 删除蹲饼器配置中的所有有datasource_id的配置
-        FetcherConfigSqlOperate::delete_fetcher_configs_by_datasource_id(
-            &ctx, id,
-        )
-        .await?;
+        FetcherConfigSqlOperate::delete_by_datasource_id(&ctx, id).await?;
         // 删除数据源
-        FetcherDatasourceConfigSqlOperate::delete_one_datasource_config(
-            &ctx, id,
-        )
-        .await?;
+        FetcherDatasourceConfigSqlOperate::delete_one(&ctx, id).await?;
 
         // 提交事务
         ctx.submit().await?;

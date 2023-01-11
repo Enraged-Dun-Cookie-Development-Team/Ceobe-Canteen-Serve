@@ -11,5 +11,6 @@ enum FetcherDatasourceConfig {
     Avatar,
     Config,
     UniqueId,
+    DbUniqueKey,
 }
 pub mod m20221231_200206_alter_nickname;

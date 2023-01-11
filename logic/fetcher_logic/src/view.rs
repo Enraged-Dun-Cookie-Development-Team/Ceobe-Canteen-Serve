@@ -1,6 +1,11 @@
-use serde::{Deserialize, Serialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
-use sql_models::fetcher::datasource_config::models::model_datasource_config::{DataSourceForFetcherConfig, BackendDatasource};
+use sql_models::fetcher::{
+    config::models,
+    datasource_config::models::model_datasource_config::{
+        BackendDatasource, DataSourceForFetcherConfig,
+    },
+};
 use typed_builder::TypedBuilder;
 
 /// 返回蹲饼器配置与上传蹲饼器配置的组数据
@@ -10,13 +15,39 @@ use typed_builder::TypedBuilder;
 pub struct Group {
     pub name: String,
     pub platform: String,
-    pub datasource: Vec<i32>,
+    #[builder(default)]
+    #[serde(rename = "datasource")]
+    pub data_source: Vec<i32>,
     #[builder(default = None)]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interval: Option<u64>,
     #[builder(default = None)]
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interval_by_time_range: Option<Vec<TimeRange>>,
+}
+
+impl TryFrom<models::model_config::Model> for Group {
+    type Error = serde_json::Error;
+
+    fn try_from(
+        models::model_config::Model {
+            group_name,
+            platform,
+            interval,
+            interval_by_time_range,
+            ..
+        }: models::model_config::Model,
+    ) -> Result<Self, Self::Error> {
+        Ok(Group {
+            name: group_name,
+            platform,
+            data_source: vec![],
+            interval,
+            interval_by_time_range: interval_by_time_range
+                .map(|str| serde_json::from_str(&str))
+                .transpose()?,
+        })
+    }
 }
 
 #[derive(
@@ -39,11 +70,28 @@ pub struct Server {
     pub groups: Vec<Group>,
 }
 
+impl<GI: IntoIterator<Item = Group>> From<GI> for Server {
+    fn from(g: GI) -> Self {
+        Self::builder().groups(g.into_iter().collect()).build()
+    }
+}
+
 /// 单种存活数量下多个蹲饼器配置
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-pub struct BackFetcherConfig {
+pub struct BackEndFetcherConfig {
     pub number: i8,
     pub server: Vec<Server>,
+}
+
+impl BackEndFetcherConfig {
+    pub fn new<S: IntoIterator<Item = Server>>(
+        number: i8, server: S,
+    ) -> Self {
+        Self {
+            number,
+            server: server.into_iter().collect(),
+        }
+    }
 }
 
 /// 蹲饼器配置根结构体

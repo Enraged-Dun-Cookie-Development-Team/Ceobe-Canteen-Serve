@@ -46,19 +46,22 @@ impl MigrationTrait for Migration {
             .col(
                 ColumnDef::new(FetcherDatasourceConfig::Config)
                     .text()
-                    .not_null()
-                    .default("{}"),
+                    .not_null(),
             )
             .col(
                 ColumnDef::new(FetcherDatasourceConfig::UniqueId)
                     .uuid()
                     .not_null(),
+            )
+            .col(
+                ColumnDef::new(FetcherDatasourceConfig::DbUniqueKey)
+                    .string_len(64)
+                    .not_null(),
             );
         table.index(
             Index::create()
-                .col(FetcherDatasourceConfig::Platform)
                 .col(FetcherDatasourceConfig::Datasource)
-                .col(FetcherDatasourceConfig::Config)
+                .col(FetcherDatasourceConfig::DbUniqueKey)
                 .name("single-datasource")
                 .unique(),
         );

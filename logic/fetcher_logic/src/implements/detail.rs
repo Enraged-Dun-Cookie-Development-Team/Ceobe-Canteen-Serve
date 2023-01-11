@@ -1,6 +1,6 @@
 use std::collections::{BTreeSet, HashMap};
 
-use checker::{Checker, ToCheckRequire};
+use checker::prefabs::post_checker::PostChecker;
 use redis::{AsyncCommands, RedisError};
 use redis_global::redis_key::fetcher::FetcherConfigKey;
 use sql_models::{
@@ -17,7 +17,8 @@ use sql_models::{
     },
     sql_connection::{
         database_traits::get_connect::{
-            GetDatabaseConnect, GetDatabaseTransaction, GetMutDatabaseConnect,
+            GetDatabaseConnect, GetDatabaseTransaction,
+            GetMutDatabaseConnect, TransactionOps,
         },
         sea_orm::{ConnectionTrait, DbErr},
     },
@@ -25,14 +26,15 @@ use sql_models::{
 
 use super::FetcherConfigLogic;
 use crate::{
+    checkers::check_platform_same::PlatformSameChecker,
     error::{LogicError, LogicResult},
-    utils::GetOrCreate,
-    view::{BackFetcherConfig, Group, Server},
+    utils::{GetOrCreate, TrueOrError},
+    view::{BackEndFetcherConfig, Group, Server},
 };
 
 impl FetcherConfigLogic {
     /// 获取蹲饼器最大存活数量
-    pub async fn get_cookie_fetcher_max_live_number<'client, C>(
+    pub async fn get_max_live_number<'client, C>(
         client: &'client mut C,
     ) -> LogicResult<i8>
     where
@@ -40,176 +42,152 @@ impl FetcherConfigLogic {
         C::Connect<'client>: AsyncCommands,
     {
         let con = client.mut_connect()?;
-        let mut live_number = 0;
+
         // 判断redis key存在，如果不存在则默认没有蹲饼器
-        if con.exists(FetcherConfigKey::LIVE_NUMBER).await? {
+        let live_number = if con.exists(FetcherConfigKey::LIVE_NUMBER).await?
+        {
             // 获取key的值
-            live_number = con.get(FetcherConfigKey::LIVE_NUMBER).await?;
+            con.get(FetcherConfigKey::LIVE_NUMBER).await?
         }
+        else {
+            0
+        };
 
         Ok(live_number)
     }
 
     /// 上传蹲饼器配置
-    pub async fn upload_cookie_fetcher_configs<'db, D>(
-        db: &'db D, configs: Vec<BackFetcherConfig>,
+    pub async fn upload_multi<'db, D>(
+        db: &'db D, configs: impl IntoIterator<Item = BackEndFetcherConfig>,
     ) -> LogicResult<()>
     where
-        D: GetDatabaseTransaction<Error = DbErr>
-            + GetDatabaseConnect<Error = DbErr>
-            + 'static,
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
         D::Transaction<'db>: ConnectionTrait,
-        D::Connect<'db>: ConnectionTrait,
     {
-        let mut config_in_db_uncheck: Vec<FetcherConfigUncheck> =
-            Vec::<FetcherConfigUncheck>::new();
+        let mut upload_configs_uncheck = Vec::<FetcherConfigUncheck>::new();
 
-        let mut all_datasources_set = BTreeSet::new();
+        let mut all_data_sources_set = BTreeSet::new();
 
         // 将上传数据格式换成unchecked结构体
-        for BackFetcherConfig { number, server } in configs {
+        for BackEndFetcherConfig { number, server } in configs {
             for (count, Server { groups }) in server.into_iter().enumerate() {
                 for Group {
                     name,
                     platform,
-                    datasource,
+                    data_source,
                     interval,
                     interval_by_time_range,
                 } in groups
                 {
-                    for id in datasource {
-                        if !all_datasources_set.contains(&id) {
-                            all_datasources_set.insert(id);
-                        }
-                        config_in_db_uncheck.push(FetcherConfigUncheck {
-                            live_number: number.require_check(),
-                            fetcher_count: (count as i8 + 1).require_check(),
-                            group_name: name.clone().require_check(),
-                            platform: platform.clone().require_check(),
+                    for id in data_source {
+                        all_data_sources_set.insert(id);
 
-                            datasource_id: id.require_check(),
-                            interval: interval.require_check(),
-                            interval_by_time_range: serde_json::to_value(
-                                &interval_by_time_range,
-                            )?
-                            .require_check(),
-                        })
+                        upload_configs_uncheck.push(
+                            FetcherConfigUncheck::builder()
+                                .live_number(number)
+                                .fetcher_count(count)
+                                .group_name(name.clone())
+                                .platform(platform.clone())
+                                .datasource_id(id)
+                                .interval(interval)
+                                .interval_by_time_range(serde_json::to_value(
+                                    &interval_by_time_range,
+                                )?)
+                                .build(),
+                        )
                     }
                 }
             }
         }
+
+        type FetcherConfigSliceChecker = PostChecker<
+            FetcherConfigVecChecker,
+            // 追加检查，确认所有的platform 全部一致
+            PlatformSameChecker,
+            LogicError,
+        >;
+
+        use checker::LiteChecker;
         // 验证传入数据库数据的合法性
-        let configs_in_db: Vec<FetcherConfig> =
-            FetcherConfigVecChecker::check(
-                ((), (), (), (), (), (), ()),
-                config_in_db_uncheck,
-            )
-            .await?;
-        if configs_in_db.is_empty() {
+        let upload_config: Vec<FetcherConfig> =
+            FetcherConfigSliceChecker::lite_check(upload_configs_uncheck)
+                .await?;
+        // 取出第一个，如果没有，那将无效果，返回
+        let Some(platform) = upload_config.first().map(FetcherConfig::get_platform_type_id) else{
             return Ok(());
-        }
+        };
 
-        // 判断平台是否存在
-        let platform = configs_in_db[0].platform.clone();
-        if FetcherPlatformConfigSqlOperate::is_platform_exist(
-            db.get_connect()?,
-            &platform,
-        )
-        .await?
-            && FetcherDatasourceConfigSqlOperate::has_all_datasource_ids(
-                db,
-                all_datasources_set,
-            )
-            .await?
-        {
-            FetcherConfigSqlOperate::create_configs_by_platform(
-                db,
-                platform,
-                configs_in_db,
+        let ctx = db.get_transaction().await?;
+
+        let platform_exist =
+            FetcherPlatformConfigSqlOperate::exist_by_type_id(&ctx, platform)
+                .await?;
+        let all_datasource_exist =
+            FetcherDatasourceConfigSqlOperate::all_exist_by_id(
+                &ctx,
+                all_data_sources_set,
             )
             .await?;
-            // TODO：告诉调度器哪个平台更新了
-        }
-        else {
-            return Err(LogicError::NoPlatform);
-        }
 
+        // 指定平台与数据源均存在
+        (platform_exist && all_datasource_exist)
+            .true_or_with(|| LogicError::PlatformNotFound)?;
+        // 清除指定 platform 下全部 config
+        FetcherConfigSqlOperate::delete_by_platform(&ctx, platform).await?;
+        // 创建config
+        FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
+        // TODO:告诉调度器哪个平台更新了
+        ctx.submit().await?;
         Ok(())
     }
 
     /// 获取蹲饼器配置
-    pub async fn get_cookie_fetcher_configs<'db, D>(
-        db: &'db D, platform: String,
-    ) -> LogicResult<Vec<BackFetcherConfig>>
+    pub async fn get_by_platform<'db, D>(
+        db: &'db D, platform: &str,
+    ) -> LogicResult<Vec<BackEndFetcherConfig>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         let configs_in_db =
-            FetcherConfigSqlOperate::find_single_platform_config_list(
-                db, platform,
-            )
-            .await?;
+            FetcherConfigSqlOperate::find_all_by_platform(db, platform)
+                .await?;
 
-        let mut configs = Vec::<BackFetcherConfig>::new();
-        let mut configs_temp =
+        let mut configs =
             HashMap::<i8, HashMap<i8, HashMap<String, Group>>>::new();
-        for FetcherConfigModel {
-            id: _,
+        for config @ FetcherConfigModel {
             live_number,
             fetcher_count,
-            group_name,
-            platform,
             datasource_id,
-            interval,
-            interval_by_time_range,
+            ..
         } in configs_in_db
         {
-            let server_temp = configs_temp
+            let server_temp = configs
                 .get_mut_or_default(live_number)
                 .get_mut_or_default(fetcher_count - 1);
 
-            let group = server_temp
-                .get_or_try_create_with::<_, serde_json::Error>(
-                    group_name.clone(),
-                    || {
-                        Ok(Group {
-                            name: group_name,
-                            platform,
-                            datasource: vec![],
-                            interval,
-                            interval_by_time_range: interval_by_time_range
-                                .map(|str| serde_json::from_str(&str))
-                                .transpose()?,
+            let group = server_temp.get_mut_or_try_create_with(
+                config.group_name.to_owned(),
+                || Group::try_from(config),
+            )?;
+            group.data_source.push(datasource_id);
+        }
+
+        let configs = configs
+            .into_iter()
+            .map(|(number, mut server)| {
+                let servers = (0..number).map(|idx| {
+                    server
+                        .remove(&idx)
+                        .into_iter()
+                        .flat_map(|map| {
+                            map.into_iter().map(|(_, group)| group)
                         })
-                    },
-                )?;
-            group.datasource.push(datasource_id);
-        }
-
-        // 对configs_temp根据key排序
-        let mut configs_temp = Vec::from_iter(configs_temp);
-        configs_temp.sort_by(|&(a, _), &(b, _)| a.cmp(&b));
-        for (live_number, server) in configs_temp.iter() {
-            let mut servers_temp = Vec::<Server>::new();
-            for i in 1..(*live_number + 1) {
-                let mut groups_temp = Vec::<Group>::new();
-                if server.get(&(i - 1)).is_some() {
-                    // 如果不为空 继续map循环
-                    for group in server.get(&(i - 1)).unwrap().values() {
-                        groups_temp.push(group.clone());
-                    }
-                }
-                servers_temp.push(Server {
-                    groups: groups_temp,
+                        .into()
                 });
-            }
-            configs.push(BackFetcherConfig {
-                number: *live_number,
-                server: servers_temp,
-            });
-        }
-
+                BackEndFetcherConfig::new(number, servers)
+            })
+            .collect();
         Ok(configs)
     }
 }

@@ -59,7 +59,7 @@ pub enum LogicError {
 
     #[error("该平台不存在")]
     #[status_err(err(err_code = 0x00_13, prefix = "ErrPrefix::CHECKER"))]
-    NoPlatform,
+    PlatformNotFound,
 
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
@@ -69,6 +69,9 @@ pub enum LogicError {
 
     #[error("Json 反/序列化失败 {0}")]
     Json(#[from] serde_json::Error),
+    #[error("Platform 不一致")]
+    #[status_err(err(err_code = 0x00_16u16, prefix = "ErrPrefix::CHECKER"))]
+    PlatFromNotSame,
 }
 
 #[allow(dead_code)]

@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use page_size::{database::OffsetLimit, request::PageSize};
+use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{
     ConnectionTrait, DbErr, EntityTrait, PaginatorTrait, QuerySelect,
 };
@@ -20,8 +20,8 @@ use crate::fetcher::platform_config::{
 impl FetcherPlatformConfigSqlOperate {
     #[instrument(skip(db))]
     /// 分页获取全部平台列表
-    pub async fn find_platform_list_by_page_size<'db, D>(
-        db: &'db D, page_size: PageSize,
+    pub async fn find_all_with_paginator<'db, D>(
+        db: &'db D, page_size: Paginator,
     ) -> OperateResult<Vec<model_platform_config::Model>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
@@ -33,8 +33,7 @@ impl FetcherPlatformConfigSqlOperate {
         );
         let db = db.get_connect()?;
         Ok(model_platform_config::Entity::find()
-            .offset_limit(page_size)
-            .into_model::<model_platform_config::Model>()
+            .with_pagination(page_size)
             .all(db)
             .await?).tap_ok(|list| {
                 Span::current()
@@ -47,9 +46,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db))]
     /// 获取全部平台type_id列表
-    pub async fn find_platform_list<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<Vec<String>>
+    pub async fn find_all<'db, D>(db: &'db D) -> OperateResult<Vec<String>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
@@ -74,7 +71,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db))]
     /// 获取全部平台基础信息列表
-    pub async fn find_all_platform_list_with_basic_info<'db, D>(
+    pub async fn find_all_basic_info<'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<PlatformBasicInfo>>
     where
@@ -96,9 +93,7 @@ impl FetcherPlatformConfigSqlOperate {
 
     #[instrument(skip(db), ret)]
     /// 获取平台总数
-    pub async fn get_platform_total_number<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<u64>
+    pub async fn count_all<'db, D>(db: &'db D) -> OperateResult<u64>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,

@@ -34,7 +34,7 @@ pub type StrCharLenRangeChecker<S, const L: usize, const U: usize> =
 
 impl<S, Bound> RefChecker for StrCharLenChecker<S, Bound>
 where
-    S: Deref<Target = str> + 'static,
+    S: Deref<Target = str>,
     Bound: RangeBound + 'static,
 {
     type Args = ();

@@ -5,11 +5,11 @@ use checker::{
         str_len_checker::StrMaxCharLenChecker,
     },
 };
-use sea_orm::Set;
+use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
-use crate::fetcher::global_config::models::model_global_config;
+use crate::fetcher::global_config::models::model_global_config::ActiveModel;
 
 #[derive(Debug, TypedBuilder)]
 pub struct FetcherGlobalConfig {
@@ -29,13 +29,11 @@ pub struct FetcherGlobalConfigChecker {
     pub value: StrMaxCharLenChecker<String, 64>,
 }
 
-impl model_global_config::ActiveModel {
-    pub(in crate::fetcher::global_config) fn global_config_into_active_model(
-        FetcherGlobalConfig { key, value }: FetcherGlobalConfig,
-    ) -> Self {
-        Self {
-            key: Set(key),
-            value: Set(value),
+impl IntoActiveModel<ActiveModel> for FetcherGlobalConfig {
+    fn into_active_model(self) -> ActiveModel {
+        ActiveModel {
+            key: Set(self.key),
+            value: Set(self.value),
             ..Default::default()
         }
     }

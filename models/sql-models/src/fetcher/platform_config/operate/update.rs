@@ -1,17 +1,17 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
 use super::FetcherPlatformConfigSqlOperate;
 use crate::fetcher::platform_config::{
     checkers::platform_config_data::FetcherPlatformConfig,
-    models::model_platform_config::ActiveModel, operate::OperateResult,
+    operate::OperateResult,
 };
 
 impl FetcherPlatformConfigSqlOperate {
     /// 更新平台配置到数据库
     #[instrument(ret, skip(db))]
-    pub async fn update_platform_config<'db, D>(
+    pub async fn update<'db, D>(
         db: &'db D, config: FetcherPlatformConfig,
     ) -> OperateResult<()>
     where
@@ -26,9 +26,7 @@ impl FetcherPlatformConfigSqlOperate {
         );
 
         let db = db.get_connect()?;
-        let platform_config_active =
-            ActiveModel::platform_config_into_active_model(config);
-        platform_config_active.update(db).await?;
+        config.into_active_model().update(db).await?;
 
         Ok(())
     }

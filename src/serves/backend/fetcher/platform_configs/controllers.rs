@@ -6,7 +6,7 @@ use orm_migrate::{
     sql_connection::SqlConnect,
     sql_models::fetcher::platform_config::{
         models::model_platform_config::{
-            PlatformBasicInfo, PlatformWithHasDatasource,
+            PlatformBasicInfo, PlatformHasDatasource,
         },
         operate::FetcherPlatformConfigSqlOperate,
     },
@@ -28,20 +28,16 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     pub async fn get_platform_list(
         db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
-    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformWithHasDatasource>>
-    {
+    ) -> PlatformConfigRResult<ListWithPageInfo<PlatformHasDatasource>> {
         resp_try(async {
             // 获取平台列表
             let platform_list =
-                FetcherConfigLogic::get_platform_list_with_has_datasource(
+                FetcherConfigLogic::get_all_platform_having_datasource_with_paginator(
                     &db, page_size,
                 );
 
             // 获取平台数量
-            let count =
-                FetcherPlatformConfigSqlOperate::get_platform_total_number(
-                    &db,
-                );
+            let count = FetcherPlatformConfigSqlOperate::count_all(&db);
             // 并发执行
             let (platform_list, count) =
                 future::join(platform_list, count).await;
@@ -59,11 +55,8 @@ impl FetcherConfigControllers {
         db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            FetcherPlatformConfigSqlOperate::create_platform_config(
-                &db,
-                platform_config
-            )
-            .await
+            FetcherPlatformConfigSqlOperate::create(&db, platform_config)
+                .await
         );
         Ok(()).into()
     }
@@ -74,11 +67,8 @@ impl FetcherConfigControllers {
         db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            FetcherPlatformConfigSqlOperate::update_platform_config(
-                &db,
-                platform_config
-            )
-            .await
+            FetcherPlatformConfigSqlOperate::update(&db, platform_config)
+                .await
         );
         Ok(()).into()
     }
@@ -90,12 +80,7 @@ impl FetcherConfigControllers {
         MapReject(body): MapReject<Json<OneIdReq>, PlatformConfigError>,
     ) -> PlatformConfigRResult<()> {
         let pid = body.id;
-        rtry!(
-            FetcherPlatformConfigSqlOperate::delete_one_platform_config(
-                &db, pid
-            )
-            .await
-        );
+        rtry!(FetcherPlatformConfigSqlOperate::delete_one(&db, pid).await);
         Ok(()).into()
     }
 
@@ -104,6 +89,9 @@ impl FetcherConfigControllers {
     pub async fn get_platform_all_list_with_basic_info(
         db: SqlConnect,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
-        Ok(rtry!(FetcherPlatformConfigSqlOperate::find_all_platform_list_with_basic_info(&db).await)).into()
+        Ok(rtry!(
+            FetcherPlatformConfigSqlOperate::find_all_basic_info(&db).await
+        ))
+        .into()
     }
 }

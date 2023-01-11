@@ -10,9 +10,7 @@ use crate::fetcher::platform_config::{
 impl FetcherPlatformConfigSqlOperate {
     #[instrument(skip(db), ret)]
     /// 删除一个平台
-    pub async fn delete_one_platform_config<'db, D>(
-        db: &'db D, pid: i32,
-    ) -> OperateResult<()>
+    pub async fn delete_one<'db, D>(db: &'db D, pid: i32) -> OperateResult<()>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
         D::Connect<'db>: ConnectionTrait,
@@ -21,15 +19,14 @@ impl FetcherPlatformConfigSqlOperate {
         let db = db.get_connect()?;
 
         // 获取平台的type，比对数据源表时候有平台的相关数据源
-        if !Self::has_datasource_with_id(db, pid).await? {
+        if !Self::has_datasource_by_id(db, pid).await? {
             model_platform_config::Entity::delete_by_id(pid)
                 .exec(db)
                 .await?;
+            Ok(())
         }
         else {
-            return Err(OperateError::NoDeletePlatformHasDatasource);
+            Err(OperateError::NoDeletePlatformHasDatasource)
         }
-
-        Ok(())
     }
 }

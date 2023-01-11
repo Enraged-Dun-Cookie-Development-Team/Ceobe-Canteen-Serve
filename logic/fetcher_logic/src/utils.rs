@@ -13,7 +13,7 @@ pub(super) trait GetOrCreate<K, V> {
     fn get_mut_or_create_with<F: FnOnce() -> V>(
         &mut self, key: K, default: F,
     ) -> &mut V;
-    fn get_or_try_create_with<F: FnOnce() -> Result<V, E>, E>(
+    fn get_mut_or_try_create_with<F: FnOnce() -> Result<V, E>, E>(
         &mut self, key: K, default: F,
     ) -> Result<&mut V, E>;
 }
@@ -38,7 +38,7 @@ impl<Q: std::hash::Hash + std::cmp::Eq, V, R: BuildHasher> GetOrCreate<Q, V>
         self.entry(key).or_insert_with(default)
     }
 
-    fn get_or_try_create_with<F: FnOnce() -> Result<V, E>, E>(
+    fn get_mut_or_try_create_with<F: FnOnce() -> Result<V, E>, E>(
         &mut self, key: Q, default: F,
     ) -> Result<&mut V, E> {
         match self.entry(key) {
@@ -48,6 +48,26 @@ impl<Q: std::hash::Hash + std::cmp::Eq, V, R: BuildHasher> GetOrCreate<Q, V>
                 let v = entry.insert(v);
                 Ok(v)
             }
+        }
+    }
+}
+
+/// 将 [`bool`](bool) 映射到 [`Result<(), E>`](Result<(),E>)
+pub trait TrueOrError: Sized {
+    #[inline]
+    fn true_or<E>(self, e: E) -> Result<(), E> {
+        <Self as TrueOrError>::true_or_with(self, || e)
+    }
+
+    fn true_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E>;
+}
+
+impl TrueOrError for bool {
+    #[inline]
+    fn true_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E> {
+        match self {
+            true => Ok(()),
+            false => Err(f()),
         }
     }
 }

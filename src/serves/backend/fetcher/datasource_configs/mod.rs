@@ -1,7 +1,5 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use orm_migrate::sql_models::fetcher::{
-    datasource_config::checkers::datasource_config_data::FetcherDatasourceConfigChecker,
-};
+use orm_migrate::sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfigChecker;
 use page_size::request::PageSizeChecker;
 
 use self::error::DatasourceConfigError;

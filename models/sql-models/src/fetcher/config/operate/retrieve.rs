@@ -11,8 +11,8 @@ use crate::fetcher::config::models::model_config::{self, Model};
 impl FetcherConfigSqlOperate {
     #[instrument(skip(db))]
     /// 获取单个平台下的全部蹲饼器配置
-    pub async fn find_single_platform_config_list<'db, D>(
-        db: &'db D, platform: String,
+    pub async fn find_all_by_platform<'db, D>(
+        db: &'db D, platform: &str,
     ) -> OperateResult<Vec<Model>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
