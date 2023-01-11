@@ -18,7 +18,7 @@ pub enum CheckError {
 
     #[error("Datasource Unique key[{0:?}] 未找到")]
     #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x0017u16))]
-    UniqueKeyInValid(String),
+    UniqueKeyInvalid(String),
 }
 
 impl From<Infallible> for CheckError {

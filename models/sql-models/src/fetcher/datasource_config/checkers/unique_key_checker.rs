@@ -48,7 +48,7 @@ impl Checker for UniqueKeyChecker {
 
             // try get the unique for number
             let Some(Value::String(identify))= uncheck.config.get(&unique_key) else{
-                break 'checker Err(super::CheckError::UniqueKeyInValid(unique_key))
+                break 'checker Err(super::CheckError::UniqueKeyInvalid(unique_key))
             };
 
             if let Err(err)= StrMaxCharLenChecker::<_,64>::ref_checker((),identify).into_inner(){
