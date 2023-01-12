@@ -15,9 +15,11 @@ use bootstrap::{
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, qiniu_secret::QiniuUploadConfig,
-    resp_result_config::RespResultConfig, GlobalConfig, CONFIG_FILE_JSON,
-    CONFIG_FILE_TOML, CONFIG_FILE_YAML,
+    resp_result_config::RespResultConfig,
+    schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
+    CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
+use fetcher_logic::axum_starter::ScheduleNotifierPrepare;
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
@@ -63,6 +65,7 @@ async fn main_task() {
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
+        .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
         // database
         .prepare_concurrent(|set| {
             set.join_state(MysqlDbConnect)

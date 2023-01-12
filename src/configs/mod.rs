@@ -1,3 +1,4 @@
+pub mod schedule_notifier_config;
 pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
@@ -65,4 +66,8 @@ pub struct GlobalConfig {
     #[serde(alias = "qiniu")]
     #[provider(transparent, ref)]
     pub qiniu_secret: QiniuUploadConfig,
+    
+    #[serde(alias = "schedule")]
+    #[provider(transparent, ref)]
+    pub schedule_manage:schedule_notifier_config::ScheduleNotifierConfig
 }
