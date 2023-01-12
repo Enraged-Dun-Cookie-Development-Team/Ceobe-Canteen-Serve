@@ -76,3 +76,12 @@ pub enum LogicError {
 
 #[allow(dead_code)]
 pub(crate) type LogicResult<T> = Result<T, LogicError>;
+
+
+#[derive(Debug,thiserror::Error)]
+pub enum PrepareError{
+    #[error(transparent)]
+    Reqwest(#[from]reqwest::Error),
+    #[error(transparent)]
+    UrlParse(#[from]url::ParseError)
+}
