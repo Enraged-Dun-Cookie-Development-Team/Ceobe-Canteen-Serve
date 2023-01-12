@@ -11,16 +11,10 @@ pub struct ScheduleNotifierConfig {
     schedule_port: u16,
 }
 
-fn default_port() -> u16 {
-    80
-}
+fn default_port() -> u16 { 80 }
 
 impl fetcher_logic::config::FetcherLogicConfig for ScheduleNotifierConfig {
-    fn schedule_host(&self) -> std::net::IpAddr {
-        self.schedule_host
-    }
+    fn schedule_host(&self) -> std::net::IpAddr { self.schedule_host }
 
-    fn schedule_port(&self) -> u16 {
-        self.schedule_port
-    }
+    fn schedule_port(&self) -> u16 { self.schedule_port }
 }

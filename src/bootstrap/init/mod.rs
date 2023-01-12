@@ -14,6 +14,5 @@ pub struct State {
     qiniu: Arc<ceobe_qiniu_upload::Uploader>,
     qiniu_base_url: QiniuBaseUrl,
     // fetcher request client
-    fetcher_schedule_notifier:ScheduleNotifier
-
+    fetcher_schedule_notifier: ScheduleNotifier,
 }

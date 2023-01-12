@@ -27,9 +27,10 @@ use sql_models::{
 use super::FetcherConfigLogic;
 use crate::{
     checkers::check_platform_same::PlatformSameChecker,
+    config::ScheduleNotifier,
     error::{LogicError, LogicResult},
     utils::{GetOrCreate, TrueOrError},
-    view::{BackEndFetcherConfig, Group, Server}, config::ScheduleNotifier,
+    view::{BackEndFetcherConfig, Group, Server},
 };
 
 impl FetcherConfigLogic {
@@ -58,8 +59,8 @@ impl FetcherConfigLogic {
 
     /// 上传蹲饼器配置
     pub async fn upload_multi<'db, D>(
-        notifier:&ScheduleNotifier,
-        db: &'db D, configs: impl IntoIterator<Item = BackEndFetcherConfig>,
+        notifier: &ScheduleNotifier, db: &'db D,
+        configs: impl IntoIterator<Item = BackEndFetcherConfig>,
     ) -> LogicResult<()>
     where
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
@@ -121,8 +122,10 @@ impl FetcherConfigLogic {
         let ctx = db.get_transaction().await?;
 
         let platform_exist =
-            FetcherPlatformConfigSqlOperate::exist_by_type_id(&ctx, &platform)
-                .await?;
+            FetcherPlatformConfigSqlOperate::exist_by_type_id(
+                &ctx, &platform,
+            )
+            .await?;
         let all_datasource_exist =
             FetcherDatasourceConfigSqlOperate::all_exist_by_id(
                 &ctx,

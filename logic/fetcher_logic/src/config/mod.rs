@@ -75,7 +75,7 @@ impl ScheduleNotifier {
 
     pub(crate) async fn notify_schedule(&self, platform: impl AsRef<str>) {
         self.client
-            .post((&*self.path).to_owned())
+            .post((*self.path).to_owned())
             .query(&[("platform", platform.as_ref())])
             .send()
             .await
