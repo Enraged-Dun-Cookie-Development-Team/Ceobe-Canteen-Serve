@@ -1,8 +1,10 @@
 use std::{
     collections::{
+        btree_map::Entry::{
+            Occupied as BTreeOccupied, Vacant as BTreeVacant,
+        },
         hash_map::Entry::{Occupied as HashOccupied, Vacant as HashVacant},
-        HashMap, BTreeMap,
-        btree_map::Entry::{Occupied as BTreeOccupied, Vacant as BTreeVacant}
+        BTreeMap, HashMap,
     },
     hash::BuildHasher,
 };
@@ -73,9 +75,7 @@ impl TrueOrError for bool {
     }
 }
 
-impl<Q: Ord, V> GetOrCreate<Q, V>
-    for BTreeMap<Q, V>
-{
+impl<Q: Ord, V> GetOrCreate<Q, V> for BTreeMap<Q, V> {
     fn get_mut_or_create(&mut self, key: Q, value: V) -> &mut V {
         self.entry(key).or_insert(value)
     }
