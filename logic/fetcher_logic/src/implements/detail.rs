@@ -1,4 +1,4 @@
-use std::collections::{BTreeSet, HashMap};
+use std::collections::{BTreeSet, HashMap, BTreeMap};
 
 use checker::prefabs::post_checker::PostChecker;
 use redis::{AsyncCommands, RedisError};
@@ -154,7 +154,8 @@ impl FetcherConfigLogic {
                 .await?;
 
         let mut configs =
-            HashMap::<i8, HashMap<i8, HashMap<String, Group>>>::new();
+            BTreeMap::<i8, HashMap<i8, HashMap<String, Group>>>::new();
+        
         for config @ FetcherConfigModel {
             live_number,
             fetcher_count,
@@ -188,6 +189,7 @@ impl FetcherConfigLogic {
                 BackEndFetcherConfig::new(number, servers)
             })
             .collect();
+        
         Ok(configs)
     }
 }
