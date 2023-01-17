@@ -8,7 +8,6 @@ use general_request_client::{
     traits::{RequestBuilder, Requester},
     Method,
 };
-
 use sql_models::sql_connection::database_traits::get_connect::Parts;
 use url::Url;
 
@@ -18,9 +17,7 @@ use crate::config;
 pub struct FetcherNotifyScheduleUrl(Arc<Url>);
 
 impl FetcherNotifyScheduleUrl {
-    pub fn new(url: Url) -> Self {
-        Self(Arc::new(url))
-    }
+    pub fn new(url: Url) -> Self { Self(Arc::new(url)) }
 
     pub fn new_cfg(
         cfg: &impl config::FetcherLogicConfig,
@@ -95,9 +92,8 @@ impl<'url, 'query> NotifyRequest<'url, 'query> {
 
 impl<'url, 'query> Requester for NotifyRequest<'url, 'query> {
     const METHOD: Method = Method::POST;
-    fn get_url(&self) -> Url {
-        self.url.to_owned()
-    }
+
+    fn get_url(&self) -> Url { self.url.to_owned() }
 
     fn prepare_request<B: RequestBuilder>(
         self, builder: B,

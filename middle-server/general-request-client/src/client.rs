@@ -9,10 +9,8 @@ pub struct RequestClient(reqwest::Client);
 
 impl RequestBuilder for reqwest::RequestBuilder {
     type Body = reqwest::Body;
-
-    type Request = reqwest::Request;
-
     type Error = reqwest::Error;
+    type Request = reqwest::Request;
 
     fn query<T: serde::Serialize>(self, query: &T) -> Self {
         self.query(query)
@@ -24,21 +22,13 @@ impl RequestBuilder for reqwest::RequestBuilder {
         self.headers(map)
     }
 
-    fn body<T: Into<Self::Body>>(self, body: T) -> Self {
-        self.body(body)
-    }
+    fn body<T: Into<Self::Body>>(self, body: T) -> Self { self.body(body) }
 
-    fn json<T: serde::Serialize>(self, json: &T) -> Self {
-        self.json(json)
-    }
+    fn json<T: serde::Serialize>(self, json: &T) -> Self { self.json(json) }
 
-    fn form<T: serde::Serialize>(self, form: &T) -> Self {
-        self.form(form)
-    }
+    fn form<T: serde::Serialize>(self, form: &T) -> Self { self.form(form) }
 
-    fn build(self) -> Result<Self::Request, Self::Error> {
-        self.build()
-    }
+    fn build(self) -> Result<Self::Request, Self::Error> { self.build() }
 }
 
 impl RequestClient {

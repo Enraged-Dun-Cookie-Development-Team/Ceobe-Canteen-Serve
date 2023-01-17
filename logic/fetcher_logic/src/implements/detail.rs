@@ -28,8 +28,9 @@ use super::FetcherConfigLogic;
 use crate::{
     checkers::check_platform_same::PlatformSameChecker,
     error::{LogicError, LogicResult},
+    notifier::ScheduleNotifier,
     utils::{GetOrCreate, TrueOrError},
-    view::{BackEndFetcherConfig, Group, Server}, notifier::ScheduleNotifier,
+    view::{BackEndFetcherConfig, Group, Server},
 };
 
 impl FetcherConfigLogic {

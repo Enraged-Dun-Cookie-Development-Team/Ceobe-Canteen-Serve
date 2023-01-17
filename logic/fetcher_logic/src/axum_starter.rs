@@ -1,8 +1,7 @@
 use axum_starter::{prepare, state::AddState};
 
-use crate::{error::PrepareError};
-
 use self::starter_state::FetcherNotifyScheduleUrl;
+use crate::error::PrepareError;
 #[prepare(ScheduleNotifierPrepare? 'cfg)]
 pub fn prepare_fetcher<'cfg, C>(
     config: &'cfg C,
