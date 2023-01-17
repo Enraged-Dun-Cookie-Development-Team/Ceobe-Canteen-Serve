@@ -1,8 +1,7 @@
 use axum::{extract::Query, Json};
 use fetcher_logic::{
-    config::ScheduleNotifier,
     implements::FetcherConfigLogic,
-    view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
+    view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq}, ScheduleNotifier,
 };
 use orm_migrate::sql_connection::SqlConnect;
 use redis_connection::RedisConnect;

@@ -3,7 +3,7 @@ use reqwest::Error;
 
 use crate::client::RequestClient;
 
-#[prepare(RequestClient?)]
+#[prepare(RequestClientPrepare?)]
 pub fn request_client_prepare() -> Result<AddState<RequestClient>, Error> {
     Ok(AddState::new(RequestClient::new_with(|builder| {
         builder.user_agent(
