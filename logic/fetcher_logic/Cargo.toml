@@ -19,6 +19,7 @@ reqwest.workspace = true
 axum-starter.workspace = true
 url.workspace = true
 axum-core.workspace = true
+general-request-client.workspace = true
 
 [dependencies.sql-models]
 path = "../../models/sql-models"

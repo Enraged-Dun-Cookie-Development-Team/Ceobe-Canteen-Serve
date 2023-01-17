@@ -1,18 +1,20 @@
 use axum_starter::{prepare, state::AddState};
 
-use crate::{config::ScheduleNotifier, error::PrepareError};
+use crate::{error::PrepareError};
+
+use self::starter_state::FetcherNotifyScheduleUrl;
 #[prepare(ScheduleNotifierPrepare? 'cfg)]
 pub fn prepare_fetcher<'cfg, C>(
     config: &'cfg C,
-) -> Result<AddState<ScheduleNotifier>, PrepareError>
+) -> Result<AddState<FetcherNotifyScheduleUrl>, PrepareError>
 where
     C: crate::config::FetcherLogicConfig,
 {
-    let notifier = ScheduleNotifier::new(config)?;
+    let base_url = FetcherNotifyScheduleUrl::new_cfg(config)?;
 
-    Ok(AddState::new(notifier))
+    Ok(AddState::new(base_url))
 }
 
 pub mod starter_state {
-    pub use crate::config::ScheduleNotifier;
+    pub use crate::notifier::FetcherNotifyScheduleUrl;
 }

@@ -27,10 +27,9 @@ use sql_models::{
 use super::FetcherConfigLogic;
 use crate::{
     checkers::check_platform_same::PlatformSameChecker,
-    config::ScheduleNotifier,
     error::{LogicError, LogicResult},
     utils::{GetOrCreate, TrueOrError},
-    view::{BackEndFetcherConfig, Group, Server},
+    view::{BackEndFetcherConfig, Group, Server}, notifier::ScheduleNotifier,
 };
 
 impl FetcherConfigLogic {
