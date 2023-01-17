@@ -3,7 +3,7 @@ use serde::Serialize;
 use url::Url;
 pub trait Requester: Sized {
     const METHOD: Method;
-    const VERSION: Version;
+    const VERSION: Version = Version::HTTP_2;
 
     fn get_url(&self) -> Url;
 
