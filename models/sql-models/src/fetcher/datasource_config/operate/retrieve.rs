@@ -10,15 +10,16 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
-use super::{FetcherDatasourceConfigSqlOperate, OperateError, OperateResult};
+use super::{
+    super::models::model_datasource_config::DatasourcePlatform,
+    FetcherDatasourceConfigSqlOperate, OperateError, OperateResult,
+};
 use crate::fetcher::datasource_config::{
     models::model_datasource_config::{
         self, BackendDatasource, Column, DataSourceForFetcherConfig, Entity,
     },
     operate::retrieve::model_datasource_config::SingleDatasourceInfo,
 };
-
-use super::super::models::model_datasource_config::DatasourcePlatform;
 
 impl FetcherDatasourceConfigSqlOperate {
     pub async fn find_platform_by_id(
@@ -30,7 +31,7 @@ impl FetcherDatasourceConfigSqlOperate {
             .into_model()
             .one(db)
             .await?
-            .ok_or_else(|| OperateError::DatasourceNotFound(id))
+            .ok_or(OperateError::DatasourceNotFound(id))
     }
 
     #[instrument(skip(db))]
