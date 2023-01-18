@@ -140,8 +140,8 @@ impl FetcherConfigLogic {
         FetcherConfigSqlOperate::delete_by_platform(&ctx, &platform).await?;
         // 创建config
         FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
-        notifier.notify_schedule(platform).await;
         ctx.submit().await?;
+        notifier.notify_schedule(platform).await;
         Ok(())
     }
 

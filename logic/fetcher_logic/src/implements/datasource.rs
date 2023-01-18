@@ -68,9 +68,9 @@ impl FetcherConfigLogic {
         // 删除数据源
         FetcherDatasourceConfigSqlOperate::delete_one(&ctx, id).await?;
 
-        notifier.notify_schedule(platform).await;
         // 提交事务
         ctx.submit().await?;
+        notifier.notify_schedule(platform).await;
 
         Ok(())
     }
