@@ -140,7 +140,6 @@ impl FetcherConfigLogic {
         FetcherConfigSqlOperate::delete_by_platform(&ctx, &platform).await?;
         // 创建config
         FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
-        // TODO:告诉调度器哪个平台更新了
         notifier.notify_schedule(platform).await;
         ctx.submit().await?;
         Ok(())

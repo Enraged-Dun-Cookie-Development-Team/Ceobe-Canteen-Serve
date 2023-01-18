@@ -6,6 +6,7 @@ use fetcher_logic::{
         DatasourceList, DatasourceListFilterCondReq, DatasourceWithNameResp,
         OneIdReq, PlatformAndDatasourceArrayResp, PlatformFilterReq,
     },
+    ScheduleNotifier,
 };
 use futures::future;
 use orm_migrate::{
@@ -125,17 +126,21 @@ impl FetcherConfigControllers {
     }
 
     // 删除数据源配置
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, notifier))]
     pub async fn delete_datasource_config(
-        db: SqlConnect,
+        db: SqlConnect, notifier: ScheduleNotifier,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
         >,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            FetcherConfigLogic::delete_datasource_by_id(&db, datasource.id)
-                .await
+            FetcherConfigLogic::delete_datasource_by_id(
+                &notifier,
+                &db,
+                datasource.id
+            )
+            .await
         );
         Ok(()).into()
     }
