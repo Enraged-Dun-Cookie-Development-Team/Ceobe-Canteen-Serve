@@ -14,6 +14,7 @@ pub struct NotifyPlatformUpdate<'query> {
 
 impl<'query> NotifyRequester for NotifyPlatformUpdate<'query> {
     type Args = &'query str;
+
     fn create<'args>(url: Url, args: Self::Args) -> Self {
         Self::new(url, args)
     }
@@ -34,9 +35,8 @@ impl<'query> NotifyPlatformUpdate<'query> {
 
 impl<'query> Requester for NotifyPlatformUpdate<'query> {
     const METHOD: Method = Method::POST;
-    fn get_url(&self) -> Url {
-        self.url.to_owned()
-    }
+
+    fn get_url(&self) -> Url { self.url.to_owned() }
 
     fn prepare_request<B: RequestBuilder>(
         self, builder: B,

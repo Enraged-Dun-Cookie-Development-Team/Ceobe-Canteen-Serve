@@ -2,17 +2,15 @@ use http::HeaderMap;
 use reqwest::ClientBuilder;
 use tap::Pipe;
 
-use crate::traits::{RequestBuilder, Requester, ClientTrait};
+use crate::traits::{ClientTrait, RequestBuilder, Requester};
 
 #[derive(Debug, Clone)]
 pub struct RequestClient(reqwest::Client);
 
 impl ClientTrait for RequestClient {
-    type Response = reqwest::Response;
-
-    type RequestBuilder = reqwest::RequestBuilder;
-
     type Error = reqwest::Error;
+    type RequestBuilder = reqwest::RequestBuilder;
+    type Response = reqwest::Response;
 }
 
 impl RequestBuilder for reqwest::RequestBuilder {

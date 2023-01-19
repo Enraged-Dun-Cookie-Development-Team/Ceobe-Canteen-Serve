@@ -7,9 +7,6 @@ pub struct ScheduleNotifierConfig {
     base_url: url::Url,
 }
 
-
 impl SchedulerNotifierConfig for ScheduleNotifierConfig {
-    fn base_url(&self) -> url::Url {
-        self.base_url.clone()
-    }
+    fn base_url(&self) -> url::Url { self.base_url.clone() }
 }

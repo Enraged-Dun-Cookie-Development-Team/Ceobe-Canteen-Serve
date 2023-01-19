@@ -16,11 +16,12 @@ pub trait Requester: Sized {
 
 pub trait ClientTrait {
     type Response;
-    type RequestBuilder:RequestBuilder;
+    type RequestBuilder: RequestBuilder;
     type Error;
 }
 
-pub type ClientResult<C> = Result<<C as ClientTrait>::Response,<C as ClientTrait>::Error>;
+pub type ClientResult<C> =
+    Result<<C as ClientTrait>::Response, <C as ClientTrait>::Error>;
 
 pub trait RequestBuilder: Sized {
     type Body;

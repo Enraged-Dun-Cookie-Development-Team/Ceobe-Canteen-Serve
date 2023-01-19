@@ -49,9 +49,8 @@ impl<R: NotifyRequester, P: NotifyPath> Requester
 {
     const METHOD: Method = R::METHOD;
     const VERSION: Version = R::VERSION;
-    fn get_url(&self) -> Url {
-        self.requester.get_url()
-    }
+
+    fn get_url(&self) -> Url { self.requester.get_url() }
 
     fn prepare_request<B: RequestBuilder>(
         self, builder: B,
