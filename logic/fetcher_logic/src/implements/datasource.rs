@@ -1,3 +1,4 @@
+use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
     fetcher::{
         config::operate::FetcherConfigSqlOperate,
@@ -20,7 +21,6 @@ use crate::{
     error::{LogicError, LogicResult},
     implements::FetcherConfigLogic,
     utils::TrueOrError,
-    ScheduleNotifier,
 };
 
 impl FetcherConfigLogic {
@@ -48,7 +48,7 @@ impl FetcherConfigLogic {
 
     /// 删除一个数据源
     pub async fn delete_datasource_by_id<'db, D>(
-        notifier: &ScheduleNotifier, db: &'db D, id: i32,
+        notifier: &SchedulerNotifier, db: &'db D, id: i32,
     ) -> LogicResult<()>
     where
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
@@ -70,7 +70,7 @@ impl FetcherConfigLogic {
 
         // 提交事务
         ctx.submit().await?;
-        notifier.notify_schedule(platform).await;
+        notifier.notify_platform_update(platform).await;
 
         Ok(())
     }

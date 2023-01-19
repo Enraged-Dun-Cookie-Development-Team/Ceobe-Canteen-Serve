@@ -2,11 +2,11 @@ use axum::{extract::Query, Json};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
-    ScheduleNotifier,
 };
 use orm_migrate::sql_connection::SqlConnect;
 use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
+use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
 
 use super::error::{FetcherConfigError, FetcherConfigRResult};
@@ -33,7 +33,7 @@ impl FetcherConfigControllers {
     /// 上传蹲饼器配置
     // #[instrument(ret, skip(db, configs))]
     pub async fn upload_fetchers_configs(
-        db: SqlConnect, notifier: ScheduleNotifier,
+        db: SqlConnect, notifier: SchedulerNotifier,
         MapReject(configs): MapReject<
             Json<Vec<BackEndFetcherConfig>>,
             FetcherConfigError,

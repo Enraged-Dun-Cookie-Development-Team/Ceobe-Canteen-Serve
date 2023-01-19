@@ -3,6 +3,7 @@ use std::collections::{BTreeSet, HashMap};
 use checker::prefabs::post_checker::PostChecker;
 use redis::{AsyncCommands, RedisError};
 use redis_global::redis_key::fetcher::FetcherConfigKey;
+use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
     fetcher::{
         config::{
@@ -28,7 +29,6 @@ use super::FetcherConfigLogic;
 use crate::{
     checkers::check_platform_same::PlatformSameChecker,
     error::{LogicError, LogicResult},
-    notifier::ScheduleNotifier,
     utils::{GetOrCreate, TrueOrError},
     view::{BackEndFetcherConfig, Group, Server},
 };
@@ -59,7 +59,7 @@ impl FetcherConfigLogic {
 
     /// 上传蹲饼器配置
     pub async fn upload_multi<'db, D>(
-        notifier: &ScheduleNotifier, db: &'db D,
+        notifier: &SchedulerNotifier, db: &'db D,
         configs: impl IntoIterator<Item = BackEndFetcherConfig>,
     ) -> LogicResult<()>
     where
@@ -141,7 +141,7 @@ impl FetcherConfigLogic {
         // 创建config
         FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
         ctx.submit().await?;
-        notifier.notify_schedule(platform).await;
+        notifier.notify_platform_update(platform).await;
         Ok(())
     }
 

@@ -19,9 +19,9 @@ use configs::{
     schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
     CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
-use fetcher_logic::axum_starter::ScheduleNotifierPrepare;
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
+use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
