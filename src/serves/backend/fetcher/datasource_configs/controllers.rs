@@ -17,6 +17,7 @@ use orm_migrate::{
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use resp_result::{resp_try, rtry, MapReject};
+use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
 
 use super::{
@@ -125,17 +126,21 @@ impl FetcherConfigControllers {
     }
 
     // 删除数据源配置
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, notifier))]
     pub async fn delete_datasource_config(
-        db: SqlConnect,
+        db: SqlConnect, notifier: SchedulerNotifier,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
         >,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            FetcherConfigLogic::delete_datasource_by_id(&db, datasource.id)
-                .await
+            FetcherConfigLogic::delete_datasource_by_id(
+                &notifier,
+                &db,
+                datasource.id
+            )
+            .await
         );
         Ok(()).into()
     }

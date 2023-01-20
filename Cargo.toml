@@ -72,6 +72,8 @@ redis = { version = "0.22", features = [
     "ahash",
     "connection-manager"
 ] }
+general-request-client = {path =  "./middle-server/general-request-client"}
+scheduler-notifier = { version = "0.1.0", path = "middle-server/scheduler-notifier" }
 
 [dependencies]
 # Xss
@@ -121,6 +123,9 @@ dotenv = "0.15"
 tracing-unwrap = { workspace = true }
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 uuid = { workspace = true }
+general-request-client.workspace = true
+scheduler-notifier.workspace = true
+
 
 [dependencies.tokio]
 workspace = true

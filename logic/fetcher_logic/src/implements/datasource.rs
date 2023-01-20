@@ -1,8 +1,10 @@
+use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
     fetcher::{
         config::operate::FetcherConfigSqlOperate,
         datasource_config::{
             checkers::FetcherDatasourceConfig,
+            models::model_datasource_config::DatasourcePlatform,
             operate::FetcherDatasourceConfigSqlOperate,
         },
         platform_config::operate::FetcherPlatformConfigSqlOperate,
@@ -46,7 +48,7 @@ impl FetcherConfigLogic {
 
     /// 删除一个数据源
     pub async fn delete_datasource_by_id<'db, D>(
-        db: &'db D, id: i32,
+        notifier: &SchedulerNotifier, db: &'db D, id: i32,
     ) -> LogicResult<()>
     where
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
@@ -57,13 +59,18 @@ impl FetcherConfigLogic {
 
         // 删除蹲饼器配置中的所有有datasource_id的配置
         FetcherConfigSqlOperate::delete_by_datasource_id(&ctx, id).await?;
+
+        let DatasourcePlatform { platform } =
+            FetcherDatasourceConfigSqlOperate
+                .find_platform_by_id(&ctx, id)
+                .await?;
+
         // 删除数据源
         FetcherDatasourceConfigSqlOperate::delete_one(&ctx, id).await?;
 
         // 提交事务
         ctx.submit().await?;
-
-        // TODO：告诉调度器哪个平台更新了
+        notifier.notify_platform_update(platform).await;
 
         Ok(())
     }

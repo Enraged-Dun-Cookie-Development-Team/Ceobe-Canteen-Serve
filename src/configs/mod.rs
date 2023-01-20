@@ -4,6 +4,7 @@ pub mod http_listen_config;
 pub mod logger;
 pub mod qiniu_secret;
 pub mod resp_result_config;
+pub mod schedule_notifier_config;
 use std::net::SocketAddr;
 
 use axum_starter::{Configure, Provider};
@@ -65,4 +66,8 @@ pub struct GlobalConfig {
     #[serde(alias = "qiniu")]
     #[provider(transparent, ref)]
     pub qiniu_secret: QiniuUploadConfig,
+
+    #[serde(alias = "schedule")]
+    #[provider(transparent, ref)]
+    pub schedule_manage: schedule_notifier_config::ScheduleNotifierConfig,
 }

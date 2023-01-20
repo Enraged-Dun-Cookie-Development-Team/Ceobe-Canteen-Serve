@@ -24,6 +24,13 @@ use crate::fetcher::{
     none(
         name = "DataSourceForFetcherConfig",
         extra(derive(sea_orm::FromQueryResult))
+    ),
+    none(
+        name = "DatasourcePlatform",
+        extra(
+            derive(sea_orm::FromQueryResult),
+            doc = "取得数据源所属的平台"
+        )
     )
 )]
 pub struct Model {
@@ -31,6 +38,7 @@ pub struct Model {
     #[sea_orm(primary_key)]
     #[sub_model(want("DataSourceForFetcherConfig"))]
     pub id: i32,
+    #[sub_model(want("DatasourcePlatform"))]
     pub platform: String,
     /// 数据源type
     #[sub_model(

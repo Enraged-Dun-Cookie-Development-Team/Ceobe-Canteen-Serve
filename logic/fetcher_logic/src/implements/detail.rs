@@ -3,6 +3,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use checker::prefabs::post_checker::PostChecker;
 use redis::{AsyncCommands, RedisError};
 use redis_global::redis_key::fetcher::FetcherConfigKey;
+use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
     fetcher::{
         config::{
@@ -58,7 +59,8 @@ impl FetcherConfigLogic {
 
     /// 上传蹲饼器配置
     pub async fn upload_multi<'db, D>(
-        db: &'db D, configs: impl IntoIterator<Item = BackEndFetcherConfig>,
+        notifier: &SchedulerNotifier, db: &'db D,
+        configs: impl IntoIterator<Item = BackEndFetcherConfig>,
     ) -> LogicResult<()>
     where
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
@@ -113,15 +115,17 @@ impl FetcherConfigLogic {
             FetcherConfigSliceChecker::lite_check(upload_configs_uncheck)
                 .await?;
         // 取出第一个，如果没有，那将无效果，返回
-        let Some(platform) = upload_config.first().map(FetcherConfig::get_platform_type_id) else{
+        let Some(platform) = upload_config.first().map(FetcherConfig::get_platform_type_id).map(ToOwned::to_owned) else{
             return Ok(());
         };
 
         let ctx = db.get_transaction().await?;
 
         let platform_exist =
-            FetcherPlatformConfigSqlOperate::exist_by_type_id(&ctx, platform)
-                .await?;
+            FetcherPlatformConfigSqlOperate::exist_by_type_id(
+                &ctx, &platform,
+            )
+            .await?;
         let all_datasource_exist =
             FetcherDatasourceConfigSqlOperate::all_exist_by_id(
                 &ctx,
@@ -133,11 +137,11 @@ impl FetcherConfigLogic {
         (platform_exist && all_datasource_exist)
             .true_or_with(|| LogicError::PlatformNotFound)?;
         // 清除指定 platform 下全部 config
-        FetcherConfigSqlOperate::delete_by_platform(&ctx, platform).await?;
+        FetcherConfigSqlOperate::delete_by_platform(&ctx, &platform).await?;
         // 创建config
         FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
-        // TODO:告诉调度器哪个平台更新了
         ctx.submit().await?;
+        notifier.notify_platform_update(platform).await;
         Ok(())
     }
 

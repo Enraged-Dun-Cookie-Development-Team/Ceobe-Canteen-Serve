@@ -10,7 +10,10 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
-use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
+use super::{
+    super::models::model_datasource_config::DatasourcePlatform,
+    FetcherDatasourceConfigSqlOperate, OperateError, OperateResult,
+};
 use crate::fetcher::datasource_config::{
     models::model_datasource_config::{
         self, BackendDatasource, Column, DataSourceForFetcherConfig, Entity,
@@ -19,6 +22,18 @@ use crate::fetcher::datasource_config::{
 };
 
 impl FetcherDatasourceConfigSqlOperate {
+    pub async fn find_platform_by_id(
+        &self, db: &impl ConnectionTrait, id: i32,
+    ) -> OperateResult<DatasourcePlatform> {
+        Entity::find_by_id(id)
+            .select_only()
+            .column(Column::Platform)
+            .into_model()
+            .one(db)
+            .await?
+            .ok_or(OperateError::DatasourceNotFound(id))
+    }
+
     #[instrument(skip(db))]
     /// 分页获取全部数据源列表
     pub async fn find_all_with_paginator<'db, D>(

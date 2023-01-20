@@ -6,6 +6,7 @@ use fetcher_logic::{
 use orm_migrate::sql_connection::SqlConnect;
 use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
+use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
 
 use super::error::{FetcherConfigError, FetcherConfigRResult};
@@ -32,14 +33,14 @@ impl FetcherConfigControllers {
     /// 上传蹲饼器配置
     // #[instrument(ret, skip(db, configs))]
     pub async fn upload_fetchers_configs(
-        db: SqlConnect,
+        db: SqlConnect, notifier: SchedulerNotifier,
         MapReject(configs): MapReject<
             Json<Vec<BackEndFetcherConfig>>,
             FetcherConfigError,
         >,
     ) -> FetcherConfigRResult<()> {
         resp_try(async move {
-            FetcherConfigLogic::upload_multi(&db, configs).await?;
+            FetcherConfigLogic::upload_multi(&notifier, &db, configs).await?;
             Ok(())
         })
         .await
