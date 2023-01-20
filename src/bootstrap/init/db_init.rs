@@ -45,7 +45,6 @@ async fn connect_mongo_db<'arg>(
 }
 
 /// 连接Redis数据库
-#[allow(unused)]
 #[prepare(box RedisDbConnect? 'arg)]
 async fn connect_redis_db<'arg>(
     database: &'arg RedisDbConfig,

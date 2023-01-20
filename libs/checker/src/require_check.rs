@@ -38,6 +38,11 @@ where
     }
 
     #[inline]
+    pub fn new_with_no_checker(unchecked: D::Unchecked) -> Self {
+        CheckRequire(unchecked)
+    }
+
+    #[inline]
     pub fn checking(self, args: D::Args) -> D::Fut { D::check(args, self.0) }
 }
 
@@ -63,3 +68,22 @@ where
         Ok(CheckRequire(res))
     }
 }
+/// 将当前类型转换为指定的 [`Checker`](Checker) 检查的 [CheckRequire]
+pub trait ToCheckRequire: Sized {
+    /// 将Self转换为对应的 [CheckRequire].
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use crate::prefabs::no_check::NoCheck;
+    /// use crate::require_check::{CheckRequire, ToCheckRequire};
+    ///
+    /// let _cr : CheckRequire<NoCheck<i32>> = 11i32.require_check();
+    /// ```
+    #[inline]
+    fn require_check<C: Checker<Unchecked = Self>>(self) -> CheckRequire<C> {
+        CheckRequire(self)
+    }
+}
+
+impl<T: Sized> ToCheckRequire for T {}

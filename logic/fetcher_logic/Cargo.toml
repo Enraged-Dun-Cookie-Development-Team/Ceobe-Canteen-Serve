@@ -1,0 +1,27 @@
+[package]
+name = "fetcher_logic"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true}
+typed-builder = { workspace = true }
+thiserror = { workspace = true }
+redis = { workspace = true }
+status-err = { path = "../../libs/status-err" }
+range-limit = { path = "../../libs/range-limit" }
+page_size = {path = "../../libs/page_size"}
+futures.workspace = true
+scheduler-notifier.workspace = true
+
+[dependencies.sql-models]
+path = "../../models/sql-models"
+
+[dependencies.checker]
+path = "../../libs/checker"
+
+[dependencies.redis_global]
+path = "../../global/redis_global"

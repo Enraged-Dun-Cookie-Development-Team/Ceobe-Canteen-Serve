@@ -15,21 +15,7 @@ impl<T, Rb: Default> RangeBoundLimit<T, Rb> {
     fn handle_arms(
         status: SizeStatus, size: usize, value: T,
     ) -> Result<Self, error::Error> {
-        match status {
-            SizeStatus::Ok => Ok(Self(value, Rb::default())),
-            SizeStatus::TooLarge(require) => {
-                Err(error::Error::TooLarge { require, get: size })
-            }
-            SizeStatus::TooSmall(require) => {
-                Err(error::Error::TooSmall { require, get: size })
-            }
-            SizeStatus::FIxSize(s) => {
-                Err(error::Error::FixSize {
-                    require: s,
-                    get: size,
-                })
-            }
-        }
+        status.to_result(size).map(|_| Self(value, Rb::default()))
     }
 }
 

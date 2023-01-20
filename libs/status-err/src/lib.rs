@@ -53,6 +53,9 @@ impl ErrPrefix {
     pub const PARSE: Self = Self('P', HttpCode::BAD_REQUEST);
     /// 七牛云上传异常
     pub const QI_NIU: Self = Self('Q', HttpCode::BAD_REQUEST);
+    /// Redis 数据库异常
+    pub const REDIS_DB: Self =
+        Self::new('R', HttpCode::INTERNAL_SERVER_ERROR);
     /// 数据库产生的异常
     pub const SEA_ORM: Self = Self('D', HttpCode::INTERNAL_SERVER_ERROR);
     /// actix 框架产生的异常

@@ -1,1 +1,2 @@
 pub mod m20220803_104932_create;
+pub mod m20221218_001756_charset_and_collate;

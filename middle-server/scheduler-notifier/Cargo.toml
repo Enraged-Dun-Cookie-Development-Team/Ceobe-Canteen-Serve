@@ -1,0 +1,17 @@
+[package]
+name = "scheduler-notifier"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum-core.workspace = true
+axum-starter.workspace = true
+futures.workspace = true
+general-request-client.workspace = true
+http.workspace = true
+url.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
