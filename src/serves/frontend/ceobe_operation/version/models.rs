@@ -1,12 +1,12 @@
-use checker::QueryCheckExtract;
-use checker::prefabs::option_checker::OptionChecker;
-use mongo_migration::mongo_models::ceobe_operation::plugin_version::check::version_checker::VersionChecker as PluginVersionChecker;
-use mongo_migration::mongo_models::ceobe_operation::plugin_version::models::Version;
-use orm_migrate::sql_models::ceobe_operation::app_version::checkers::app_version_checker::{AppVersionChecker};
-use serde::{Serialize, Deserialize};
+use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
+use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
+    check::version_checker::VersionChecker as PluginVersionChecker,
+    models::Version,
+    check:: CheckError as PluginCheckError
+};
+use orm_migrate::sql_models::ceobe_operation::app_version;
+use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use crate::models::sql::app_version::checkers::CheckError as AppCheckError;
-use crate::models::mongo::plugin_version::check::CheckError as PluginCheckError;
 
 use super::error::CeobeOperationVersionError;
 
@@ -18,11 +18,11 @@ pub struct AppVersion {
 #[checker::check_gen(
     uncheck = AppVersionUncheck,
     checked = AppVersion,
-    error = AppCheckError
+    error = app_version::CheckError
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct OptionAppVersionChecker {
-    pub version: OptionChecker<AppVersionChecker>,
+    pub version: OptionChecker<app_version::AppVersionChecker>,
 }
 
 pub type OptionAppVersionCheckerPretreat =

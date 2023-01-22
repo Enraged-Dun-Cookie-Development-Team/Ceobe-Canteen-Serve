@@ -1,11 +1,14 @@
 use std::time::Duration;
 
 use checker::CheckExtract;
-use database_traits::database_operates::sub_operate::SuperOperate;
-use mongo_migration::mongo_connection::MongoConnect;
+
+use mongo_migration::{
+    mongo_connection::MongoConnect,
+    mongo_models::ceobe_operation::plugin_version::operates::PluginDbOperation,
+};
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::SqlCeobeOperation,
+    sql_models::ceobe_operation::ToSqlCeobeOperation,
 };
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
@@ -18,13 +21,7 @@ use super::{
     },
     view::{AppVersionView, PluginVersionView},
 };
-use crate::{
-    models::{
-        mongo::plugin_version::operates::PluginDbOperation,
-        sql::app_version::operate::AppVersionOperate,
-    },
-    router::CeobeOperationVersionFrontend,
-};
+use crate::router::CeobeOperationVersionFrontend;
 
 impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
@@ -42,15 +39,15 @@ impl CeobeOperationVersionFrontend {
                 match version {
                     Some(version) => {
                         database
-                            .child::<SqlCeobeOperation<_>>()
-                            .child::<AppVersionOperate<_>>()
+                            .ceobe_operation()
+                            .app_version()
                             .get_info_by_version(&version)
                             .await
                     }
                     None => {
                         database
-                            .child::<SqlCeobeOperation<_>>()
-                            .child::<AppVersionOperate<_>>()
+                            .ceobe_operation()
+                            .app_version()
                             .get_newest_info()
                             .await
                     }

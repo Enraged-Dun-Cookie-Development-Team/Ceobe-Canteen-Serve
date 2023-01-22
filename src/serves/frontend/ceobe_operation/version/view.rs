@@ -1,13 +1,10 @@
+use mongo_migration::mongo_models::ceobe_operation::plugin_version::{models::SpareLink, DownloadResource, PluginVersion};
+use orm_migrate::sql_models::ceobe_operation::app_version;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use crate::models::{
-    mongo::plugin_version::models::{
-        DownloadResource, PluginVersion, SpareLink,
-    },
-    sql::app_version::models::model_app_version,
-};
+
 
 /// app版本
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -19,15 +16,15 @@ pub struct AppVersionView {
 }
 
 /// app版本转换
-impl From<model_app_version::Model> for AppVersionView {
+impl From<app_version::Model> for AppVersionView {
     fn from(
-        model_app_version::Model {
+        app_version::Model {
             version,
             force,
             last_force_version,
             description,
             ..
-        }: model_app_version::Model,
+        }: app_version::Model,
     ) -> Self {
         Self {
             version,

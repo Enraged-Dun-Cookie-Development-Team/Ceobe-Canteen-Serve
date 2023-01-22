@@ -8,8 +8,8 @@ error_generate! {
     pub CeobeOperationAppVersionError
 
     Json = JsonRejection
-    Check = app_version::checkers::CheckError
-    DbOperate = app_version::operate::OperateError
+    Check = app_version::CheckError
+    DbOperate = app_version::OperateError
 }
 
 pub(super) type AppRespResult<T> =
