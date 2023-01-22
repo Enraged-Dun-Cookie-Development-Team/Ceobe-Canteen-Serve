@@ -1,6 +1,5 @@
 use sea_orm::{
-    ColumnTrait, ConnectionTrait, DbErr, EntityTrait, Order, QueryFilter,
-    QueryOrder,
+    ColumnTrait, ConnectionTrait, EntityTrait, Order, QueryFilter, QueryOrder,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
@@ -17,13 +16,13 @@ impl CeobeOperationAppVersionSqlOperate {
         db: &'db D, version: &impl AsRef<str>,
     ) -> OperateResult<model_app_version::Model>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(app.version = version.as_ref());
         model_app_version::Entity::find()
             .filter(model_app_version::Column::Version.eq(version.as_ref()))
-            .one(db.get_connect()?)
+            .one(db.get_connect())
             .await?
             .ok_or_else(|| {
                 OperateError::AppVersionIdNoExist(version.as_ref().to_owned())
@@ -35,12 +34,12 @@ impl CeobeOperationAppVersionSqlOperate {
         db: &'db D,
     ) -> OperateResult<model_app_version::Model>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         model_app_version::Entity::find()
             .order_by(model_app_version::Column::CreateAt, Order::Desc)
-            .one(db.get_connect()?)
+            .one(db.get_connect())
             .await?
             .ok_or(OperateError::NotAppVersion)
             .tap_ok(|version| info!(newestVersion.version = version.version))

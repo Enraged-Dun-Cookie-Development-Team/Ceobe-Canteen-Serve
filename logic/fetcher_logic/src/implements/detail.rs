@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use checker::prefabs::post_checker::PostChecker;
-use redis::{AsyncCommands, RedisError};
+use redis::AsyncCommands;
 use redis_global::redis_key::fetcher::FetcherConfigKey;
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
@@ -39,10 +39,10 @@ impl FetcherConfigLogic {
         client: &'client mut C,
     ) -> LogicResult<i8>
     where
-        C: GetMutDatabaseConnect<Error = RedisError> + 'client,
+        C: GetMutDatabaseConnect + 'client,
         C::Connect<'client>: AsyncCommands,
     {
-        let con = client.mut_connect()?;
+        let con = client.mut_connect();
 
         // 判断redis key存在，如果不存在则默认没有蹲饼器
         let live_number = if con.exists(FetcherConfigKey::LIVE_NUMBER).await?
@@ -150,7 +150,7 @@ impl FetcherConfigLogic {
         db: &'db D, platform: &str,
     ) -> LogicResult<Vec<BackEndFetcherConfig>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         let configs_in_db =

@@ -1,6 +1,6 @@
 use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
 use sql_connection::database_traits::get_connect::{
-    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    GetDatabaseTransaction, TransactionOps,
 };
 use tracing::{info, instrument};
 
@@ -15,7 +15,7 @@ impl CeobeOperationAnnouncementSqlOperate {
         db: &'d D, announcements: Vec<CeobeOpAnnouncement>,
     ) -> OperateResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'd,
+        D: GetDatabaseTransaction<Error = DbErr> + 'd,
         D::Transaction<'d>: ConnectionTrait,
     {
         info!(announcements.update.size = announcements.len());

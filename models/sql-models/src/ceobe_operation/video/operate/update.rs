@@ -6,7 +6,7 @@ use sea_orm::{
     EntityTrait, IntoActiveModel, QueryFilter, StreamTrait,
 };
 use sql_connection::database_traits::get_connect::{
-    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    GetDatabaseTransaction, TransactionOps,
 };
 use tap::{Pipe, Tap};
 use tracing::{info, instrument};
@@ -41,9 +41,7 @@ impl CeobeOperationVideoSqlOperate {
         db: &'db D, videos: Vec<CeobeOpVideo>,
     ) -> OperateResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr>
-            + GetDatabaseTransaction
-            + 'static,
+        D: GetDatabaseTransaction<Error = DbErr> + 'static,
         D::Transaction<'db>: ConnectionTrait + StreamTrait,
     {
         let db = db.get_transaction().await?;
@@ -77,12 +75,10 @@ impl CeobeOperationVideoSqlOperate {
                             )
                         })
                     }
-                    None => {
-                        ActiveModel::from_video_data_with_order(
-                            video,
-                            order as i32,
-                        )
-                    }
+                    None => ActiveModel::from_video_data_with_order(
+                        video,
+                        order as i32,
+                    ),
                 }
             })
             .pipe(iter)

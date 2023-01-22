@@ -1,4 +1,4 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, IntoActiveModel};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
@@ -12,7 +12,7 @@ impl FetcherPlatformConfigSqlOperate {
         db: &'db D, config: FetcherPlatformConfig,
     ) -> OperateResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(
@@ -20,7 +20,7 @@ impl FetcherPlatformConfigSqlOperate {
             config.type_id = config.type_id,
             config.min_request_interval = config.min_request_interval
         );
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         config.into_active_model().save(db).await?;
 
         Ok(())

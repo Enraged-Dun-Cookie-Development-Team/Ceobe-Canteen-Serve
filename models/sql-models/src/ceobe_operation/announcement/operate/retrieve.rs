@@ -54,12 +54,12 @@ impl CeobeOperationAnnouncementSqlOperate {
         db: &'db D,
     ) -> OperateResult<Vec<model_announcement::Model>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait + StreamTrait,
     {
         Ok(Self::find_by_filter_not_delete_raw(
             Condition::all(),
-            db.get_connect()?,
+            db.get_connect(),
         )
         .await?
         .try_collect()

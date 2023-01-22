@@ -1,5 +1,5 @@
 use sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
+    ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
@@ -15,11 +15,11 @@ impl FetcherConfigSqlOperate {
         db: &'db D, platform: &str,
     ) -> OperateResult<Vec<Model>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(fetcherConfig.platform = platform,);
-        let db = db.get_connect()?;
+        let db = db.get_connect();
 
         Ok(model_config::Entity::find()
             .filter(model_config::Column::Platform.eq(platform))
@@ -38,13 +38,13 @@ impl FetcherConfigSqlOperate {
         db: &'db D, platforms: Vec<String>,
     ) -> OperateResult<Vec<Model>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(
             fetcherConfig.platform.list = ?platforms,
         );
-        let db = db.get_connect()?;
+        let db = db.get_connect();
 
         // 用Or拼接多个平台条件
         let mut condition = Condition::any();

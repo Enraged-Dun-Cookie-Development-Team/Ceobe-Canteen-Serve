@@ -1,5 +1,5 @@
 use sea_orm::{
-    sea_query, ConnectionTrait, DbErr, EntityTrait, IntoActiveModel,
+    sea_query, ConnectionTrait, EntityTrait, IntoActiveModel,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
@@ -17,10 +17,10 @@ impl FetcherGlobalConfigSqlOperate {
         db: &'db D, configs: impl IntoIterator<Item = FetcherGlobalConfig>,
     ) -> OperateResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         // 转换configs成Vec<ActiveModel>
         let config_list =
             configs.into_iter().map(IntoActiveModel::into_active_model);

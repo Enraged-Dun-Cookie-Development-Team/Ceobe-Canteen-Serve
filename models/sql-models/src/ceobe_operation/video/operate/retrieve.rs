@@ -48,10 +48,10 @@ impl CeobeOperationVideoSqlOperate {
         db: &'db D,
     ) -> OperateResult<Vec<model_video::Model>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait + StreamTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
 
         Ok(Self::find_by_filter_not_delete_raw(Condition::all(), db)
             .await?

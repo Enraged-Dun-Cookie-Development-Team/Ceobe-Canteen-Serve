@@ -1,4 +1,4 @@
-use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
+use sea_orm::{ConnectionTrait, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
@@ -13,10 +13,10 @@ impl FetcherGlobalConfigSqlOperate {
         db: &'db D,
     ) -> OperateResult<Vec<model_global_config::Model>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         // 查询所有的键值对
         Ok(Entity::find().all(db).await?)
     }

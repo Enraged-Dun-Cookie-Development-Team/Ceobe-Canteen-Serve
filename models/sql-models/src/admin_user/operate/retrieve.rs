@@ -93,14 +93,14 @@ impl UserSqlOperate {
     ) -> OperateResult<Result<T, E>>
     where
         M: Fn(user::Model) -> T,
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
         OE: Fn() -> E,
         E: Debug,
         T: Debug,
     {
         info!(user.id = uid, user.password.version = token_version);
-        let db = db.get_connect()?;
+        let db = db.get_connect();
 
         let user = Self::find_user_by_id_raw(uid, db).await?;
 
@@ -118,14 +118,14 @@ impl UserSqlOperate {
         db: &'db D, page_size: Paginator,
     ) -> OperateResult<Vec<user::UserList>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(
             userList.page.num = page_size.page.deref(),
             userList.page.size = page_size.size.deref()
         );
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         Ok(user::Entity::find()
             .select_only()
             .column(user::Column::Id)
@@ -151,10 +151,10 @@ impl UserSqlOperate {
         db: &'db D,
     ) -> OperateResult<u64>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         user::Entity::find().count(db).await.map_err(Into::into)
     }
 }

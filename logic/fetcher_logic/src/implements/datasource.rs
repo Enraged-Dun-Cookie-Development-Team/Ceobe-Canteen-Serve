@@ -29,10 +29,10 @@ impl FetcherConfigLogic {
         db: &'db D, datasource_config: FetcherDatasourceConfig,
     ) -> LogicResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         // 验证平台存在
         FetcherPlatformConfigSqlOperate::exist_by_type_id(
             db,

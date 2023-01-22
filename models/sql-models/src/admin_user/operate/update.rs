@@ -5,7 +5,7 @@ use sea_orm::{
     DbErr, IntoActiveModel, Set,
 };
 use sql_connection::database_traits::get_connect::{
-    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    GetDatabaseTransaction, TransactionOps,
 };
 use tracing::{info, instrument};
 
@@ -106,7 +106,7 @@ impl UserSqlOperate {
         db: &'db D, uid: i32, new_auth: AuthLevel,
     ) -> OperateResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
+        D: GetDatabaseTransaction<Error = DbErr> + 'db,
         D::Transaction<'db>: ConnectionTrait,
     {
         info!(user.id = uid, user.new.auth_level = ?new_auth);

@@ -1,7 +1,7 @@
 use std::{collections::BTreeSet, fmt::Debug, marker::Send};
 
 use sea_orm::{
-    ColumnTrait, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
+    ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter,
     QuerySelect,
 };
 use sql_connection::{
@@ -54,10 +54,10 @@ impl FetcherDatasourceConfigSqlOperate {
         db: &'db D, platforms: impl IntoIterator<Item = &str>,
     ) -> OperateResult<BTreeSet<String>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         let resp = Entity::find()
             .select_only()
             .column(Column::Platform)

@@ -9,7 +9,7 @@ use sql_models::{
     },
     sql_connection::{
         database_traits::get_connect::GetDatabaseConnect,
-        sea_orm::{ConnectionTrait, DbErr},
+        sea_orm::ConnectionTrait,
     },
 };
 
@@ -21,7 +21,7 @@ impl FetcherConfigLogic {
         db: &'db D, page_size: Paginator,
     ) -> LogicResult<Vec<PlatformHasDatasource>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         // 分页查询平台列表

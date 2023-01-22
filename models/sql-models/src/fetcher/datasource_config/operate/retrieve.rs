@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait,
+    ColumnTrait, Condition, ConnectionTrait, EntityTrait,
     PaginatorTrait, QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
@@ -41,7 +41,7 @@ impl FetcherDatasourceConfigSqlOperate {
         datasource: Option<String>,
     ) -> OperateResult<Vec<BackendDatasource>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(
@@ -50,7 +50,7 @@ impl FetcherDatasourceConfigSqlOperate {
             datasourceList.filter.platform = platform,
             datasourceList.filter.datasource = datasource,
         );
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         let result = Entity::find()
             .filter(
                 Condition::all()
@@ -81,11 +81,11 @@ impl FetcherDatasourceConfigSqlOperate {
         db: &'db D, platform: &str,
     ) -> OperateResult<Vec<DataSourceForFetcherConfig>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(datasourceList.platform = platform,);
-        let db = db.get_connect()?;
+        let db = db.get_connect();
 
         Ok(Entity::find()
             .filter(Column::Platform.eq(platform))
@@ -107,10 +107,10 @@ impl FetcherDatasourceConfigSqlOperate {
         db: &'db D,
     ) -> OperateResult<Vec<String>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         Ok(Entity::find()
             .select_only()
             .column(Column::Datasource)
@@ -135,10 +135,10 @@ impl FetcherDatasourceConfigSqlOperate {
         db: &'db D, platform: Option<String>, datasource: Option<String>,
     ) -> OperateResult<u64>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         Entity::find()
             .filter(
                 Condition::all()

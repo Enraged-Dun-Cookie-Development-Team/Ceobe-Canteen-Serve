@@ -13,7 +13,7 @@ use sql_models::{
     },
     sql_connection::{
         database_traits::get_connect::GetDatabaseConnect,
-        sea_orm::{ConnectionTrait, DbErr},
+        sea_orm::ConnectionTrait,
     },
 };
 
@@ -24,7 +24,7 @@ impl FetcherConfigLogic {
     /// 从数据库获取json的key和value，拼接成json格式返回
     pub async fn get_global_configs<'db, D>(db: &'db D) -> LogicResult<Value>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         // 获取数据库configs：Vec<Model>
@@ -45,7 +45,7 @@ impl FetcherConfigLogic {
         db: &'db D, config: Map<String, Value>,
     ) -> LogicResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
+        D: GetDatabaseConnect + 'static,
         D::Connect<'db>: ConnectionTrait,
     {
         // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串

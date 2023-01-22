@@ -4,7 +4,7 @@ use sea_orm::{
     QuerySelect, StreamTrait,
 };
 use sql_connection::database_traits::get_connect::{
-    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    GetDatabaseTransaction, TransactionOps,
 };
 use tap::Pipe;
 use tracing::{info, instrument};
@@ -90,9 +90,7 @@ impl CeobeOperationResourceSqlOperate {
     ) -> Result<T, OperateError>
     where
         F: FnOnce(ResourceAllAvailable, Vec<Countdown>) -> T,
-        D: GetDatabaseConnect<Error = DbErr>
-            + GetDatabaseTransaction
-            + 'static,
+        D: GetDatabaseTransaction<Error = DbErr> + 'static,
         D::Transaction<'db>: ConnectionTrait + StreamTrait,
     {
         let db = db.get_transaction().await?;

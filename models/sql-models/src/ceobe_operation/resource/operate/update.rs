@@ -1,7 +1,7 @@
 use chrono::Local;
 use sea_orm::{ConnectionTrait, DbErr};
 use sql_connection::database_traits::get_connect::{
-    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    GetDatabaseTransaction, TransactionOps,
 };
 use tracing::{info, instrument};
 
@@ -23,9 +23,7 @@ impl CeobeOperationResourceSqlOperate {
         db: &'db D, resource: CeobeOperationResource,
     ) -> Result<(), OperateError>
     where
-        D: GetDatabaseConnect<Error = DbErr>
-            + GetDatabaseTransaction
-            + 'static,
+        D: GetDatabaseTransaction<Error = DbErr> + 'static,
         D::Transaction<'db>: ConnectionTrait,
     {
         let db = db.get_transaction().await?;

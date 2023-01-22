@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{
-    ConnectionTrait, DbErr, EntityTrait, PaginatorTrait, QuerySelect,
+    ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect,
 };
 use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
@@ -24,14 +24,14 @@ impl FetcherPlatformConfigSqlOperate {
         db: &'db D, page_size: Paginator,
     ) -> OperateResult<Vec<model_platform_config::Model>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(
             platformList.page.num = page_size.page.deref(),
             platformList.page.size = page_size.size.deref()
         );
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         Ok(model_platform_config::Entity::find()
             .with_pagination(page_size)
             .all(db)
@@ -48,10 +48,10 @@ impl FetcherPlatformConfigSqlOperate {
     /// 获取全部平台type_id列表
     pub async fn find_all<'db, D>(db: &'db D) -> OperateResult<Vec<String>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         Ok(model_platform_config::Entity::find()
             .select_only()
             .column(model_platform_config::Column::TypeId)
@@ -75,10 +75,10 @@ impl FetcherPlatformConfigSqlOperate {
         db: &'db D,
     ) -> OperateResult<Vec<PlatformBasicInfo>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         Ok(model_platform_config::Entity::find()
             .into_model::<PlatformBasicInfo>()
             .all(db)
@@ -95,10 +95,10 @@ impl FetcherPlatformConfigSqlOperate {
     /// 获取平台总数
     pub async fn count_all<'db, D>(db: &'db D) -> OperateResult<u64>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect()?;
+        let db = db.get_connect();
         model_platform_config::Entity::find()
             .count(db)
             .await

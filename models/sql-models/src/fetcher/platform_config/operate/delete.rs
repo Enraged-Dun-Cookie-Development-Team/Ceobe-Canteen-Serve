@@ -1,4 +1,4 @@
-use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
+use sea_orm::{ConnectionTrait, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
@@ -12,11 +12,11 @@ impl FetcherPlatformConfigSqlOperate {
     /// 删除一个平台
     pub async fn delete_one<'db, D>(db: &'db D, pid: i32) -> OperateResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
+        D: GetDatabaseConnect + 'db,
         D::Connect<'db>: ConnectionTrait,
     {
         info!(platform.id = pid);
-        let db = db.get_connect()?;
+        let db = db.get_connect();
 
         // 获取平台的type，比对数据源表时候有平台的相关数据源
         if !Self::has_datasource_by_id(db, pid).await? {

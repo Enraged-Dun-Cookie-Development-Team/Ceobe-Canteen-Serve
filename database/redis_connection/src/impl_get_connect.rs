@@ -4,7 +4,7 @@ use std::convert::Infallible;
 use database_traits::get_connect::{
     FromRequestParts, GetMutDatabaseConnect, Parts,
 };
-use redis::{aio::ConnectionManager, RedisError};
+use redis::aio::ConnectionManager;
 
 use crate::static_var::get_redis_client;
 
@@ -41,9 +41,8 @@ impl GetMutDatabaseConnect for RedisConnect {
     type Connect<'s> = ConnectionManager
     where
         Self: 's;
-    type Error = RedisError;
 
-    fn mut_connect(&mut self) -> Result<&mut Self::Connect<'_>, Self::Error> {
-        Ok(&mut self.0)
+    fn mut_connect(&mut self) -> &mut Self::Connect<'_> {
+        &mut self.0
     }
 }
