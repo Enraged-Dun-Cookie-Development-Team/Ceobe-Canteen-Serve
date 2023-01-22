@@ -2,16 +2,20 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
 };
+use database_traits::database_operates::sub_operate::SuperOperate;
 use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::ceobe_operation::video::{
-        checkers::{
-            bv_arg_checker::{BvQuery, BvQueryChecker},
-            video_data::{
-                CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
+    sql_connection::SqlDatabaseOperate,
+    sql_models::ceobe_operation::{
+        video::{
+            checkers::{
+                bv_arg_checker::{BvQuery, BvQueryChecker},
+                video_data::{
+                    CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
+                },
             },
+            operate::VideoOperate,
         },
-        operate::CeobeOperationVideoSqlOperate,
+        SqlCeobeOperation,
     },
 };
 use reqwest::Url;
@@ -54,10 +58,15 @@ impl CeobeOperationVideo {
         .await
     }
 
-    #[instrument(ret, skip(db))]
-    pub async fn list_all(db: SqlConnect) -> VideoRespResult<Vec<VideoItem>> {
+    #[instrument(ret, skip(database))]
+    pub async fn list_all(
+        mut database: SqlDatabaseOperate,
+    ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
-            Ok(CeobeOperationVideoSqlOperate::find_all_not_delete(&db)
+            Ok(database
+                .child::<SqlCeobeOperation<_>>()
+                .child::<VideoOperate<_>>()
+                .find_all_not_delete()
                 .await?
                 .into_iter()
                 .map(Into::into)
@@ -68,9 +77,14 @@ impl CeobeOperationVideo {
 
     #[instrument(ret, skip(db))]
     pub async fn update_list(
-        db: SqlConnect, CheckExtract(videos): UpdateVideoCheck,
+        mut db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
-        rtry!(CeobeOperationVideoSqlOperate::update_all(&db, videos).await);
+        rtry!(
+            db.child::<SqlCeobeOperation<_>>()
+                .child::<VideoOperate<_>>()
+                .update_all(videos)
+                .await
+        );
         RespResult::ok(())
     }
 }

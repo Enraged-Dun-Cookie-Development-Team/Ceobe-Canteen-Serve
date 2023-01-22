@@ -2,14 +2,18 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
+use database_traits::database_operates::sub_operate::SuperOperate;
 use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::ceobe_operation::announcement::{
-        checkers::announcement_data::{
-            CeobeOpAnnouncement, CeobeOpAnnouncementChecker,
-            CeobeOpAnnouncementUncheck,
+    sql_connection::SqlDatabaseOperate,
+    sql_models::ceobe_operation::{
+        announcement::{
+            checkers::announcement_data::{
+                CeobeOpAnnouncement, CeobeOpAnnouncementChecker,
+                CeobeOpAnnouncementUncheck,
+            },
+            operate::AnnouncementOperate,
         },
-        operate::CeobeOperationAnnouncementSqlOperate,
+        SqlCeobeOperation,
     },
 };
 use resp_result::resp_try;
@@ -34,18 +38,17 @@ impl CeobeOperationAnnouncement {
     // 获取公告列表
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
-        db: SqlConnect,
+        mut db: SqlDatabaseOperate,
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
         resp_try(async {
-            Ok(
-                CeobeOperationAnnouncementSqlOperate::find_all_not_delete(
-                    &db,
-                )
+            Ok(db
+                .child::<SqlCeobeOperation<_>>()
+                .child::<AnnouncementOperate<_>>()
+                .find_all_not_delete()
                 .await?
                 .into_iter()
                 .map(Into::into)
-                .collect(),
-            )
+                .collect())
         })
         .await
     }
@@ -53,14 +56,14 @@ impl CeobeOperationAnnouncement {
     #[instrument(ret, skip(db))]
     // 更新公告列表
     pub async fn update_announcement_list(
-        db: SqlConnect, CheckExtract(announcements): UpdateAnnouncementCheck,
+        mut db: SqlDatabaseOperate,
+        CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
-            CeobeOperationAnnouncementSqlOperate::update_all(
-                &db,
-                announcements,
-            )
-            .await?;
+            db.child::<SqlCeobeOperation<_>>()
+                .child::<AnnouncementOperate<_>>()
+                .update_all(announcements)
+                .await?;
             Ok(())
         })
         .await

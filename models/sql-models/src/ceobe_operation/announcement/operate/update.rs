@@ -4,23 +4,23 @@ use sql_connection::database_traits::get_connect::{
 };
 use tracing::{info, instrument};
 
-use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
+use super::{AnnouncementOperate, OperateResult};
 use crate::ceobe_operation::announcement::{
     checkers::announcement_data::CeobeOpAnnouncement,
     models::model_announcement::{self, ActiveModel},
 };
-impl CeobeOperationAnnouncementSqlOperate {
-    #[instrument(skip(db, announcements), ret)]
-    pub async fn update_all<'d, D>(
-        db: &'d D, announcements: Vec<CeobeOpAnnouncement>,
-    ) -> OperateResult<()>
-    where
-        D: GetDatabaseTransaction<Error = DbErr> + 'd,
-        D::Transaction<'d>: ConnectionTrait,
-    {
+impl<'c, C> AnnouncementOperate<'c, C>
+where
+    C: GetDatabaseTransaction<Error = DbErr> + 'c,
+    C::Transaction<'c>: ConnectionTrait,
+{
+    #[instrument(skip(self, announcements), ret)]
+    pub async fn update_all(
+        &'c self, announcements: Vec<CeobeOpAnnouncement>,
+    ) -> OperateResult<()> {
         info!(announcements.update.size = announcements.len());
 
-        let db = db.get_transaction().await?;
+        let db = self.get_transaction().await?;
         // 所有先前的数据都设置为删除
         Self::all_soft_remove(&db).await?;
         // 如果为空，直接返回，不需要插入

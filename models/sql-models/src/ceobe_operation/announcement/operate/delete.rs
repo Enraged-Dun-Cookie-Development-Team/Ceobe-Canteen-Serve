@@ -3,13 +3,13 @@ use sea_orm::{
 };
 use tracing::info;
 
-use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
+use super::{AnnouncementOperate, OperateResult};
 use crate::{
     ceobe_operation::announcement::models::model_announcement,
     get_now_naive_date_time_value, get_zero_data_time,
 };
 
-impl CeobeOperationAnnouncementSqlOperate {
+impl<C> AnnouncementOperate<'_,C> {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,
     ) -> OperateResult<u64> {

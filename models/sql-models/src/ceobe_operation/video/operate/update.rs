@@ -11,7 +11,7 @@ use sql_connection::database_traits::get_connect::{
 use tap::{Pipe, Tap};
 use tracing::{info, instrument};
 
-use super::{CeobeOperationVideoSqlOperate, OperateResult};
+use super::{OperateResult, VideoOperate};
 use crate::{
     ceobe_operation::video::{
         checkers::video_data::CeobeOpVideo,
@@ -20,7 +20,7 @@ use crate::{
     get_now_naive_date_time_value, get_zero_data_time,
 };
 
-impl CeobeOperationVideoSqlOperate {
+impl<C> VideoOperate<'_, C> {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,
     ) -> OperateResult<u64> {
@@ -35,16 +35,17 @@ impl CeobeOperationVideoSqlOperate {
         info!(softDelete.effect = resp.rows_affected);
         Ok(resp.rows_affected)
     }
-
+}
+impl<'c, C> VideoOperate<'c, C>
+where
+    C: GetDatabaseTransaction<Error = DbErr>,
+    C::Transaction<'c>: ConnectionTrait + StreamTrait,
+{
     #[instrument(skip_all, ret, fields(videos.len = videos.len()))]
-    pub async fn update_all<'db, D>(
-        db: &'db D, videos: Vec<CeobeOpVideo>,
-    ) -> OperateResult<()>
-    where
-        D: GetDatabaseTransaction<Error = DbErr> + 'static,
-        D::Transaction<'db>: ConnectionTrait + StreamTrait,
-    {
-        let db = db.get_transaction().await?;
+    pub async fn update_all(
+        &'c self, videos: Vec<CeobeOpVideo>,
+    ) -> OperateResult<()> {
+        let db = self.get_transaction().await?;
         // 所有先前的数据都设置为删除
         Self::all_soft_remove(&db).await?;
 

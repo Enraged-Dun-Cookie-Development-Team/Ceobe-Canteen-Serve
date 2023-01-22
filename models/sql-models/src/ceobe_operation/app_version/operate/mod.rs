@@ -3,12 +3,29 @@ pub mod retrieve;
 pub mod verify;
 
 use sea_orm::FromQueryResult;
+use sql_connection::database_traits::{get_connect::GetDatabaseConnect, database_operates::sub_operate::SubOperate};
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 
-pub struct CeobeOperationAppVersionSqlOperate;
+pub struct AppVersionOperate<'c,C:'c + GetDatabaseConnect>(&'c C::Connect<'c>);
+
+impl<'c, C: 'c + GetDatabaseConnect> AppVersionOperate<'c, C> {
+    pub(self) fn get_connect(&'c self)->& C::Connect<'c>{
+        self.0
+    }
+}
+
+impl<'c, C: 'c + GetDatabaseConnect> SubOperate<'c> for AppVersionOperate<'c, C> {
+    type Parent = SqlCeobeOperation<'c,C>;
+
+    fn from_parent(parent: & 'c mut Self::Parent) -> Self {
+        Self(parent.0.get_connect())
+    }
+}
 
 pub use OperateError::*;
+
+use crate::ceobe_operation::SqlCeobeOperation;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {

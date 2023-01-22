@@ -7,12 +7,12 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
 use tracing::{info, instrument};
 
-use super::{CeobeOperationVideoSqlOperate, OperateResult};
+use super::{OperateResult, VideoOperate};
 use crate::{
     ceobe_operation::video::models::model_video, get_zero_data_time,
 };
 
-impl CeobeOperationVideoSqlOperate {
+impl<'c, Conn: 'c> VideoOperate<'c, Conn> {
     pub async fn find_by_filter_raw<'r, 'db, C>(
         filter: impl IntoCondition, db: &'db C,
     ) -> OperateResult<
@@ -29,10 +29,10 @@ impl CeobeOperationVideoSqlOperate {
             .await?)
     }
 
-    pub async fn find_by_filter_not_delete_raw<'r, 'db: 'r, C>(
-        filter: impl IntoCondition, db: &'db C,
+    pub async fn find_by_filter_not_delete_raw<C>(
+        filter: impl IntoCondition, db: &'c C,
     ) -> OperateResult<
-        impl Stream<Item = Result<model_video::Model, DbErr>> + 'r,
+        impl Stream<Item = Result<model_video::Model, DbErr>> + 'c,
     >
     where
         C: ConnectionTrait + StreamTrait + Send,
@@ -42,16 +42,17 @@ impl CeobeOperationVideoSqlOperate {
             .add(model_video::Column::DeleteAt.eq(get_zero_data_time()));
         Self::find_by_filter_raw(filter, db).await
     }
-
-    #[instrument(skip(db))]
-    pub async fn find_all_not_delete<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<Vec<model_video::Model>>
-    where
-        D: GetDatabaseConnect + 'static,
-        D::Connect<'db>: ConnectionTrait + StreamTrait,
-    {
-        let db = db.get_connect();
+}
+impl<'c, C> VideoOperate<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect<'c>: ConnectionTrait + StreamTrait,
+{
+    #[instrument(skip(self))]
+    pub async fn find_all_not_delete(
+        &'c self,
+    ) -> OperateResult<Vec<model_video::Model>> {
+        let db = self.get_connect();
 
         Ok(Self::find_by_filter_not_delete_raw(Condition::all(), db)
             .await?

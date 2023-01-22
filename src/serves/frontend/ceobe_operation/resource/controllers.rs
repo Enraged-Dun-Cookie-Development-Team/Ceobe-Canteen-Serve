@@ -1,19 +1,24 @@
 use std::time::Duration;
 
-use orm_migrate::sql_connection::SqlConnect;
+use database_traits::database_operates::sub_operate::SuperOperate;
+use orm_migrate::{
+    sql_connection::SqlDatabaseOperate,
+    sql_models::ceobe_operation::SqlCeobeOperation,
+};
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
 use super::{error::FlagResourceRespResult, view::Resource};
 use crate::{
-    models::sql::resource::operate::CeobeOperationResourceSqlOperate,
+    models::sql::resource::operate::ResourceOperate,
     router::CeobeOperationResourceFrontend,
 };
 
 impl CeobeOperationResourceFrontend {
-    #[instrument(skip(db, modify))]
+    #[instrument(skip(database, modify))]
     pub async fn resource_list(
-        db: SqlConnect, mut modify: modify_cache::CheckModify,
+        mut database: SqlDatabaseOperate,
+        mut modify: modify_cache::CheckModify,
     ) -> FlagResourceRespResult<Resource> {
         modify
             .cache_headers
@@ -21,11 +26,11 @@ impl CeobeOperationResourceFrontend {
             .set_max_age(Duration::from_secs(60 * 60));
         resp_try(async {
             let (data, extra) = modify.check_modify(
-                CeobeOperationResourceSqlOperate::get_resource(
-                    &db,
-                    |raa, cd| Resource::from((raa, cd)),
-                )
-                .await?,
+                database
+                    .child::<SqlCeobeOperation<_>>()
+                    .child::<ResourceOperate<_>>()
+                    .get(|raa, cd| Resource::from((raa, cd)))
+                    .await?,
             )?;
 
             Ok(FlagWrap::new(data, extra))

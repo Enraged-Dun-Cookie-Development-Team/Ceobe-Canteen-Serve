@@ -1,9 +1,13 @@
 use checker::{CheckExtract, JsonCheckExtract};
+use database_traits::database_operates::sub_operate::SuperOperate;
 use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::ceobe_operation::resource::{
-        checkers::resource_data::CeobeOperationResourceChecker,
-        operate::CeobeOperationResourceSqlOperate,
+    sql_connection::SqlDatabaseOperate,
+    sql_models::ceobe_operation::{
+        resource::{
+            checkers::resource_data::CeobeOperationResourceChecker,
+            operate::ResourceOperate,
+        },
+        SqlCeobeOperation,
     },
 };
 use resp_result::{rtry, RespResult};
@@ -21,20 +25,25 @@ type ResourceUploadCheck =
 impl CeobeOpResource {
     #[instrument(ret, skip(db))]
     pub async fn upload_resource(
-        db: SqlConnect, CheckExtract(resource): ResourceUploadCheck,
+        mut db: SqlDatabaseOperate,
+        CheckExtract(resource): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
-        CeobeOperationResourceSqlOperate::update_resource(&db, resource)
+        db.child::<SqlCeobeOperation<_>>()
+            .child::<ResourceOperate<_>>()
+            .update_resource(resource)
             .await
             .map_err(Into::into)
             .into()
     }
 
     #[instrument(ret, skip(db))]
-    pub async fn get_resource(db: SqlConnect) -> ResourceRResult<Resource> {
-        let resp =
-            CeobeOperationResourceSqlOperate::get_resource(&db, |raa, cd| {
-                Resource::from((raa, cd))
-            })
+    pub async fn get_resource(
+        mut db: SqlDatabaseOperate,
+    ) -> ResourceRResult<Resource> {
+        let resp = db
+            .child::<SqlCeobeOperation<_>>()
+            .child::<ResourceOperate<_>>()
+            .get(|raa, cd| Resource::from((raa, cd)))
             .await;
 
         RespResult::ok(rtry!(resp))

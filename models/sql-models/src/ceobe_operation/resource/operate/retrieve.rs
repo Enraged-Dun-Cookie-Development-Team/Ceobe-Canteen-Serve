@@ -9,7 +9,7 @@ use sql_connection::database_traits::get_connect::{
 use tap::Pipe;
 use tracing::{info, instrument};
 
-use super::{CeobeOperationResourceSqlOperate, OperateError};
+use super::{OperateError, ResourceOperate};
 use crate::{
     ceobe_operation::resource::models::{
         model_resource::{self, Column, Countdown, ResourceAllAvailable},
@@ -18,7 +18,7 @@ use crate::{
     get_zero_data_time,
 };
 
-impl CeobeOperationResourceSqlOperate {
+impl<C> ResourceOperate<'_, C> {
     #[instrument(ret, skip_all)]
     pub async fn get_resource_all_available<'db, D>(
         db: &'db D,
@@ -77,7 +77,12 @@ impl CeobeOperationResourceSqlOperate {
         info!(countdown.size = resp_stream.len());
         Ok(resp_stream)
     }
-
+}
+impl<'op, C> ResourceOperate<'op, C>
+where
+    C: GetDatabaseTransaction<Error = DbErr>,
+    C::Transaction<'op>: ConnectionTrait + StreamTrait,
+{
     #[instrument(
         skip_all,
         fields(
@@ -85,15 +90,13 @@ impl CeobeOperationResourceSqlOperate {
             resource.all_available
         )
     )]
-    pub async fn get_resource<'db, D, F, T>(
-        db: &'db D, map: F,
+    pub async fn get<F, T>(
+        & 'op self, map: F,
     ) -> Result<T, OperateError>
     where
         F: FnOnce(ResourceAllAvailable, Vec<Countdown>) -> T,
-        D: GetDatabaseTransaction<Error = DbErr> + 'static,
-        D::Transaction<'db>: ConnectionTrait + StreamTrait,
     {
-        let db = db.get_transaction().await?;
+        let db = self.get_transaction().await?;
         let (raa, countdown) = join(
             Self::get_resource_all_available(&db),
             Self::get_all_countdown(&db),

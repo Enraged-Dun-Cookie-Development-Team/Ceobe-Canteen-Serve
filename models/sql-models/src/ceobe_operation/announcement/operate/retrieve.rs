@@ -9,22 +9,19 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::{Tap, TapFallible};
 use tracing::{info, instrument};
 
-use super::{CeobeOperationAnnouncementSqlOperate, OperateResult};
+use super::{AnnouncementOperate, OperateResult};
 use crate::{
     ceobe_operation::announcement::models::model_announcement,
     get_zero_data_time,
 };
 
-impl CeobeOperationAnnouncementSqlOperate {
-    pub async fn find_by_filter_raw<'r, 'db, C>(
-        filter: impl IntoCondition, db: &'db C,
+impl<'c, C: 'c> AnnouncementOperate<'c, C> {
+    pub async fn find_by_filter_raw(
+        filter: impl IntoCondition,
+        db: &'c (impl ConnectionTrait + StreamTrait + Send),
     ) -> OperateResult<
-        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 'r,
-    >
-    where
-        'db: 'r,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 'c,
+    > {
         Ok(model_announcement::Entity::find()
             .filter(filter)
             .order_by_asc(model_announcement::Column::Order)
@@ -32,14 +29,12 @@ impl CeobeOperationAnnouncementSqlOperate {
             .await?)
     }
 
-    pub async fn find_by_filter_not_delete_raw<'r, 'db: 'r, C>(
-        filter: impl IntoCondition, db: &'db C,
+    pub async fn find_by_filter_not_delete_raw(
+        filter: impl IntoCondition,
+        db: &'c (impl ConnectionTrait + StreamTrait + Send),
     ) -> OperateResult<
-        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 'r,
-    >
-    where
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 'c,
+    > {
         Self::find_by_filter_raw(
             Condition::all().add(filter.into_condition()).add(
                 model_announcement::Column::DeleteAt.eq(get_zero_data_time()),
@@ -48,22 +43,21 @@ impl CeobeOperationAnnouncementSqlOperate {
         )
         .await
     }
-
-    #[instrument(skip(db))]
-    pub async fn find_all_not_delete<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<Vec<model_announcement::Model>>
-    where
-        D: GetDatabaseConnect + 'static,
-        D::Connect<'db>: ConnectionTrait + StreamTrait,
-    {
-        Ok(Self::find_by_filter_not_delete_raw(
-            Condition::all(),
-            db.get_connect(),
-        )
-        .await?
-        .try_collect()
-        .await?)
+}
+impl<'c, C> AnnouncementOperate<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect<'c>: ConnectionTrait + StreamTrait,
+{
+    #[instrument(skip(self))]
+    pub async fn find_all_not_delete(
+        &'c self,
+    ) -> OperateResult<Vec<model_announcement::Model>> {
+        let db = self.get_connect();
+        Ok(Self::find_by_filter_not_delete_raw(Condition::all(), db)
+            .await?
+            .try_collect()
+            .await?)
         .tap_ok(|list: &Vec<_>| {
             let contents = list
                 .iter()
