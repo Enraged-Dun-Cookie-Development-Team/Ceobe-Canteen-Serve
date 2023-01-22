@@ -1,11 +1,11 @@
-use crate::get_connect::{
-    GetDatabaseCollection, GetDatabaseConnect, GetDatabaseTransaction,
-    GetMutDatabaseConnect,
-};
 use axum_core::extract::FromRequestParts;
 use futures::TryFutureExt;
 
 use super::DatabaseOperate;
+use crate::get_connect::{
+    GetDatabaseCollection, GetDatabaseConnect, GetDatabaseTransaction,
+    GetMutDatabaseConnect,
+};
 
 impl<C> GetMutDatabaseConnect for DatabaseOperate<C>
 where
@@ -28,9 +28,7 @@ where
     where
         Self: 's;
 
-    fn get_connect(&self) -> &Self::Connect<'_> {
-        self.connect.get_connect()
-    }
+    fn get_connect(&self) -> &Self::Connect<'_> { self.connect.get_connect() }
 }
 
 impl<C> GetDatabaseTransaction for DatabaseOperate<C>
@@ -41,7 +39,6 @@ where
     type Transaction<'s> = C::Transaction<'s>
     where
         Self: 's;
-
     type TransactionFuture<'s> = C::TransactionFuture<'s>
     where
         Self: 's;
@@ -55,10 +52,10 @@ impl<C, Collect> GetDatabaseCollection<Collect> for DatabaseOperate<C>
 where
     C: GetDatabaseCollection<Collect>,
 {
-    type Error = C::Error;
     type CollectGuard<'s> =C::CollectGuard<'s>
     where
         Self: 's;
+    type Error = C::Error;
 
     fn get_collection(&self) -> Result<Self::CollectGuard<'_>, Self::Error> {
         self.connect.get_collection()

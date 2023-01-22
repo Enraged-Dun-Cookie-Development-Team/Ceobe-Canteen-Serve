@@ -5,9 +5,7 @@ use orm_migrate::sql_models::ceobe_operation::video;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-use crate::{
-    utils::time_format::naive_date_time_format,
-};
+use crate::utils::time_format::naive_date_time_format;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct VideoItem {

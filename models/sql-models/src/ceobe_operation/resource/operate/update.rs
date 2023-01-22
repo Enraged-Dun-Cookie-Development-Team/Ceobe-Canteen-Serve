@@ -5,15 +5,16 @@ use sql_connection::database_traits::get_connect::{
 };
 use tracing::{info, instrument};
 
-use super::{ResourceOperate, OperateError};
+use super::{OperateError, ResourceOperate};
 use crate::ceobe_operation::resource::{
     checkers::resource_data::CeobeOperationResource,
     models::resource_type::ResourceType,
 };
 
-impl <'op,C> ResourceOperate<'op,C>
-    where C:GetDatabaseTransaction<Error = DbErr>,
-    C::Transaction<'op>:ConnectionTrait
+impl<'op, C> ResourceOperate<'op, C>
+where
+    C: GetDatabaseTransaction<Error = DbErr>,
+    C::Transaction<'op>: ConnectionTrait,
 {
     #[instrument(
         skip_all, ret,
@@ -24,8 +25,7 @@ impl <'op,C> ResourceOperate<'op,C>
     )]
     pub async fn update_resource(
         &'op self, resource: CeobeOperationResource,
-    ) -> Result<(), OperateError>
-    {
+    ) -> Result<(), OperateError> {
         let db = self.get_transaction().await?;
         let now = Local::now().naive_local();
 

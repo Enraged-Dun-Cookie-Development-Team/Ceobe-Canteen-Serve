@@ -7,7 +7,7 @@ use crate::ceobe_operation::resource::{
     checkers::resource_data::CeobeOperationResource, models::model_resource,
 };
 
-impl<C> ResourceOperate<'_,C> {
+impl<C> ResourceOperate<'_, C> {
     pub async fn create_new_resource_set(
         db: &impl ConnectionTrait, resource: CeobeOperationResource,
         now: NaiveDateTime,

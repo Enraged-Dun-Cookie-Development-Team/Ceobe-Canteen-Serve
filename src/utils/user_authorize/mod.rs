@@ -11,7 +11,6 @@ pub use set_token::GenerateToken;
 use sha2::Sha256;
 pub use valid_token::decrypt_token;
 
-
 crate::quick_struct! {
 
     #[derive(PartialEq, Eq)]

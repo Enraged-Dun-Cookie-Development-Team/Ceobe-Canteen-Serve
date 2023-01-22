@@ -1,8 +1,7 @@
 use std::{collections::BTreeSet, fmt::Debug, marker::Send};
 
 use sea_orm::{
-    ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter,
-    QuerySelect,
+    ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect,
 };
 use sql_connection::{
     database_traits::get_connect::GetDatabaseConnect,

@@ -38,17 +38,15 @@ impl<S: Send + Sync> FromRequestParts<S> for MongoConnect {
 impl GetDatabaseConnect for MongoConnect {
     type Connect<'s> = DatabaseManage;
 
-    fn get_connect(&self) -> &Self::Connect<'_> {
-        get_mongo_database()
-    }
+    fn get_connect(&self) -> &Self::Connect<'_> { get_mongo_database() }
 }
 
 impl<C> GetDatabaseCollection<C> for MongoConnect
 where
     C: Serialize + for<'de> Deserialize<'de> + 'static,
 {
-    type Error = MongoDbError;
     type CollectGuard<'s> = CollectionGuard<C>;
+    type Error = MongoDbError;
 
     fn get_collection(&self) -> Result<Self::CollectGuard<'_>, Self::Error> {
         get_mongo_collection()

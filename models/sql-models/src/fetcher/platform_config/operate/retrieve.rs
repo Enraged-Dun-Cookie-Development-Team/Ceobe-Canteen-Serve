@@ -1,9 +1,7 @@
 use std::ops::Deref;
 
 use page_size::{database::WithPagination, request::Paginator};
-use sea_orm::{
-    ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect,
-};
+use sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect};
 use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;

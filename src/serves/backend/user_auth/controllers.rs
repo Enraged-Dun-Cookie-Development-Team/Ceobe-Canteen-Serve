@@ -7,7 +7,9 @@ use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
 use orm_migrate::{
     sql_connection::SqlConnect,
-    sql_models::admin_user::{operate::UserSqlOperate, models::auth_level::AuthLevel},
+    sql_models::admin_user::{
+        models::auth_level::AuthLevel, operate::UserSqlOperate,
+    },
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};

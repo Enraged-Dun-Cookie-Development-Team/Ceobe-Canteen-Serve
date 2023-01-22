@@ -4,7 +4,6 @@ use std::borrow::Cow;
 use modify_cache::ModifyState;
 use mongo_migration::mongo_models::bakery::mansion::preludes::Predict;
 
-
 crate::quick_struct! {
     pub ViewMansionWithTime {
         id:String

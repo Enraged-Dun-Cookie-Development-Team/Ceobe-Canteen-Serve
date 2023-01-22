@@ -90,9 +90,7 @@ where
             resource.all_available
         )
     )]
-    pub async fn get<F, T>(
-        & 'op self, map: F,
-    ) -> Result<T, OperateError>
+    pub async fn get<F, T>(&'op self, map: F) -> Result<T, OperateError>
     where
         F: FnOnce(ResourceAllAvailable, Vec<Countdown>) -> T,
     {

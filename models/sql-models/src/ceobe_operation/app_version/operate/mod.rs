@@ -14,9 +14,7 @@ pub struct AppVersionOperate<'c, C: 'c + GetDatabaseConnect>(
 );
 
 impl<'c, C: 'c + GetDatabaseConnect> AppVersionOperate<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &C::Connect<'c> {
-        self.0
-    }
+    pub(self) fn get_connect(&'c self) -> &C::Connect<'c> { self.0 }
 }
 
 impl<'c, C: 'c + GetDatabaseConnect> SubOperate<'c>
@@ -28,7 +26,6 @@ impl<'c, C: 'c + GetDatabaseConnect> SubOperate<'c>
         Self(parent.0.get_connect())
     }
 }
-
 
 use crate::ceobe_operation::SqlCeobeOperation;
 

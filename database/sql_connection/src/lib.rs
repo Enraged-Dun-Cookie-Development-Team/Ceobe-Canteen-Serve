@@ -10,4 +10,5 @@ pub use impl_get_connect::{SqlConnect, SqlTransaction};
 pub use impl_initial::{SqlDatabase, SqlDatabaseBuilder};
 pub use sea_orm;
 
-pub type SqlDatabaseOperate = database_traits::database_operates::DatabaseOperate<SqlConnect>;
+pub type SqlDatabaseOperate =
+    database_traits::database_operates::DatabaseOperate<SqlConnect>;

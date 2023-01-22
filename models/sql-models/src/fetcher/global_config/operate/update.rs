@@ -1,6 +1,4 @@
-use sea_orm::{
-    sea_query, ConnectionTrait, EntityTrait, IntoActiveModel,
-};
+use sea_orm::{sea_query, ConnectionTrait, EntityTrait, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 

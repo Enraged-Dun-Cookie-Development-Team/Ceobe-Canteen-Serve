@@ -11,8 +11,7 @@ pub struct Resource {
     countdown: Vec<Countdown>,
 }
 
-pub use self::all_available::AllAvailable;
-pub use self::countdown::Countdown;
+pub use self::{all_available::AllAvailable, countdown::Countdown};
 
 impl
     From<(

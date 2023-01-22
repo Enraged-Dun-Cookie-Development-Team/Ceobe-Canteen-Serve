@@ -8,15 +8,11 @@ pub struct DatabaseOperate<C> {
 }
 
 impl<C> DerefMut for DatabaseOperate<C> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.connect
-    }
+    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.connect }
 }
 
 impl<C> Deref for DatabaseOperate<C> {
     type Target = C;
 
-    fn deref(&self) -> &Self::Target {
-        &self.connect
-    }
+    fn deref(&self) -> &Self::Target { &self.connect }
 }

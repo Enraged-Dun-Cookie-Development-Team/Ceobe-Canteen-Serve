@@ -1,10 +1,10 @@
-use mongo_migration::mongo_models::ceobe_operation::plugin_version::{models::SpareLink, DownloadResource, PluginVersion};
+use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
+    models::SpareLink, DownloadResource, PluginVersion,
+};
 use orm_migrate::sql_models::ceobe_operation::app_version;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
-
-
 
 /// app版本
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]

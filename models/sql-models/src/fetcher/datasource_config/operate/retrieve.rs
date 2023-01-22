@@ -2,8 +2,8 @@ use std::ops::Deref;
 
 use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, EntityTrait,
-    PaginatorTrait, QueryFilter, QuerySelect,
+    ColumnTrait, Condition, ConnectionTrait, EntityTrait, PaginatorTrait,
+    QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;

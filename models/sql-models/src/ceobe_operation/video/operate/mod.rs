@@ -34,9 +34,7 @@ where
 {
     type Parent = SqlCeobeOperation<'c, C>;
 
-    fn from_parent(parent: &'c mut Self::Parent) -> Self {
-        Self(parent.0)
-    }
+    fn from_parent(parent: &'c mut Self::Parent) -> Self { Self(parent.0) }
 }
 
 #[derive(Debug, Error, status_err::StatusErr)]

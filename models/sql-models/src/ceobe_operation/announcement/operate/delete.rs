@@ -9,7 +9,7 @@ use crate::{
     get_now_naive_date_time_value, get_zero_data_time,
 };
 
-impl<C> AnnouncementOperate<'_,C> {
+impl<C> AnnouncementOperate<'_, C> {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,
     ) -> OperateResult<u64> {

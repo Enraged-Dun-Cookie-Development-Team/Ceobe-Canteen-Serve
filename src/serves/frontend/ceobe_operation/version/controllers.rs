@@ -1,7 +1,6 @@
 use std::time::Duration;
 
 use checker::CheckExtract;
-
 use mongo_migration::{
     mongo_connection::MongoConnect,
     mongo_models::ceobe_operation::plugin_version::operates::PluginDbOperation,

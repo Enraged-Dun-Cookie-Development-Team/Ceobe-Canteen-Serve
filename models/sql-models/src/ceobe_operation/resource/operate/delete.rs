@@ -5,7 +5,7 @@ use sea_orm::{
 };
 use tracing::info;
 
-use super::{ResourceOperate, OperateError};
+use super::{OperateError, ResourceOperate};
 use crate::{
     ceobe_operation::resource::models::{
         model_resource, resource_type::ResourceType,
@@ -13,7 +13,7 @@ use crate::{
     get_zero_data_time,
 };
 
-impl <C> ResourceOperate<'_,C> {
+impl<C> ResourceOperate<'_, C> {
     pub async fn soft_remove(
         db: &impl ConnectionTrait, now: NaiveDateTime, ty: ResourceType,
     ) -> Result<(), OperateError> {

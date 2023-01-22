@@ -10,13 +10,10 @@ pub use checkers::{
     },
     CheckError,
 };
-
 pub use models::model_announcement::{
     ActiveModel, Column, Entity, Model, Relation,
 };
-
-pub use operate::AnnouncementOperate as Operate;
-pub use operate::OperateError;
+pub use operate::{AnnouncementOperate as Operate, OperateError};
 use sql_connection::database_traits::{
     database_operates::sub_operate::SuperOperate,
     get_connect::GetDatabaseConnect,
@@ -25,7 +22,5 @@ use sql_connection::database_traits::{
 use super::SqlCeobeOperation;
 
 impl<'c, C: GetDatabaseConnect> SqlCeobeOperation<'c, C> {
-    pub fn announcement(&'c mut self) -> Operate<'c, C> {
-        self.child()
-    }
+    pub fn announcement(&'c mut self) -> Operate<'c, C> { self.child() }
 }

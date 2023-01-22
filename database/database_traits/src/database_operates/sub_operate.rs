@@ -1,11 +1,9 @@
-
-use crate::get_connect::GetDatabaseConnect;
-
 use super::DatabaseOperate;
+use crate::get_connect::GetDatabaseConnect;
 
 pub trait SubOperate<'op>: 'op {
     type Parent;
-    fn from_parent(parent: & 'op mut Self::Parent) -> Self;
+    fn from_parent(parent: &'op mut Self::Parent) -> Self;
 }
 
 pub trait SuperOperate {
@@ -38,9 +36,9 @@ where
     }
 }
 
-
-fn _sql<C>(mut op :DatabaseOperate<C>)
-where C:GetDatabaseConnect
+fn _sql<C>(mut op: DatabaseOperate<C>)
+where
+    C: GetDatabaseConnect,
 {
     let _v = op.child::<SqlUserOperate<_>>();
 }

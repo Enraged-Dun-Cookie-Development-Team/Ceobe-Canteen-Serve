@@ -1,8 +1,10 @@
 use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
 use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
-    check::version_checker::VersionChecker as PluginVersionChecker,
+    check::{
+        version_checker::VersionChecker as PluginVersionChecker,
+        CheckError as PluginCheckError,
+    },
     models::Version,
-    check:: CheckError as PluginCheckError
 };
 use orm_migrate::sql_models::ceobe_operation::app_version;
 use serde::{Deserialize, Serialize};

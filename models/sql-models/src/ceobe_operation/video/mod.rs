@@ -2,17 +2,19 @@ mod checkers;
 mod models;
 mod operate;
 
-pub use checkers::video_data::CeobeOpVideo as Checked;
-pub use checkers::video_data::CeobeOpVideoChecker as Checker;
-pub use checkers::video_data::CeobeOpVideoUncheck as Uncheck;
-pub use checkers::CheckError;
-
+pub use checkers::{
+    video_data::{
+        CeobeOpVideo as Checked, CeobeOpVideoChecker as Checker,
+        CeobeOpVideoUncheck as Uncheck,
+    },
+    CheckError,
+};
 pub use models::model_video::{ActiveModel, Column, Entity, Model, Relation};
 
 pub mod bv {
-    pub use super::checkers::bv::{Bv as Checked, BvChecker as Checker};
     pub use std::string::String as Uncheck;
 
+    pub use super::checkers::bv::{Bv as Checked, BvChecker as Checker};
     use super::checkers::bv_arg_checker;
     pub mod query {
         pub use super::bv_arg_checker::{
@@ -31,7 +33,5 @@ use sql_connection::database_traits::{
 use super::SqlCeobeOperation;
 
 impl<'c, C: GetDatabaseConnect> SqlCeobeOperation<'c, C> {
-    pub fn video(&'c mut self) -> Operate<'c, C> {
-        self.child()
-    }
+    pub fn video(&'c mut self) -> Operate<'c, C> { self.child() }
 }

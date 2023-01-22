@@ -6,7 +6,6 @@ pub mod prefabs;
 pub mod codegen;
 pub mod error;
 
-
 /// 权限等级判别特征
 /// 用于判决是否允许这种类型权限通过
 pub trait AuthLevelVerify {

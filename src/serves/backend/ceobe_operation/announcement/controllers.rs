@@ -2,7 +2,6 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
-
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
     sql_models::ceobe_operation::{announcement, ToSqlCeobeOperation},

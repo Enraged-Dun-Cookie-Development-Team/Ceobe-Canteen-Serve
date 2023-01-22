@@ -42,7 +42,5 @@ impl GetMutDatabaseConnect for RedisConnect {
     where
         Self: 's;
 
-    fn mut_connect(&mut self) -> &mut Self::Connect<'_> {
-        &mut self.0
-    }
+    fn mut_connect(&mut self) -> &mut Self::Connect<'_> { &mut self.0 }
 }

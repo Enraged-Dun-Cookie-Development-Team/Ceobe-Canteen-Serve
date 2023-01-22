@@ -28,9 +28,7 @@ impl ModifyState for Resource {
         Some(Cow::Borrowed(&self.modify_at))
     }
 
-    fn get_identify(&self) -> Cow<'_, Self::Identify> {
-        Cow::Borrowed(self)
-    }
+    fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
 
 impl
