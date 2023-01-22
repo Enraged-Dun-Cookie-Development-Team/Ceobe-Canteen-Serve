@@ -1,5 +1,6 @@
+use orm_migrate::sql_models::admin_user::models::auth_level::AuthLevel;
+
 use super::AuthLevelVerify;
-use crate::models::sql::models::auth_level::AuthLevel;
 
 #[derive(Clone)]
 pub struct Chef;

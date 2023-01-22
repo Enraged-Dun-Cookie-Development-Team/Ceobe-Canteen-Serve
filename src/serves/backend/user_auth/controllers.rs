@@ -7,7 +7,7 @@ use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
 use orm_migrate::{
     sql_connection::SqlConnect,
-    sql_models::admin_user::operate::UserSqlOperate,
+    sql_models::admin_user::{operate::UserSqlOperate, models::auth_level::AuthLevel},
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -20,7 +20,6 @@ use super::{
 };
 use crate::{
     middleware::authorize::AuthorizeInfo,
-    models::sql::models::auth_level::AuthLevel,
     router::UserAuthBackend,
     serves::backend::user_auth::{
         error::AdminUserError,

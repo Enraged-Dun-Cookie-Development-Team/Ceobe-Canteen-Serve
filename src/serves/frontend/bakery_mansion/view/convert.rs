@@ -1,6 +1,7 @@
+use mongo_migration::mongo_models::bakery::mansion::preludes::{Info, Daily, ModelMansion};
+
 use super::{ViewDaily, ViewInfo, ViewMansionWithTime};
 use crate::{
-    models::mongo::mansion::preludes::{Daily, Info, ModelMansion},
     utils::time_format::{bson_date_time_format, naive_date_format},
 };
 

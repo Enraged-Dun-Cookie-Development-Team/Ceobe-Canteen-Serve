@@ -2,8 +2,8 @@ mod convert;
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
+use mongo_migration::mongo_models::bakery::mansion::preludes::Predict;
 
-use crate::models::mongo::mansion::preludes::*;
 
 crate::quick_struct! {
     pub ViewMansionWithTime {
