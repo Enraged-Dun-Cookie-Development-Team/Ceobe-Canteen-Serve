@@ -1,8 +1,8 @@
+use orm_migrate::sql_models::ceobe_operation::announcement;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 use crate::{
-    models::sql::announcement::models::model_announcement,
     utils::time_format::naive_date_time_format,
 };
 
@@ -15,16 +15,16 @@ pub struct AnnouncementItem {
     pub notice: bool,
 }
 
-impl From<model_announcement::Model> for AnnouncementItem {
+impl From<announcement::Model> for AnnouncementItem {
     fn from(
-        model_announcement::Model {
+        announcement::Model {
             start_time,
             over_time,
             content,
             img_url,
             notice,
             ..
-        }: model_announcement::Model,
+        }: announcement::Model,
     ) -> Self {
         Self {
             start_time: naive_date_time_format(start_time),

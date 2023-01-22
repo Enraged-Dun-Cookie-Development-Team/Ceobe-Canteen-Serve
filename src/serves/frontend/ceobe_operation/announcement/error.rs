@@ -6,7 +6,7 @@ use crate::error_generate;
 error_generate! {
     pub CeobeOperationAnnouncementError
 
-    DbOperate = announcement::operate::OperateError
+    DbOperate = announcement::OperateError
     ModifyVerify = modify_cache::Error
 }
 

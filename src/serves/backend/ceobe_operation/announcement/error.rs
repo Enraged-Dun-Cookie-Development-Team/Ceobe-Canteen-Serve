@@ -10,8 +10,8 @@ error_generate! {
     Auth = AuthError
     Json = JsonRejection
     Query = QueryRejection
-    Check = announcement::checkers::CheckError
-    DbOperate = announcement::operate::OperateError
+    Check = announcement::CheckError
+    DbOperate = announcement::OperateError
 }
 
 pub(crate) type AnnouncementRespResult<T> =

@@ -40,8 +40,6 @@ where
     }
 }
 
-pub use OperateError::*;
-
 use crate::ceobe_operation::SqlCeobeOperation;
 
 #[derive(Debug, Error, StatusErr)]

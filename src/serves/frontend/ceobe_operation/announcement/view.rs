@@ -1,12 +1,13 @@
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
+use orm_migrate::sql_models::ceobe_operation::announcement;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
 
 use crate::{
-    models::sql::announcement::models::model_announcement,
+
     utils::time_format::naive_date_time_format,
 };
 
@@ -18,16 +19,16 @@ pub struct AnnouncementItem {
     pub notice: bool,
 }
 
-impl From<model_announcement::Model> for AnnouncementItem {
+impl From<announcement::Model> for AnnouncementItem {
     fn from(
-        model_announcement::Model {
+        announcement::Model {
             start_time,
             over_time,
             content,
             img_url,
             notice,
             ..
-        }: model_announcement::Model,
+        }: announcement::Model,
     ) -> Self {
         let image = Url::parse(&img_url)
             .map(|url| url.to_string())

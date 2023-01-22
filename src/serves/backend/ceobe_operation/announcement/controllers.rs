@@ -2,19 +2,10 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
-use database_traits::database_operates::sub_operate::SuperOperate;
+
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::{
-        announcement::{
-            checkers::announcement_data::{
-                CeobeOpAnnouncement, CeobeOpAnnouncementChecker,
-                CeobeOpAnnouncementUncheck,
-            },
-            operate::AnnouncementOperate,
-        },
-        SqlCeobeOperation,
-    },
+    sql_models::ceobe_operation::{announcement, ToSqlCeobeOperation},
 };
 use resp_result::resp_try;
 use tracing::instrument;
@@ -27,9 +18,9 @@ use crate::router::CeobeOperationAnnouncement;
 
 type UpdateAnnouncementCheck = JsonCheckExtract<
     IntoIterChecker<
-        Vec<CeobeOpAnnouncementUncheck>,
-        CeobeOpAnnouncementChecker,
-        Vec<CeobeOpAnnouncement>,
+        Vec<announcement::Uncheck>,
+        announcement::Checker,
+        Vec<announcement::Checked>,
     >,
     CeobeOperationAnnouncementError,
 >;
@@ -42,8 +33,8 @@ impl CeobeOperationAnnouncement {
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
         resp_try(async {
             Ok(db
-                .child::<SqlCeobeOperation<_>>()
-                .child::<AnnouncementOperate<_>>()
+                .ceobe_operation()
+                .announcement()
                 .find_all_not_delete()
                 .await?
                 .into_iter()
@@ -60,8 +51,8 @@ impl CeobeOperationAnnouncement {
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
-            db.child::<SqlCeobeOperation<_>>()
-                .child::<AnnouncementOperate<_>>()
+            db.ceobe_operation()
+                .announcement()
                 .update_all(announcements)
                 .await?;
             Ok(())

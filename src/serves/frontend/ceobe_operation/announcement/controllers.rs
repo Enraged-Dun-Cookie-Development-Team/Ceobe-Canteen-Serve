@@ -1,10 +1,7 @@
-use database_traits::database_operates::sub_operate::SuperOperate;
 use modify_cache::CacheMode;
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::{
-        announcement::operate::AnnouncementOperate, SqlCeobeOperation,
-    },
+    sql_models::ceobe_operation::ToSqlCeobeOperation,
 };
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
@@ -26,9 +23,8 @@ impl CeobeOperationAnnouncementFrontend {
 
         resp_try(async {
             let (data, extra) = modify.check_modify(AnnouncementItems(
-                db
-                .child::<SqlCeobeOperation<_>>()
-                    .child::<AnnouncementOperate<_>>()
+                db.ceobe_operation()
+                    .announcement()
                     .find_all_not_delete()
                     .await?
                     .into_iter()
