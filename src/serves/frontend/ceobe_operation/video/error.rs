@@ -1,11 +1,12 @@
+use orm_migrate::sql_models::ceobe_operation::video;
 use resp_result::FlagRespResult;
 
-use crate::{error_generate, models::sql::video};
+use crate::{error_generate};
 
 error_generate! {
     pub CeobeOperationVideoError
 
-    DbOperate = video::operate::OperateError
+    DbOperate = video::OperateError
     ModifyVerify = modify_cache::Error
 }
 

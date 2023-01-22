@@ -15,8 +15,8 @@ error_generate! {
     Url = url::ParseError
     Json = JsonRejection
     Query = QueryRejection
-    Check = video::checkers::CheckError
-    DbOperate = video::operate::OperateError
+    Check = video::CheckError
+    DbOperate = video::OperateError
 }
 
 pub(super) type VideoRespResult<T> = RespResult<T, CeobeOperationVideoError>;

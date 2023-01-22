@@ -1,11 +1,11 @@
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
+use orm_migrate::sql_models::ceobe_operation::video;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 use crate::{
-    models::sql::video::models::model_video,
     utils::time_format::naive_date_time_format,
 };
 
@@ -20,9 +20,9 @@ pub struct VideoItem {
     pub cover_image: String,
 }
 
-impl From<model_video::Model> for VideoItem {
+impl From<video::Model> for VideoItem {
     fn from(
-        model_video::Model {
+        video::Model {
             start_time,
             over_time,
             title,
@@ -30,7 +30,7 @@ impl From<model_video::Model> for VideoItem {
             video_link,
             cover_image,
             ..
-        }: model_video::Model,
+        }: video::Model,
     ) -> Self {
         Self {
             start_time: naive_date_time_format(start_time),

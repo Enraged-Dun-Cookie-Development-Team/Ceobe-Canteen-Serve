@@ -2,20 +2,12 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
 };
-use database_traits::database_operates::sub_operate::SuperOperate;
+
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
     sql_models::ceobe_operation::{
-        video::{
-            checkers::{
-                bv_arg_checker::{BvQuery, BvQueryChecker},
-                video_data::{
-                    CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
-                },
-            },
-            operate::VideoOperate,
-        },
-        SqlCeobeOperation,
+        video::{self, bv::query::Checked as BvQuery},
+        ToSqlCeobeOperation,
     },
 };
 use reqwest::Url;
@@ -30,14 +22,10 @@ use super::{
 use crate::router::CeobeOperationVideo;
 
 type BvQueryCheck =
-    QueryCheckExtract<BvQueryChecker, CeobeOperationVideoError>;
+    QueryCheckExtract<video::bv::query::Checker, CeobeOperationVideoError>;
 
 type UpdateVideoCheck = JsonCheckExtract<
-    IntoIterChecker<
-        Vec<CeobeOpVideoUncheck>,
-        CeobeOpVideoChecker,
-        Vec<CeobeOpVideo>,
-    >,
+    IntoIterChecker<Vec<video::Uncheck>, video::Checker, Vec<video::Checked>>,
     CeobeOperationVideoError,
 >;
 
@@ -64,8 +52,8 @@ impl CeobeOperationVideo {
     ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
             Ok(database
-                .child::<SqlCeobeOperation<_>>()
-                .child::<VideoOperate<_>>()
+                .ceobe_operation()
+                .video()
                 .find_all_not_delete()
                 .await?
                 .into_iter()
@@ -79,12 +67,7 @@ impl CeobeOperationVideo {
     pub async fn update_list(
         mut db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
-        rtry!(
-            db.child::<SqlCeobeOperation<_>>()
-                .child::<VideoOperate<_>>()
-                .update_all(videos)
-                .await
-        );
+        rtry!(db.ceobe_operation().video().update_all(videos).await);
         RespResult::ok(())
     }
 }
