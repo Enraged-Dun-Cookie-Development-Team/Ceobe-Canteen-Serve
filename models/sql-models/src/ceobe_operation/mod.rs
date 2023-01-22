@@ -1,5 +1,8 @@
 use sql_connection::database_traits::{
-    database_operates::{sub_operate::SubOperate, DatabaseOperate},
+    database_operates::{
+        sub_operate::{SubOperate, SuperOperate},
+        DatabaseOperate,
+    },
     get_connect::GetDatabaseConnect,
 };
 
@@ -20,5 +23,18 @@ where
 
     fn from_parent(parent: &'c mut Self::Parent) -> Self {
         Self(parent)
+    }
+}
+
+pub trait ToSqlCeobeOperation<C: GetDatabaseConnect> {
+    fn ceobe_operation<'c>(&'c mut self) -> SqlCeobeOperation<'c, C>;
+}
+
+impl<C> ToSqlCeobeOperation<C> for DatabaseOperate<C>
+where
+    C: GetDatabaseConnect,
+{
+    fn ceobe_operation<'c>(&'c mut self) -> SqlCeobeOperation<'c, C> {
+        self.child()
     }
 }
