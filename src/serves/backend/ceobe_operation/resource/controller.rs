@@ -1,14 +1,7 @@
 use checker::{CheckExtract, JsonCheckExtract};
-use database_traits::database_operates::sub_operate::SuperOperate;
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::{
-        resource::{
-            checkers::resource_data::CeobeOperationResourceChecker,
-            operate::ResourceOperate,
-        },
-        SqlCeobeOperation,
-    },
+    sql_models::ceobe_operation::{resource, ToSqlCeobeOperation},
 };
 use resp_result::{rtry, RespResult};
 use tracing::instrument;
@@ -19,8 +12,7 @@ use super::{
 };
 use crate::router::CeobeOpResource;
 
-type ResourceUploadCheck =
-    JsonCheckExtract<CeobeOperationResourceChecker, ResourceError>;
+type ResourceUploadCheck = JsonCheckExtract<resource::Checker, ResourceError>;
 
 impl CeobeOpResource {
     #[instrument(ret, skip(db))]
@@ -28,8 +20,8 @@ impl CeobeOpResource {
         mut db: SqlDatabaseOperate,
         CheckExtract(resource): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
-        db.child::<SqlCeobeOperation<_>>()
-            .child::<ResourceOperate<_>>()
+        db.ceobe_operation()
+            .resource()
             .update_resource(resource)
             .await
             .map_err(Into::into)
@@ -41,8 +33,8 @@ impl CeobeOpResource {
         mut db: SqlDatabaseOperate,
     ) -> ResourceRResult<Resource> {
         let resp = db
-            .child::<SqlCeobeOperation<_>>()
-            .child::<ResourceOperate<_>>()
+            .ceobe_operation()
+            .resource()
             .get(|raa, cd| Resource::from((raa, cd)))
             .await;
 

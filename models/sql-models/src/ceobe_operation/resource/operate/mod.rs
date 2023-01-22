@@ -35,7 +35,6 @@ where
 }
 
 use status_err::{ErrPrefix, HttpCode};
-pub use OperateError::*;
 
 use crate::ceobe_operation::SqlCeobeOperation;
 #[derive(Debug, Error, StatusErr)]

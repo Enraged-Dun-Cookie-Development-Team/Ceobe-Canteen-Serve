@@ -1,15 +1,16 @@
+use orm_migrate::sql_models::ceobe_operation::resource;
 use resp_result::FlagRespResult;
 
 use crate::{
     error_generate,
-    models::sql::resource::{checkers::CheckError, operate::OperateError},
+   
 };
 
 error_generate! {
     pub ResourceError
 
-    Check = CheckError
-    DbOperate = OperateError
+    Check = resource::CheckError
+    DbOperate = resource::OperateError
     ModifyVerify = modify_cache::Error
 }
 

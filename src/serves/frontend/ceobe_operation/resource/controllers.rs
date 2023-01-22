@@ -1,18 +1,14 @@
 use std::time::Duration;
 
-use database_traits::database_operates::sub_operate::SuperOperate;
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::SqlCeobeOperation,
+    sql_models::ceobe_operation::ToSqlCeobeOperation,
 };
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
 use super::{error::FlagResourceRespResult, view::Resource};
-use crate::{
-    models::sql::resource::operate::ResourceOperate,
-    router::CeobeOperationResourceFrontend,
-};
+use crate::router::CeobeOperationResourceFrontend;
 
 impl CeobeOperationResourceFrontend {
     #[instrument(skip(database, modify))]
@@ -27,8 +23,8 @@ impl CeobeOperationResourceFrontend {
         resp_try(async {
             let (data, extra) = modify.check_modify(
                 database
-                    .child::<SqlCeobeOperation<_>>()
-                    .child::<ResourceOperate<_>>()
+                    .ceobe_operation()
+                    .resource()
                     .get(|raa, cd| Resource::from((raa, cd)))
                     .await?,
             )?;

@@ -1,4 +1,4 @@
-use orm_migrate::sql_models::ceobe_operation::resource::models::model_resource;
+use orm_migrate::sql_models::ceobe_operation::resource::countdown;
 use serde::Serialize;
 
 use crate::utils::time_format::naive_date_time_format;
@@ -14,16 +14,16 @@ pub struct Countdown {
     start_time: String,
     over_time: String,
 }
-impl From<model_resource::Countdown> for Countdown {
+impl From<countdown::Model> for Countdown {
     fn from(
-        model_resource::Countdown {
+        countdown::Model {
             start_time,
             message,
             countdown_end,
             banner_info,
             over_time,
             ..
-        }: model_resource::Countdown,
+        }: countdown::Model,
     ) -> Self {
         Self {
             message,

@@ -5,7 +5,7 @@ use std::borrow::Cow;
 use chrono::NaiveDateTime;
 use modify_cache::ModifyState;
 use orm_migrate::sql_models::{
-    ceobe_operation::resource::models::model_resource, get_zero_data_time,
+    ceobe_operation::resource, get_zero_data_time,
 };
 use serde::Serialize;
 
@@ -28,19 +28,21 @@ impl ModifyState for Resource {
         Some(Cow::Borrowed(&self.modify_at))
     }
 
-    fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
+    fn get_identify(&self) -> Cow<'_, Self::Identify> {
+        Cow::Borrowed(self)
+    }
 }
 
 impl
     From<(
-        model_resource::ResourceAllAvailable,
-        Vec<model_resource::Countdown>,
+        resource::all_available::Model,
+        Vec<resource::countdown::Model>,
     )> for Resource
 {
     fn from(
         (raa, cd): (
-            model_resource::ResourceAllAvailable,
-            Vec<model_resource::Countdown>,
+            resource::all_available::Model,
+            Vec<resource::countdown::Model>,
         ),
     ) -> Self {
         let modify_at = NaiveDateTime::max(
