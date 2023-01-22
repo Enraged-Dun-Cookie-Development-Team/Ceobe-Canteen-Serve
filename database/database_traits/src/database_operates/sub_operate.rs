@@ -9,13 +9,13 @@ pub trait SubOperate<'op>: 'op {
 }
 
 pub trait SuperOperate {
-    fn sub<'r, S: SubOperate<'r, Parent = Self>>(&'r mut self) -> S
+    fn child<'r, S: SubOperate<'r, Parent = Self>>(&'r mut self) -> S
     where
         S: 'r;
 }
 
 impl<T> SuperOperate for T {
-    fn sub<'r, S: SubOperate<'r, Parent = Self>>(&'r mut self) -> S
+    fn child<'r, S: SubOperate<'r, Parent = Self>>(&'r mut self) -> S
     where
         S: 'r,
     {
@@ -42,5 +42,5 @@ where
 fn _sql<C>(mut op :DatabaseOperate<C>)
 where C:GetDatabaseConnect
 {
-    let _v = op.sub::<SqlUserOperate<_>>();
+    let _v = op.child::<SqlUserOperate<_>>();
 }
