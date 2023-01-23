@@ -2,7 +2,7 @@ mod layer;
 use async_trait::async_trait;
 use axum::extract::FromRequestParts;
 use http::request::Parts;
-use orm_migrate::sql_models::admin_user::models::user;
+use orm_migrate::sql_models::admin_user;
 use resp_result::{Nil, RespResult};
 
 pub use self::error::AuthorizeError;
@@ -10,7 +10,7 @@ pub use self::error::AuthorizeError;
 mod error;
 mod service;
 
-pub struct AuthorizeInfo(pub user::Model);
+pub struct AuthorizeInfo(pub admin_user::Model);
 
 impl std::fmt::Debug for AuthorizeInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

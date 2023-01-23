@@ -47,8 +47,8 @@ mod test {
             prefabs::{Architect, Chef, Cooker},
             AuthLevelVerify,
         },
-        AuthLevel,
     };
+    use crate::utils::user_authorize::AuthLevel;
 
     new_auth_level! {
         pub MansionAuth=>[

@@ -1,4 +1,4 @@
-use orm_migrate::sql_models::admin_user::models::auth_level::AuthLevel;
+use orm_migrate::sql_models::admin_user::AuthLevel;
 
 use super::AuthLevelVerify;
 

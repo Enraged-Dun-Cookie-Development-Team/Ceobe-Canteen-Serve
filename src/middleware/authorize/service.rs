@@ -8,8 +8,8 @@ use axum::{
 use futures::future::BoxFuture;
 use http::Request;
 use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::admin_user::operate::{OperateError, UserSqlOperate},
+    sql_connection::SqlDatabaseOperate,
+    sql_models::admin_user::{OperateError, ToSqlUserOperate},
 };
 use resp_result::RespResult;
 use tap::Tap;
@@ -26,11 +26,15 @@ use crate::utils::user_authorize::{
 pub struct AdminAuthorize<L>(PhantomData<L>);
 
 impl<L> Clone for AdminAuthorize<L> {
-    fn clone(&self) -> Self { Self::default() }
+    fn clone(&self) -> Self {
+        Self::default()
+    }
 }
 
 impl<L> Default for AdminAuthorize<L> {
-    fn default() -> Self { Self(PhantomData) }
+    fn default() -> Self {
+        Self(PhantomData)
+    }
 }
 
 impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
@@ -51,11 +55,9 @@ impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
                 };
 
                 let (mut parts,body )= request.into_parts();
-                let db = SqlConnect::from_request_parts(&mut parts,&()).await.unwrap();
-
+                let mut db = SqlDatabaseOperate::from_request_parts(&mut parts,&()).await.unwrap();
                 let req = Request::from_parts(parts,body);
-                let user = match UserSqlOperate::find_user_with_version_verify(
-                    &db,
+                let user = match db.user().find_user_with_version_verify(
                     id,
                     num_pwd_change,
                     |user| user,

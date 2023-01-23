@@ -18,3 +18,6 @@ pub use lite_args::LiteArgs;
 pub use require_check::{CheckRequire, ToCheckRequire};
 
 pub use crate::checker::{Checker, LiteChecker, RefChecker};
+
+pub type Checked<C> = <C as Checker>::Checked;
+pub type Uncheck<C> = <C as Checker>::Unchecked;

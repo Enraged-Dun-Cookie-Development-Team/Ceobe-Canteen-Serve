@@ -1,6 +1,6 @@
 //! 带有等级鉴定功能的鉴权模块
 
-use orm_migrate::sql_models::admin_user::models::auth_level::AuthLevel;
+use orm_migrate::sql_models::admin_user::AuthLevel;
 pub mod prefabs;
 #[macro_use]
 pub mod codegen;
