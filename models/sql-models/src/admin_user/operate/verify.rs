@@ -4,10 +4,10 @@ use sea_orm::{
 };
 use tracing::info;
 
-use super::{OperateResult, UserCounts, UserSqlOperate};
+use super::{OperateResult, UserCounts, UserOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
 
-impl UserSqlOperate {
+impl<'c, C: 'c> UserOperate<'c, C> {
     pub async fn is_user_exist_raw(
         filter: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
     ) -> OperateResult<bool> {

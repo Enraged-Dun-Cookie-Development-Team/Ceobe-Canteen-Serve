@@ -5,11 +5,42 @@ mod verify;
 use sea_orm::FromQueryResult;
 
 mod create;
+use sql_connection::database_traits::{
+    database_operates::{sub_operate::SubOperate, DatabaseOperate},
+    get_connect::{GetDatabaseConnect, GetDatabaseTransaction},
+};
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
-pub struct UserSqlOperate;
+pub struct UserOperate<'c, C: 'c>(&'c C);
 
-pub use OperateError::*;
+impl<'c, C: 'c> UserOperate<'c, C> {
+    pub(self) fn get_connect(&'c self) -> &'c C::Connect<'c>
+    where
+        C: GetDatabaseConnect,
+    {
+        self.0.get_connect()
+    }
+
+    pub(self) async fn get_transaction(
+        &'c self,
+    ) -> Result<C::Transaction<'c>, C::Error>
+    where
+        C: GetDatabaseTransaction,
+    {
+        self.0.get_transaction().await
+    }
+}
+
+impl<'c, C: 'c> SubOperate<'c> for UserOperate<'c, C>
+where
+    C: GetDatabaseConnect,
+{
+    type Parent = DatabaseOperate<C>;
+
+    fn from_parent(parent: &'c mut Self::Parent) -> Self {
+        Self(parent)
+    }
+}
 
 #[derive(FromQueryResult)]
 struct UserCounts {
