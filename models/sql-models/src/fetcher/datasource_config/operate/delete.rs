@@ -1,10 +1,11 @@
 use sea_orm::{ConnectionTrait, EntityTrait};
+use sql_connection::database_traits::database_operates::NoConnect;
 use tracing::{info, instrument};
 
-use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
+use super::{Datasource, OperateResult};
 use crate::fetcher::datasource_config::models::model_datasource_config::Entity;
 
-impl FetcherDatasourceConfigSqlOperate {
+impl Datasource<'_,NoConnect> {
     #[instrument(skip(db), ret)]
     /// 删除一个平台
     pub async fn delete_one(

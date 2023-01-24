@@ -4,18 +4,20 @@ use sea_orm::{
     ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect,
 };
 use sql_connection::{
-    database_traits::get_connect::GetDatabaseConnect,
+    database_traits::{
+        database_operates::NoConnect, get_connect::GetDatabaseConnect,
+    },
     ext_traits::{check_all_exist::QueryAllExist, CountZero},
 };
 use tracing::instrument;
 
-use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
+use super::{Datasource, OperateResult};
 use crate::fetcher::datasource_config::{
     models::model_datasource_config::{Column, Entity},
     operate::PlatformDatasource,
 };
 
-impl FetcherDatasourceConfigSqlOperate {
+impl Datasource<'_, NoConnect> {
     /// 验证id数组是否都存在
     #[instrument(ret, skip(db))]
     pub async fn all_exist_by_id<T>(
@@ -46,17 +48,19 @@ impl FetcherDatasourceConfigSqlOperate {
 
         Ok(resp)
     }
-
+}
+impl<'c, C> Datasource<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect<'c>: ConnectionTrait,
+{
     /// 验证平台下是否还有数据源
-    #[instrument(ret, skip(db, platforms))]
-    pub async fn any_belong_to_platforms<'db, D>(
-        db: &'db D, platforms: impl IntoIterator<Item = &str>,
+    #[instrument(ret, skip_all)]
+    pub async fn any_belong_to_platforms(
+        &'c self, platforms: impl IntoIterator<Item = &str>,
     ) -> OperateResult<BTreeSet<String>>
-    where
-        D: GetDatabaseConnect + 'static,
-        D::Connect<'db>: ConnectionTrait,
     {
-        let db = db.get_connect();
+        let db = self.get_connect();
         let resp = Entity::find()
             .select_only()
             .column(Column::Platform)
