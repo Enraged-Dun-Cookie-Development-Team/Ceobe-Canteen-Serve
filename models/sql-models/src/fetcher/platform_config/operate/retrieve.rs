@@ -3,11 +3,13 @@ use std::ops::Deref;
 use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect};
 use smallvec::SmallVec;
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use sql_connection::database_traits::{
+    database_operates::NoConnect, get_connect::GetDatabaseConnect,
+};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
-use super::{FetcherPlatformConfigSqlOperate, OperateResult};
+use super::{OperateResult, Platform};
 use crate::fetcher::platform_config::{
     models::model_platform_config,
     operate::retrieve::model_platform_config::{
@@ -15,21 +17,16 @@ use crate::fetcher::platform_config::{
     },
 };
 
-impl FetcherPlatformConfigSqlOperate {
+impl Platform<'_, NoConnect> {
     #[instrument(skip(db))]
     /// 分页获取全部平台列表
-    pub async fn find_all_with_paginator<'db, D>(
-        db: &'db D, page_size: Paginator,
-    ) -> OperateResult<Vec<model_platform_config::Model>>
-    where
-        D: GetDatabaseConnect + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
+    pub async fn find_all_with_paginator(
+        db: &impl ConnectionTrait, page_size: Paginator,
+    ) -> OperateResult<Vec<model_platform_config::Model>> {
         info!(
             platformList.page.num = page_size.page.deref(),
             platformList.page.size = page_size.size.deref()
         );
-        let db = db.get_connect();
         Ok(model_platform_config::Entity::find()
             .with_pagination(page_size)
             .all(db)
@@ -41,15 +38,17 @@ impl FetcherPlatformConfigSqlOperate {
                 });
             })
     }
+}
 
-    #[instrument(skip(db))]
+impl<'c, C> Platform<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect<'c>: ConnectionTrait,
+{
+    #[instrument(skip_all)]
     /// 获取全部平台type_id列表
-    pub async fn find_all<'db, D>(db: &'db D) -> OperateResult<Vec<String>>
-    where
-        D: GetDatabaseConnect + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
-        let db = db.get_connect();
+    pub async fn find_all(&'c self) -> OperateResult<Vec<String>> {
+        let db = self.get_connect();
         Ok(model_platform_config::Entity::find()
             .select_only()
             .column(model_platform_config::Column::TypeId)
@@ -67,16 +66,12 @@ impl FetcherPlatformConfigSqlOperate {
             })
     }
 
-    #[instrument(skip(db))]
+    #[instrument(skip_all)]
     /// 获取全部平台基础信息列表
-    pub async fn find_all_basic_info<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<Vec<PlatformBasicInfo>>
-    where
-        D: GetDatabaseConnect + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
-        let db = db.get_connect();
+    pub async fn find_all_basic_info(
+        &'c self,
+    ) -> OperateResult<Vec<PlatformBasicInfo>> {
+        let db = self.get_connect();
         Ok(model_platform_config::Entity::find()
             .into_model::<PlatformBasicInfo>()
             .all(db)
@@ -89,14 +84,10 @@ impl FetcherPlatformConfigSqlOperate {
             })
     }
 
-    #[instrument(skip(db), ret)]
+    #[instrument(skip_all, ret)]
     /// 获取平台总数
-    pub async fn count_all<'db, D>(db: &'db D) -> OperateResult<u64>
-    where
-        D: GetDatabaseConnect + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
-        let db = db.get_connect();
+    pub async fn count_all(&'c self) -> OperateResult<u64> {
+        let db = self.get_connect();
         model_platform_config::Entity::find()
             .count(db)
             .await
