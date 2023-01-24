@@ -44,5 +44,5 @@ use sql_connection::database_traits::{
 use super::SqlCeobeOperation;
 
 impl<'c, C: GetDatabaseConnect> SqlCeobeOperation<'c, C> {
-    pub fn resource(&'c mut self) -> Operate<'c, C> { self.child() }
+    pub fn resource(&'c self) -> Operate<'c, C> { self.child() }
 }

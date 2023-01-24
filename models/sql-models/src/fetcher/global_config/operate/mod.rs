@@ -24,7 +24,7 @@ where C:GetDatabaseConnect
 impl<'c, C> SubOperate<'c> for Global<'c, C> {
     type Parent = FetcherOperate<'c,C>;
 
-    fn from_parent(parent: &'c mut Self::Parent) -> Self {
+    fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent.0)
     }
 }

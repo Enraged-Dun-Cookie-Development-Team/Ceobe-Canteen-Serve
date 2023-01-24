@@ -7,7 +7,7 @@ pub mod models;
 pub mod operate;
 
 impl<'c, C> FetcherOperate<'c, C> {
-    pub fn config(&'c mut self) -> operate::Config<'c, C> {
+    pub fn config(&'c self) -> operate::Config<'c, C> {
         self.child()
     }
 }

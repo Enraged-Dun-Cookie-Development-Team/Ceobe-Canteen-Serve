@@ -25,7 +25,7 @@ use crate::fetcher::datasource_config::{
 
 impl Datasource<'_, NoConnect> {
     pub async fn find_platform_by_id(
-        &self, db: &impl ConnectionTrait, id: i32,
+        db: &impl ConnectionTrait, id: i32,
     ) -> OperateResult<DatasourcePlatform> {
         Entity::find_by_id(id)
             .select_only()

@@ -22,7 +22,7 @@ impl<'c, C: 'c + GetDatabaseConnect> SubOperate<'c>
 {
     type Parent = SqlCeobeOperation<'c, C>;
 
-    fn from_parent(parent: &'c mut Self::Parent) -> Self {
+    fn from_parent(parent: &'c  Self::Parent) -> Self {
         Self(parent.0.get_connect())
     }
 }

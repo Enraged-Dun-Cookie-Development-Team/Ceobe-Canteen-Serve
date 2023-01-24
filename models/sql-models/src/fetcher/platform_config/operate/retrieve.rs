@@ -3,9 +3,7 @@ use std::ops::Deref;
 use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect};
 use smallvec::SmallVec;
-use sql_connection::database_traits::{
-    database_operates::NoConnect, get_connect::GetDatabaseConnect,
-};
+use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
@@ -16,12 +14,15 @@ use crate::fetcher::platform_config::{
         PlatformBasicInfo, PlatformType,
     },
 };
-
-impl Platform<'_, NoConnect> {
-    #[instrument(skip(db))]
+impl<'c, C> Platform<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect<'c>: ConnectionTrait,
+{
+    #[instrument(skip(self))]
     /// 分页获取全部平台列表
     pub async fn find_all_with_paginator(
-        db: &impl ConnectionTrait, page_size: Paginator,
+        &'c self, page_size: Paginator,
     ) -> OperateResult<Vec<model_platform_config::Model>> {
         info!(
             platformList.page.num = page_size.page.deref(),
@@ -29,7 +30,7 @@ impl Platform<'_, NoConnect> {
         );
         Ok(model_platform_config::Entity::find()
             .with_pagination(page_size)
-            .all(db)
+            .all(self.get_connect())
             .await?).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
@@ -38,13 +39,7 @@ impl Platform<'_, NoConnect> {
                 });
             })
     }
-}
 
-impl<'c, C> Platform<'c, C>
-where
-    C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
-{
     #[instrument(skip_all)]
     /// 获取全部平台type_id列表
     pub async fn find_all(&'c self) -> OperateResult<Vec<String>> {

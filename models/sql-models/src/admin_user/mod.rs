@@ -25,11 +25,11 @@ use sql_connection::database_traits::{
 };
 
 pub trait ToSqlUserOperate<C> {
-    fn user<'c>(&'c mut self) -> UserOperate<'c, C>;
+    fn user<'c>(&'c  self) -> UserOperate<'c, C>;
 }
 
 impl<C: GetDatabaseConnect> ToSqlUserOperate<C> for DatabaseOperate<C> {
-    fn user<'c>(&'c mut self) -> UserOperate<'c, C> {
+    fn user<'c>(&'c self) -> UserOperate<'c, C> {
         self.child()
     }
 }

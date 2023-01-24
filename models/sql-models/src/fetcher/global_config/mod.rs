@@ -6,7 +6,7 @@ pub mod checkers;
 pub mod models;
 pub mod operate;
 impl<'c, C> FetcherOperate<'c, C> {
-    pub fn global(&'c mut self) -> operate::Global<'c, C> {
+    pub fn global(&'c self) -> operate::Global<'c, C> {
         self.child()
     }
 }

@@ -37,7 +37,7 @@ where
 {
     type Parent = DatabaseOperate<C>;
 
-    fn from_parent(parent: &'c mut Self::Parent) -> Self {
+    fn from_parent(parent: &'c  Self::Parent) -> Self {
         Self(parent)
     }
 }

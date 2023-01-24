@@ -26,7 +26,7 @@ impl<'c, C: 'c> Config<'c, C> {
 impl<'c, C: 'c> SubOperate<'c> for Config<'c, C> {
     type Parent = FetcherOperate<'c, C>;
 
-    fn from_parent(parent: &'c mut Self::Parent) -> Self {
+    fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent.0)
     }
 }
