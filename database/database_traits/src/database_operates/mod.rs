@@ -16,3 +16,6 @@ impl<C> Deref for DatabaseOperate<C> {
 
     fn deref(&self) -> &Self::Target { &self.connect }
 }
+
+
+pub struct NoConnect;

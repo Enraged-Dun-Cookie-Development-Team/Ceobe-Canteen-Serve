@@ -29,6 +29,11 @@ pub trait GetMutDatabaseConnect {
     fn mut_connect(&mut self) -> &mut Self::Connect<'_>;
 }
 
+pub type CollectionResult<'s, Conn,C> = Result<
+    <Conn as GetDatabaseCollection<C>>::CollectGuard<'s>,
+    <Conn as GetDatabaseCollection<C>>::Error,
+>;
+
 pub trait GetDatabaseCollection<C>: GetDatabaseConnect {
     /// 获取Collection 期间可能的异常
     type Error: StdError;
@@ -37,6 +42,11 @@ pub trait GetDatabaseCollection<C>: GetDatabaseConnect {
         Self: 's;
     fn get_collection(&self) -> Result<Self::CollectGuard<'_>, Self::Error>;
 }
+
+pub type TransactionResult<'r, C> = Result<
+    <C as GetDatabaseTransaction>::Transaction<'r>,
+    <C as GetDatabaseTransaction>::Error,
+>;
 
 pub trait GetDatabaseTransaction: GetDatabaseConnect {
     /// 建立transaction时可能的异常
