@@ -11,12 +11,12 @@ use crate::fetcher::platform_config::{
 impl<'c, C> Platform<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 更新平台配置到数据库
     #[instrument(ret, skip(self))]
     pub async fn update(
-        &'c self, config: FetcherPlatformConfig,
+        & self, config: FetcherPlatformConfig,
     ) -> OperateResult<()> {
         info!(
             config.id = config.id,

@@ -17,7 +17,7 @@ use crate::fetcher::FetcherOperate;
 pub struct Datasource<'c, C>(&'c C);
 
 impl<'c, C> Datasource<'c, C> {
-    fn get_connect(&'c self) -> &'c C::Connect<'c>
+    fn get_connect(&self) -> &C::Connect
     where
         C: GetDatabaseConnect,
     {
@@ -25,10 +25,10 @@ impl<'c, C> Datasource<'c, C> {
     }
 }
 
-impl<'op, C> SubOperate<'op> for Datasource<'op, C> {
-    type Parent = FetcherOperate<'op, C>;
+impl<'p: 'c, 'c, C: 'static> SubOperate<'p, 'c> for Datasource<'c, C> {
+    type Parent<'parent> = FetcherOperate<'parent, C>where 'parent:'c;
 
-    fn from_parent(parent: &'op Self::Parent) -> Self {
+    fn from_parent<'parent:'c>(parent: &'p Self::Parent<'parent>) -> Self {
         Self(parent.0)
     }
 }

@@ -8,12 +8,12 @@ use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 impl<'c, C> Datasource<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 更新数据配置到数据库
     #[instrument(ret, skip(self))]
     pub async fn update(
-        &'c self, config: FetcherDatasourceConfig,
+        &self, config: FetcherDatasourceConfig,
     ) -> OperateResult<()> {
         info!(
             config.id = config.id,

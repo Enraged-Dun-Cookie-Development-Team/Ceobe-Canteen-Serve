@@ -11,12 +11,12 @@ use crate::fetcher::config::models::model_config::{self, Model};
 impl<'c, C> Config<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self))]
     /// 获取单个平台下的全部蹲饼器配置
     pub async fn find_all_by_platform(
-        &'c self, platform: &str,
+        &self, platform: &str,
     ) -> OperateResult<Vec<Model>> {
         info!(fetcherConfig.platform = platform,);
         let db = self.get_connect();
@@ -35,9 +35,8 @@ where
     #[instrument(skip(self))]
     /// 获取多个平台下的全部蹲饼器配置
     pub async fn find_multi_platforms_config_list(
-        &'c self, platforms: Vec<String>,
-    ) -> OperateResult<Vec<Model>>
-    {
+        &self, platforms: Vec<String>,
+    ) -> OperateResult<Vec<Model>> {
         info!(
             fetcherConfig.platform.list = ?platforms,
         );

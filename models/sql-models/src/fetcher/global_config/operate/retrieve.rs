@@ -7,15 +7,15 @@ use crate::fetcher::global_config::models::model_global_config::{
     self, Entity,
 };
 
-impl<'c,C> Global<'c,C>
-where C:GetDatabaseConnect,
-C::Connect<'c>:ConnectionTrait
+impl<'c, C> Global<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(ret, skip_all)]
     pub async fn get_all(
-        &'c self,
-    ) -> OperateResult<Vec<model_global_config::Model>>
-    {
+        &self,
+    ) -> OperateResult<Vec<model_global_config::Model>> {
         let db = self.get_connect();
         // 查询所有的键值对
         Ok(Entity::find().all(db).await?)

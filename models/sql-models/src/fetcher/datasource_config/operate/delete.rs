@@ -5,7 +5,7 @@ use tracing::{info, instrument};
 use super::{Datasource, OperateResult};
 use crate::fetcher::datasource_config::models::model_datasource_config::Entity;
 
-impl Datasource<'_,NoConnect> {
+impl Datasource<'_, NoConnect> {
     #[instrument(skip(db), ret)]
     /// 删除一个平台
     pub async fn delete_one(

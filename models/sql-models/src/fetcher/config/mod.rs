@@ -6,8 +6,12 @@ pub mod checkers;
 pub mod models;
 pub mod operate;
 
-impl<'c, C> FetcherOperate<'c, C> {
-    pub fn config(&'c self) -> operate::Config<'c, C> {
+impl<'s, C:'static> FetcherOperate<'s, C> {
+    pub fn config<'c>(&'s self) -> operate::Config<'c, C>
+    where
+        's: 'c,
+        Self: 's,
+    {
         self.child()
     }
 }

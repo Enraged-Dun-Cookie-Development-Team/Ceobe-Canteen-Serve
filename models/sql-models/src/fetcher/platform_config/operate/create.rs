@@ -8,12 +8,12 @@ use crate::fetcher::platform_config::checkers::platform_config_data::FetcherPlat
 impl<'c, C> Platform<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 保存平台配置到数据库
     #[instrument(ret, skip(self))]
     pub async fn create(
-        &'c self, config: FetcherPlatformConfig,
+        & self, config: FetcherPlatformConfig,
     ) -> OperateResult<()> {
         info!(
             config.name = config.platform_name,

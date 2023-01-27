@@ -11,10 +11,11 @@ use sql_models::{
                 FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
             },
             models::model_config::Model as FetcherConfigModel,
-            operate::FetcherConfigSqlOperate,
+            operate::Config,
         },
-        datasource_config::operate::FetcherDatasourceConfigSqlOperate,
-        platform_config::operate::FetcherPlatformConfigSqlOperate,
+        datasource_config::operate::Datasource,
+        platform_config::operate::Platform,
+        FetcherOperate,
     },
     sql_connection::{
         database_traits::get_connect::{
@@ -40,7 +41,7 @@ impl FetcherConfigLogic {
     ) -> LogicResult<i8>
     where
         C: GetMutDatabaseConnect + 'client,
-        C::Connect<'client>: AsyncCommands,
+        C::Connect: AsyncCommands,
     {
         let con = client.mut_connect();
 
@@ -49,8 +50,7 @@ impl FetcherConfigLogic {
         {
             // 获取key的值
             con.get(FetcherConfigKey::LIVE_NUMBER).await?
-        }
-        else {
+        } else {
             0
         };
 
@@ -122,40 +122,32 @@ impl FetcherConfigLogic {
         let ctx = db.get_transaction().await?;
 
         let platform_exist =
-            FetcherPlatformConfigSqlOperate::exist_by_type_id(
-                &ctx, &platform,
-            )
-            .await?;
+            Platform::exist_by_type_id(&ctx, &platform).await?;
         let all_datasource_exist =
-            FetcherDatasourceConfigSqlOperate::all_exist_by_id(
-                &ctx,
-                all_data_sources_set,
-            )
-            .await?;
+            Datasource::all_exist_by_id(&ctx, all_data_sources_set).await?;
 
         // 指定平台与数据源均存在
         (platform_exist && all_datasource_exist)
             .true_or_with(|| LogicError::PlatformNotFound)?;
         // 清除指定 platform 下全部 config
-        FetcherConfigSqlOperate::delete_by_platform(&ctx, &platform).await?;
+        Config::delete_by_platform(&ctx, &platform).await?;
         // 创建config
-        FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
+        Config::create_multi(&ctx, upload_config).await?;
         ctx.submit().await?;
         notifier.notify_platform_update(platform).await;
         Ok(())
     }
 
     /// 获取蹲饼器配置
-    pub async fn get_by_platform<'db, D>(
-        db: &'db D, platform: &str,
+    pub async fn get_by_platform<D>(
+        db: FetcherOperate<'_, D>, platform: &str,
     ) -> LogicResult<Vec<BackEndFetcherConfig>>
     where
         D: GetDatabaseConnect + 'static,
-        D::Connect<'db>: ConnectionTrait,
+        D::Connect: ConnectionTrait,
     {
         let configs_in_db =
-            FetcherConfigSqlOperate::find_all_by_platform(db, platform)
-                .await?;
+            db.config().find_all_by_platform(platform).await?;
 
         let mut configs =
             BTreeMap::<i8, HashMap<i8, HashMap<String, Group>>>::new();

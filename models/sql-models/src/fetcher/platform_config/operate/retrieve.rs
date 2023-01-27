@@ -17,12 +17,12 @@ use crate::fetcher::platform_config::{
 impl<'c, C> Platform<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self))]
     /// 分页获取全部平台列表
     pub async fn find_all_with_paginator(
-        &'c self, page_size: Paginator,
+        &self, page_size: Paginator,
     ) -> OperateResult<Vec<model_platform_config::Model>> {
         info!(
             platformList.page.num = page_size.page.deref(),
@@ -42,7 +42,7 @@ where
 
     #[instrument(skip_all)]
     /// 获取全部平台type_id列表
-    pub async fn find_all(&'c self) -> OperateResult<Vec<String>> {
+    pub async fn find_all(&self) -> OperateResult<Vec<String>> {
         let db = self.get_connect();
         Ok(model_platform_config::Entity::find()
             .select_only()
@@ -64,7 +64,7 @@ where
     #[instrument(skip_all)]
     /// 获取全部平台基础信息列表
     pub async fn find_all_basic_info(
-        &'c self,
+        &self,
     ) -> OperateResult<Vec<PlatformBasicInfo>> {
         let db = self.get_connect();
         Ok(model_platform_config::Entity::find()
@@ -81,7 +81,7 @@ where
 
     #[instrument(skip_all, ret)]
     /// 获取平台总数
-    pub async fn count_all(&'c self) -> OperateResult<u64> {
+    pub async fn count_all(&self) -> OperateResult<u64> {
         let db = self.get_connect();
         model_platform_config::Entity::find()
             .count(db)

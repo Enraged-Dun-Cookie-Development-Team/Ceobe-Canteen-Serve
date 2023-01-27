@@ -40,12 +40,12 @@ impl Datasource<'_, NoConnect> {
 impl<'c, C> Datasource<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self))]
     /// 分页获取全部数据源列表
     pub async fn find_all_with_paginator(
-        &'c self, page_size: Paginator, platform: Option<String>,
+        &self, page_size: Paginator, platform: Option<String>,
         datasource: Option<String>,
     ) -> OperateResult<Vec<BackendDatasource>> {
         info!(
@@ -82,7 +82,7 @@ where
     #[instrument(skip(self))]
     /// 获取单个平台下的全部数据源列表
     pub async fn find_by_platform(
-        &'c self, platform: &str,
+        &self, platform: &str,
     ) -> OperateResult<Vec<DataSourceForFetcherConfig>> {
         info!(datasourceList.platform = platform,);
         let db = self.get_connect();
@@ -103,7 +103,7 @@ where
     #[instrument(skip(self))]
     /// 获取全部数据源类型列表（如：B站动态、B站视频、网易云专辑、
     /// 网易云歌手等）
-    pub async fn find_all_type(&'c self) -> OperateResult<Vec<String>> {
+    pub async fn find_all_type(& self) -> OperateResult<Vec<String>> {
         let db = self.get_connect();
         Ok(Entity::find()
             .select_only()
@@ -126,7 +126,7 @@ where
     #[instrument(skip(self), ret)]
     /// 获取数据源总数
     pub async fn count(
-        &'c self, platform: Option<String>, datasource: Option<String>,
+        &self, platform: Option<String>, datasource: Option<String>,
     ) -> OperateResult<u64> {
         let db = self.get_connect();
         Entity::find()

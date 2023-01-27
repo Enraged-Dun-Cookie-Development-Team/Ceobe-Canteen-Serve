@@ -4,32 +4,35 @@ pub mod retrieve;
 pub mod update;
 pub mod verify;
 
-use sql_connection::database_traits::{database_operates::sub_operate::SubOperate, get_connect::GetDatabaseConnect};
+use sql_connection::database_traits::{
+    database_operates::sub_operate::SubOperate,
+    get_connect::GetDatabaseConnect,
+};
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 
 use crate::fetcher::FetcherOperate;
 
-pub struct Platform<'c,C>(&'c C);
+pub struct Platform<'c, C>(&'c C);
 
-impl<'c, C:GetDatabaseConnect> GetDatabaseConnect for Platform<'c, C> {
-    type Connect<'s> = C::Connect<'s>
-    where
-        Self: 's;
+impl<C: GetDatabaseConnect> GetDatabaseConnect for Platform<'_, C> {
+    type Connect = C::Connect;
 
-    fn get_connect(&self) -> &Self::Connect<'_> {
+    fn get_connect<'s, 'c>(&'s self) -> &Self::Connect {
         self.0.get_connect()
     }
 }
 
-impl<'op, C> SubOperate<'op> for Platform<'op, C> {
-    type Parent = FetcherOperate<'op,C>;
+impl<'p: 'c, 'c, C> SubOperate<'p, 'c> for Platform<'c, C>
+where
+    C: 'static,
+{
+    type Parent<'parent> = FetcherOperate<'parent, C>where 'parent:'c;
 
-    fn from_parent(parent: &'op Self::Parent) -> Self {
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
         Self(parent.0)
     }
 }
-
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {

@@ -52,12 +52,12 @@ impl Datasource<'_, NoConnect> {
 impl<'c, C> Datasource<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 验证平台下是否还有数据源
     #[instrument(ret, skip_all)]
     pub async fn any_belong_to_platforms(
-        &'c self, platforms: impl IntoIterator<Item = &str>,
+        &self, platforms: impl IntoIterator<Item = &str>,
     ) -> OperateResult<BTreeSet<String>>
     {
         let db = self.get_connect();

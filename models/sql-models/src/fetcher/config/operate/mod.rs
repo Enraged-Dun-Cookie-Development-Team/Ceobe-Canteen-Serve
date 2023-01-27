@@ -14,19 +14,16 @@ use crate::fetcher::FetcherOperate;
 
 pub struct Config<'c, C: 'c>(&'c C);
 
-impl<'c, C: 'c> Config<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &'c C::Connect<'c>
-    where
-        C: GetDatabaseConnect,
-    {
+impl<C: GetDatabaseConnect> Config<'_, C> {
+    fn get_connect(&self) -> &C::Connect {
         self.0.get_connect()
     }
 }
 
-impl<'c, C: 'c> SubOperate<'c> for Config<'c, C> {
-    type Parent = FetcherOperate<'c, C>;
+impl<'p: 'c, 'c, C: 'static> SubOperate<'p, 'c> for Config<'c, C> {
+    type Parent<'parent> = FetcherOperate<'parent, C>where 'parent:'c;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
         Self(parent.0)
     }
 }

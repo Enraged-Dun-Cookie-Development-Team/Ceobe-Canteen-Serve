@@ -14,7 +14,7 @@ use thiserror::Error;
 pub struct UserOperate<'c, C: 'c>(&'c C);
 
 impl<'c, C: 'c> UserOperate<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &'c C::Connect
+    pub(self) fn get_connect(&self) -> &C::Connect
     where
         C: GetDatabaseConnect,
     {

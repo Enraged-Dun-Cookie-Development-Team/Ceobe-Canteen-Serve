@@ -10,11 +10,11 @@ use crate::fetcher::platform_config::{
 impl<'c, C> Platform<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self), ret)]
     /// 删除一个平台
-    pub async fn delete_one(&'c self, pid: i32) -> OperateResult<()> {
+    pub async fn delete_one(& self, pid: i32) -> OperateResult<()> {
         info!(platform.id = pid);
         let db = self.get_connect();
 

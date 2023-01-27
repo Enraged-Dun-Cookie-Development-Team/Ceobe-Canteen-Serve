@@ -1,34 +1,35 @@
 pub mod retrieve;
 pub mod update;
 
-use sql_connection::database_traits::{database_operates::sub_operate::SubOperate, get_connect::GetDatabaseConnect};
+use sql_connection::database_traits::{
+    database_operates::sub_operate::SubOperate,
+    get_connect::GetDatabaseConnect,
+};
 use status_err::StatusErr;
 use thiserror::Error;
 
 use crate::fetcher::FetcherOperate;
 
-pub struct Global<'c,C>(&'c C);
+pub struct Global<'c, C>(&'c C);
 
-impl<'c, C> GetDatabaseConnect for Global<'c, C> 
-where C:GetDatabaseConnect
+impl<C> GetDatabaseConnect for Global<'_, C>
+where
+    C: GetDatabaseConnect,
 {
-    type Connect<'s> = C::Connect<'s>
-    where
-        Self: 's;
+    type Connect = C::Connect;
 
-    fn get_connect(&self) -> &Self::Connect<'_> {
+    fn get_connect<'s, 'c>(&'s self) -> &Self::Connect {
         self.0.get_connect()
     }
 }
 
-impl<'c, C> SubOperate<'c> for Global<'c, C> {
-    type Parent = FetcherOperate<'c,C>;
+impl<'p: 'c, 'c, C: 'static> SubOperate<'p, 'c> for Global<'c, C> {
+    type Parent<'parent> = FetcherOperate<'parent, C>where 'parent:'c;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
         Self(parent.0)
     }
 }
-
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {
