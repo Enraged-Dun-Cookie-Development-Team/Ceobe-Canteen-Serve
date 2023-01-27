@@ -16,7 +16,7 @@ impl CeobeOpVersion {
     // 新增一个app版本
     #[instrument(ret, skip(db))]
     pub async fn create_app_version(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         CheckExtract(version): CreateAppVersionCheck,
     ) -> AppRespResult<()> {
         resp_try(async {

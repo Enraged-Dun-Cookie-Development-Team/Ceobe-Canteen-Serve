@@ -28,7 +28,7 @@ impl CeobeOperationAnnouncement {
     // 获取公告列表
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
         resp_try(async {
             Ok(db
@@ -46,7 +46,7 @@ impl CeobeOperationAnnouncement {
     #[instrument(ret, skip(db))]
     // 更新公告列表
     pub async fn update_announcement_list(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {

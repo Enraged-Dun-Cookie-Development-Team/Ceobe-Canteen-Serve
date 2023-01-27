@@ -16,7 +16,7 @@ use crate::router::CeobeOperationVideoFrontend;
 impl CeobeOperationVideoFrontend {
     #[instrument(skip(db, modify), name = "list all video")]
     pub async fn list_all(
-        mut db: SqlDatabaseOperate, mut modify: modify_cache::CheckModify,
+        db: SqlDatabaseOperate, mut modify: modify_cache::CheckModify,
     ) -> FlagVideoRespResult<Vec<VideoItem>> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_max_age(Duration::from_secs(60 * 60));

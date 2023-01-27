@@ -10,19 +10,22 @@ use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 
 pub struct AppVersionOperate<'c, C: 'c + GetDatabaseConnect>(
-    &'c C::Connect<'c>,
+    &'c C::Connect,
 );
 
 impl<'c, C: 'c + GetDatabaseConnect> AppVersionOperate<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &C::Connect<'c> { self.0 }
+    pub(self) fn get_connect(&'c self) -> &C::Connect{
+        self.0
+    }
 }
 
-impl<'c, C: 'c + GetDatabaseConnect> SubOperate<'c>
-    for AppVersionOperate<'c, C>
+impl<'p: 'c, 'c, C: 'p> SubOperate<'p, 'c> for AppVersionOperate<'c, C>
+where
+    C: 'static + GetDatabaseConnect,
 {
-    type Parent = SqlCeobeOperation<'c, C>;
+    type Parent<'parent> = SqlCeobeOperation<'parent, C>where 'parent:'c;
 
-    fn from_parent(parent: &'c  Self::Parent) -> Self {
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
         Self(parent.0.get_connect())
     }
 }

@@ -47,7 +47,7 @@ impl CeobeOperationVideo {
 
     #[instrument(ret, skip(database))]
     pub async fn list_all(
-        mut database: SqlDatabaseOperate,
+        database: SqlDatabaseOperate,
     ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
             Ok(database
@@ -64,7 +64,7 @@ impl CeobeOperationVideo {
 
     #[instrument(ret, skip(db))]
     pub async fn update_list(
-        mut db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
+        db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
         rtry!(db.ceobe_operation().video().update_all(videos).await);
         RespResult::ok(())

@@ -11,7 +11,7 @@ use crate::ceobe_operation::SqlCeobeOperation;
 pub struct VideoOperate<'c, C: 'c>(&'c C);
 
 impl<'c, C: 'c> VideoOperate<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &C::Connect<'c>
+    pub(self) fn get_connect(&self) -> &C::Connect
     where
         C: GetDatabaseConnect,
     {
@@ -28,13 +28,15 @@ impl<'c, C: 'c> VideoOperate<'c, C> {
     }
 }
 
-impl<'c, C: 'c> SubOperate<'c> for VideoOperate<'c, C>
+impl<'p: 'c, 'c, C: 'p> SubOperate<'p, 'c> for VideoOperate<'c, C>
 where
-    C: GetDatabaseConnect,
+    C: GetDatabaseConnect + 'static,
 {
-    type Parent = SqlCeobeOperation<'c, C>;
+    type Parent<'parent> = SqlCeobeOperation<'parent, C>where 'parent:'c;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+        Self(parent.0)
+    }
 }
 
 #[derive(Debug, Error, status_err::StatusErr)]

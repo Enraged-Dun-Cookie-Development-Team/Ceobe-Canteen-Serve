@@ -11,11 +11,11 @@ use crate::ceobe_operation::app_version::models::model_app_version;
 impl<'c, C> AppVersionOperate<'c, C>
 where
     C: GetDatabaseConnect + 'c,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self, version), ret, fields(version = version.as_ref()))]
     pub async fn get_info_by_version(
-        &'c self, version: &impl AsRef<str>,
+        &self, version: &impl AsRef<str>,
     ) -> OperateResult<model_app_version::Model> {
         info!(app.version = version.as_ref());
         model_app_version::Entity::find()
@@ -29,7 +29,7 @@ where
 
     #[instrument(skip(self), ret)]
     pub async fn get_newest_info(
-        &'c self,
+        &self,
     ) -> OperateResult<model_app_version::Model> {
         model_app_version::Entity::find()
             .order_by(model_app_version::Column::CreateAt, Order::Desc)

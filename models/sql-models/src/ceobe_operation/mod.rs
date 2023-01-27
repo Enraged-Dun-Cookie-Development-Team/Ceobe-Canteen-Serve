@@ -13,26 +13,26 @@ pub mod video;
 
 pub struct SqlCeobeOperation<'c, C>(&'c C)
 where
-    C: GetDatabaseConnect + 'c;
+    C: GetDatabaseConnect;
 
-impl<'c, C> SubOperate<'c> for SqlCeobeOperation<'c, C>
+impl<'p: 'c, 'c, C> SubOperate<'p, 'c> for SqlCeobeOperation<'c, C>
 where
-    C: GetDatabaseConnect + 'c,
+    C: 'static + GetDatabaseConnect,
 {
-    type Parent = DatabaseOperate<C>;
+    type Parent<'parent> = DatabaseOperate<C>where 'parent:'c;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
         Self(parent)
     }
 }
 
-pub trait ToSqlCeobeOperation<C: GetDatabaseConnect> {
-    fn ceobe_operation(& self) -> SqlCeobeOperation<'_, C>;
+pub trait ToSqlCeobeOperation<C: GetDatabaseConnect + 'static> {
+    fn ceobe_operation(&self) -> SqlCeobeOperation<'_, C>;
 }
 
 impl<C> ToSqlCeobeOperation<C> for DatabaseOperate<C>
 where
-    C: GetDatabaseConnect,
+    C: GetDatabaseConnect + 'static,
 {
     fn ceobe_operation(&self) -> SqlCeobeOperation<'_, C> {
         self.child()

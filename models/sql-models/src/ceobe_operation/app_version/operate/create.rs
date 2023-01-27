@@ -13,11 +13,11 @@ use crate::ceobe_operation::app_version::{
 impl<'c, C> AppVersionOperate<'c, C>
 where
     C: GetDatabaseConnect + 'c,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self), ret)]
     pub async fn create_one(
-        &'c self, version_info: CeobeOperationAppVersion,
+        & self, version_info: CeobeOperationAppVersion,
     ) -> OperateResult<()> {
         info!(
             newVersion.version = version_info.version,

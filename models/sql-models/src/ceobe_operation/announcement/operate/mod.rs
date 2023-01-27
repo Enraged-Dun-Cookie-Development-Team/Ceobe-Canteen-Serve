@@ -12,7 +12,7 @@ use thiserror::Error;
 pub struct AnnouncementOperate<'c, C>(&'c C);
 
 impl<'c, C> AnnouncementOperate<'c, C> {
-    pub(self) fn get_connect(&self) -> &C::Connect<'_>
+    pub(self) fn get_connect(&self) -> &C::Connect
     where
         C: GetDatabaseConnect,
     {
@@ -29,13 +29,15 @@ impl<'c, C> AnnouncementOperate<'c, C> {
     }
 }
 
-impl<'c, C> SubOperate<'c> for AnnouncementOperate<'c, C>
+impl<'p: 'c, 'c, C> SubOperate<'p, 'c> for AnnouncementOperate<'c, C>
 where
-    C: GetDatabaseConnect,
+    C: GetDatabaseConnect + 'static,
 {
-    type Parent = SqlCeobeOperation<'c, C>;
+    type Parent<'parent> = SqlCeobeOperation<'parent, C> where 'parent: 'c;
 
-    fn from_parent(parent: &'c  Self::Parent) -> Self { Self(parent.0) }
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+        Self(parent.0)
+    }
 }
 
 use crate::ceobe_operation::SqlCeobeOperation;

@@ -3,7 +3,9 @@ use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
     EntityTrait, QueryFilter, QueryOrder, StreamTrait,
 };
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use sql_connection::database_traits::{
+    database_operates::NoConnect, get_connect::GetDatabaseConnect,
+};
 use tap::TapFallible;
 use tracing::{info, instrument};
 
@@ -12,7 +14,7 @@ use crate::{
     ceobe_operation::video::models::model_video, get_zero_data_time,
 };
 
-impl<'c, Conn: 'c> VideoOperate<'c, Conn> {
+impl VideoOperate<'_, NoConnect> {
     pub async fn find_by_filter_raw<'r, 'db, C>(
         filter: impl IntoCondition, db: &'db C,
     ) -> OperateResult<
@@ -29,10 +31,10 @@ impl<'c, Conn: 'c> VideoOperate<'c, Conn> {
             .await?)
     }
 
-    pub async fn find_by_filter_not_delete_raw<C>(
-        filter: impl IntoCondition, db: &'c C,
+    pub async fn find_by_filter_not_delete_raw<'r, 'db: 'r, C>(
+        filter: impl IntoCondition, db: &'db C,
     ) -> OperateResult<
-        impl Stream<Item = Result<model_video::Model, DbErr>> + 'c,
+        impl Stream<Item = Result<model_video::Model, DbErr>> + 'r,
     >
     where
         C: ConnectionTrait + StreamTrait + Send,
@@ -40,13 +42,13 @@ impl<'c, Conn: 'c> VideoOperate<'c, Conn> {
         let filter = Condition::all()
             .add(filter.into_condition())
             .add(model_video::Column::DeleteAt.eq(get_zero_data_time()));
-        Self::find_by_filter_raw(filter, db).await
+        VideoOperate::find_by_filter_raw(filter, db).await
     }
 }
 impl<'c, C> VideoOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     #[instrument(skip(self))]
     pub async fn find_all_not_delete(
@@ -54,10 +56,12 @@ where
     ) -> OperateResult<Vec<model_video::Model>> {
         let db = self.get_connect();
 
-        Ok(Self::find_by_filter_not_delete_raw(Condition::all(), db)
-            .await?
-            .try_collect()
-            .await?)
+        Ok(
+            VideoOperate::find_by_filter_not_delete_raw(Condition::all(), db)
+                .await?
+                .try_collect()
+                .await?,
+        )
         .tap_ok(|list: &Vec<_>| {
             info!(videoList.size = list.len());
         })

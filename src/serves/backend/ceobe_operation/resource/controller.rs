@@ -17,7 +17,7 @@ type ResourceUploadCheck = JsonCheckExtract<resource::Checker, ResourceError>;
 impl CeobeOpResource {
     #[instrument(ret, skip(db))]
     pub async fn upload_resource(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         CheckExtract(resource): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
         db.ceobe_operation()
@@ -30,7 +30,7 @@ impl CeobeOpResource {
 
     #[instrument(ret, skip(db))]
     pub async fn get_resource(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
     ) -> ResourceRResult<Resource> {
         let resp = db
             .ceobe_operation()

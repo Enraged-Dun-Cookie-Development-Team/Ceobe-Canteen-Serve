@@ -5,7 +5,9 @@ use sea_orm::{
 };
 use smallstr::SmallString;
 use smallvec::SmallVec;
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use sql_connection::database_traits::{
+    database_operates::NoConnect, get_connect::GetDatabaseConnect,
+};
 use tap::{Tap, TapFallible};
 use tracing::{info, instrument};
 
@@ -15,12 +17,12 @@ use crate::{
     get_zero_data_time,
 };
 
-impl<'c, C: 'c> AnnouncementOperate<'c, C> {
-    pub async fn find_by_filter_raw(
+impl AnnouncementOperate<'_, NoConnect> {
+    pub async fn find_by_filter_raw<'s, 'db: 's>(
         filter: impl IntoCondition,
-        db: &'c (impl ConnectionTrait + StreamTrait + Send),
+        db: &'db (impl ConnectionTrait + StreamTrait + Send + 's),
     ) -> OperateResult<
-        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 'c,
+        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 's,
     > {
         Ok(model_announcement::Entity::find()
             .filter(filter)
@@ -29,11 +31,11 @@ impl<'c, C: 'c> AnnouncementOperate<'c, C> {
             .await?)
     }
 
-    pub async fn find_by_filter_not_delete_raw(
+    pub async fn find_by_filter_not_delete_raw<'s, 'db: 's>(
         filter: impl IntoCondition,
-        db: &'c (impl ConnectionTrait + StreamTrait + Send),
+        db: &'db (impl ConnectionTrait + StreamTrait + Send + 's),
     ) -> OperateResult<
-        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 'c,
+        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 's,
     > {
         Self::find_by_filter_raw(
             Condition::all().add(filter.into_condition()).add(
@@ -47,17 +49,20 @@ impl<'c, C: 'c> AnnouncementOperate<'c, C> {
 impl<'c, C> AnnouncementOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     #[instrument(skip(self))]
     pub async fn find_all_not_delete(
-        &'c self,
+        &self,
     ) -> OperateResult<Vec<model_announcement::Model>> {
         let db = self.get_connect();
-        Ok(Self::find_by_filter_not_delete_raw(Condition::all(), db)
-            .await?
-            .try_collect()
-            .await?)
+        Ok(AnnouncementOperate::find_by_filter_not_delete_raw(
+            Condition::all(),
+            db,
+        )
+        .await?
+        .try_collect()
+        .await?)
         .tap_ok(|list: &Vec<_>| {
             let contents = list
                 .iter()

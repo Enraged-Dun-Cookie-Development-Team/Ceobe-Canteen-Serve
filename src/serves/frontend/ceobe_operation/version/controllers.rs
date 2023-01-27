@@ -26,7 +26,7 @@ impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
     // #[instrument(skip(db, modify))]
     pub async fn app_version(
-        mut database: SqlDatabaseOperate,
+        database: SqlDatabaseOperate,
         CheckExtract(AppVersion { version }): OptionAppVersionCheckerPretreat,
         mut modify: modify_cache::CheckModify,
     ) -> FlagVersionRespResult<AppVersionView> {

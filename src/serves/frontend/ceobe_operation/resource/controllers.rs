@@ -13,7 +13,7 @@ use crate::router::CeobeOperationResourceFrontend;
 impl CeobeOperationResourceFrontend {
     #[instrument(skip(database, modify))]
     pub async fn resource_list(
-        mut database: SqlDatabaseOperate,
+        database: SqlDatabaseOperate,
         mut modify: modify_cache::CheckModify,
     ) -> FlagResourceRespResult<Resource> {
         modify

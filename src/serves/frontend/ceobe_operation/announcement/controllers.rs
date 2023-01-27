@@ -16,7 +16,7 @@ impl CeobeOperationAnnouncementFrontend {
     // 获取公告列表
     #[instrument(skip(db, modify))]
     pub async fn get_announcement_list(
-        mut db: SqlDatabaseOperate, mut modify: modify_cache::CheckModify,
+        db: SqlDatabaseOperate, mut modify: modify_cache::CheckModify,
     ) -> FlagAnnouncementRespResult<Vec<AnnouncementItem>> {
         let ctrl = modify.cache_headers.get_control();
         ctrl.set_ty(CacheMode::NoCache);

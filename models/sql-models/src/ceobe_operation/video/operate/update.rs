@@ -2,9 +2,10 @@ use std::collections::HashMap;
 
 use futures::{future::ok, stream::iter, StreamExt, TryStreamExt};
 use sea_orm::{
-    sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait, DbErr,
+    sea_query::Expr, ColumnTrait, ConnectionTrait, DbErr,
     EntityTrait, IntoActiveModel, QueryFilter, StreamTrait,
 };
+use sea_orm::ActiveModelTrait;
 use sql_connection::database_traits::get_connect::{
     GetDatabaseTransaction, TransactionOps,
 };
@@ -50,7 +51,7 @@ where
         Self::all_soft_remove(&db).await?;
 
         // 通过BV获取当前已经存在的数据
-        let mut exist_data = Self::find_by_filter_raw(
+        let mut exist_data = VideoOperate::find_by_filter_raw(
             model_video::Column::Bv
                 .is_in(videos.iter().map(|v| v.bv.as_str())),
             &db,

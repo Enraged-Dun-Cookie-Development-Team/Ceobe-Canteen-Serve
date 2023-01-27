@@ -23,13 +23,13 @@ impl<'op, C: 'op> ResourceOperate<'op, C> {
     }
 }
 
-impl<'op, C> SubOperate<'op> for ResourceOperate<'op, C>
+impl<'p: 'c, 'c, C: 'p> SubOperate<'p, 'c> for ResourceOperate<'c, C>
 where
-    C: 'op + GetDatabaseConnect,
+    C: 'static + GetDatabaseConnect,
 {
-    type Parent = SqlCeobeOperation<'op, C>;
+    type Parent<'parent> = SqlCeobeOperation<'parent, C>where 'parent:'c;
 
-    fn from_parent(parent: &'op Self::Parent) -> Self { Self(parent.0) }
+    fn from_parent<'parent:'c>(parent: &'p Self::Parent<'parent>) -> Self { Self(parent.0) }
 }
 
 use status_err::{ErrPrefix, HttpCode};
