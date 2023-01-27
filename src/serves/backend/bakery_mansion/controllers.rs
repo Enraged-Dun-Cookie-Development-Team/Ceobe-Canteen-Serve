@@ -1,8 +1,8 @@
 use checker::CheckExtract;
 use chrono::Duration;
 use mongo_migration::{
-    mongo_connection::MongoConnect,
-    mongo_models::bakery::mansion::operate::MansionDataMongoOperate,
+    mongo_connection::MongoDatabaseOperate,
+    mongo_models::bakery::mansion::operate::ToMansionOperate,
 };
 use resp_result::resp_try;
 use tracing::{debug, instrument};
@@ -20,9 +20,9 @@ use crate::{
 };
 
 impl BakeryMansionBackend {
-    #[instrument(ret)]
+    #[instrument(skip(db), ret)]
     pub async fn save_mansion(
-        db: MongoConnect,
+        db: MongoDatabaseOperate,
         CheckExtract(mid, ..): OptionMidCheckerPretreatment,
         CheckExtract(json, ..): MansionBodyCheckerPretreatment,
     ) -> MansionRResult<()> {
@@ -36,16 +36,14 @@ impl BakeryMansionBackend {
                         mansion.id.provide = true,
                         mansion.saveMode = "Update"
                     );
-                    MansionDataMongoOperate::update_mansion(&db, mid, data)
-                        .await?;
+                    db.mansion().update(mid, data).await?;
                 }
                 None => {
                     debug!(
                         mansion.id.provide = false,
                         mansion.saveMode = "Create"
                     );
-                    MansionDataMongoOperate::create_mansion_data(&db, data)
-                        .await?;
+                    db.mansion().create(data).await?;
                 }
             }
             Ok(())
@@ -55,36 +53,35 @@ impl BakeryMansionBackend {
 
     #[instrument(ret, skip(db))]
     pub async fn get_mansion(
-        db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
+        db: MongoDatabaseOperate,
+        CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
         resp_try(async {
-            Ok(MansionDataMongoOperate::get_mansion_by_id(&db, &mid.id)
-                .await?
-                .into())
+            Ok(db.mansion().get_mansion_by_id(&mid.id).await?.into())
         })
         .await
     }
 
     #[instrument(ret, skip(db))]
     pub async fn get_recent_id(
-        db: MongoConnect,
+        db: MongoDatabaseOperate,
     ) -> MansionRResult<Vec<String>> {
         resp_try(async {
-            Ok(MansionDataMongoOperate::get_mansion_id_list_by_time(
-                &db,
-                Duration::days(90),
-            )
-            .await?)
+            Ok(db
+                .mansion()
+                .get_mansion_id_list_by_time(Duration::days(90))
+                .await?)
         })
         .await
     }
 
     #[instrument(ret, skip(db))]
     pub async fn remove_mansion(
-        db: MongoConnect, CheckExtract(mid, ..): MidCheckerPretreatment,
+        db: MongoDatabaseOperate,
+        CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
         resp_try(async {
-            MansionDataMongoOperate::delete_mansion(&db, &mid.id).await?;
+            db.mansion().delete(&mid.id).await?;
             Ok(())
         })
         .await

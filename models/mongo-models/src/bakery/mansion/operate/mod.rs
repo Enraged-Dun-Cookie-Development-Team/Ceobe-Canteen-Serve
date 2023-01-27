@@ -1,4 +1,10 @@
-use mongo_connection::MongoDbError;
+use mongo_connection::{
+    database_traits::{
+        database_operates::{sub_operate::{SubOperate, SuperOperate}, DatabaseOperate},
+        get_connect::GetDatabaseCollection,
+    },
+    MongoDbError,
+};
 
 mod create;
 mod delete;
@@ -7,9 +13,48 @@ mod update;
 mod verify;
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
-pub struct MansionDataMongoOperate;
 pub use OperateError::*;
+
+use super::preludes::ModelMansion;
 pub type MongoErr = mongodb::error::Error;
+pub struct MansionOperate<'db, Db>(&'db Db)
+where
+    Db: GetDatabaseCollection<ModelMansion> + 'db;
+
+impl<'db, Db> MansionOperate<'db, Db>
+where
+    Db: GetDatabaseCollection<ModelMansion>,
+{
+    pub(self) fn get_collection(
+        &self,
+    ) -> Result<Db::CollectGuard<'db>, Db::Error> {
+        self.0.get_collection()
+    }
+}
+
+impl<'db, Db> SubOperate<'db> for MansionOperate<'db, Db>
+where
+    Db: GetDatabaseCollection<ModelMansion> + 'db,
+{
+    type Parent = DatabaseOperate<Db>;
+
+    fn from_parent(parent: &'db Self::Parent) -> Self {
+        Self(parent)
+    }
+}
+
+pub trait ToMansionOperate<Db: GetDatabaseCollection<ModelMansion>> {
+    fn mansion(&self) -> MansionOperate<'_, Db>;
+}
+
+impl<'db, Db> ToMansionOperate<Db> for DatabaseOperate<Db>
+where
+    Db: GetDatabaseCollection<ModelMansion>,
+{
+    fn mansion(&self) -> MansionOperate<'_, Db> {
+        self.child()
+    }
+}
 
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
