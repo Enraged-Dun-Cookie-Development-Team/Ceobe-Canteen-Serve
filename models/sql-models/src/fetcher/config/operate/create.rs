@@ -7,7 +7,7 @@ use crate::fetcher::config::{
     checkers::config_data::FetcherConfig, models::model_config,
 };
 
-impl Config<'_,NoConnect> {
+impl Config<'_, NoConnect> {
     #[instrument(skip(ctx, configs))]
     /// 新建单一平台蹲饼配置
     pub async fn create_multi(

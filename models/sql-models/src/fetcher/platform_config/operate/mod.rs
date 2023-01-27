@@ -18,7 +18,7 @@ pub struct Platform<'c, C>(&'c C);
 impl<C: GetDatabaseConnect> GetDatabaseConnect for Platform<'_, C> {
     type Connect = C::Connect;
 
-    fn get_connect<'s, 'c>(&'s self) -> &Self::Connect {
+    fn get_connect(&self) -> &Self::Connect {
         self.0.get_connect()
     }
 }

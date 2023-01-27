@@ -5,8 +5,6 @@ use super::FetcherOperate;
 pub mod checkers;
 pub mod models;
 pub mod operate;
-impl<'c, C:  'static> FetcherOperate<'c, C> {
-    pub fn platform(&'c self) -> operate::Platform<'c, C> {
-        self.child()
-    }
+impl<'c, C: 'static> FetcherOperate<'c, C> {
+    pub fn platform(&'c self) -> operate::Platform<'c, C> { self.child() }
 }

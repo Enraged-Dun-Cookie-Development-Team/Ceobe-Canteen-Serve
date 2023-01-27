@@ -5,7 +5,7 @@ use tracing::{info, instrument};
 use super::{Config, OperateResult};
 use crate::fetcher::config::models::model_config;
 
-impl Config<'_,NoConnect>{
+impl Config<'_, NoConnect> {
     #[instrument(skip(db), ret)]
     /// 根据平台删除相关配置
     pub async fn delete_by_platform(

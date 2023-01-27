@@ -29,7 +29,9 @@ where
 {
     type Parent<'parent> = SqlCeobeOperation<'parent, C>where 'parent:'c;
 
-    fn from_parent<'parent:'c>(parent: &'p Self::Parent<'parent>) -> Self { Self(parent.0) }
+    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+        Self(parent.0)
+    }
 }
 
 use status_err::{ErrPrefix, HttpCode};

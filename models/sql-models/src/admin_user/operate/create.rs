@@ -31,7 +31,8 @@ where
 {
     #[instrument(skip(self), ret)]
     pub async fn add_with_encoded_password(
-        &'c self, username: String, encoded_pwd: String, auth_level: AuthLevel,
+        &'c self, username: String, encoded_pwd: String,
+        auth_level: AuthLevel,
     ) -> OperateResult<()> {
         info!(
             user.name = username,

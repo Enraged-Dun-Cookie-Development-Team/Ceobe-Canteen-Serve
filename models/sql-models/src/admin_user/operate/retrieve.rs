@@ -6,9 +6,12 @@ use sea_orm::{
     EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
-use sql_connection::database_traits::{get_connect::{
-    GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
-}, database_operates::NoConnect};
+use sql_connection::database_traits::{
+    database_operates::NoConnect,
+    get_connect::{
+        GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    },
+};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
@@ -113,7 +116,8 @@ where
 
         if user.num_pwd_change == token_version {
             Ok(Ok(ok_mapper(user)))
-        } else {
+        }
+        else {
             Ok(Err(error()))
         }
     }
@@ -149,10 +153,7 @@ where
 
     #[instrument(skip(self), ret)]
     /// 获取用户总数
-    pub async fn get_user_total_number(
-        &'c self
-    ) -> OperateResult<u64>
-    {
+    pub async fn get_user_total_number(&'c self) -> OperateResult<u64> {
         let db = self.get_connect();
         user::Entity::find().count(db).await.map_err(Into::into)
     }

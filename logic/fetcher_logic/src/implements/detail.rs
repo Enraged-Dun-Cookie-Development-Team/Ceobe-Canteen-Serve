@@ -50,7 +50,8 @@ impl FetcherConfigLogic {
         {
             // 获取key的值
             con.get(FetcherConfigKey::LIVE_NUMBER).await?
-        } else {
+        }
+        else {
             0
         };
 

@@ -22,7 +22,5 @@ use sql_connection::database_traits::{
 use super::SqlCeobeOperation;
 
 impl<'c, C: GetDatabaseConnect + 'static> SqlCeobeOperation<'c, C> {
-    pub fn announcement(&'c self) -> Operate<'c, C> {
-        self.child()
-    }
+    pub fn announcement(&'c self) -> Operate<'c, C> { self.child() }
 }

@@ -14,7 +14,7 @@ where
 {
     #[instrument(skip(self), ret)]
     /// 删除一个平台
-    pub async fn delete_one(& self, pid: i32) -> OperateResult<()> {
+    pub async fn delete_one(&self, pid: i32) -> OperateResult<()> {
         info!(platform.id = pid);
         let db = self.get_connect();
 
@@ -24,7 +24,8 @@ where
                 .exec(db)
                 .await?;
             Ok(())
-        } else {
+        }
+        else {
             Err(OperateError::NoDeletePlatformHasDatasource)
         }
     }

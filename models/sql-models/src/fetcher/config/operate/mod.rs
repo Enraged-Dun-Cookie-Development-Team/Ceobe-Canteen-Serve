@@ -15,9 +15,7 @@ use crate::fetcher::FetcherOperate;
 pub struct Config<'c, C: 'c>(&'c C);
 
 impl<C: GetDatabaseConnect> Config<'_, C> {
-    fn get_connect(&self) -> &C::Connect {
-        self.0.get_connect()
-    }
+    fn get_connect(&self) -> &C::Connect { self.0.get_connect() }
 }
 
 impl<'p: 'c, 'c, C: 'static> SubOperate<'p, 'c> for Config<'c, C> {

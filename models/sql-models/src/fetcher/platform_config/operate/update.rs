@@ -16,7 +16,7 @@ where
     /// 更新平台配置到数据库
     #[instrument(ret, skip(self))]
     pub async fn update(
-        & self, config: FetcherPlatformConfig,
+        &self, config: FetcherPlatformConfig,
     ) -> OperateResult<()> {
         info!(
             config.id = config.id,

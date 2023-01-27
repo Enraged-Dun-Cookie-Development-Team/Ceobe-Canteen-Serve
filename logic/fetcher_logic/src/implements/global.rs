@@ -44,7 +44,7 @@ impl FetcherConfigLogic {
     }
 
     /// 接收来自controller的json格式
-    pub async fn set_global_config< D>(
+    pub async fn set_global_config<D>(
         db: FetcherOperate<'_, D>, config: Map<String, Value>,
     ) -> LogicResult<()>
     where

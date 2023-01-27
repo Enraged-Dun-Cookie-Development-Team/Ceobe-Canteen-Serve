@@ -5,8 +5,6 @@ use super::FetcherOperate;
 pub mod checkers;
 pub mod models;
 pub mod operate;
-impl<'c, C:  'static> FetcherOperate<'c, C> {
-    pub fn datasource(&'c self) -> operate::Datasource<'c, C> {
-        self.child()
-    }
+impl<'c, C: 'static> FetcherOperate<'c, C> {
+    pub fn datasource(&'c self) -> operate::Datasource<'c, C> { self.child() }
 }

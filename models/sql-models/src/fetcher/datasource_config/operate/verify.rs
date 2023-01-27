@@ -58,8 +58,7 @@ where
     #[instrument(ret, skip_all)]
     pub async fn any_belong_to_platforms(
         &self, platforms: impl IntoIterator<Item = &str>,
-    ) -> OperateResult<BTreeSet<String>>
-    {
+    ) -> OperateResult<BTreeSet<String>> {
         let db = self.get_connect();
         let resp = Entity::find()
             .select_only()

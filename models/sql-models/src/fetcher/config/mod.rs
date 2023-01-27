@@ -6,7 +6,7 @@ pub mod checkers;
 pub mod models;
 pub mod operate;
 
-impl<'s, C:'static> FetcherOperate<'s, C> {
+impl<'s, C: 'static> FetcherOperate<'s, C> {
     pub fn config<'c>(&'s self) -> operate::Config<'c, C>
     where
         's: 'c,

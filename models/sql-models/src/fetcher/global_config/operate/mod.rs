@@ -18,7 +18,7 @@ where
 {
     type Connect = C::Connect;
 
-    fn get_connect<'s, 'c>(&'s self) -> &Self::Connect {
+    fn get_connect(&self) -> &Self::Connect {
         self.0.get_connect()
     }
 }

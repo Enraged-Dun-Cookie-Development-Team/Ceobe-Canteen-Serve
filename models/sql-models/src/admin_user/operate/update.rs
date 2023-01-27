@@ -49,9 +49,9 @@ where
     }
 
     #[instrument(ret, skip_all)]
-    pub async fn update_user_password< Verify, Encode, Map, Err, T>(
-        &'c self, uid: i32, new_pwd: String, old_pwd: String,
-        verify: Verify, encode: Encode, mapping: Map,
+    pub async fn update_user_password<Verify, Encode, Map, Err, T>(
+        &'c self, uid: i32, new_pwd: String, old_pwd: String, verify: Verify,
+        encode: Encode, mapping: Map,
     ) -> OperateResult<Result<T, Err>>
     where
         Verify: Fn(&str, &str) -> Result<bool, Err>,
@@ -102,8 +102,7 @@ where
     #[instrument(ret, skip(self))]
     pub async fn update_user_auth(
         &'c self, uid: i32, new_auth: AuthLevel,
-    ) -> OperateResult<()>
-    {
+    ) -> OperateResult<()> {
         info!(user.id = uid, user.new.auth_level = ?new_auth);
         let db = self.get_transaction().await?;
 

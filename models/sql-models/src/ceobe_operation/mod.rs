@@ -34,7 +34,5 @@ impl<C> ToSqlCeobeOperation<C> for DatabaseOperate<C>
 where
     C: GetDatabaseConnect + 'static,
 {
-    fn ceobe_operation(&self) -> SqlCeobeOperation<'_, C> {
-        self.child()
-    }
+    fn ceobe_operation(&self) -> SqlCeobeOperation<'_, C> { self.child() }
 }

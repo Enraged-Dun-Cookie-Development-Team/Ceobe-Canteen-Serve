@@ -24,10 +24,7 @@ where
 {
     type Connect = C::Connect;
 
-    fn get_connect(& self) -> &Self::Connect
-    {
-        self.connect.get_connect()
-    }
+    fn get_connect(&self) -> &Self::Connect { self.connect.get_connect() }
 }
 
 impl<C> GetDatabaseTransaction for DatabaseOperate<C>

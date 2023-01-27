@@ -13,7 +13,7 @@ where
     /// 保存平台配置到数据库
     #[instrument(ret, skip(self))]
     pub async fn create(
-        & self, config: FetcherPlatformConfig,
+        &self, config: FetcherPlatformConfig,
     ) -> OperateResult<()> {
         info!(
             config.name = config.platform_name,

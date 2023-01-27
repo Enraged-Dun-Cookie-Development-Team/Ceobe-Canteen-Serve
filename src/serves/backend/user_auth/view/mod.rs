@@ -1,6 +1,4 @@
-use orm_migrate::sql_models::admin_user::{
-    AuthLevel,sub_models::UserList
-};
+use orm_migrate::sql_models::admin_user::{sub_models::UserList, AuthLevel};
 
 crate::quick_struct! {
     pub CreateUser {

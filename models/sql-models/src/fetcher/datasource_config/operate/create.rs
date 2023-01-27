@@ -5,7 +5,7 @@ use tracing::{info, instrument};
 use super::{Datasource, OperateResult};
 use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 
-impl Datasource<'_,NoConnect> {
+impl Datasource<'_, NoConnect> {
     /// 保存数据源配置到数据库
     #[instrument(ret, skip(db))]
     pub async fn create(

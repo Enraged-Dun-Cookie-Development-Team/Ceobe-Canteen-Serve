@@ -9,14 +9,10 @@ use sql_connection::database_traits::{
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 
-pub struct AppVersionOperate<'c, C: 'c + GetDatabaseConnect>(
-    &'c C::Connect,
-);
+pub struct AppVersionOperate<'c, C: 'c + GetDatabaseConnect>(&'c C::Connect);
 
 impl<'c, C: 'c + GetDatabaseConnect> AppVersionOperate<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &C::Connect{
-        self.0
-    }
+    pub(self) fn get_connect(&'c self) -> &C::Connect { self.0 }
 }
 
 impl<'p: 'c, 'c, C: 'p> SubOperate<'p, 'c> for AppVersionOperate<'c, C>

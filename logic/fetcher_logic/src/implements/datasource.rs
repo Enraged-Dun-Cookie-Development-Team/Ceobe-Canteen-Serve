@@ -43,13 +43,13 @@ impl FetcherConfigLogic {
     }
 
     /// 删除一个数据源
-    pub async fn delete_datasource_by_id<'t,'db, D>(
+    pub async fn delete_datasource_by_id<'t, 'db, D>(
         notifier: &SchedulerNotifier, db: &'db D, id: i32,
     ) -> LogicResult<()>
     where
         D: GetDatabaseTransaction<Error = DbErr> + 'db,
         D::Transaction<'t>: ConnectionTrait,
-        'db:'t
+        'db: 't,
     {
         // 开事务
         let ctx = db.get_transaction().await?;

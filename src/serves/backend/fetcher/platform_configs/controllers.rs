@@ -5,10 +5,8 @@ use futures::future;
 use orm_migrate::{
     sql_connection::{SqlConnect, SqlDatabaseOperate},
     sql_models::fetcher::{
-        platform_config::{
-            models::model_platform_config::{
-                PlatformBasicInfo, PlatformHasDatasource,
-            },
+        platform_config::models::model_platform_config::{
+            PlatformBasicInfo, PlatformHasDatasource,
         },
         ToFetcherOperate,
     },
@@ -40,7 +38,7 @@ impl FetcherConfigControllers {
 
                 // 并发执行
                 let (platform_list, count) =
-                future::join(platform_list, 
+                future::join(platform_list,
                     // 获取平台数量
                     db.fetcher_operate().platform().count_all()).await;
 
@@ -54,21 +52,30 @@ impl FetcherConfigControllers {
     /// 创建一个平台配置
     #[instrument(ret, skip(db))]
     pub async fn create_platform_config(
-        db: SqlDatabaseOperate, CheckExtract(platform_config): FetcherPlatformCheck,
+        db: SqlDatabaseOperate,
+        CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            db
-            .fetcher_operate()
-            .platform().create(platform_config).await);
+            db.fetcher_operate()
+                .platform()
+                .create(platform_config)
+                .await
+        );
         Ok(()).into()
     }
 
     /// 更新一个平台配置
     #[instrument(ret, skip(db))]
     pub async fn update_platform_config(
-        db: SqlDatabaseOperate, CheckExtract(platform_config): FetcherPlatformCheck,
+        db: SqlDatabaseOperate,
+        CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
-        rtry!(db.fetcher_operate().platform().update(platform_config).await);
+        rtry!(
+            db.fetcher_operate()
+                .platform()
+                .update(platform_config)
+                .await
+        );
         Ok(()).into()
     }
 
@@ -88,6 +95,9 @@ impl FetcherConfigControllers {
     pub async fn get_platform_all_list_with_basic_info(
         db: SqlDatabaseOperate,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
-        Ok(rtry!(db.fetcher_operate().platform().find_all_basic_info().await)).into()
+        Ok(rtry!(
+            db.fetcher_operate().platform().find_all_basic_info().await
+        ))
+        .into()
     }
 }

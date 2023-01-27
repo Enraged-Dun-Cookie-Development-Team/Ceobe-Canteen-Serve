@@ -13,8 +13,8 @@ use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
 use super::{
-    super::models::model_datasource_config::DatasourcePlatform,
-    Datasource, OperateError, OperateResult,
+    super::models::model_datasource_config::DatasourcePlatform, Datasource,
+    OperateError, OperateResult,
 };
 use crate::fetcher::datasource_config::{
     models::model_datasource_config::{
@@ -103,7 +103,7 @@ where
     #[instrument(skip(self))]
     /// 获取全部数据源类型列表（如：B站动态、B站视频、网易云专辑、
     /// 网易云歌手等）
-    pub async fn find_all_type(& self) -> OperateResult<Vec<String>> {
+    pub async fn find_all_type(&self) -> OperateResult<Vec<String>> {
         let db = self.get_connect();
         Ok(Entity::find()
             .select_only()

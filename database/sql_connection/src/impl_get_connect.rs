@@ -45,9 +45,7 @@ impl<S> FromRequestParts<S> for SqlConnect {
 impl GetDatabaseConnect for SqlConnect {
     type Connect = DatabaseConnection;
 
-fn get_connect(&self) -> &Self::Connect {
-    get_sql_database()
-}
+    fn get_connect(&self) -> &Self::Connect { get_sql_database() }
 }
 
 #[derive(Debug)]
@@ -87,15 +85,11 @@ impl TransactionOps for SqlTransaction {
 impl Deref for SqlTransaction {
     type Target = DatabaseTransaction;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 
 impl DerefMut for SqlTransaction {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
+    fn deref_mut(&mut self) -> &mut Self::Target { &mut self.0 }
 }
 
 impl ConnectionTrait for SqlTransaction {

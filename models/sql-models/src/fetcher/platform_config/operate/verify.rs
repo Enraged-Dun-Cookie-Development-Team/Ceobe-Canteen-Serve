@@ -1,7 +1,10 @@
 use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
-use sql_connection::{ext_traits::select_count::QueryCountByColumn, database_traits::database_operates::NoConnect};
+use sql_connection::{
+    database_traits::database_operates::NoConnect,
+    ext_traits::select_count::QueryCountByColumn,
+};
 
-use super::{Platform, OperateResult};
+use super::{OperateResult, Platform};
 use crate::fetcher::{
     datasource_config::models::model_datasource_config,
     platform_config::models::model_platform_config::{
@@ -11,7 +14,7 @@ use crate::fetcher::{
     },
 };
 
-impl Platform<'_,NoConnect> {
+impl Platform<'_, NoConnect> {
     /// 查询是否存在type_id的平台
     pub async fn exist_by_type_id(
         db: &impl ConnectionTrait, type_id: &str,

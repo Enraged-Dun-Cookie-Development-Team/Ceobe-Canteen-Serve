@@ -7,9 +7,7 @@ use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::admin_user::{
-        AuthLevel, ToSqlUserOperate,
-    },
+    sql_models::admin_user::{AuthLevel, ToSqlUserOperate},
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -128,9 +126,11 @@ impl UserAuthBackend {
                             PasswordEncoder::verify(src, &dst)
                         })
                     },
-                    |user| User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
+                    |user| {
+                        User {
+                            id: user.id,
+                            num_pwd_change: user.num_pwd_change,
+                        }
                     },
                 )
                 .await??;
@@ -197,9 +197,11 @@ impl UserAuthBackend {
                         PasswordEncoder::encode(Cow::Borrowed(pwd))
                             .map(|pwd| pwd.to_string())
                     },
-                    |user| User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
+                    |user| {
+                        User {
+                            id: user.id,
+                            num_pwd_change: user.num_pwd_change,
+                        }
                     },
                 )
                 .await??;
@@ -217,8 +219,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 获取用户列表
     pub async fn user_list(
-        db: SqlDatabaseOperate,
-        CheckExtract(page_size): PageSizePretreatment,
+        db: SqlDatabaseOperate, CheckExtract(page_size): PageSizePretreatment,
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         resp_try(async {
             let user_ops = db.user();

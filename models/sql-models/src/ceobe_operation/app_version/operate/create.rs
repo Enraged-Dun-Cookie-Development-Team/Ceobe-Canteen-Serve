@@ -17,7 +17,7 @@ where
 {
     #[instrument(skip(self), ret)]
     pub async fn create_one(
-        & self, version_info: CeobeOperationAppVersion,
+        &self, version_info: CeobeOperationAppVersion,
     ) -> OperateResult<()> {
         info!(
             newVersion.version = version_info.version,
