@@ -45,7 +45,7 @@ crate::quick_struct! {
 impl UserAuthBackend {
     #[instrument(ret, skip(db, permission))]
     pub async fn create_user(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         MapReject(NewUserAuthLevel { permission }): MapReject<
             Query<NewUserAuthLevel>,
             AdminUserError,
@@ -111,7 +111,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip_all)]
     pub async fn login(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         MapReject(UserLogin {
             ref username,
             ref password,
@@ -161,7 +161,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_username(
-        mut db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
         CheckExtract(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         resp_try(async {
@@ -177,7 +177,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
-        mut db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
         MapReject(body): MapReject<Json<ChangePassword>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
@@ -217,7 +217,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 获取用户列表
     pub async fn user_list(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         CheckExtract(page_size): PageSizePretreatment,
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         resp_try(async {
@@ -241,7 +241,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 修改用户权限
     pub async fn change_auth(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         MapReject(body): MapReject<Json<ChangeAuthReq>, AdminUserError>,
     ) -> AdminUserRResult<()> {
         resp_try(async {
@@ -255,7 +255,7 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 删除用户
     pub async fn delete_one_user(
-        mut db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate,
         MapReject(body): MapReject<Json<DeleteOneUserReq>, AdminUserError>,
     ) -> AdminUserRResult<()> {
         let uid = body.id;

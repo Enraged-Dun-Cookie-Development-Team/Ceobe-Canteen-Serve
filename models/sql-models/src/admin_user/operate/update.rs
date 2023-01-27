@@ -36,7 +36,7 @@ where
             });
         }
 
-        let mut user = Self::find_user_by_id_raw(uid, &ctx)
+        let mut user = UserOperate::find_user_by_id_raw(uid, &ctx)
             .await?
             .into_active_model();
 
@@ -63,7 +63,7 @@ where
         info!(user.id = uid);
         let ctx = self.get_transaction().await?;
 
-        let user = Self::find_user_by_id_raw(uid, &ctx).await?;
+        let user = UserOperate::find_user_by_id_raw(uid, &ctx).await?;
         let pwd_version = user.num_pwd_change;
 
         // verify password
@@ -107,7 +107,7 @@ where
         info!(user.id = uid, user.new.auth_level = ?new_auth);
         let db = self.get_transaction().await?;
 
-        let mut user = Self::find_user_by_id_raw(uid, &db)
+        let mut user = UserOperate::find_user_by_id_raw(uid, &db)
             .await?
             .into_active_model();
 

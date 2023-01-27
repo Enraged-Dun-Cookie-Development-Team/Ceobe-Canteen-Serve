@@ -14,7 +14,7 @@ use thiserror::Error;
 pub struct UserOperate<'c, C: 'c>(&'c C);
 
 impl<'c, C: 'c> UserOperate<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &'c C::Connect<'c>
+    pub(self) fn get_connect(&'c self) -> &'c C::Connect
     where
         C: GetDatabaseConnect,
     {
@@ -31,13 +31,13 @@ impl<'c, C: 'c> UserOperate<'c, C> {
     }
 }
 
-impl<'c, C: 'c> SubOperate<'c> for UserOperate<'c, C>
-where
-    C: GetDatabaseConnect,
-{
-    type Parent = DatabaseOperate<C>;
+impl<'p: 'c, 'c, C: 'static> SubOperate<'p, 'c> for UserOperate<'c, C> {
+    type Parent<'parent> = DatabaseOperate<C> where 'parent:'c;
 
-    fn from_parent(parent: &'c  Self::Parent) -> Self {
+    fn from_parent<'parent>(parent: &'p Self::Parent<'parent>) -> Self
+    where
+        'parent: 'c,
+    {
         Self(parent)
     }
 }

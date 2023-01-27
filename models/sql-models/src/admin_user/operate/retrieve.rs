@@ -6,16 +6,16 @@ use sea_orm::{
     EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
-use sql_connection::database_traits::get_connect::{
+use sql_connection::database_traits::{get_connect::{
     GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
-};
+}, database_operates::NoConnect};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
 use super::{OperateError, OperateResult, UserOperate};
 use crate::admin_user::models::user;
 
-impl<'c, C:'c> UserOperate<'c, C> {
+impl UserOperate<'_, NoConnect> {
     pub async fn query_one_user_raw(
         condition: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
     ) -> OperateResult<user::Model> {
@@ -75,7 +75,7 @@ where
         info!(user.name = name);
         let ctx = self.get_transaction().await?;
 
-        let user = Self::find_user_by_name_raw(name, &ctx).await?;
+        let user = UserOperate::find_user_by_name_raw(name, &ctx).await?;
 
         ctx.submit().await?;
 
@@ -93,12 +93,12 @@ where
 impl<'c, C> UserOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect<'c>: ConnectionTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 获取并验证密码版本
     #[instrument(ret, skip(self, ok_mapper, error))]
     pub async fn find_user_with_version_verify<M, E, T, OE>(
-        &'c self, uid: i32, token_version: u32, ok_mapper: M, error: OE,
+        &self, uid: i32, token_version: u32, ok_mapper: M, error: OE,
     ) -> OperateResult<Result<T, E>>
     where
         M: Fn(user::Model) -> T,
@@ -109,7 +109,7 @@ where
         info!(user.id = uid, user.password.version = token_version);
         let db = self.get_connect();
 
-        let user = Self::find_user_by_id_raw(uid, db).await?;
+        let user = UserOperate::find_user_by_id_raw(uid, db).await?;
 
         if user.num_pwd_change == token_version {
             Ok(Ok(ok_mapper(user)))
