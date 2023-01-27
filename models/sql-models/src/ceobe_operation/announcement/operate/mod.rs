@@ -35,9 +35,7 @@ where
 {
     type Parent = SqlCeobeOperation<'c, C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent.0)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
 }
 
 use crate::ceobe_operation::SqlCeobeOperation;

@@ -30,13 +30,11 @@ impl<'c, C: 'c> VideoOperate<'c, C> {
 
 impl<'c, C> SubOperate<'c> for VideoOperate<'c, C>
 where
-    C: GetDatabaseConnect ,
+    C: GetDatabaseConnect,
 {
-    type Parent= SqlCeobeOperation<'c, C>;
+    type Parent = SqlCeobeOperation<'c, C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent.0)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
 }
 
 #[derive(Debug, Error, status_err::StatusErr)]

@@ -21,9 +21,7 @@ where
 {
     type Parent = DatabaseOperate<C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent) }
 }
 
 pub trait ToSqlCeobeOperation<C: GetDatabaseConnect> {
@@ -34,7 +32,5 @@ impl<C> ToSqlCeobeOperation<C> for DatabaseOperate<C>
 where
     C: GetDatabaseConnect,
 {
-    fn ceobe_operation(&self) -> SqlCeobeOperation<'_, C> {
-        self.child()
-    }
+    fn ceobe_operation(&self) -> SqlCeobeOperation<'_, C> { self.child() }
 }

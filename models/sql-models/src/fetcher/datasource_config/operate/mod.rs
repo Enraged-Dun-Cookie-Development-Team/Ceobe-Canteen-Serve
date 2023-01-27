@@ -28,9 +28,7 @@ impl<'c, C> Datasource<'c, C> {
 impl<'c, C> SubOperate<'c> for Datasource<'c, C> {
     type Parent = FetcherOperate<'c, C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent.0)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
 }
 
 #[derive(Debug, Error, StatusErr)]

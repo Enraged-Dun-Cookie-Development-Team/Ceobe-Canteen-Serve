@@ -18,19 +18,13 @@ pub struct Platform<'c, C>(&'c C);
 impl<C: GetDatabaseConnect> GetDatabaseConnect for Platform<'_, C> {
     type Connect = C::Connect;
 
-    fn get_connect(&self) -> &Self::Connect {
-        self.0.get_connect()
-    }
+    fn get_connect(&self) -> &Self::Connect { self.0.get_connect() }
 }
 
-impl<'c, C> SubOperate<'c> for Platform<'c, C>
-where
-{
+impl<'c, C> SubOperate<'c> for Platform<'c, C> {
     type Parent = FetcherOperate<'c, C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent.0)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
 }
 
 #[derive(Debug, Error, StatusErr)]

@@ -34,9 +34,7 @@ impl<'c, C: 'c> UserOperate<'c, C> {
 impl<'c, C> SubOperate<'c> for UserOperate<'c, C> {
     type Parent = DatabaseOperate<C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent) }
 }
 
 #[derive(FromQueryResult)]

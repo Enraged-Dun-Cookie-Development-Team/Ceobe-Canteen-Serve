@@ -30,21 +30,23 @@ where
         collection: &CollectionGuard<Mid>,
     ) -> OperateResult<Vec<String>> {
         Ok(collection
-            .doing(|collection| async move {
-                let mut vec = collection
-                    .find(
-                        filter,
-                        FindOptions::builder()
-                            .projection(doc! {"id":1i32})
-                            .sort(doc! {"id.main_id":1,"id.minor_id":1})
-                            .build(),
-                    )
-                    .await?;
-                let mut res = Vec::new();
-                while let Some(v) = vec.next().await {
-                    res.push(v?);
+            .doing(|collection| {
+                async move {
+                    let mut vec = collection
+                        .find(
+                            filter,
+                            FindOptions::builder()
+                                .projection(doc! {"id":1i32})
+                                .sort(doc! {"id.main_id":1,"id.minor_id":1})
+                                .build(),
+                        )
+                        .await?;
+                    let mut res = Vec::new();
+                    while let Some(v) = vec.next().await {
+                        res.push(v?);
+                    }
+                    Ok(res)
                 }
-                Ok(res)
             })
             .await?
             .into_iter()
@@ -52,6 +54,7 @@ where
             .collect::<Vec<_>>()
             .tap(|list| info!(mansionList.ids = ?list)))
     }
+
     /// 根据条件获取单一大厦创建和更新时间
     /// params：mid 大厦id
     pub async fn get_mansion_time_by_filter(

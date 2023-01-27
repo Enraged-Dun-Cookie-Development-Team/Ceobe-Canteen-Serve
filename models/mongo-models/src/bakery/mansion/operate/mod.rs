@@ -1,6 +1,9 @@
 use mongo_connection::{
     database_traits::{
-        database_operates::{sub_operate::{SubOperate, SuperOperate}, DatabaseOperate},
+        database_operates::{
+            sub_operate::{SubOperate, SuperOperate},
+            DatabaseOperate,
+        },
         get_connect::GetDatabaseCollection,
     },
     MongoDbError,
@@ -38,22 +41,18 @@ where
 {
     type Parent = DatabaseOperate<Db>;
 
-    fn from_parent(parent: &'db Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
 pub trait ToMansionOperate<Db: GetDatabaseCollection<ModelMansion>> {
     fn mansion(&self) -> MansionOperate<'_, Db>;
 }
 
-impl<'db, Db> ToMansionOperate<Db> for DatabaseOperate<Db>
+impl<Db> ToMansionOperate<Db> for DatabaseOperate<Db>
 where
     Db: GetDatabaseCollection<ModelMansion>,
 {
-    fn mansion(&self) -> MansionOperate<'_, Db> {
-        self.child()
-    }
+    fn mansion(&self) -> MansionOperate<'_, Db> { self.child() }
 }
 
 #[allow(dead_code)]

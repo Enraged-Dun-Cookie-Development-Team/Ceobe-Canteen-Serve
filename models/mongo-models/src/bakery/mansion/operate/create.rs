@@ -11,10 +11,7 @@ where
     /// 新建饼学大厦
     /// params：mansion 大厦信息
     #[instrument(skip(self), ret)]
-    pub async fn create(
-        &'db self,
-        mansion: Mansion,
-    ) -> OperateResult<()> {
+    pub async fn create(&'db self, mansion: Mansion) -> OperateResult<()> {
         info!(
             newMansion.id = %mansion.id,
             newMansion.description = mansion.description

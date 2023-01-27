@@ -19,9 +19,7 @@ where
 {
     type Parent = DatabaseOperate<C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent) }
 }
 
 pub trait ToFetcherOperate<C: 'static> {

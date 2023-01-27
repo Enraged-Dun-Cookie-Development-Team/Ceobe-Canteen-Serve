@@ -27,11 +27,9 @@ impl<'c, C> SubOperate<'c> for ResourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
 {
-    type Parent = SqlCeobeOperation<'c,C>;
+    type Parent = SqlCeobeOperation<'c, C>;
 
-    fn from_parent(parent: & Self::Parent) -> Self {
-        Self(parent.0)
-    }
+    fn from_parent(parent: &Self::Parent) -> Self { Self(parent.0) }
 }
 
 use status_err::{ErrPrefix, HttpCode};

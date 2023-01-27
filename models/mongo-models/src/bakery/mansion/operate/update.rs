@@ -9,14 +9,14 @@ use crate::bakery::mansion::{
 
 impl<'db, Db> MansionOperate<'db, Db>
 where
-    Db: MongoDbCollectionTrait<'db, ModelMansion>,{
+    Db: MongoDbCollectionTrait<'db, ModelMansion>,
+{
     /// 更新大厦
     /// mid: 原先大厦id
     /// mansion: 大厦信息
     #[instrument(skip(self), ret)]
     pub async fn update(
-        &'db self,
-        mid: MansionId, mansion: Mansion,
+        &'db self, mid: MansionId, mansion: Mansion,
     ) -> OperateResult<()> {
         info!(
             mansionUpdate.id = %mid,
