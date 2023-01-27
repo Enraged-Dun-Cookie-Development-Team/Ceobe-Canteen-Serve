@@ -23,13 +23,12 @@ impl<C: GetDatabaseConnect> GetDatabaseConnect for Platform<'_, C> {
     }
 }
 
-impl<'p: 'c, 'c, C> SubOperate<'p, 'c> for Platform<'c, C>
+impl<'c, C> SubOperate<'c> for Platform<'c, C>
 where
-    C: 'static,
 {
-    type Parent<'parent> = FetcherOperate<'parent, C>where 'parent:'c;
+    type Parent = FetcherOperate<'c, C>;
 
-    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+    fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent.0)
     }
 }

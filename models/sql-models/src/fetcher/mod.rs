@@ -13,14 +13,13 @@ pub mod platform_config;
 
 pub struct FetcherOperate<'c, C>(&'c C);
 
-impl<'p, 'c, C> SubOperate<'p, 'c> for FetcherOperate<'c, C>
+impl<'c, C> SubOperate<'c> for FetcherOperate<'c, C>
 where
-    C: GetDatabaseConnect + 'static,
-    'p: 'c,
+    C: GetDatabaseConnect,
 {
-    type Parent<'parent> = DatabaseOperate<C> where 'parent:'c;
+    type Parent = DatabaseOperate<C>;
 
-    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+    fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent)
     }
 }

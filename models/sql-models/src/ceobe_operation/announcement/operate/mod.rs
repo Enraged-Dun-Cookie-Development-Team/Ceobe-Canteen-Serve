@@ -29,13 +29,13 @@ impl<'c, C> AnnouncementOperate<'c, C> {
     }
 }
 
-impl<'p: 'c, 'c, C> SubOperate<'p, 'c> for AnnouncementOperate<'c, C>
+impl<'c, C> SubOperate<'c> for AnnouncementOperate<'c, C>
 where
-    C: GetDatabaseConnect + 'static,
+    C: GetDatabaseConnect,
 {
-    type Parent<'parent> = SqlCeobeOperation<'parent, C> where 'parent: 'c;
+    type Parent = SqlCeobeOperation<'c, C>;
 
-    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+    fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent.0)
     }
 }

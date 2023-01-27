@@ -23,13 +23,13 @@ impl<'op, C: 'op> ResourceOperate<'op, C> {
     }
 }
 
-impl<'p: 'c, 'c, C: 'p> SubOperate<'p, 'c> for ResourceOperate<'c, C>
+impl<'c, C> SubOperate<'c> for ResourceOperate<'c, C>
 where
-    C: 'static + GetDatabaseConnect,
+    C: GetDatabaseConnect,
 {
-    type Parent<'parent> = SqlCeobeOperation<'parent, C>where 'parent:'c;
+    type Parent = SqlCeobeOperation<'c,C>;
 
-    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+    fn from_parent(parent: & Self::Parent) -> Self {
         Self(parent.0)
     }
 }

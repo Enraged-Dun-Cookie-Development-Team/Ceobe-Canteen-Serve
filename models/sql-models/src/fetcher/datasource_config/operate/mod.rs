@@ -25,10 +25,10 @@ impl<'c, C> Datasource<'c, C> {
     }
 }
 
-impl<'p: 'c, 'c, C: 'static> SubOperate<'p, 'c> for Datasource<'c, C> {
-    type Parent<'parent> = FetcherOperate<'parent, C>where 'parent:'c;
+impl<'c, C> SubOperate<'c> for Datasource<'c, C> {
+    type Parent = FetcherOperate<'c, C>;
 
-    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+    fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent.0)
     }
 }

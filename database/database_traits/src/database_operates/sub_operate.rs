@@ -1,13 +1,6 @@
-pub trait SubOperate<'p, 's>: 's
-where
-    'p: 's,
-{
-    type Parent<'parent>: 'parent
-    where
-        'parent: 's;
-    fn from_parent<'parent>(parent: &'p Self::Parent<'parent>) -> Self
-    where
-        'parent: 's;
+pub trait SubOperate<'s>: 's {
+    type Parent;
+    fn from_parent(parent: &'s Self::Parent) -> Self;
 }
 
 pub trait SubMutOperate<'op>: 'op {
@@ -16,12 +9,9 @@ pub trait SubMutOperate<'op>: 'op {
 }
 
 pub trait SuperOperate {
-    fn child<'this, 'r, 's, S>(&'r self) -> S
+    fn child<'s, S>(&'s self) -> S
     where
-        S: SubOperate<'r, 's, Parent<'this> = Self>,
-        Self: 'r,
-        'r: 's,
-        'this: 's,
+        S: SubOperate<'s, Parent = Self>,
     {
         <S as SubOperate>::from_parent(self)
     }

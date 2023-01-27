@@ -15,13 +15,13 @@ impl<'c, C: 'c + GetDatabaseConnect> AppVersionOperate<'c, C> {
     pub(self) fn get_connect(&'c self) -> &C::Connect { self.0 }
 }
 
-impl<'p: 'c, 'c, C: 'p> SubOperate<'p, 'c> for AppVersionOperate<'c, C>
+impl<'c, C> SubOperate<'c> for AppVersionOperate<'c, C>
 where
-    C: 'static + GetDatabaseConnect,
+    C: GetDatabaseConnect,
 {
-    type Parent<'parent> = SqlCeobeOperation<'parent, C>where 'parent:'c;
+    type Parent = SqlCeobeOperation<'c, C>;
 
-    fn from_parent<'parent: 'c>(parent: &'p Self::Parent<'parent>) -> Self {
+    fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent.0.get_connect())
     }
 }
