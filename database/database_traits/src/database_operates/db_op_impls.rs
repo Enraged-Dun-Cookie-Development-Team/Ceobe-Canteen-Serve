@@ -11,11 +11,9 @@ impl<C> GetMutDatabaseConnect for DatabaseOperate<C>
 where
     C: GetMutDatabaseConnect,
 {
-    type Connect<'s> = C::Connect<'s>
-    where
-        Self: 's;
+    type Connect = C::Connect;
 
-    fn mut_connect(&mut self) -> &mut Self::Connect<'_> {
+    fn mut_connect(&mut self) -> &mut Self::Connect {
         self.connect.mut_connect()
     }
 }
@@ -24,11 +22,12 @@ impl<C> GetDatabaseConnect for DatabaseOperate<C>
 where
     C: GetDatabaseConnect,
 {
-    type Connect<'s> = C::Connect<'s>
-    where
-        Self: 's;
+    type Connect = C::Connect;
 
-    fn get_connect(&self) -> &Self::Connect<'_> { self.connect.get_connect() }
+    fn get_connect(& self) -> &Self::Connect
+    {
+        self.connect.get_connect()
+    }
 }
 
 impl<C> GetDatabaseTransaction for DatabaseOperate<C>

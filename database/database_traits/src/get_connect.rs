@@ -6,30 +6,25 @@ pub use http::request::Parts;
 /// 获取数据库连接， 以及后续操作基本trait
 pub trait GetDatabaseConnect {
     /// 数据库连接本身
-    type Connect<'s>: 's
-    where
-        Self: 's;
-
+    type Connect;
     /// 获取一个数据库连接
     /// # Note
     /// 获取一个连接引用不应有任何错误发生
-    fn get_connect(&self) -> &Self::Connect<'_>;
+    fn get_connect(&self) -> &Self::Connect;
 }
 
 /// 获取数据库连接， 以及后续操作基本trait
 /// 获取的为 `&mut`
 pub trait GetMutDatabaseConnect {
     /// 数据库连接本身
-    type Connect<'s>: 's
-    where
-        Self: 's;
+    type Connect;
     /// 获取一个数据库连接
     /// # Note
     /// 获取一个连接引用不应有任何错误发生
-    fn mut_connect(&mut self) -> &mut Self::Connect<'_>;
+    fn mut_connect(&mut self) -> &mut Self::Connect;
 }
 
-pub type CollectionResult<'s, Conn,C> = Result<
+pub type CollectionResult<'s, Conn, C> = Result<
     <Conn as GetDatabaseCollection<C>>::CollectGuard<'s>,
     <Conn as GetDatabaseCollection<C>>::Error,
 >;

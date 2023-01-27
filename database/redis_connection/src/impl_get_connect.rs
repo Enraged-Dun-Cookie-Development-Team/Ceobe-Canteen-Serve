@@ -38,9 +38,9 @@ impl<S> FromRequestParts<S> for RedisConnect {
 }
 
 impl GetMutDatabaseConnect for RedisConnect {
-    type Connect<'s> = ConnectionManager
-    where
-        Self: 's;
+    type Connect = ConnectionManager;
 
-    fn mut_connect(&mut self) -> &mut Self::Connect<'_> { &mut self.0 }
+    fn mut_connect(&mut self) -> &mut Self::Connect {
+        &mut self.0
+    }
 }

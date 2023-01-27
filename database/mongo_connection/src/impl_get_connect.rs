@@ -36,9 +36,11 @@ impl<S: Send + Sync> FromRequestParts<S> for MongoConnect {
 }
 
 impl GetDatabaseConnect for MongoConnect {
-    type Connect<'s> = DatabaseManage;
+    type Connect = DatabaseManage;
 
-    fn get_connect(&self) -> &Self::Connect<'_> { get_mongo_database() }
+    fn get_connect(&self) -> &Self::Connect {
+        get_mongo_database()
+    }
 }
 
 impl<C> GetDatabaseCollection<C> for MongoConnect
