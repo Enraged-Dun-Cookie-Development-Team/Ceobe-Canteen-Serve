@@ -55,7 +55,7 @@ impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
                 };
 
                 let (mut parts,body )= request.into_parts();
-                let mut db = SqlDatabaseOperate::from_request_parts(&mut parts,&()).await.unwrap();
+                let db = SqlDatabaseOperate::from_request_parts(&mut parts,&()).await.unwrap();
                 let req = Request::from_parts(parts,body);
                 let user = match db.user().find_user_with_version_verify(
                     id,
