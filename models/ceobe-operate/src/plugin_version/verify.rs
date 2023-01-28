@@ -1,11 +1,12 @@
-use mongo_connection::CollectionGuard;
-use mongodb::bson::doc;
+use db_ops_prelude::database_operates::NoConnect;
+use db_ops_prelude::mongo_connection::CollectionGuard;
+use db_ops_prelude::mongodb::bson::doc;
 use tracing::warn;
 
-use super::{OperateError, OperateResult, PluginDbOperation, Version};
-use crate::ceobe_operation::plugin_version::models::PluginVersion;
-
-impl PluginDbOperation {
+use super::PluginVersionOperate;
+use super::{OperateError, OperateResult};
+use super::{PluginVersion, Version};
+impl PluginVersionOperate<'_, NoConnect> {
     pub async fn verify_version(
         version: Version, collect: &CollectionGuard<PluginVersion>,
     ) -> OperateResult<()> {

@@ -3,6 +3,7 @@ pub mod ceobe_operation;
 
 use chrono::Local;
 pub use mongo_connection;
+pub use mongodb;
 use mongodb::bson::DateTime;
 use serde::{Deserialize, Serialize};
 

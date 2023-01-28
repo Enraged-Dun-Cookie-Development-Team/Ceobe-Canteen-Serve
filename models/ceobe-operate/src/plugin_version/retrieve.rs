@@ -1,22 +1,24 @@
-use mongo_connection::MongoDbCollectionTrait;
-use mongodb::{bson::doc, options::FindOneOptions};
-use tracing::{info, instrument};
+use db_ops_prelude::mongo_connection::MongoDbCollectionTrait;
+use db_ops_prelude::mongodb::bson::doc;
+use db_ops_prelude::mongodb::options::FindOneOptions;
+use tracing::info;
+use tracing::instrument;
 
-use super::{OperateError, OperateResult, PluginDbOperation};
-use crate::ceobe_operation::plugin_version::models::{
-    PluginVersion, Version,
+use super::{
+     Version,PluginVersion,
+    OperateError, OperateResult, PluginVersionOperate,
 };
 
-impl PluginDbOperation {
-    #[instrument(skip(db), ret)]
-    pub async fn get_plugin_version_info_by_version<'db, D>(
-        db: &'db D, version: Version,
-    ) -> OperateResult<PluginVersion>
-    where
-        D: MongoDbCollectionTrait<'db, PluginVersion>,
-    {
+impl<'db, Conn> PluginVersionOperate<'db, Conn>
+where
+    Conn: MongoDbCollectionTrait<'db, PluginVersion>,
+{
+    #[instrument(skip(self), ret)]
+    pub async fn get_info_by_version(
+        &'db self, version: Version,
+    ) -> OperateResult<PluginVersion> {
         info!(plugin.version = %version);
-        let collection = db.get_collection()?;
+        let collection = self.get_collection()?;
         let filter = doc! {
             "version.major": version.major,
             "version.minor": version.minor,
@@ -28,15 +30,13 @@ impl PluginDbOperation {
             .ok_or(OperateError::VersionNotFind(version))
     }
 
-    #[instrument(skip(db), ret)]
-    pub async fn get_newest_plugin_version_info<'db, D>(
-        db: &'db D,
+    #[instrument(skip(self), ret)]
+    pub async fn get_newest_info(
+        &'db self,
     ) -> OperateResult<PluginVersion>
-    where
-        D: MongoDbCollectionTrait<'db, PluginVersion>,
     {
         info!(plugin.version = "latest");
-        let collection = db.get_collection()?;
+        let collection = self.get_collection()?;
         collection
             .doing(|collection|
                 collection.find_one(
