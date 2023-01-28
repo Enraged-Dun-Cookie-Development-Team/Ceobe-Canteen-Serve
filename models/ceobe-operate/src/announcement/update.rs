@@ -1,14 +1,9 @@
-use sea_orm::{ConnectionTrait, DbErr, EntityTrait};
-use sql_connection::database_traits::get_connect::{
-    GetDatabaseTransaction, TransactionOps,
-};
-use tracing::{info, instrument};
+use db_ops_prelude::{get_connect::{GetDatabaseTransaction, TransactionOps}, sea_orm::{ConnectionTrait, DbErr, EntityTrait}};
+use tracing::{instrument, info};
 
-use super::{AnnouncementOperate, OperateResult};
-use crate::ceobe_operation::announcement::{
-    checkers::announcement_data::CeobeOpAnnouncement,
-    models::model_announcement::{self, ActiveModel},
-};
+use super::{Checked, Entity};
+use super::AnnouncementOperate;
+use super::OperateResult;
 impl<'c, C> AnnouncementOperate<'c, C>
 where
     C: GetDatabaseTransaction<Error = DbErr> + 'c,
@@ -16,7 +11,7 @@ where
 {
     #[instrument(skip(self, announcements), ret)]
     pub async fn update_all(
-        &'c self, announcements: Vec<CeobeOpAnnouncement>,
+        &'c self, announcements: Vec<Checked>,
     ) -> OperateResult<()> {
         info!(announcements.update.size = announcements.len());
 
@@ -31,14 +26,14 @@ where
         // 处理数据，添加order
         let announcement_list = announcements.into_iter().enumerate().map(
             |(order, announcement)| {
-                ActiveModel::from_announcement_data_with_order(
+                super::ActiveModel::from_announcement_data_with_order(
                     announcement,
                     order as i32,
                 )
             },
         );
         // 新建数据
-        model_announcement::Entity::insert_many(announcement_list)
+        Entity::insert_many(announcement_list)
             .exec(&db)
             .await?;
         db.submit().await?;

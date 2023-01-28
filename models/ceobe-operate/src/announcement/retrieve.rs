@@ -1,32 +1,18 @@
-use futures::{Stream, TryStreamExt};
-use sea_orm::{
-    sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
-    EntityTrait, QueryFilter, QueryOrder, StreamTrait,
-};
-use smallstr::SmallString;
-use smallvec::SmallVec;
-use sql_connection::database_traits::{
-    database_operates::NoConnect, get_connect::GetDatabaseConnect,
-};
-use tap::{Tap, TapFallible};
-use tracing::{info, instrument};
+use db_ops_prelude::{database_operates::NoConnect, sea_orm::{sea_query::IntoCondition, ConnectionTrait, StreamTrait, DbErr, EntityTrait, QueryFilter, QueryOrder, Condition, ColumnTrait}, futures::{Stream, TryStreamExt}, get_zero_data_time, get_connect::GetDatabaseConnect, tap::{TapFallible, Tap}, smallstr::SmallString, smallvec::SmallVec};
+use tracing::{instrument, info};
 
-use super::{AnnouncementOperate, OperateResult};
-use crate::{
-    ceobe_operation::announcement::models::model_announcement,
-    get_zero_data_time,
-};
+use super::{AnnouncementOperate, OperateResult, Model, Entity, Column};
 
 impl AnnouncementOperate<'_, NoConnect> {
     pub async fn find_by_filter_raw<'s, 'db: 's>(
         filter: impl IntoCondition,
         db: &'db (impl ConnectionTrait + StreamTrait + Send + 's),
     ) -> OperateResult<
-        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 's,
+        impl Stream<Item = Result<Model, DbErr>> + Send + 's,
     > {
-        Ok(model_announcement::Entity::find()
+        Ok(Entity::find()
             .filter(filter)
-            .order_by_asc(model_announcement::Column::Order)
+            .order_by_asc(Column::Order)
             .stream(db)
             .await?)
     }
@@ -35,11 +21,11 @@ impl AnnouncementOperate<'_, NoConnect> {
         filter: impl IntoCondition,
         db: &'db (impl ConnectionTrait + StreamTrait + Send + 's),
     ) -> OperateResult<
-        impl Stream<Item = Result<model_announcement::Model, DbErr>> + Send + 's,
+        impl Stream<Item = Result<Model, DbErr>> + Send + 's,
     > {
         Self::find_by_filter_raw(
             Condition::all().add(filter.into_condition()).add(
-                model_announcement::Column::DeleteAt.eq(get_zero_data_time()),
+                Column::DeleteAt.eq(get_zero_data_time()),
             ),
             db,
         )
@@ -54,7 +40,7 @@ where
     #[instrument(skip(self))]
     pub async fn find_all_not_delete(
         &self,
-    ) -> OperateResult<Vec<model_announcement::Model>> {
+    ) -> OperateResult<Vec<Model>> {
         let db = self.get_connect();
         Ok(AnnouncementOperate::find_by_filter_not_delete_raw(
             Condition::all(),
