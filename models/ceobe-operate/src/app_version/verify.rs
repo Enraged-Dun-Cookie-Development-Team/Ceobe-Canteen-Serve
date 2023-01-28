@@ -1,13 +1,14 @@
-use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
-use sql_connection::{
-    database_traits::get_connect::GetDatabaseConnect,
+use db_ops_prelude::{
     ext_traits::select_count::QueryCountByColumn,
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter},
+    tap::{Pipe, Tap},
 };
-use tap::{Pipe, Tap};
 use tracing::info;
 
-use super::{AppVersionOperate, OperateResult};
-use crate::ceobe_operation::app_version::models::model_app_version;
+use super::{
+    AppVersionOperate, OperateResult, {Column, Entity},
+};
 
 impl<'c, C> AppVersionOperate<'c, C>
 where
@@ -16,9 +17,9 @@ where
     pub async fn is_exist_app_version(
         version: &impl AsRef<str>, db: &impl ConnectionTrait,
     ) -> OperateResult<bool> {
-        model_app_version::Entity::find()
-            .filter(model_app_version::Column::Version.eq(version.as_ref()))
-            .count_non_zero_by_column(model_app_version::Column::Id)
+        Entity::find()
+            .filter(Column::Version.eq(version.as_ref()))
+            .count_non_zero_by_column(Column::Id)
             .one(db)
             .await?
             .unwrap()

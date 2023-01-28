@@ -1,15 +1,15 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait};
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
-use tap::{Pipe, Tap};
+use std::ops::Deref;
+
+use db_ops_prelude::sea_orm::{ActiveModelTrait, IntoActiveModel};
+use db_ops_prelude::tap::{Pipe, Tap};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect, sea_orm::ConnectionTrait,
+};
 use tracing::{info, instrument};
 
-use super::{AppVersionOperate, OperateError, OperateResult};
-use crate::ceobe_operation::app_version::{
-    checkers::app_version_data::CeobeOperationAppVersion,
-    models::model_app_version,
-    operate::create::model_app_version::ActiveModel,
-};
-
+use super::Checked;
+use super::AppVersionOperate;
+use super::{OperateError, OperateResult};
 impl<'c, C> AppVersionOperate<'c, C>
 where
     C: GetDatabaseConnect + 'c,
@@ -17,22 +17,23 @@ where
 {
     #[instrument(skip(self), ret)]
     pub async fn create_one(
-        &self, version_info: CeobeOperationAppVersion,
+        &self, version_info: Checked,
     ) -> OperateResult<()> {
         info!(
             newVersion.version = version_info.version,
             newVersion.force = version_info.force
         );
 
-        let db = self.get_connect();
+        let db = self.deref();
         // 判断版本是否已存在
 
-        let false = Self::is_exist_app_version(&version_info.version, db).await? else {
+        let false = Self::is_exist_app_version(&version_info.version,db).await? else {
             return Err(OperateError::AppVersionIdExist(version_info.version));
         };
 
-        ActiveModel::create_app_version(version_info)
-            .pipe(|active| active.insert(db))
+        version_info
+            .into_active_model()
+            .insert(db)
             .await?
             .tap(|result| {
                 info!(

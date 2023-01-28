@@ -1,6 +1,5 @@
 mod checkers;
 mod models;
-mod operate;
 
 pub use checkers::{
     app_version_checker::AppVersionChecker,
@@ -14,14 +13,3 @@ pub use checkers::{
 pub use models::model_app_version::{
     ActiveModel, Column, Entity, Model, Relation,
 };
-pub use operate::{AppVersionOperate as Operate, OperateError};
-use sql_connection::database_traits::{
-    database_operates::sub_operate::SuperOperate,
-    get_connect::GetDatabaseConnect,
-};
-
-use super::SqlCeobeOperation;
-
-impl<'c, C: GetDatabaseConnect + 'static> SqlCeobeOperation<'c, C> {
-    pub fn app_version(&'c self) -> Operate<'c, C> { self.child() }
-}

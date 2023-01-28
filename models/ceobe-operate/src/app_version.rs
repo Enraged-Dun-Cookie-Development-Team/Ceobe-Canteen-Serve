@@ -1,34 +1,42 @@
-pub mod create;
-pub mod retrieve;
-pub mod verify;
+use std::ops::Deref;
 
-use sql_connection::database_traits::{
-    database_operates::sub_operate::SubOperate,
+use db_ops_prelude::{
+    database_operates::sub_operate::{SubOperate, SuperOperate},
     get_connect::GetDatabaseConnect,
+    sea_orm, ErrPrefix, HttpCode, StatusErr, ThisError,
 };
-use status_err::{ErrPrefix, HttpCode, StatusErr};
-use thiserror::Error;
+
+use crate::CeobeDatabaseOperate;
+
+mod create;
+mod retrieve;
+mod verify;
 
 pub struct AppVersionOperate<'c, C: 'c + GetDatabaseConnect>(&'c C::Connect);
 
-impl<'c, C: 'c + GetDatabaseConnect> AppVersionOperate<'c, C> {
-    pub(self) fn get_connect(&'c self) -> &C::Connect { self.0 }
+impl<'c, C> Deref for AppVersionOperate<'c, C>
+where
+    C: 'c + GetDatabaseConnect,
+{
+    type Target = C::Connect;
+
+    fn deref(&self) -> &Self::Target {
+        self.0
+    }
 }
 
 impl<'c, C> SubOperate<'c> for AppVersionOperate<'c, C>
 where
     C: GetDatabaseConnect,
 {
-    type Parent = SqlCeobeOperation<'c, C>;
+    type Parent = CeobeDatabaseOperate<'c, C>;
 
     fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent.0.get_connect())
+        Self(parent.get_connect())
     }
 }
 
-use crate::ceobe_operation::SqlCeobeOperation;
-
-#[derive(Debug, Error, StatusErr)]
+#[derive(Debug, ThisError, StatusErr)]
 pub enum OperateError {
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
@@ -48,3 +56,11 @@ pub enum OperateError {
 }
 
 type OperateResult<T> = Result<T, OperateError>;
+
+pub use db_ops_prelude::sql_models::ceobe_operation::app_version::*;
+
+impl<'db, Conn: GetDatabaseConnect> CeobeDatabaseOperate<'db, Conn> {
+    pub fn app_version(&self) -> AppVersionOperate<'_, Conn> {
+        self.child()
+    }
+}
