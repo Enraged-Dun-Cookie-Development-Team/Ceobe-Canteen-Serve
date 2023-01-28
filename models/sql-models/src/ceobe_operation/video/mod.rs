@@ -1,6 +1,5 @@
 mod checkers;
 mod models;
-mod operate;
 
 pub use checkers::{
     video_data::{
@@ -22,16 +21,4 @@ pub mod bv {
             BvQueryUncheck as Uncheck,
         };
     }
-}
-
-pub use operate::{OperateError, VideoOperate as Operate};
-use sql_connection::database_traits::{
-    database_operates::sub_operate::SuperOperate,
-    get_connect::GetDatabaseConnect,
-};
-
-use super::SqlCeobeOperation;
-
-impl<'c, C: GetDatabaseConnect + 'static> SqlCeobeOperation<'c, C> {
-    pub fn video(&'c self) -> Operate<'c, C> { self.child() }
 }

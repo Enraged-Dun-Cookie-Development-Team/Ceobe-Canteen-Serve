@@ -1,33 +1,27 @@
 use std::collections::HashMap;
 
-use futures::{future::ok, stream::iter, StreamExt, TryStreamExt};
-use sea_orm::{
-    sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait, DbErr,
-    EntityTrait, IntoActiveModel, QueryFilter, StreamTrait,
+use db_ops_prelude::{
+    database_operates::NoConnect,
+    futures::{future::ok, stream::iter, StreamExt, TryStreamExt},
+    get_connect::{GetDatabaseTransaction, TransactionOps},
+    get_now_naive_date_time_value, get_zero_data_time,
+    sea_orm::{
+        sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait,
+        DbErr, EntityTrait, IntoActiveModel, QueryFilter, StreamTrait,
+    },
+    tap::{Pipe, Tap},
 };
-use sql_connection::database_traits::get_connect::{
-    GetDatabaseTransaction, TransactionOps,
-};
-use tap::{Pipe, Tap};
 use tracing::{info, instrument};
 
-use super::{OperateResult, VideoOperate};
-use crate::{
-    ceobe_operation::video::{
-        checkers::video_data::CeobeOpVideo,
-        models::model_video::{self, ActiveModel},
-    },
-    get_now_naive_date_time_value, get_zero_data_time,
-};
-
-impl<C> VideoOperate<'_, C> {
+use super::{ActiveModel, Checked, Column, Entity, OperateResult, VideoOperate};
+impl VideoOperate<'_, NoConnect> {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,
     ) -> OperateResult<u64> {
-        let resp = model_video::Entity::update_many()
-            .filter(model_video::Column::DeleteAt.eq(get_zero_data_time()))
+        let resp = Entity::update_many()
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .col_expr(
-                model_video::Column::DeleteAt,
+                Column::DeleteAt,
                 Expr::value(get_now_naive_date_time_value()),
             )
             .exec(db)
@@ -36,23 +30,23 @@ impl<C> VideoOperate<'_, C> {
         Ok(resp.rows_affected)
     }
 }
-impl<'c, C> VideoOperate<'c, C>
+
+impl<'s, Conn> VideoOperate<'s, Conn>
 where
-    C: GetDatabaseTransaction<Error = DbErr>,
-    C::Transaction<'c>: ConnectionTrait + StreamTrait,
+    Conn: GetDatabaseTransaction<Error = DbErr>,
+    Conn::Transaction<'s>: ConnectionTrait + StreamTrait,
 {
     #[instrument(skip_all, ret, fields(videos.len = videos.len()))]
     pub async fn update_all(
-        &'c self, videos: Vec<CeobeOpVideo>,
+        &'s self, videos: Vec<Checked>,
     ) -> OperateResult<()> {
         let db = self.get_transaction().await?;
         // 所有先前的数据都设置为删除
-        Self::all_soft_remove(&db).await?;
+        VideoOperate::all_soft_remove(&db).await?;
 
         // 通过BV获取当前已经存在的数据
         let mut exist_data = VideoOperate::find_by_filter_raw(
-            model_video::Column::Bv
-                .is_in(videos.iter().map(|v| v.bv.as_str())),
+            Column::Bv.is_in(videos.iter().map(|v| v.bv.as_str())),
             &db,
         )
         .await?
@@ -76,12 +70,10 @@ where
                             )
                         })
                     }
-                    None => {
-                        ActiveModel::from_video_data_with_order(
-                            video,
-                            order as i32,
-                        )
-                    }
+                    None => ActiveModel::from_video_data_with_order(
+                        video,
+                        order as i32,
+                    ),
                 }
             })
             .pipe(iter)
