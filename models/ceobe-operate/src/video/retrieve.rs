@@ -1,13 +1,14 @@
 use db_ops_prelude::{
     database_operates::NoConnect,
+    futures::{Stream, TryStreamExt},
     get_connect::GetDatabaseConnect,
     get_zero_data_time,
     sea_orm::{
         sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
-        DbErr, EntityTrait, QueryFilter, StreamTrait, QueryOrder,
+        DbErr, EntityTrait, QueryFilter, QueryOrder, StreamTrait,
     },
     tap::TapFallible,
-    tracing::instrument, futures::{Stream, TryStreamExt},
+    tracing::instrument,
 };
 use tracing::info;
 
@@ -50,10 +51,12 @@ where
     pub async fn find_all_not_delete(&self) -> OperateResult<Vec<Model>> {
         let db = self.get_connect();
 
-        Ok(VideoOperate::find_by_filter_not_delete_raw(Condition::all(), db)
-            .await?
-            .try_collect()
-            .await?)
+        Ok(
+            VideoOperate::find_by_filter_not_delete_raw(Condition::all(), db)
+                .await?
+                .try_collect()
+                .await?,
+        )
         .tap_ok(|list: &Vec<_>| {
             info!(videoList.size = list.len());
         })

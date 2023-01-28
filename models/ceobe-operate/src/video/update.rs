@@ -13,7 +13,9 @@ use db_ops_prelude::{
 };
 use tracing::{info, instrument};
 
-use super::{ActiveModel, Checked, Column, Entity, OperateResult, VideoOperate};
+use super::{
+    ActiveModel, Checked, Column, Entity, OperateResult, VideoOperate,
+};
 impl VideoOperate<'_, NoConnect> {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,
@@ -70,10 +72,12 @@ where
                             )
                         })
                     }
-                    None => ActiveModel::from_video_data_with_order(
-                        video,
-                        order as i32,
-                    ),
+                    None => {
+                        ActiveModel::from_video_data_with_order(
+                            video,
+                            order as i32,
+                        )
+                    }
                 }
             })
             .pipe(iter)

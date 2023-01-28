@@ -1,11 +1,12 @@
-use db_ops_prelude::database_operates::NoConnect;
-use db_ops_prelude::mongo_connection::CollectionGuard;
-use db_ops_prelude::mongodb::bson::doc;
+use db_ops_prelude::{
+    database_operates::NoConnect, mongo_connection::CollectionGuard,
+    mongodb::bson::doc,
+};
 use tracing::warn;
 
-use super::PluginVersionOperate;
-use super::{OperateError, OperateResult};
-use super::{PluginVersion, Version};
+use super::{
+    OperateError, OperateResult, PluginVersion, PluginVersionOperate, Version,
+};
 impl PluginVersionOperate<'_, NoConnect> {
     pub async fn verify_version(
         version: Version, collect: &CollectionGuard<PluginVersion>,

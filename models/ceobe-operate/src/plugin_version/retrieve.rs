@@ -1,12 +1,11 @@
-use db_ops_prelude::mongo_connection::MongoDbCollectionTrait;
-use db_ops_prelude::mongodb::bson::doc;
-use db_ops_prelude::mongodb::options::FindOneOptions;
-use tracing::info;
-use tracing::instrument;
+use db_ops_prelude::{
+    mongo_connection::MongoDbCollectionTrait,
+    mongodb::{bson::doc, options::FindOneOptions},
+};
+use tracing::{info, instrument};
 
 use super::{
-     Version,PluginVersion,
-    OperateError, OperateResult, PluginVersionOperate,
+    OperateError, OperateResult, PluginVersion, PluginVersionOperate, Version,
 };
 
 impl<'db, Conn> PluginVersionOperate<'db, Conn>
@@ -31,10 +30,7 @@ where
     }
 
     #[instrument(skip(self), ret)]
-    pub async fn get_newest_info(
-        &'db self,
-    ) -> OperateResult<PluginVersion>
-    {
+    pub async fn get_newest_info(&'db self) -> OperateResult<PluginVersion> {
         info!(plugin.version = "latest");
         let collection = self.get_collection()?;
         collection

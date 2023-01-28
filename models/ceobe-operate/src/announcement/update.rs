@@ -1,9 +1,10 @@
-use db_ops_prelude::{get_connect::{GetDatabaseTransaction, TransactionOps}, sea_orm::{ConnectionTrait, DbErr, EntityTrait}};
-use tracing::{instrument, info};
+use db_ops_prelude::{
+    get_connect::{GetDatabaseTransaction, TransactionOps},
+    sea_orm::{ConnectionTrait, DbErr, EntityTrait},
+};
+use tracing::{info, instrument};
 
-use super::{Checked, Entity};
-use super::AnnouncementOperate;
-use super::OperateResult;
+use super::{AnnouncementOperate, Checked, Entity, OperateResult};
 impl<'c, C> AnnouncementOperate<'c, C>
 where
     C: GetDatabaseTransaction<Error = DbErr> + 'c,
@@ -33,9 +34,7 @@ where
             },
         );
         // 新建数据
-        Entity::insert_many(announcement_list)
-            .exec(&db)
-            .await?;
+        Entity::insert_many(announcement_list).exec(&db).await?;
         db.submit().await?;
 
         Ok(())

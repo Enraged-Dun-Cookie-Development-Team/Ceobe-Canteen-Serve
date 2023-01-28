@@ -6,9 +6,7 @@ use db_ops_prelude::{
 };
 use tracing::info;
 
-use super::{
-    AppVersionOperate, OperateResult, {Column, Entity},
-};
+use super::{AppVersionOperate, Column, Entity, OperateResult};
 
 impl<'c, C> AppVersionOperate<'c, C>
 where

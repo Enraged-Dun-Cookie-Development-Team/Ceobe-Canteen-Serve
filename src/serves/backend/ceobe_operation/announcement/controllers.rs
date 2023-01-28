@@ -5,7 +5,7 @@ use checker::{
 };
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::{announcement},
+    sql_models::ceobe_operation::announcement,
 };
 use resp_result::resp_try;
 use tracing::instrument;

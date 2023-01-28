@@ -1,12 +1,12 @@
 mod check;
 mod models;
 
+pub use check::{
+    plugin_version_checker::PluginVersionChecker as Checker, CheckError,
+};
 pub use models::{
     DownloadResource, PluginVersion, PluginVersionChecked, SpareLink, Version,
 };
-
-pub use check::plugin_version_checker::PluginVersionChecker as Checker;
-pub use check::CheckError;
 pub type Uncheck = checker::Uncheck<Checker>;
 pub type Checked = checker::Checked<Checker>;
 

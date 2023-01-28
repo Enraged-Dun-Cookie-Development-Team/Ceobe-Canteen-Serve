@@ -4,8 +4,11 @@ mod update;
 
 use std::ops::Deref;
 
-use db_ops_prelude::{database_operates::sub_operate::{SubOperate, SuperOperate}, StatusErr, ThisError, sea_orm};
 pub use db_ops_prelude::sql_models::ceobe_operation::announcement::*;
+use db_ops_prelude::{
+    database_operates::sub_operate::{SubOperate, SuperOperate},
+    sea_orm, StatusErr, ThisError,
+};
 
 use crate::CeobeDatabaseOperate;
 
@@ -14,17 +17,13 @@ pub struct AnnouncementOperate<'c, C>(&'c C);
 impl<'c, C> Deref for AnnouncementOperate<'c, C> {
     type Target = C;
 
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 impl<'c, C> SubOperate<'c> for AnnouncementOperate<'c, C> {
     type Parent = CeobeDatabaseOperate<'c, C>;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent) }
 }
 
 #[derive(Debug, ThisError, StatusErr)]

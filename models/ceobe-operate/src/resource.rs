@@ -16,17 +16,13 @@ pub struct ResourceOperate<'op, C: 'op>(&'op C);
 impl<'op, C: 'op> Deref for ResourceOperate<'op, C> {
     type Target = C;
 
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 impl<'c, C> SubOperate<'c> for ResourceOperate<'c, C> {
     type Parent = CeobeDatabaseOperate<'c, C>;
 
-    fn from_parent(parent: &Self::Parent) -> Self {
-        Self(parent.0)
-    }
+    fn from_parent(parent: &Self::Parent) -> Self { Self(parent.0) }
 }
 
 use status_err::{ErrPrefix, HttpCode};
@@ -54,7 +50,5 @@ pub enum OperateError {
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
-    pub fn resource(&self) -> ResourceOperate<'_, Conn> {
-        self.child()
-    }
+    pub fn resource(&self) -> ResourceOperate<'_, Conn> { self.child() }
 }

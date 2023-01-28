@@ -5,8 +5,8 @@ use checker::{
 };
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::{
-        video::{self, bv::query::Checked as BvQuery},
+    sql_models::ceobe_operation::video::{
+        self, bv::query::Checked as BvQuery,
     },
 };
 use reqwest::Url;

@@ -14,21 +14,16 @@ mod verify;
 
 pub struct PluginVersionOperate<'db, Conn>(&'db Conn);
 
-
 impl<'db, Conn> SubOperate<'db> for PluginVersionOperate<'db, Conn> {
     type Parent = CeobeDatabaseOperate<'db, Conn>;
 
-    fn from_parent(parent: &'db Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
 impl<'db, Conn> Deref for PluginVersionOperate<'db, Conn> {
     type Target = Conn;
 
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 #[derive(Debug, ThisError, StatusErr)]

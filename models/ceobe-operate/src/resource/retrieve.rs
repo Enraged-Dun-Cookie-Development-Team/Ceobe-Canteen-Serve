@@ -1,16 +1,18 @@
 use db_ops_prelude::{
+    futures::{future::join, StreamExt, TryStreamExt},
     get_connect::{GetDatabaseTransaction, TransactionOps},
     get_zero_data_time,
     sea_orm::{
         ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait,
         QueryFilter, QuerySelect, StreamTrait,
-    }, futures::{StreamExt, TryStreamExt, future::join}, tap::Pipe,
+    },
+    tap::Pipe,
 };
 use tracing::{info, instrument};
 
 use super::{
-    all_available, countdown, Column, Entity, OperateError, ResourceOperate,OperateResult,
-    ResourceType,
+    all_available, countdown, Column, Entity, OperateError, OperateResult,
+    ResourceOperate, ResourceType,
 };
 
 impl<C> ResourceOperate<'_, C> {

@@ -1,5 +1,6 @@
-use resp_result::FlagRespResult;
 use ceobe_operate::resource;
+use resp_result::FlagRespResult;
+
 use crate::error_generate;
 
 error_generate! {

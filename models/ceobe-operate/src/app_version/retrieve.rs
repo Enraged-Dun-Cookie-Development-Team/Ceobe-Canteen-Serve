@@ -11,7 +11,7 @@ use db_ops_prelude::{
 use tracing::{info, instrument};
 
 use super::{
-    AppVersionOperate, OperateError, OperateResult, {Column, Entity, Model},
+    AppVersionOperate, Column, Entity, Model, OperateError, OperateResult,
 };
 
 impl<'c, C> AppVersionOperate<'c, C>

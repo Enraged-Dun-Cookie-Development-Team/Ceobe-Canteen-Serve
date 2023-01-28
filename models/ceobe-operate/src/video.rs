@@ -1,35 +1,29 @@
 use std::ops::Deref;
 
-use crate::CeobeDatabaseOperate;
+pub use db_ops_prelude::sql_models::ceobe_operation::video::*;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
     sea_orm::DbErr,
     StatusErr, ThisError,
 };
-pub use db_ops_prelude::sql_models::ceobe_operation::video::*;
 
+use crate::CeobeDatabaseOperate;
 
 mod retrieve;
 mod update;
 
 pub struct VideoOperate<'s, Conn>(&'s Conn);
 
-
-
 impl<'s, Conn> SubOperate<'s> for VideoOperate<'s, Conn> {
     type Parent = CeobeDatabaseOperate<'s, Conn>;
 
-    fn from_parent(parent: &'s Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'s Self::Parent) -> Self { Self(parent) }
 }
 
 impl<'s, Conn> Deref for VideoOperate<'s, Conn> {
     type Target = Conn;
 
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 #[derive(Debug, ThisError, StatusErr)]
@@ -40,10 +34,6 @@ pub enum OperateError {
 
 type OperateResult<T> = Result<T, OperateError>;
 
-
-
 impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
-    pub fn video(&self) -> VideoOperate<'_, Conn> {
-        self.child()
-    }
+    pub fn video(&self) -> VideoOperate<'_, Conn> { self.child() }
 }

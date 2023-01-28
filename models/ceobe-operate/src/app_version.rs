@@ -20,9 +20,7 @@ where
 {
     type Target = C::Connect;
 
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 impl<'c, C> SubOperate<'c> for AppVersionOperate<'c, C>
@@ -60,7 +58,5 @@ type OperateResult<T> = Result<T, OperateError>;
 pub use db_ops_prelude::sql_models::ceobe_operation::app_version::*;
 
 impl<'db, Conn: GetDatabaseConnect> CeobeDatabaseOperate<'db, Conn> {
-    pub fn app_version(&self) -> AppVersionOperate<'_, Conn> {
-        self.child()
-    }
+    pub fn app_version(&self) -> AppVersionOperate<'_, Conn> { self.child() }
 }

@@ -1,11 +1,13 @@
-use db_ops_prelude::{sea_orm::{ConnectionTrait, ActiveModelTrait, EntityTrait}, chrono::NaiveDateTime};
+use db_ops_prelude::{
+    chrono::NaiveDateTime,
+    sea_orm::{ActiveModelTrait, ConnectionTrait, EntityTrait},
+};
 use tracing::info;
 
-use super::{Entity, ResourceOperate, Checked, OperateResult};
+use super::{Checked, Entity, OperateResult, ResourceOperate};
 impl<C> ResourceOperate<'_, C> {
     pub async fn create_new_resource_set(
-        db: &impl ConnectionTrait, resource: Checked,
-        now: NaiveDateTime,
+        db: &impl ConnectionTrait, resource: Checked, now: NaiveDateTime,
     ) -> OperateResult<()> {
         info!(
             newResource.allAvailable = ?resource.resource_all_available,

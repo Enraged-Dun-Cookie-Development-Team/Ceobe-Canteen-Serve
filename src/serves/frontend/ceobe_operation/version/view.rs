@@ -56,9 +56,7 @@ pub struct PluginVersionView {
 }
 
 impl From<SpareLink> for SpareLinkView {
-    fn from(SpareLink { url, msg }: SpareLink) -> Self {
-        Self(url, msg)
-    }
+    fn from(SpareLink { url, msg }: SpareLink) -> Self { Self(url, msg) }
 }
 
 impl From<DownloadResource> for DownloadView {

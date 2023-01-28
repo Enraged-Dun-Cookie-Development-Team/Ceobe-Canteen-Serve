@@ -1,15 +1,13 @@
 use std::ops::Deref;
 
-use db_ops_prelude::sea_orm::{ActiveModelTrait, IntoActiveModel};
-use db_ops_prelude::tap::{Pipe, Tap};
 use db_ops_prelude::{
-    get_connect::GetDatabaseConnect, sea_orm::ConnectionTrait,
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel},
+    tap::{Pipe, Tap},
 };
 use tracing::{info, instrument};
 
-use super::Checked;
-use super::AppVersionOperate;
-use super::{OperateError, OperateResult};
+use super::{AppVersionOperate, Checked, OperateError, OperateResult};
 impl<'c, C> AppVersionOperate<'c, C>
 where
     C: GetDatabaseConnect + 'c,

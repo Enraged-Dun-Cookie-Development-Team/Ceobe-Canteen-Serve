@@ -5,27 +5,23 @@ use db_ops_prelude::database_operates::{
     DatabaseOperate,
 };
 
-pub mod video;
-pub mod plugin_version;
-pub mod app_version;
-pub mod resource;
 pub mod announcement;
+pub mod app_version;
+pub mod plugin_version;
+pub mod resource;
+pub mod video;
 pub struct CeobeDatabaseOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for CeobeDatabaseOperate<'db, Conn> {
     type Target = Conn;
 
-    fn deref(&self) -> &Self::Target {
-        self.0
-    }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 impl<'db, Conn> SubOperate<'db> for CeobeDatabaseOperate<'db, Conn> {
     type Parent = DatabaseOperate<Conn>;
 
-    fn from_parent(parent: &'db Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
 pub trait ToCeobeOperation<C> {
@@ -33,7 +29,5 @@ pub trait ToCeobeOperation<C> {
 }
 
 impl<C> ToCeobeOperation<C> for DatabaseOperate<C> {
-    fn ceobe_operation(&self) -> CeobeDatabaseOperate<'_, C> {
-        self.child()
-    }
+    fn ceobe_operation(&self) -> CeobeDatabaseOperate<'_, C> { self.child() }
 }
