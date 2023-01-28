@@ -1,15 +1,7 @@
-use chrono::Local;
-use sea_orm::{ConnectionTrait, DbErr};
-use sql_connection::database_traits::get_connect::{
-    GetDatabaseTransaction, TransactionOps,
-};
-use tracing::{info, instrument};
+use db_ops_prelude::{get_connect::{GetDatabaseTransaction, TransactionOps}, sea_orm::{DbErr, ConnectionTrait}, chrono::Local};
+use tracing::{instrument, info};
 
-use super::{OperateError, ResourceOperate};
-use crate::ceobe_operation::resource::{
-    checkers::resource_data::CeobeOperationResource,
-    models::resource_type::ResourceType,
-};
+use super::{ResourceOperate, Checked, OperateResult, ResourceType};
 
 impl<'op, C> ResourceOperate<'op, C>
 where
@@ -24,8 +16,8 @@ where
         )
     )]
     pub async fn update_resource(
-        &'op self, resource: CeobeOperationResource,
-    ) -> Result<(), OperateError> {
+        &'op self, resource: Checked,
+    ) -> OperateResult<()> {
         let db = self.get_transaction().await?;
         let now = Local::now().naive_local();
 

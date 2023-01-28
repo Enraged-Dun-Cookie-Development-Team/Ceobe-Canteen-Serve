@@ -1,33 +1,28 @@
-use futures::{future::join, StreamExt, TryStreamExt};
-use sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
-    QuerySelect, StreamTrait,
+use db_ops_prelude::{
+    get_connect::{GetDatabaseTransaction, TransactionOps},
+    get_zero_data_time,
+    sea_orm::{
+        ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait,
+        QueryFilter, QuerySelect, StreamTrait,
+    }, futures::{StreamExt, TryStreamExt, future::join}, tap::Pipe,
 };
-use sql_connection::database_traits::get_connect::{
-    GetDatabaseTransaction, TransactionOps,
-};
-use tap::Pipe;
 use tracing::{info, instrument};
 
-use super::{OperateError, ResourceOperate};
-use crate::{
-    ceobe_operation::resource::models::{
-        model_resource::{self, Column, Countdown, ResourceAllAvailable},
-        resource_type::ResourceType,
-    },
-    get_zero_data_time,
+use super::{
+    all_available, countdown, Column, Entity, OperateError, ResourceOperate,OperateResult,
+    ResourceType,
 };
 
 impl<C> ResourceOperate<'_, C> {
     #[instrument(ret, skip_all)]
     pub async fn get_resource_all_available<'db, D>(
         db: &'db D,
-    ) -> Result<ResourceAllAvailable, OperateError>
+    ) -> OperateResult<all_available::Model>
     where
         D: ConnectionTrait + StreamTrait,
     {
         // finding raa
-        let mut resp_stream = model_resource::Entity::find()
+        let mut resp_stream = Entity::find()
             .filter(
                 Condition::all()
                     .add(Column::Ty.eq(ResourceType::ResourceAllAvailable))
@@ -39,7 +34,7 @@ impl<C> ResourceOperate<'_, C> {
             .column(Column::CreateAt)
             .column(Column::ModifyAt)
             .column(Column::DeleteAt)
-            .into_model::<ResourceAllAvailable>()
+            .into_model::<all_available::Model>()
             .stream(db)
             .await?;
 
@@ -58,17 +53,17 @@ impl<C> ResourceOperate<'_, C> {
     #[instrument(skip_all)]
     pub async fn get_all_countdown<'db, D>(
         db: &'db D,
-    ) -> Result<Vec<Countdown>, OperateError>
+    ) -> OperateResult<Vec<countdown::Model>>
     where
         D: ConnectionTrait + StreamTrait,
     {
-        let resp_stream = model_resource::Entity::find()
+        let resp_stream = Entity::find()
             .filter(
                 Condition::all()
                     .add(Column::Ty.eq(ResourceType::Countdown))
                     .add(Column::DeleteAt.eq(get_zero_data_time())),
             )
-            .into_model::<Countdown>()
+            .into_model::<countdown::Model>()
             .stream(db)
             .await?
             .try_collect::<Vec<_>>()
@@ -90,9 +85,9 @@ where
             resource.all_available
         )
     )]
-    pub async fn get<F, T>(&'op self, map: F) -> Result<T, OperateError>
+    pub async fn get<F, T>(&'op self, map: F) -> OperateResult<T>
     where
-        F: FnOnce(ResourceAllAvailable, Vec<Countdown>) -> T,
+        F: FnOnce(all_available::Model, Vec<countdown::Model>) -> T,
     {
         let db = self.get_transaction().await?;
         let (raa, countdown) = join(

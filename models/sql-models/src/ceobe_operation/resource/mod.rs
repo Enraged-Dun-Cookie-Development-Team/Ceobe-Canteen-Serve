@@ -1,6 +1,5 @@
 mod checkers;
 mod models;
-mod operate;
 
 pub use checkers::{
     resource_data::{
@@ -35,14 +34,3 @@ pub use models::{
     model_resource::{ActiveModel, Column, Entity, Model, Relation},
     resource_type::ResourceType,
 };
-pub use operate::{OperateError, ResourceOperate as Operate};
-use sql_connection::database_traits::{
-    database_operates::sub_operate::SuperOperate,
-    get_connect::GetDatabaseConnect,
-};
-
-use super::SqlCeobeOperation;
-
-impl<'c, C: GetDatabaseConnect + 'static> SqlCeobeOperation<'c, C> {
-    pub fn resource(&'c self) -> Operate<'c, C> { self.child() }
-}
