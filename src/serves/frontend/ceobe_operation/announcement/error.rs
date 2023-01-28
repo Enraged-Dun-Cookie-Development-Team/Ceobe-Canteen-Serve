@@ -1,6 +1,5 @@
-use orm_migrate::sql_models::ceobe_operation::announcement;
 use resp_result::FlagRespResult;
-
+use ceobe_operate::announcement;
 use crate::error_generate;
 
 error_generate! {

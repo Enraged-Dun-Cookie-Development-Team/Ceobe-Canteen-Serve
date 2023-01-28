@@ -1,7 +1,6 @@
 use axum::extract::rejection::JsonRejection;
-use orm_migrate::sql_models::ceobe_operation::app_version;
 use resp_result::RespResult;
-
+use ceobe_operate::app_version;
 use crate::error_generate;
 
 error_generate! {

@@ -1,5 +1,5 @@
-use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
-    models::SpareLink, DownloadResource, PluginVersion,
+use ceobe_operate::plugin_version::{
+    DownloadResource, PluginVersion, SpareLink,
 };
 use orm_migrate::sql_models::ceobe_operation::app_version;
 use serde::{Deserialize, Serialize};
@@ -56,7 +56,9 @@ pub struct PluginVersionView {
 }
 
 impl From<SpareLink> for SpareLinkView {
-    fn from(SpareLink { url, msg }: SpareLink) -> Self { Self(url, msg) }
+    fn from(SpareLink { url, msg }: SpareLink) -> Self {
+        Self(url, msg)
+    }
 }
 
 impl From<DownloadResource> for DownloadView {

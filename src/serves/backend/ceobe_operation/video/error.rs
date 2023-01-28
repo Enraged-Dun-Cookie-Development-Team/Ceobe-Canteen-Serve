@@ -1,9 +1,8 @@
 use std::string::FromUtf8Error;
 
 use axum::extract::rejection::{JsonRejection, QueryRejection};
-use orm_migrate::sql_models::ceobe_operation::video;
 use resp_result::RespResult;
-
+use ceobe_operate::video;
 use crate::{error_generate, utils::user_authorize::error::AuthError};
 
 error_generate! {

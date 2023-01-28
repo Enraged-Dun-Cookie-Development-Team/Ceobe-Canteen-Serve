@@ -1,10 +1,11 @@
+use ceobe_operate::ToCeobeOperation;
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::{announcement, ToSqlCeobeOperation},
+    sql_models::ceobe_operation::{announcement},
 };
 use resp_result::resp_try;
 use tracing::instrument;

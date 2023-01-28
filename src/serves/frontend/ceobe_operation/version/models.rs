@@ -1,11 +1,7 @@
 use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
-use mongo_migration::mongo_models::ceobe_operation::plugin_version::{
-    check::{
-        version_checker::VersionChecker as PluginVersionChecker,
-        CheckError as PluginCheckError,
-    },
-    models::Version,
-};
+
+use ceobe_operate::plugin_version::{version,self};
+
 use orm_migrate::sql_models::ceobe_operation::app_version;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -33,16 +29,16 @@ pub type OptionAppVersionCheckerPretreat =
 /// 用于插件版本请求参数
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct PluginVersion {
-    pub version: Option<Version>,
+    pub version: Option<version::Checked>,
 }
 #[checker::check_gen(
     uncheck = PluginVersionUncheck,
     checked = PluginVersion,
-    error = PluginCheckError
+    error = plugin_version::CheckError
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct OptionPluginVersionChecker {
-    pub version: OptionChecker<PluginVersionChecker>,
+    pub version: OptionChecker<version::Checker>,
 }
 
 pub type OptionPluginVersionCheckerPretreat =

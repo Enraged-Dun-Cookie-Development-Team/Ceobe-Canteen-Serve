@@ -1,7 +1,8 @@
+use ceobe_operate::ToCeobeOperation;
 use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::{app_version, ToSqlCeobeOperation},
+    sql_models::ceobe_operation::{app_version},
 };
 use resp_result::resp_try;
 use tracing::instrument;

@@ -1,6 +1,5 @@
-use orm_migrate::sql_models::ceobe_operation::video;
 use resp_result::FlagRespResult;
-
+use ceobe_operate::video;
 use crate::error_generate;
 
 error_generate! {

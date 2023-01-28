@@ -1,3 +1,4 @@
+use ceobe_operate::ToCeobeOperation;
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
@@ -6,7 +7,6 @@ use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
     sql_models::ceobe_operation::{
         video::{self, bv::query::Checked as BvQuery},
-        ToSqlCeobeOperation,
     },
 };
 use reqwest::Url;

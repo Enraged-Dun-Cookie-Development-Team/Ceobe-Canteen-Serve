@@ -1,14 +1,9 @@
 use std::time::Duration;
 
+use ceobe_operate::ToCeobeOperation;
 use checker::CheckExtract;
-use mongo_migration::{
-    mongo_connection::MongoConnect,
-    mongo_models::ceobe_operation::plugin_version::operates::PluginDbOperation,
-};
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::ToSqlCeobeOperation,
-};
+use mongo_migration::mongo_connection::MongoDatabaseOperate;
+use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
@@ -60,7 +55,7 @@ impl CeobeOperationVersionFrontend {
     // 获取插件端对应版本信息
     #[instrument(skip(db, modify))]
     pub async fn plugin_version(
-        db: MongoConnect,
+        db: MongoDatabaseOperate,
         CheckExtract(version): OptionPluginVersionCheckerPretreat,
         mut modify: modify_cache::CheckModify,
     ) -> FlagVersionRespResult<PluginVersionView> {
@@ -72,13 +67,15 @@ impl CeobeOperationVersionFrontend {
         resp_try(async {
             let (data, extra) = modify.check_modify(match version {
                 Some(version) => {
-                    PluginDbOperation::get_plugin_version_info_by_version(
-                        &db, version,
-                    )
-                    .await
+                    db.ceobe_operation()
+                        .plugin_version()
+                        .get_info_by_version(version)
+                        .await
                 }
                 None => {
-                    PluginDbOperation::get_newest_plugin_version_info(&db)
+                    db.ceobe_operation()
+                        .plugin_version()
+                        .get_newest_info()
                         .await
                 }
             }?)?;

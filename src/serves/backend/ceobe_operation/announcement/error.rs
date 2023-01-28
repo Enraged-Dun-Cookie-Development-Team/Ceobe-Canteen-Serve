@@ -1,6 +1,6 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
-use orm_migrate::sql_models::ceobe_operation::announcement;
 use resp_result::RespResult;
+use ceobe_operate::announcement;
 
 use crate::{error_generate, utils::user_authorize::error::AuthError};
 
