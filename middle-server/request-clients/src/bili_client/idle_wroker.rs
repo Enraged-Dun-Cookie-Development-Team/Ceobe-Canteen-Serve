@@ -3,7 +3,7 @@ use std::time::Duration;
 use bytes::Bytes;
 use futures::TryFutureExt;
 use reqwest::Client;
-use sql_models::ceobe_operation::video::checkers::bv::Bv;
+use sql_models::ceobe_operation::video::bv;
 use tokio::{
     spawn,
     sync::{mpsc, oneshot},
@@ -19,7 +19,7 @@ use url::Url;
 pub(super) async fn idle_client(
     base_url: Url, client: Client,
     mut recv: mpsc::Receiver<(
-        Bv,
+        bv::Checked,
         oneshot::Sender<Result<Bytes, reqwest::Error>>,
     )>,
 ) {

@@ -3,7 +3,7 @@ use std::convert::Infallible;
 use axum_core::extract::{FromRef, FromRequestParts};
 use bytes::Bytes;
 use futures::future::ok;
-use sql_models::ceobe_operation::video::checkers::bv::Bv;
+use sql_models::ceobe_operation::video::bv;
 use tokio::sync::{mpsc, oneshot};
 
 use crate::error::ChannelClose;
@@ -12,7 +12,7 @@ use crate::error::ChannelClose;
 #[derive(Debug, Clone)]
 pub struct QueryBiliVideo {
     sender:
-        mpsc::Sender<(Bv, oneshot::Sender<Result<Bytes, reqwest::Error>>)>,
+        mpsc::Sender<(bv::Checked, oneshot::Sender<Result<Bytes, reqwest::Error>>)>,
 }
 
 impl<S> FromRequestParts<S> for QueryBiliVideo
@@ -43,7 +43,7 @@ where
 impl QueryBiliVideo {
     pub(super) fn new(
         sender: mpsc::Sender<(
-            Bv,
+            bv::Checked,
             oneshot::Sender<Result<Bytes, reqwest::Error>>,
         )>,
     ) -> Self {
@@ -59,7 +59,7 @@ impl QueryBiliVideo {
     /// 1. 独立协程管道非正常关闭
     /// 2. [reqwest::Error] 请求异常
     pub async fn fetch(
-        &self, bv: Bv,
+        &self, bv: bv::Checked,
     ) -> Result<Result<Bytes, reqwest::Error>, ChannelClose> {
         let (rx, tx) = oneshot::channel();
         // 将bv 和 回调 一起发送

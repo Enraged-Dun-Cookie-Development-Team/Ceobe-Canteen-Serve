@@ -20,8 +20,8 @@ use configs::{
     CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
-use request_clients::bili_client::BiliClientPrepare;
 use general_request_client::axum_starter::RequestClientPrepare;
+use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,

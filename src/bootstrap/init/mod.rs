@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use axum_macros::FromRef;
 use axum_starter::FromStateCollector;
-use request_clients::bili_client::QueryBiliVideo;
 use ceobe_qiniu_upload::QiniuBaseUrl;
 use general_request_client::client::RequestClient;
+use request_clients::bili_client::QueryBiliVideo;
 use scheduler_notifier::SchedulerUrl;
 
 pub mod component_init;
