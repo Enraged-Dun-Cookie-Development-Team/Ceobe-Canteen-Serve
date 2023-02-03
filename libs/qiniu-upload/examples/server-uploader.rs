@@ -13,10 +13,11 @@ use axum_starter::{
     PrepareRouteEffect, ServeAddress, ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    GetBucket, PayloadLocal, QiniuUpload, QiniuUploader, SecretConfig,
-    Uploader,
+    BaseUrl, GetBucket, PayloadLocal, QiniuBaseUrl, QiniuUpload,
+    QiniuUploader, SecretConfig, Uploader,
 };
 use log::SetLoggerError;
+use url::Url;
 #[tokio::main]
 async fn main() {
     let path = std::fs::read_to_string("./qiniu_example.json")
@@ -41,6 +42,7 @@ async fn main() {
 #[derive(Debug, FromStateCollector, FromRef, Clone)]
 struct State {
     uploader: Arc<Uploader>,
+    qiniu_base: QiniuBaseUrl,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -48,6 +50,12 @@ struct Config {
     secret: String,
     access: String,
     buckets: String,
+}
+
+impl BaseUrl for Config {
+    fn get_base_url(&self) -> Url {
+        "http://static.forzenstring.top/".parse().unwrap()
+    }
 }
 
 impl LoggerInitialization for Config {
@@ -82,6 +90,7 @@ where
     B: Send + Sync + 'static + HttpBody,
     S: Send + Sync + 'static + Clone,
     Arc<Uploader>: FromRef<S>,
+    QiniuBaseUrl: FromRef<S>,
     axum::body::Bytes: From<<B as HttpBody>::Data>,
     <B as HttpBody>::Error: std::error::Error + Send + Sync,
 {

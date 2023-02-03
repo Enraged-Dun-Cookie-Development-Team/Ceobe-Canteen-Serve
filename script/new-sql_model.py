@@ -23,29 +23,9 @@ use thiserror::Error;
 use status_err::{ErrPrefix, StatusErr, HttpCode};
 pub use CheckError::*;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, StatusErr)]
 pub enum CheckError {
     
-}
-
-impl StatusErr for CheckError {
-    fn prefix(&self) -> ErrPrefix {
-        match self {
-            
-        }
-    }
-
-    fn code(&self) -> u16 {
-        match self {
-            
-        }
-    }
-
-    fn http_code(&self) -> HttpCode {
-        match self {
-            
-        }
-    }
 }
 """
 checker_template = """
@@ -60,12 +40,14 @@ pub struct %s {
     
 }
 
-check_obj! {
-    #[derive(Debug,serde::Deserialize)]
-    pub struct %sUncheck = %sChecker > %s{
+#[check_obj(
+    uncheck = %sUncheck,
+    checked = %s,
+    error = CheckError
+)]
+#[derive(Debug,serde::Deserialize)]
+pub struct %sChecker {
         
-    }
-    err: CheckError
 }
 
 impl model_%s::ActiveModel {
@@ -80,27 +62,13 @@ pub struct %sSqlOperate;
 
 pub use OperateError::*;
 
-#[derive(Debug, Error)]
+#[derive(Debug, Error, StatusErr)]
 pub enum OperateError {
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
 }
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
-
-impl StatusErr for OperateError {
-    fn prefix(&self) -> ErrPrefix {
-        match self {
-            Db(inner) => inner.prefix(),
-        }
-    }
-
-    fn code(&self) -> u16 {
-        match self {
-            Db(inner) => inner.code(),
-        }
-    }
-}
 """
 operate_template = """
 use super::%sSqlOperate;
@@ -424,7 +392,7 @@ class OperateMod(object):
             self.need_add_mods.append(mod_name)
 
 
-    def add_operate(self, operations="curd"):
+    def add_operate(self, operations="curdv"):
         if "c" in operations:
             self.add_mod("create")
         if "u" in operations:
@@ -433,6 +401,8 @@ class OperateMod(object):
             self.add_mod("retrieve")
         if "d" in operations:
             self.add_mod("delete")
+        if "d" in operations:
+            self.add_mod("verify")
     
     def create_mod(self):
         if not os.path.exists(self.path):
@@ -484,7 +454,7 @@ if __name__ == '__main__':
 
     if len(operates) == 0:
         print(
-            f"Using like `python {sys.argv[0]} \"<path1>/.../<path1>/<model_name> <curd>\"")
+            f"Using like `python {sys.argv[0]} \"<path1>/.../<path1>/<model_name> <curdv>\"")
         sys.exit(1)
 
     rs_lib = RustLib(sql_model_dir)

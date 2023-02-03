@@ -28,7 +28,7 @@ import pathlib
 import sys
 import re
 
-mod_patten = re.compile(r'(?:pub)? mod ([a-zA-Z_][a-zA-Z0-9_]*);')
+mod_patten = re.compile(r'(?:pub )?mod ([a-zA-Z_][a-zA-Z0-9_]*);')
 migrate_patten = re.compile(r'crate::migrate_group!\[([\n\sa-z_:A-Z0-9]+)(?=\n\s+])')
 
 
@@ -61,7 +61,7 @@ class RustLib(object):
             if rs_mod not in exist_mod:
                 vec.append(f"mod {rs_mod};")
         
-        add_mods = '\n'.join(vec)+"\n"
+        add_mods = '\n'.join(vec) + "\n" if vec else ""
         self.file = f"{add_mods}{self.file}"
         
         

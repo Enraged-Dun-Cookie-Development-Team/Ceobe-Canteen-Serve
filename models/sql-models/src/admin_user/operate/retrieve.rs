@@ -1,6 +1,6 @@
 use std::{fmt::Debug, ops::Deref};
 
-use page_size::{database::OffsetLimit, request::PageSize};
+use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{
     sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
     EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
@@ -115,7 +115,7 @@ impl UserSqlOperate {
     #[instrument(skip(db))]
     /// 分页获取用户列表
     pub async fn find_user_list<'db, D>(
-        db: &'db D, page_size: PageSize,
+        db: &'db D, page_size: Paginator,
     ) -> OperateResult<Vec<user::UserList>>
     where
         D: GetDatabaseConnect<Error = DbErr> + 'db,
@@ -131,7 +131,7 @@ impl UserSqlOperate {
             .column(user::Column::Id)
             .column(user::Column::Username)
             .column(user::Column::Auth)
-            .offset_limit(page_size)
+            .with_pagination(page_size)
             .into_model::<user::UserList>()
             .all(db)
             .await?)

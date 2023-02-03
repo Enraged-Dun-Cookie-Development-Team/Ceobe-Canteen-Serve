@@ -1,5 +1,6 @@
 pub mod admin_user;
 pub mod ceobe_operation;
+pub mod fetcher;
 
 use std::pin::Pin;
 

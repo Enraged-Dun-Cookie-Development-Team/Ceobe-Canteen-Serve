@@ -32,7 +32,7 @@ where
     Ok(())
 }
 
-// 获取redis数据库
+/// 获取redis数据库
 pub fn get_redis_client() -> &'static ConnectionManager {
     REDIS_DATABASE_CLIENT.get().expect("Redis 数据库连接未建立")
 }

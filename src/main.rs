@@ -7,7 +7,7 @@ use axum_starter::ServerPrepare;
 use bootstrap::{
     init::{
         component_init::{BackendAuthConfig, RResultConfig},
-        db_init::{MongoDbConnect, MysqlDbConnect},
+        db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
     midllewares::tracing_request::tracing_request,
@@ -15,11 +15,14 @@ use bootstrap::{
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, qiniu_secret::QiniuUploadConfig,
-    resp_result_config::RespResultConfig, GlobalConfig, CONFIG_FILE_JSON,
-    CONFIG_FILE_TOML, CONFIG_FILE_YAML,
+    resp_result_config::RespResultConfig,
+    schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
+    CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use request_clients::bili_client::BiliClientPrepare;
+use general_request_client::axum_starter::RequestClientPrepare;
+use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
@@ -63,12 +66,15 @@ async fn main_task() {
         // components
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
+        .prepare_state(RequestClientPrepare)
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
         .prepare_state(BiliClientPrepare)
+        .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
         // database
         .prepare_concurrent(|set| {
-            set.join_state(MysqlDbConnect).join_state(MongoDbConnect)
-            // .join_state(RedisDbConnect)
+            set.join_state(MysqlDbConnect)
+                .join_state(MongoDbConnect)
+                .join_state(RedisDbConnect)
         })
         // router
         .prepare_route(RouteV1)

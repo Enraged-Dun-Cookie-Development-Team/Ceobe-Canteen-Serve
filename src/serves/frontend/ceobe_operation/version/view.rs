@@ -9,7 +9,7 @@ use crate::models::{
     sql::app_version::models::model_app_version,
 };
 
-// app版本
+/// app版本
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct AppVersionView {
     pub version: String,
@@ -18,7 +18,7 @@ pub struct AppVersionView {
     pub description: String,
 }
 
-// app版本转换
+/// app版本转换
 impl From<model_app_version::Model> for AppVersionView {
     fn from(
         model_app_version::Model {
@@ -38,7 +38,7 @@ impl From<model_app_version::Model> for AppVersionView {
     }
 }
 
-// 插件版本
+/// 插件版本
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SpareLinkView(pub Url, pub String);
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
