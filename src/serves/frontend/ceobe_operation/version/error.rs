@@ -1,19 +1,19 @@
 use axum::extract::rejection::QueryRejection;
+use ceobe_operate;
+use mongo_migration::mongo_models::ceobe_operation::plugin_version;
+use orm_migrate::sql_models::ceobe_operation::app_version;
 use resp_result::FlagRespResult;
 
-use crate::{
-    error_generate,
-    models::{mongo::plugin_version, sql::app_version},
-};
+use crate::error_generate;
 
 error_generate! {
     pub CeobeOperationVersionError
 
-    AppCheck = app_version::checkers::CheckError
-    PluginCheck = plugin_version::check::CheckError
+    AppCheck = app_version::CheckError
+    PluginCheck = plugin_version::CheckError
     Query = QueryRejection
-    DbOperate = app_version::operate::OperateError
-    MongoDbError = plugin_version::operates::OperateError
+    DbOperate = ceobe_operate::app_version::OperateError
+    MongoDbError = ceobe_operate::plugin_version::OperateError
     ModifyVerify = modify_cache::Error
 }
 

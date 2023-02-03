@@ -35,7 +35,7 @@ pub struct CeobeOpAnnouncementChecker {
 }
 
 impl model_announcement::ActiveModel {
-    pub(in crate::ceobe_operation::announcement) fn from_announcement_data_with_order(
+    pub fn from_announcement_data_with_order(
         CeobeOpAnnouncement {
             start_time,
             over_time,

@@ -44,7 +44,7 @@ pub struct CeobeOpVideoChecker {
 }
 
 impl model_video::ActiveModel {
-    pub(in crate::ceobe_operation::video) fn from_video_data_with_order(
+    pub fn from_video_data_with_order(
         CeobeOpVideo {
             bv,
             start_time,
@@ -69,7 +69,7 @@ impl model_video::ActiveModel {
         }
     }
 
-    pub(in crate::ceobe_operation::video) fn update_with_video_and_order(
+    pub fn update_with_video_and_order(
         &mut self,
         CeobeOpVideo {
             bv: _,

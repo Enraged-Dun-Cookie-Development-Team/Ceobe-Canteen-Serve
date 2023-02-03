@@ -1,26 +1,23 @@
-use sea_orm::{
-    sea_query, ConnectionTrait, DbErr, EntityTrait, IntoActiveModel,
-};
+use sea_orm::{sea_query, ConnectionTrait, EntityTrait, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
-use super::{FetcherGlobalConfigSqlOperate, OperateResult};
+use super::{Global, OperateResult};
 use crate::fetcher::global_config::{
     checkers::global_config_data::FetcherGlobalConfig,
     models::model_global_config::{Column, Entity},
 };
-
-impl FetcherGlobalConfigSqlOperate {
+impl<'c, C> Global<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect: ConnectionTrait,
+{
     // 创建或者更新蹲饼器全局配置
     #[instrument(ret, skip_all)]
-    pub async fn create_or_update<'db, D>(
-        db: &'db D, configs: impl IntoIterator<Item = FetcherGlobalConfig>,
-    ) -> OperateResult<()>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait,
-    {
-        let db = db.get_connect()?;
+    pub async fn create_or_update(
+        &self, configs: impl IntoIterator<Item = FetcherGlobalConfig>,
+    ) -> OperateResult<()> {
+        let db = self.get_connect();
         // 转换configs成Vec<ActiveModel>
         let config_list =
             configs.into_iter().map(IntoActiveModel::into_active_model);

@@ -1,4 +1,4 @@
-use orm_migrate::sql_models::ceobe_operation::resource::models::model_resource;
+use orm_migrate::sql_models::ceobe_operation::resource::all_available;
 use serde::Serialize;
 
 use crate::utils::time_format::naive_date_time_format;
@@ -8,13 +8,13 @@ pub struct AllAvailable {
     start_time: String,
     over_time: String,
 }
-impl From<model_resource::ResourceAllAvailable> for AllAvailable {
+impl From<all_available::Model> for AllAvailable {
     fn from(
-        model_resource::ResourceAllAvailable {
+        all_available::Model {
             over_time,
             start_time,
             ..
-        }: model_resource::ResourceAllAvailable,
+        }: all_available::Model,
     ) -> Self {
         Self {
             start_time: naive_date_time_format(start_time),

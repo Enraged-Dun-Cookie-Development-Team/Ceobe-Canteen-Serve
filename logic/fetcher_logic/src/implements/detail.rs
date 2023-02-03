@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use checker::prefabs::post_checker::PostChecker;
-use redis::{AsyncCommands, RedisError};
+use redis::AsyncCommands;
 use redis_global::redis_key::fetcher::FetcherConfigKey;
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
@@ -11,10 +11,11 @@ use sql_models::{
                 FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
             },
             models::model_config::Model as FetcherConfigModel,
-            operate::FetcherConfigSqlOperate,
+            operate::Config,
         },
-        datasource_config::operate::FetcherDatasourceConfigSqlOperate,
-        platform_config::operate::FetcherPlatformConfigSqlOperate,
+        datasource_config::operate::Datasource,
+        platform_config::operate::Platform,
+        FetcherOperate,
     },
     sql_connection::{
         database_traits::get_connect::{
@@ -39,10 +40,10 @@ impl FetcherConfigLogic {
         client: &'client mut C,
     ) -> LogicResult<i8>
     where
-        C: GetMutDatabaseConnect<Error = RedisError> + 'client,
-        C::Connect<'client>: AsyncCommands,
+        C: GetMutDatabaseConnect + 'client,
+        C::Connect: AsyncCommands,
     {
-        let con = client.mut_connect()?;
+        let con = client.mut_connect();
 
         // 判断redis key存在，如果不存在则默认没有蹲饼器
         let live_number = if con.exists(FetcherConfigKey::LIVE_NUMBER).await?
@@ -122,40 +123,32 @@ impl FetcherConfigLogic {
         let ctx = db.get_transaction().await?;
 
         let platform_exist =
-            FetcherPlatformConfigSqlOperate::exist_by_type_id(
-                &ctx, &platform,
-            )
-            .await?;
+            Platform::exist_by_type_id(&ctx, &platform).await?;
         let all_datasource_exist =
-            FetcherDatasourceConfigSqlOperate::all_exist_by_id(
-                &ctx,
-                all_data_sources_set,
-            )
-            .await?;
+            Datasource::all_exist_by_id(&ctx, all_data_sources_set).await?;
 
         // 指定平台与数据源均存在
         (platform_exist && all_datasource_exist)
             .true_or_with(|| LogicError::PlatformNotFound)?;
         // 清除指定 platform 下全部 config
-        FetcherConfigSqlOperate::delete_by_platform(&ctx, &platform).await?;
+        Config::delete_by_platform(&ctx, &platform).await?;
         // 创建config
-        FetcherConfigSqlOperate::create_multi(&ctx, upload_config).await?;
+        Config::create_multi(&ctx, upload_config).await?;
         ctx.submit().await?;
         notifier.notify_platform_update(platform).await;
         Ok(())
     }
 
     /// 获取蹲饼器配置
-    pub async fn get_by_platform<'db, D>(
-        db: &'db D, platform: &str,
+    pub async fn get_by_platform<D>(
+        db: FetcherOperate<'_, D>, platform: &str,
     ) -> LogicResult<Vec<BackEndFetcherConfig>>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait,
+        D: GetDatabaseConnect + 'static,
+        D::Connect: ConnectionTrait,
     {
         let configs_in_db =
-            FetcherConfigSqlOperate::find_all_by_platform(db, platform)
-                .await?;
+            db.config().find_all_by_platform(platform).await?;
 
         let mut configs =
             BTreeMap::<i8, HashMap<i8, HashMap<String, Group>>>::new();

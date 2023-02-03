@@ -72,8 +72,9 @@ redis = { version = "0.22", features = [
     "ahash",
     "connection-manager"
 ] }
-general-request-client = {path =  "./middle-server/general-request-client"}
+general-request-client = { path = "./middle-server/general-request-client" }
 scheduler-notifier = { version = "0.1.0", path = "middle-server/scheduler-notifier" }
+db-ops-prelude = { version = "0.1.0", path = "database/db-ops-prelude" }
 
 [dependencies]
 # Xss
@@ -126,7 +127,7 @@ uuid = { version = "1.2.2", features = ["v4"] }
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 general-request-client.workspace = true
 scheduler-notifier.workspace = true
-
+ceobe-operate = { version = "0.1.0", path = "models/ceobe-operate" }
 
 [dependencies.tokio]
 workspace = true

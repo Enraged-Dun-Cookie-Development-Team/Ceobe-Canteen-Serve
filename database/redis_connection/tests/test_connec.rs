@@ -38,7 +38,7 @@ async fn test_connect() {
 
     let mut redis = RedisConnect::from_static();
 
-    let conn = redis.mut_connect().unwrap();
+    let conn = redis.mut_connect();
     conn.set("key", "foo").await.expect("error")
 }
 #[tokio::test]
@@ -47,7 +47,7 @@ async fn test_set_timeout() {
 
     let mut redis = RedisConnect::from_static();
 
-    let conn = redis.mut_connect().unwrap();
+    let conn = redis.mut_connect();
     let _: Option<()> =
         conn.set_ex("outtime", "foo-out", 20).await.expect("Error");
     // read

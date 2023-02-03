@@ -1,16 +1,14 @@
 use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
 use sql_connection::{
-    database_traits::get_connect::{
-        GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
-    },
+    database_traits::get_connect::{GetDatabaseTransaction, TransactionOps},
     sea_orm::Set,
 };
 use tracing::{info, instrument};
 
-use super::{OperateResult, UserSqlOperate};
+use super::{OperateResult, UserOperate};
 use crate::admin_user::models::{auth_level::AuthLevel, user};
 
-impl UserSqlOperate {
+impl<'c, C> UserOperate<'c, C> {
     pub async fn add_user_with_encoded_password_db(
         username: String, encoded_pwd: String, auth_level: AuthLevel,
         db: &impl ConnectionTrait,
@@ -25,22 +23,23 @@ impl UserSqlOperate {
         user_active.save(db).await?;
         Ok(())
     }
-
-    #[instrument(skip(db), ret)]
-    pub async fn add_user_with_encoded_password<'db, D>(
-        db: &'db D, username: String, encoded_pwd: String,
+}
+impl<'c, C> UserOperate<'c, C>
+where
+    C: GetDatabaseTransaction<Error = DbErr>,
+    C::Transaction<'c>: ConnectionTrait,
+{
+    #[instrument(skip(self), ret)]
+    pub async fn add_with_encoded_password(
+        &'c self, username: String, encoded_pwd: String,
         auth_level: AuthLevel,
-    ) -> OperateResult<()>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + GetDatabaseTransaction + 'db,
-        D::Transaction<'db>: ConnectionTrait,
-    {
+    ) -> OperateResult<()> {
         info!(
             user.name = username,
             user.password.encoded = encoded_pwd,
             user.auth_level = ?auth_level
         );
-        let ctx = db.get_transaction().await?;
+        let ctx = self.get_transaction().await?;
 
         Self::add_user_with_encoded_password_db(
             username,

@@ -5,7 +5,6 @@ use std::convert::Infallible;
 
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
-pub use CheckError::*;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

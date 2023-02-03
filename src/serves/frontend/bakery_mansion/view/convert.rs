@@ -1,8 +1,9 @@
-use super::{ViewDaily, ViewInfo, ViewMansionWithTime};
-use crate::{
-    models::mongo::mansion::preludes::{Daily, Info, ModelMansion},
-    utils::time_format::{bson_date_time_format, naive_date_format},
+use mongo_migration::mongo_models::bakery::mansion::preludes::{
+    Daily, Info, ModelMansion,
 };
+
+use super::{ViewDaily, ViewInfo, ViewMansionWithTime};
+use crate::utils::time_format::{bson_date_time_format, naive_date_format};
 
 impl From<Info> for ViewInfo {
     fn from(Info { predict, forecast }: Info) -> Self {

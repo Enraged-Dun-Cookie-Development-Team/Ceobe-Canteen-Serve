@@ -12,4 +12,5 @@ get-connect = []
 
 [dependencies]
 axum-core = { workspace = true }
+futures.workspace = true
 http = { workspace = true }

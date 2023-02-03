@@ -34,7 +34,7 @@ mod bootstrap;
 mod configs;
 mod error;
 mod middleware;
-mod models;
+
 mod router;
 mod serves;
 mod utils;

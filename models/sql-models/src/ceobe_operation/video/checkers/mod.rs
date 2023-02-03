@@ -4,7 +4,6 @@ pub mod video_data;
 
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
-pub use CheckError::*;
 
 #[derive(Debug, Error, PartialEq, Eq, StatusErr)]
 pub enum CheckError {

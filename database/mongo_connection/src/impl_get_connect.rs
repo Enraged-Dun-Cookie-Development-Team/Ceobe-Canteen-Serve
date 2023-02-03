@@ -7,7 +7,6 @@ use database_traits::get_connect::{
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    error,
     static_vars::{get_mongo_collection, get_mongo_database},
     CollectionGuard, DatabaseManage, MongoDbError,
 };
@@ -37,12 +36,9 @@ impl<S: Send + Sync> FromRequestParts<S> for MongoConnect {
 }
 
 impl GetDatabaseConnect for MongoConnect {
-    type Connect<'s> = DatabaseManage;
-    type Error = error::MongoDbError;
+    type Connect = DatabaseManage;
 
-    fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error> {
-        Ok(get_mongo_database())
-    }
+    fn get_connect(&self) -> &Self::Connect { get_mongo_database() }
 }
 
 impl<C> GetDatabaseCollection<C> for MongoConnect
@@ -50,6 +46,7 @@ where
     C: Serialize + for<'de> Deserialize<'de> + 'static,
 {
     type CollectGuard<'s> = CollectionGuard<C>;
+    type Error = MongoDbError;
 
     fn get_collection(&self) -> Result<Self::CollectGuard<'_>, Self::Error> {
         get_mongo_collection()
@@ -57,8 +54,12 @@ where
 }
 
 pub trait MongoDbCollectionTrait<'db, T>:
-    GetDatabaseConnect<Error = MongoDbError>
-    + GetDatabaseCollection<T, CollectGuard<'db> = CollectionGuard<T>>
+    GetDatabaseConnect
+    + GetDatabaseCollection<
+        T,
+        Error = MongoDbError,
+        CollectGuard<'db> = CollectionGuard<T>,
+    >
 where
     Self: 'static,
     T: Serialize + for<'de> Deserialize<'de> + 'static,
@@ -68,8 +69,11 @@ where
 impl<'db, D, T> MongoDbCollectionTrait<'db, T> for D
 where
     T: Serialize + for<'de> Deserialize<'de> + 'static,
-    Self: GetDatabaseConnect<Error = MongoDbError>
-        + GetDatabaseCollection<T, CollectGuard<'db> = CollectionGuard<T>>
-        + 'static,
+    Self: GetDatabaseConnect
+        + GetDatabaseCollection<
+            T,
+            Error = MongoDbError,
+            CollectGuard<'db> = CollectionGuard<T>,
+        > + 'static,
 {
 }

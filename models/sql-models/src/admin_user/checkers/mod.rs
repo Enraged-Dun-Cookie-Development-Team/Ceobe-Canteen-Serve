@@ -2,7 +2,6 @@ pub mod username;
 
 use status_err::StatusErr;
 use thiserror::Error;
-pub use CheckError::*;
 
 #[derive(Debug, Error, PartialEq, Eq, StatusErr)]
 pub enum CheckError {

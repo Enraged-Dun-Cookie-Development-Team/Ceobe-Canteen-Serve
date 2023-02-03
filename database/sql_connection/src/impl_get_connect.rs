@@ -43,18 +43,16 @@ impl<S> FromRequestParts<S> for SqlConnect {
 }
 
 impl GetDatabaseConnect for SqlConnect {
-    type Connect<'s> = DatabaseConnection;
-    type Error = DbErr;
+    type Connect = DatabaseConnection;
 
-    fn get_connect(&self) -> Result<&Self::Connect<'_>, Self::Error> {
-        Ok(get_sql_database())
-    }
+    fn get_connect(&self) -> &Self::Connect { get_sql_database() }
 }
 
 #[derive(Debug)]
 pub struct SqlTransaction(pub DatabaseTransaction);
 
 impl GetDatabaseTransaction for SqlConnect {
+    type Error = DbErr;
     type Transaction<'s> = SqlTransaction;
     type TransactionFuture<'s> =
         BoxedResultSendFuture<'s, SqlTransaction, DbErr>;

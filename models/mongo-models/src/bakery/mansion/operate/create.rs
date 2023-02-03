@@ -1,23 +1,23 @@
 use mongo_connection::MongoDbCollectionTrait;
 use tracing::{info, instrument, warn};
 
-use super::{MansionDataMongoOperate, OperateError, OperateResult};
+use super::{MansionOperate, OperateError, OperateResult};
 use crate::bakery::mansion::{checked::Mansion, preludes::ModelMansion};
 
-impl MansionDataMongoOperate {
+impl<'db, Db> MansionOperate<'db, Db>
+where
+    Db: MongoDbCollectionTrait<'db, ModelMansion>,
+{
     /// 新建饼学大厦
     /// params：mansion 大厦信息
-    #[instrument(skip(db), ret)]
-    pub async fn create_mansion_data<'db>(
-        db: &'db impl MongoDbCollectionTrait<'db, ModelMansion>,
-        mansion: Mansion,
-    ) -> OperateResult<()> {
+    #[instrument(skip(self), ret)]
+    pub async fn create(&'db self, mansion: Mansion) -> OperateResult<()> {
         info!(
             newMansion.id = %mansion.id,
             newMansion.description = mansion.description
         );
 
-        let collection = db.get_collection()?;
+        let collection = self.get_collection()?;
 
         // 判断mansion id是否已经存在
         let false = Self::is_exist_mansion_by_filter(

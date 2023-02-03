@@ -3,12 +3,12 @@ use checker::CheckExtract;
 use fetcher_logic::{implements::FetcherConfigLogic, view::OneIdReq};
 use futures::future;
 use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::fetcher::platform_config::{
-        models::model_platform_config::{
+    sql_connection::{SqlConnect, SqlDatabaseOperate},
+    sql_models::fetcher::{
+        platform_config::models::model_platform_config::{
             PlatformBasicInfo, PlatformHasDatasource,
         },
-        operate::FetcherPlatformConfigSqlOperate,
+        ToFetcherOperate,
     },
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
@@ -25,22 +25,22 @@ use crate::{
 
 impl FetcherConfigControllers {
     /// 分页获取平台列表
-    #[instrument(ret, skip(db))]
+    // #[instrument(ret, skip(db))]
     pub async fn get_platform_list(
-        db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
+        db: SqlDatabaseOperate, CheckExtract(page_size): PageSizePretreatment,
     ) -> PlatformConfigRResult<ListWithPageInfo<PlatformHasDatasource>> {
         resp_try(async {
             // 获取平台列表
             let platform_list =
-                FetcherConfigLogic::get_all_platform_having_datasource_with_paginator(
-                    &db, page_size,
+                FetcherConfigLogic::get_all_platform_having_datasource_with_paginator::<SqlConnect>(
+                    db.fetcher_operate(), page_size,
                 );
 
-            // 获取平台数量
-            let count = FetcherPlatformConfigSqlOperate::count_all(&db);
-            // 并发执行
-            let (platform_list, count) =
-                future::join(platform_list, count).await;
+                // 并发执行
+                let (platform_list, count) =
+                future::join(platform_list,
+                    // 获取平台数量
+                    db.fetcher_operate().platform().count_all()).await;
 
             let resp = platform_list?.with_page_info(page_size, count?);
 
@@ -52,10 +52,13 @@ impl FetcherConfigControllers {
     /// 创建一个平台配置
     #[instrument(ret, skip(db))]
     pub async fn create_platform_config(
-        db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
+        db: SqlDatabaseOperate,
+        CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            FetcherPlatformConfigSqlOperate::create(&db, platform_config)
+            db.fetcher_operate()
+                .platform()
+                .create(platform_config)
                 .await
         );
         Ok(()).into()
@@ -64,10 +67,13 @@ impl FetcherConfigControllers {
     /// 更新一个平台配置
     #[instrument(ret, skip(db))]
     pub async fn update_platform_config(
-        db: SqlConnect, CheckExtract(platform_config): FetcherPlatformCheck,
+        db: SqlDatabaseOperate,
+        CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            FetcherPlatformConfigSqlOperate::update(&db, platform_config)
+            db.fetcher_operate()
+                .platform()
+                .update(platform_config)
                 .await
         );
         Ok(()).into()
@@ -76,21 +82,21 @@ impl FetcherConfigControllers {
     /// 删除平台配置
     #[instrument(ret, skip(db))]
     pub async fn delete_platform_config(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         MapReject(body): MapReject<Json<OneIdReq>, PlatformConfigError>,
     ) -> PlatformConfigRResult<()> {
         let pid = body.id;
-        rtry!(FetcherPlatformConfigSqlOperate::delete_one(&db, pid).await);
+        rtry!(db.fetcher_operate().platform().delete_one(pid).await);
         Ok(()).into()
     }
 
     #[instrument(skip(db))]
     /// 获取全部平台列表
     pub async fn get_platform_all_list_with_basic_info(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
         Ok(rtry!(
-            FetcherPlatformConfigSqlOperate::find_all_basic_info(&db).await
+            db.fetcher_operate().platform().find_all_basic_info().await
         ))
         .into()
     }

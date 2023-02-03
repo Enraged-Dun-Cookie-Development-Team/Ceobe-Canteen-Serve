@@ -1,7 +1,7 @@
 mod all_available;
 mod countdown;
 
-use orm_migrate::sql_models::ceobe_operation::resource::models::model_resource;
+use orm_migrate::sql_models::ceobe_operation::resource;
 use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
@@ -11,19 +11,18 @@ pub struct Resource {
     countdown: Vec<Countdown>,
 }
 
-pub use all_available::AllAvailable;
-pub use countdown::Countdown;
+pub use self::{all_available::AllAvailable, countdown::Countdown};
 
 impl
     From<(
-        model_resource::ResourceAllAvailable,
-        Vec<model_resource::Countdown>,
+        resource::all_available::Model,
+        Vec<resource::countdown::Model>,
     )> for Resource
 {
     fn from(
         (raa, cd): (
-            model_resource::ResourceAllAvailable,
-            Vec<model_resource::Countdown>,
+            resource::all_available::Model,
+            Vec<resource::countdown::Model>,
         ),
     ) -> Self {
         Self {

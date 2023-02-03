@@ -9,11 +9,7 @@ use fetcher_logic::{
 };
 use futures::future;
 use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::fetcher::{
-        datasource_config::operate::FetcherDatasourceConfigSqlOperate,
-        platform_config::operate::FetcherPlatformConfigSqlOperate,
-    },
+    sql_connection::SqlDatabaseOperate, sql_models::fetcher::ToFetcherOperate,
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use resp_result::{resp_try, rtry, MapReject};
@@ -30,19 +26,17 @@ impl FetcherConfigControllers {
     /// 获取平台与数据源类型列表
     #[instrument(ret, skip(db))]
     pub async fn get_platform_and_datasource_list(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
     ) -> DatasourceConfigRResult<PlatformAndDatasourceArrayResp> {
         resp_try(async {
-            // 获取平台列表
-            let platform_list =
-                FetcherPlatformConfigSqlOperate::find_all(&db);
-
-            // 获取数据源数量
-            let datasource_list =
-                FetcherDatasourceConfigSqlOperate::find_all_type(&db);
             // 异步获取
-            let (platform_list, datasource_list) =
-                future::join(platform_list, datasource_list).await;
+            let (platform_list, datasource_list) = future::join(
+                // 获取数据源数量
+                db.fetcher_operate().platform().find_all(),
+                // 获取平台列表
+                db.fetcher_operate().datasource().find_all_type(),
+            )
+            .await;
 
             let resp = PlatformAndDatasourceArrayResp {
                 platform_list: platform_list?,
@@ -57,7 +51,8 @@ impl FetcherConfigControllers {
     /// 获取数据源列表
     #[instrument(ret, skip(db))]
     pub async fn get_datasource_list(
-        db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
+        db: SqlDatabaseOperate,
+        CheckExtract(page_size): PageSizePretreatment,
         MapReject(filter_cond): MapReject<
             Query<DatasourceListFilterCondReq>,
             DatasourceConfigError,
@@ -65,23 +60,19 @@ impl FetcherConfigControllers {
     ) -> DatasourceConfigRResult<ListWithPageInfo<DatasourceList>> {
         resp_try(async {
             // 获取数据源列表
-            let datasource_list =
-                FetcherDatasourceConfigSqlOperate::find_all_with_paginator(
-                    &db,
+            // 获取数据源数量
+            // 异步获取
+            let (datasource_list, count) = future::join(
+                db.fetcher_operate().datasource().find_all_with_paginator(
                     page_size,
                     filter_cond.platform.clone(),
                     filter_cond.datasource.clone(),
-                );
-
-            // 获取数据源数量
-            let count = FetcherDatasourceConfigSqlOperate::count(
-                &db,
-                filter_cond.platform,
-                filter_cond.datasource,
-            );
-            // 异步获取
-            let (datasource_list, count) =
-                future::join(datasource_list, count).await;
+                ),
+                db.fetcher_operate()
+                    .datasource()
+                    .count(filter_cond.platform, filter_cond.datasource),
+            )
+            .await;
 
             let datasource_list = datasource_list?
                 .into_iter()
@@ -98,7 +89,7 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db))]
     // #[axum::debug_handler]
     pub async fn create_datasource_config(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         resp_try(async {
@@ -115,11 +106,13 @@ impl FetcherConfigControllers {
     // 更新数据源配置
     #[instrument(ret, skip(db))]
     pub async fn update_datasource_config(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            FetcherDatasourceConfigSqlOperate::update(&db, datasource_config)
+            db.fetcher_operate()
+                .datasource()
+                .update(datasource_config)
                 .await
         );
         Ok(()).into()
@@ -128,7 +121,7 @@ impl FetcherConfigControllers {
     // 删除数据源配置
     #[instrument(ret, skip(db, notifier))]
     pub async fn delete_datasource_config(
-        db: SqlConnect, notifier: SchedulerNotifier,
+        db: SqlDatabaseOperate, notifier: SchedulerNotifier,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
@@ -148,18 +141,18 @@ impl FetcherConfigControllers {
     /// 获取数据源配置全列表(包含id、名字、config)
     #[instrument(ret, skip(db))]
     pub async fn get_datasource_name_list(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         MapReject(filter): MapReject<
             Query<PlatformFilterReq>,
             DatasourceConfigError,
         >,
     ) -> DatasourceConfigRResult<Vec<DatasourceWithNameResp>> {
         resp_try(async {
-            let list = FetcherDatasourceConfigSqlOperate::find_by_platform(
-                &db,
-                &filter.type_id,
-            )
-            .await?;
+            let list = db
+                .fetcher_operate()
+                .datasource()
+                .find_by_platform(&filter.type_id)
+                .await?;
             let resp = list.into_iter().map(Into::into).collect();
             Ok(resp)
         })

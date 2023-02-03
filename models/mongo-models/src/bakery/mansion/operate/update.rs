@@ -1,27 +1,29 @@
 use mongo_connection::MongoDbCollectionTrait;
 use tracing::{info, instrument, warn};
 
-use super::{MansionDataMongoOperate, OperateError, OperateResult};
+use super::{MansionOperate, OperateError, OperateResult};
 use crate::bakery::mansion::{
     checked::Mansion,
     preludes::{MansionId, ModelMansion},
 };
 
-impl MansionDataMongoOperate {
+impl<'db, Db> MansionOperate<'db, Db>
+where
+    Db: MongoDbCollectionTrait<'db, ModelMansion>,
+{
     /// 更新大厦
     /// mid: 原先大厦id
     /// mansion: 大厦信息
-    #[instrument(skip(db), ret)]
-    pub async fn update_mansion<'db>(
-        db: &'db impl MongoDbCollectionTrait<'db, ModelMansion>,
-        mid: MansionId, mansion: Mansion,
+    #[instrument(skip(self), ret)]
+    pub async fn update(
+        &'db self, mid: MansionId, mansion: Mansion,
     ) -> OperateResult<()> {
         info!(
             mansionUpdate.id = %mid,
             mansionUpdate.description = mansion.description
         );
 
-        let collection = db.get_collection()?;
+        let collection = self.get_collection()?;
         // 获取原先数据新增时间和修改时间
         let old_mansion_time =
             Self::get_mansion_time_by_id(&mid, &collection.with_mapping())

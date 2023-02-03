@@ -1,12 +1,13 @@
 use sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel};
+use sql_connection::database_traits::database_operates::NoConnect;
 use tracing::instrument;
 
-use super::{FetcherConfigSqlOperate, OperateResult};
+use super::{Config, OperateResult};
 use crate::fetcher::config::{
     checkers::config_data::FetcherConfig, models::model_config,
 };
 
-impl FetcherConfigSqlOperate {
+impl Config<'_, NoConnect> {
     #[instrument(skip(ctx, configs))]
     /// 新建单一平台蹲饼配置
     pub async fn create_multi(
