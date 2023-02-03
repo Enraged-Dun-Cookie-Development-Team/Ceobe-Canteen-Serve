@@ -11,8 +11,10 @@ use crate::error::ChannelClose;
 /// 获取bili 视频信息支持类型
 #[derive(Debug, Clone)]
 pub struct QueryBiliVideo {
-    sender:
-        mpsc::Sender<(bv::Checked, oneshot::Sender<Result<Bytes, reqwest::Error>>)>,
+    sender: mpsc::Sender<(
+        bv::Checked,
+        oneshot::Sender<Result<Bytes, reqwest::Error>>,
+    )>,
 }
 
 impl<S> FromRequestParts<S> for QueryBiliVideo
