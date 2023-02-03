@@ -1,12 +1,12 @@
 use checker::prefabs::{
     no_check::NoCheck, str_len_checker::StrMaxCharLenChecker,
 };
-use sea_orm::Set;
+use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 
 use super::{app_version_checker::AppVersionChecker, CheckError};
 use crate::{
-    ceobe_operation::app_version::models::model_app_version,
+    ceobe_operation::app_version::models::model_app_version::ActiveModel,
     get_now_naive_date_time,
 };
 
@@ -31,18 +31,16 @@ pub struct CeobeOperationAppVersionChecker {
     pub description: StrMaxCharLenChecker<String, 4096>,
 }
 
-impl model_app_version::ActiveModel {
-    // 新建app更新信息
-    pub(in crate::ceobe_operation::app_version) fn create_app_version(
-        CeobeOperationAppVersion {
+impl IntoActiveModel<ActiveModel> for CeobeOperationAppVersion {
+    fn into_active_model(self) -> ActiveModel {
+        let CeobeOperationAppVersion {
             version,
             force,
             last_force_version,
             description,
-        }: CeobeOperationAppVersion,
-    ) -> Self {
+        } = self;
         let now = get_now_naive_date_time();
-        Self {
+        ActiveModel {
             version: Set(version),
             force: Set(force),
             last_force_version: Set(last_force_version),
@@ -52,9 +50,11 @@ impl model_app_version::ActiveModel {
             ..Default::default()
         }
     }
+}
 
+impl ActiveModel {
     #[allow(dead_code)]
-    pub(in crate::ceobe_operation::app_version) fn update_app_version(
+    pub fn update_app_version(
         &mut self,
         CeobeOperationAppVersion {
             version,

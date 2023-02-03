@@ -1,20 +1,20 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, IntoActiveModel};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
-use super::{FetcherDatasourceConfigSqlOperate, OperateResult};
+use super::{Datasource, OperateResult};
 use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 
-impl FetcherDatasourceConfigSqlOperate {
+impl<'c, C> Datasource<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect: ConnectionTrait,
+{
     /// 更新数据配置到数据库
-    #[instrument(ret, skip(db))]
-    pub async fn update<'db, D>(
-        db: &'db D, config: FetcherDatasourceConfig,
-    ) -> OperateResult<()>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait,
-    {
+    #[instrument(ret, skip(self))]
+    pub async fn update(
+        &self, config: FetcherDatasourceConfig,
+    ) -> OperateResult<()> {
         info!(
             config.id = config.id,
             datasource.name = config.nickname,
@@ -22,7 +22,7 @@ impl FetcherDatasourceConfigSqlOperate {
             datasource.config = ?config.config
         );
 
-        let db = db.get_connect()?;
+        let db = self.get_connect();
 
         config.into_active_model().update(db).await?;
 

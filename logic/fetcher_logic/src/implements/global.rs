@@ -4,16 +4,18 @@ use checker::{
 };
 use serde_json::{Map, Value};
 use sql_models::{
-    fetcher::global_config::{
-        checkers::global_config_data::{
-            FetcherGlobalConfigChecker, FetcherGlobalConfigUncheck,
+    fetcher::{
+        global_config::{
+            checkers::global_config_data::{
+                FetcherGlobalConfigChecker, FetcherGlobalConfigUncheck,
+            },
+            models::model_global_config::Model,
         },
-        models::model_global_config::Model,
-        operate::FetcherGlobalConfigSqlOperate,
+        FetcherOperate,
     },
     sql_connection::{
         database_traits::get_connect::GetDatabaseConnect,
-        sea_orm::{ConnectionTrait, DbErr},
+        sea_orm::ConnectionTrait,
     },
 };
 
@@ -22,14 +24,15 @@ use crate::error::LogicResult;
 
 impl FetcherConfigLogic {
     /// 从数据库获取json的key和value，拼接成json格式返回
-    pub async fn get_global_configs<'db, D>(db: &'db D) -> LogicResult<Value>
+    pub async fn get_global_configs<D>(
+        db: FetcherOperate<'_, D>,
+    ) -> LogicResult<Value>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait,
+        D: GetDatabaseConnect + 'static,
+        D::Connect: ConnectionTrait,
     {
         // 获取数据库configs：Vec<Model>
-        let global_config_kv =
-            FetcherGlobalConfigSqlOperate::get_all(db).await?;
+        let global_config_kv = db.global().get_all().await?;
 
         let mut map = Map::with_capacity(global_config_kv.len());
         // 转成map格式
@@ -41,12 +44,12 @@ impl FetcherConfigLogic {
     }
 
     /// 接收来自controller的json格式
-    pub async fn set_global_config<'db, D>(
-        db: &'db D, config: Map<String, Value>,
+    pub async fn set_global_config<D>(
+        db: FetcherOperate<'_, D>, config: Map<String, Value>,
     ) -> LogicResult<()>
     where
-        D: GetDatabaseConnect<Error = DbErr> + 'static,
-        D::Connect<'db>: ConnectionTrait,
+        D: GetDatabaseConnect + 'static,
+        D::Connect: ConnectionTrait,
     {
         // 迭代map将<Key, Value>转Vec<{key, value}>， 并将value转字符串
         let vec = config.into_iter().map(|(key, value)| {
@@ -58,7 +61,7 @@ impl FetcherConfigLogic {
         // 验证传入数据库数据的合法性
         let configs =
             IntoIterChecker::<_,FetcherGlobalConfigChecker,Vec<_>>::lite_check(vec).await?;
-        FetcherGlobalConfigSqlOperate::create_or_update(db, configs).await?;
+        db.global().create_or_update(configs).await?;
         Ok(())
     }
 }

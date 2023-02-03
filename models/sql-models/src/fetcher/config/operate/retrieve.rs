@@ -1,25 +1,25 @@
 use sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait, QueryFilter,
+    ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
 };
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
-use super::{FetcherConfigSqlOperate, OperateResult};
+use super::{Config, OperateResult};
 use crate::fetcher::config::models::model_config::{self, Model};
 
-impl FetcherConfigSqlOperate {
-    #[instrument(skip(db))]
+impl<'c, C> Config<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect: ConnectionTrait,
+{
+    #[instrument(skip(self))]
     /// 获取单个平台下的全部蹲饼器配置
-    pub async fn find_all_by_platform<'db, D>(
-        db: &'db D, platform: &str,
-    ) -> OperateResult<Vec<Model>>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
+    pub async fn find_all_by_platform(
+        &self, platform: &str,
+    ) -> OperateResult<Vec<Model>> {
         info!(fetcherConfig.platform = platform,);
-        let db = db.get_connect()?;
+        let db = self.get_connect();
 
         Ok(model_config::Entity::find()
             .filter(model_config::Column::Platform.eq(platform))
@@ -32,19 +32,15 @@ impl FetcherConfigSqlOperate {
         })
     }
 
-    #[instrument(skip(db))]
+    #[instrument(skip(self))]
     /// 获取多个平台下的全部蹲饼器配置
-    pub async fn find_multi_platforms_config_list<'db, D>(
-        db: &'db D, platforms: Vec<String>,
-    ) -> OperateResult<Vec<Model>>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
+    pub async fn find_multi_platforms_config_list(
+        &self, platforms: Vec<String>,
+    ) -> OperateResult<Vec<Model>> {
         info!(
             fetcherConfig.platform.list = ?platforms,
         );
-        let db = db.get_connect()?;
+        let db = self.get_connect();
 
         // 用Or拼接多个平台条件
         let mut condition = Condition::any();

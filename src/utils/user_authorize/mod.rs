@@ -6,11 +6,10 @@ mod set_token;
 mod valid_token;
 
 use hmac::Hmac;
+use orm_migrate::sql_models::admin_user;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 pub use valid_token::decrypt_token;
-
-use crate::models::sql::models::user;
 
 crate::quick_struct! {
 
@@ -28,10 +27,10 @@ crate::quick_struct! {
     }
 }
 
-pub use orm_migrate::sql_models::admin_user::models::auth_level::AuthLevel;
+pub use orm_migrate::sql_models::admin_user::AuthLevel;
 
 /// 用户权限信息
-pub type AuthInfo = user::Model;
+pub type AuthInfo = admin_user::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where

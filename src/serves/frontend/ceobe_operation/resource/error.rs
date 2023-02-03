@@ -1,15 +1,13 @@
+use ceobe_operate::resource;
 use resp_result::FlagRespResult;
 
-use crate::{
-    error_generate,
-    models::sql::resource::{checkers::CheckError, operate::OperateError},
-};
+use crate::error_generate;
 
 error_generate! {
     pub ResourceError
 
-    Check = CheckError
-    DbOperate = OperateError
+    Check = resource::CheckError
+    DbOperate = resource::OperateError
     ModifyVerify = modify_cache::Error
 }
 

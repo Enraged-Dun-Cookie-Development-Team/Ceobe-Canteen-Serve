@@ -1,3 +1,5 @@
-use super::FetcherConfigSqlOperate;
+use sql_connection::database_traits::database_operates::NoConnect;
 
-impl FetcherConfigSqlOperate {}
+use super::Config;
+
+impl Config<'_, NoConnect> {}

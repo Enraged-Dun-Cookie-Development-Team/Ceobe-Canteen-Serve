@@ -4,7 +4,6 @@ pub mod resource_data;
 
 use status_err::StatusErr;
 use thiserror::Error;
-pub use CheckError::*;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

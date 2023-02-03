@@ -1,17 +1,12 @@
+use ceobe_operate::ToCeobeOperation;
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
 };
 use orm_migrate::{
-    sql_connection::SqlConnect,
+    sql_connection::SqlDatabaseOperate,
     sql_models::ceobe_operation::video::{
-        checkers::{
-            bv_arg_checker::{BvQuery, BvQueryChecker},
-            video_data::{
-                CeobeOpVideo, CeobeOpVideoChecker, CeobeOpVideoUncheck,
-            },
-        },
-        operate::CeobeOperationVideoSqlOperate,
+        self, bv::query::Checked as BvQuery,
     },
 };
 use reqwest::Url;
@@ -26,14 +21,10 @@ use super::{
 use crate::router::CeobeOperationVideo;
 
 type BvQueryCheck =
-    QueryCheckExtract<BvQueryChecker, CeobeOperationVideoError>;
+    QueryCheckExtract<video::bv::query::Checker, CeobeOperationVideoError>;
 
 type UpdateVideoCheck = JsonCheckExtract<
-    IntoIterChecker<
-        Vec<CeobeOpVideoUncheck>,
-        CeobeOpVideoChecker,
-        Vec<CeobeOpVideo>,
-    >,
+    IntoIterChecker<Vec<video::Uncheck>, video::Checker, Vec<video::Checked>>,
     CeobeOperationVideoError,
 >;
 
@@ -54,10 +45,15 @@ impl CeobeOperationVideo {
         .await
     }
 
-    #[instrument(ret, skip(db))]
-    pub async fn list_all(db: SqlConnect) -> VideoRespResult<Vec<VideoItem>> {
+    #[instrument(ret, skip(database))]
+    pub async fn list_all(
+        database: SqlDatabaseOperate,
+    ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
-            Ok(CeobeOperationVideoSqlOperate::find_all_not_delete(&db)
+            Ok(database
+                .ceobe_operation()
+                .video()
+                .find_all_not_delete()
                 .await?
                 .into_iter()
                 .map(Into::into)
@@ -68,9 +64,9 @@ impl CeobeOperationVideo {
 
     #[instrument(ret, skip(db))]
     pub async fn update_list(
-        db: SqlConnect, CheckExtract(videos): UpdateVideoCheck,
+        db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
-        rtry!(CeobeOperationVideoSqlOperate::update_all(&db, videos).await);
+        rtry!(db.ceobe_operation().video().update_all(videos).await);
         RespResult::ok(())
     }
 }

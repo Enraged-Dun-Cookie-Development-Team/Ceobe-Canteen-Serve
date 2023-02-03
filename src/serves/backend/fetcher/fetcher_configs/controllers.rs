@@ -3,7 +3,10 @@ use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
-use orm_migrate::sql_connection::SqlConnect;
+use orm_migrate::{
+    sql_connection::{SqlConnect, SqlDatabaseOperate},
+    sql_models::fetcher::ToFetcherOperate,
+};
 use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
@@ -49,14 +52,18 @@ impl FetcherConfigControllers {
     /// 根据平台获取蹲饼器配置
     #[instrument(skip(db))]
     pub async fn get_fetchers_configs(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         MapReject(PlatformFilterReq { type_id }): MapReject<
             Query<PlatformFilterReq>,
             FetcherConfigError,
         >,
     ) -> FetcherConfigRResult<Vec<BackEndFetcherConfig>> {
         Ok(rtry!(
-            FetcherConfigLogic::get_by_platform(&db, &type_id).await
+            FetcherConfigLogic::get_by_platform(
+                db.fetcher_operate(),
+                &type_id
+            )
+            .await
         ))
         .into()
     }

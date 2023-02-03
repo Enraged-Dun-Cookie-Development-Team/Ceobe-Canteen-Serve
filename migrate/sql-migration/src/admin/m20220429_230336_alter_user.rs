@@ -1,5 +1,5 @@
 use sea_orm_migration::prelude::*;
-use sql_models::admin_user::models::user::Column::NumPwdChange;
+use sql_models::admin_user::Column::NumPwdChange;
 
 use super::m20220324_222712_create_user::User;
 

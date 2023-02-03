@@ -1,8 +1,8 @@
 use checker::CheckExtract;
 use modify_cache::CacheMode;
 use mongo_migration::{
-    mongo_connection::MongoConnect,
-    mongo_models::bakery::mansion::operate::MansionDataMongoOperate,
+    mongo_connection::MongoDatabaseOperate,
+    mongo_models::bakery::mansion::operate::ToMansionOperate,
 };
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
@@ -18,7 +18,7 @@ use crate::{
 impl BakeryMansionFrontend {
     #[instrument(skip(db, modify))]
     pub async fn get_mansion_with_time(
-        db: MongoConnect, CheckExtract(mid): MidCheckerPretreatment,
+        db: MongoDatabaseOperate, CheckExtract(mid): MidCheckerPretreatment,
         mut modify: modify_cache::CheckModify,
     ) -> FlagMansionRResult<ViewMansionWithTime> {
         resp_try(async {
@@ -26,8 +26,7 @@ impl BakeryMansionFrontend {
             ctrl.set_ty(CacheMode::NoCache);
 
             let (data, extra) = modify.check_modify(
-                MansionDataMongoOperate::get_mansion_by_id(&db, &mid.id)
-                    .await?,
+                db.mansion().get_mansion_by_id(&mid.id).await?,
             )?;
 
             Ok(FlagWrap::new(data.map(Into::into), extra))
@@ -37,14 +36,14 @@ impl BakeryMansionFrontend {
 
     #[instrument(skip(db, modify))]
     pub async fn get_all_id(
-        db: MongoConnect, mut modify: modify_cache::CheckModify,
+        db: MongoDatabaseOperate, mut modify: modify_cache::CheckModify,
     ) -> FlagMansionRResult<Vec<String>> {
         resp_try(async {
             let ctrl = modify.cache_headers.get_control();
             ctrl.set_ty(CacheMode::NoCache);
 
             let (data, extra) = modify.check_modify(MansionIds(
-                MansionDataMongoOperate::get_all_mansion_id_list(&db).await?,
+                db.mansion().get_all_mansion_id_list().await?,
             ))?;
             Ok(FlagWrap::new(MansionIds::into_inner(data), extra))
         })

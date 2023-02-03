@@ -6,8 +6,8 @@ use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
 use orm_migrate::{
-    sql_connection::SqlConnect,
-    sql_models::admin_user::operate::UserSqlOperate,
+    sql_connection::SqlDatabaseOperate,
+    sql_models::admin_user::{AuthLevel, ToSqlUserOperate},
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -20,7 +20,6 @@ use super::{
 };
 use crate::{
     middleware::authorize::AuthorizeInfo,
-    models::sql::models::auth_level::AuthLevel,
     router::UserAuthBackend,
     serves::backend::user_auth::{
         error::AdminUserError,
@@ -44,7 +43,7 @@ crate::quick_struct! {
 impl UserAuthBackend {
     #[instrument(ret, skip(db, permission))]
     pub async fn create_user(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         MapReject(NewUserAuthLevel { permission }): MapReject<
             Query<NewUserAuthLevel>,
             AdminUserError,
@@ -89,13 +88,13 @@ impl UserAuthBackend {
             }?;
 
             // 将用户信息写入数据库
-            UserSqlOperate::add_user_with_encoded_password(
-                &db,
-                rand_username,
-                encode_password.to_string(),
-                permission,
-            )
-            .await?;
+            db.user()
+                .add_with_encoded_password(
+                    rand_username,
+                    encode_password.to_string(),
+                    permission,
+                )
+                .await?;
 
             // 返回用户信息
             let user_info = CreateUser {
@@ -108,29 +107,33 @@ impl UserAuthBackend {
         .await
     }
 
-    #[instrument(ret, skip(db, body))]
+    #[instrument(ret, skip_all)]
     pub async fn login(
-        db: SqlConnect,
-        MapReject(body): MapReject<Json<UserLogin>, AdminUserError>,
+        db: SqlDatabaseOperate,
+        MapReject(UserLogin {
+            ref username,
+            ref password,
+        }): MapReject<Json<UserLogin>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
-            let token_info = UserSqlOperate::find_user_and_verify_pwd(
-                &db,
-                &body.username,
-                &body.password,
-                |src, dst| {
-                    tokio::task::block_in_place(|| {
-                        PasswordEncoder::verify(src, &dst)
-                    })
-                },
-                |user| {
-                    User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
-                    }
-                },
-            )
-            .await??;
+            let token_info = db
+                .user()
+                .find_user_and_verify_pwd(
+                    username,
+                    password,
+                    |src, dst| {
+                        tokio::task::block_in_place(|| {
+                            PasswordEncoder::verify(src, &dst)
+                        })
+                    },
+                    |user| {
+                        User {
+                            id: user.id,
+                            num_pwd_change: user.num_pwd_change,
+                        }
+                    },
+                )
+                .await??;
 
             // 生成用户token
             let token = token_info.generate().unwrap();
@@ -158,16 +161,14 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_username(
-        db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
         CheckExtract(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         resp_try(async {
             let id = user.id;
 
             let username = username.username;
-
-            UserSqlOperate::update_user_name(&db, id, username.clone())
-                .await?;
+            db.user().update_user_name(id, username.clone()).await?;
 
             Ok(UserName { username })
         })
@@ -176,7 +177,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
-        db: SqlConnect, AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
         MapReject(body): MapReject<Json<ChangePassword>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
@@ -185,24 +186,25 @@ impl UserAuthBackend {
             let old_password = body.old_password;
             let new_password = body.new_password;
 
-            let generate_token = UserSqlOperate::update_user_password(
-                &db,
-                id,
-                new_password,
-                old_password,
-                |old, new| PasswordEncoder::verify(old, &new),
-                |pwd| {
-                    PasswordEncoder::encode(Cow::Borrowed(pwd))
-                        .map(|pwd| pwd.to_string())
-                },
-                |user| {
-                    User {
-                        id: user.id,
-                        num_pwd_change: user.num_pwd_change,
-                    }
-                },
-            )
-            .await??;
+            let generate_token = db
+                .user()
+                .update_user_password(
+                    id,
+                    new_password,
+                    old_password,
+                    |old, new| PasswordEncoder::verify(old, &new),
+                    |pwd| {
+                        PasswordEncoder::encode(Cow::Borrowed(pwd))
+                            .map(|pwd| pwd.to_string())
+                    },
+                    |user| {
+                        User {
+                            id: user.id,
+                            num_pwd_change: user.num_pwd_change,
+                        }
+                    },
+                )
+                .await??;
 
             let token = generate_token.generate().unwrap();
 
@@ -217,16 +219,16 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 获取用户列表
     pub async fn user_list(
-        db: SqlConnect, CheckExtract(page_size): PageSizePretreatment,
+        db: SqlDatabaseOperate, CheckExtract(page_size): PageSizePretreatment,
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         resp_try(async {
+            let user_ops = db.user();
             // 获取用户列表
-            let user_list = UserSqlOperate::find_user_list(&db, page_size)
-                .map_ok(|a| {
-                    a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
-                });
+            let user_list = user_ops.find_user_list(page_size).map_ok(|a| {
+                a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
+            });
             // 获取用户数量
-            let count = UserSqlOperate::get_user_total_number(&db);
+            let count = user_ops.get_user_total_number();
             // 异步获取
             let (user_list, count) = future::join(user_list, count).await;
 
@@ -240,12 +242,12 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 修改用户权限
     pub async fn change_auth(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         MapReject(body): MapReject<Json<ChangeAuthReq>, AdminUserError>,
     ) -> AdminUserRResult<()> {
         resp_try(async {
             let ChangeAuthReq { id, auth } = body;
-            UserSqlOperate::update_user_auth(&db, id, auth).await?;
+            db.user().update_user_auth(id, auth).await?;
             Ok(())
         })
         .await
@@ -254,11 +256,11 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db))]
     // 删除用户
     pub async fn delete_one_user(
-        db: SqlConnect,
+        db: SqlDatabaseOperate,
         MapReject(body): MapReject<Json<DeleteOneUserReq>, AdminUserError>,
     ) -> AdminUserRResult<()> {
         let uid = body.id;
-        rtry!(UserSqlOperate::delete_one_user(&db, uid).await);
+        rtry!(db.user().delete_one(uid).await);
         Ok(()).into()
     }
 }

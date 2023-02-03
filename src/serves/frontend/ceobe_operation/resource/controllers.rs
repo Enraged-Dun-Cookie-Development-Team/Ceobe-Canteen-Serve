@@ -1,19 +1,17 @@
 use std::time::Duration;
 
-use orm_migrate::sql_connection::SqlConnect;
+use ceobe_operate::ToCeobeOperation;
+use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
 use super::{error::FlagResourceRespResult, view::Resource};
-use crate::{
-    models::sql::resource::operate::CeobeOperationResourceSqlOperate,
-    router::CeobeOperationResourceFrontend,
-};
+use crate::router::CeobeOperationResourceFrontend;
 
 impl CeobeOperationResourceFrontend {
-    #[instrument(skip(db, modify))]
+    #[instrument(skip(database, modify))]
     pub async fn resource_list(
-        db: SqlConnect, mut modify: modify_cache::CheckModify,
+        database: SqlDatabaseOperate, mut modify: modify_cache::CheckModify,
     ) -> FlagResourceRespResult<Resource> {
         modify
             .cache_headers
@@ -21,11 +19,11 @@ impl CeobeOperationResourceFrontend {
             .set_max_age(Duration::from_secs(60 * 60));
         resp_try(async {
             let (data, extra) = modify.check_modify(
-                CeobeOperationResourceSqlOperate::get_resource(
-                    &db,
-                    |raa, cd| Resource::from((raa, cd)),
-                )
-                .await?,
+                database
+                    .ceobe_operation()
+                    .resource()
+                    .get(|raa, cd| Resource::from((raa, cd)))
+                    .await?,
             )?;
 
             Ok(FlagWrap::new(data, extra))

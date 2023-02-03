@@ -2,17 +2,19 @@ use std::ops::Deref;
 
 use page_size::{database::WithPagination, request::Paginator};
 use sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait,
-    PaginatorTrait, QueryFilter, QuerySelect,
+    ColumnTrait, Condition, ConnectionTrait, EntityTrait, PaginatorTrait,
+    QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use sql_connection::database_traits::{
+    database_operates::NoConnect, get_connect::GetDatabaseConnect,
+};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
 use super::{
-    super::models::model_datasource_config::DatasourcePlatform,
-    FetcherDatasourceConfigSqlOperate, OperateError, OperateResult,
+    super::models::model_datasource_config::DatasourcePlatform, Datasource,
+    OperateError, OperateResult,
 };
 use crate::fetcher::datasource_config::{
     models::model_datasource_config::{
@@ -21,9 +23,9 @@ use crate::fetcher::datasource_config::{
     operate::retrieve::model_datasource_config::SingleDatasourceInfo,
 };
 
-impl FetcherDatasourceConfigSqlOperate {
+impl Datasource<'_, NoConnect> {
     pub async fn find_platform_by_id(
-        &self, db: &impl ConnectionTrait, id: i32,
+        db: &impl ConnectionTrait, id: i32,
     ) -> OperateResult<DatasourcePlatform> {
         Entity::find_by_id(id)
             .select_only()
@@ -33,24 +35,26 @@ impl FetcherDatasourceConfigSqlOperate {
             .await?
             .ok_or(OperateError::DatasourceNotFound(id))
     }
+}
 
-    #[instrument(skip(db))]
+impl<'c, C> Datasource<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect: ConnectionTrait,
+{
+    #[instrument(skip(self))]
     /// 分页获取全部数据源列表
-    pub async fn find_all_with_paginator<'db, D>(
-        db: &'db D, page_size: Paginator, platform: Option<String>,
+    pub async fn find_all_with_paginator(
+        &self, page_size: Paginator, platform: Option<String>,
         datasource: Option<String>,
-    ) -> OperateResult<Vec<BackendDatasource>>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
+    ) -> OperateResult<Vec<BackendDatasource>> {
         info!(
             datasourceList.page.num = page_size.page.deref(),
             datasourceList.page.size = page_size.size.deref(),
             datasourceList.filter.platform = platform,
             datasourceList.filter.datasource = datasource,
         );
-        let db = db.get_connect()?;
+        let db = self.get_connect();
         let result = Entity::find()
             .filter(
                 Condition::all()
@@ -75,17 +79,13 @@ impl FetcherDatasourceConfigSqlOperate {
             })
     }
 
-    #[instrument(skip(db))]
+    #[instrument(skip(self))]
     /// 获取单个平台下的全部数据源列表
-    pub async fn find_by_platform<'db, D>(
-        db: &'db D, platform: &str,
-    ) -> OperateResult<Vec<DataSourceForFetcherConfig>>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
+    pub async fn find_by_platform(
+        &self, platform: &str,
+    ) -> OperateResult<Vec<DataSourceForFetcherConfig>> {
         info!(datasourceList.platform = platform,);
-        let db = db.get_connect()?;
+        let db = self.get_connect();
 
         Ok(Entity::find()
             .filter(Column::Platform.eq(platform))
@@ -100,17 +100,11 @@ impl FetcherDatasourceConfigSqlOperate {
             })
     }
 
-    #[instrument(skip(db))]
+    #[instrument(skip(self))]
     /// 获取全部数据源类型列表（如：B站动态、B站视频、网易云专辑、
     /// 网易云歌手等）
-    pub async fn find_all_type<'db, D>(
-        db: &'db D,
-    ) -> OperateResult<Vec<String>>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
-        let db = db.get_connect()?;
+    pub async fn find_all_type(&self) -> OperateResult<Vec<String>> {
+        let db = self.get_connect();
         Ok(Entity::find()
             .select_only()
             .column(Column::Datasource)
@@ -129,16 +123,12 @@ impl FetcherDatasourceConfigSqlOperate {
             })
     }
 
-    #[instrument(skip(db), ret)]
+    #[instrument(skip(self), ret)]
     /// 获取数据源总数
-    pub async fn count<'db, D>(
-        db: &'db D, platform: Option<String>, datasource: Option<String>,
-    ) -> OperateResult<u64>
-    where
-        D: GetDatabaseConnect<Error = DbErr> + 'db,
-        D::Connect<'db>: ConnectionTrait,
-    {
-        let db = db.get_connect()?;
+    pub async fn count(
+        &self, platform: Option<String>, datasource: Option<String>,
+    ) -> OperateResult<u64> {
+        let db = self.get_connect();
         Entity::find()
             .filter(
                 Condition::all()
