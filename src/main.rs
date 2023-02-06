@@ -21,6 +21,7 @@ use configs::{
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
+use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
@@ -67,6 +68,7 @@ async fn main_task() {
         .prepare(BackendAuthConfig::<_, AuthConfig>)
         .prepare_state(RequestClientPrepare)
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
+        .prepare_state(BiliClientPrepare)
         .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
         // database
         .prepare_concurrent(|set| {

@@ -9,14 +9,13 @@ use orm_migrate::{
         self, bv::query::Checked as BvQuery,
     },
 };
-use reqwest::Url;
+use request_clients::bili_client::QueryBiliVideo;
 use resp_result::{resp_try, rtry, RespResult};
-use tracing::instrument;
+use tracing::{event, instrument, Level};
 
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},
     view::VideoItem,
-    REQUEST_CLIENT,
 };
 use crate::router::CeobeOperationVideo;
 
@@ -29,17 +28,13 @@ type UpdateVideoCheck = JsonCheckExtract<
 >;
 
 impl CeobeOperationVideo {
-    #[instrument(ret)]
+    #[instrument(skip(query))]
     pub async fn get_video_detail(
-        CheckExtract(BvQuery { bv }): BvQueryCheck,
+        CheckExtract(BvQuery { bv }): BvQueryCheck, query: QueryBiliVideo,
     ) -> VideoRespResult<String> {
         resp_try(async {
-            let url = Url::parse_with_params(
-                "https://api.bilibili.com/x/web-interface/view",
-                &[("bvid", bv)],
-            )?;
-
-            let body = REQUEST_CLIENT.get(url).send().await?.bytes().await?;
+            let body = query.fetch(bv).await??;
+            event!(Level::INFO, response.len = body.len());
             Ok(String::from_utf8(body.to_vec())?)
         })
         .await
