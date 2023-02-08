@@ -21,7 +21,7 @@ impl MigrationTrait for Migration {
         user.create_idx_if_not_exist(
             IndexModel::builder()
                 .keys(doc! {
-                    "mob_id":1i32
+                    "mob_id":1
                 })
                 .options(
                     IndexOptions::builder()
