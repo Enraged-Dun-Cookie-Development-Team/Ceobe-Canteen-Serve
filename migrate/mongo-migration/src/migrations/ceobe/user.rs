@@ -18,22 +18,21 @@ impl MigrationTrait for Migration {
         &self, mut user: CollectManage<Self>,
     ) -> Result<(), mongodb::error::Error> {
         info!(user.migrate.createIndex.name = MOB_IDX_NAME);
-        user
-            .create_idx_if_not_exist(
-                IndexModel::builder()
-                    .keys(doc! {
-                        "mob_id":1i32
-                    })
-                    .options(
-                        IndexOptions::builder()
-                            .unique(true)
-                            .name(MOB_IDX_NAME.to_string())
-                            .build(),
-                    )
-                    .build(),
-                None,
-            )
-            .await?;
+        user.create_idx_if_not_exist(
+            IndexModel::builder()
+                .keys(doc! {
+                    "mob_id":1i32
+                })
+                .options(
+                    IndexOptions::builder()
+                        .unique(true)
+                        .name(MOB_IDX_NAME.to_string())
+                        .build(),
+                )
+                .build(),
+            None,
+        )
+        .await?;
 
         Ok(())
     }

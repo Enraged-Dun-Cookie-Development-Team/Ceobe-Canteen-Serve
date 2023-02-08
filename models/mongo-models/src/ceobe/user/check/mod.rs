@@ -1,10 +1,7 @@
 use std::convert::Infallible;
 
 use status_err::{ErrPrefix, StatusErr};
-
 pub mod user_checker;
-
-
 
 #[derive(Debug, thiserror::Error, StatusErr)]
 pub enum CheckError {

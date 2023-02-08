@@ -1,4 +1,3 @@
-
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
@@ -19,22 +18,20 @@ pub struct User {
     pub mod_id: String,
     pub datasource_push: Vec<Uuid>,
     #[sub_model(ignore("UserChecked"))]
-    pub time_record: RecordUnit
+    pub time_record: RecordUnit,
 }
 
 impl UserChecked {
-    pub fn into_with_time_record(
-        self, time_record: RecordUnit,
-    ) -> User {
+    pub fn into_with_time_record(self, time_record: RecordUnit) -> User {
         let Self {
             mod_id,
-            datasource_push
+            datasource_push,
         } = self;
 
         User {
             mod_id,
             datasource_push,
-            time_record
+            time_record,
         }
     }
 }
@@ -57,4 +54,3 @@ impl User {
         self
     }
 }
-
