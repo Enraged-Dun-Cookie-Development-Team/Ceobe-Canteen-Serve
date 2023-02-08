@@ -15,6 +15,8 @@ impl MigratorTrait for Migrator {
             .append(migrations::bakery::mansion::Migration)
             .await?
             .append(migrations::ceobe_operation::plugin_version::Migration)
+            .await?
+            .append(migrations::ceobe::user::Migration)
             .await?;
 
         Ok(())
