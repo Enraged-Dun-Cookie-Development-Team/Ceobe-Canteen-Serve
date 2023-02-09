@@ -14,6 +14,6 @@ use crate::ceobe::user::{check::CheckError, models::UserChecked};
 )]
 #[derive(Debug, Deserialize)]
 pub struct UserChecker {
-    mod_id: MaxRangeLimit<String, 16>,
+    mob_id: MaxRangeLimit<String, 16>,
     datasource_push: IntoIterChecker<Vec<Uuid>, NoCheck<Uuid>, Vec<Uuid>>,
 }

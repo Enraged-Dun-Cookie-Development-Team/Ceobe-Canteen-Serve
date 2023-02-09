@@ -15,7 +15,7 @@ use crate::RecordUnit;
     extra(derive(Debug, TypedBuilder))
 ))]
 pub struct UserModel {
-    pub mod_id: String,
+    pub mob_id: String,
     pub datasource_push: Vec<Uuid>,
     #[sub_model(ignore("UserChecked"))]
     pub time_record: RecordUnit,
@@ -24,12 +24,12 @@ pub struct UserModel {
 impl UserChecked {
     pub fn into_with_time_record(self, time_record: RecordUnit) -> UserModel {
         let Self {
-            mod_id,
+            mob_id,
             datasource_push,
         } = self;
 
         UserModel {
-            mod_id,
+            mob_id,
             datasource_push,
             time_record,
         }
@@ -52,5 +52,11 @@ impl UserModel {
     pub fn now_modify(mut self) -> Self {
         self.time_record.modify();
         self
+    }
+}
+
+impl From<UserChecked> for UserModel {
+    fn from(user: UserChecked) -> Self {
+        user.into_with_time_record(RecordUnit::new())
     }
 }
