@@ -14,7 +14,7 @@ use crate::RecordUnit;
     name = "UserChecked",
     extra(derive(Debug, TypedBuilder))
 ))]
-pub struct User {
+pub struct UserModel {
     pub mod_id: String,
     pub datasource_push: Vec<Uuid>,
     #[sub_model(ignore("UserChecked"))]
@@ -22,13 +22,13 @@ pub struct User {
 }
 
 impl UserChecked {
-    pub fn into_with_time_record(self, time_record: RecordUnit) -> User {
+    pub fn into_with_time_record(self, time_record: RecordUnit) -> UserModel {
         let Self {
             mod_id,
             datasource_push,
         } = self;
 
-        User {
+        UserModel {
             mod_id,
             datasource_push,
             time_record,
@@ -36,7 +36,7 @@ impl UserChecked {
     }
 }
 
-impl ModifyState for User {
+impl ModifyState for UserModel {
     type Identify = Self;
 
     fn get_last_modify_time(&self) -> Option<Cow<'_, chrono::NaiveDateTime>> {
@@ -48,7 +48,7 @@ impl ModifyState for User {
     fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
 
-impl User {
+impl UserModel {
     pub fn now_modify(mut self) -> Self {
         self.time_record.modify();
         self
