@@ -11,6 +11,7 @@ use sql_connection::database_traits::{
 };
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
+use uuid::Uuid;
 
 use super::{
     super::models::model_datasource_config::DatasourcePlatform, Datasource,
@@ -22,6 +23,8 @@ use crate::fetcher::datasource_config::{
     },
     operate::retrieve::model_datasource_config::SingleDatasourceInfo,
 };
+use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::DatasourceUuid;
+
 
 impl Datasource<'_, NoConnect> {
     pub async fn find_platform_by_id(
@@ -96,6 +99,30 @@ where
                 .in_scope(||{
                     let list = list.iter().map(|platform|(&platform.nickname)).collect::<SmallVec<[_;4]>>();
                     info!(platformList.len = list.len(),  platformList.platform.pType = ?list );
+                });
+            })
+    }
+
+    #[instrument(skip(self))]
+    /// 获取全部数据源UUID列表
+    pub async fn find_all_uuid(
+        &self
+    ) -> OperateResult<Vec<Uuid>> {
+        let db = self.get_connect();
+
+        Ok(Entity::find()
+            .select_only()
+            .column(Column::UniqueId)
+            .into_model::<DatasourceUuid>()
+            .all(db)
+            .await?
+            .into_iter()
+            .map(|item| item.unique_id)
+            .collect::<Vec<Uuid>>()
+            ).tap_ok(|list| {
+                Span::current()
+                .in_scope(||{
+                    info!(datasourceUuid.len = list.len(),  datasourceUuidList.unique_ids = ?list );
                 });
             })
     }
