@@ -15,7 +15,7 @@ error_generate! {
     pub DatasourceConfigError
 
     Json = JsonRejection
-     Query = QueryRejection
+    Query = QueryRejection
     DatasourceOperate = DatasourceOperateError
     PlatformOperate = PlatformOperateError
     Check = CheckError
