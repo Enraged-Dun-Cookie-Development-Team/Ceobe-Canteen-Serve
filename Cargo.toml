@@ -86,7 +86,7 @@ axum = { workspace = true, features = ["headers"] }
 http = { workspace = true }
 axum-starter = { workspace = true }
 # db
-bson = { version = "2.1.0", features = ["chrono-0_4"] }
+bson = { version = "2.4.0", features = ["chrono-0_4", "uuid-1"] }
 ceobe-qiniu-upload = { workspace = true }
 # else
 chrono = { workspace = true, features = ["serde"] }
@@ -178,3 +178,6 @@ path = "./database/redis_connection"
 
 [dependencies.fetcher_logic]
 path = "./logic/fetcher_logic"
+
+[dependencies.ceobe_user_logic]
+path = "./logic/ceobe_user_logic"
