@@ -1,5 +1,7 @@
 use std::ops::Deref;
 
+use crate::utils::vec_uuid_to_bson_uuid;
+use crate::view::DatasourceConfig;
 use crate::{error::LogicResult, view::MobIdReq};
 use checker::LiteChecker;
 use futures::future;
@@ -58,12 +60,12 @@ impl CeobeUserLogic {
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
-    ) -> LogicResult<()> {
+    ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
         let (datasource_list, user_datasource_config) = future::join(
             db.fetcher_operate().datasource().find_all_uuid(),
-            mongo.user().find_datasource_list_by_mob(mob_id.into()),
+            mongo.user().find_datasource_list_by_mob(mob_id.clone().into()),
         )
         .await;
 
@@ -77,14 +79,16 @@ impl CeobeUserLogic {
             .filter(|uuid| !datasource_list.contains(&uuid.to_owned().into()))
             .collect::<Vec<bson::Uuid>>();
         // 获取用户设置有且数据源存在的列表
-        let datasources_config = user_datasource_config
+        let mut resq = DatasourceConfig::new();
+        resq.datasource_config = user_datasource_config
             .into_iter()
-            .filter(|uuid| !datasource_list.contains(&uuid.to_owned().into()))
+            .filter(|uuid| datasource_list.contains(&uuid.to_owned().into()))
             .map(|bson_uuid| bson_uuid.into())
             .collect::<Vec<uuid::Uuid>>();
 
-        
+        // 异步执行，无论成功与否都继续~
+        let _ = mongo.user().update_datasource(&mob_id.mob_id, vec_uuid_to_bson_uuid(resq.datasource_config.clone()));
 
-        Ok(())
+        Ok(resq)
     }
 }
