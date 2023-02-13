@@ -1,7 +1,8 @@
 use std::borrow::Cow;
 
+use chrono::Local;
 use modify_cache::ModifyState;
-use mongodb::bson::Uuid;
+use mongodb::bson::{Uuid, DateTime};
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
@@ -18,6 +19,8 @@ pub struct UserModel {
     pub mob_id: String,
     pub datasource_push: Vec<Uuid>,
     #[sub_model(ignore("UserChecked"))]
+    pub last_access_time: DateTime,
+    #[sub_model(ignore("UserChecked"))]
     pub time_record: RecordUnit,
 }
 
@@ -31,6 +34,7 @@ impl UserChecked {
         UserModel {
             mob_id,
             datasource_push,
+            last_access_time: time_record.create_at,
             time_record,
         }
     }
@@ -51,6 +55,14 @@ impl ModifyState for UserModel {
 impl UserModel {
     pub fn now_modify(mut self) -> Self {
         self.time_record.modify();
+        self
+    }
+
+    // 用户进行活跃度刷新操作
+    pub fn user_access(mut self) -> Self {
+        let now = Local::now();
+
+        self.last_access_time =  DateTime::from_chrono(now);
         self
     }
 }
