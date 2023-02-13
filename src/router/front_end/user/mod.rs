@@ -1,4 +1,4 @@
-use axum::{routing::post, Router};
+use axum::{routing::{post, get}, Router};
 
 use crate::router::ServerRoute;
 
@@ -9,5 +9,9 @@ pub(super) fn ceobe_user_router() -> ServerRoute {
         .route(
             "/createUser",
             post(CeobeUserFrontend::register),
+        )
+        .route(
+            "/datasourceConfig",
+            get(CeobeUserFrontend::get_datasource_config_by_user),
         )
 }
