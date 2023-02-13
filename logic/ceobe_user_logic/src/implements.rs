@@ -41,4 +41,19 @@ impl CeobeUserLogic {
         mongo.user().create(user_checked).await?;
         Ok(())
     }
+
+    /// 获取用户数据源配置
+    pub async fn get_datasource_by_user(
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
+    ) -> LogicResult<()> {
+
+        // 获取所有数据源的uuid列表
+        // let (datasource_list, user_datasource_config) = future::join(
+        //     db.fetcher_operate().datasource().find_all_with_unique_id(),
+        //     mongo.user()
+        // )
+        // .await;
+
+        Ok(())
+    }
 }
