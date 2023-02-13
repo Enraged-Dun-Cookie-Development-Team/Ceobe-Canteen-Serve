@@ -15,7 +15,7 @@ use crate::fetcher::{
     ),
     none(
         name = "FrontendDatasource",
-        extra(derive(sea_orm::FromQueryResult))
+        extra(derive(sea_orm::FromQueryResult, serde::Serialize, Debug))
     ),
     none(
         name = "DatasourceUuid",

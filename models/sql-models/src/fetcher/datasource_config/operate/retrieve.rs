@@ -24,6 +24,7 @@ use crate::fetcher::datasource_config::{
     operate::retrieve::model_datasource_config::SingleDatasourceInfo,
 };
 use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::DatasourceUuid;
+use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::FrontendDatasource;
 
 
 impl Datasource<'_, NoConnect> {
@@ -76,8 +77,8 @@ where
         Ok(result).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
-                    let list = list.iter().map(|platform|(&platform.nickname)).collect::<SmallVec<[_;4]>>();
-                    info!(platformList.len = list.len(),  platformList.platform.pType = ?list );
+                    let list = list.iter().map(|datasource|(&datasource.nickname)).collect::<SmallVec<[_;4]>>();
+                    info!(datasourceList.len = list.len(),  datasourceList.datasource = ?list );
                 });
             })
     }
@@ -169,5 +170,25 @@ where
             .count(db)
             .await
             .map_err(Into::into)
+    }
+
+    #[instrument(skip(self))]
+    /// 获取全部携带给前台唯一标识的数据源列表
+    pub async fn find_all_with_unique_id(
+        &self
+    ) -> OperateResult<Vec<FrontendDatasource>> {
+        let db = self.get_connect();
+        let result = Entity::find()
+            .into_model::<FrontendDatasource>()
+            .all(db)
+            .await?;
+
+        Ok(result).tap_ok(|list| {
+                Span::current()
+                .in_scope(||{
+                    let list = list.iter().map(|datasource|(&datasource.nickname)).collect::<SmallVec<[_;4]>>();
+                    info!(datasourceList.len = list.len(),  datasourceList.datasource = ?list );
+                });
+            })
     }
 }
