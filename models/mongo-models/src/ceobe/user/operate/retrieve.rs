@@ -19,7 +19,7 @@ where
     Conn: MongoDbCollectionTrait<'db, UserModel>,
 {
     /// 根据条件查询数据源配置
-    pub async fn find_datasource_list_by_fiter(
+    pub(super) async fn find_datasource_list_by_filter(
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<UserDatasource>,
     ) -> OperateResult<Vec<Uuid>> {
@@ -42,5 +42,16 @@ where
             .await?
             .tap(|list| info!(mansionList.ids = ?list))
         )  
+    }
+
+    /// 根据用户mob查询数据源配置
+    pub async fn find_datasource_list_by_mob(
+        &'db self, mob_id: UserMobId,
+    ) -> OperateResult<Vec<Uuid>> {
+        info!(user.mob_id = %mob_id.mob_id);
+        let collection = self.get_collection()?;
+        Self::find_datasource_list_by_filter(mob_id.into_id_filter(), &collection.with_mapping())
+            .await
+       
     }
 }
