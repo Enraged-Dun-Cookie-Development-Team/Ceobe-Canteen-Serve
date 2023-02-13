@@ -1,3 +1,4 @@
+use mongo_models::ceobe::user::models::UserMobId;
 use serde::{Serialize, Deserialize};
 use typed_builder::TypedBuilder;
 
@@ -7,4 +8,10 @@ use typed_builder::TypedBuilder;
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct MobIdReq {
     pub mob_id: String,
+}
+
+impl Into<UserMobId> for MobIdReq {
+    fn into(self) -> UserMobId {
+        UserMobId { mob_id: self.mob_id }
+    }
 }

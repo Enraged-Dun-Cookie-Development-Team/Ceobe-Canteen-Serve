@@ -1,20 +1,27 @@
+use std::ops::Deref;
 
-
-use mongo_models::{mongo_connection::MongoDatabaseOperate, ceobe::user::{operate::ToUserOperate, models::UserChecked, check::user_checker::UserChecker}, mongodb::bson};
+use crate::{error::LogicResult, view::MobIdReq};
+use checker::LiteChecker;
+use futures::future;
+use mongo_models::ceobe::user::check::user_checker::UserUncheck;
+use mongo_models::{
+    ceobe::user::{
+        check::user_checker::UserChecker, models::UserChecked,
+        operate::ToUserOperate,
+    },
+    mongo_connection::MongoDatabaseOperate,
+    mongodb::bson,
+};
 use sql_models::{
-    fetcher::
-        ToFetcherOperate,
+    fetcher::ToFetcherOperate,
     sql_connection::{
         database_traits::get_connect::{
             GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
         },
-        sea_orm::{ConnectionTrait, DbErr}, SqlDatabaseOperate,
+        sea_orm::{ConnectionTrait, DbErr},
+        SqlDatabaseOperate,
     },
 };
-use mongo_models::ceobe::user::check::user_checker::UserUncheck;
-use crate::{view::MobIdReq, error::LogicResult};
-use checker::LiteChecker;
-
 
 pub struct CeobeUserLogic;
 
@@ -25,9 +32,15 @@ impl CeobeUserLogic {
     ) -> LogicResult<()> {
         // TODO: 验证mob_id是否为小刻食堂旗下mob id
 
-
         // 获取所有数据源的uuid列表
-        let datasource_uuids = db.fetcher_operate().datasource().find_all_uuid().await?.into_iter().map(|uuid| uuid.into()).collect::<Vec<bson::uuid::Uuid>>();
+        let datasource_uuids = db
+            .fetcher_operate()
+            .datasource()
+            .find_all_uuid()
+            .await?
+            .into_iter()
+            .map(|uuid| uuid.into())
+            .collect::<Vec<bson::uuid::Uuid>>();
 
         // 拼接数据
         let user_uncheck = UserUncheck::builder()
@@ -46,13 +59,31 @@ impl CeobeUserLogic {
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
     ) -> LogicResult<()> {
-
         // 获取所有数据源的uuid列表
-        // let (datasource_list, user_datasource_config) = future::join(
-        //     db.fetcher_operate().datasource().find_all_with_unique_id(),
-        //     mongo.user()
-        // )
-        // .await;
+        // 获取用户数据源配置
+        let (datasource_list, user_datasource_config) = future::join(
+            db.fetcher_operate().datasource().find_all_uuid(),
+            mongo.user().find_datasource_list_by_mob(mob_id.into()),
+        )
+        .await;
+
+        let datasource_list = datasource_list?;
+        let user_datasource_config = user_datasource_config?;
+
+        // 获取用户设置有，当数据源不存在的列表
+        let cancel_datasources = user_datasource_config
+            .clone()
+            .into_iter()
+            .filter(|uuid| !datasource_list.contains(&uuid.to_owned().into()))
+            .collect::<Vec<bson::Uuid>>();
+        // 获取用户设置有且数据源存在的列表
+        let datasources_config = user_datasource_config
+            .into_iter()
+            .filter(|uuid| !datasource_list.contains(&uuid.to_owned().into()))
+            .map(|bson_uuid| bson_uuid.into())
+            .collect::<Vec<uuid::Uuid>>();
+
+        
 
         Ok(())
     }
