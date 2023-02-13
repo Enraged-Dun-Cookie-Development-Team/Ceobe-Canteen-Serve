@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use chrono::Local;
 use modify_cache::ModifyState;
-use mongodb::bson::{Uuid, DateTime};
+use mongodb::bson::{Uuid, DateTime, doc, Document};
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
@@ -14,9 +14,19 @@ use crate::RecordUnit;
     vis = "pub",
     name = "UserChecked",
     extra(derive(Debug, TypedBuilder))
+),none(
+    vis = "pub",
+    name = "UserMobId",
+    extra(derive(Debug, TypedBuilder))
+),none(
+    vis = "pub",
+    name = "UserDatasource",
+    extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
 ))]
 pub struct UserModel {
+    #[sub_model(want("UserMobId"))]
     pub mob_id: String,
+    #[sub_model(want("UserDatasource"))]
     pub datasource_push: Vec<Uuid>,
     #[sub_model(ignore("UserChecked"))]
     pub last_access_time: DateTime,
@@ -70,5 +80,13 @@ impl UserModel {
 impl From<UserChecked> for UserModel {
     fn from(user: UserChecked) -> Self {
         user.into_with_time_record(RecordUnit::new())
+    }
+}
+
+impl UserMobId {
+    pub fn into_id_filter(&self) -> Document {
+        doc! {
+            "mob_id" : &self.mob_id
+        }
     }
 }
