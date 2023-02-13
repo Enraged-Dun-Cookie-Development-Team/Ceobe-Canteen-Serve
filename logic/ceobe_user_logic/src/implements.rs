@@ -20,13 +20,9 @@ pub struct CeobeUserLogic;
 
 impl CeobeUserLogic {
     /// 新建数据源配置
-    pub async fn create_user<D>(
+    pub async fn create_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
-    ) -> LogicResult<()> 
-    where
-        D: GetDatabaseConnect + 'static,
-        D::Connect: ConnectionTrait
-    {
+    ) -> LogicResult<()> {
         // TODO: 验证mob_id是否为小刻食堂旗下mob id
 
 
