@@ -22,7 +22,7 @@ where
         let collection = self.get_collection()?;
 
         // 判断用户 id是否已经存在
-        let false = Self::is_exist_user(
+        let false = Self::is_exist_user_by_db(
             &user.mob_id,
             &collection,
         )

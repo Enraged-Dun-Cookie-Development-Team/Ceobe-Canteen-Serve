@@ -1,11 +1,13 @@
 use std::ops::Deref;
 
+use crate::error;
 use crate::utils::vec_uuid_to_bson_uuid;
 use crate::view::DatasourceConfig;
 use crate::{error::LogicResult, view::MobIdReq};
 use checker::LiteChecker;
-use futures::future;
+use futures::{future, FutureExt};
 use mongo_models::ceobe::user::check::user_checker::UserUncheck;
+use mongo_models::ceobe::user::operate::OperateError;
 use mongo_models::{
     ceobe::user::{
         check::user_checker::UserChecker, models::UserChecked,
@@ -24,6 +26,9 @@ use sql_models::{
         SqlDatabaseOperate,
     },
 };
+use tracing::{info_span, warn};
+use tracing::instrument::Instrument;
+use tokio::task;
 
 pub struct CeobeUserLogic;
 
@@ -61,6 +66,17 @@ impl CeobeUserLogic {
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
     ) -> LogicResult<DatasourceConfig> {
+        // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
+        // 判断用户是否存在
+        let true = mongo.user().is_exist_user(
+            &mob_id.mob_id,
+        )
+        .await? else {
+            warn!(user.mob_id = %mob_id.mob_id, newUser.mob_id.exist = false);
+            return Err(error::LogicError::CeobeUserOperateError(OperateError::UserMobIdNotExist(mob_id.mob_id)))
+        };
+
+
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
         let (datasource_list, user_datasource_config) = future::join(
@@ -75,6 +91,7 @@ impl CeobeUserLogic {
         // 获取用户设置有且数据源存在的列表
         let mut resq = DatasourceConfig::new();
         resq.datasource_config = user_datasource_config
+            .clone()    
             .into_iter()
             .filter(|uuid| datasource_list.contains(&uuid.to_owned().into()))
             .map(|bson_uuid| bson_uuid.into())
@@ -82,8 +99,12 @@ impl CeobeUserLogic {
 
         // 将删除过已不存在的数据源列表存回数据库
         // 异步执行，无论成功与否都继续~
-        tokio::spawn(
-             mongo.user().update_datasource(mob_id.mob_id, vec_uuid_to_bson_uuid(resq.datasource_config.clone())));
+        if resq.datasource_config.len() < user_datasource_config.len() {
+            tokio::spawn(
+                mongo.user().update_datasource(mob_id.mob_id, vec_uuid_to_bson_uuid(resq.datasource_config.clone()))
+            );
+            task::yield_now().await;
+        }
 
         Ok(resq)
     }

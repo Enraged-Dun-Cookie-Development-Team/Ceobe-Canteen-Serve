@@ -62,8 +62,15 @@ pub enum OperateError {
     #[error("用户Mob ID:[{0:?}] 已经存在")]
     #[status_err(err(
         prefix = "ErrPrefix::CHECKER",
-        err_code = 0x0008,
+        err_code = 0x0018,
         http_code = "HttpCode::CONFLICT"
     ))]
     UserMobIdExist(String),
+
+    #[error("用户Mob ID:[{0:?}] 不存在")]
+    #[status_err(err(
+        prefix = "ErrPrefix::CHECKER",
+        err_code = 0x0019,
+    ))]
+    UserMobIdNotExist(String),
 }

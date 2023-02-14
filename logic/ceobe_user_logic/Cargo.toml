@@ -15,6 +15,7 @@ range-limit = { path = "../../libs/range-limit" }
 futures.workspace = true
 uuid.workspace = true
 tokio.workspace = true
+tracing = { workspace = true }
 
 [dependencies.mongo-models]
 path = "../../models/mongo-models"
