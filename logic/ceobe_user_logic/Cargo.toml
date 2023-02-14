@@ -14,6 +14,7 @@ status-err = { path = "../../libs/status-err" }
 range-limit = { path = "../../libs/range-limit" }
 futures.workspace = true
 uuid.workspace = true
+tokio.workspace = true
 
 [dependencies.mongo-models]
 path = "../../models/mongo-models"

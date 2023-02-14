@@ -72,12 +72,6 @@ impl CeobeUserLogic {
         let datasource_list = datasource_list?;
         let user_datasource_config = user_datasource_config?;
 
-        // 获取用户设置有，当数据源不存在的列表
-        let cancel_datasources = user_datasource_config
-            .clone()
-            .into_iter()
-            .filter(|uuid| !datasource_list.contains(&uuid.to_owned().into()))
-            .collect::<Vec<bson::Uuid>>();
         // 获取用户设置有且数据源存在的列表
         let mut resq = DatasourceConfig::new();
         resq.datasource_config = user_datasource_config
@@ -86,8 +80,10 @@ impl CeobeUserLogic {
             .map(|bson_uuid| bson_uuid.into())
             .collect::<Vec<uuid::Uuid>>();
 
+        // 将删除过已不存在的数据源列表存回数据库
         // 异步执行，无论成功与否都继续~
-        let _ = mongo.user().update_datasource(&mob_id.mob_id, vec_uuid_to_bson_uuid(resq.datasource_config.clone()));
+        tokio::spawn(
+             mongo.user().update_datasource(mob_id.mob_id, vec_uuid_to_bson_uuid(resq.datasource_config.clone())));
 
         Ok(resq)
     }

@@ -56,7 +56,7 @@ type OperateResult<T> = Result<T, OperateError>;
 
 #[derive(Debug, Error, status_err::StatusErr)]
 pub enum OperateError {
-    #[error("Mongo数据库异常")]
+    #[error("Mongo数据库异常: {0}")]
     Db(#[from] MongoDbError),
 
     #[error("用户Mob ID:[{0:?}] 已经存在")]
