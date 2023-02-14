@@ -1,13 +1,13 @@
 use std::ops::Deref;
 
 use crate::error;
-use crate::utils::vec_uuid_to_bson_uuid;
+use crate::utils::{vec_uuid_to_bson_uuid, vec_bson_uuid_to_uuid};
 use crate::view::DatasourceConfig;
 use crate::{error::LogicResult, view::MobIdReq};
 use checker::LiteChecker;
 use futures::{future, FutureExt};
 use mongo_models::ceobe::user::check::user_checker::UserUncheck;
-use mongo_models::ceobe::user::operate::OperateError;
+use mongo_models::ceobe::user::operate::OperateError as CeobeUserOperateError;
 use mongo_models::{
     ceobe::user::{
         check::user_checker::UserChecker, models::UserChecked,
@@ -16,6 +16,7 @@ use mongo_models::{
     mongo_connection::MongoDatabaseOperate,
     mongodb::bson,
 };
+use sql_models::fetcher::datasource_config::operate::OperateError as FetcherDatasourceOperateError;
 use sql_models::{
     fetcher::ToFetcherOperate,
     sql_connection::{
@@ -73,7 +74,7 @@ impl CeobeUserLogic {
         )
         .await? else {
             warn!(user.mob_id = %mob_id.mob_id, newUser.mob_id.exist = false);
-            return Err(error::LogicError::CeobeUserOperateError(OperateError::UserMobIdNotExist(mob_id.mob_id)))
+            return Err(error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(mob_id.mob_id)))
         };
 
 
@@ -107,5 +108,31 @@ impl CeobeUserLogic {
         }
 
         Ok(resq)
+    }
+
+    /// 更新用户数据源配置
+    pub async fn update_datasource(
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, user_config: UserChecked,
+    ) -> LogicResult<()> {
+        // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
+        // 判断用户是否存在
+        let true = mongo.user().is_exist_user(
+            &user_config.mob_id,
+        )
+        .await? else {
+            warn!(user.mob_id = %user_config.mob_id, newUser.mob_id.exist = false);
+            return Err(error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(user_config.mob_id)))
+        };
+
+        // 判断是否所有数据源都存在
+        let true = db.fetcher_operate().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await? else {
+            warn!(user.datasources = ?user_config.datasource_push, user.datasources.exist = false);
+            return Err(error::LogicError::DatasourceConfigOperateError(FetcherDatasourceOperateError::DatasourcesNotFound))
+        };
+
+        // 更新用户蹲饼器数据
+        mongo.user().update_datasource(user_config.mob_id, user_config.datasource_push).await?;
+
+        Ok(())
     }
 }
