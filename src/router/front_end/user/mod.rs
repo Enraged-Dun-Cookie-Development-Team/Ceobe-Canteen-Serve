@@ -14,4 +14,8 @@ pub(super) fn ceobe_user_router() -> ServerRoute {
             "/datasourceConfig",
             get(CeobeUserFrontend::get_datasource_config_by_user),
         )
+        .route(
+            "/updateDatasourceConfig",
+            post(CeobeUserFrontend::update_datasource_config_by_user),
+        )
 }

@@ -1,5 +1,6 @@
 use axum::extract::rejection::QueryRejection;
 use ceobe_user_logic::error::LogicError;
+use mongo_migration::mongo_models::ceobe::user::check::CheckError as CeobeUserCheckError;
 use resp_result::RespResult;
 use axum::extract::rejection::JsonRejection;
 
@@ -11,6 +12,7 @@ error_generate! {
     Json = JsonRejection
     Query = QueryRejection
     Logic = LogicError
+    Check = CeobeUserCheckError
 }
 
 pub type CeobeUserRResult<T> = RespResult<T, CeobeUserError>;
