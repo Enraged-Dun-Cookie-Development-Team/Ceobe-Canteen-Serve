@@ -10,6 +10,7 @@ use sql_connection::{
     ext_traits::{check_all_exist::QueryAllExist, CountZero},
 };
 use tracing::instrument;
+use uuid::Uuid;
 
 use super::{Datasource, OperateResult};
 use crate::fetcher::datasource_config::{
@@ -70,5 +71,37 @@ where
             .await?;
 
         Ok(resp.into_iter().map(|item| item.platform).collect())
+    }
+
+    #[instrument(ret, skip_all)]
+    pub async fn all_exist_by_uuid<T>(
+        &self, uuids: T,
+    ) -> OperateResult<bool> 
+    where
+        T: IntoIterator<Item = Uuid> + Debug + Send,
+        <T as IntoIterator>::IntoIter: Send,
+    {
+        let db = self.get_connect();
+        
+        let mut uuids = uuids.into_iter();
+        let Some(first) = uuids.next() else{
+            return Ok(true);
+        };
+        
+        let resp = Entity::find()
+            .all_exist(
+                Entity,
+                Column::UniqueId,
+                first,
+                uuids,
+                &db.get_database_backend(),
+            )
+            .into_model::<CountZero>()
+            .one(db)
+            .await?
+            .unwrap()
+            .take();
+
+        Ok(resp)
     }
 }
