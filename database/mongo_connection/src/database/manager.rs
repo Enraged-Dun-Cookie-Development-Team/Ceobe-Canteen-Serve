@@ -1,6 +1,6 @@
 use std::{
     any::{type_name, TypeId},
-    collections::HashMap,
+    collections::HashMap, sync::Arc,
 };
 
 use futures::Future;
@@ -19,13 +19,13 @@ pub use collection_guard::CollectionGuard;
 /// 但是可以通过collection来进行数据操作
 pub struct DatabaseManage {
     _db_client: Client,
-    collections: HashMap<TypeId, Collection<()>>,
+    collections: Arc<HashMap<TypeId, Collection<()>>>,
 }
 
 impl From<DatabaseBuilder> for DatabaseManage {
     fn from(val: DatabaseBuilder) -> Self {
         DatabaseManage {
-            collections: val.inner_collect,
+            collections: Arc::new(val.inner_collect),
             _db_client: val.client,
         }
     }
