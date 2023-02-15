@@ -2,7 +2,7 @@ use ceobe_operate::ToCeobeOperation;
 use checker::{CheckExtract, JsonCheckExtract};
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe_operation::plugin_version::Checker,
+    mongo_models::ceobe::operation::plugin_version::Checker,
 };
 use resp_result::resp_try;
 use tracing::instrument;

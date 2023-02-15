@@ -48,7 +48,7 @@ pub enum OperateError {
 
 type OperateResult<T> = Result<T, OperateError>;
 
-pub use db_ops_prelude::mongo_models::ceobe_operation::plugin_version::*;
+pub use db_ops_prelude::mongo_models::ceobe::operation::plugin_version::*;
 
 impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
     pub fn plugin_version(&self) -> PluginVersionOperate<'_, Conn> {
