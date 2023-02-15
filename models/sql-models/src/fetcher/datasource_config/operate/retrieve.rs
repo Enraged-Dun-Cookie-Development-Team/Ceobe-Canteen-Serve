@@ -21,11 +21,10 @@ use crate::fetcher::datasource_config::{
     models::model_datasource_config::{
         self, BackendDatasource, Column, DataSourceForFetcherConfig, Entity,
     },
-    operate::retrieve::model_datasource_config::SingleDatasourceInfo,
+    operate::retrieve::model_datasource_config::{
+        DatasourceUuid, FrontendDatasource, SingleDatasourceInfo,
+    },
 };
-use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::DatasourceUuid;
-use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::FrontendDatasource;
-
 
 impl Datasource<'_, NoConnect> {
     pub async fn find_platform_by_id(
@@ -106,9 +105,7 @@ where
 
     #[instrument(skip(self))]
     /// 获取全部数据源UUID列表
-    pub async fn find_all_uuid(
-        &self
-    ) -> OperateResult<Vec<Uuid>> {
+    pub async fn find_all_uuid(&self) -> OperateResult<Vec<Uuid>> {
         let db = self.get_connect();
 
         Ok(Entity::find()
@@ -175,7 +172,7 @@ where
     #[instrument(skip(self))]
     /// 获取全部携带给前台唯一标识的数据源列表
     pub async fn find_all_with_unique_id(
-        &self
+        &self,
     ) -> OperateResult<Vec<FrontendDatasource>> {
         let db = self.get_connect();
         let result = Entity::find()

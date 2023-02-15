@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use chrono::Local;
 use modify_cache::ModifyState;
-use mongodb::bson::{Uuid, DateTime, doc, Document};
+use mongodb::bson::{doc, DateTime, Document, Uuid};
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
@@ -10,19 +10,23 @@ use typed_builder::TypedBuilder;
 use crate::RecordUnit;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
-#[sub_model(all(
-    vis = "pub",
-    name = "UserChecked",
-    extra(derive(Debug, TypedBuilder))
-),none(
-    vis = "pub",
-    name = "UserMobId",
-    extra(derive(Debug, TypedBuilder))
-),none(
-    vis = "pub",
-    name = "UserDatasource",
-    extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
-))]
+#[sub_model(
+    all(
+        vis = "pub",
+        name = "UserChecked",
+        extra(derive(Debug, TypedBuilder))
+    ),
+    none(
+        vis = "pub",
+        name = "UserMobId",
+        extra(derive(Debug, TypedBuilder))
+    ),
+    none(
+        vis = "pub",
+        name = "UserDatasource",
+        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
+    )
+)]
 pub struct UserModel {
     #[sub_model(want("UserMobId"))]
     pub mob_id: String,
@@ -72,7 +76,7 @@ impl UserModel {
     pub fn user_access(mut self) -> Self {
         let now = Local::now();
 
-        self.last_access_time =  DateTime::from_chrono(now);
+        self.last_access_time = DateTime::from_chrono(now);
         self
     }
 }

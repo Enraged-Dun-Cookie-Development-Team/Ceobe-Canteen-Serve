@@ -1,10 +1,11 @@
-use crate::ceobe::user::models::UserModel;
+use mongo_connection::MongoDbCollectionTrait;
+use tracing::{info, instrument, warn};
 
 use super::UserOperate;
-use mongo_connection::MongoDbCollectionTrait;
-use tracing::{instrument, info, warn};
-use crate::ceobe::user::models::UserChecked;
-use crate::ceobe::user::operate::{OperateResult, OperateError};
+use crate::ceobe::user::{
+    models::{UserChecked, UserModel},
+    operate::{OperateError, OperateResult},
+};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where

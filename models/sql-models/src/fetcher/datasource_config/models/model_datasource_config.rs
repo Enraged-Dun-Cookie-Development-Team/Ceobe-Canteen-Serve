@@ -17,10 +17,7 @@ use crate::fetcher::{
         name = "FrontendDatasource",
         extra(derive(sea_orm::FromQueryResult, serde::Serialize, Debug))
     ),
-    none(
-        name = "DatasourceUuid",
-        extra(derive(sea_orm::FromQueryResult))
-    ),
+    none(name = "DatasourceUuid", extra(derive(sea_orm::FromQueryResult))),
     none(
         name = "SingleDatasourceInfo",
         extra(derive(sea_orm::FromQueryResult))
@@ -63,7 +60,11 @@ pub struct Model {
     #[sub_model(want("DataSourceForFetcherConfig"))]
     pub config: String,
     /// 数据源uuid，给用户端使用
-    #[sub_model(ignore("BackendDatasource"), want("FrontendDatasource"), want("DatasourceUuid"))]
+    #[sub_model(
+        ignore("BackendDatasource"),
+        want("FrontendDatasource"),
+        want("DatasourceUuid")
+    )]
     pub unique_id: Uuid,
     /// 数据库使用的Unique Key
     #[sub_model(ignore("BackendDatasource"))]

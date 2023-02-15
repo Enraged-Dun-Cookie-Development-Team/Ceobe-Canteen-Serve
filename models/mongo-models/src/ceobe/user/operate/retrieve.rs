@@ -1,18 +1,16 @@
-use super::UserOperate;
-use crate::ceobe::user::models::UserMobId;
-use crate::ceobe::user::models::UserModel;
-use crate::ceobe::user::operate::OperateResult;
-use mongo_connection::CollectionGuard;
-use mongo_connection::MongoDbCollectionTrait;
-use mongodb::bson::Document;
-use mongodb::bson::Uuid;
-use mongodb::bson::doc;
-use mongodb::options::FindOneOptions;
-use mongodb::options::FindOptions;
+use mongo_connection::{CollectionGuard, MongoDbCollectionTrait};
+use mongodb::{
+    bson::{doc, Document, Uuid},
+    options::FindOneOptions,
+};
 use tap::Tap;
 use tracing::info;
-use crate::ceobe::user::models::UserDatasource;
-use tracing::instrument;
+
+use super::UserOperate;
+use crate::ceobe::user::{
+    models::{UserDatasource, UserMobId, UserModel},
+    operate::OperateResult,
+};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where
@@ -23,25 +21,26 @@ where
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<UserDatasource>,
     ) -> OperateResult<Vec<Uuid>> {
-       Ok(collection
-            .doing(|collection| async move {
-                let datasource_uuids = collection
-                    .find_one(
-                        filter,
-                        FindOneOptions::builder()
-                            .projection(doc! {"datasource_push":1i32})
-                            .build(),
-                    )
-                    .await?;
+        Ok(collection
+            .doing(|collection| {
+                async move {
+                    let datasource_uuids = collection
+                        .find_one(
+                            filter,
+                            FindOneOptions::builder()
+                                .projection(doc! {"datasource_push":1i32})
+                                .build(),
+                        )
+                        .await?;
                     let mut res = Vec::new();
                     if let Some(info) = datasource_uuids {
                         res = info.datasource_push
                     }
                     Ok(res)
+                }
             })
             .await?
-            .tap(|list| info!(mansionList.ids = ?list))
-        )  
+            .tap(|list| info!(mansionList.ids = ?list)))
     }
 
     /// 根据用户mob查询数据源配置
@@ -50,8 +49,10 @@ where
     ) -> OperateResult<Vec<Uuid>> {
         info!(user.mob_id = %mob_id.mob_id);
         let collection = self.get_collection()?;
-        Self::find_datasource_list_by_filter(mob_id.into_id_filter(), &collection.with_mapping())
-            .await
-       
+        Self::find_datasource_list_by_filter(
+            mob_id.into_id_filter(),
+            &collection.with_mapping(),
+        )
+        .await
     }
 }

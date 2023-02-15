@@ -1,9 +1,7 @@
 use mongo_models::ceobe::user::models::UserMobId;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use uuid::Uuid;
-
-
 
 /// MobId请求
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -11,22 +9,16 @@ pub struct MobIdReq {
     pub mob_id: String,
 }
 
-impl Into<UserMobId> for MobIdReq {
-    fn into(self) -> UserMobId {
-        UserMobId { mob_id: self.mob_id }
+impl From<MobIdReq> for UserMobId {
+    fn from(mob_id: MobIdReq) -> Self {
+        UserMobId {
+            mob_id: mob_id.mob_id,
+        }
     }
 }
 
 /// MobId请求
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, Default)]
 pub struct DatasourceConfig {
     pub datasource_config: Vec<Uuid>,
-}
-
-impl DatasourceConfig {
-    pub fn new() -> Self {
-        DatasourceConfig {
-            datasource_config: Vec::new(),
-        }
-    }
 }

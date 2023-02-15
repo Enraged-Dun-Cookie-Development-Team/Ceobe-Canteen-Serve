@@ -76,22 +76,22 @@ where
     }
 
     #[instrument(ret, skip_all)]
-    pub async fn all_exist_by_uuid<T>(
-        &self, uuids: T,
-    ) -> OperateResult<bool> 
+    pub async fn all_exist_by_uuid<T>(&self, uuids: T) -> OperateResult<bool>
     where
         T: IntoIterator<Item = Uuid> + Debug + Send,
         <T as IntoIterator>::IntoIter: Send,
     {
         let db = self.get_connect();
-        
+
         let mut uuids = uuids.into_iter();
         let Some(first) = uuids.next() else{
             return Ok(true);
         };
         let first = Func::cust(UuidToBin).arg(first.hyphenated().to_string());
-        let uuids = uuids.map(|uuid| Func::cust(UuidToBin).arg(uuid.hyphenated().to_string()));
-        
+        let uuids = uuids.map(|uuid| {
+            Func::cust(UuidToBin).arg(uuid.hyphenated().to_string())
+        });
+
         let resp = Entity::find()
             .all_exist(
                 Entity,

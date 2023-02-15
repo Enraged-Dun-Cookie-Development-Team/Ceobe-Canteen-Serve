@@ -10,7 +10,7 @@ pub use back_end::{
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
-    CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend
+    CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend,
 };
 
 pub type ServerRoute = Router<State>;

@@ -1,35 +1,30 @@
-use std::ops::Deref;
-
-use crate::error;
-use crate::utils::{vec_uuid_to_bson_uuid, vec_bson_uuid_to_uuid};
-use crate::view::DatasourceConfig;
-use crate::{error::LogicResult, view::MobIdReq};
 use checker::LiteChecker;
-use futures::{future, FutureExt};
-use mongo_models::ceobe::user::check::user_checker::UserUncheck;
-use mongo_models::ceobe::user::operate::OperateError as CeobeUserOperateError;
+use futures::future;
 use mongo_models::{
     ceobe::user::{
-        check::user_checker::UserChecker, models::UserChecked,
-        operate::ToUserOperate,
+        check::user_checker::{UserChecker, UserUncheck},
+        models::UserChecked,
+        operate::{OperateError as CeobeUserOperateError, ToUserOperate},
     },
     mongo_connection::MongoDatabaseOperate,
     mongodb::bson,
 };
-use sql_models::fetcher::datasource_config::operate::OperateError as FetcherDatasourceOperateError;
 use sql_models::{
-    fetcher::ToFetcherOperate,
-    sql_connection::{
-        database_traits::get_connect::{
-            GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
-        },
-        sea_orm::{ConnectionTrait, DbErr},
-        SqlDatabaseOperate,
+    fetcher::{
+        datasource_config::operate::OperateError as FetcherDatasourceOperateError,
+        ToFetcherOperate,
     },
+    sql_connection::SqlDatabaseOperate,
 };
-use tracing::{info_span, warn};
-use tracing::instrument::Instrument;
 use tokio::task;
+use tracing::warn;
+
+use crate::{
+    error,
+    error::LogicResult,
+    utils::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid},
+    view::{DatasourceConfig, MobIdReq},
+};
 
 pub struct CeobeUserLogic;
 
@@ -77,12 +72,13 @@ impl CeobeUserLogic {
             return Err(error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(mob_id.mob_id)))
         };
 
-
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
         let (datasource_list, user_datasource_config) = future::join(
             db.fetcher_operate().datasource().find_all_uuid(),
-            mongo.user().find_datasource_list_by_mob(mob_id.clone().into()),
+            mongo
+                .user()
+                .find_datasource_list_by_mob(mob_id.clone().into()),
         )
         .await;
 
@@ -90,29 +86,34 @@ impl CeobeUserLogic {
         let user_datasource_config = user_datasource_config?;
 
         // 获取用户设置有且数据源存在的列表
-        let mut resq = DatasourceConfig::new();
-        resq.datasource_config = user_datasource_config
-            .clone()    
-            .into_iter()
-            .filter(|uuid| datasource_list.contains(&uuid.to_owned().into()))
-            .map(|bson_uuid| bson_uuid.into())
-            .collect::<Vec<uuid::Uuid>>();
+        let resp = DatasourceConfig {
+            datasource_config: user_datasource_config
+                .clone()
+                .into_iter()
+                .filter(|uuid| {
+                    datasource_list.contains(&uuid.to_owned().into())
+                })
+                .map(|bson_uuid| bson_uuid.into())
+                .collect::<Vec<uuid::Uuid>>(),
+        };
 
         // 将删除过已不存在的数据源列表存回数据库
         // 异步执行，无论成功与否都继续~
-        if resq.datasource_config.len() < user_datasource_config.len() {
-            tokio::spawn(
-                mongo.user().update_datasource(mob_id.mob_id, vec_uuid_to_bson_uuid(resq.datasource_config.clone()))
-            );
+        if resp.datasource_config.len() < user_datasource_config.len() {
+            tokio::spawn(mongo.user().update_datasource(
+                mob_id.mob_id,
+                vec_uuid_to_bson_uuid(resp.datasource_config.clone()),
+            ));
             task::yield_now().await;
         }
 
-        Ok(resq)
+        Ok(resp)
     }
 
     /// 更新用户数据源配置
     pub async fn update_datasource(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, user_config: UserChecked,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        user_config: UserChecked,
     ) -> LogicResult<()> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
@@ -131,7 +132,13 @@ impl CeobeUserLogic {
         };
 
         // 更新用户蹲饼器数据
-        mongo.user().update_datasource(user_config.mob_id, user_config.datasource_push).await?;
+        mongo
+            .user()
+            .update_datasource(
+                user_config.mob_id,
+                user_config.datasource_push,
+            )
+            .await?;
 
         Ok(())
     }

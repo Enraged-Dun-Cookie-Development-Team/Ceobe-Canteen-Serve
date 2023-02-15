@@ -1,20 +1,19 @@
-pub mod config;
-mod user;
 mod bakery_mansion;
+pub mod config;
 mod operation;
+mod user;
 use axum::Router;
 pub use bakery_mansion::BakeryMansionFrontend;
-pub use user::CeobeUserFrontend;
+pub use config::ConfigDatasourceFrontend;
 pub use operation::{
     CeobeOperationAnnouncementFrontend, CeobeOperationResourceFrontend,
-    CeobeOperationVersionFrontend, CeobeOperationVideoFrontend
+    CeobeOperationVersionFrontend, CeobeOperationVideoFrontend,
 };
-pub use config::ConfigDatasourceFrontend;
+pub use user::CeobeUserFrontend;
 
 use self::{
-    bakery_mansion::bakery_mansion_router,
-    operation::ceobe_operation_router,
-    user::ceobe_user_router, config::config_router,
+    bakery_mansion::bakery_mansion_router, config::config_router,
+    operation::ceobe_operation_router, user::ceobe_user_router,
 };
 use super::ServerRoute;
 pub(super) fn front_end_router() -> ServerRoute {

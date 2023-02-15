@@ -1,7 +1,9 @@
 use sea_orm::{
-    sea_query::{self, Alias, Expr, Query, SelectStatement, UnionType, Func, SimpleExpr},
+    sea_query::{
+        self, Alias, Expr, Query, SelectStatement, SimpleExpr, UnionType,
+    },
     ColumnTrait, DbBackend, EntityTrait, Select, SelectModel, SelectorRaw,
-    Statement, StatementBuilder, Value,
+    Statement, StatementBuilder,
 };
 
 use super::{CountZero, COUNT_NAME};
@@ -55,17 +57,15 @@ impl<E: EntityTrait> QueryAllExist<E> for Select<E> {
         V: Into<SimpleExpr> + Send,
         I: IntoIterator<Item = V> + Send,
     {
-        let a = Self::gen_statement(
-            entity, primary, first, residual, db,
-        );
-        println!("{:#?}",a.to_string());
-        self.from_raw_sql(a)
-        .into_model::<CountZero>()
+        let a = Self::gen_statement(entity, primary, first, residual, db);
+        println!("{:#?}", a.to_string());
+        self.from_raw_sql(a).into_model::<CountZero>()
     }
 }
 
 fn gen_statement(
-    entity: impl EntityTrait, pk: impl ColumnTrait, first: impl Into<SimpleExpr>,
+    entity: impl EntityTrait, pk: impl ColumnTrait,
+    first: impl Into<SimpleExpr>,
     residual: impl IntoIterator<Item = impl Into<SimpleExpr>>,
 ) -> SelectStatement {
     let mut query = Query::select();

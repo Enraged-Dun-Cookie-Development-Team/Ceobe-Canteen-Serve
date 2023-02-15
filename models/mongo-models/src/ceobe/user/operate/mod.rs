@@ -1,21 +1,27 @@
-pub mod verify;
+pub mod create;
 pub mod delete;
 pub mod retrieve;
 pub mod update;
-pub mod create;
+pub mod verify;
 
+use mongo_connection::{
+    database_traits::{
+        database_operates::{
+            sub_operate::{SubOperate, SuperOperate},
+            DatabaseOperate,
+        },
+        get_connect::GetDatabaseCollection,
+    },
+    MongoDbError,
+};
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
 
-use mongo_connection::{database_traits::{database_operates::{sub_operate::{SubOperate, SuperOperate}, DatabaseOperate}, get_connect::GetDatabaseCollection}, MongoDbError};
-
 use super::models::UserModel;
 
-
 pub struct UserOperate<'db, Conn>(&'db Conn)
-where 
+where
     Conn: GetDatabaseCollection<UserModel>;
-
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where
@@ -28,16 +34,13 @@ where
     }
 }
 
-
 impl<'db, Conn> SubOperate<'db> for UserOperate<'db, Conn>
 where
-Conn: GetDatabaseCollection<UserModel>
+    Conn: GetDatabaseCollection<UserModel>,
 {
     type Parent = DatabaseOperate<Conn>;
 
-    fn from_parent(parent: &'db Self::Parent) -> Self {
-        Self(parent)
-    }
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
 pub trait ToUserOperate<Conn: GetDatabaseCollection<UserModel>> {
@@ -46,7 +49,7 @@ pub trait ToUserOperate<Conn: GetDatabaseCollection<UserModel>> {
 
 impl<Conn> ToUserOperate<Conn> for DatabaseOperate<Conn>
 where
-Conn: GetDatabaseCollection<UserModel>,
+    Conn: GetDatabaseCollection<UserModel>,
 {
     fn user(&self) -> UserOperate<'_, Conn> { self.child() }
 }

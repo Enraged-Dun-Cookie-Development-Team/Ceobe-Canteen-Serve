@@ -1,10 +1,14 @@
-use mongo_models::{mongo_connection::MongoDbError, ceobe::user::{operate::OperateError as CeobeUserOperateError, check::CheckError as CeobeUserCheckError}};
+use mongo_models::{
+    ceobe::user::{
+        check::CheckError as CeobeUserCheckError,
+        operate::OperateError as CeobeUserOperateError,
+    },
+    mongo_connection::MongoDbError,
+};
 use sql_models::{
-    fetcher::{
-        datasource_config::{
-            checkers::CheckError as DatasourceConfigCheckError,
-            operate::OperateError as DatasourceConfigOperateError,
-        },
+    fetcher::datasource_config::{
+        checkers::CheckError as DatasourceConfigCheckError,
+        operate::OperateError as DatasourceConfigOperateError,
     },
     sql_connection::sea_orm,
 };

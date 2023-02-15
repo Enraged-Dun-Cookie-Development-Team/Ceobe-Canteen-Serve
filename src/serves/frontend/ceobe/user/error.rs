@@ -1,8 +1,7 @@
-use axum::extract::rejection::QueryRejection;
+use axum::extract::rejection::{JsonRejection, QueryRejection};
 use ceobe_user_logic::error::LogicError;
 use mongo_migration::mongo_models::ceobe::user::check::CheckError as CeobeUserCheckError;
 use resp_result::RespResult;
-use axum::extract::rejection::JsonRejection;
 
 use crate::error_generate;
 
