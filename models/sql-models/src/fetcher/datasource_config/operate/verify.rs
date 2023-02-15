@@ -1,8 +1,10 @@
 use std::{collections::BTreeSet, fmt::Debug, marker::Send};
 
+use mysql_func::UuidToBin;
 use sea_orm::{
     ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect,
 };
+use sea_query::Func;
 use sql_connection::{
     database_traits::{
         database_operates::NoConnect, get_connect::GetDatabaseConnect,
@@ -87,6 +89,8 @@ where
         let Some(first) = uuids.next() else{
             return Ok(true);
         };
+        let first = Func::cust(UuidToBin).arg(first.hyphenated().to_string());
+        let uuids = uuids.map(|uuid| Func::cust(UuidToBin).arg(uuid.hyphenated().to_string()));
         
         let resp = Entity::find()
             .all_exist(
@@ -96,7 +100,6 @@ where
                 uuids,
                 &db.get_database_backend(),
             )
-            .into_model::<CountZero>()
             .one(db)
             .await?
             .unwrap()

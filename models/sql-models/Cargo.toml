@@ -32,3 +32,7 @@ sea-query = { workspace = true }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }
+
+
+[dependencies.mysql_func]
+path = "../../libs/mysql_func"

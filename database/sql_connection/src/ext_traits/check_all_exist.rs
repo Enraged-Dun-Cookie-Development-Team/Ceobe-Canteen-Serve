@@ -1,5 +1,5 @@
 use sea_orm::{
-    sea_query::{self, Alias, Expr, Query, SelectStatement, UnionType},
+    sea_query::{self, Alias, Expr, Query, SelectStatement, UnionType, Func, SimpleExpr},
     ColumnTrait, DbBackend, EntityTrait, Select, SelectModel, SelectorRaw,
     Statement, StatementBuilder, Value,
 };
@@ -19,7 +19,7 @@ pub trait QueryAllExist<E: EntityTrait> {
     ) -> Statement
     where
         C: ColumnTrait,
-        V: Into<Value>,
+        V: Into<SimpleExpr>,
         I: IntoIterator<Item = V>;
 
     type RetSelector;
@@ -28,7 +28,7 @@ pub trait QueryAllExist<E: EntityTrait> {
     ) -> Self::RetSelector
     where
         C: ColumnTrait + Send,
-        V: Into<Value> + Send,
+        V: Into<SimpleExpr> + Send,
         I: IntoIterator<Item = V> + Send;
 }
 
@@ -40,7 +40,7 @@ impl<E: EntityTrait> QueryAllExist<E> for Select<E> {
     ) -> Statement
     where
         C: ColumnTrait,
-        V: Into<Value>,
+        V: Into<SimpleExpr>,
         I: IntoIterator<Item = V>,
     {
         let state = gen_statement(entity, primary, first, values);
@@ -52,19 +52,21 @@ impl<E: EntityTrait> QueryAllExist<E> for Select<E> {
     ) -> Self::RetSelector
     where
         C: ColumnTrait + Send,
-        V: Into<Value> + Send,
+        V: Into<SimpleExpr> + Send,
         I: IntoIterator<Item = V> + Send,
     {
-        self.from_raw_sql(Self::gen_statement(
+        let a = Self::gen_statement(
             entity, primary, first, residual, db,
-        ))
+        );
+        println!("{:#?}",a.to_string());
+        self.from_raw_sql(a)
         .into_model::<CountZero>()
     }
 }
 
 fn gen_statement(
-    entity: impl EntityTrait, pk: impl ColumnTrait, first: impl Into<Value>,
-    residual: impl IntoIterator<Item = impl Into<Value>>,
+    entity: impl EntityTrait, pk: impl ColumnTrait, first: impl Into<SimpleExpr>,
+    residual: impl IntoIterator<Item = impl Into<SimpleExpr>>,
 ) -> SelectStatement {
     let mut query = Query::select();
 
@@ -78,12 +80,12 @@ fn gen_statement(
         {
             // 取出第一个做base
             let mut query = Query::select();
-            query.expr_as(Expr::val(first), TempTable::Id);
+            query.expr_as(first, TempTable::Id);
             // 剩下的union上, 使用去重union, select from DUAL
             query.unions(residual.into_iter().map(|idx| {
                 (UnionType::Distinct, {
                     let mut union_query = Query::select();
-                    union_query.expr_as(Expr::val(idx), TempTable::Id);
+                    union_query.expr_as(idx, TempTable::Id);
                     union_query
                 })
             }));
