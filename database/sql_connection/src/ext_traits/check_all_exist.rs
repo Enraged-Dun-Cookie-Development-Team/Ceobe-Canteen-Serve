@@ -57,9 +57,7 @@ impl<E: EntityTrait> QueryAllExist<E> for Select<E> {
         V: Into<SimpleExpr> + Send,
         I: IntoIterator<Item = V> + Send,
     {
-        let a = Self::gen_statement(entity, primary, first, residual, db);
-        println!("{:#?}", a.to_string());
-        self.from_raw_sql(a).into_model::<CountZero>()
+        self.from_raw_sql(Self::gen_statement(entity, primary, first, residual, db)).into_model::<CountZero>()
     }
 }
 
