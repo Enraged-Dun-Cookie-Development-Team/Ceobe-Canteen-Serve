@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use chrono::Local;
 use modify_cache::ModifyState;
-use mongodb::bson::{Uuid, DateTime};
+use mongodb::bson::{DateTime, Uuid};
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
@@ -62,7 +62,7 @@ impl UserModel {
     pub fn user_access(mut self) -> Self {
         let now = Local::now();
 
-        self.last_access_time =  DateTime::from_chrono(now);
+        self.last_access_time = DateTime::from_chrono(now);
         self
     }
 }
