@@ -1,10 +1,10 @@
-use futures::Future;
-use mongo_connection::MongoDbCollectionTrait;
-use mongodb::bson::{doc, Uuid};
+
+use std::future::Future;
+
+use db_ops_prelude::{mongodb::bson::{Uuid, doc}, mongo_connection::MongoDbCollectionTrait, mongo_models::ceobe::user::models::UserModel};
 use tracing::{info, instrument};
 
-use super::UserOperate;
-use crate::ceobe::user::{models::UserModel, operate::OperateResult};
+use super::{UserOperate, OperateResult};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where

@@ -1,10 +1,10 @@
+use ceobe_user::{ToCeobeUser, user::OperateError as CeobeUserOperateError};
 use checker::LiteChecker;
 use futures::future;
 use mongo_models::{
     ceobe::user::{
         check::user_checker::{UserChecker, UserUncheck},
-        models::UserChecked,
-        operate::{OperateError as CeobeUserOperateError, ToUserOperate},
+        models::UserChecked
     },
     mongo_connection::MongoDatabaseOperate,
     mongodb::bson,
@@ -14,7 +14,7 @@ use sql_models::{
         datasource_config::operate::OperateError as FetcherDatasourceOperateError,
         ToFetcherOperate,
     },
-    sql_connection::SqlDatabaseOperate,
+    sql_connection::SqlDatabaseOperate, admin_user::ToSqlUserOperate,
 };
 use tokio::task;
 use tracing::warn;
@@ -54,7 +54,7 @@ impl CeobeUserLogic {
         let user_checked: UserChecked =
             UserChecker::lite_check(user_uncheck).await?;
         // 将用户信息存入数据库
-        mongo.user().create(user_checked).await?;
+        mongo.ceobe_user().user().create(user_checked).await?;
         Ok(())
     }
 
@@ -64,7 +64,7 @@ impl CeobeUserLogic {
     ) -> LogicResult<DatasourceConfig> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        let true = mongo.user().is_exist_user(
+        let true = mongo.ceobe_user().user().is_exist_user(
             &mob_id.mob_id,
         )
         .await? else {
@@ -77,7 +77,7 @@ impl CeobeUserLogic {
         let (datasource_list, user_datasource_config) = future::join(
             db.fetcher_operate().datasource().find_all_uuid(),
             mongo
-                .user()
+                .ceobe_user().user()
                 .find_datasource_list_by_mob(mob_id.clone().into()),
         )
         .await;
@@ -100,7 +100,7 @@ impl CeobeUserLogic {
         // 将删除过已不存在的数据源列表存回数据库
         // 异步执行，无论成功与否都继续~
         if resp.datasource_config.len() < user_datasource_config.len() {
-            tokio::spawn(mongo.user().update_datasource(
+            tokio::spawn(mongo.ceobe_user().user().update_datasource(
                 mob_id.mob_id,
                 vec_uuid_to_bson_uuid(resp.datasource_config.clone()),
             ));
@@ -117,7 +117,7 @@ impl CeobeUserLogic {
     ) -> LogicResult<()> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        let true = mongo.user().is_exist_user(
+        let true = mongo.ceobe_user().user().is_exist_user(
             &user_config.mob_id,
         )
         .await? else {
@@ -133,7 +133,7 @@ impl CeobeUserLogic {
 
         // 更新用户蹲饼器数据
         mongo
-            .user()
+            .ceobe_user().user()
             .update_datasource(
                 user_config.mob_id,
                 user_config.datasource_push,

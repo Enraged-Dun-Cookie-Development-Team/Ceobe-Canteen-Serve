@@ -1,7 +1,7 @@
-use mongo_connection::MongoDbCollectionTrait;
+
+use db_ops_prelude::{mongo_models::ceobe::user::models::UserModel, mongo_connection::MongoDbCollectionTrait};
 
 use super::UserOperate;
-use crate::ceobe::user::models::UserModel;
 
 impl<'db, Conn> UserOperate<'db, Conn> where
     Conn: MongoDbCollectionTrait<'db, UserModel>

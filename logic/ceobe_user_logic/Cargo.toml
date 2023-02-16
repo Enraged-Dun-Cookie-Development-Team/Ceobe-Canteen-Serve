@@ -25,3 +25,6 @@ path = "../../models/sql-models"
 
 [dependencies.checker]
 path = "../../libs/checker"
+
+[dependencies.ceobe-user]
+path = "../../models/ceobe-user"

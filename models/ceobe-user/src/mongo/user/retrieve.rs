@@ -1,16 +1,8 @@
-use mongo_connection::{CollectionGuard, MongoDbCollectionTrait};
-use mongodb::{
-    bson::{doc, Document, Uuid},
-    options::FindOneOptions,
-};
-use tap::Tap;
+
+use db_ops_prelude::{mongo_connection::{MongoDbCollectionTrait, CollectionGuard}, mongo_models::ceobe::user::models::{UserModel, UserDatasource, UserMobId}, mongodb::{bson::{Document, doc, Uuid}, options::FindOneOptions}, tap::Tap};
 use tracing::info;
 
-use super::UserOperate;
-use crate::ceobe::user::{
-    models::{UserDatasource, UserMobId, UserModel},
-    operate::OperateResult,
-};
+use super::{UserOperate, OperateResult};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where

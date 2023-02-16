@@ -1,7 +1,8 @@
+use ceobe_user::user::OperateError as CeobeUserOperateError;
 use mongo_models::{
     ceobe::user::{
         check::CheckError as CeobeUserCheckError,
-        operate::OperateError as CeobeUserOperateError,
+        
     },
     mongo_connection::MongoDbError,
 };

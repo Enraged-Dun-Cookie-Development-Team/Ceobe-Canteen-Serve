@@ -1,8 +1,7 @@
-use mongo_connection::{CollectionGuard, MongoDbCollectionTrait};
-use mongodb::bson::doc;
+
+use db_ops_prelude::{mongodb::bson::doc, mongo_connection::{CollectionGuard, MongoDbCollectionTrait}, mongo_models::ceobe::user::models::UserModel};
 
 use super::{OperateResult, UserOperate};
-use crate::ceobe::user::models::UserModel;
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where
