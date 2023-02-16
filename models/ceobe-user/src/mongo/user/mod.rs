@@ -6,14 +6,10 @@ pub mod verify;
 
 use std::ops::Deref;
 
-use db_ops_prelude::{mongo_models::ceobe::user::models::UserModel, mongo_connection};
+use db_ops_prelude::mongo_connection;
 use mongo_connection::{
-    database_traits::{
-        database_operates::{
-            sub_operate::{SubOperate, SuperOperate},
-            DatabaseOperate,
-        },
-        get_connect::GetDatabaseCollection,
+    database_traits::database_operates::sub_operate::{
+        SubOperate, SuperOperate,
     },
     MongoDbError,
 };
@@ -21,7 +17,6 @@ use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
 
 use crate::CeobeDatabaseOperate;
-
 
 pub struct UserOperate<'db, Conn>(&'db Conn);
 
@@ -62,7 +57,5 @@ pub enum OperateError {
 }
 
 impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
-    pub fn user(&self) -> UserOperate<'_, Conn> {
-        self.child()
-    }
+    pub fn user(&self) -> UserOperate<'_, Conn> { self.child() }
 }

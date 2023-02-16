@@ -1,6 +1,7 @@
 use std::{
     any::{type_name, TypeId},
-    collections::HashMap, sync::Arc,
+    collections::HashMap,
+    sync::Arc,
 };
 
 use futures::Future;

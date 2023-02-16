@@ -1,5 +1,7 @@
-
-use db_ops_prelude::{mongo_models::ceobe::user::models::UserModel, mongo_connection::MongoDbCollectionTrait};
+use db_ops_prelude::{
+    mongo_connection::MongoDbCollectionTrait,
+    mongo_models::ceobe::user::models::UserModel,
+};
 
 use super::UserOperate;
 

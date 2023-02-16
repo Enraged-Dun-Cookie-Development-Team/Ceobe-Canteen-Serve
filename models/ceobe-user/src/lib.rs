@@ -1,7 +1,9 @@
 use std::ops::Deref;
 
-use db_ops_prelude::database_operates::{DatabaseOperate, sub_operate::{SubOperate, SuperOperate}};
-
+use db_ops_prelude::database_operates::{
+    sub_operate::{SubOperate, SuperOperate},
+    DatabaseOperate,
+};
 
 #[path = "mongo/user/mod.rs"] pub mod user;
 

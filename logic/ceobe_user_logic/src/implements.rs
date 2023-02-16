@@ -1,10 +1,10 @@
-use ceobe_user::{ToCeobeUser, user::OperateError as CeobeUserOperateError};
+use ceobe_user::{user::OperateError as CeobeUserOperateError, ToCeobeUser};
 use checker::LiteChecker;
 use futures::future;
 use mongo_models::{
     ceobe::user::{
         check::user_checker::{UserChecker, UserUncheck},
-        models::UserChecked
+        models::UserChecked,
     },
     mongo_connection::MongoDatabaseOperate,
     mongodb::bson,
@@ -14,7 +14,7 @@ use sql_models::{
         datasource_config::operate::OperateError as FetcherDatasourceOperateError,
         ToFetcherOperate,
     },
-    sql_connection::SqlDatabaseOperate, admin_user::ToSqlUserOperate,
+    sql_connection::SqlDatabaseOperate,
 };
 use tokio::task;
 use tracing::warn;
@@ -77,7 +77,8 @@ impl CeobeUserLogic {
         let (datasource_list, user_datasource_config) = future::join(
             db.fetcher_operate().datasource().find_all_uuid(),
             mongo
-                .ceobe_user().user()
+                .ceobe_user()
+                .user()
                 .find_datasource_list_by_mob(mob_id.clone().into()),
         )
         .await;
@@ -133,7 +134,8 @@ impl CeobeUserLogic {
 
         // 更新用户蹲饼器数据
         mongo
-            .ceobe_user().user()
+            .ceobe_user()
+            .user()
             .update_datasource(
                 user_config.mob_id,
                 user_config.datasource_push,

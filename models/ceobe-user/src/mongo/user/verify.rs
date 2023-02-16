@@ -1,5 +1,8 @@
-
-use db_ops_prelude::{mongodb::bson::doc, mongo_connection::{CollectionGuard, MongoDbCollectionTrait}, mongo_models::ceobe::user::models::UserModel};
+use db_ops_prelude::{
+    mongo_connection::{CollectionGuard, MongoDbCollectionTrait},
+    mongo_models::ceobe::user::models::UserModel,
+    mongodb::bson::doc,
+};
 
 use super::{OperateResult, UserOperate};
 

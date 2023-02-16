@@ -52,11 +52,11 @@ impl ModifyState for PluginVersion {
 impl RecordUnitSet for PluginVersion {
     type Source = PluginVersionChecked;
 
-    fn get_mut(&mut self) -> &mut RecordUnit {
-        &mut self.time_record
-    }
+    fn get_mut(&mut self) -> &mut RecordUnit { &mut self.time_record }
 
-    fn into_with_time_record(model: Self::Source, time_record: RecordUnit) -> Self {
+    fn into_with_time_record(
+        model: Self::Source, time_record: RecordUnit,
+    ) -> Self {
         let Self::Source {
             version,
             title,

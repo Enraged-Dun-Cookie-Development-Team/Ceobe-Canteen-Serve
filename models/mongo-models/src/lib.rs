@@ -43,7 +43,7 @@ pub trait RecordUnitSet {
 
     fn get_mut(&mut self) -> &mut RecordUnit;
 
-    fn mut_by(&mut self, f:impl FnOnce(&mut RecordUnit)) {
+    fn mut_by(&mut self, f: impl FnOnce(&mut RecordUnit)) {
         f(self.get_mut())
     }
 
@@ -55,5 +55,7 @@ pub trait RecordUnitSet {
     }
 
     // 一般用于将
-    fn into_with_time_record(model: Self::Source, time_record:RecordUnit) -> Self;
+    fn into_with_time_record(
+        model: Self::Source, time_record: RecordUnit,
+    ) -> Self;
 }
