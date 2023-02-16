@@ -37,3 +37,23 @@ fn now() -> DateTime {
     let now = Local::now();
     DateTime::from_chrono(now)
 }
+
+pub trait RecordUnitSet {
+    type Source;
+
+    fn get_mut(&mut self) -> &mut RecordUnit;
+
+    fn mut_by(&mut self, f:impl FnOnce(&mut RecordUnit)) {
+        f(self.get_mut())
+    }
+
+    // 用于更新修改时间
+    fn modeify_time(&mut self) {
+        self.mut_by(|record| {
+            record.modify();
+        })
+    }
+
+    // 一般用于将
+    fn into_with_time_record(model: Self::Source, time_record:RecordUnit) -> Self;
+}

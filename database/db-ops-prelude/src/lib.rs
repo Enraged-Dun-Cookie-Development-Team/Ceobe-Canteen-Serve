@@ -21,5 +21,5 @@ pub mod sql_models {
 }
 
 pub mod mongo_models {
-    pub use ::mongo_models::{bakery, ceobe};
+    pub use ::mongo_models::{bakery, ceobe, RecordUnitSet};
 }
