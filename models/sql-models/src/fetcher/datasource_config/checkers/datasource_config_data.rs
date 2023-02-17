@@ -16,7 +16,9 @@ use super::{
     unique_key_checker::PreCheckFetcherDatasourceConfig, CheckError,
     FetcherDatasourceConfig, UniqueKeyChecker,
 };
-use crate::fetcher::datasource_config::models::model_datasource_config::ActiveModel;
+use crate::{fetcher::datasource_config::models::model_datasource_config::{
+    self, ActiveModel,
+}, get_now_naive_date_time};
 #[check_obj(
     uncheck = FetcherDatasourceConfigUncheck,
     checked = PreCheckFetcherDatasourceConfig,
@@ -62,6 +64,22 @@ impl IntoActiveModel<ActiveModel> for FetcherDatasourceConfig {
             active.unique_id = Set(Uuid::new_v4())
         }
 
+        active
+    }
+}
+
+impl FetcherDatasourceConfig {
+    /// FetcherDatasourceConfig转ActiveModel，激活删除数据
+    pub(in crate::fetcher::datasource_config) fn into_active_model_by_delete(self) -> ActiveModel {
+        let mut active = ActiveModel {
+            nickname: Set(self.nickname),
+            avatar: Set(self.avatar.to_string()),
+            config: Set(serde_json::to_string(&self.config)
+                .expect_or_log("config为非法json格式")),
+            db_unique_key: Set(self.unique_key),
+            ..Default::default()
+        };
+        active.soft_recover();
         active
     }
 }
