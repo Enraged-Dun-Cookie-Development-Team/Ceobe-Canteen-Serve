@@ -6,9 +6,9 @@ use sea_orm::{
     QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
-use sql_connection::database_traits::{
+use sql_connection::{database_traits::{
     database_operates::NoConnect, get_connect::GetDatabaseConnect,
-};
+}, ext_traits::select_count::QueryCountByColumn};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
@@ -16,12 +16,12 @@ use super::{
     super::models::model_datasource_config::DatasourcePlatform, Datasource,
     OperateError, OperateResult,
 };
-use crate::fetcher::datasource_config::{
+use crate::{fetcher::datasource_config::{
     models::model_datasource_config::{
         self, BackendDatasource, Column, DataSourceForFetcherConfig, Entity,
     },
     operate::retrieve::model_datasource_config::SingleDatasourceInfo,
-};
+}, get_zero_data_time};
 
 impl Datasource<'_, NoConnect> {
     pub async fn find_platform_by_id(
@@ -30,6 +30,7 @@ impl Datasource<'_, NoConnect> {
         Entity::find_by_id(id)
             .select_only()
             .column(Column::Platform)
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .into_model()
             .one(db)
             .await?
@@ -65,6 +66,7 @@ where
                         Column::Datasource.eq(datasource_str)
                     })),
             )
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .with_pagination(page_size)
             .into_model::<BackendDatasource>()
             .all(db)
@@ -89,6 +91,7 @@ where
 
         Ok(Entity::find()
             .filter(Column::Platform.eq(platform))
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .into_model::<DataSourceForFetcherConfig>()
             .all(db)
             .await?).tap_ok(|list| {
@@ -108,6 +111,7 @@ where
         Ok(Entity::find()
             .select_only()
             .column(Column::Datasource)
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .group_by(Column::Datasource)
             .into_model::<SingleDatasourceInfo>()
             .all(db)

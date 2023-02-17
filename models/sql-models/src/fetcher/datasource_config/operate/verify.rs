@@ -7,15 +7,15 @@ use sql_connection::{
     database_traits::{
         database_operates::NoConnect, get_connect::GetDatabaseConnect,
     },
-    ext_traits::{check_all_exist::QueryAllExist, CountZero},
+    ext_traits::{check_all_exist::QueryAllExist, CountZero, select_count::QueryCountByColumn},
 };
 use tracing::instrument;
 
 use super::{Datasource, OperateResult};
-use crate::fetcher::datasource_config::{
+use crate::{fetcher::datasource_config::{
     models::model_datasource_config::{Column, Entity},
     operate::PlatformDatasource,
-};
+}, get_zero_data_time};
 
 impl Datasource<'_, NoConnect> {
     /// 验证id数组是否都存在
@@ -48,7 +48,39 @@ impl Datasource<'_, NoConnect> {
 
         Ok(resp)
     }
+
+    #[instrument(skip(db), ret)]
+    /// 是否存在该数据源，且被删除的
+    pub async fn is_datasource_delete_exist(
+        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
+    ) -> OperateResult<bool> {
+        Ok(Entity::find()
+            .filter(Column::Datasource.eq(datasource))
+            .filter(Column::DbUniqueKey.eq(unique_key))
+            .filter(Column::DeleteAt.ne(get_zero_data_time()))
+            .count_non_zero_by_column(Column::Id)
+            .one(db)
+            .await?
+            .unwrap()
+            .take())
+    }
+
+    #[instrument(skip(db), ret)]
+    /// 是否存在该数据源，且没被删除的
+    pub async fn is_id_exist(
+        db: &impl ConnectionTrait, did: i32,
+    ) -> OperateResult<bool> {
+        Ok(Entity::find()
+            .filter(Column::Id.eq(did))
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
+            .count_non_zero_by_column(Column::Id)
+            .one(db)
+            .await?
+            .unwrap()
+            .take())
+    }
 }
+
 impl<'c, C> Datasource<'c, C>
 where
     C: GetDatabaseConnect,
@@ -64,11 +96,12 @@ where
             .select_only()
             .column(Column::Platform)
             .filter(Column::Platform.is_in(platforms))
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .group_by(Column::Platform)
             .into_model::<PlatformDatasource>()
             .all(db)
             .await?;
 
         Ok(resp.into_iter().map(|item| item.platform).collect())
-    }
+    }  
 }

@@ -23,8 +23,10 @@ where
         );
 
         let db = self.get_connect();
-
-        config.into_active_model().update(db).await?;
+        
+        if Datasource::is_id_exist(db, config.id.unwrap()).await? {
+            config.into_active_model().update(db).await?;
+        };
 
         Ok(())
     }

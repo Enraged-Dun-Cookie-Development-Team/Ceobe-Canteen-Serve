@@ -18,7 +18,12 @@ impl Datasource<'_, NoConnect> {
             datasource.avatar = config.avatar.to_string(),
             datasouce.config = ?config.config
         );
-        config.into_active_model().save(db).await?;
+        if Self::is_datasource_delete_exist(db, &config.datasource, &config.unique_key).await? {
+            config.into_active_model_by_delete().save(db).await?;
+        }
+        else {
+            config.into_active_model().save(db).await?;
+        };
 
         Ok(())
     }
