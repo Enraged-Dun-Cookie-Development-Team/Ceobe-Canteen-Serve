@@ -6,7 +6,7 @@ use checker::{
         url_checker::UrlChecker,
     },
 };
-use sea_orm::{IntoActiveModel, Set};
+use sea_orm::{ActiveValue::NotSet, IntoActiveModel, Set};
 use serde_json::{Map, Value};
 use sql_connection::ext_traits::active_or_set::ActiveOrSet;
 use tracing_unwrap::ResultExt;
@@ -16,9 +16,12 @@ use super::{
     unique_key_checker::PreCheckFetcherDatasourceConfig, CheckError,
     FetcherDatasourceConfig, UniqueKeyChecker,
 };
-use crate::{fetcher::datasource_config::models::model_datasource_config::{
-    self, ActiveModel,
-}, get_now_naive_date_time};
+use crate::{
+    fetcher::datasource_config::models::model_datasource_config::{
+        self, ActiveModel, Model,
+    },
+    get_now_naive_date_time,
+};
 #[check_obj(
     uncheck = FetcherDatasourceConfigUncheck,
     checked = PreCheckFetcherDatasourceConfig,
@@ -68,16 +71,22 @@ impl IntoActiveModel<ActiveModel> for FetcherDatasourceConfig {
     }
 }
 
-impl FetcherDatasourceConfig {
+impl Model {
     /// FetcherDatasourceConfig转ActiveModel，激活删除数据
-    pub(in crate::fetcher::datasource_config) fn into_active_model_by_delete(self) -> ActiveModel {
+    pub(in crate::fetcher::datasource_config) fn into_active_model_by_delete(
+        self, new_model: FetcherDatasourceConfig,
+    ) -> ActiveModel {
         let mut active = ActiveModel {
-            nickname: Set(self.nickname),
-            avatar: Set(self.avatar.to_string()),
-            config: Set(serde_json::to_string(&self.config)
+            nickname: Set(new_model.nickname),
+            avatar: Set(new_model.avatar.to_string()),
+            config: Set(serde_json::to_string(&new_model.config)
                 .expect_or_log("config为非法json格式")),
-            db_unique_key: Set(self.unique_key),
-            ..Default::default()
+            platform: Set(new_model.platform),
+            id: Set(self.id),
+            datasource: Set(self.datasource),
+            unique_id: Set(self.unique_id),
+            db_unique_key: Set(self.db_unique_key),
+            delete_at: Set(self.delete_at),
         };
         active.soft_recover();
         active
