@@ -6,7 +6,7 @@ use checker::{
         url_checker::UrlChecker,
     },
 };
-use sea_orm::{ActiveValue::NotSet, IntoActiveModel, Set};
+use sea_orm::{IntoActiveModel, Set};
 use serde_json::{Map, Value};
 use sql_connection::ext_traits::active_or_set::ActiveOrSet;
 use tracing_unwrap::ResultExt;
@@ -16,11 +16,8 @@ use super::{
     unique_key_checker::PreCheckFetcherDatasourceConfig, CheckError,
     FetcherDatasourceConfig, UniqueKeyChecker,
 };
-use crate::{
-    fetcher::datasource_config::models::model_datasource_config::{
-        self, ActiveModel, Model,
-    },
-    get_now_naive_date_time,
+use crate::fetcher::datasource_config::models::model_datasource_config::{
+    ActiveModel, Model,
 };
 #[check_obj(
     uncheck = FetcherDatasourceConfigUncheck,

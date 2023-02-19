@@ -6,9 +6,9 @@ use sea_orm::{
     QueryFilter, QuerySelect,
 };
 use smallvec::SmallVec;
-use sql_connection::{database_traits::{
+use sql_connection::database_traits::{
     database_operates::NoConnect, get_connect::GetDatabaseConnect,
-}, ext_traits::select_count::QueryCountByColumn};
+};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
@@ -16,12 +16,16 @@ use super::{
     super::models::model_datasource_config::DatasourcePlatform, Datasource,
     OperateError, OperateResult,
 };
-use crate::{fetcher::datasource_config::{
-    models::model_datasource_config::{
-        self, BackendDatasource, Column, DataSourceForFetcherConfig, Entity, Model,
+use crate::{
+    fetcher::datasource_config::{
+        models::model_datasource_config::{
+            self, BackendDatasource, Column, DataSourceForFetcherConfig,
+            Entity, Model,
+        },
+        operate::retrieve::model_datasource_config::SingleDatasourceInfo,
     },
-    operate::retrieve::model_datasource_config::SingleDatasourceInfo,
-}, get_zero_data_time};
+    get_zero_data_time,
+};
 
 impl Datasource<'_, NoConnect> {
     pub async fn find_platform_by_id(
@@ -38,7 +42,7 @@ impl Datasource<'_, NoConnect> {
     }
 
     pub async fn find_delete_model_by_datasource_and_unique_key(
-        db: &impl ConnectionTrait, datasource: &str, unique_key: &str
+        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
     ) -> OperateResult<Model> {
         Entity::find()
             .filter(Column::Datasource.eq(datasource))

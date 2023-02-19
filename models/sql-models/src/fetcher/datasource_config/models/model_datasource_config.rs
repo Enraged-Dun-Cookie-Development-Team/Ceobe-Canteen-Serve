@@ -1,10 +1,13 @@
 use sea_orm::{entity::prelude::*, Set};
 use sub_model::SubModel;
 
-use crate::{fetcher::{
-    datasource_config::checkers::DatasourceUnique,
-    platform_config::models::model_platform_config,
-}, get_now_naive_date_time, get_zero_data_time};
+use crate::{
+    fetcher::{
+        datasource_config::checkers::DatasourceUnique,
+        platform_config::models::model_platform_config,
+    },
+    get_now_naive_date_time, get_zero_data_time,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_config")]
@@ -104,4 +107,3 @@ impl ActiveModel {
         self.delete_at = Set(get_zero_data_time())
     }
 }
-

@@ -1,11 +1,15 @@
-use sea_orm::{ConnectionTrait, EntityTrait, QueryFilter, ColumnTrait};
+use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
 use sea_query::Expr;
 use sql_connection::database_traits::database_operates::NoConnect;
 use tracing::{info, instrument};
 
 use super::{Datasource, OperateResult};
-use crate::{fetcher::datasource_config::{models::model_datasource_config::{Entity, Column}, checkers::FetcherDatasourceConfig}, get_zero_data_time, get_now_naive_date_time_value};
-
+use crate::{
+    fetcher::datasource_config::models::model_datasource_config::{
+        Column, Entity,
+    },
+    get_now_naive_date_time_value, get_zero_data_time,
+};
 
 impl Datasource<'_, NoConnect> {
     #[instrument(skip(db), ret)]

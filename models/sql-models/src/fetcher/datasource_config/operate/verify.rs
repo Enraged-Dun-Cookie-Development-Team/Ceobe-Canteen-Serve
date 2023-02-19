@@ -7,15 +7,21 @@ use sql_connection::{
     database_traits::{
         database_operates::NoConnect, get_connect::GetDatabaseConnect,
     },
-    ext_traits::{check_all_exist::QueryAllExist, CountZero, select_count::QueryCountByColumn},
+    ext_traits::{
+        check_all_exist::QueryAllExist, select_count::QueryCountByColumn,
+        CountZero,
+    },
 };
 use tracing::instrument;
 
 use super::{Datasource, OperateResult};
-use crate::{fetcher::datasource_config::{
-    models::model_datasource_config::{Column, Entity},
-    operate::PlatformDatasource,
-}, get_zero_data_time};
+use crate::{
+    fetcher::datasource_config::{
+        models::model_datasource_config::{Column, Entity},
+        operate::PlatformDatasource,
+    },
+    get_zero_data_time,
+};
 
 impl Datasource<'_, NoConnect> {
     /// 验证id数组是否都存在
@@ -103,5 +109,5 @@ where
             .await?;
 
         Ok(resp.into_iter().map(|item| item.platform).collect())
-    }  
+    }
 }

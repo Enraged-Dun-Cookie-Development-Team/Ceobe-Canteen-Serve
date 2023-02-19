@@ -1,11 +1,9 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel, Set};
+use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
 use sql_connection::database_traits::database_operates::NoConnect;
 use tracing::{info, instrument};
 
 use super::{Datasource, OperateResult};
-use crate::fetcher::datasource_config::{
-    checkers::FetcherDatasourceConfig, models::model_datasource_config,
-};
+use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 
 impl Datasource<'_, NoConnect> {
     /// 保存数据源配置到数据库
@@ -28,14 +26,11 @@ impl Datasource<'_, NoConnect> {
         .await
         {
             Ok(model) => {
-                let active_model =
-                    model.into_active_model_by_delete(config);
+                let active_model = model.into_active_model_by_delete(config);
                 active_model.update(db).await?;
-                ()
             }
             Err(_) => {
                 config.into_active_model().save(db).await?;
-                ()
             }
         };
 

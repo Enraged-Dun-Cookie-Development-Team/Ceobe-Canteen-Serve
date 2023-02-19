@@ -12,7 +12,7 @@ enum FetcherDatasourceConfig {
     Config,
     UniqueId,
     DbUniqueKey,
-    DeleteAt
+    DeleteAt,
 }
 pub mod m20221231_200206_alter_nickname;
 pub mod m20230217_135012_add_sort_detele;
