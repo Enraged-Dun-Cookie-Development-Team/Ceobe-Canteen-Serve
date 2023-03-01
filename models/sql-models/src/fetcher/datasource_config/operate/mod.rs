@@ -42,15 +42,15 @@ pub enum OperateError {
         resp_msg = "蹲饼器数据源不存在"
     ))]
     DatasourceNotFound(i32),
-    #[error("蹲饼器 Datasource 不存在")]
+    #[error("Datasources有不存在")]
     #[status_err(err(
-        err_code = 0x0007,
+        err_code = 0x0008,
         prefix = "ErrPrefix::NOT_FOUND",
-        resp_msg = "蹲饼器数据源不存在"
+        resp_msg = "有数据源不存在"
     ))]
-    DatasourceNotExist,
+    DatasourcesNotExist,
 }
-#[allow(dead_code)]
+
 type OperateResult<T> = Result<T, OperateError>;
 
 #[derive(FromQueryResult)]

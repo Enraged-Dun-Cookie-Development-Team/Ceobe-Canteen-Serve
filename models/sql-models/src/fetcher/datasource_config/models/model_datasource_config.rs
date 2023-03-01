@@ -1,4 +1,4 @@
-use sea_orm::{entity::prelude::*, Set};
+use sea_orm::{entity::prelude::*, Set, ActiveValue};
 use sub_model::SubModel;
 
 use crate::{
@@ -6,8 +6,9 @@ use crate::{
         datasource_config::checkers::DatasourceUnique,
         platform_config::models::model_platform_config,
     },
-    get_now_naive_date_time, get_zero_data_time,
+    get_now_naive_date_time, get_zero_data_time, SoftDelete,
 };
+use crate::NaiveDateTime;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_config")]
@@ -96,14 +97,9 @@ impl Related<model_platform_config::Entity> for Entity {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-impl ActiveModel {
-    // 软删除
-    pub fn soft_remove(&mut self) {
-        self.delete_at = Set(get_now_naive_date_time());
-    }
+impl SoftDelete for ActiveModel {
 
-    // 还原删除
-    pub fn soft_recover(&mut self) {
-        self.delete_at = Set(get_zero_data_time())
+    fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime> {
+        &mut self.delete_at
     }
 }

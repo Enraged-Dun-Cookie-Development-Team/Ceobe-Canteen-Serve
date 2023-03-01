@@ -31,10 +31,8 @@ impl MigrationTrait for Migration {
             .drop_column(FetcherDatasourceConfig::DeleteAt);
         let mut delete = sea_query::DeleteStatement::new();
         delete.from_table(FetcherDatasourceConfig::Table).and_where(
-            Expr::col(FetcherDatasourceConfig::DeleteAt).ne(
-                Value::ChronoDateTime(Box::new(get_zero_data_time()).into()),
-            ),
-        );
+            Expr::col(FetcherDatasourceConfig::DeleteAt).ne(get_zero_data_time())
+            );
         manager.exec_stmt(delete).await?;
         manager.alter_table(al).await?;
         Ok(())

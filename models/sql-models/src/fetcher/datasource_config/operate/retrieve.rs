@@ -51,7 +51,7 @@ impl Datasource<'_, NoConnect> {
             .into_model()
             .one(db)
             .await?
-            .ok_or(OperateError::DatasourceNotExist)
+            .ok_or(OperateError::DatasourcesNotExist)
     }
 }
 
