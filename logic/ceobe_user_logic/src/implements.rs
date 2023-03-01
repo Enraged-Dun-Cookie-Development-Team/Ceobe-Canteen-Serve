@@ -1,30 +1,30 @@
 use std::collections::HashSet;
 
 use ceobe_user::{user::OperateError as CeobeUserOperateError, ToCeobeUser};
-
 use checker::LiteChecker;
-use db_ops_prelude::sql_models::fetcher::{
-    datasource_config::operate::OperateError as FetcherDatasourceOperateError,
-    ToFetcherOperate,
-};
 use db_ops_prelude::{
+    bool_or::TrueOrError,
     mongo_connection::MongoDatabaseOperate,
     mongo_models::ceobe::user::{
         check::user_checker::{UserChecker, UserUncheck},
         models::UserChecked,
     },
     mongodb::bson,
+    sql_models::fetcher::{
+        datasource_config::operate::OperateError as FetcherDatasourceOperateError,
+        ToFetcherOperate,
+    },
     SqlDatabaseOperate,
 };
 use futures::future;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
-use uuids_convert::{vec_uuid_to_bson_uuid, vec_bson_uuid_to_uuid};
+use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
     error,
-    error::LogicResult, 
+    error::LogicResult,
     view::{DatasourceConfig, MobIdReq},
 };
 
@@ -71,7 +71,7 @@ impl CeobeUserLogic {
         )
         .await?.true_or_with(|| {
             warn!(user.mob_id = %mob_id.mob_id, newUser.mob_id.exist = false);
-            error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(mob_id.mob_id))
+            error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(mob_id.mob_id.clone()))
         })?;
 
         // 获取所有数据源的uuid列表
@@ -127,13 +127,13 @@ impl CeobeUserLogic {
         )
         .await?.true_or_with(|| {
             warn!(user.mob_id = %user_config.mob_id, newUser.mob_id.exist = false);
-            return Err(error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(user_config.mob_id)))
+            error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(user_config.mob_id.clone()))
         })?;
 
         // 判断是否所有数据源都存在
         db.fetcher_operate().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await?.true_or_with(|| {
             warn!(user.datasources = ?user_config.datasource_push, user.datasources.exist = false);
-            return Err(error::LogicError::DatasourceConfigOperateError(FetcherDatasourceOperateError::DatasourcesNotFound))
+            error::LogicError::DatasourceConfigOperateError(FetcherDatasourceOperateError::DatasourcesNotFound)
         })?;
 
         // 更新用户蹲饼器数据

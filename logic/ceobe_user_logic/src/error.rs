@@ -1,15 +1,12 @@
 use ceobe_user::user::OperateError as CeobeUserOperateError;
-
-use db_ops_prelude::mongo_connection::MongoDbError;
-use db_ops_prelude::mongo_models::{
-    ceobe::user::check::CheckError as CeobeUserCheckError
-};
-use db_ops_prelude::sea_orm;
-use db_ops_prelude::sql_models::{
-    fetcher::datasource_config::{
+use db_ops_prelude::{
+    mongo_connection::MongoDbError,
+    mongo_models::ceobe::user::check::CheckError as CeobeUserCheckError,
+    sea_orm,
+    sql_models::fetcher::datasource_config::{
         checkers::CheckError as DatasourceConfigCheckError,
         operate::OperateError as DatasourceConfigOperateError,
-    }
+    },
 };
 use status_err::StatusErr;
 use thiserror::Error;

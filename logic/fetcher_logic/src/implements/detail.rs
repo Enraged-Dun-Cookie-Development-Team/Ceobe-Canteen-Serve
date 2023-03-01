@@ -31,7 +31,7 @@ use super::FetcherConfigLogic;
 use crate::{
     checkers::check_platform_same::PlatformSameChecker,
     error::{LogicError, LogicResult},
-    utils::{GetOrCreate},
+    utils::GetOrCreate,
     view::{BackEndFetcherConfig, Group, Server},
 };
 

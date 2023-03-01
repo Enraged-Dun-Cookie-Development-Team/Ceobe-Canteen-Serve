@@ -1,6 +1,7 @@
 use db_ops_prelude::{
+    bool_or::FalseOrError,
     mongo_connection::MongoDbCollectionTrait,
-    mongo_models::ceobe::user::models::{UserChecked, UserModel}, bool_or::FalseOrError,
+    mongo_models::ceobe::user::models::{UserChecked, UserModel},
 };
 use tracing::{info, instrument, warn};
 

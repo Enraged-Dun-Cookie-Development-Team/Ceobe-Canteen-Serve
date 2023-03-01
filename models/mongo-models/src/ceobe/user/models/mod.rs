@@ -78,16 +78,12 @@ impl RecordUnitUpdater for UserModel {
     type Source = UserChecked;
 
     fn get_mut(&mut self) -> &mut RecordUnit { &mut self.time_record }
-
-    
 }
 
 impl SetRecordUnit for UserChecked {
     type Target = UserModel;
 
-    fn into_with_time_record(
-       self, time_record: RecordUnit,
-    ) -> Self::Target {
+    fn into_with_time_record(self, time_record: RecordUnit) -> Self::Target {
         let Self {
             mob_id,
             datasource_push,

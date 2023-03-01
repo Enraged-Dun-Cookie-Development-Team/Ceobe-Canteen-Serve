@@ -3,7 +3,7 @@ use checker::RefChecker;
 use futures::future::{ready, Ready};
 use sql_models::fetcher::config::checkers::config_data::FetcherConfig;
 
-use crate::{error::LogicError};
+use crate::error::LogicError;
 
 pub struct PlatformSameChecker;
 

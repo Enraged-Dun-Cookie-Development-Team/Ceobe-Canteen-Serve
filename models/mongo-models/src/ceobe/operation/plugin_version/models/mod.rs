@@ -53,16 +53,12 @@ impl RecordUnitUpdater for PluginVersion {
     type Source = PluginVersionChecked;
 
     fn get_mut(&mut self) -> &mut RecordUnit { &mut self.time_record }
-
-    
 }
 
 impl SetRecordUnit for PluginVersionChecked {
     type Target = PluginVersion;
 
-    fn into_with_time_record(
-        self, time_record: RecordUnit,
-    ) -> Self::Target {
+    fn into_with_time_record(self, time_record: RecordUnit) -> Self::Target {
         let Self {
             version,
             title,
@@ -79,4 +75,3 @@ impl SetRecordUnit for PluginVersionChecked {
         }
     }
 }
-

@@ -25,7 +25,8 @@ where
             mansion.id.into_id_filter(),
             &collection,
         )
-        .await?.false_or_with(|| {
+        .await?
+        .false_or_with(|| {
             warn!(newMansion.id = %mansion.id, newMansion.id.exist = true);
             OperateError::MansionIdExist(mansion.id.to_string())
         })?;

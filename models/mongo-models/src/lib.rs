@@ -58,8 +58,6 @@ pub trait RecordUnitUpdater {
 // 设置RecordUnit
 pub trait SetRecordUnit {
     type Target;
-    
-    fn into_with_time_record(
-        self, time_record: RecordUnit,
-    ) -> Self::Target;
+
+    fn into_with_time_record(self, time_record: RecordUnit) -> Self::Target;
 }

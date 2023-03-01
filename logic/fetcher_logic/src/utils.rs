@@ -55,7 +55,6 @@ impl<Q: std::hash::Hash + std::cmp::Eq, V, R: BuildHasher> GetOrCreate<Q, V>
     }
 }
 
-
 impl<Q: Ord, V> GetOrCreate<Q, V> for BTreeMap<Q, V> {
     fn get_mut_or_create(&mut self, key: Q, value: V) -> &mut V {
         self.entry(key).or_insert(value)

@@ -32,10 +32,11 @@ where
 
         // 检查id，确保id存在
         Self::is_exist_mansion_by_filter(mid.into_id_filter(), &collection)
-        .await?.true_or_with(|| {
-            warn!(mansion.id = %mid,mansion.id.exist = false);
-            OperateError::MansionIdExist(mansion.id.to_string());
-        })?;
+            .await?
+            .true_or_with(|| {
+                warn!(mansion.id = %mid,mansion.id.exist = false);
+                OperateError::MansionIdExist(mansion.id.to_string())
+            })?;
 
         collection
             .doing(|collection| {
