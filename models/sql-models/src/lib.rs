@@ -8,7 +8,6 @@ use chrono::{Local, NaiveDateTime};
 use futures::Stream;
 use sea_orm::{DbErr, Value, Set, ActiveValue};
 pub use sql_connection;
-use sea_orm::prelude::DateTime;
 
 pub type StreamResult<'b, M> =
     Pin<Box<dyn Stream<Item = Result<M, DbErr>> + 'b + Send>>;

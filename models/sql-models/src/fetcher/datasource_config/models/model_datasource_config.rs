@@ -1,4 +1,4 @@
-use sea_orm::{entity::prelude::*, Set, ActiveValue};
+use sea_orm::{entity::prelude::*, ActiveValue};
 use sub_model::SubModel;
 
 use crate::{
@@ -6,7 +6,7 @@ use crate::{
         datasource_config::checkers::DatasourceUnique,
         platform_config::models::model_platform_config,
     },
-    get_now_naive_date_time, get_zero_data_time, SoftDelete,
+    SoftDelete,
 };
 use crate::NaiveDateTime;
 
@@ -98,7 +98,6 @@ impl Related<model_platform_config::Entity> for Entity {
 impl ActiveModelBehavior for ActiveModel {}
 
 impl SoftDelete for ActiveModel {
-
     fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime> {
         &mut self.delete_at
     }

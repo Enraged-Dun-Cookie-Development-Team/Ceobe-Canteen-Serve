@@ -1,6 +1,6 @@
-use sea_orm::{entity::prelude::*, Set};
-
-use crate::{get_now_naive_date_time, get_zero_data_time};
+use sea_orm::ActiveValue;
+use sea_orm::entity::prelude::*;
+use crate::{NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "ceobe_operation_announcement")]
@@ -26,16 +26,9 @@ impl RelationTrait for Relation {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-impl ActiveModel {
-    // 软删除
-    pub fn soft_remove(&mut self) {
-        let now = get_now_naive_date_time();
-        self.delete_at = Set(now);
-    }
-
-    // 还原删除
-    pub fn soft_recover(&mut self) {
-        let date_time = get_zero_data_time();
-        self.delete_at = Set(date_time)
+impl SoftDelete for ActiveModel {
+    fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime> {
+        &mut self.delete_at
     }
 }
+
