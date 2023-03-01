@@ -3,7 +3,7 @@ use std::ops::Deref;
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
     sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel},
-    tap::{Pipe, Tap},
+    tap::{Pipe, Tap}, bool_or::FalseOrError,
 };
 use tracing::{info, instrument};
 
@@ -23,11 +23,9 @@ where
         );
 
         let db = self.deref();
-        // 判断版本是否已存在
 
-        let false = Self::is_exist_app_version(&version_info.version,db).await? else {
-            return Err(OperateError::AppVersionIdExist(version_info.version));
-        };
+        // 判断版本是否已存在
+        Self::is_exist_app_version(&version_info.version,db).await?.false_or_with(|| OperateError::AppVersionIdExist(version_info.version.clone()))?;
 
         version_info
             .into_active_model()

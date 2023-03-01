@@ -1,3 +1,4 @@
+use bool_or::TrueOrError;
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
     fetcher::{
@@ -20,7 +21,6 @@ use sql_models::{
 use crate::{
     error::{LogicError, LogicResult},
     implements::FetcherConfigLogic,
-    utils::TrueOrError,
 };
 
 impl FetcherConfigLogic {

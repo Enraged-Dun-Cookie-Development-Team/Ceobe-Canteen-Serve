@@ -1,5 +1,6 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
+use bool_or::TrueOrError;
 use checker::prefabs::post_checker::PostChecker;
 use redis::AsyncCommands;
 use redis_global::redis_key::fetcher::FetcherConfigKey;
@@ -30,7 +31,7 @@ use super::FetcherConfigLogic;
 use crate::{
     checkers::check_platform_same::PlatformSameChecker,
     error::{LogicError, LogicResult},
-    utils::{GetOrCreate, TrueOrError},
+    utils::{GetOrCreate},
     view::{BackEndFetcherConfig, Group, Server},
 };
 

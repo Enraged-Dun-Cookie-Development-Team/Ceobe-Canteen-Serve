@@ -25,14 +25,14 @@ where
         Ok(collection
             .doing(|collection| {
                 async move {
-                    Ok(collection
+                    collection
                         .find_one(
                             filter,
                             FindOneOptions::builder()
                                 .projection(doc! {"datasource_push":1i32})
                                 .build(),
                         )
-                        .await?)
+                        .await
                 }
             })
             .await?

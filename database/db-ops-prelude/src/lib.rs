@@ -15,6 +15,7 @@ pub use status_err::{ErrPrefix, HttpCode, StatusErr};
 pub use tap;
 pub use thiserror::Error as ThisError;
 pub use tracing;
+pub use bool_or;
 
 pub mod sql_models {
     pub use ::sql_models::{admin_user, ceobe_operation, fetcher};

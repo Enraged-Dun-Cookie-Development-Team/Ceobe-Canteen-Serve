@@ -1,3 +1,4 @@
+use bool_or::FalseOrError;
 use mongo_connection::MongoDbCollectionTrait;
 use tracing::{info, instrument, warn};
 
@@ -20,14 +21,14 @@ where
         let collection = self.get_collection()?;
 
         // 判断mansion id是否已经存在
-        let false = Self::is_exist_mansion_by_filter(
+        Self::is_exist_mansion_by_filter(
             mansion.id.into_id_filter(),
             &collection,
         )
-        .await? else {
+        .await?.false_or_with(|| {
             warn!(newMansion.id = %mansion.id, newMansion.id.exist = true);
-            return Err(OperateError::MansionIdExist(mansion.id.to_string()))
-        };
+            OperateError::MansionIdExist(mansion.id.to_string())
+        })?;
 
         collection
             .doing(|collection| {

@@ -1,19 +1,39 @@
-pub trait FalseOr {
-    fn false_or(self, f: impl FnOnce() -> ());
+/// 将 [`bool`](bool) 映射到 [`Result<(), E>`](Result<(),E>)
+pub trait FalseOrError: Sized {
+    #[inline]
+    fn false_or<E>(self, e: E) -> Result<(), E> {
+        <Self as FalseOrError>::false_or_with(self, || e)
+    }
+
+    fn false_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E>;
 }
 
-impl FalseOr for bool {
-    fn false_or(self, f: impl FnOnce() -> ()) {
-        if self == true {f()}
+impl FalseOrError for bool {
+    #[inline]
+    fn false_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E> {
+        match self {
+            true => Err(f()),
+            false => Ok(()),
+        }
     }
 }
 
-pub trait TrueOr {
-    fn true_or(self, f: impl FnOnce() -> ());
+/// 将 [`bool`](bool) 映射到 [`Result<(), E>`](Result<(),E>)
+pub trait TrueOrError: Sized {
+    #[inline]
+    fn true_or<E>(self, e: E) -> Result<(), E> {
+        <Self as TrueOrError>::true_or_with(self, || e)
+    }
+
+    fn true_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E>;
 }
 
-impl TrueOr for bool {
-    fn true_or(self, f: impl FnOnce() -> ()) {
-        if self == false {f()}
+impl TrueOrError for bool {
+    #[inline]
+    fn true_or_with<E, F: FnOnce() -> E>(self, f: F) -> Result<(), E> {
+        match self {
+            true => Ok(()),
+            false => Err(f()),
+        }
     }
 }

@@ -32,3 +32,6 @@ path = "../../database/mongo_connection"
 
 [dependencies.status-err]
 path = "../../libs/status-err"
+
+[dependencies.bool_or]
+path = "../../libs/bool_or"

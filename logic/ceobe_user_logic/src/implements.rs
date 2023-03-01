@@ -66,13 +66,13 @@ impl CeobeUserLogic {
     ) -> LogicResult<DatasourceConfig> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        let true = mongo.ceobe_user().user().is_exist_user(
+        mongo.ceobe_user().user().is_exist_user(
             &mob_id.mob_id,
         )
-        .await? else {
+        .await?.true_or_with(|| {
             warn!(user.mob_id = %mob_id.mob_id, newUser.mob_id.exist = false);
-            return Err(error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(mob_id.mob_id)))
-        };
+            error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(mob_id.mob_id))
+        })?;
 
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
@@ -122,19 +122,19 @@ impl CeobeUserLogic {
     ) -> LogicResult<()> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        let true = mongo.ceobe_user().user().is_exist_user(
+        mongo.ceobe_user().user().is_exist_user(
             &user_config.mob_id,
         )
-        .await? else {
+        .await?.true_or_with(|| {
             warn!(user.mob_id = %user_config.mob_id, newUser.mob_id.exist = false);
             return Err(error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(user_config.mob_id)))
-        };
+        })?;
 
         // 判断是否所有数据源都存在
-        let true = db.fetcher_operate().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await? else {
+        db.fetcher_operate().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await?.true_or_with(|| {
             warn!(user.datasources = ?user_config.datasource_push, user.datasources.exist = false);
             return Err(error::LogicError::DatasourceConfigOperateError(FetcherDatasourceOperateError::DatasourcesNotFound))
-        };
+        })?;
 
         // 更新用户蹲饼器数据
         mongo
