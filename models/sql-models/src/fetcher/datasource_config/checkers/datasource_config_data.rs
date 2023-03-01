@@ -73,7 +73,7 @@ impl IntoActiveModel<ActiveModel> for FetcherDatasourceConfig {
 
 impl Model {
     /// FetcherDatasourceConfig转ActiveModel，激活删除数据
-    pub(in crate::fetcher::datasource_config) fn into_active_model_by_delete(
+    pub(in crate::fetcher::datasource_config) fn recover_active_model(
         self, new_model: FetcherDatasourceConfig,
     ) -> ActiveModel {
         let mut active = ActiveModel {

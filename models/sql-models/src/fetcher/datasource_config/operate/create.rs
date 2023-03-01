@@ -26,7 +26,7 @@ impl Datasource<'_, NoConnect> {
         .await
         {
             Ok(model) => {
-                let active_model = model.into_active_model_by_delete(config);
+                let active_model = model.recover_active_model(config);
                 active_model.update(db).await?;
             }
             Err(_) => {
