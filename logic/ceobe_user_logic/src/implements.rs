@@ -1,28 +1,30 @@
+use std::collections::HashSet;
+
 use ceobe_user::{user::OperateError as CeobeUserOperateError, ToCeobeUser};
+
 use checker::LiteChecker;
-use futures::future;
-use mongo_models::{
-    ceobe::user::{
+use db_ops_prelude::sql_models::fetcher::{
+    datasource_config::operate::OperateError as FetcherDatasourceOperateError,
+    ToFetcherOperate,
+};
+use db_ops_prelude::{
+    mongo_connection::MongoDatabaseOperate,
+    mongo_models::ceobe::user::{
         check::user_checker::{UserChecker, UserUncheck},
         models::UserChecked,
     },
-    mongo_connection::MongoDatabaseOperate,
     mongodb::bson,
+    SqlDatabaseOperate,
 };
-use sql_models::{
-    fetcher::{
-        datasource_config::operate::OperateError as FetcherDatasourceOperateError,
-        ToFetcherOperate,
-    },
-    sql_connection::SqlDatabaseOperate,
-};
+use futures::future;
 use tokio::task;
 use tracing::warn;
+use uuid::Uuid;
+use uuids_convert::{vec_uuid_to_bson_uuid, vec_bson_uuid_to_uuid};
 
 use crate::{
     error,
-    error::LogicResult,
-    utils::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid},
+    error::LogicResult, 
     view::{DatasourceConfig, MobIdReq},
 };
 
@@ -83,16 +85,18 @@ impl CeobeUserLogic {
         )
         .await;
 
-        let datasource_list = datasource_list?;
         let user_datasource_config = user_datasource_config?;
+        let datasource_set: HashSet<Uuid> =
+            HashSet::from_iter(datasource_list?);
+        let user_config_set: HashSet<bson::Uuid> =
+            HashSet::from_iter(user_datasource_config.clone());
 
         // 获取用户设置有且数据源存在的列表
         let resp = DatasourceConfig {
-            datasource_config: user_datasource_config
-                .clone()
+            datasource_config: user_config_set
                 .into_iter()
                 .filter(|uuid| {
-                    datasource_list.contains(&uuid.to_owned().into())
+                    datasource_set.contains(&uuid.to_owned().into())
                 })
                 .map(|bson_uuid| bson_uuid.into())
                 .collect::<Vec<uuid::Uuid>>(),

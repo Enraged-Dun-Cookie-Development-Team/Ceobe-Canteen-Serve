@@ -17,3 +17,4 @@ status-err = { version = "0.1.0", path = "../../libs/status-err" }
 tap.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
+bool_or = { version = "0.1.0", path = "../../libs/bool_or" }

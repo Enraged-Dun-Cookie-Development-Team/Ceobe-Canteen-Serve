@@ -25,22 +25,19 @@ where
         Ok(collection
             .doing(|collection| {
                 async move {
-                    let datasource_uuids = collection
+                    Ok(collection
                         .find_one(
                             filter,
                             FindOneOptions::builder()
                                 .projection(doc! {"datasource_push":1i32})
                                 .build(),
                         )
-                        .await?;
-                    let mut res = Vec::new();
-                    if let Some(info) = datasource_uuids {
-                        res = info.datasource_push
-                    }
-                    Ok(res)
+                        .await?)
                 }
             })
             .await?
+            .map(|info| info.datasource_push)
+            .unwrap_or_default()
             .tap(|list| info!(mansionList.ids = ?list)))
     }
 

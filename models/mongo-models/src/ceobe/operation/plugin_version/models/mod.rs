@@ -10,7 +10,7 @@ use typed_builder::TypedBuilder;
 use url::Url;
 pub use version::Version;
 
-use crate::{RecordUnit, RecordUnitSet};
+use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 
 pub struct DownloadResource {
@@ -49,22 +49,28 @@ impl ModifyState for PluginVersion {
     fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
 
-impl RecordUnitSet for PluginVersion {
+impl RecordUnitUpdater for PluginVersion {
     type Source = PluginVersionChecked;
 
     fn get_mut(&mut self) -> &mut RecordUnit { &mut self.time_record }
 
+    
+}
+
+impl SetRecordUnit for PluginVersionChecked {
+    type Target = PluginVersion;
+
     fn into_with_time_record(
-        model: Self::Source, time_record: RecordUnit,
-    ) -> Self {
-        let Self::Source {
+        self, time_record: RecordUnit,
+    ) -> Self::Target {
+        let Self {
             version,
             title,
             description,
             down,
-        } = model;
+        } = self;
 
-        PluginVersion {
+        Self::Target {
             version,
             time_record,
             title,
@@ -73,3 +79,4 @@ impl RecordUnitSet for PluginVersion {
         }
     }
 }
+

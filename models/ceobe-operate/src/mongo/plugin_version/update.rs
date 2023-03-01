@@ -1,11 +1,11 @@
 use db_ops_prelude::{
     mongo_connection::MongoDbCollectionTrait,
-    mongo_models::{self, ceobe::operation::plugin_version::PluginVersion},
+    mongo_models::{self, ceobe::operation::plugin_version::{PluginVersion, PluginVersionChecked}},
     RecordUnit,
 };
-use mongo_models::RecordUnitSet;
+use db_ops_prelude::mongo_models::SetRecordUnit;
+use mongo_models::RecordUnitUpdater;
 use tracing::{info, instrument};
-
 use super::{Checked, OperateResult, PluginVersionOperate};
 impl<'db, Conn> PluginVersionOperate<'db, Conn>
 where
@@ -19,7 +19,7 @@ where
         let db = self.get_collection()?;
 
         let plugin_version =
-            PluginVersion::into_with_time_record(version, RecordUnit::new());
+        version.into_with_time_record(RecordUnit::new());
 
         // version can not be the same even is delete
         PluginVersionOperate::verify_version(plugin_version.version, &db)

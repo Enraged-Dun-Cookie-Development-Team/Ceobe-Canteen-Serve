@@ -38,7 +38,7 @@ fn now() -> DateTime {
     DateTime::from_chrono(now)
 }
 
-pub trait RecordUnitSet {
+pub trait RecordUnitUpdater {
     type Source;
 
     fn get_mut(&mut self) -> &mut RecordUnit;
@@ -53,9 +53,13 @@ pub trait RecordUnitSet {
             record.modify();
         })
     }
+}
 
-    // 一般用于将
+// 设置RecordUnit
+pub trait SetRecordUnit {
+    type Target;
+    
     fn into_with_time_record(
-        model: Self::Source, time_record: RecordUnit,
-    ) -> Self;
+        self, time_record: RecordUnit,
+    ) -> Self::Target;
 }

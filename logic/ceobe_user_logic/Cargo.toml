@@ -16,15 +16,13 @@ futures.workspace = true
 uuid.workspace = true
 tokio.workspace = true
 tracing = { workspace = true }
-
-[dependencies.mongo-models]
-path = "../../models/mongo-models"
-
-[dependencies.sql-models]
-path = "../../models/sql-models"
+db-ops-prelude.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"
 
 [dependencies.ceobe-user]
 path = "../../models/ceobe-user"
+
+[dependencies.uuids-convert]
+path = "../../libs/uuids-convert"

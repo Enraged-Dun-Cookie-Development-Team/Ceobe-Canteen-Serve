@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
-use crate::{RecordUnit, RecordUnitSet};
+use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(
@@ -62,7 +62,7 @@ impl UserModel {
 
 impl From<UserChecked> for UserModel {
     fn from(user: UserChecked) -> Self {
-        Self::into_with_time_record(user, RecordUnit::new())
+        user.into_with_time_record(RecordUnit::new())
     }
 }
 
@@ -74,20 +74,26 @@ impl UserMobId {
     }
 }
 
-impl RecordUnitSet for UserModel {
+impl RecordUnitUpdater for UserModel {
     type Source = UserChecked;
 
     fn get_mut(&mut self) -> &mut RecordUnit { &mut self.time_record }
 
+    
+}
+
+impl SetRecordUnit for UserChecked {
+    type Target = UserModel;
+
     fn into_with_time_record(
-        model: Self::Source, time_record: RecordUnit,
-    ) -> Self {
-        let Self::Source {
+       self, time_record: RecordUnit,
+    ) -> Self::Target {
+        let Self {
             mob_id,
             datasource_push,
-        } = model;
+        } = self;
 
-        UserModel {
+        Self::Target {
             mob_id,
             datasource_push,
             last_access_time: time_record.create_at,
