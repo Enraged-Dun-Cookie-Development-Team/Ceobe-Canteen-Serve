@@ -1,5 +1,5 @@
-use sea_orm::ActiveValue;
-use sea_orm::entity::prelude::*;
+use sea_orm::{entity::prelude::*, ActiveValue};
+
 use crate::{NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel)]
@@ -31,4 +31,3 @@ impl SoftDelete for ActiveModel {
         &mut self.delete_at
     }
 }
-

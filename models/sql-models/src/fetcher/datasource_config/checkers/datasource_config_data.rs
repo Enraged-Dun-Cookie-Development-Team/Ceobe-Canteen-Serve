@@ -16,9 +16,12 @@ use super::{
     unique_key_checker::PreCheckFetcherDatasourceConfig, CheckError,
     FetcherDatasourceConfig, UniqueKeyChecker,
 };
-use crate::{fetcher::datasource_config::models::model_datasource_config::{
-    ActiveModel, Model,
-}, SoftDelete};
+use crate::{
+    fetcher::datasource_config::models::model_datasource_config::{
+        ActiveModel, Model,
+    },
+    SoftDelete,
+};
 #[check_obj(
     uncheck = FetcherDatasourceConfigUncheck,
     checked = PreCheckFetcherDatasourceConfig,

@@ -6,7 +6,7 @@ use std::pin::Pin;
 
 use chrono::{Local, NaiveDateTime};
 use futures::Stream;
-use sea_orm::{DbErr, Value, Set, ActiveValue};
+use sea_orm::{ActiveValue, DbErr, Set, Value};
 pub use sql_connection;
 
 pub type StreamResult<'b, M> =
@@ -25,9 +25,9 @@ pub fn get_now_naive_date_time() -> NaiveDateTime {
 }
 
 pub trait SoftDelete {
-    fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime> ;
+    fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime>;
 
-    fn mut_by(&mut self, f: impl FnOnce(&mut ActiveValue<NaiveDateTime> )) {
+    fn mut_by(&mut self, f: impl FnOnce(&mut ActiveValue<NaiveDateTime>)) {
         f(self.get_mut())
     }
 

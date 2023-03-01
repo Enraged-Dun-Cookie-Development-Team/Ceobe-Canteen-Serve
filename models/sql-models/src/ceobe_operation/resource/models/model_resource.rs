@@ -1,9 +1,9 @@
 use chrono::Local;
-use sea_orm::{entity::prelude::*, FromQueryResult, Set, ActiveValue};
+use sea_orm::{entity::prelude::*, ActiveValue, FromQueryResult, Set};
 use sub_model::SubModel;
-use crate::NaiveDateTime;
+
 use super::resource_type::ResourceType;
-use crate::SoftDelete;
+use crate::{NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "ceobe_operation_resource")]
@@ -65,4 +65,3 @@ impl SoftDelete for ActiveModel {
         &mut self.delete_at
     }
 }
-

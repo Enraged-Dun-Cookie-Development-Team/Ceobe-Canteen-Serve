@@ -6,9 +6,8 @@ use crate::{
         datasource_config::checkers::DatasourceUnique,
         platform_config::models::model_platform_config,
     },
-    SoftDelete,
+    NaiveDateTime, SoftDelete,
 };
-use crate::NaiveDateTime;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_config")]

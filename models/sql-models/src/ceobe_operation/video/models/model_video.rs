@@ -1,6 +1,6 @@
 use sea_orm::{entity::prelude::*, ActiveValue};
-use crate::NaiveDateTime;
-use crate::SoftDelete;
+
+use crate::{NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, Eq, PartialEq, DeriveEntityModel)]
 #[sea_orm(table_name = "ceobe_operation_video")]

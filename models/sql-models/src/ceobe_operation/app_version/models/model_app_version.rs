@@ -1,10 +1,10 @@
 use std::borrow::Cow;
-use crate::{NaiveDateTime, SoftDelete};
+
 use modify_cache::ModifyState;
-use sea_orm::{entity::prelude::*, Set, ActiveValue};
+use sea_orm::{entity::prelude::*, ActiveValue, Set};
 use serde::Serialize;
 
-use crate::get_now_naive_date_time;
+use crate::{get_now_naive_date_time, NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize)]
 #[sea_orm(table_name = "ceobe_operation_app_version")]
@@ -53,4 +53,3 @@ impl SoftDelete for ActiveModel {
         &mut self.delete_at
     }
 }
-
