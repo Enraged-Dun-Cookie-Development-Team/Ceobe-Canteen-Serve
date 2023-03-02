@@ -7,7 +7,7 @@ use db_ops_prelude::{
     StatusErr, ThisError,
 };
 
-use crate::CeobeDatabaseOperate;
+use crate::OperationDatabaseOperate;
 
 mod retrieve;
 mod update;
@@ -15,7 +15,7 @@ mod update;
 pub struct VideoOperate<'s, Conn>(&'s Conn);
 
 impl<'s, Conn> SubOperate<'s> for VideoOperate<'s, Conn> {
-    type Parent = CeobeDatabaseOperate<'s, Conn>;
+    type Parent = OperationDatabaseOperate<'s, Conn>;
 
     fn from_parent(parent: &'s Self::Parent) -> Self { Self(parent) }
 }
@@ -34,6 +34,6 @@ pub enum OperateError {
 
 type OperateResult<T> = Result<T, OperateError>;
 
-impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
+impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
     pub fn video(&self) -> VideoOperate<'_, Conn> { self.child() }
 }

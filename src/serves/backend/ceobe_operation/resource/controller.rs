@@ -1,11 +1,11 @@
-use ceobe_operate::ToCeobeOperation;
+use abstract_database::ceobe::ToCeobe;
 use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate, sql_models::ceobe_operation::resource,
 };
 use resp_result::{rtry, RespResult};
 use tracing::instrument;
-
+use ceobe_operate::ToCeobeOperation;
 use super::{
     error::{ResourceError, ResourceRResult},
     view::Resource,
@@ -19,7 +19,7 @@ impl CeobeOpResource {
     pub async fn upload_resource(
         db: SqlDatabaseOperate, CheckExtract(resource): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
-        db.ceobe_operation()
+        db.ceobe().operation()
             .resource()
             .update_resource(resource)
             .await
@@ -32,7 +32,7 @@ impl CeobeOpResource {
         db: SqlDatabaseOperate,
     ) -> ResourceRResult<Resource> {
         let resp = db
-            .ceobe_operation()
+            .ceobe().operation()
             .resource()
             .get(|raa, cd| Resource::from((raa, cd)))
             .await;

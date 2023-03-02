@@ -16,12 +16,12 @@ use mongo_connection::{
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
 
-use crate::CeobeDatabaseOperate;
+use crate::UserDatabaseOperate;
 
 pub struct UserOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> SubOperate<'db> for UserOperate<'db, Conn> {
-    type Parent = CeobeDatabaseOperate<'db, Conn>;
+    type Parent = UserDatabaseOperate<'db, Conn>;
 
     fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
@@ -56,6 +56,6 @@ pub enum OperateError {
     UserMobIdNotExist(String),
 }
 
-impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
+impl<'db, Conn> UserDatabaseOperate<'db, Conn> {
     pub fn user(&self) -> UserOperate<'_, Conn> { self.child() }
 }

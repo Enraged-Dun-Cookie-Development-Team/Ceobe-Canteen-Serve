@@ -10,6 +10,7 @@ use super::{
     view::{VideoItem, VideoItems},
 };
 use crate::router::CeobeOperationVideoFrontend;
+use abstract_database::ceobe::ToCeobe;
 
 impl CeobeOperationVideoFrontend {
     #[instrument(skip(db, modify), name = "list all video")]
@@ -21,7 +22,7 @@ impl CeobeOperationVideoFrontend {
 
         resp_try(async {
             let (data, extra) = modify.check_modify(VideoItems(
-                db.ceobe_operation()
+                db.ceobe().operation()
                     .video()
                     .find_all_not_delete()
                     .await?

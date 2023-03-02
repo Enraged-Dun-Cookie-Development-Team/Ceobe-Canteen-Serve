@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use abstract_database::ceobe::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use checker::CheckExtract;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
@@ -33,14 +34,14 @@ impl CeobeOperationVersionFrontend {
                 match version {
                     Some(version) => {
                         database
-                            .ceobe_operation()
+                            .ceobe().operation()
                             .app_version()
                             .get_info_by_version(&version)
                             .await
                     }
                     None => {
                         database
-                            .ceobe_operation()
+                            .ceobe().operation()
                             .app_version()
                             .get_newest_info()
                             .await
@@ -67,13 +68,13 @@ impl CeobeOperationVersionFrontend {
         resp_try(async {
             let (data, extra) = modify.check_modify(match version {
                 Some(version) => {
-                    db.ceobe_operation()
+                    db.ceobe().operation()
                         .plugin_version()
                         .get_info_by_version(version)
                         .await
                 }
                 None => {
-                    db.ceobe_operation()
+                    db.ceobe().operation()
                         .plugin_version()
                         .get_newest_info()
                         .await

@@ -6,7 +6,7 @@ use db_ops_prelude::{
     ErrPrefix, HttpCode, StatusErr, ThisError,
 };
 
-use crate::CeobeDatabaseOperate;
+use crate::OperationDatabaseOperate;
 
 mod retrieve;
 mod update;
@@ -15,7 +15,7 @@ mod verify;
 pub struct PluginVersionOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> SubOperate<'db> for PluginVersionOperate<'db, Conn> {
-    type Parent = CeobeDatabaseOperate<'db, Conn>;
+    type Parent = OperationDatabaseOperate<'db, Conn>;
 
     fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
@@ -50,7 +50,7 @@ type OperateResult<T> = Result<T, OperateError>;
 
 pub use db_ops_prelude::mongo_models::ceobe::operation::plugin_version::*;
 
-impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
+impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
     pub fn plugin_version(&self) -> PluginVersionOperate<'_, Conn> {
         self.child()
     }

@@ -17,6 +17,7 @@ uuid.workspace = true
 tokio.workspace = true
 tracing = { workspace = true }
 db-ops-prelude.workspace = true
+abstract_database.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"
