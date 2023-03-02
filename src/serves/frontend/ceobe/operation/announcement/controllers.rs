@@ -3,7 +3,7 @@ use modify_cache::CacheMode;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
-
+use abstract_database::ceobe::ToCeobe;
 use super::{
     error::FlagAnnouncementRespResult,
     view::{AnnouncementItem, AnnouncementItems},
@@ -21,7 +21,7 @@ impl CeobeOperationAnnouncementFrontend {
 
         resp_try(async {
             let (data, extra) = modify.check_modify(AnnouncementItems(
-                db.ceobe_operation()
+                db.ceobe().operation()
                     .announcement()
                     .find_all_not_delete()
                     .await?

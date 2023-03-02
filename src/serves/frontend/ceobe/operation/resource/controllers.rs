@@ -4,7 +4,7 @@ use ceobe_operate::ToCeobeOperation;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
-
+use abstract_database::ceobe::ToCeobe;
 use super::{error::FlagResourceRespResult, view::Resource};
 use crate::router::CeobeOperationResourceFrontend;
 
@@ -20,7 +20,7 @@ impl CeobeOperationResourceFrontend {
         resp_try(async {
             let (data, extra) = modify.check_modify(
                 database
-                    .ceobe_operation()
+                    .ceobe().operation()
                     .resource()
                     .get(|raa, cd| Resource::from((raa, cd)))
                     .await?,

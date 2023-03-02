@@ -20,14 +20,14 @@ impl<'op, C: 'op> Deref for ResourceOperate<'op, C> {
 }
 
 impl<'c, C> SubOperate<'c> for ResourceOperate<'c, C> {
-    type Parent = CeobeDatabaseOperate<'c, C>;
+    type Parent = OperationDatabaseOperate<'c, C>;
 
     fn from_parent(parent: &Self::Parent) -> Self { Self(parent.0) }
 }
 
 use status_err::{ErrPrefix, HttpCode};
 
-use crate::CeobeDatabaseOperate;
+use crate::OperationDatabaseOperate;
 
 #[derive(Debug, ThisError, StatusErr)]
 pub enum OperateError {
@@ -49,6 +49,6 @@ pub enum OperateError {
 }
 type OperateResult<T> = Result<T, OperateError>;
 
-impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
+impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
     pub fn resource(&self) -> ResourceOperate<'_, Conn> { self.child() }
 }

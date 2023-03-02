@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use abstract_database::ceobe::ToCeobe;
 use ceobe_user::{user::OperateError as CeobeUserOperateError, ToCeobeUser};
 use checker::LiteChecker;
 use db_ops_prelude::{
@@ -56,7 +57,7 @@ impl CeobeUserLogic {
         let user_checked: UserChecked =
             UserChecker::lite_check(user_uncheck).await?;
         // 将用户信息存入数据库
-        mongo.ceobe_user().user().create(user_checked).await?;
+        mongo.ceobe().user().user().create(user_checked).await?;
         Ok(())
     }
 
@@ -66,7 +67,7 @@ impl CeobeUserLogic {
     ) -> LogicResult<DatasourceConfig> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        mongo.ceobe_user().user().is_exist_user(
+        mongo.ceobe().user().user().is_exist_user(
             &mob_id.mob_id,
         )
         .await?.true_or_with(|| {
@@ -79,7 +80,7 @@ impl CeobeUserLogic {
         let (datasource_list, user_datasource_config) = future::join(
             db.fetcher_operate().datasource().find_all_uuid(),
             mongo
-                .ceobe_user()
+                .ceobe().user()
                 .user()
                 .find_datasource_list_by_mob(mob_id.clone().into()),
         )
@@ -105,7 +106,7 @@ impl CeobeUserLogic {
         // 将删除过已不存在的数据源列表存回数据库
         // 异步执行，无论成功与否都继续~
         if resp.datasource_config.len() < user_datasource_config.len() {
-            tokio::spawn(mongo.ceobe_user().user().update_datasource(
+            tokio::spawn(mongo.ceobe().user().user().update_datasource(
                 mob_id.mob_id,
                 vec_uuid_to_bson_uuid(resp.datasource_config.clone()),
             ));
@@ -122,7 +123,7 @@ impl CeobeUserLogic {
     ) -> LogicResult<()> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        mongo.ceobe_user().user().is_exist_user(
+        mongo.ceobe().user().user().is_exist_user(
             &user_config.mob_id,
         )
         .await?.true_or_with(|| {
@@ -138,7 +139,8 @@ impl CeobeUserLogic {
 
         // 更新用户蹲饼器数据
         mongo
-            .ceobe_user()
+            .ceobe()
+            .user()
             .user()
             .update_datasource(
                 user_config.mob_id,

@@ -6,7 +6,7 @@ use db_ops_prelude::{
     sea_orm, ErrPrefix, HttpCode, StatusErr, ThisError,
 };
 
-use crate::CeobeDatabaseOperate;
+use crate::OperationDatabaseOperate;
 
 mod create;
 mod retrieve;
@@ -27,7 +27,7 @@ impl<'c, C> SubOperate<'c> for AppVersionOperate<'c, C>
 where
     C: GetDatabaseConnect,
 {
-    type Parent = CeobeDatabaseOperate<'c, C>;
+    type Parent = OperationDatabaseOperate<'c, C>;
 
     fn from_parent(parent: &'c Self::Parent) -> Self {
         Self(parent.get_connect())
@@ -57,6 +57,6 @@ type OperateResult<T> = Result<T, OperateError>;
 
 pub use db_ops_prelude::sql_models::ceobe_operation::app_version::*;
 
-impl<'db, Conn: GetDatabaseConnect> CeobeDatabaseOperate<'db, Conn> {
+impl<'db, Conn: GetDatabaseConnect> OperationDatabaseOperate<'db, Conn> {
     pub fn app_version(&self) -> AppVersionOperate<'_, Conn> { self.child() }
 }

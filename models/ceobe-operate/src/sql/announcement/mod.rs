@@ -10,7 +10,7 @@ use db_ops_prelude::{
     sea_orm, StatusErr, ThisError,
 };
 
-use crate::CeobeDatabaseOperate;
+use crate::OperationDatabaseOperate;
 
 pub struct AnnouncementOperate<'c, C>(&'c C);
 
@@ -21,7 +21,7 @@ impl<'c, C> Deref for AnnouncementOperate<'c, C> {
 }
 
 impl<'c, C> SubOperate<'c> for AnnouncementOperate<'c, C> {
-    type Parent = CeobeDatabaseOperate<'c, C>;
+    type Parent = OperationDatabaseOperate<'c, C>;
 
     fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent) }
 }
@@ -33,7 +33,7 @@ pub enum OperateError {
 }
 type OperateResult<T> = Result<T, OperateError>;
 
-impl<'db, Conn> CeobeDatabaseOperate<'db, Conn> {
+impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
     pub fn announcement(&self) -> AnnouncementOperate<'_, Conn> {
         self.child()
     }
