@@ -1,3 +1,4 @@
+pub mod mob_verify;
 pub mod data_struct;
 pub mod field_with_struct_trait;
 pub mod quick_struct;
