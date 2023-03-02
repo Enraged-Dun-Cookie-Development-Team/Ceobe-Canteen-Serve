@@ -12,26 +12,26 @@ use crate::RecordUnit;
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
     vis = "pub",
-    name = "UserChecked",
+    name = "UserPropertyChecked",
     extra(derive(Debug, TypedBuilder))
 ))]
-pub struct UserModel {
+pub struct UserPropertyModel {
     pub mob_id: String,
     pub datasource_push: Vec<Uuid>,
-    #[sub_model(ignore("UserChecked"))]
+    #[sub_model(ignore("UserPropertyChecked"))]
     pub last_access_time: DateTime,
-    #[sub_model(ignore("UserChecked"))]
+    #[sub_model(ignore("UserPropertyChecked"))]
     pub time_record: RecordUnit,
 }
 
-impl UserChecked {
-    pub fn into_with_time_record(self, time_record: RecordUnit) -> UserModel {
+impl UserPropertyChecked {
+    pub fn into_with_time_record(self, time_record: RecordUnit) -> UserPropertyModel {
         let Self {
             mob_id,
             datasource_push,
         } = self;
 
-        UserModel {
+        UserPropertyModel {
             mob_id,
             datasource_push,
             last_access_time: time_record.create_at,
@@ -40,7 +40,7 @@ impl UserChecked {
     }
 }
 
-impl ModifyState for UserModel {
+impl ModifyState for UserPropertyModel {
     type Identify = Self;
 
     fn get_last_modify_time(&self) -> Option<Cow<'_, chrono::NaiveDateTime>> {
@@ -52,7 +52,7 @@ impl ModifyState for UserModel {
     fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
 
-impl UserModel {
+impl UserPropertyModel {
     pub fn now_modify(mut self) -> Self {
         self.time_record.modify();
         self

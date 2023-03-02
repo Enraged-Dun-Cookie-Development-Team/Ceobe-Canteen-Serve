@@ -1,7 +1,7 @@
 const MOB_IDX_NAME: &str = "mob_idx";
 
 use mongo_migrate_util::{CollectManage, MigrationTrait};
-use mongo_models::ceobe::user::models::UserModel;
+use mongo_models::ceobe::user_property::models::UserPropertyModel;
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 use tracing::{info, instrument};
 
@@ -9,9 +9,9 @@ pub struct Migration;
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
-    type Model = UserModel;
+    type Model = UserPropertyModel;
 
-    fn name(&self) -> &'static str { "ceobe_user" }
+    fn name(&self) -> &'static str { "ceobe_user_property" }
 
     #[instrument(name = "migrate of user", skip_all)]
     async fn migrate(
