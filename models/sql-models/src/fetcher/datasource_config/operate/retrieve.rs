@@ -176,6 +176,10 @@ where
     ) -> OperateResult<Vec<FrontendDatasource>> {
         let db = self.get_connect();
         let result = Entity::find()
+            .select_only()
+            .column(Column::Nickname)
+            .column(Column::Avatar)
+            .column(Column::UniqueId)
             .into_model::<FrontendDatasource>()
             .all(db)
             .await?;
