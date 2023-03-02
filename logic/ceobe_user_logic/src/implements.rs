@@ -80,7 +80,8 @@ impl CeobeUserLogic {
         let (datasource_list, user_datasource_config) = future::join(
             db.fetcher_operate().datasource().find_all_uuid(),
             mongo
-                .ceobe().user()
+                .ceobe()
+                .user()
                 .user()
                 .find_datasource_list_by_mob(mob_id.clone().into()),
         )

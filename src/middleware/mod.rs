@@ -1,2 +1,2 @@
-pub mod mob;
 pub mod authorize;
+pub mod mob;

@@ -1,10 +1,10 @@
 use abstract_database::ceobe::ToCeobe;
+use ceobe_operate::ToCeobeOperation;
 use checker::{CheckExtract, JsonCheckExtract};
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
     mongo_models::ceobe::operation::plugin_version::Checker,
 };
- use ceobe_operate::ToCeobeOperation;
 use resp_result::resp_try;
 use tracing::instrument;
 
@@ -21,7 +21,8 @@ impl CeobeOpVersion {
         CheckExtract(version): PluginVersionPreChecker,
     ) -> PluginRespResult<()> {
         resp_try(async {
-            db.ceobe().operation()
+            db.ceobe()
+                .operation()
                 .plugin_version()
                 .update_new(version)
                 .await?;

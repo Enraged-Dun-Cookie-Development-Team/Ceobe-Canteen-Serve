@@ -2,15 +2,13 @@ use async_trait::async_trait;
 use axum::extract::FromRequestParts;
 use http::request::Parts;
 use mongo_migration::mongo_models::ceobe::user::models::UserMobId;
-use resp_result::RespResult;
-use resp_result::Nil;
+use resp_result::{Nil, RespResult};
 
 use self::error::MobVerifyError;
 
-mod service;
-mod layer;
 mod error;
-
+mod layer;
+mod service;
 
 pub struct MobIdInfo(pub UserMobId);
 

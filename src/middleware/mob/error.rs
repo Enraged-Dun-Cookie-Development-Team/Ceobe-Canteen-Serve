@@ -1,14 +1,11 @@
 use std::fmt::Debug;
 
-use ceobe_user::user::OperateError;
 use http::StatusCode;
 use status_err::{ErrPrefix, StatusErr};
 
-
-
 #[derive(Debug, thiserror::Error, StatusErr)]
 #[status_err(resp_err)]
-pub enum MobVerifyError {   
+pub enum MobVerifyError {
     #[error("Mob id 字段未找到")]
     #[status_err(err(
         prefix = "ErrPrefix::UNAUTHORIZED",
@@ -39,5 +36,5 @@ pub enum MobVerifyError {
         err_code = 0x000E,
         resp_msg = "系统错误，请联系开发者"
     ))]
-    UserDatabaseOperateError
+    UserDatabaseOperateError,
 }

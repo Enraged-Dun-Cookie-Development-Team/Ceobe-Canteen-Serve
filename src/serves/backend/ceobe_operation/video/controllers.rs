@@ -1,4 +1,5 @@
 use abstract_database::ceobe::ToCeobe;
+use ceobe_operate::ToCeobeOperation;
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
@@ -9,7 +10,6 @@ use orm_migrate::{
         self, bv::query::Checked as BvQuery,
     },
 };
- use ceobe_operate::ToCeobeOperation;
 use request_clients::bili_client::QueryBiliVideo;
 use resp_result::{resp_try, rtry, RespResult};
 use tracing::{event, instrument, Level};
@@ -47,7 +47,8 @@ impl CeobeOperationVideo {
     ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
             Ok(database
-                .ceobe().operation()
+                .ceobe()
+                .operation()
                 .video()
                 .find_all_not_delete()
                 .await?

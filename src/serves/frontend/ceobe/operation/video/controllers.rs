@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use abstract_database::ceobe::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
@@ -10,7 +11,6 @@ use super::{
     view::{VideoItem, VideoItems},
 };
 use crate::router::CeobeOperationVideoFrontend;
-use abstract_database::ceobe::ToCeobe;
 
 impl CeobeOperationVideoFrontend {
     #[instrument(skip(db, modify), name = "list all video")]
@@ -22,7 +22,8 @@ impl CeobeOperationVideoFrontend {
 
         resp_try(async {
             let (data, extra) = modify.check_modify(VideoItems(
-                db.ceobe().operation()
+                db.ceobe()
+                    .operation()
                     .video()
                     .find_all_not_delete()
                     .await?

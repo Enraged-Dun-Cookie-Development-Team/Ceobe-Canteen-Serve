@@ -13,7 +13,7 @@ pub struct MobVerifyLayer(InnerLayer);
 impl<S> Layer<S> for MobVerifyLayer
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
-    S::Error: Send + 'static
+    S::Error: Send + 'static,
 {
     type Service = AsyncRequireAuthorization<S, MobVerify>;
 
@@ -21,8 +21,8 @@ where
 }
 
 impl MobVerifyLayer {
+    #[allow(dead_code)]
     pub fn new() -> Self { Self(InnerLayer::new(MobVerify::default())) }
 }
 
-type InnerLayer =
-    AsyncRequireAuthorizationLayer<service::MobVerify>;
+type InnerLayer = AsyncRequireAuthorizationLayer<service::MobVerify>;
