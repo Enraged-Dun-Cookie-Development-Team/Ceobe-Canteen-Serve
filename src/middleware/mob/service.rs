@@ -39,6 +39,20 @@ impl AsyncAuthorizeRequest<Body> for MobVerify {
                     break 'auth Err(MobVerifyError::MobIdNotExist(mob_id))
                 };
 
+                if let Err(err) = match mongo.ceobe_user().user().is_exist_user(&mob_id).await
+                .map_err(|_| {
+                    MobVerifyError::UserDatabaseOperateError
+                }) {
+                    Ok(exist) => exist,
+                    Err(err)=>break 'auth Err(err)
+                }
+                .true_or_with(|| {
+                    MobVerifyError::MobIdNotExist(mob_id.clone())
+                }) {
+                    break 'auth Err(err)
+                };
+
+
                 info!(
                     user.mob_id = mob_id,
                 );

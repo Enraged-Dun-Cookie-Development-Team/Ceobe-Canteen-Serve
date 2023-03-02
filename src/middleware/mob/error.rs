@@ -31,5 +31,13 @@ pub enum MobVerifyError {
         err_code = 0x000D,
         http_code = "StatusCode::INTERNAL_SERVER_ERROR"
     ))]
-    NoMobIdLayer
+    NoMobIdLayer,
+
+    #[error("Mongo用户表查询失败")]
+    #[status_err(err(
+        prefix = "ErrPrefix::UNAUTHORIZED",
+        err_code = 0x000E,
+        resp_msg = "系统错误，请联系开发者"
+    ))]
+    UserDatabaseOperateError
 }

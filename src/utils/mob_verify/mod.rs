@@ -24,16 +24,6 @@ impl Default for LocalMobIdConfig {
     }
 }
 
-impl LocalMobIdConfig {
-    pub(super) fn from_config<C: MobIdConfig>(cfg: &C) -> Self {
-        // generate static str
-        let name = cfg.mob_header().into_boxed_str();
-        let mob_header = Box::leak(name) as &'static str;
-
-        Self { mob_header }
-    }
-}
-
 fn get_local_config() -> &'static LocalMobIdConfig {
     LOCAL_CONFIG.get_or_init(|| {
         warn!(auth.config.set = false, auth.config = "Default");
