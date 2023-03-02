@@ -10,10 +10,13 @@ crate::quick_struct! {
         jwt:Jwt
         #[serde(alias="header",default="default_token")]
         header_name:String
+        #[serde(default="default_mob")]
+        mob_header:String
     }
 }
 
 fn default_token() -> String { String::from("token") }
+fn default_mob() -> String { String::from("mob-id") }
 
 impl config::AuthConfig for AuthConfig {
     fn jwt_key(&self) -> &[u8] { &self.jwt.0 }
