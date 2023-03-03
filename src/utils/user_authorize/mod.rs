@@ -29,14 +29,17 @@ crate::quick_struct! {
 
 pub use orm_migrate::sql_models::admin_user::AuthLevel;
 
+use super::mob_verify;
+
 /// 用户权限信息
 pub type AuthInfo = admin_user::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where
-    C: config::AuthConfig,
+    C: config::AuthConfig + mob_verify::MobIdConfig,
 {
-    config::set_auth_config(cfg)
+    config::set_auth_config(cfg);
+    mob_verify::set_auth_config(cfg)
 }
 
 /// 获取jwt密钥

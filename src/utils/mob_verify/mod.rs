@@ -25,6 +25,22 @@ impl Default for LocalMobIdConfig {
     }
 }
 
+impl LocalMobIdConfig {
+    pub(super) fn from_config<C: MobIdConfig>(cfg: &C) -> Self {
+        // generate static str
+        let name = cfg.mob_header().into_boxed_str();
+        let mob_header = Box::leak(name) as &'static str;
+
+        Self { mob_header }
+    }
+}
+
+pub fn set_auth_config<C: MobIdConfig>(cfg: &C) {
+    if LOCAL_CONFIG.set(LocalMobIdConfig::from_config(cfg)).is_err() {
+        panic!("UserAuth配置信息重复提供")
+    }
+}
+
 fn get_local_config() -> &'static LocalMobIdConfig {
     LOCAL_CONFIG.get_or_init(|| {
         warn!(auth.config.set = false, auth.config = "Default");
