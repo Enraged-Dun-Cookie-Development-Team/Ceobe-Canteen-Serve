@@ -130,6 +130,7 @@ where
         Ok(Entity::find()
             .select_only()
             .column(Column::UniqueId)
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .into_model::<DatasourceUuid>()
             .all(db)
             .await?
