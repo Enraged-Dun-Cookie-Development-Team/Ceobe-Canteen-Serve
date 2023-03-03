@@ -9,15 +9,15 @@ use range_limit::limits::max_limit::MaxRangeLimit;
 use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
-use crate::ceobe::user::{check::CheckError, models::UserChecked};
+use crate::ceobe::user_property::{check::CheckError, models::UserPropertyChecked};
 
 #[checker::check_gen(
-    uncheck = UserUncheck,
-    checked = UserChecked,
+    uncheck = UserPropertyUncheck,
+    checked = UserPropertyChecked,
     error = CheckError
 )]
 #[derive(Debug, Deserialize, TypedBuilder)]
-pub struct UserChecker {
+pub struct UserPropertyChecker {
     #[builder(setter(
         transform = |id:String| ToCheckRequire::require_check(id)
     ))]

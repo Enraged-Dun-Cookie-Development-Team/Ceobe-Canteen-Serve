@@ -13,7 +13,7 @@ use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
 #[sub_model(
     all(
         vis = "pub",
-        name = "UserChecked",
+        name = "UserPropertyChecked",
         extra(derive(Debug, TypedBuilder))
     ),
     none(
@@ -27,14 +27,14 @@ use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
         extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
     )
 )]
-pub struct UserModel {
+pub struct UserPropertyModel {
     #[sub_model(want("UserMobId"))]
     pub mob_id: String,
     #[sub_model(want("UserDatasource"))]
     pub datasource_push: Vec<Uuid>,
-    #[sub_model(ignore("UserChecked"))]
+    #[sub_model(ignore("UserPropertyChecked"))]
     pub last_access_time: DateTime,
-    #[sub_model(ignore("UserChecked"))]
+    #[sub_model(ignore("UserPropertyChecked"))]
     pub time_record: RecordUnit,
 }
 
@@ -50,7 +50,12 @@ impl ModifyState for UserModel {
     fn get_identify(&self) -> Cow<'_, Self::Identify> { Cow::Borrowed(self) }
 }
 
-impl UserModel {
+impl UserPropertyModel {
+    pub fn now_modify(mut self) -> Self {
+        self.time_record.modify();
+        self
+    }
+
     // 用户进行活跃度刷新操作
     pub fn user_access(mut self) -> Self {
         let now = Local::now();
