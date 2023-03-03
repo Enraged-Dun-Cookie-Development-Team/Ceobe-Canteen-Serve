@@ -9,7 +9,9 @@ use range_limit::limits::max_limit::MaxRangeLimit;
 use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
-use crate::ceobe::user_property::{check::CheckError, models::UserPropertyChecked};
+use crate::ceobe::user_property::{
+    check::CheckError, models::UserPropertyChecked,
+};
 
 #[checker::check_gen(
     uncheck = UserPropertyUncheck,

@@ -19,7 +19,7 @@ use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
     none(
         vis = "pub",
         name = "UserMobId",
-        extra(derive(Debug, TypedBuilder))
+        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
     ),
     none(
         vis = "pub",

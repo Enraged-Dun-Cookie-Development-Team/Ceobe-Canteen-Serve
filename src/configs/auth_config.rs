@@ -1,7 +1,7 @@
 use rand::RngCore;
 use serde::Deserialize;
 
-use crate::utils::{user_authorize::config, mob_verify::MobIdConfig};
+use crate::utils::{mob_verify::MobIdConfig, user_authorize::config};
 
 crate::quick_struct! {
     #[derive(Default)]
@@ -27,7 +27,6 @@ impl config::AuthConfig for AuthConfig {
 impl MobIdConfig for AuthConfig {
     fn mob_header(&self) -> String { self.mob_header.clone() }
 }
-
 
 #[derive(serde::Serialize, Clone, Debug)]
 pub struct Jwt([u8; 32]);

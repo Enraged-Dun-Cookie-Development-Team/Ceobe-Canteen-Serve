@@ -1,7 +1,9 @@
 use db_ops_prelude::{
     bool_or::FalseOrError,
     mongo_connection::MongoDbCollectionTrait,
-    mongo_models::ceobe::user_property::models::{UserPropertyChecked, UserPropertyModel},
+    mongo_models::ceobe::user_property::models::{
+        UserPropertyChecked, UserPropertyModel,
+    },
 };
 use tracing::{info, instrument, warn};
 
@@ -15,7 +17,9 @@ where
     /// 新建蹲饼用户
     /// params 用户初始信息
     #[instrument(skip(self), ret)]
-    pub async fn create(&'db self, user: UserPropertyChecked) -> OperateResult<()> {
+    pub async fn create(
+        &'db self, user: UserPropertyChecked,
+    ) -> OperateResult<()> {
         info!(
             newUser.mob_id = %user.mob_id,
             newUser.datasource_push = ?user.datasource_push

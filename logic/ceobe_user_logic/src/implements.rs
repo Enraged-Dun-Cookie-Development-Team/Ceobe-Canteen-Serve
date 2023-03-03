@@ -1,14 +1,14 @@
 use std::collections::HashSet;
 
 use abstract_database::ceobe::ToCeobe;
-use ceobe_user::{property::OperateError as CeobeUserOperateError, ToCeobeUser};
+use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
 use db_ops_prelude::{
     bool_or::TrueOrError,
     mongo_connection::MongoDatabaseOperate,
     mongo_models::ceobe::user_property::{
         check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
-        models::UserPropertyChecked,
+        models::{UserPropertyChecked, UserMobId},
     },
     mongodb::bson,
     sql_models::fetcher::{
@@ -63,18 +63,8 @@ impl CeobeUserLogic {
 
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
-        // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
-        // 判断用户是否存在
-        mongo.ceobe().user().property().is_exist_user(
-            &mob_id.mob_id,
-        )
-        .await?.true_or_with(|| {
-            warn!(user.mob_id = %mob_id.mob_id, newUser.mob_id.exist = false);
-            error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(mob_id.mob_id.clone()))
-        })?;
-
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
         let (datasource_list, user_datasource_config) = future::join(
@@ -83,7 +73,7 @@ impl CeobeUserLogic {
                 .ceobe()
                 .user()
                 .property()
-                .find_datasource_list_by_mob(mob_id.clone().into()),
+                .find_datasource_list_by_mob(mob_id.clone()),
         )
         .await;
 
@@ -120,17 +110,10 @@ impl CeobeUserLogic {
     /// 更新用户数据源配置
     pub async fn update_datasource(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        user_config: UserPropertyChecked,
+        datasource_config: Vec<bson::Uuid>, mob_id: UserMobId,
     ) -> LogicResult<()> {
-        // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
-        // 判断用户是否存在
-        mongo.ceobe().user().property().is_exist_user(
-            &user_config.mob_id,
-        )
-        .await?.true_or_with(|| {
-            warn!(user.mob_id = %user_config.mob_id, newUser.mob_id.exist = false);
-            error::LogicError::CeobeUserOperateError(CeobeUserOperateError::UserMobIdNotExist(user_config.mob_id.clone()))
-        })?;
+        let user_unchecked:UserPropertyUncheck = UserPropertyUncheck::builder().mob_id(mob_id.mob_id).datasource_push(datasource_config).build();
+        let user_config:UserPropertyChecked = UserPropertyChecker::lite_check(user_unchecked).await?;
 
         // 判断是否所有数据源都存在
         db.fetcher_operate().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await?.true_or_with(|| {

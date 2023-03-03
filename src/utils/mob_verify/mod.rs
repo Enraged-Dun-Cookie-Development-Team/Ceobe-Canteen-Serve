@@ -36,7 +36,10 @@ impl LocalMobIdConfig {
 }
 
 pub fn set_auth_config<C: MobIdConfig>(cfg: &C) {
-    if LOCAL_CONFIG.set(LocalMobIdConfig::from_config(cfg)).is_err() {
+    if LOCAL_CONFIG
+        .set(LocalMobIdConfig::from_config(cfg))
+        .is_err()
+    {
         panic!("UserAuth配置信息重复提供")
     }
 }

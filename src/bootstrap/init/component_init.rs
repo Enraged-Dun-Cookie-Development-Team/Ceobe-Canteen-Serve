@@ -1,7 +1,10 @@
 use axum_starter::prepare;
 use resp_result::ConfigTrait;
 
-use crate::utils::{user_authorize::{self, config::AuthConfig}, mob_verify};
+use crate::utils::{
+    mob_verify,
+    user_authorize::{self, config::AuthConfig},
+};
 
 /// rresult配置
 #[prepare(RResultConfig? 'arg)]

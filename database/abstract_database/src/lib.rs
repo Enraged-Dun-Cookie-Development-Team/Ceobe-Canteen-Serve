@@ -1,2 +1,2 @@
-pub mod fetcher;
 pub mod ceobe;
+pub mod fetcher;

@@ -1,19 +1,15 @@
-use axum::{extract::Query, Json};
+use axum::Json;
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceConfig, MobIdReq},
 };
-use checker::{CheckExtract, JsonCheckExtract};
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user_property::check::user_checker::UserPropertyChecker,
-};
+use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
 use super::error::{CeobeUserError, CeobeUserRResult};
-use crate::router::CeobeUserFrontend;
+use crate::{router::CeobeUserFrontend, middleware::mob::MobIdInfo};
 impl CeobeUserFrontend {
     /// 新建用户（注册mobid入库）
     #[instrument(ret, skip(db, mongo))]
@@ -29,7 +25,7 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo))]
     pub async fn get_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        MapReject(mob_id): MapReject<Query<MobIdReq>, CeobeUserError>,
+        MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
             CeobeUserLogic::get_datasource_by_user(mongo, db, mob_id).await
@@ -41,10 +37,11 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo))]
     pub async fn update_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        CheckExtract(user, ..): JsonCheckExtract<UserPropertyChecker, CeobeUserError>,
+        MobIdInfo(mob_id): MobIdInfo,
+        MapReject(datasource_config): MapReject<Json<Vec<bson::Uuid>>, CeobeUserError>,
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
-            CeobeUserLogic::update_datasource(mongo, db, user).await
+            CeobeUserLogic::update_datasource(mongo, db, datasource_config, mob_id).await
         ))
         .into()
     }
