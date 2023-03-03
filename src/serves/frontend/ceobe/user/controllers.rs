@@ -3,7 +3,7 @@ use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceConfig, MobIdReq},
 };
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
+use mongo_migration::{mongo_connection::MongoDatabaseOperate, mongo_models::ceobe::user_property::models::UserDatasource};
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
@@ -38,10 +38,10 @@ impl CeobeUserFrontend {
     pub async fn update_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         MobIdInfo(mob_id): MobIdInfo,
-        MapReject(datasource_config): MapReject<Json<Vec<bson::Uuid>>, CeobeUserError>,
+        MapReject(datasource_config): MapReject<Json<UserDatasource>, CeobeUserError>,
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
-            CeobeUserLogic::update_datasource(mongo, db, datasource_config, mob_id).await
+            CeobeUserLogic::update_datasource(mongo, db, datasource_config.datasource_push, mob_id).await
         ))
         .into()
     }

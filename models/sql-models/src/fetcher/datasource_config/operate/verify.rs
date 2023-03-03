@@ -126,9 +126,9 @@ where
         let Some(first) = uuids.next() else{
             return Ok(true);
         };
-        let first = Func::cust(UuidToBin).arg(first.hyphenated().to_string());
+        let first = Func::cast_as(first.hyphenated().to_string(), mysql_func::UUID);
         let uuids = uuids.map(|uuid| {
-            Func::cust(UuidToBin).arg(uuid.hyphenated().to_string())
+            Func::cast_as(uuid.hyphenated().to_string(), mysql_func::UUID)
         });
 
         let resp = Entity::find()
