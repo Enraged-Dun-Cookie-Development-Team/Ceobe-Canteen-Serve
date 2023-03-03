@@ -1,9 +1,9 @@
 use chrono::Local;
-use sea_orm::{entity::prelude::*, FromQueryResult, Set};
+use sea_orm::{entity::prelude::*, ActiveValue, FromQueryResult, Set};
 use sub_model::SubModel;
 
 use super::resource_type::ResourceType;
-use crate::get_zero_data_time;
+use crate::{NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "ceobe_operation_resource")]
@@ -48,17 +48,6 @@ impl RelationTrait for Relation {
 impl ActiveModelBehavior for ActiveModel {}
 
 impl ActiveModel {
-    // 软删除
-    pub fn soft_remove(&mut self) {
-        let now = Local::now().naive_local();
-        self.delete_at = Set(now);
-    }
-
-    // 还原删除
-    pub fn soft_recover(&mut self) {
-        self.delete_at = Set(get_zero_data_time())
-    }
-
     pub fn now_create_with_time(&mut self, now: chrono::NaiveDateTime) {
         self.create_at = Set(now);
         self.modify_at = Set(now)
@@ -68,5 +57,11 @@ impl ActiveModel {
     pub fn now_modify(&mut self) {
         let now = Local::now().naive_local();
         self.modify_at = Set(now);
+    }
+}
+
+impl SoftDelete for ActiveModel {
+    fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime> {
+        &mut self.delete_at
     }
 }

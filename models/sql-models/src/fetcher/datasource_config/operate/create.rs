@@ -18,7 +18,21 @@ impl Datasource<'_, NoConnect> {
             datasource.avatar = config.avatar.to_string(),
             datasouce.config = ?config.config
         );
-        config.into_active_model().save(db).await?;
+        match Self::find_delete_model_by_datasource_and_unique_key(
+            db,
+            &config.datasource,
+            &config.unique_key,
+        )
+        .await
+        {
+            Ok(model) => {
+                let active_model = model.recover_active_model(config);
+                active_model.update(db).await?;
+            }
+            Err(_) => {
+                config.into_active_model().save(db).await?;
+            }
+        };
 
         Ok(())
     }

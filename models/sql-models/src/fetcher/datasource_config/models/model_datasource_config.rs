@@ -1,9 +1,12 @@
-use sea_orm::entity::prelude::*;
+use sea_orm::{entity::prelude::*, ActiveValue};
 use sub_model::SubModel;
 
-use crate::fetcher::{
-    datasource_config::checkers::DatasourceUnique,
-    platform_config::models::model_platform_config,
+use crate::{
+    fetcher::{
+        datasource_config::checkers::DatasourceUnique,
+        platform_config::models::model_platform_config,
+    },
+    NaiveDateTime, SoftDelete,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
@@ -69,6 +72,9 @@ pub struct Model {
     /// 数据库使用的Unique Key
     #[sub_model(ignore("BackendDatasource"))]
     pub db_unique_key: DatasourceUnique,
+    /// field for soft delete
+    #[sub_model(ignore("BackendDatasource"))]
+    pub(in crate::fetcher::datasource_config) delete_at: DateTime,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -94,3 +100,9 @@ impl Related<model_platform_config::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl SoftDelete for ActiveModel {
+    fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime> {
+        &mut self.delete_at
+    }
+}

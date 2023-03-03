@@ -50,7 +50,7 @@ pub enum OperateError {
     ))]
     DatasourcesNotFound,
 }
-#[allow(dead_code)]
+
 type OperateResult<T> = Result<T, OperateError>;
 
 #[derive(FromQueryResult)]
