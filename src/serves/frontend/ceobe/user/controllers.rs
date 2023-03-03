@@ -6,7 +6,7 @@ use ceobe_user_logic::{
 use checker::{CheckExtract, JsonCheckExtract};
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user::check::user_checker::UserChecker,
+    mongo_models::ceobe::user_property::check::user_checker::UserPropertyChecker,
 };
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{rtry, MapReject};
@@ -41,7 +41,7 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo))]
     pub async fn update_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        CheckExtract(user, ..): JsonCheckExtract<UserChecker, CeobeUserError>,
+        CheckExtract(user, ..): JsonCheckExtract<UserPropertyChecker, CeobeUserError>,
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
             CeobeUserLogic::update_datasource(mongo, db, user).await

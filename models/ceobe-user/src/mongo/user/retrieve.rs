@@ -1,7 +1,7 @@
 use db_ops_prelude::{
     mongo_connection::{CollectionGuard, MongoDbCollectionTrait},
-    mongo_models::ceobe::user::models::{
-        UserDatasource, UserMobId, UserModel,
+    mongo_models::ceobe::user_property::models::{
+        UserDatasource, UserMobId, UserPropertyModel,
     },
     mongodb::{
         bson::{doc, Document, Uuid},
@@ -15,7 +15,7 @@ use super::{OperateResult, UserOperate};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where
-    Conn: MongoDbCollectionTrait<'db, UserModel>,
+    Conn: MongoDbCollectionTrait<'db, UserPropertyModel>,
 {
     /// 根据条件查询数据源配置
     pub(super) async fn find_datasource_list_by_filter(

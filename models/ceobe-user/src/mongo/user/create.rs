@@ -1,7 +1,7 @@
 use db_ops_prelude::{
     bool_or::FalseOrError,
     mongo_connection::MongoDbCollectionTrait,
-    mongo_models::ceobe::user::models::{UserChecked, UserModel},
+    mongo_models::ceobe::user_property::models::{UserPropertyChecked, UserPropertyModel},
 };
 use tracing::{info, instrument, warn};
 
@@ -10,12 +10,12 @@ use crate::user::{OperateError, OperateResult};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where
-    Conn: MongoDbCollectionTrait<'db, UserModel>,
+    Conn: MongoDbCollectionTrait<'db, UserPropertyModel>,
 {
     /// 新建蹲饼用户
     /// params 用户初始信息
     #[instrument(skip(self), ret)]
-    pub async fn create(&'db self, user: UserChecked) -> OperateResult<()> {
+    pub async fn create(&'db self, user: UserPropertyChecked) -> OperateResult<()> {
         info!(
             newUser.mob_id = %user.mob_id,
             newUser.datasource_push = ?user.datasource_push
@@ -36,7 +36,7 @@ where
         // 将用户初始化信息存入数据库
         collection
             .doing(|collection| {
-                collection.insert_one(UserModel::from(user), None)
+                collection.insert_one(UserPropertyModel::from(user), None)
             })
             .await
             .map(|_| ())

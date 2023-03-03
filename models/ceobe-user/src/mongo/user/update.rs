@@ -2,7 +2,7 @@ use std::future::Future;
 
 use db_ops_prelude::{
     mongo_connection::MongoDbCollectionTrait,
-    mongo_models::ceobe::user::models::UserModel,
+    mongo_models::ceobe::user_property::models::UserPropertyModel,
     mongodb::bson::{doc, Uuid},
 };
 use tracing::{info, instrument};
@@ -11,7 +11,7 @@ use super::{OperateResult, UserOperate};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where
-    Conn: MongoDbCollectionTrait<'db, UserModel>,
+    Conn: MongoDbCollectionTrait<'db, UserPropertyModel>,
 {
     /// 更新数据源配置
     /// params: mob_id 用户mob id

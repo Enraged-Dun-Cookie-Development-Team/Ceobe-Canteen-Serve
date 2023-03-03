@@ -38,7 +38,7 @@ pub struct UserPropertyModel {
     pub time_record: RecordUnit,
 }
 
-impl ModifyState for UserModel {
+impl ModifyState for UserPropertyModel {
     type Identify = Self;
 
     fn get_last_modify_time(&self) -> Option<Cow<'_, chrono::NaiveDateTime>> {
@@ -65,8 +65,8 @@ impl UserPropertyModel {
     }
 }
 
-impl From<UserChecked> for UserModel {
-    fn from(user: UserChecked) -> Self {
+impl From<UserPropertyChecked> for UserPropertyModel {
+    fn from(user: UserPropertyChecked) -> Self {
         user.into_with_time_record(RecordUnit::new())
     }
 }
@@ -79,14 +79,14 @@ impl UserMobId {
     }
 }
 
-impl RecordUnitUpdater for UserModel {
-    type Source = UserChecked;
+impl RecordUnitUpdater for UserPropertyModel {
+    type Source = UserPropertyChecked;
 
     fn get_mut(&mut self) -> &mut RecordUnit { &mut self.time_record }
 }
 
-impl SetRecordUnit for UserChecked {
-    type Target = UserModel;
+impl SetRecordUnit for UserPropertyChecked {
+    type Target = UserPropertyModel;
 
     fn into_with_time_record(self, time_record: RecordUnit) -> Self::Target {
         let Self {

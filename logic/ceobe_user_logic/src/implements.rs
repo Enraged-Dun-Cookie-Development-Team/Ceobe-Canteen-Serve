@@ -6,9 +6,9 @@ use checker::LiteChecker;
 use db_ops_prelude::{
     bool_or::TrueOrError,
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user::{
-        check::user_checker::{UserChecker, UserUncheck},
-        models::UserChecked,
+    mongo_models::ceobe::user_property::{
+        check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
+        models::UserPropertyChecked,
     },
     mongodb::bson,
     sql_models::fetcher::{
@@ -49,13 +49,13 @@ impl CeobeUserLogic {
             .collect::<Vec<bson::uuid::Uuid>>();
 
         // 拼接数据
-        let user_uncheck = UserUncheck::builder()
+        let user_uncheck = UserPropertyUncheck::builder()
             .mob_id(mob_id.mob_id)
             .datasource_push(datasource_uuids)
             .build();
         // 验证数据
-        let user_checked: UserChecked =
-            UserChecker::lite_check(user_uncheck).await?;
+        let user_checked: UserPropertyChecked =
+            UserPropertyChecker::lite_check(user_uncheck).await?;
         // 将用户信息存入数据库
         mongo.ceobe().user().user().create(user_checked).await?;
         Ok(())
@@ -120,7 +120,7 @@ impl CeobeUserLogic {
     /// 更新用户数据源配置
     pub async fn update_datasource(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        user_config: UserChecked,
+        user_config: UserPropertyChecked,
     ) -> LogicResult<()> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在

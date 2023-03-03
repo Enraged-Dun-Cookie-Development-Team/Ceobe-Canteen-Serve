@@ -10,7 +10,7 @@ use futures::future::BoxFuture;
 use http::Request;
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user::models::UserMobId,
+    mongo_models::ceobe::user_property::models::UserMobId,
 };
 use resp_result::RespResult;
 use tap::Tap;
