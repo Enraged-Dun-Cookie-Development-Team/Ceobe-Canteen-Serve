@@ -5,7 +5,7 @@ use db_ops_prelude::database_operates::sub_operate::{
     SubOperate, SuperOperate,
 };
 
-#[path = "mongo/user/mod.rs"] pub mod user;
+#[path = "mongo/property/mod.rs"] pub mod property;
 
 pub struct UserDatabaseOperate<'db, Conn>(&'db Conn);
 

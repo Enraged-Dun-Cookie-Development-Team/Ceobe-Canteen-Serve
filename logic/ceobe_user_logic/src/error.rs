@@ -1,4 +1,4 @@
-use ceobe_user::user::OperateError as CeobeUserOperateError;
+use ceobe_user::property::OperateError as CeobeUserOperateError;
 use db_ops_prelude::{
     mongo_connection::MongoDbError,
     mongo_models::ceobe::user_property::check::CheckError as CeobeUserPropertyCheckerror,

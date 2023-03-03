@@ -6,7 +6,7 @@ use db_ops_prelude::{
 use tracing::{info, instrument, warn};
 
 use super::UserOperate;
-use crate::user::{OperateError, OperateResult};
+use crate::property::{OperateError, OperateResult};
 
 impl<'db, Conn> UserOperate<'db, Conn>
 where

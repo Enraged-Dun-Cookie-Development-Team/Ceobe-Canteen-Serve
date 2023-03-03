@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use abstract_database::ceobe::ToCeobe;
-use ceobe_user::{user::OperateError as CeobeUserOperateError, ToCeobeUser};
+use ceobe_user::{property::OperateError as CeobeUserOperateError, ToCeobeUser};
 use checker::LiteChecker;
 use db_ops_prelude::{
     bool_or::TrueOrError,
