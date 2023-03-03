@@ -16,11 +16,15 @@ use super::{
     super::models::model_datasource_config::DatasourcePlatform, Datasource,
     OperateError, OperateResult,
 };
-use crate::fetcher::datasource_config::{
-    models::model_datasource_config::{
-        self, BackendDatasource, Column, DataSourceForFetcherConfig, Entity,
+use crate::{
+    fetcher::datasource_config::{
+        models::model_datasource_config::{
+            self, BackendDatasource, Column, DataSourceForFetcherConfig,
+            Entity, Model,
+        },
+        operate::retrieve::model_datasource_config::SingleDatasourceInfo,
     },
-    operate::retrieve::model_datasource_config::SingleDatasourceInfo,
+    get_zero_data_time,
 };
 
 impl Datasource<'_, NoConnect> {
@@ -30,10 +34,24 @@ impl Datasource<'_, NoConnect> {
         Entity::find_by_id(id)
             .select_only()
             .column(Column::Platform)
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .into_model()
             .one(db)
             .await?
             .ok_or(OperateError::DatasourceNotFound(id))
+    }
+
+    pub async fn find_delete_model_by_datasource_and_unique_key(
+        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
+    ) -> OperateResult<Model> {
+        Entity::find()
+            .filter(Column::Datasource.eq(datasource))
+            .filter(Column::DbUniqueKey.eq(unique_key))
+            .filter(Column::DeleteAt.ne(get_zero_data_time()))
+            .into_model()
+            .one(db)
+            .await?
+            .ok_or(OperateError::DatasourcesNotExist)
     }
 }
 
@@ -65,6 +83,7 @@ where
                         Column::Datasource.eq(datasource_str)
                     })),
             )
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .with_pagination(page_size)
             .into_model::<BackendDatasource>()
             .all(db)
@@ -89,6 +108,7 @@ where
 
         Ok(Entity::find()
             .filter(Column::Platform.eq(platform))
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .into_model::<DataSourceForFetcherConfig>()
             .all(db)
             .await?).tap_ok(|list| {
@@ -108,6 +128,7 @@ where
         Ok(Entity::find()
             .select_only()
             .column(Column::Datasource)
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .group_by(Column::Datasource)
             .into_model::<SingleDatasourceInfo>()
             .all(db)
@@ -139,6 +160,7 @@ where
                         Column::Datasource.eq(datasource_str)
                     })),
             )
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .count(db)
             .await
             .map_err(Into::into)

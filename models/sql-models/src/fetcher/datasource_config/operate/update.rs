@@ -3,7 +3,9 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
 use super::{Datasource, OperateResult};
-use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
+use crate::fetcher::datasource_config::{
+    checkers::FetcherDatasourceConfig, operate::OperateError,
+};
 
 impl<'c, C> Datasource<'c, C>
 where
@@ -24,7 +26,12 @@ where
 
         let db = self.get_connect();
 
-        config.into_active_model().update(db).await?;
+        if Datasource::is_id_exist(db, config.id.unwrap()).await? {
+            config.into_active_model().update(db).await?;
+        }
+        else {
+            return Err(OperateError::DatasourceNotFound(config.id.unwrap()));
+        };
 
         Ok(())
     }

@@ -14,7 +14,7 @@ use super::{
     bv::{Bv, BvChecker},
     CheckError,
 };
-use crate::ceobe_operation::video::models::model_video;
+use crate::{ceobe_operation::video::models::model_video, SoftDelete};
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOpVideo {
