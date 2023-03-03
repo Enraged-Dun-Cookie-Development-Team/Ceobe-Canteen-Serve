@@ -34,14 +34,16 @@ impl CeobeOperationVersionFrontend {
                 match version {
                     Some(version) => {
                         database
-                            .ceobe().operation()
+                            .ceobe()
+                            .operation()
                             .app_version()
                             .get_info_by_version(&version)
                             .await
                     }
                     None => {
                         database
-                            .ceobe().operation()
+                            .ceobe()
+                            .operation()
                             .app_version()
                             .get_newest_info()
                             .await
@@ -68,13 +70,15 @@ impl CeobeOperationVersionFrontend {
         resp_try(async {
             let (data, extra) = modify.check_modify(match version {
                 Some(version) => {
-                    db.ceobe().operation()
+                    db.ceobe()
+                        .operation()
                         .plugin_version()
                         .get_info_by_version(version)
                         .await
                 }
                 None => {
-                    db.ceobe().operation()
+                    db.ceobe()
+                        .operation()
                         .plugin_version()
                         .get_newest_info()
                         .await

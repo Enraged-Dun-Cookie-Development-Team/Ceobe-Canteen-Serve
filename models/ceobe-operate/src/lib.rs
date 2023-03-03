@@ -1,9 +1,8 @@
 use std::ops::Deref;
 
 use abstract_database::ceobe::CeobeDatabaseOperate;
-use db_ops_prelude::database_operates::{
-    sub_operate::{SubOperate, SuperOperate},
-    DatabaseOperate,
+use db_ops_prelude::database_operates::sub_operate::{
+    SubOperate, SuperOperate,
 };
 #[path = "sql/announcement/mod.rs"] pub mod announcement;
 #[path = "sql/app_version/mod.rs"] pub mod app_version;
