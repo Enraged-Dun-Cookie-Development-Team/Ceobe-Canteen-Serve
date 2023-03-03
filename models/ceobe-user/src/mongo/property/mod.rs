@@ -18,15 +18,15 @@ use thiserror::Error;
 
 use crate::UserDatabaseOperate;
 
-pub struct UserOperate<'db, Conn>(&'db Conn);
+pub struct UserPropertyOperate<'db, Conn>(&'db Conn);
 
-impl<'db, Conn> SubOperate<'db> for UserOperate<'db, Conn> {
+impl<'db, Conn> SubOperate<'db> for UserPropertyOperate<'db, Conn> {
     type Parent = UserDatabaseOperate<'db, Conn>;
 
     fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
-impl<'db, Conn> Deref for UserOperate<'db, Conn> {
+impl<'db, Conn> Deref for UserPropertyOperate<'db, Conn> {
     type Target = Conn;
 
     fn deref(&self) -> &Self::Target { self.0 }
@@ -57,5 +57,5 @@ pub enum OperateError {
 }
 
 impl<'db, Conn> UserDatabaseOperate<'db, Conn> {
-    pub fn user(&self) -> UserOperate<'_, Conn> { self.child() }
+    pub fn property(&self) -> UserPropertyOperate<'_, Conn> { self.child() }
 }

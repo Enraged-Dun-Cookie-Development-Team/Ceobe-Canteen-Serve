@@ -5,10 +5,10 @@ use db_ops_prelude::{
 };
 use tracing::{info, instrument, warn};
 
-use super::UserOperate;
+use super::UserPropertyOperate;
 use crate::property::{OperateError, OperateResult};
 
-impl<'db, Conn> UserOperate<'db, Conn>
+impl<'db, Conn> UserPropertyOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, UserPropertyModel>,
 {

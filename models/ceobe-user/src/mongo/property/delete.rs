@@ -3,9 +3,9 @@ use db_ops_prelude::{
     mongo_models::ceobe::user_property::models::UserPropertyModel,
 };
 
-use super::UserOperate;
+use super::UserPropertyOperate;
 
-impl<'db, Conn> UserOperate<'db, Conn> where
+impl<'db, Conn> UserPropertyOperate<'db, Conn> where
     Conn: MongoDbCollectionTrait<'db, UserPropertyModel>
 {
 }

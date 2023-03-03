@@ -53,7 +53,7 @@ impl AsyncAuthorizeRequest<Body> for MobVerify {
                     if let Err(err) = match mongo
                         .ceobe()
                         .user()
-                        .user()
+                        .property()
                         .is_exist_user(&mob_id)
                         .await
                         .map_err(|_| MobVerifyError::UserDatabaseOperateError)

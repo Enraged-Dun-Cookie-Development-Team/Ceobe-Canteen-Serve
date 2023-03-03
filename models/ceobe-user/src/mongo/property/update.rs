@@ -7,9 +7,9 @@ use db_ops_prelude::{
 };
 use tracing::{info, instrument};
 
-use super::{OperateResult, UserOperate};
+use super::{OperateResult, UserPropertyOperate};
 
-impl<'db, Conn> UserOperate<'db, Conn>
+impl<'db, Conn> UserPropertyOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, UserPropertyModel>,
 {

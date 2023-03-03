@@ -57,7 +57,7 @@ impl CeobeUserLogic {
         let user_checked: UserPropertyChecked =
             UserPropertyChecker::lite_check(user_uncheck).await?;
         // 将用户信息存入数据库
-        mongo.ceobe().user().user().create(user_checked).await?;
+        mongo.ceobe().user().property().create(user_checked).await?;
         Ok(())
     }
 
@@ -67,7 +67,7 @@ impl CeobeUserLogic {
     ) -> LogicResult<DatasourceConfig> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        mongo.ceobe().user().user().is_exist_user(
+        mongo.ceobe().user().property().is_exist_user(
             &mob_id.mob_id,
         )
         .await?.true_or_with(|| {
@@ -82,7 +82,7 @@ impl CeobeUserLogic {
             mongo
                 .ceobe()
                 .user()
-                .user()
+                .property()
                 .find_datasource_list_by_mob(mob_id.clone().into()),
         )
         .await;
@@ -107,7 +107,7 @@ impl CeobeUserLogic {
         // 将删除过已不存在的数据源列表存回数据库
         // 异步执行，无论成功与否都继续~
         if resp.datasource_config.len() < user_datasource_config.len() {
-            tokio::spawn(mongo.ceobe().user().user().update_datasource(
+            tokio::spawn(mongo.ceobe().user().property().update_datasource(
                 mob_id.mob_id,
                 vec_uuid_to_bson_uuid(resp.datasource_config.clone()),
             ));
@@ -124,7 +124,7 @@ impl CeobeUserLogic {
     ) -> LogicResult<()> {
         // TODO: 优化为中间件，放在用户相关接口判断用户是否存在
         // 判断用户是否存在
-        mongo.ceobe().user().user().is_exist_user(
+        mongo.ceobe().user().property().is_exist_user(
             &user_config.mob_id,
         )
         .await?.true_or_with(|| {
@@ -142,7 +142,7 @@ impl CeobeUserLogic {
         mongo
             .ceobe()
             .user()
-            .user()
+            .property()
             .update_datasource(
                 user_config.mob_id,
                 user_config.datasource_push,
