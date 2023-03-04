@@ -1,11 +1,7 @@
-use sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel};
-use sql_connection::database_traits::database_operates::NoConnect;
+use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel}, sql_models::fetcher::config::{checkers::config_data::FetcherConfig, models::model_config}, database_operates::NoConnect};
 use tracing::instrument;
 
 use super::{ConfigOperate, OperateResult};
-use crate::fetcher::config::{
-    checkers::config_data::FetcherConfig, models::model_config,
-};
 
 impl ConfigOperate<'_, NoConnect> {
     #[instrument(skip(ctx, configs))]

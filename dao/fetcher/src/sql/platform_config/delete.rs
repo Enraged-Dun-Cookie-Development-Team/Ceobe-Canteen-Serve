@@ -1,11 +1,9 @@
-use sea_orm::{ConnectionTrait, EntityTrait};
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait}, get_connect::GetDatabaseConnect, sql_models::fetcher::platform_config::models::model_platform_config::Entity};
 use tracing::{info, instrument};
 
+use crate::platform_config::OperateError;
+
 use super::{OperateResult, PlatformOperate};
-use crate::fetcher::platform_config::{
-    models::model_platform_config, operate::OperateError,
-};
 
 impl<'c, C> PlatformOperate<'c, C>
 where
@@ -19,8 +17,8 @@ where
         let db = self.get_connect();
 
         // 获取平台的type，比对数据源表时候有平台的相关数据源
-        if !Platform::has_datasource_by_id(db, pid).await? {
-            model_platform_config::Entity::delete_by_id(pid)
+        if !PlatformOperate::has_datasource_by_id(db, pid).await? {
+            Entity::delete_by_id(pid)
                 .exec(db)
                 .await?;
             Ok(())

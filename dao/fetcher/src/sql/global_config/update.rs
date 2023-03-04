@@ -1,12 +1,8 @@
-use sea_orm::{sea_query, ConnectionTrait, EntityTrait, IntoActiveModel};
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use db_ops_prelude::{sea_orm::{sea_query, ConnectionTrait, EntityTrait, IntoActiveModel}, sql_models::fetcher::global_config::{models::model_global_config::{Entity, Column}, checkers::global_config_data::FetcherGlobalConfig}, get_connect::GetDatabaseConnect};
 use tracing::instrument;
 
 use super::{GlobalOperate, OperateResult};
-use crate::fetcher::global_config::{
-    checkers::global_config_data::FetcherGlobalConfig,
-    models::model_global_config::{Column, Entity},
-};
+
 impl<'c, C> GlobalOperate<'c, C>
 where
     C: GetDatabaseConnect,

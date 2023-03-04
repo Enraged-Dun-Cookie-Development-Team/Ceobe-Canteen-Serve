@@ -1,11 +1,9 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel}, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig, get_connect::GetDatabaseConnect};
 use tracing::{info, instrument};
 
+use crate::datasource_config::OperateError;
+
 use super::{DatasourceOperate, OperateResult};
-use crate::fetcher::datasource_config::{
-    checkers::FetcherDatasourceConfig, operate::OperateError,
-};
 
 impl<'c, C> DatasourceOperate<'c, C>
 where
@@ -26,7 +24,7 @@ where
 
         let db = self.get_connect();
 
-        if Datasource::is_id_exist(db, config.id.unwrap()).await? {
+        if DatasourceOperate::is_id_exist(db, config.id.unwrap()).await? {
             config.into_active_model().update(db).await?;
         }
         else {

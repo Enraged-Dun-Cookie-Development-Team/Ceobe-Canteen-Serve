@@ -1,18 +1,5 @@
-use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
-use sql_connection::{
-    database_traits::database_operates::NoConnect,
-    ext_traits::select_count::QueryCountByColumn,
-};
-
+use db_ops_prelude::{sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter}, sql_models::fetcher::{datasource_config::models::model_datasource_config, platform_config::models::model_platform_config::{Entity, self, Column}}, database_operates::NoConnect, ext_traits::select_count::QueryCountByColumn};
 use super::{OperateResult, PlatformOperate};
-use crate::fetcher::{
-    datasource_config::models::model_datasource_config,
-    platform_config::models::model_platform_config::{
-        self,
-        Column::{Id, TypeId},
-        Entity,
-    },
-};
 
 impl PlatformOperate<'_, NoConnect> {
     /// 查询是否存在type_id的平台
@@ -20,8 +7,8 @@ impl PlatformOperate<'_, NoConnect> {
         db: &impl ConnectionTrait, type_id: &str,
     ) -> OperateResult<bool> {
         let exist = Entity::find()
-            .filter(TypeId.eq(type_id))
-            .count_non_zero_by_column(Id)
+            .filter(Column::TypeId.eq(type_id))
+            .count_non_zero_by_column(Column::Id)
             .one(db)
             .await?
             .unwrap()
@@ -83,20 +70,11 @@ mod test {
         query
     }
 
-    use sea_orm::{
+    use db_ops_prelude::{sea_orm::{
         ColumnTrait, DatabaseBackend, EntityTrait, QueryFilter, QueryTrait,
-        Select,
-    };
-    use sea_query::{Alias, Expr, MysqlQueryBuilder, Query, SelectStatement};
-    use sql_connection::ext_traits::{
-        check_all_exist::QueryAllExist,
-        select_count::{ColumnExpr, QueryCountByColumn},
-    };
+        Select, sea_query::{Expr, MysqlQueryBuilder, Query, Alias, SelectStatement},
+    }, sql_models::fetcher::{platform_config::models::model_platform_config, datasource_config::models::model_datasource_config}, ext_traits::{select_count::{QueryCountByColumn, ColumnExpr}, check_all_exist::QueryAllExist}};
 
-    use crate::fetcher::{
-        datasource_config::models::model_datasource_config,
-        platform_config::models::model_platform_config,
-    };
     #[test]
     fn test_gen_sql() {
         let query = super::Entity::find()

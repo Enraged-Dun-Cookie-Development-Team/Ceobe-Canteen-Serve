@@ -1,19 +1,15 @@
 use std::ops::Deref;
 
+use db_ops_prelude::get_connect::GetDatabaseConnect;
+use db_ops_prelude::sql_models::fetcher::platform_config::models::model_platform_config::{self, Entity, PlatformType, PlatformBasicInfo};
 use page_size::{database::WithPagination, request::Paginator};
-use sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect};
-use smallvec::SmallVec;
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use db_ops_prelude::sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect};
+use db_ops_prelude::smallvec::SmallVec;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
 use super::{OperateResult, PlatformOperate};
-use crate::fetcher::platform_config::{
-    models::model_platform_config,
-    operate::retrieve::model_platform_config::{
-        PlatformBasicInfo, PlatformType,
-    },
-};
+
 impl<'c, C> PlatformOperate<'c, C>
 where
     C: GetDatabaseConnect,
@@ -28,7 +24,7 @@ where
             platformList.page.num = page_size.page.deref(),
             platformList.page.size = page_size.size.deref()
         );
-        Ok(model_platform_config::Entity::find()
+        Ok(Entity::find()
             .with_pagination(page_size)
             .all(self.get_connect())
             .await?).tap_ok(|list| {

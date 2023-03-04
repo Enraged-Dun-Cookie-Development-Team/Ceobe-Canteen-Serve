@@ -11,3 +11,6 @@ status-err = { version = "0.1.0", path = "../../libs/status-err" }
 thiserror.workspace = true
 tracing.workspace = true
 abstract_database.workspace = true
+tap.workspace = true
+uuid.workspace = true
+page_size.workspace = true

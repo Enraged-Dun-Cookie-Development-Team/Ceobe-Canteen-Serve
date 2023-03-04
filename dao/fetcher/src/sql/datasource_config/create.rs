@@ -1,9 +1,7 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
-use sql_connection::database_traits::database_operates::NoConnect;
+use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel}, database_operates::NoConnect, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig};
 use tracing::{info, instrument};
 
 use super::{DatasourceOperate, OperateResult};
-use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 
 impl DatasourceOperate<'_, NoConnect> {
     /// 保存数据源配置到数据库

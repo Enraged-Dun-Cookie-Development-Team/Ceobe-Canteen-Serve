@@ -4,28 +4,13 @@ pub mod retrieve;
 pub mod update;
 pub mod verify;
 
-use sea_orm::FromQueryResult;
-use sql_connection::database_traits::{
-    database_operates::sub_operate::SubOperate,
-    get_connect::GetDatabaseConnect,
-};
+use db_ops_prelude::{sea_orm::FromQueryResult, database_operates::sub_operate::{SubOperate, SuperOperate}};
+use std::ops::Deref;
+use abstract_database::fetcher::FetcherDatabaseOperate;
+use db_ops_prelude::sea_orm;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
-
-pub struct DatasourceOperate<'db, Conn>(&'db Conn);
-
-impl<'db, Conn> SubOperate<'db> for DatasourceOperate<'db, Conn> {
-    type Parent = FetcherDatabaseOperate<'db, Conn>;
-
-    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
-}
-
-impl<'db, Conn> Deref for DatasourceOperate<'db, Conn> {
-    type Target = Conn;
-
-    fn deref(&self) -> &Self::Target { self.0 }
-}
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {
@@ -54,6 +39,25 @@ struct PlatformDatasource {
     pub(crate) platform: String,
 }
 
-impl<'db, Conn> DatasourceOperate<'db, Conn> {
-    pub fn datasource(&self) -> FetcherDatasourceOperate<'_, Conn> { self.child() }
+
+pub struct DatasourceOperate<'db, Conn>(&'db Conn);
+
+impl<'db, Conn> SubOperate<'db> for DatasourceOperate<'db, Conn> {
+    type Parent = FetcherDatabaseOperate<'db, Conn>;
+
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
+}
+
+impl<'db, Conn> Deref for DatasourceOperate<'db, Conn> {
+    type Target = Conn;
+
+    fn deref(&self) -> &Self::Target { self.0 }
+}
+
+pub trait ToDatasource<C> {
+    fn datasource(&self) -> DatasourceOperate<'_, C>;
+}
+
+impl<C> ToDatasource<C> for FetcherDatabaseOperate<'_, C> {
+    fn datasource(&self) -> DatasourceOperate<'_, C> { self.child() }
 }
