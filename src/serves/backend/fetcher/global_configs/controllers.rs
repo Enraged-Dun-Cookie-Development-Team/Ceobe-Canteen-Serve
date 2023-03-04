@@ -1,7 +1,7 @@
 use axum::Json;
 use fetcher_logic::implements::FetcherConfigLogic;
 use orm_migrate::{
-    sql_connection::SqlDatabaseOperate, sql_models::fetcher::ToFetcherOperate,
+    sql_connection::SqlDatabaseOperate,
 };
 use resp_result::{rtry, MapReject, RespResult};
 use serde_json::{Map, Value};
@@ -21,7 +21,7 @@ impl FetcherConfigControllers {
         >,
     ) -> GlobalConfigRResult<()> {
         FetcherConfigLogic::set_global_config(
-            db.fetcher_operate(),
+            db,
             global_config,
         )
         .await
@@ -35,7 +35,7 @@ impl FetcherConfigControllers {
         db: SqlDatabaseOperate,
     ) -> GlobalConfigRResult<Value> {
         let resp =
-            FetcherConfigLogic::get_global_configs(db.fetcher_operate())
+            FetcherConfigLogic::get_global_configs(db)
                 .await;
         RespResult::ok(rtry!(resp))
     }

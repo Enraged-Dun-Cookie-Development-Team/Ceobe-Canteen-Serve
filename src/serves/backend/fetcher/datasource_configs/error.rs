@@ -3,11 +3,14 @@ use checker::prefabs::num_check::NonZeroUnsignedError;
 use fetcher_logic::error::LogicError;
 use orm_migrate::sql_models::fetcher::{
     datasource_config::{
-        checkers::CheckError, operate::OperateError as DatasourceOperateError,
+        checkers::CheckError
     },
-    platform_config::operate::OperateError as PlatformOperateError,
 };
 use resp_result::RespResult;
+use fetcher::{
+    datasource_config::OperateError as DatasourceOperateError,
+    platform_config::OperateError as PlatformOperateError,
+};
 
 use crate::error_generate;
 

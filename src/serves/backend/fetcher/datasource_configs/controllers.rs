@@ -1,5 +1,7 @@
+use abstract_database::fetcher::ToFetcher;
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
+use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{
@@ -9,7 +11,7 @@ use fetcher_logic::{
 };
 use futures::future;
 use orm_migrate::{
-    sql_connection::SqlDatabaseOperate, sql_models::fetcher::ToFetcherOperate,
+    sql_connection::SqlDatabaseOperate,
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use resp_result::{resp_try, rtry, MapReject};
@@ -32,9 +34,9 @@ impl FetcherConfigControllers {
             // 异步获取
             let (platform_list, datasource_list) = future::join(
                 // 获取数据源数量
-                db.fetcher_operate().platform().find_all(),
+                db.fetcher().platform().find_all(),
                 // 获取平台列表
-                db.fetcher_operate().datasource().find_all_type(),
+                db.fetcher().datasource().find_all_type(),
             )
             .await;
 
@@ -63,12 +65,12 @@ impl FetcherConfigControllers {
             // 获取数据源数量
             // 异步获取
             let (datasource_list, count) = future::join(
-                db.fetcher_operate().datasource().find_all_with_paginator(
+                db.fetcher().datasource().find_all_with_paginator(
                     page_size,
                     filter_cond.platform.clone(),
                     filter_cond.datasource.clone(),
                 ),
-                db.fetcher_operate()
+                db.fetcher()
                     .datasource()
                     .count(filter_cond.platform, filter_cond.datasource),
             )
@@ -94,7 +96,7 @@ impl FetcherConfigControllers {
     ) -> DatasourceConfigRResult<()> {
         resp_try(async {
             FetcherConfigLogic::create_datasource_config(
-                &db,
+                db,
                 datasource_config,
             )
             .await?;
@@ -110,7 +112,7 @@ impl FetcherConfigControllers {
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
         rtry!(
-            db.fetcher_operate()
+            db.fetcher()
                 .datasource()
                 .update(datasource_config)
                 .await
@@ -130,7 +132,7 @@ impl FetcherConfigControllers {
         rtry!(
             FetcherConfigLogic::delete_datasource_by_id(
                 &notifier,
-                &db,
+                db,
                 datasource.id
             )
             .await
@@ -149,7 +151,7 @@ impl FetcherConfigControllers {
     ) -> DatasourceConfigRResult<Vec<DatasourceWithNameResp>> {
         resp_try(async {
             let list = db
-                .fetcher_operate()
+                .fetcher()
                 .datasource()
                 .find_by_platform(&filter.type_id)
                 .await?;

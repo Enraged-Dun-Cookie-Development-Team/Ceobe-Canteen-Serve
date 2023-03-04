@@ -17,6 +17,7 @@ page_size = {path = "../../libs/page_size"}
 futures.workspace = true
 scheduler-notifier.workspace = true
 fetcher.workspace = true
+abstract_database.workspace = true
 
 [dependencies.sql-models]
 path = "../../models/sql-models"

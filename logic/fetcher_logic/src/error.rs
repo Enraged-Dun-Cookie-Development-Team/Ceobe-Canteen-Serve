@@ -1,24 +1,33 @@
 use redis::RedisError;
 use sql_models::{
     fetcher::{
-        config::{
+        config::
             checkers::CheckError as FetcherConfigCheckError,
-            operate::OperateError as FetcherConfigOperateError,
-        },
-        datasource_config::{
+        
+        datasource_config::
             checkers::CheckError as DatasourceConfigCheckError,
-            operate::OperateError as DatasourceConfigOperateError,
-        },
-        global_config::{
+
+        global_config::
             checkers::CheckError as GlobalConfigCheckError,
-            operate::OperateError as GlobalConfigOperateError,
-        },
-        platform_config::{
+        
+        platform_config::
             checkers::CheckError as PlatformConfigCheckError,
-            operate::OperateError as PlatformConfigOperateError,
-        },
+        
     },
     sql_connection::sea_orm,
+};
+use fetcher::{
+    config::OperateError as FetcherConfigOperateError,
+
+    datasource_config::
+        OperateError as DatasourceConfigOperateError,
+
+    global_config::
+        OperateError as GlobalConfigOperateError,
+
+    platform_config::
+        OperateError as PlatformConfigOperateError,
+
 };
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;

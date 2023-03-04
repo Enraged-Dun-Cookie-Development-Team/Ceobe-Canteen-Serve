@@ -1,5 +1,5 @@
 use db_ops_prelude::sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
+    ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter, StreamTrait,
 };
 use db_ops_prelude::get_connect::GetDatabaseConnect;
 use db_ops_prelude::sql_models::fetcher::config::models::model_config::{self, Model};
@@ -11,7 +11,7 @@ use super::{ConfigOperate, OperateResult};
 impl<'c, C> ConfigOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     #[instrument(skip(self))]
     /// 获取单个平台下的全部蹲饼器配置

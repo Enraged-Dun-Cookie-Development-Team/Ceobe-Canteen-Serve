@@ -1,4 +1,4 @@
-use db_ops_prelude::{sea_orm::{sea_query, ConnectionTrait, EntityTrait, IntoActiveModel}, sql_models::fetcher::global_config::{models::model_global_config::{Entity, Column}, checkers::global_config_data::FetcherGlobalConfig}, get_connect::GetDatabaseConnect};
+use db_ops_prelude::{sea_orm::{sea_query, ConnectionTrait, EntityTrait, IntoActiveModel, StreamTrait}, sql_models::fetcher::global_config::{models::model_global_config::{Entity, Column}, checkers::global_config_data::FetcherGlobalConfig}, get_connect::GetDatabaseConnect};
 use tracing::instrument;
 
 use super::{GlobalOperate, OperateResult};
@@ -6,7 +6,7 @@ use super::{GlobalOperate, OperateResult};
 impl<'c, C> GlobalOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     // 创建或者更新蹲饼器全局配置
     #[instrument(ret, skip_all)]

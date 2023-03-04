@@ -1,4 +1,4 @@
-use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel}, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig, get_connect::GetDatabaseConnect};
+use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait}, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig, get_connect::GetDatabaseConnect};
 use tracing::{info, instrument};
 
 use crate::datasource_config::OperateError;
@@ -8,7 +8,7 @@ use super::{DatasourceOperate, OperateResult};
 impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     /// 更新数据配置到数据库
     #[instrument(ret, skip(self))]

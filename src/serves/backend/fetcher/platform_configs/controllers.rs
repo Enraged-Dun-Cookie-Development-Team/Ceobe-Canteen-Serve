@@ -1,5 +1,7 @@
+use abstract_database::fetcher::ToFetcher;
 use axum::Json;
 use checker::CheckExtract;
+use fetcher::platform_config::ToPlatform;
 use fetcher_logic::{implements::FetcherConfigLogic, view::OneIdReq};
 use futures::future;
 use orm_migrate::{
@@ -8,7 +10,6 @@ use orm_migrate::{
         platform_config::models::model_platform_config::{
             PlatformBasicInfo, PlatformHasDatasource,
         },
-        ToFetcherOperate,
     },
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
@@ -32,15 +33,15 @@ impl FetcherConfigControllers {
         resp_try(async {
             // 获取平台列表
             let platform_list =
-                FetcherConfigLogic::get_all_platform_having_datasource_with_paginator::<SqlConnect>(
-                    db.fetcher_operate(), page_size,
+                FetcherConfigLogic::get_all_platform_having_datasource_with_paginator(
+                    &db, page_size,
                 );
 
                 // 并发执行
                 let (platform_list, count) =
                 future::join(platform_list,
                     // 获取平台数量
-                    db.fetcher_operate().platform().count_all()).await;
+                    db.fetcher().platform().count_all()).await;
 
             let resp = platform_list?.with_page_info(page_size, count?);
 
@@ -56,7 +57,7 @@ impl FetcherConfigControllers {
         CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            db.fetcher_operate()
+            db.fetcher()
                 .platform()
                 .create(platform_config)
                 .await
@@ -71,7 +72,7 @@ impl FetcherConfigControllers {
         CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
         rtry!(
-            db.fetcher_operate()
+            db.fetcher()
                 .platform()
                 .update(platform_config)
                 .await
@@ -86,7 +87,7 @@ impl FetcherConfigControllers {
         MapReject(body): MapReject<Json<OneIdReq>, PlatformConfigError>,
     ) -> PlatformConfigRResult<()> {
         let pid = body.id;
-        rtry!(db.fetcher_operate().platform().delete_one(pid).await);
+        rtry!(db.fetcher().platform().delete_one(pid).await);
         Ok(()).into()
     }
 
@@ -96,7 +97,7 @@ impl FetcherConfigControllers {
         db: SqlDatabaseOperate,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
         Ok(rtry!(
-            db.fetcher_operate().platform().find_all_basic_info().await
+            db.fetcher().platform().find_all_basic_info().await
         ))
         .into()
     }

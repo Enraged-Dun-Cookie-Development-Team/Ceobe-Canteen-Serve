@@ -1,3 +1,4 @@
+use abstract_database::fetcher::ToFetcher;
 use axum::{extract::Query, Json};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
@@ -5,7 +6,6 @@ use fetcher_logic::{
 };
 use orm_migrate::{
     sql_connection::{SqlConnect, SqlDatabaseOperate},
-    sql_models::fetcher::ToFetcherOperate,
 };
 use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
@@ -36,14 +36,14 @@ impl FetcherConfigControllers {
     /// 上传蹲饼器配置
     // #[instrument(ret, skip(db, configs))]
     pub async fn upload_fetchers_configs(
-        db: SqlConnect, notifier: SchedulerNotifier,
+        db: SqlDatabaseOperate, notifier: SchedulerNotifier,
         MapReject(configs): MapReject<
             Json<Vec<BackEndFetcherConfig>>,
             FetcherConfigError,
         >,
     ) -> FetcherConfigRResult<()> {
         resp_try(async move {
-            FetcherConfigLogic::upload_multi(&notifier, &db, configs).await?;
+            FetcherConfigLogic::upload_multi(&notifier, db, configs).await?;
             Ok(())
         })
         .await
@@ -60,7 +60,7 @@ impl FetcherConfigControllers {
     ) -> FetcherConfigRResult<Vec<BackEndFetcherConfig>> {
         Ok(rtry!(
             FetcherConfigLogic::get_by_platform(
-                db.fetcher_operate(),
+                db,
                 &type_id
             )
             .await

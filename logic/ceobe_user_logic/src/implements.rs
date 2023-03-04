@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use abstract_database::ceobe::ToCeobe;
+use abstract_database::{ceobe::ToCeobe, fetcher::ToFetcher};
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
 use db_ops_prelude::{
@@ -11,12 +11,9 @@ use db_ops_prelude::{
         models::{UserPropertyChecked, UserMobId},
     },
     mongodb::bson,
-    sql_models::fetcher::{
-        datasource_config::operate::OperateError as FetcherDatasourceOperateError,
-        ToFetcherOperate,
-    },
     SqlDatabaseOperate,
 };
+use fetcher::datasource_config::{OperateError as FetcherDatasourceOperateError, ToDatasource};
 use futures::future;
 use tokio::task;
 use tracing::warn;
@@ -40,7 +37,7 @@ impl CeobeUserLogic {
 
         // 获取所有数据源的uuid列表
         let datasource_uuids = db
-            .fetcher_operate()
+            .fetcher()
             .datasource()
             .find_all_uuid()
             .await?
@@ -68,7 +65,7 @@ impl CeobeUserLogic {
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
         let (datasource_list, user_datasource_config) = future::join(
-            db.fetcher_operate().datasource().find_all_uuid(),
+            db.fetcher().datasource().find_all_uuid(),
             mongo
                 .ceobe()
                 .user()
@@ -116,7 +113,7 @@ impl CeobeUserLogic {
         let user_config:UserPropertyChecked = UserPropertyChecker::lite_check(user_unchecked).await?;
 
         // 判断是否所有数据源都存在
-        db.fetcher_operate().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await?.true_or_with(|| {
+        db.fetcher().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await?.true_or_with(|| {
             warn!(user.datasources = ?user_config.datasource_push, user.datasources.exist = false);
             error::LogicError::DatasourceConfigOperateError(FetcherDatasourceOperateError::DatasourcesNotFound)
         })?;

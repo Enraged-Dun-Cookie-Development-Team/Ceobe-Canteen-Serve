@@ -1,7 +1,7 @@
 use std::{collections::BTreeSet, fmt::Debug, marker::Send};
 
 use db_ops_prelude::{sea_orm::{
-    ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect, sea_query::Func,
+    ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect, sea_query::Func, StreamTrait,
 }, database_operates::NoConnect, sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column}, ext_traits::{CountZero, check_all_exist::QueryAllExist, select_count::QueryCountByColumn}, get_zero_data_time, get_connect::GetDatabaseConnect, mysql_func};
 use tracing::instrument;
 use uuid::Uuid;
@@ -13,10 +13,12 @@ use super::{DatasourceOperate, OperateResult};
 impl DatasourceOperate<'_, NoConnect> {
     /// 验证id数组是否都存在
     #[instrument(ret, skip(db))]
-    pub async fn all_exist_by_id<T>(
-        db: &impl ConnectionTrait, ids: T,
+    pub async fn all_exist_by_id<'s, 'db, C, T>(
+        db: &'db C, ids: T,
     ) -> OperateResult<bool>
     where
+        'db: 's,
+        C: ConnectionTrait + StreamTrait + Send,
         T: IntoIterator<Item = i32> + Debug + Send,
         <T as IntoIterator>::IntoIter: Send,
     {
@@ -44,9 +46,13 @@ impl DatasourceOperate<'_, NoConnect> {
 
     #[instrument(skip(db), ret)]
     /// 是否存在该数据源，且被删除的
-    pub async fn is_datasource_delete_exist(
-        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
-    ) -> OperateResult<bool> {
+    pub async fn is_datasource_delete_exist<'s, 'db, C>(
+        db: &'db C, datasource: &str, unique_key: &str,
+    ) -> OperateResult<bool> 
+    where
+        'db: 's,
+        C: ConnectionTrait + StreamTrait + Send,
+    {
         Ok(Entity::find()
             .filter(Column::Datasource.eq(datasource))
             .filter(Column::DbUniqueKey.eq(unique_key))
@@ -60,9 +66,13 @@ impl DatasourceOperate<'_, NoConnect> {
 
     #[instrument(skip(db), ret)]
     /// 是否存在该数据源，且没被删除的
-    pub async fn is_id_exist(
-        db: &impl ConnectionTrait, did: i32,
-    ) -> OperateResult<bool> {
+    pub async fn is_id_exist<'s, 'db, C>(
+        db: &'db C, did: i32,
+    ) -> OperateResult<bool> 
+    where
+        'db: 's,
+        C: ConnectionTrait + StreamTrait + Send,
+    {
         Ok(Entity::find()
             .filter(Column::Id.eq(did))
             .filter(Column::DeleteAt.eq(get_zero_data_time()))
@@ -77,7 +87,7 @@ impl DatasourceOperate<'_, NoConnect> {
 impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     /// 验证平台下是否还有数据源
     #[instrument(ret, skip_all)]

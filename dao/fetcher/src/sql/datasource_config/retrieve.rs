@@ -6,7 +6,7 @@ use db_ops_prelude::get_zero_data_time;
 use page_size::{database::WithPagination, request::Paginator};
 use db_ops_prelude::sea_orm::{
     ColumnTrait, Condition, ConnectionTrait, EntityTrait, PaginatorTrait,
-    QueryFilter, QuerySelect,
+    QueryFilter, QuerySelect, StreamTrait,
 };
 use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource};
 use db_ops_prelude::smallvec::SmallVec;
@@ -19,9 +19,13 @@ use super::{
 };
 
 impl DatasourceOperate<'_, NoConnect> {
-    pub async fn find_platform_by_id(
-        db: &impl ConnectionTrait, id: i32,
-    ) -> OperateResult<DatasourcePlatform> {
+    pub async fn find_platform_by_id<'s, 'db, C>(
+        db: &'db C, id: i32,
+    ) -> OperateResult<DatasourcePlatform> 
+    where
+        'db: 's,
+        C: ConnectionTrait + StreamTrait + Send,
+    {
         Entity::find_by_id(id)
             .select_only()
             .column(Column::Platform)
@@ -32,9 +36,13 @@ impl DatasourceOperate<'_, NoConnect> {
             .ok_or(OperateError::DatasourceNotFound(id))
     }
 
-    pub async fn find_delete_model_by_datasource_and_unique_key(
-        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
-    ) -> OperateResult<Model> {
+    pub async fn find_delete_model_by_datasource_and_unique_key<'s, 'db, C>(
+        db: &'db C, datasource: &str, unique_key: &str,
+    ) -> OperateResult<Model> 
+    where
+        'db: 's,
+        C: ConnectionTrait + StreamTrait + Send,
+    {
         Entity::find()
             .filter(Column::Datasource.eq(datasource))
             .filter(Column::DbUniqueKey.eq(unique_key))
@@ -49,7 +57,7 @@ impl DatasourceOperate<'_, NoConnect> {
 impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     #[instrument(skip(self))]
     /// 分页获取全部数据源列表

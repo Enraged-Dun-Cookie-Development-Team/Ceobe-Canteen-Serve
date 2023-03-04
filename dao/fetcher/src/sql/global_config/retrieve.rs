@@ -1,4 +1,4 @@
-use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait}, get_connect::GetDatabaseConnect, sql_models::fetcher::global_config::models::model_global_config::{self, Entity}};
+use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait, StreamTrait}, get_connect::GetDatabaseConnect, sql_models::fetcher::global_config::models::model_global_config::{self, Entity}};
 use tracing::instrument;
 
 use super::{GlobalOperate, OperateResult};
@@ -6,7 +6,7 @@ use super::{GlobalOperate, OperateResult};
 impl<'c, C> GlobalOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait,
+    C::Connect: ConnectionTrait + StreamTrait,
 {
     #[instrument(ret, skip_all)]
     pub async fn get_all(

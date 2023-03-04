@@ -1,7 +1,9 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 
+use abstract_database::fetcher::ToFetcher;
 use bool_or::TrueOrError;
 use checker::prefabs::post_checker::PostChecker;
+use fetcher::{datasource_config::DatasourceOperate, platform_config::PlatformOperate, config::{ConfigOperate, ToConfig}};
 use redis::AsyncCommands;
 use redis_global::redis_key::fetcher::FetcherConfigKey;
 use scheduler_notifier::SchedulerNotifier;
@@ -12,18 +14,14 @@ use sql_models::{
                 FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
             },
             models::model_config::Model as FetcherConfigModel,
-            operate::Config,
         },
-        datasource_config::operate::Datasource,
-        platform_config::operate::Platform,
-        FetcherOperate,
     },
     sql_connection::{
         database_traits::get_connect::{
             GetDatabaseConnect, GetDatabaseTransaction,
             GetMutDatabaseConnect, TransactionOps,
         },
-        sea_orm::{ConnectionTrait, DbErr},
+        sea_orm::{ConnectionTrait, DbErr}, SqlDatabaseOperate,
     },
 };
 
@@ -60,14 +58,10 @@ impl FetcherConfigLogic {
     }
 
     /// 上传蹲饼器配置
-    pub async fn upload_multi<'db, D>(
-        notifier: &SchedulerNotifier, db: &'db D,
+    pub async fn upload_multi(
+        notifier: &SchedulerNotifier, db: SqlDatabaseOperate,
         configs: impl IntoIterator<Item = BackEndFetcherConfig>,
-    ) -> LogicResult<()>
-    where
-        D: GetDatabaseTransaction<Error = DbErr> + 'db,
-        D::Transaction<'db>: ConnectionTrait,
-    {
+    ) -> LogicResult<()> {
         let mut upload_configs_uncheck = Vec::<FetcherConfigUncheck>::new();
 
         let mut all_data_sources_set = BTreeSet::new();
@@ -124,32 +118,28 @@ impl FetcherConfigLogic {
         let ctx = db.get_transaction().await?;
 
         let platform_exist =
-            Platform::exist_by_type_id(&ctx, &platform).await?;
+            PlatformOperate::exist_by_type_id(&ctx, &platform).await?;
         let all_datasource_exist =
-            Datasource::all_exist_by_id(&ctx, all_data_sources_set).await?;
+            DatasourceOperate::all_exist_by_id(&ctx, all_data_sources_set).await?;
 
         // 指定平台与数据源均存在
         (platform_exist && all_datasource_exist)
             .true_or_with(|| LogicError::PlatformNotFound)?;
         // 清除指定 platform 下全部 config
-        Config::delete_by_platform(&ctx, &platform).await?;
+        ConfigOperate::delete_by_platform(&ctx, &platform).await?;
         // 创建config
-        Config::create_multi(&ctx, upload_config).await?;
+        ConfigOperate::create_multi(&ctx, upload_config).await?;
         ctx.submit().await?;
         notifier.notify_platform_update(platform).await;
         Ok(())
     }
 
     /// 获取蹲饼器配置
-    pub async fn get_by_platform<D>(
-        db: FetcherOperate<'_, D>, platform: &str,
-    ) -> LogicResult<Vec<BackEndFetcherConfig>>
-    where
-        D: GetDatabaseConnect + 'static,
-        D::Connect: ConnectionTrait,
-    {
+    pub async fn get_by_platform(
+        db: SqlDatabaseOperate, platform: &str,
+    ) -> LogicResult<Vec<BackEndFetcherConfig>> {
         let configs_in_db =
-            db.config().find_all_by_platform(platform).await?;
+            db.fetcher().config().find_all_by_platform(platform).await?;
 
         let mut configs =
             BTreeMap::<i8, HashMap<i8, HashMap<String, Group>>>::new();

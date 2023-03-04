@@ -3,11 +3,9 @@ use db_ops_prelude::{
     mongo_connection::MongoDbError,
     mongo_models::ceobe::user_property::check::CheckError as CeobeUserPropertyCheckerror,
     sea_orm,
-    sql_models::fetcher::datasource_config::{
-        checkers::CheckError as DatasourceConfigCheckError,
-        operate::OperateError as DatasourceConfigOperateError,
-    },
+    sql_models::fetcher::datasource_config::checkers::CheckError as DatasourceConfigCheckError
 };
+use fetcher::datasource_config::OperateError as DatasourceConfigOperateError;
 use status_err::StatusErr;
 use thiserror::Error;
 

@@ -1,6 +1,6 @@
 use axum::extract::rejection::QueryRejection;
-use orm_migrate::sql_models::fetcher::datasource_config::operate::OperateError as DatasourceOperateError;
 use resp_result::RespResult;
+use fetcher::datasource_config::OperateError as DatasourceOperateError;
 
 use crate::error_generate;
 

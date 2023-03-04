@@ -1,4 +1,4 @@
-use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel}, database_operates::NoConnect, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig};
+use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait}, database_operates::NoConnect, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig};
 use tracing::{info, instrument};
 
 use super::{DatasourceOperate, OperateResult};
@@ -6,9 +6,13 @@ use super::{DatasourceOperate, OperateResult};
 impl DatasourceOperate<'_, NoConnect> {
     /// 保存数据源配置到数据库
     #[instrument(ret, skip(db))]
-    pub async fn create(
-        db: &impl ConnectionTrait, config: FetcherDatasourceConfig,
-    ) -> OperateResult<()> {
+    pub async fn create<'s, 'db, C>(
+        db: &'db C, config: FetcherDatasourceConfig,
+    ) -> OperateResult<()>
+    where
+        'db: 's,
+        C: ConnectionTrait + StreamTrait + Send,
+    {
         info!(
             datasource.platform = config.platform,
             datasource.datasource = config.datasource,
