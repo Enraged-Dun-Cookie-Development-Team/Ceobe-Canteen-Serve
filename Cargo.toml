@@ -77,6 +77,9 @@ scheduler-notifier = { version = "0.1.0", path = "middle-server/scheduler-notifi
 db-ops-prelude = { version = "0.1.0", path = "database/db-ops-prelude" }
 bool_or = {version = "0.1.0", path = "./libs/bool_or"}
 abstract_database = { version = "0.1.0", path = "database/abstract_database" }
+ceobe-user = { version = "0.1.0", path = "dao/ceobe-user" }
+ceobe-operate = { version = "0.1.0", path = "dao/ceobe-operate" }
+fetcher = { version = "0.1.0", path = "dao/ceobe-fetcher" }
 
 [dependencies]
 # Xss
@@ -129,9 +132,10 @@ uuid = { version = "1.2.2", features = ["v4"] }
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 general-request-client.workspace = true
 scheduler-notifier.workspace = true
-ceobe-operate = { version = "0.1.0", path = "models/ceobe-operate" }
+ceobe-operate.workspace = true
 bool_or.workspace = true
 abstract_database.workspace = true
+ceobe-user.workspace = true
 
 [dependencies.tokio]
 workspace = true
@@ -186,5 +190,3 @@ path = "./logic/fetcher_logic"
 [dependencies.ceobe_user_logic]
 path = "./logic/ceobe_user_logic"
 
-[dependencies.ceobe-user]
-path = "./models/ceobe-user"

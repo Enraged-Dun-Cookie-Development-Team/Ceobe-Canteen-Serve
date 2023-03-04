@@ -18,12 +18,10 @@ tokio.workspace = true
 tracing = { workspace = true }
 db-ops-prelude.workspace = true
 abstract_database.workspace = true
+ceobe-user.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"
-
-[dependencies.ceobe-user]
-path = "../../models/ceobe-user"
 
 [dependencies.uuids-convert]
 path = "../../libs/uuids-convert"
