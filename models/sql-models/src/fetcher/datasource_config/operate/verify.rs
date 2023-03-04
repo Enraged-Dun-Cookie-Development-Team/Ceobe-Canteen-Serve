@@ -1,6 +1,5 @@
 use std::{collections::BTreeSet, fmt::Debug, marker::Send};
 
-use mysql_func::UuidToBin;
 use sea_orm::{
     ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect,
 };

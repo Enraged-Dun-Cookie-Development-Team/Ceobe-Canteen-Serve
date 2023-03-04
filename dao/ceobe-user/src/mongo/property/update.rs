@@ -3,7 +3,7 @@ use std::future::Future;
 use db_ops_prelude::{
     mongo_connection::MongoDbCollectionTrait,
     mongo_models::ceobe::user_property::models::UserPropertyModel,
-    mongodb::bson::{doc, Uuid},
+    mongodb::bson::{doc, Uuid, DateTime}, chrono::Local,
 };
 use tracing::{info, instrument};
 
@@ -38,5 +38,31 @@ where
                 .await?;
             Ok(())
         }
+    }
+
+    /// 更新最后进入时间
+    /// params: mob_id 用户mob id
+    #[instrument(skip(self), ret)]
+    pub async fn update_access_time(
+        &'db self, mob_id: String
+    ) -> OperateResult<()> {
+        let now = Local::now();
+        let now = DateTime::from_chrono(now);
+        info!(
+            updateDatasource.mob_id = mob_id,
+            updateDatasource.last_access_time = ?now
+        );
+        let collection = self.get_collection();
+        // 更新用户最后活跃时间
+        collection?
+            .doing(|collection| {
+                collection.update_one(
+                    doc! {"mob_id": mob_id},
+                    doc! {"$set": {"last_access_time": now}},
+                    None,
+                )
+            })
+            .await?;
+        Ok(())
     }
 }

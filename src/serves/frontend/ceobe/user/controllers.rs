@@ -1,4 +1,6 @@
+use abstract_database::ceobe::ToCeobe;
 use axum::Json;
+use ceobe_user::ToCeobeUser;
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceConfig, MobIdReq},
@@ -42,6 +44,18 @@ impl CeobeUserFrontend {
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
             CeobeUserLogic::update_datasource(mongo, db, datasource_config.datasource_push, mob_id).await
+        ))
+        .into()
+    }
+
+    /// 更新用户最后活跃时间
+    #[instrument(ret, skip(mongo))]
+    pub async fn update_user_access_time(
+        mongo: MongoDatabaseOperate,
+        MobIdInfo(mob_id): MobIdInfo,
+    ) -> CeobeUserRResult<()> {
+        Ok(rtry!(
+            mongo.ceobe().user().property().update_access_time(mob_id.mob_id).await
         ))
         .into()
     }
