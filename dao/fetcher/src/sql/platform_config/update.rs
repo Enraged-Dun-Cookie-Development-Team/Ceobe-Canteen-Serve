@@ -1,4 +1,10 @@
-use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait}, get_connect::GetDatabaseConnect, sql_models::fetcher::platform_config::checkers::platform_config_data::FetcherPlatformConfig};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{
+        ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait,
+    },
+    sql_models::fetcher::platform_config::checkers::platform_config_data::FetcherPlatformConfig,
+};
 use tracing::{info, instrument};
 
 use super::PlatformOperate;

@@ -3,13 +3,15 @@ pub mod delete;
 pub mod retrieve;
 pub mod verify;
 
+use std::ops::Deref;
 
+use abstract_database::fetcher::FetcherDatabaseOperate;
+use db_ops_prelude::{
+    database_operates::sub_operate::{SubOperate, SuperOperate},
+    sea_orm,
+};
 use status_err::StatusErr;
 use thiserror::Error;
-use db_ops_prelude::{sea_orm::FromQueryResult, database_operates::sub_operate::{SubOperate, SuperOperate}};
-use std::ops::Deref;
-use abstract_database::fetcher::FetcherDatabaseOperate;
-use db_ops_prelude::sea_orm;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {
@@ -18,7 +20,6 @@ pub enum OperateError {
 }
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
-
 
 pub struct ConfigOperate<'db, Conn>(&'db Conn);
 

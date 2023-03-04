@@ -1,4 +1,10 @@
-use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel, StreamTrait}, sql_models::fetcher::config::{checkers::config_data::FetcherConfig, models::model_config}, database_operates::NoConnect};
+use db_ops_prelude::{
+    database_operates::NoConnect,
+    sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel, StreamTrait},
+    sql_models::fetcher::config::{
+        checkers::config_data::FetcherConfig, models::model_config,
+    },
+};
 use tracing::instrument;
 
 use super::{ConfigOperate, OperateResult};
@@ -8,7 +14,7 @@ impl ConfigOperate<'_, NoConnect> {
     /// 新建单一平台蹲饼配置
     pub async fn create_multi<'s, 'db, C>(
         ctx: &'db C, configs: Vec<FetcherConfig>,
-    ) -> OperateResult<()> 
+    ) -> OperateResult<()>
     where
         'db: 's,
         C: ConnectionTrait + StreamTrait + Send,

@@ -5,13 +5,16 @@ use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceConfig, MobIdReq},
 };
-use mongo_migration::{mongo_connection::MongoDatabaseOperate, mongo_models::ceobe::user_property::models::UserDatasource};
+use mongo_migration::{
+    mongo_connection::MongoDatabaseOperate,
+    mongo_models::ceobe::user_property::models::UserDatasource,
+};
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
 use super::error::{CeobeUserError, CeobeUserRResult};
-use crate::{router::CeobeUserFrontend, middleware::mob::MobIdInfo};
+use crate::{middleware::mob::MobIdInfo, router::CeobeUserFrontend};
 impl CeobeUserFrontend {
     /// 新建用户（注册mobid入库）
     #[instrument(ret, skip(db, mongo))]
@@ -40,10 +43,19 @@ impl CeobeUserFrontend {
     pub async fn update_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         MobIdInfo(mob_id): MobIdInfo,
-        MapReject(datasource_config): MapReject<Json<UserDatasource>, CeobeUserError>,
+        MapReject(datasource_config): MapReject<
+            Json<UserDatasource>,
+            CeobeUserError,
+        >,
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
-            CeobeUserLogic::update_datasource(mongo, db, datasource_config.datasource_push, mob_id).await
+            CeobeUserLogic::update_datasource(
+                mongo,
+                db,
+                datasource_config.datasource_push,
+                mob_id
+            )
+            .await
         ))
         .into()
     }
@@ -51,11 +63,15 @@ impl CeobeUserFrontend {
     /// 更新用户最后活跃时间
     #[instrument(ret, skip(mongo))]
     pub async fn update_user_access_time(
-        mongo: MongoDatabaseOperate,
-        MobIdInfo(mob_id): MobIdInfo,
+        mongo: MongoDatabaseOperate, MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
-            mongo.ceobe().user().property().update_access_time(mob_id.mob_id).await
+            mongo
+                .ceobe()
+                .user()
+                .property()
+                .update_access_time(mob_id.mob_id)
+                .await
         ))
         .into()
     }

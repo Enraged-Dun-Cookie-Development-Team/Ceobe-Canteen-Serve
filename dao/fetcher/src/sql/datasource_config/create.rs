@@ -1,4 +1,10 @@
-use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait}, database_operates::NoConnect, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig};
+use db_ops_prelude::{
+    database_operates::NoConnect,
+    sea_orm::{
+        ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait,
+    },
+    sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig,
+};
 use tracing::{info, instrument};
 
 use super::{DatasourceOperate, OperateResult};

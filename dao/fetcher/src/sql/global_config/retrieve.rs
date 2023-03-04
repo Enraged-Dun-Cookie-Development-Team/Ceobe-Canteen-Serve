@@ -1,4 +1,10 @@
-use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait, StreamTrait}, get_connect::GetDatabaseConnect, sql_models::fetcher::global_config::models::model_global_config::{self, Entity}};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ConnectionTrait, EntityTrait, StreamTrait},
+    sql_models::fetcher::global_config::models::model_global_config::{
+        self, Entity,
+    },
+};
 use tracing::instrument;
 
 use super::{GlobalOperate, OperateResult};

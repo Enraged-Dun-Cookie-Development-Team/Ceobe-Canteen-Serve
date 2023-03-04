@@ -4,13 +4,16 @@ pub mod retrieve;
 pub mod update;
 pub mod verify;
 
-use db_ops_prelude::{sea_orm::FromQueryResult, database_operates::sub_operate::{SubOperate, SuperOperate}};
 use std::ops::Deref;
+
 use abstract_database::fetcher::FetcherDatabaseOperate;
-use db_ops_prelude::sea_orm;
+use db_ops_prelude::{
+    database_operates::sub_operate::{SubOperate, SuperOperate},
+    sea_orm,
+    sea_orm::FromQueryResult,
+};
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
-
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {
@@ -38,7 +41,6 @@ type OperateResult<T> = Result<T, OperateError>;
 struct PlatformDatasource {
     pub(crate) platform: String,
 }
-
 
 pub struct DatasourceOperate<'db, Conn>(&'db Conn);
 

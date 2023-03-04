@@ -10,9 +10,7 @@ use fetcher_logic::{
     },
 };
 use futures::future;
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-};
+use orm_migrate::sql_connection::SqlDatabaseOperate;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
@@ -111,12 +109,7 @@ impl FetcherConfigControllers {
         db: SqlDatabaseOperate,
         CheckExtract(datasource_config): FetcherDatasourceCheck,
     ) -> DatasourceConfigRResult<()> {
-        rtry!(
-            db.fetcher()
-                .datasource()
-                .update(datasource_config)
-                .await
-        );
+        rtry!(db.fetcher().datasource().update(datasource_config).await);
         Ok(()).into()
     }
 

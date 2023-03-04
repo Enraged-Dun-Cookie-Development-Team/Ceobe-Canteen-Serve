@@ -1,9 +1,10 @@
 use std::future::Future;
 
 use db_ops_prelude::{
+    chrono::Local,
     mongo_connection::MongoDbCollectionTrait,
     mongo_models::ceobe::user_property::models::UserPropertyModel,
-    mongodb::bson::{doc, Uuid, DateTime}, chrono::Local,
+    mongodb::bson::{doc, DateTime, Uuid},
 };
 use tracing::{info, instrument};
 
@@ -44,7 +45,7 @@ where
     /// params: mob_id 用户mob id
     #[instrument(skip(self), ret)]
     pub async fn update_access_time(
-        &'db self, mob_id: String
+        &'db self, mob_id: String,
     ) -> OperateResult<()> {
         let now = Local::now();
         let now = DateTime::from_chrono(now);

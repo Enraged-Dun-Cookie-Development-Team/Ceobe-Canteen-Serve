@@ -2,9 +2,7 @@ use abstract_database::fetcher::ToFetcher;
 use fetcher::datasource_config::ToDatasource;
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::fetcher::{
-        datasource_config::models::model_datasource_config::FrontendDatasource                                             
-    },
+    sql_models::fetcher::datasource_config::models::model_datasource_config::FrontendDatasource,
 };
 use resp_result::rtry;
 use tracing::instrument;
@@ -21,10 +19,7 @@ impl ConfigDatasourceFrontend {
         db: SqlDatabaseOperate,
     ) -> DatasourceRResult<Vec<FrontendDatasource>> {
         Ok(rtry!(
-            db.fetcher()
-                .datasource()
-                .find_all_with_unique_id()
-                .await
+            db.fetcher().datasource().find_all_with_unique_id().await
         ))
         .into()
     }

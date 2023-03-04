@@ -8,12 +8,14 @@ use db_ops_prelude::{
     mongo_connection::MongoDatabaseOperate,
     mongo_models::ceobe::user_property::{
         check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
-        models::{UserPropertyChecked, UserMobId},
+        models::{UserMobId, UserPropertyChecked},
     },
     mongodb::bson,
     SqlDatabaseOperate,
 };
-use fetcher::datasource_config::{OperateError as FetcherDatasourceOperateError, ToDatasource};
+use fetcher::datasource_config::{
+    OperateError as FetcherDatasourceOperateError, ToDatasource,
+};
 use futures::future;
 use tokio::task;
 use tracing::warn;
@@ -60,7 +62,8 @@ impl CeobeUserLogic {
 
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: UserMobId,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
@@ -109,8 +112,13 @@ impl CeobeUserLogic {
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
         datasource_config: Vec<bson::Uuid>, mob_id: UserMobId,
     ) -> LogicResult<()> {
-        let user_unchecked:UserPropertyUncheck = UserPropertyUncheck::builder().mob_id(mob_id.mob_id).datasource_push(datasource_config).build();
-        let user_config:UserPropertyChecked = UserPropertyChecker::lite_check(user_unchecked).await?;
+        let user_unchecked: UserPropertyUncheck =
+            UserPropertyUncheck::builder()
+                .mob_id(mob_id.mob_id)
+                .datasource_push(datasource_config)
+                .build();
+        let user_config: UserPropertyChecked =
+            UserPropertyChecker::lite_check(user_unchecked).await?;
 
         // 判断是否所有数据源都存在
         db.fetcher().datasource().all_exist_by_uuid(vec_bson_uuid_to_uuid(user_config.datasource_push.clone())).await?.true_or_with(|| {

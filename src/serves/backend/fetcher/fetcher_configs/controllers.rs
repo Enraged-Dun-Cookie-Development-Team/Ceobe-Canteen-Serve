@@ -1,12 +1,9 @@
-use abstract_database::fetcher::ToFetcher;
 use axum::{extract::Query, Json};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
-use orm_migrate::{
-    sql_connection::{SqlConnect, SqlDatabaseOperate},
-};
+use orm_migrate::sql_connection::SqlDatabaseOperate;
 use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
@@ -59,11 +56,7 @@ impl FetcherConfigControllers {
         >,
     ) -> FetcherConfigRResult<Vec<BackEndFetcherConfig>> {
         Ok(rtry!(
-            FetcherConfigLogic::get_by_platform(
-                db,
-                &type_id
-            )
-            .await
+            FetcherConfigLogic::get_by_platform(db, &type_id).await
         ))
         .into()
     }

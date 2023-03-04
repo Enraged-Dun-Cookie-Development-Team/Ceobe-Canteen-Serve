@@ -1,10 +1,17 @@
 use std::ops::Deref;
 
-use db_ops_prelude::get_connect::GetDatabaseConnect;
-use db_ops_prelude::sql_models::fetcher::platform_config::models::model_platform_config::{self, Entity, PlatformType, PlatformBasicInfo};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{
+        ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect,
+        StreamTrait,
+    },
+    smallvec::SmallVec,
+    sql_models::fetcher::platform_config::models::model_platform_config::{
+        self, Entity, PlatformBasicInfo, PlatformType,
+    },
+};
 use page_size::{database::WithPagination, request::Paginator};
-use db_ops_prelude::sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect, StreamTrait};
-use db_ops_prelude::smallvec::SmallVec;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 

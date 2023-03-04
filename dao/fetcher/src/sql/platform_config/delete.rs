@@ -1,9 +1,12 @@
-use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait, StreamTrait}, get_connect::GetDatabaseConnect, sql_models::fetcher::platform_config::models::model_platform_config::Entity};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ConnectionTrait, EntityTrait, StreamTrait},
+    sql_models::fetcher::platform_config::models::model_platform_config::Entity,
+};
 use tracing::{info, instrument};
 
-use crate::platform_config::OperateError;
-
 use super::{OperateResult, PlatformOperate};
+use crate::platform_config::OperateError;
 
 impl<'c, C> PlatformOperate<'c, C>
 where
@@ -18,9 +21,7 @@ where
 
         // 获取平台的type，比对数据源表时候有平台的相关数据源
         if !PlatformOperate::has_datasource_by_id(db, pid).await? {
-            Entity::delete_by_id(pid)
-                .exec(db)
-                .await?;
+            Entity::delete_by_id(pid).exec(db).await?;
             Ok(())
         }
         else {

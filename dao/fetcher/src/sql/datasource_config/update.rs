@@ -1,9 +1,14 @@
-use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait}, sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig, get_connect::GetDatabaseConnect};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{
+        ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait,
+    },
+    sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig,
+};
 use tracing::{info, instrument};
 
-use crate::datasource_config::OperateError;
-
 use super::{DatasourceOperate, OperateResult};
+use crate::datasource_config::OperateError;
 
 impl<'c, C> DatasourceOperate<'c, C>
 where

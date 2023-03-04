@@ -5,11 +5,9 @@ use fetcher::platform_config::ToPlatform;
 use fetcher_logic::{implements::FetcherConfigLogic, view::OneIdReq};
 use futures::future;
 use orm_migrate::{
-    sql_connection::{SqlConnect, SqlDatabaseOperate},
-    sql_models::fetcher::{
-        platform_config::models::model_platform_config::{
-            PlatformBasicInfo, PlatformHasDatasource,
-        },
+    sql_connection::SqlDatabaseOperate,
+    sql_models::fetcher::platform_config::models::model_platform_config::{
+        PlatformBasicInfo, PlatformHasDatasource,
     },
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
@@ -56,12 +54,7 @@ impl FetcherConfigControllers {
         db: SqlDatabaseOperate,
         CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
-        rtry!(
-            db.fetcher()
-                .platform()
-                .create(platform_config)
-                .await
-        );
+        rtry!(db.fetcher().platform().create(platform_config).await);
         Ok(()).into()
     }
 
@@ -71,12 +64,7 @@ impl FetcherConfigControllers {
         db: SqlDatabaseOperate,
         CheckExtract(platform_config): FetcherPlatformCheck,
     ) -> PlatformConfigRResult<()> {
-        rtry!(
-            db.fetcher()
-                .platform()
-                .update(platform_config)
-                .await
-        );
+        rtry!(db.fetcher().platform().update(platform_config).await);
         Ok(()).into()
     }
 
@@ -96,9 +84,6 @@ impl FetcherConfigControllers {
     pub async fn get_platform_all_list_with_basic_info(
         db: SqlDatabaseOperate,
     ) -> PlatformConfigRResult<Vec<PlatformBasicInfo>> {
-        Ok(rtry!(
-            db.fetcher().platform().find_all_basic_info().await
-        ))
-        .into()
+        Ok(rtry!(db.fetcher().platform().find_all_basic_info().await)).into()
     }
 }

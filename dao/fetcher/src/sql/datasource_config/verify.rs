@@ -48,7 +48,7 @@ impl DatasourceOperate<'_, NoConnect> {
     /// 是否存在该数据源，且被删除的
     pub async fn is_datasource_delete_exist<'s, 'db, C>(
         db: &'db C, datasource: &str, unique_key: &str,
-    ) -> OperateResult<bool> 
+    ) -> OperateResult<bool>
     where
         'db: 's,
         C: ConnectionTrait + StreamTrait + Send,
@@ -68,7 +68,7 @@ impl DatasourceOperate<'_, NoConnect> {
     /// 是否存在该数据源，且没被删除的
     pub async fn is_id_exist<'s, 'db, C>(
         db: &'db C, did: i32,
-    ) -> OperateResult<bool> 
+    ) -> OperateResult<bool>
     where
         'db: 's,
         C: ConnectionTrait + StreamTrait + Send,
@@ -120,7 +120,8 @@ where
         let Some(first) = uuids.next() else{
             return Ok(true);
         };
-        let first = Func::cast_as(first.hyphenated().to_string(), mysql_func::UUID);
+        let first =
+            Func::cast_as(first.hyphenated().to_string(), mysql_func::UUID);
         let uuids = uuids.map(|uuid| {
             Func::cast_as(uuid.hyphenated().to_string(), mysql_func::UUID)
         });

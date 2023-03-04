@@ -4,13 +4,15 @@ pub mod retrieve;
 pub mod update;
 pub mod verify;
 
-use db_ops_prelude::{sea_orm::FromQueryResult, database_operates::sub_operate::{SubOperate, SuperOperate}};
 use std::ops::Deref;
+
 use abstract_database::fetcher::FetcherDatabaseOperate;
-use db_ops_prelude::sea_orm;
+use db_ops_prelude::{
+    database_operates::sub_operate::{SubOperate, SuperOperate},
+    sea_orm,
+};
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
-
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {

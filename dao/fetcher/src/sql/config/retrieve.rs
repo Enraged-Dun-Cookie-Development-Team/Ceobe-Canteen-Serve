@@ -1,8 +1,11 @@
-use db_ops_prelude::sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter, StreamTrait,
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{
+        ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
+        StreamTrait,
+    },
+    sql_models::fetcher::config::models::model_config::{self, Model},
 };
-use db_ops_prelude::get_connect::GetDatabaseConnect;
-use db_ops_prelude::sql_models::fetcher::config::models::model_config::{self, Model};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 

@@ -6,18 +6,13 @@ use checker::{
 use fetcher::global_config::ToGlobal;
 use serde_json::{Map, Value};
 use sql_models::{
-    fetcher::{
-        global_config::{
-            checkers::global_config_data::{
-                FetcherGlobalConfigChecker, FetcherGlobalConfigUncheck,
-            },
-            models::model_global_config::Model,
+    fetcher::global_config::{
+        checkers::global_config_data::{
+            FetcherGlobalConfigChecker, FetcherGlobalConfigUncheck,
         },
+        models::model_global_config::Model,
     },
-    sql_connection::{
-        database_traits::get_connect::GetDatabaseConnect,
-        sea_orm::ConnectionTrait, SqlDatabaseOperate,
-    },
+    sql_connection::SqlDatabaseOperate,
 };
 
 use super::FetcherConfigLogic;

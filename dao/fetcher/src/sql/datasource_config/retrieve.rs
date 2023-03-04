@@ -21,7 +21,7 @@ use super::{
 impl DatasourceOperate<'_, NoConnect> {
     pub async fn find_platform_by_id<'s, 'db, C>(
         db: &'db C, id: i32,
-    ) -> OperateResult<DatasourcePlatform> 
+    ) -> OperateResult<DatasourcePlatform>
     where
         'db: 's,
         C: ConnectionTrait + StreamTrait + Send,
@@ -38,7 +38,7 @@ impl DatasourceOperate<'_, NoConnect> {
 
     pub async fn find_delete_model_by_datasource_and_unique_key<'s, 'db, C>(
         db: &'db C, datasource: &str, unique_key: &str,
-    ) -> OperateResult<Model> 
+    ) -> OperateResult<Model>
     where
         'db: 's,
         C: ConnectionTrait + StreamTrait + Send,

@@ -3,25 +3,26 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use abstract_database::fetcher::ToFetcher;
 use bool_or::TrueOrError;
 use checker::prefabs::post_checker::PostChecker;
-use fetcher::{datasource_config::DatasourceOperate, platform_config::PlatformOperate, config::{ConfigOperate, ToConfig}};
+use fetcher::{
+    config::{ConfigOperate, ToConfig},
+    datasource_config::DatasourceOperate,
+    platform_config::PlatformOperate,
+};
 use redis::AsyncCommands;
 use redis_global::redis_key::fetcher::FetcherConfigKey;
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
-    fetcher::{
-        config::{
-            checkers::config_data::{
-                FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
-            },
-            models::model_config::Model as FetcherConfigModel,
+    fetcher::config::{
+        checkers::config_data::{
+            FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
         },
+        models::model_config::Model as FetcherConfigModel,
     },
     sql_connection::{
         database_traits::get_connect::{
-            GetDatabaseConnect, GetDatabaseTransaction,
-            GetMutDatabaseConnect, TransactionOps,
+            GetDatabaseTransaction, GetMutDatabaseConnect, TransactionOps,
         },
-        sea_orm::{ConnectionTrait, DbErr}, SqlDatabaseOperate,
+        SqlDatabaseOperate,
     },
 };
 
@@ -120,7 +121,8 @@ impl FetcherConfigLogic {
         let platform_exist =
             PlatformOperate::exist_by_type_id(&ctx, &platform).await?;
         let all_datasource_exist =
-            DatasourceOperate::all_exist_by_id(&ctx, all_data_sources_set).await?;
+            DatasourceOperate::all_exist_by_id(&ctx, all_data_sources_set)
+                .await?;
 
         // 指定平台与数据源均存在
         (platform_exist && all_datasource_exist)

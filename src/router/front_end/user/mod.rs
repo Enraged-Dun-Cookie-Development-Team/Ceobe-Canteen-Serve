@@ -3,7 +3,7 @@ use axum::{
     Router,
 };
 
-use crate::{router::ServerRoute, middleware::mob::MobVerifyLayer};
+use crate::{middleware::mob::MobVerifyLayer, router::ServerRoute};
 
 pub struct CeobeUserFrontend;
 

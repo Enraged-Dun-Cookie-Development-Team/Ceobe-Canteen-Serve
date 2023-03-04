@@ -1,21 +1,21 @@
 use bool_or::TrueOrError;
-use fetcher::{config::{ToConfig, ConfigOperate}, datasource_config::{ToDatasource, DatasourceOperate}, platform_config::PlatformOperate};
+use fetcher::{
+    config::ConfigOperate, datasource_config::DatasourceOperate,
+    platform_config::PlatformOperate,
+};
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
-    fetcher::{
-        datasource_config::{
-            checkers::FetcherDatasourceConfig,
-            models::model_datasource_config::DatasourcePlatform,
-        },
+    fetcher::datasource_config::{
+        checkers::FetcherDatasourceConfig,
+        models::model_datasource_config::DatasourcePlatform,
     },
     sql_connection::{
         database_traits::get_connect::{
             GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
         },
-        sea_orm::{ConnectionTrait, DbErr}, SqlDatabaseOperate,
+        SqlDatabaseOperate,
     },
 };
-use abstract_database::fetcher::ToFetcher;
 
 use crate::{
     error::{LogicError, LogicResult},
@@ -38,7 +38,7 @@ impl FetcherConfigLogic {
     }
 
     /// 删除一个数据源
-    pub async fn delete_datasource_by_id (
+    pub async fn delete_datasource_by_id(
         notifier: &SchedulerNotifier, db: SqlDatabaseOperate, id: i32,
     ) -> LogicResult<()> {
         // 开事务
@@ -48,7 +48,7 @@ impl FetcherConfigLogic {
         ConfigOperate::delete_by_datasource_id(&ctx, id).await?;
 
         let DatasourcePlatform { platform } =
-             DatasourceOperate::find_platform_by_id(&ctx, id).await?;
+            DatasourceOperate::find_platform_by_id(&ctx, id).await?;
 
         // 删除数据源
         DatasourceOperate::delete_one(&ctx, id).await?;
