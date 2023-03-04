@@ -4,7 +4,7 @@ use sql_connection::{
     ext_traits::select_count::QueryCountByColumn,
 };
 
-use super::{OperateResult, Platform};
+use super::{OperateResult, PlatformOperate};
 use crate::fetcher::{
     datasource_config::models::model_datasource_config,
     platform_config::models::model_platform_config::{
@@ -14,7 +14,7 @@ use crate::fetcher::{
     },
 };
 
-impl Platform<'_, NoConnect> {
+impl PlatformOperate<'_, NoConnect> {
     /// 查询是否存在type_id的平台
     pub async fn exist_by_type_id(
         db: &impl ConnectionTrait, type_id: &str,

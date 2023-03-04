@@ -16,7 +16,7 @@ use sql_connection::{
 use tracing::instrument;
 use uuid::Uuid;
 
-use super::{Datasource, OperateResult};
+use super::{DatasourceOperate, OperateResult};
 use crate::{
     fetcher::datasource_config::{
         models::model_datasource_config::{Column, Entity},
@@ -25,7 +25,7 @@ use crate::{
     get_zero_data_time,
 };
 
-impl Datasource<'_, NoConnect> {
+impl DatasourceOperate<'_, NoConnect> {
     /// 验证id数组是否都存在
     #[instrument(ret, skip(db))]
     pub async fn all_exist_by_id<T>(
@@ -89,7 +89,7 @@ impl Datasource<'_, NoConnect> {
     }
 }
 
-impl<'c, C> Datasource<'c, C>
+impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,

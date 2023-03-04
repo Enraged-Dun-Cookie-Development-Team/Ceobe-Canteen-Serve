@@ -11,20 +11,19 @@ use sql_connection::database_traits::{
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 
-use crate::fetcher::FetcherOperate;
 
-pub struct Platform<'c, C>(&'c C);
+pub struct PlatformOperate<'db, Conn>(&'db Conn);
 
-impl<C: GetDatabaseConnect> GetDatabaseConnect for Platform<'_, C> {
-    type Connect = C::Connect;
+impl<'db, Conn> SubOperate<'db> for PlatformOperate<'db, Conn> {
+    type Parent = FetcherDatabaseOperate<'db, Conn>;
 
-    fn get_connect(&self) -> &Self::Connect { self.0.get_connect() }
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
-impl<'c, C> SubOperate<'c> for Platform<'c, C> {
-    type Parent = FetcherOperate<'c, C>;
+impl<'db, Conn> Deref for PlatformOperate<'db, Conn> {
+    type Target = Conn;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 #[derive(Debug, Error, StatusErr)]
@@ -41,5 +40,8 @@ pub enum OperateError {
     NoDeletePlatformHasDatasource,
 }
 
-#[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
+
+impl<'db, Conn> FetcherDatabaseOperate<'db, Conn> {
+    pub fn platform(&self) -> PlatformOperate<'_, Conn> { self.child() }
+}

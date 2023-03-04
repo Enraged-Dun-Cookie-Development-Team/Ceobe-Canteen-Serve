@@ -10,18 +10,18 @@ use sql_connection::database_traits::{
 use status_err::StatusErr;
 use thiserror::Error;
 
-use crate::fetcher::FetcherOperate;
+pub struct ConfigOperate<'db, Conn>(&'db Conn);
 
-pub struct Config<'c, C: 'c>(&'c C);
+impl<'db, Conn> SubOperate<'db> for ConfigOperate<'db, Conn> {
+    type Parent = ConfigOperate<'db, Conn>;
 
-impl<C: GetDatabaseConnect> Config<'_, C> {
-    fn get_connect(&self) -> &C::Connect { self.0.get_connect() }
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
-impl<'c, C> SubOperate<'c> for Config<'c, C> {
-    type Parent = FetcherOperate<'c, C>;
+impl<'db, Conn> Deref for ConfigOperate<'db, Conn> {
+    type Target = Conn;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 #[derive(Debug, Error, StatusErr)]
@@ -31,3 +31,7 @@ pub enum OperateError {
 }
 #[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
+
+impl<'db, Conn> FetcherDatabaseOperate<'db, Conn> {
+    pub fn config(&self) -> ConfigOperate<'_, Conn> { self.child() }
+}

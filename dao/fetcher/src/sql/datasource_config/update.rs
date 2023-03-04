@@ -2,12 +2,12 @@ use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
-use super::{Datasource, OperateResult};
+use super::{DatasourceOperate, OperateResult};
 use crate::fetcher::datasource_config::{
     checkers::FetcherDatasourceConfig, operate::OperateError,
 };
 
-impl<'c, C> Datasource<'c, C>
+impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,

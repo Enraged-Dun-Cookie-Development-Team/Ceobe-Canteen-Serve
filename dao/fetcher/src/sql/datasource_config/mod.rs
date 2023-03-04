@@ -12,23 +12,19 @@ use sql_connection::database_traits::{
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
-use crate::fetcher::FetcherOperate;
 
-pub struct Datasource<'c, C>(&'c C);
+pub struct DatasourceOperate<'db, Conn>(&'db Conn);
 
-impl<'c, C> Datasource<'c, C> {
-    fn get_connect(&self) -> &C::Connect
-    where
-        C: GetDatabaseConnect,
-    {
-        self.0.get_connect()
-    }
+impl<'db, Conn> SubOperate<'db> for DatasourceOperate<'db, Conn> {
+    type Parent = FetcherDatabaseOperate<'db, Conn>;
+
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
-impl<'c, C> SubOperate<'c> for Datasource<'c, C> {
-    type Parent = FetcherOperate<'c, C>;
+impl<'db, Conn> Deref for DatasourceOperate<'db, Conn> {
+    type Target = Conn;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 #[derive(Debug, Error, StatusErr)]
@@ -56,4 +52,8 @@ type OperateResult<T> = Result<T, OperateError>;
 #[derive(FromQueryResult)]
 struct PlatformDatasource {
     pub(crate) platform: String,
+}
+
+impl<'db, Conn> DatasourceOperate<'db, Conn> {
+    pub fn datasource(&self) -> FetcherDatasourceOperate<'_, Conn> { self.child() }
 }

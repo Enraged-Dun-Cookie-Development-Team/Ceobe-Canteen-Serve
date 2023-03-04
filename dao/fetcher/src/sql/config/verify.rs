@@ -1,5 +1,5 @@
 use sql_connection::database_traits::database_operates::NoConnect;
 
-use super::Config;
+use super::ConfigOperate;
 
-impl Config<'_, NoConnect> {}
+impl ConfigOperate<'_, NoConnect> {}

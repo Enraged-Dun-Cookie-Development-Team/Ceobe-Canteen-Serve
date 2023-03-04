@@ -15,7 +15,7 @@ use uuid::Uuid;
 use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::FrontendDatasource;
 use crate::fetcher::datasource_config::operate::retrieve::model_datasource_config::DatasourceUuid;
 use super::{
-    super::models::model_datasource_config::DatasourcePlatform, Datasource,
+    super::models::model_datasource_config::DatasourcePlatform, DatasourceOperate,
     OperateError, OperateResult,
 };
 use crate::{
@@ -29,7 +29,7 @@ use crate::{
     get_zero_data_time,
 };
 
-impl Datasource<'_, NoConnect> {
+impl DatasourceOperate<'_, NoConnect> {
     pub async fn find_platform_by_id(
         db: &impl ConnectionTrait, id: i32,
     ) -> OperateResult<DatasourcePlatform> {
@@ -57,7 +57,7 @@ impl Datasource<'_, NoConnect> {
     }
 }
 
-impl<'c, C> Datasource<'c, C>
+impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,

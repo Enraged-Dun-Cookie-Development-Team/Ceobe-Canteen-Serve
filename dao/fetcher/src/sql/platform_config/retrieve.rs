@@ -7,14 +7,14 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
-use super::{OperateResult, Platform};
+use super::{OperateResult, PlatformOperate};
 use crate::fetcher::platform_config::{
     models::model_platform_config,
     operate::retrieve::model_platform_config::{
         PlatformBasicInfo, PlatformType,
     },
 };
-impl<'c, C> Platform<'c, C>
+impl<'c, C> PlatformOperate<'c, C>
 where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,

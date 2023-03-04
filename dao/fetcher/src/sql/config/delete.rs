@@ -2,10 +2,10 @@ use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
 use sql_connection::database_traits::database_operates::NoConnect;
 use tracing::{info, instrument};
 
-use super::{Config, OperateResult};
+use super::{ConfigOperate, OperateResult};
 use crate::fetcher::config::models::model_config;
 
-impl Config<'_, NoConnect> {
+impl ConfigOperate<'_, NoConnect> {
     #[instrument(skip(db), ret)]
     /// 根据平台删除相关配置
     pub async fn delete_by_platform(

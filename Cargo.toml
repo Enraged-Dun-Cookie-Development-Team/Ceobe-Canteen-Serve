@@ -79,7 +79,7 @@ bool_or = {version = "0.1.0", path = "./libs/bool_or"}
 abstract_database = { version = "0.1.0", path = "database/abstract_database" }
 ceobe-user = { version = "0.1.0", path = "dao/ceobe-user" }
 ceobe-operate = { version = "0.1.0", path = "dao/ceobe-operate" }
-fetcher = { version = "0.1.0", path = "dao/ceobe-fetcher" }
+fetcher = { version = "0.1.0", path = "dao/fetcher" }
 
 [dependencies]
 # Xss

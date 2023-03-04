@@ -5,10 +5,10 @@ use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
-use super::{Config, OperateResult};
+use super::{ConfigOperate, OperateResult};
 use crate::fetcher::config::models::model_config::{self, Model};
 
-impl<'c, C> Config<'c, C>
+impl<'c, C> ConfigOperate<'c, C>
 where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,

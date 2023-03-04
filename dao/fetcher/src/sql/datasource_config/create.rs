@@ -2,10 +2,10 @@ use sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel};
 use sql_connection::database_traits::database_operates::NoConnect;
 use tracing::{info, instrument};
 
-use super::{Datasource, OperateResult};
+use super::{DatasourceOperate, OperateResult};
 use crate::fetcher::datasource_config::checkers::FetcherDatasourceConfig;
 
-impl Datasource<'_, NoConnect> {
+impl DatasourceOperate<'_, NoConnect> {
     /// 保存数据源配置到数据库
     #[instrument(ret, skip(db))]
     pub async fn create(

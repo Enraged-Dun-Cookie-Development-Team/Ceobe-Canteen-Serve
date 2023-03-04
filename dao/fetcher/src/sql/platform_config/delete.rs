@@ -2,12 +2,12 @@ use sea_orm::{ConnectionTrait, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::{info, instrument};
 
-use super::{OperateResult, Platform};
+use super::{OperateResult, PlatformOperate};
 use crate::fetcher::platform_config::{
     models::model_platform_config, operate::OperateError,
 };
 
-impl<'c, C> Platform<'c, C>
+impl<'c, C> PlatformOperate<'c, C>
 where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,

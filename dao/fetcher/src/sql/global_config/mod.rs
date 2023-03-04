@@ -10,21 +10,18 @@ use thiserror::Error;
 
 use crate::fetcher::FetcherOperate;
 
-pub struct Global<'c, C>(&'c C);
+pub struct GlobalOperate<'db, Conn>(&'db Conn);
 
-impl<C> GetDatabaseConnect for Global<'_, C>
-where
-    C: GetDatabaseConnect,
-{
-    type Connect = C::Connect;
+impl<'db, Conn> SubOperate<'db> for GlobalOperate<'db, Conn> {
+    type Parent = FetcherDatabaseOperate<'db, Conn>;
 
-    fn get_connect(&self) -> &Self::Connect { self.0.get_connect() }
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
 }
 
-impl<'c, C> SubOperate<'c> for Global<'c, C> {
-    type Parent = FetcherOperate<'c, C>;
+impl<'db, Conn> Deref for GlobalOperate<'db, Conn> {
+    type Target = Conn;
 
-    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent.0) }
+    fn deref(&self) -> &Self::Target { self.0 }
 }
 
 #[derive(Debug, Error, StatusErr)]
@@ -33,5 +30,8 @@ pub enum OperateError {
     Db(#[from] sea_orm::DbErr),
 }
 
-#[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
+
+impl<'db, Conn> FetcherDatabaseOperate<'db, Conn> {
+    pub fn global(&self) -> GlobalOperate<'_, Conn> { self.child() }
+}

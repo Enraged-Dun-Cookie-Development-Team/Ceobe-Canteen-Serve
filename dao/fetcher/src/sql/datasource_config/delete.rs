@@ -3,7 +3,7 @@ use sea_query::Expr;
 use sql_connection::database_traits::database_operates::NoConnect;
 use tracing::{info, instrument};
 
-use super::{Datasource, OperateResult};
+use super::{DatasourceOperate, OperateResult};
 use crate::{
     fetcher::datasource_config::models::model_datasource_config::{
         Column, Entity,
@@ -11,7 +11,7 @@ use crate::{
     get_now_naive_date_time_value, get_zero_data_time,
 };
 
-impl Datasource<'_, NoConnect> {
+impl DatasourceOperate<'_, NoConnect> {
     #[instrument(skip(db), ret)]
     /// 删除一个平台
     pub async fn delete_one(

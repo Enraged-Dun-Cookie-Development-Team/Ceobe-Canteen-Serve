@@ -2,12 +2,12 @@ use sea_orm::{ConnectionTrait, EntityTrait};
 use sql_connection::database_traits::get_connect::GetDatabaseConnect;
 use tracing::instrument;
 
-use super::{Global, OperateResult};
+use super::{GlobalOperate, OperateResult};
 use crate::fetcher::global_config::models::model_global_config::{
     self, Entity,
 };
 
-impl<'c, C> Global<'c, C>
+impl<'c, C> GlobalOperate<'c, C>
 where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,
