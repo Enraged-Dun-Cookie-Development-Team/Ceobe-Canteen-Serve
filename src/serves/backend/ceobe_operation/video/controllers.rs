@@ -1,3 +1,4 @@
+use abstract_database::ceobe::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
@@ -46,7 +47,8 @@ impl CeobeOperationVideo {
     ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
             Ok(database
-                .ceobe_operation()
+                .ceobe()
+                .operation()
                 .video()
                 .find_all_not_delete()
                 .await?
@@ -61,7 +63,7 @@ impl CeobeOperationVideo {
     pub async fn update_list(
         db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
-        rtry!(db.ceobe_operation().video().update_all(videos).await);
+        rtry!(db.ceobe().operation().video().update_all(videos).await);
         RespResult::ok(())
     }
 }

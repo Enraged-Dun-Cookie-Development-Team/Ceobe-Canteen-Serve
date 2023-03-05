@@ -1,0 +1,28 @@
+[package]
+name = "ceobe_user_logic"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true}
+typed-builder = { workspace = true }
+thiserror = { workspace = true }
+status-err = { path = "../../libs/status-err" }
+range-limit = { path = "../../libs/range-limit" }
+futures.workspace = true
+uuid.workspace = true
+tokio.workspace = true
+tracing = { workspace = true }
+db-ops-prelude.workspace = true
+abstract_database.workspace = true
+ceobe-user.workspace = true
+fetcher.workspace = true
+
+[dependencies.checker]
+path = "../../libs/checker"
+
+[dependencies.uuids-convert]
+path = "../../libs/uuids-convert"

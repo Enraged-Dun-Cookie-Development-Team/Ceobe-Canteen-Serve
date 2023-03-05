@@ -1,5 +1,5 @@
 pub mod bakery;
-pub mod ceobe_operation;
+pub mod ceobe;
 
 use chrono::Local;
 pub use mongo_connection;
@@ -36,4 +36,28 @@ impl RecordUnit {
 fn now() -> DateTime {
     let now = Local::now();
     DateTime::from_chrono(now)
+}
+
+pub trait RecordUnitUpdater {
+    type Source;
+
+    fn get_mut(&mut self) -> &mut RecordUnit;
+
+    fn mut_by(&mut self, f: impl FnOnce(&mut RecordUnit)) {
+        f(self.get_mut())
+    }
+
+    // 用于更新修改时间
+    fn modeify_time(&mut self) {
+        self.mut_by(|record| {
+            record.modify();
+        })
+    }
+}
+
+// 设置RecordUnit
+pub trait SetRecordUnit {
+    type Target;
+
+    fn into_with_time_record(self, time_record: RecordUnit) -> Self::Target;
 }

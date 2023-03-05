@@ -1,8 +1,6 @@
 use axum::Json;
 use fetcher_logic::implements::FetcherConfigLogic;
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate, sql_models::fetcher::ToFetcherOperate,
-};
+use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{rtry, MapReject, RespResult};
 use serde_json::{Map, Value};
 use tracing::instrument;
@@ -20,13 +18,10 @@ impl FetcherConfigControllers {
             GlobalConfigError,
         >,
     ) -> GlobalConfigRResult<()> {
-        FetcherConfigLogic::set_global_config(
-            db.fetcher_operate(),
-            global_config,
-        )
-        .await
-        .map_err(Into::into)
-        .into()
+        FetcherConfigLogic::set_global_config(db, global_config)
+            .await
+            .map_err(Into::into)
+            .into()
     }
 
     /// 获取蹲饼器全局变量
@@ -34,9 +29,7 @@ impl FetcherConfigControllers {
     pub async fn get_global_configs(
         db: SqlDatabaseOperate,
     ) -> GlobalConfigRResult<Value> {
-        let resp =
-            FetcherConfigLogic::get_global_configs(db.fetcher_operate())
-                .await;
+        let resp = FetcherConfigLogic::get_global_configs(db).await;
         RespResult::ok(rtry!(resp))
     }
 }

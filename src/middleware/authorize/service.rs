@@ -1,5 +1,7 @@
 use std::marker::PhantomData;
 
+use abstract_database::admin::ToAdmin;
+use admin::user::{OperateError, ToUser};
 use axum::{
     body::{Body, BoxBody},
     extract::FromRequestParts,
@@ -7,10 +9,7 @@ use axum::{
 };
 use futures::future::BoxFuture;
 use http::Request;
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-    sql_models::admin_user::{OperateError, ToSqlUserOperate},
-};
+use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::RespResult;
 use tap::Tap;
 use tower_http::auth::AsyncAuthorizeRequest;
@@ -53,7 +52,7 @@ impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
                 let (mut parts,body )= request.into_parts();
                 let db = SqlDatabaseOperate::from_request_parts(&mut parts,&()).await.unwrap();
                 let req = Request::from_parts(parts,body);
-                let user = match db.user().find_user_with_version_verify(
+                let user = match db.admin().user().find_user_with_version_verify(
                     id,
                     num_pwd_change,
                     |user| user,

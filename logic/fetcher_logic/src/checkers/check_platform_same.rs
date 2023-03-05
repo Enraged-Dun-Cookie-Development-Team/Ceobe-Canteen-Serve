@@ -1,8 +1,9 @@
+use bool_or::TrueOrError;
 use checker::RefChecker;
 use futures::future::{ready, Ready};
 use sql_models::fetcher::config::checkers::config_data::FetcherConfig;
 
-use crate::{error::LogicError, utils::TrueOrError};
+use crate::error::LogicError;
 
 pub struct PlatformSameChecker;
 

@@ -4,11 +4,13 @@ pub use ::mongo_models::{mongo_connection, mongodb, RecordUnit};
 pub use ::sql_models::{
     get_now_naive_date_time, get_now_naive_date_time_value,
     get_zero_data_time,
-    sql_connection::{ext_traits, sea_orm},
+    sql_connection::{ext_traits, sea_orm, SqlDatabaseOperate},
 };
+pub use bool_or;
 pub use chrono;
 pub use database_traits::{database_operates, get_connect};
 pub use futures;
+pub use mysql_func;
 pub use smallstr;
 pub use smallvec;
 pub use status_err::{ErrPrefix, HttpCode, StatusErr};
@@ -21,5 +23,7 @@ pub mod sql_models {
 }
 
 pub mod mongo_models {
-    pub use ::mongo_models::{bakery, ceobe_operation};
+    pub use ::mongo_models::{
+        bakery, ceobe, RecordUnitUpdater, SetRecordUnit,
+    };
 }

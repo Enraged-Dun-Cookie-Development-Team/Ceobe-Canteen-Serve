@@ -1,7 +1,6 @@
 use axum::extract::rejection::QueryRejection;
-use mongo_migration::mongo_models::bakery::mansion::{
-    checkers::CheckError, operate::OperateError,
-};
+use bakery::mansion::OperateError;
+use mongo_migration::mongo_models::bakery::mansion::checkers::CheckError;
 
 use crate::error_generate;
 

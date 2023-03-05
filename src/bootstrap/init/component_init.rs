@@ -1,7 +1,10 @@
 use axum_starter::prepare;
 use resp_result::ConfigTrait;
 
-use crate::utils::user_authorize::{self, config::AuthConfig};
+use crate::utils::{
+    mob_verify,
+    user_authorize::{self, config::AuthConfig},
+};
 
 /// rresult配置
 #[prepare(RResultConfig? 'arg)]
@@ -18,7 +21,7 @@ where
 #[prepare(BackendAuthConfig 'arg)]
 fn backend_user_auth_conf<C>(user_auth: &'arg C)
 where
-    C: AuthConfig,
+    C: AuthConfig + mob_verify::MobIdConfig,
 {
     user_authorize::set_auth_config(user_auth);
 }

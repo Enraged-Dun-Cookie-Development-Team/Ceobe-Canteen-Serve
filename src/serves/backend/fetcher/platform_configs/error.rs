@@ -1,5 +1,6 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use checker::prefabs::num_check::NonZeroUnsignedError;
+use fetcher::platform_config::OperateError;
 use fetcher_logic::error::LogicError;
 use orm_migrate::sql_models::fetcher::platform_config;
 use resp_result::RespResult;
@@ -13,7 +14,7 @@ error_generate! {
     Logic = LogicError
     Query = QueryRejection
     Check = platform_config::checkers::CheckError
-    DbOperate = platform_config::operate::OperateError
+    DbOperate = OperateError
     PageSize = NonZeroUnsignedError
 }
 

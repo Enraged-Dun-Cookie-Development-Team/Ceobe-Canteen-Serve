@@ -10,7 +10,7 @@ crate::error_generate!(
     Bcrypt = BcryptError
     Auth = AuthError
     Query = QueryRejection
-    OrmDB = orm_migrate::sql_models::admin_user::OperateError
+    OrmDB = admin::user::OperateError
     Check = orm_migrate::sql_models::admin_user::CheckError
     PageSize = NonZeroUnsignedError
 );

@@ -75,6 +75,15 @@ redis = { version = "0.22", features = [
 general-request-client = { path = "./middle-server/general-request-client" }
 scheduler-notifier = { version = "0.1.0", path = "middle-server/scheduler-notifier" }
 db-ops-prelude = { version = "0.1.0", path = "database/db-ops-prelude" }
+bool_or = {version = "0.1.0", path = "./libs/bool_or"}
+abstract_database = { version = "0.1.0", path = "database/abstract_database" }
+ceobe-user = { version = "0.1.0", path = "dao/ceobe-user" }
+ceobe-operate = { version = "0.1.0", path = "dao/ceobe-operate" }
+fetcher = { version = "0.1.0", path = "dao/fetcher" }
+bakery = { version = "0.1.0", path = "dao/bakery" }
+admin = { version = "0.1.0", path = "dao/admin" }
+page_size =  { version = "0.1.0", path = "./libs/page_size" }
+mysql_func = { version = "0.1.0", path = "./libs/mysql_func" }
 
 [dependencies]
 # Xss
@@ -86,7 +95,7 @@ axum = { workspace = true, features = ["headers"] }
 http = { workspace = true }
 axum-starter = { workspace = true }
 # db
-bson = { version = "2.1.0", features = ["chrono-0_4"] }
+bson = { version = "2.4.0", features = ["chrono-0_4", "uuid-1"] }
 ceobe-qiniu-upload = { workspace = true }
 # else
 chrono = { workspace = true, features = ["serde"] }
@@ -127,7 +136,14 @@ uuid = { version = "1.2.2", features = ["v4"] }
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 general-request-client.workspace = true
 scheduler-notifier.workspace = true
-ceobe-operate = { version = "0.1.0", path = "models/ceobe-operate" }
+ceobe-operate.workspace = true
+bool_or.workspace = true
+abstract_database.workspace = true
+ceobe-user.workspace = true
+page_size.workspace = true
+fetcher.workspace = true
+bakery.workspace = true
+admin.workspace = true
 
 [dependencies.tokio]
 workspace = true
@@ -170,11 +186,12 @@ path = "./libs/modify-cache"
 [dependencies.database_traits]
 path = "./database/database_traits"
 
-[dependencies.page_size]
-path = "./libs/page_size"
-
 [dependencies.redis_connection]
 path = "./database/redis_connection"
 
 [dependencies.fetcher_logic]
 path = "./logic/fetcher_logic"
+
+[dependencies.ceobe_user_logic]
+path = "./logic/ceobe_user_logic"
+

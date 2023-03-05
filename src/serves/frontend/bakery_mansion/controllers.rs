@@ -1,9 +1,8 @@
+use abstract_database::bakery::ToBakery;
+use bakery::mansion::ToMansion;
 use checker::CheckExtract;
 use modify_cache::CacheMode;
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::bakery::mansion::operate::ToMansionOperate,
-};
+use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
@@ -26,7 +25,7 @@ impl BakeryMansionFrontend {
             ctrl.set_ty(CacheMode::NoCache);
 
             let (data, extra) = modify.check_modify(
-                db.mansion().get_mansion_by_id(&mid.id).await?,
+                db.bakery().mansion().get_mansion_by_id(&mid.id).await?,
             )?;
 
             Ok(FlagWrap::new(data.map(Into::into), extra))
@@ -43,7 +42,7 @@ impl BakeryMansionFrontend {
             ctrl.set_ty(CacheMode::NoCache);
 
             let (data, extra) = modify.check_modify(MansionIds(
-                db.mansion().get_all_mansion_id_list().await?,
+                db.bakery().mansion().get_all_mansion_id_list().await?,
             ))?;
             Ok(FlagWrap::new(MansionIds::into_inner(data), extra))
         })

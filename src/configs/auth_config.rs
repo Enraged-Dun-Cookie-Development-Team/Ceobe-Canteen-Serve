@@ -1,7 +1,7 @@
 use rand::RngCore;
 use serde::Deserialize;
 
-use crate::utils::user_authorize::config;
+use crate::utils::{mob_verify::MobIdConfig, user_authorize::config};
 
 crate::quick_struct! {
     #[derive(Default)]
@@ -10,15 +10,22 @@ crate::quick_struct! {
         jwt:Jwt
         #[serde(alias="header",default="default_token")]
         header_name:String
+        #[serde(default="default_mob")]
+        mob_header:String
     }
 }
 
 fn default_token() -> String { String::from("token") }
+fn default_mob() -> String { String::from("mob-id") }
 
 impl config::AuthConfig for AuthConfig {
     fn jwt_key(&self) -> &[u8] { &self.jwt.0 }
 
     fn token_header(&self) -> String { self.header_name.clone() }
+}
+
+impl MobIdConfig for AuthConfig {
+    fn mob_header(&self) -> String { self.mob_header.clone() }
 }
 
 #[derive(serde::Serialize, Clone, Debug)]

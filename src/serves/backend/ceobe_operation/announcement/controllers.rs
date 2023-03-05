@@ -1,3 +1,4 @@
+use abstract_database::ceobe::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
@@ -33,7 +34,8 @@ impl CeobeOperationAnnouncement {
     ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
         resp_try(async {
             Ok(db
-                .ceobe_operation()
+                .ceobe()
+                .operation()
                 .announcement()
                 .find_all_not_delete()
                 .await?
@@ -51,7 +53,8 @@ impl CeobeOperationAnnouncement {
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
-            db.ceobe_operation()
+            db.ceobe()
+                .operation()
                 .announcement()
                 .update_all(announcements)
                 .await?;

@@ -1,22 +1,16 @@
+use fetcher::{
+    config::OperateError as FetcherConfigOperateError,
+    datasource_config::OperateError as DatasourceConfigOperateError,
+    global_config::OperateError as GlobalConfigOperateError,
+    platform_config::OperateError as PlatformConfigOperateError,
+};
 use redis::RedisError;
 use sql_models::{
     fetcher::{
-        config::{
-            checkers::CheckError as FetcherConfigCheckError,
-            operate::OperateError as FetcherConfigOperateError,
-        },
-        datasource_config::{
-            checkers::CheckError as DatasourceConfigCheckError,
-            operate::OperateError as DatasourceConfigOperateError,
-        },
-        global_config::{
-            checkers::CheckError as GlobalConfigCheckError,
-            operate::OperateError as GlobalConfigOperateError,
-        },
-        platform_config::{
-            checkers::CheckError as PlatformConfigCheckError,
-            operate::OperateError as PlatformConfigOperateError,
-        },
+        config::checkers::CheckError as FetcherConfigCheckError,
+        datasource_config::checkers::CheckError as DatasourceConfigCheckError,
+        global_config::checkers::CheckError as GlobalConfigCheckError,
+        platform_config::checkers::CheckError as PlatformConfigCheckError,
     },
     sql_connection::sea_orm,
 };

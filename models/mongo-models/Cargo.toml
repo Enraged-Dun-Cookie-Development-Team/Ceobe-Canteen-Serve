@@ -14,6 +14,7 @@ tap = { workspace = true }
 url = { workspace = true }
 tracing = { workspace = true }
 modify-cache = { path = "../../libs/modify-cache" }
+bool_or.workspace = true
 
 [dependencies.sub-model]
 workspace = true
@@ -32,3 +33,4 @@ path = "../../database/mongo_connection"
 
 [dependencies.status-err]
 path = "../../libs/status-err"
+

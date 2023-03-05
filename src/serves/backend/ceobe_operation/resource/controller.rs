@@ -1,3 +1,4 @@
+use abstract_database::ceobe::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{
@@ -19,7 +20,8 @@ impl CeobeOpResource {
     pub async fn upload_resource(
         db: SqlDatabaseOperate, CheckExtract(resource): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
-        db.ceobe_operation()
+        db.ceobe()
+            .operation()
             .resource()
             .update_resource(resource)
             .await
@@ -32,7 +34,8 @@ impl CeobeOpResource {
         db: SqlDatabaseOperate,
     ) -> ResourceRResult<Resource> {
         let resp = db
-            .ceobe_operation()
+            .ceobe()
+            .operation()
             .resource()
             .get(|raa, cd| Resource::from((raa, cd)))
             .await;

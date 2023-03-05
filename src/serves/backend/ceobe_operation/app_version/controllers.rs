@@ -1,3 +1,4 @@
+use abstract_database::ceobe::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{
@@ -20,7 +21,8 @@ impl CeobeOpVersion {
         db: SqlDatabaseOperate, CheckExtract(version): CreateAppVersionCheck,
     ) -> AppRespResult<()> {
         resp_try(async {
-            db.ceobe_operation()
+            db.ceobe()
+                .operation()
                 .app_version()
                 .create_one(version)
                 .await?;
