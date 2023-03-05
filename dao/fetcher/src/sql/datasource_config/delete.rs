@@ -6,13 +6,9 @@ use super::{DatasourceOperate, OperateResult};
 impl DatasourceOperate<'_, NoConnect> {
     #[instrument(skip(db), ret)]
     /// 删除一个数据源
-    pub async fn delete_one<'s, 'db, C>(
-        db: &'db C, did: i32,
-    ) -> OperateResult<()>
-    where
-        'db: 's,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+    pub async fn delete_one(
+        db: &impl ConnectionTrait, did: i32,
+    ) -> OperateResult<()> {
         info!(datasource.id = did);
         Entity::update_many()
             .filter(Column::Id.eq(did))

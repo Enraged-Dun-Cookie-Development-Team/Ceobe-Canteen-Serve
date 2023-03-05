@@ -12,13 +12,9 @@ use super::{ConfigOperate, OperateResult};
 impl ConfigOperate<'_, NoConnect> {
     #[instrument(skip(db), ret)]
     /// 根据平台删除相关配置
-    pub async fn delete_by_platform<'s, 'db, C>(
-        db: &'db C, platform: &str,
-    ) -> OperateResult<()>
-    where
-        'db: 's,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+    pub async fn delete_by_platform(
+        db: &impl ConnectionTrait, platform: &str,
+    ) -> OperateResult<()> {
         info!(fetcherConfig.platform = platform);
 
         model_config::Entity::delete_many()
@@ -31,13 +27,9 @@ impl ConfigOperate<'_, NoConnect> {
 
     #[instrument(skip(db), ret)]
     /// 根据数据源id删除相关配置
-    pub async fn delete_by_datasource_id<'s, 'db, C>(
-        db: &'db C, did: i32,
-    ) -> OperateResult<()>
-    where
-        'db: 's,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+    pub async fn delete_by_datasource_id(
+        db: &impl ConnectionTrait, did: i32,
+    ) -> OperateResult<()> {
         info!(fetcherConfig.did = did);
 
         model_config::Entity::delete_many()

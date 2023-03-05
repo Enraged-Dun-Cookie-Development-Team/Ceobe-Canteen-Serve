@@ -16,13 +16,9 @@ use super::{OperateResult, PlatformOperate};
 
 impl PlatformOperate<'_, NoConnect> {
     /// 查询是否存在type_id的平台
-    pub async fn exist_by_type_id<'s, 'db, C>(
-        db: &'db C, type_id: &str,
-    ) -> OperateResult<bool>
-    where
-        'db: 's,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+    pub async fn exist_by_type_id(
+        db: &impl ConnectionTrait, type_id: &str,
+    ) -> OperateResult<bool> {
         let exist = Entity::find()
             .filter(Column::TypeId.eq(type_id))
             .count_non_zero_by_column(Column::Id)
@@ -35,13 +31,9 @@ impl PlatformOperate<'_, NoConnect> {
     }
 
     /// 查询id的平台下时候有数据源
-    pub async fn has_datasource_by_id<'s, 'db, C>(
-        db: &'db C, platform_id: i32,
-    ) -> OperateResult<bool>
-    where
-        'db: 's,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+    pub async fn has_datasource_by_id(
+        db:&impl ConnectionTrait, platform_id: i32,
+    ) -> OperateResult<bool> {
         let exist = Entity::find()
             .left_join(model_datasource_config::Entity)
             .filter(model_platform_config::Column::Id.eq(platform_id))

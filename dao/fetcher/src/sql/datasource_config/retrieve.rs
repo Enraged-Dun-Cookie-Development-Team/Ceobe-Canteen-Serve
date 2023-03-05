@@ -19,13 +19,9 @@ use super::{
 };
 
 impl DatasourceOperate<'_, NoConnect> {
-    pub async fn find_platform_by_id<'s, 'db, C>(
-        db: &'db C, id: i32,
-    ) -> OperateResult<DatasourcePlatform>
-    where
-        'db: 's,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+    pub async fn find_platform_by_id(
+        db:&impl ConnectionTrait, id: i32,
+    ) -> OperateResult<DatasourcePlatform> {
         Entity::find_by_id(id)
             .select_only()
             .column(Column::Platform)
@@ -36,13 +32,9 @@ impl DatasourceOperate<'_, NoConnect> {
             .ok_or(OperateError::DatasourceNotFound(id))
     }
 
-    pub async fn find_delete_model_by_datasource_and_unique_key<'s, 'db, C>(
-        db: &'db C, datasource: &str, unique_key: &str,
-    ) -> OperateResult<Model>
-    where
-        'db: 's,
-        C: ConnectionTrait + StreamTrait + Send,
-    {
+    pub async fn find_delete_model_by_datasource_and_unique_key (
+        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
+    ) -> OperateResult<Model> {
         Entity::find()
             .filter(Column::Datasource.eq(datasource))
             .filter(Column::DbUniqueKey.eq(unique_key))
