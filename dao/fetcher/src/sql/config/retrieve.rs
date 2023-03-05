@@ -1,7 +1,7 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
     sea_orm::{
-        ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter
+        ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
     },
     sql_models::fetcher::config::models::model_config::{self, Model},
 };

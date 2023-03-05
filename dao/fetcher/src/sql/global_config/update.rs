@@ -1,8 +1,6 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
-    sea_orm::{
-        sea_query, ConnectionTrait, EntityTrait, IntoActiveModel,
-    },
+    sea_orm::{sea_query, ConnectionTrait, EntityTrait, IntoActiveModel},
     sql_models::fetcher::global_config::{
         checkers::global_config_data::FetcherGlobalConfig,
         models::model_global_config::{Column, Entity},

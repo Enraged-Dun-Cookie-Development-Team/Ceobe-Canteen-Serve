@@ -24,13 +24,12 @@ where
     ) -> OperateResult<Vec<Uuid>> {
         Ok(collection
             .doing(|collection| {
-                collection
-                    .find_one(
-                        filter,
-                        FindOneOptions::builder()
-                            .projection(doc! {"datasource_push":1i32})
-                            .build(),
-                    )
+                collection.find_one(
+                    filter,
+                    FindOneOptions::builder()
+                        .projection(doc! {"datasource_push":1i32})
+                        .build(),
+                )
             })
             .await?
             .map(|info| info.datasource_push)

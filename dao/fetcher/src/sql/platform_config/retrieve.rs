@@ -2,9 +2,7 @@ use std::ops::Deref;
 
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
-    sea_orm::{
-        ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect
-    },
+    sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect},
     smallvec::SmallVec,
     sql_models::fetcher::platform_config::models::model_platform_config::{
         self, Entity, PlatformBasicInfo, PlatformType,

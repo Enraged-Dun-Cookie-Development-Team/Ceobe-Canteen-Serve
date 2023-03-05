@@ -1,8 +1,6 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
-    sea_orm::{
-        ActiveModelTrait, ConnectionTrait, IntoActiveModel,
-    },
+    sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel},
     sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig,
 };
 use tracing::{info, instrument};
