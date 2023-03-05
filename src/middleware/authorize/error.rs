@@ -2,7 +2,7 @@ use std::fmt::Debug;
 
 use crypto_str::inner_encoders::bcrypt::BcryptError;
 use http::StatusCode;
-use orm_migrate::sql_models::admin_user::OperateError;
+use admin::user::OperateError;
 use status_err::{ErrPrefix, StatusErr};
 
 use crate::utils::user_authorize::auth_level;

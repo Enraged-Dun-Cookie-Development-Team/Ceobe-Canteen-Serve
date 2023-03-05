@@ -1,8 +1,9 @@
+use abstract_database::bakery::ToBakery;
+use bakery::mansion::ToMansion;
 use checker::CheckExtract;
 use chrono::Duration;
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::bakery::mansion::operate::ToMansionOperate,
 };
 use resp_result::resp_try;
 use tracing::{debug, instrument};
@@ -36,14 +37,14 @@ impl BakeryMansionBackend {
                         mansion.id.provide = true,
                         mansion.saveMode = "Update"
                     );
-                    db.mansion().update(mid, data).await?;
+                    db.bakery().mansion().update(mid, data).await?;
                 }
                 None => {
                     debug!(
                         mansion.id.provide = false,
                         mansion.saveMode = "Create"
                     );
-                    db.mansion().create(data).await?;
+                    db.bakery().mansion().create(data).await?;
                 }
             }
             Ok(())
@@ -57,7 +58,7 @@ impl BakeryMansionBackend {
         CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
         resp_try(async {
-            Ok(db.mansion().get_mansion_by_id(&mid.id).await?.into())
+            Ok(db.bakery().mansion().get_mansion_by_id(&mid.id).await?.into())
         })
         .await
     }
@@ -68,6 +69,7 @@ impl BakeryMansionBackend {
     ) -> MansionRResult<Vec<String>> {
         resp_try(async {
             Ok(db
+                .bakery()
                 .mansion()
                 .get_mansion_id_list_by_time(Duration::days(90))
                 .await?)
@@ -81,7 +83,7 @@ impl BakeryMansionBackend {
         CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
         resp_try(async {
-            db.mansion().delete(&mid.id).await?;
+            db.bakery().mansion().delete(&mid.id).await?;
             Ok(())
         })
         .await

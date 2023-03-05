@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 
 use abstract_database::admin::ToAdmin;
+use admin::user::ToUser;
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
 use crypto_str::Encoder;
@@ -17,13 +18,12 @@ use tracing::{debug, instrument};
 
 use super::{
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
-    PageSizePretreatment, UsernamePretreatment,
+    PageSizePretreatment, UsernamePretreatment, error::AdminUserError,
 };
 use crate::{
     middleware::authorize::AuthorizeInfo,
     router::UserAuthBackend,
     serves::backend::user_auth::{
-        error::AdminUserError,
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
@@ -118,6 +118,7 @@ impl UserAuthBackend {
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
             let token_info = db
+                .admin()
                 .user()
                 .find_user_and_verify_pwd(
                     username,
@@ -169,7 +170,7 @@ impl UserAuthBackend {
             let id = user.id;
 
             let username = username.username;
-            db.user().update_user_name(id, username.clone()).await?;
+            db.admin().user().update_user_name(id, username.clone()).await?;
 
             Ok(UserName { username })
         })
@@ -188,6 +189,7 @@ impl UserAuthBackend {
             let new_password = body.new_password;
 
             let generate_token = db
+                .admin()
                 .user()
                 .update_user_password(
                     id,
@@ -223,15 +225,10 @@ impl UserAuthBackend {
         db: SqlDatabaseOperate, CheckExtract(page_size): PageSizePretreatment,
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         resp_try(async {
-            let user_ops = db.user();
-            // 获取用户列表
-            let user_list = user_ops.find_user_list(page_size).map_ok(|a| {
+            // 异步获取用户列&用户数量
+            let (user_list, count) = future::join(db.admin().user().find_user_list(page_size).map_ok(|a| {
                 a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
-            });
-            // 获取用户数量
-            let count = user_ops.get_user_total_number();
-            // 异步获取
-            let (user_list, count) = future::join(user_list, count).await;
+            }), db.admin().user().get_user_total_number()).await;
 
             let resp = user_list?.with_page_info(page_size, count?);
 
@@ -248,7 +245,7 @@ impl UserAuthBackend {
     ) -> AdminUserRResult<()> {
         resp_try(async {
             let ChangeAuthReq { id, auth } = body;
-            db.user().update_user_auth(id, auth).await?;
+            db.admin().user().update_user_auth(id, auth).await?;
             Ok(())
         })
         .await
@@ -261,7 +258,7 @@ impl UserAuthBackend {
         MapReject(body): MapReject<Json<DeleteOneUserReq>, AdminUserError>,
     ) -> AdminUserRResult<()> {
         let uid = body.id;
-        rtry!(db.user().delete_one(uid).await);
+        rtry!(db.admin().user().delete_one(uid).await);
         Ok(()).into()
     }
 }

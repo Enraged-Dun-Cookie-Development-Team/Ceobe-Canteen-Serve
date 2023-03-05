@@ -1,9 +1,9 @@
 use crypto_str::Encoder;
 use md5::{Digest, Md5};
 use orm_migrate::{
-    sql_connection::sea_orm::TransactionTrait,
-    sql_models::admin_user::UserOperate,
+    sql_connection::sea_orm::TransactionTrait
 };
+use admin::user::UserOperate;
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
 
@@ -29,7 +29,7 @@ where
     let encode_password = PasswordEncoder::encode(password.into())
         .expect_or_log("初始用户密码加密错误！");
 
-    UserOperate::<()>::not_exist_then_create_admin(
+    UserOperate::not_exist_then_create_admin(
         db,
         conf.username(),
         encode_password.to_string(),
