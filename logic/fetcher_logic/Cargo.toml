@@ -18,6 +18,7 @@ futures.workspace = true
 scheduler-notifier.workspace = true
 fetcher.workspace = true
 abstract_database.workspace = true
+bool_or.workspace = true
 
 [dependencies.sql-models]
 path = "../../models/sql-models"
@@ -28,5 +29,3 @@ path = "../../libs/checker"
 [dependencies.redis_global]
 path = "../../global/redis_global"
 
-[dependencies.bool_or]
-path = "../../libs/bool_or"

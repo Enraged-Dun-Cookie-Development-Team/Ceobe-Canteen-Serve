@@ -1,7 +1,7 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
     sea_orm::{
-        ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait,
+        ActiveModelTrait, ConnectionTrait, IntoActiveModel,
     },
     sql_models::fetcher::platform_config::checkers::platform_config_data::FetcherPlatformConfig,
 };
@@ -12,7 +12,7 @@ use super::{OperateResult, PlatformOperate};
 impl<'c, C> PlatformOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 保存平台配置到数据库
     #[instrument(ret, skip(self))]

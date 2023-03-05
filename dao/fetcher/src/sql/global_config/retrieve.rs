@@ -1,6 +1,6 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
-    sea_orm::{ConnectionTrait, EntityTrait, StreamTrait},
+    sea_orm::{ConnectionTrait, EntityTrait},
     sql_models::fetcher::global_config::models::model_global_config::{
         self, Entity,
     },
@@ -12,7 +12,7 @@ use super::{GlobalOperate, OperateResult};
 impl<'c, C> GlobalOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(ret, skip_all)]
     pub async fn get_all(

@@ -1,7 +1,7 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
     sea_orm::{
-        sea_query, ConnectionTrait, EntityTrait, IntoActiveModel, StreamTrait,
+        sea_query, ConnectionTrait, EntityTrait, IntoActiveModel,
     },
     sql_models::fetcher::global_config::{
         checkers::global_config_data::FetcherGlobalConfig,
@@ -15,7 +15,7 @@ use super::{GlobalOperate, OperateResult};
 impl<'c, C> GlobalOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     // 创建或者更新蹲饼器全局配置
     #[instrument(ret, skip_all)]

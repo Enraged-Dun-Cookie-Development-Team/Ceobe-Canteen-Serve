@@ -1,7 +1,7 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
     sea_orm::{
-        ActiveModelTrait, ConnectionTrait, IntoActiveModel, StreamTrait,
+        ActiveModelTrait, ConnectionTrait, IntoActiveModel,
     },
     sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfig,
 };
@@ -13,7 +13,7 @@ use crate::datasource_config::OperateError;
 impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 更新数据配置到数据库
     #[instrument(ret, skip(self))]

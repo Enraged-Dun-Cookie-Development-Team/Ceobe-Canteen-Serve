@@ -6,7 +6,7 @@ use db_ops_prelude::get_zero_data_time;
 use page_size::{database::WithPagination, request::Paginator};
 use db_ops_prelude::sea_orm::{
     ColumnTrait, Condition, ConnectionTrait, EntityTrait, PaginatorTrait,
-    QueryFilter, QuerySelect, StreamTrait,
+    QueryFilter, QuerySelect,
 };
 use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource};
 use db_ops_prelude::smallvec::SmallVec;
@@ -49,7 +49,7 @@ impl DatasourceOperate<'_, NoConnect> {
 impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self))]
     /// 分页获取全部数据源列表

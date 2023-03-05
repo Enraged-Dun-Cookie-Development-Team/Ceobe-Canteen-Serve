@@ -1,7 +1,7 @@
 use std::{collections::BTreeSet, fmt::Debug, marker::Send};
 
 use db_ops_prelude::{sea_orm::{
-    ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect, sea_query::Func, StreamTrait,
+    ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, QuerySelect, sea_query::Func,
 }, database_operates::NoConnect, sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column}, ext_traits::{CountZero, check_all_exist::QueryAllExist, select_count::QueryCountByColumn}, get_zero_data_time, get_connect::GetDatabaseConnect, mysql_func};
 use tracing::instrument;
 use uuid::Uuid;
@@ -77,7 +77,7 @@ impl DatasourceOperate<'_, NoConnect> {
 impl<'c, C> DatasourceOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     /// 验证平台下是否还有数据源
     #[instrument(ret, skip_all)]

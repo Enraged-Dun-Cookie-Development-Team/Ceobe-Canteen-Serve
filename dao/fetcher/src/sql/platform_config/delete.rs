@@ -1,6 +1,6 @@
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
-    sea_orm::{ConnectionTrait, EntityTrait, StreamTrait},
+    sea_orm::{ConnectionTrait, EntityTrait},
     sql_models::fetcher::platform_config::models::model_platform_config::Entity,
 };
 use tracing::{info, instrument};
@@ -11,7 +11,7 @@ use crate::platform_config::OperateError;
 impl<'c, C> PlatformOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self), ret)]
     /// 删除一个平台

@@ -3,8 +3,7 @@ use std::ops::Deref;
 use db_ops_prelude::{
     get_connect::GetDatabaseConnect,
     sea_orm::{
-        ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect,
-        StreamTrait,
+        ConnectionTrait, EntityTrait, PaginatorTrait, QuerySelect
     },
     smallvec::SmallVec,
     sql_models::fetcher::platform_config::models::model_platform_config::{
@@ -20,7 +19,7 @@ use super::{OperateResult, PlatformOperate};
 impl<'c, C> PlatformOperate<'c, C>
 where
     C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait + StreamTrait,
+    C::Connect: ConnectionTrait,
 {
     #[instrument(skip(self))]
     /// 分页获取全部平台列表
