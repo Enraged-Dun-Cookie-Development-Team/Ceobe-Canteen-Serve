@@ -1,9 +1,7 @@
-use sea_orm::{ConnectionTrait, EntityTrait};
-use sql_connection::database_traits::get_connect::GetDatabaseConnect;
+use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait}, sql_models::admin_user, get_connect::GetDatabaseConnect};
 use tracing::{info, instrument};
 
 use super::{OperateResult, UserOperate};
-use crate::admin_user::models::user;
 
 impl<'c, C> UserOperate<'c, C>
 where
@@ -16,7 +14,7 @@ where
         info!(user.id = uid);
         let db = self.get_connect();
 
-        user::Entity::delete_by_id(uid).exec(db).await?;
+        admin_user::Entity::delete_by_id(uid).exec(db).await?;
 
         Ok(())
     }

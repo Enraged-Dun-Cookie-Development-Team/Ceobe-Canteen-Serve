@@ -1,21 +1,20 @@
-use sea_orm::{
+use db_ops_prelude::{sea_orm::{
     ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
     QuerySelect, TransactionTrait,
-};
+}, sql_models::admin_user::{AuthLevel, self}, database_operates::NoConnect};
 use tracing::info;
 
 use super::{OperateResult, UserCounts, UserOperate};
-use crate::admin_user::models::{auth_level::AuthLevel, user};
 
-impl<'c, C: 'c> UserOperate<'c, C> {
+impl UserOperate<'_, NoConnect> {
     pub async fn is_user_exist_raw(
         filter: impl Into<Option<Condition>>, db: &impl ConnectionTrait,
     ) -> OperateResult<bool> {
         let condition = filter.into().unwrap_or_else(Condition::all);
-        let resp = user::Entity::find()
+        let resp = admin_user::Entity::find()
             .filter(condition)
             .select_only()
-            .column_as(user::Column::Id.count(), "count")
+            .column_as(admin_user::Column::Id.count(), "count")
             .into_model::<UserCounts>()
             .one(db)
             .await?

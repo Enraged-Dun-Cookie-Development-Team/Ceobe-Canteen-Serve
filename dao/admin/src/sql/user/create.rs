@@ -1,19 +1,14 @@
-use sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr};
-use sql_connection::{
-    database_traits::get_connect::{GetDatabaseTransaction, TransactionOps},
-    sea_orm::Set,
-};
+use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, Set}, sql_models::admin_user::{AuthLevel, self}, database_operates::NoConnect, get_connect::{GetDatabaseTransaction, TransactionOps}};
 use tracing::{info, instrument};
 
 use super::{OperateResult, UserOperate};
-use crate::admin_user::models::{auth_level::AuthLevel, user};
 
-impl<'c, C> UserOperate<'c, C> {
+impl UserOperate<'_, NoConnect> {
     pub async fn add_user_with_encoded_password_db(
         username: String, encoded_pwd: String, auth_level: AuthLevel,
         db: &impl ConnectionTrait,
     ) -> OperateResult<()> {
-        let user_active = user::ActiveModel {
+        let user_active = admin_user::ActiveModel {
             username: Set(username),
             password: Set(encoded_pwd),
             auth: Set(auth_level),
@@ -41,7 +36,7 @@ where
         );
         let ctx = self.get_transaction().await?;
 
-        Self::add_user_with_encoded_password_db(
+        UserOperate::add_user_with_encoded_password_db(
             username,
             encoded_pwd,
             auth_level,

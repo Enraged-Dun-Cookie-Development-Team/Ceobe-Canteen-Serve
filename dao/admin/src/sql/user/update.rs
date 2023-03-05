@@ -1,16 +1,12 @@
 use std::fmt::Debug;
 
-use sea_orm::{
+use db_ops_prelude::{sea_orm::{
     sea_query::IntoCondition, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DbErr, IntoActiveModel, Set,
-};
-use sql_connection::database_traits::get_connect::{
-    GetDatabaseTransaction, TransactionOps,
-};
+}, sql_models::admin_user::{AuthLevel, self}, get_connect::{GetDatabaseTransaction, TransactionOps}};
 use tracing::{info, instrument};
 
 use super::{OperateError, OperateResult, UserOperate};
-use crate::admin_user::models::{auth_level::AuthLevel, user};
 
 impl<'c, C> UserOperate<'c, C>
 where
@@ -25,8 +21,8 @@ where
         let ctx = self.get_transaction().await?;
 
         // check user name exist
-        if Self::is_user_exist_raw(
-            user::Column::Username.eq(&*new_name).into_condition(),
+        if UserOperate::is_user_exist_raw(
+            admin_user::Column::Username.eq(&*new_name).into_condition(),
             &ctx,
         )
         .await?
@@ -56,7 +52,7 @@ where
     where
         Verify: Fn(&str, &str) -> Result<bool, Err>,
         Encode: Fn(&str) -> Result<String, Err>,
-        Map: Fn(user::Model) -> T,
+        Map: Fn(admin_user::Model) -> T,
         T: Debug,
         Err: Debug,
     {

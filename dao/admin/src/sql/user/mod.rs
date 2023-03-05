@@ -2,47 +2,19 @@ mod delete;
 mod retrieve;
 mod update;
 mod verify;
-use sea_orm::FromQueryResult;
+use std::ops::Deref;
+
+use abstract_database::admin::AdminDatabaseOperate;
+use db_ops_prelude::{sea_orm::{FromQueryResult, self}, database_operates::sub_operate::{SubOperate, SuperOperate}};
 
 mod create;
-use sql_connection::database_traits::{
-    database_operates::{sub_operate::SubOperate, DatabaseOperate},
-    get_connect::{GetDatabaseConnect, GetDatabaseTransaction},
-};
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
-pub struct UserOperate<'c, C: 'c>(&'c C);
-
-impl<'c, C: 'c> UserOperate<'c, C> {
-    pub(self) fn get_connect(&self) -> &C::Connect
-    where
-        C: GetDatabaseConnect,
-    {
-        self.0.get_connect()
-    }
-
-    pub(self) async fn get_transaction(
-        &'c self,
-    ) -> Result<C::Transaction<'c>, C::Error>
-    where
-        C: GetDatabaseTransaction,
-    {
-        self.0.get_transaction().await
-    }
-}
-
-impl<'c, C> SubOperate<'c> for UserOperate<'c, C> {
-    type Parent = DatabaseOperate<C>;
-
-    fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent) }
-}
-
 #[derive(FromQueryResult)]
 struct UserCounts {
     pub(crate) count: i64,
 }
 
-#[allow(dead_code)]
 type OperateResult<T> = Result<T, OperateError>;
 
 #[derive(Debug, Error, status_err::StatusErr)]
@@ -77,4 +49,26 @@ pub enum OperateError {
         http_code = "HttpCode::UNAUTHORIZED"
     ))]
     PasswordWrong,
+}
+
+pub struct UserOperate<'db, Conn>(&'db Conn);
+
+impl<'db, Conn> SubOperate<'db> for UserOperate<'db, Conn> {
+    type Parent = AdminDatabaseOperate<'db, Conn>;
+
+    fn from_parent(parent: &'db Self::Parent) -> Self { Self(parent) }
+}
+
+impl<'db, Conn> Deref for UserOperate<'db, Conn> {
+    type Target = Conn;
+
+    fn deref(&self) -> &Self::Target { self.0 }
+}
+
+pub trait ToUser<C> {
+    fn user(&self) -> UserOperate<'_, C>;
+}
+
+impl<C> ToUser<C> for AdminDatabaseOperate<'_, C> {
+    fn user(&self) -> UserOperate<'_, C> { self.child() }
 }
