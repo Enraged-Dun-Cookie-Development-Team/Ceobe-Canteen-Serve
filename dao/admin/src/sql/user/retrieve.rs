@@ -1,10 +1,18 @@
 use std::{fmt::Debug, ops::Deref};
 
+use db_ops_prelude::{
+    database_operates::NoConnect,
+    get_connect::{
+        GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
+    },
+    sea_orm::{
+        sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
+        DbErr, EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
+    },
+    smallvec::SmallVec,
+    sql_models::admin_user,
+};
 use page_size::{database::WithPagination, request::Paginator};
-use db_ops_prelude::{sea_orm::{
-    sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait, DbErr,
-    EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
-}, sql_models::admin_user, database_operates::NoConnect, get_connect::{GetDatabaseTransaction, GetDatabaseConnect, TransactionOps}, smallvec::SmallVec};
 use tap::TapFallible;
 use tracing::{info, instrument, Span};
 
@@ -147,6 +155,9 @@ where
     /// 获取用户总数
     pub async fn get_user_total_number(&'c self) -> OperateResult<u64> {
         let db = self.get_connect();
-        admin_user::Entity::find().count(db).await.map_err(Into::into)
+        admin_user::Entity::find()
+            .count(db)
+            .await
+            .map_err(Into::into)
     }
 }

@@ -1,4 +1,8 @@
-use db_ops_prelude::{mongo_connection::CollectionGuard, mongo_models::bakery::mansion::preludes::ModelMansion, mongodb::bson::Document, get_connect::GetDatabaseCollection};
+use db_ops_prelude::{
+    get_connect::GetDatabaseCollection, mongo_connection::CollectionGuard,
+    mongo_models::bakery::mansion::preludes::ModelMansion,
+    mongodb::bson::Document,
+};
 
 use super::{MansionOperate, OperateResult};
 

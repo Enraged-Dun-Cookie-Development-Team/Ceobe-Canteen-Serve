@@ -1,9 +1,7 @@
 use db_ops_prelude::{
     database_operates::NoConnect,
     ext_traits::select_count::QueryCountByColumn,
-    sea_orm::{
-        ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter, StreamTrait,
-    },
+    sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter},
     sql_models::fetcher::{
         datasource_config::models::model_datasource_config,
         platform_config::models::model_platform_config::{
@@ -32,7 +30,7 @@ impl PlatformOperate<'_, NoConnect> {
 
     /// 查询id的平台下时候有数据源
     pub async fn has_datasource_by_id(
-        db:&impl ConnectionTrait, platform_id: i32,
+        db: &impl ConnectionTrait, platform_id: i32,
     ) -> OperateResult<bool> {
         let exist = Entity::find()
             .left_join(model_datasource_config::Entity)

@@ -20,7 +20,7 @@ use super::{
 
 impl DatasourceOperate<'_, NoConnect> {
     pub async fn find_platform_by_id(
-        db:&impl ConnectionTrait, id: i32,
+        db: &impl ConnectionTrait, id: i32,
     ) -> OperateResult<DatasourcePlatform> {
         Entity::find_by_id(id)
             .select_only()
@@ -32,7 +32,7 @@ impl DatasourceOperate<'_, NoConnect> {
             .ok_or(OperateError::DatasourceNotFound(id))
     }
 
-    pub async fn find_delete_model_by_datasource_and_unique_key (
+    pub async fn find_delete_model_by_datasource_and_unique_key(
         db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
     ) -> OperateResult<Model> {
         Entity::find()

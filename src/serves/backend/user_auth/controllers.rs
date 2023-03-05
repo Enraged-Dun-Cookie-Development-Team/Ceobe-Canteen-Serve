@@ -8,8 +8,7 @@ use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
 use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-    sql_models::admin_user::{AuthLevel},
+    sql_connection::SqlDatabaseOperate, sql_models::admin_user::AuthLevel,
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -17,8 +16,9 @@ use resp_result::{resp_try, rtry, MapReject};
 use tracing::{debug, instrument};
 
 use super::{
+    error::AdminUserError,
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
-    PageSizePretreatment, UsernamePretreatment, error::AdminUserError,
+    PageSizePretreatment, UsernamePretreatment,
 };
 use crate::{
     middleware::authorize::AuthorizeInfo,
@@ -89,7 +89,8 @@ impl UserAuthBackend {
             }?;
 
             // 将用户信息写入数据库
-            db.admin().user()
+            db.admin()
+                .user()
                 .add_with_encoded_password(
                     rand_username,
                     encode_password.to_string(),
@@ -170,7 +171,10 @@ impl UserAuthBackend {
             let id = user.id;
 
             let username = username.username;
-            db.admin().user().update_user_name(id, username.clone()).await?;
+            db.admin()
+                .user()
+                .update_user_name(id, username.clone())
+                .await?;
 
             Ok(UserName { username })
         })
@@ -226,9 +230,13 @@ impl UserAuthBackend {
     ) -> AdminUserRResult<ListWithPageInfo<UserTable>> {
         resp_try(async {
             // 异步获取用户列&用户数量
-            let (user_list, count) = future::join(db.admin().user().find_user_list(page_size).map_ok(|a| {
-                a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
-            }), db.admin().user().get_user_total_number()).await;
+            let (user_list, count) = future::join(
+                db.admin().user().find_user_list(page_size).map_ok(|a| {
+                    a.into_iter().map(Into::into).collect::<Vec<UserTable>>()
+                }),
+                db.admin().user().get_user_total_number(),
+            )
+            .await;
 
             let resp = user_list?.with_page_info(page_size, count?);
 

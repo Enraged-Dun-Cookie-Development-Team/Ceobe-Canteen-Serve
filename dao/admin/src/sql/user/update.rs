@@ -1,9 +1,13 @@
 use std::fmt::Debug;
 
-use db_ops_prelude::{sea_orm::{
-    sea_query::IntoCondition, ActiveModelTrait, ColumnTrait, ConnectionTrait,
-    DbErr, IntoActiveModel, Set,
-}, sql_models::admin_user::{AuthLevel, self}, get_connect::{GetDatabaseTransaction, TransactionOps}};
+use db_ops_prelude::{
+    get_connect::{GetDatabaseTransaction, TransactionOps},
+    sea_orm::{
+        sea_query::IntoCondition, ActiveModelTrait, ColumnTrait,
+        ConnectionTrait, DbErr, IntoActiveModel, Set,
+    },
+    sql_models::admin_user::{self, AuthLevel},
+};
 use tracing::{info, instrument};
 
 use super::{OperateError, OperateResult, UserOperate};

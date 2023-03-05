@@ -1,4 +1,7 @@
-use db_ops_prelude::{mongo_models::bakery::mansion::preludes::{ModelMansion, MansionId}, mongo_connection::MongoDbCollectionTrait};
+use db_ops_prelude::{
+    mongo_connection::MongoDbCollectionTrait,
+    mongo_models::bakery::mansion::preludes::{MansionId, ModelMansion},
+};
 use tracing::{info, instrument};
 
 use super::{MansionOperate, OperateResult};

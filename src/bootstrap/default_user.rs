@@ -1,9 +1,7 @@
+use admin::user::UserOperate;
 use crypto_str::Encoder;
 use md5::{Digest, Md5};
-use orm_migrate::{
-    sql_connection::sea_orm::TransactionTrait
-};
-use admin::user::UserOperate;
+use orm_migrate::sql_connection::sea_orm::TransactionTrait;
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
 

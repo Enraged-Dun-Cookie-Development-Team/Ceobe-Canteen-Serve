@@ -1,6 +1,6 @@
 use db_ops_prelude::{
     database_operates::NoConnect,
-    sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel, StreamTrait},
+    sea_orm::{ConnectionTrait, EntityTrait, IntoActiveModel},
     sql_models::fetcher::config::{
         checkers::config_data::FetcherConfig, models::model_config,
     },

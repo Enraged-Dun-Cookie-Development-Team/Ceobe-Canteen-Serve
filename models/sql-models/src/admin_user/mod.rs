@@ -10,6 +10,5 @@ pub mod username {
 
 pub use models::{
     auth_level::AuthLevel,
-    user::{ActiveModel, Column, Model, Relation, Entity, UserList},
+    user::{ActiveModel, Column, Entity, Model, Relation, UserList},
 };
-

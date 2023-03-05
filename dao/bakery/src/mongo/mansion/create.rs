@@ -1,4 +1,8 @@
-use db_ops_prelude::{mongo_models::bakery::mansion::preludes::{ModelMansion, Mansion}, bool_or::FalseOrError, mongo_connection::MongoDbCollectionTrait};
+use db_ops_prelude::{
+    bool_or::FalseOrError,
+    mongo_connection::MongoDbCollectionTrait,
+    mongo_models::bakery::mansion::preludes::{Mansion, ModelMansion},
+};
 use tracing::{info, instrument, warn};
 
 use super::{MansionOperate, OperateError, OperateResult};

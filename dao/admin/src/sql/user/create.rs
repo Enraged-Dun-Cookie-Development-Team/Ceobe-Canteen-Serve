@@ -1,4 +1,9 @@
-use db_ops_prelude::{sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, Set}, sql_models::admin_user::{AuthLevel, self}, database_operates::NoConnect, get_connect::{GetDatabaseTransaction, TransactionOps}};
+use db_ops_prelude::{
+    database_operates::NoConnect,
+    get_connect::{GetDatabaseTransaction, TransactionOps},
+    sea_orm::{ActiveModelTrait, ConnectionTrait, DbErr, Set},
+    sql_models::admin_user::{self, AuthLevel},
+};
 use tracing::{info, instrument};
 
 use super::{OperateResult, UserOperate};

@@ -1,7 +1,10 @@
 use std::ops::Deref;
 
 use abstract_database::bakery::BakeryDatabaseOperate;
-use db_ops_prelude::{mongodb, database_operates::sub_operate::{SubOperate, SuperOperate}, mongo_connection::MongoDbError};
+use db_ops_prelude::{
+    database_operates::sub_operate::{SubOperate, SuperOperate},
+    mongo_connection::MongoDbError,
+};
 
 mod create;
 mod delete;
@@ -30,7 +33,6 @@ pub enum OperateError {
     ))]
     MansionIdExist(String),
 }
-
 
 pub struct MansionOperate<'db, Conn>(&'db Conn);
 

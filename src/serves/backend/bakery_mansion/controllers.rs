@@ -2,9 +2,7 @@ use abstract_database::bakery::ToBakery;
 use bakery::mansion::ToMansion;
 use checker::CheckExtract;
 use chrono::Duration;
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-};
+use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use resp_result::resp_try;
 use tracing::{debug, instrument};
 
@@ -58,7 +56,12 @@ impl BakeryMansionBackend {
         CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<ViewMansion> {
         resp_try(async {
-            Ok(db.bakery().mansion().get_mansion_by_id(&mid.id).await?.into())
+            Ok(db
+                .bakery()
+                .mansion()
+                .get_mansion_by_id(&mid.id)
+                .await?
+                .into())
         })
         .await
     }

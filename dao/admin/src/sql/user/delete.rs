@@ -1,4 +1,8 @@
-use db_ops_prelude::{sea_orm::{ConnectionTrait, EntityTrait}, sql_models::admin_user, get_connect::GetDatabaseConnect};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ConnectionTrait, EntityTrait},
+    sql_models::admin_user,
+};
 use tracing::{info, instrument};
 
 use super::{OperateResult, UserOperate};

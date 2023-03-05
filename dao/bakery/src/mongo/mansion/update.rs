@@ -1,4 +1,10 @@
-use db_ops_prelude::{bool_or::TrueOrError, mongo_connection::MongoDbCollectionTrait, mongo_models::bakery::mansion::preludes::{ModelMansion, Mansion, MansionId}};
+use db_ops_prelude::{
+    bool_or::TrueOrError,
+    mongo_connection::MongoDbCollectionTrait,
+    mongo_models::bakery::mansion::preludes::{
+        Mansion, MansionId, ModelMansion,
+    },
+};
 use tracing::{info, instrument, warn};
 
 use super::{MansionOperate, OperateError, OperateResult};

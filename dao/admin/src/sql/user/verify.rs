@@ -1,7 +1,11 @@
-use db_ops_prelude::{sea_orm::{
-    ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
-    QuerySelect, TransactionTrait,
-}, sql_models::admin_user::{AuthLevel, self}, database_operates::NoConnect};
+use db_ops_prelude::{
+    database_operates::NoConnect,
+    sea_orm::{
+        ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
+        QuerySelect, TransactionTrait,
+    },
+    sql_models::admin_user::{self, AuthLevel},
+};
 use tracing::info;
 
 use super::{OperateResult, UserCounts, UserOperate};
