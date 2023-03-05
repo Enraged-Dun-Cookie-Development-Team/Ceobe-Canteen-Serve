@@ -2,7 +2,7 @@ mod migrations;
 
 use async_trait::async_trait;
 use mongo_migrate_util::{Manager, MigratorTrait};
-use mongo_models::bakery::mansion::operate::MongoErr;
+use mongodb::error::Error;
 pub use mongo_models::{self, mongo_connection};
 pub struct Migrator;
 
@@ -10,7 +10,7 @@ pub struct Migrator;
 impl MigratorTrait for Migrator {
     async fn migrating(
         &self, manage: &mut Manager<'_>,
-    ) -> Result<(), MongoErr> {
+    ) -> Result<(), Error> {
         manage
             .append(migrations::bakery::mansion::Migration)
             .await?

@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 
+use abstract_database::admin::ToAdmin;
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
 use crypto_str::Encoder;
@@ -7,7 +8,7 @@ use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
-    sql_models::admin_user::{AuthLevel, ToSqlUserOperate},
+    sql_models::admin_user::{AuthLevel},
 };
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
@@ -88,7 +89,7 @@ impl UserAuthBackend {
             }?;
 
             // 将用户信息写入数据库
-            db.user()
+            db.admin().user()
                 .add_with_encoded_password(
                     rand_username,
                     encode_password.to_string(),

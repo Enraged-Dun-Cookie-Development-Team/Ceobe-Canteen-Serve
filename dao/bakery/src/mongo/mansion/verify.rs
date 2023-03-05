@@ -1,10 +1,6 @@
-use mongo_connection::{
-    database_traits::get_connect::GetDatabaseCollection, CollectionGuard,
-};
-use mongodb::bson::Document;
+use db_ops_prelude::{mongo_connection::CollectionGuard, mongo_models::bakery::mansion::preludes::ModelMansion, mongodb::bson::Document, get_connect::GetDatabaseCollection};
 
 use super::{MansionOperate, OperateResult};
-use crate::bakery::mansion::preludes::ModelMansion;
 
 impl<'db, Db> MansionOperate<'db, Db>
 where

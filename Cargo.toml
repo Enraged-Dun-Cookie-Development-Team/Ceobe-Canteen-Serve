@@ -80,6 +80,8 @@ abstract_database = { version = "0.1.0", path = "database/abstract_database" }
 ceobe-user = { version = "0.1.0", path = "dao/ceobe-user" }
 ceobe-operate = { version = "0.1.0", path = "dao/ceobe-operate" }
 fetcher = { version = "0.1.0", path = "dao/fetcher" }
+bakery = { version = "0.1.0", path = "dao/bakery" }
+admin = { version = "0.1.0", path = "dao/admin" }
 page_size =  { version = "0.1.0", path = "./libs/page_size" }
 
 [dependencies]
@@ -139,6 +141,8 @@ abstract_database.workspace = true
 ceobe-user.workspace = true
 page_size.workspace = true
 fetcher.workspace = true
+bakery.workspace = true
+admin.workspace = true
 
 [dependencies.tokio]
 workspace = true

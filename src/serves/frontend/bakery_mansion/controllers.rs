@@ -2,7 +2,6 @@ use checker::CheckExtract;
 use modify_cache::CacheMode;
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::bakery::mansion::operate::ToMansionOperate,
 };
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;

@@ -1,9 +1,7 @@
-use bool_or::FalseOrError;
-use mongo_connection::MongoDbCollectionTrait;
+use db_ops_prelude::{mongo_models::bakery::mansion::preludes::{ModelMansion, Mansion}, bool_or::FalseOrError, mongo_connection::MongoDbCollectionTrait};
 use tracing::{info, instrument, warn};
 
 use super::{MansionOperate, OperateError, OperateResult};
-use crate::bakery::mansion::{checked::Mansion, preludes::ModelMansion};
 
 impl<'db, Db> MansionOperate<'db, Db>
 where
