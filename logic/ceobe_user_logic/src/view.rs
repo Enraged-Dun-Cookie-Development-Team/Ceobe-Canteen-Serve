@@ -22,3 +22,10 @@ impl From<MobIdReq> for UserMobId {
 pub struct DatasourceConfig {
     pub datasource_config: Vec<Uuid>,
 }
+
+/// 数据源组合id返回
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct CombIdsResp {
+    pub datasource_comb_id: String,
+}
+

@@ -8,7 +8,7 @@ use db_ops_prelude::sea_orm::{
     ColumnTrait, Condition, ConnectionTrait, EntityTrait, PaginatorTrait,
     QueryFilter, QuerySelect,
 };
-use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource};
+use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource, DatasourceId};
 use db_ops_prelude::smallvec::SmallVec;
 use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourcePlatform;
 use tap::TapFallible;
@@ -203,5 +203,23 @@ where
                     info!(datasourceList.len = list.len(),  datasourceList.datasource = ?list );
                 });
             })
+    }
+
+    #[instrument(skip(self))]
+    /// 根据数据源uuid获取数据源id
+    pub async fn find_ids_by_uuids(
+        &self, uuids: Vec<Uuid>
+    ) -> OperateResult<Vec<i32>> {
+        let db = self.get_connect();
+        Ok(Entity::find()
+            .select_only()
+            .column(Column::Id)
+            .filter(Column::UniqueId.is_in(uuids))
+            .into_model::<DatasourceId>()
+            .all(db)
+            .await?
+            .into_iter()
+            .map(|datasource| datasource.id)
+            .collect::<Vec<i32>>())
     }
 }

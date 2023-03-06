@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 
 use abstract_database::{ceobe::ToCeobe, fetcher::ToFetcher};
+use bitmaps::Bitmap;
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
 use db_ops_prelude::{
@@ -25,7 +26,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error,
     error::LogicResult,
-    view::{DatasourceConfig, MobIdReq},
+    view::{DatasourceConfig, MobIdReq, CombIdsResp},
 };
 
 pub struct CeobeUserLogic;
@@ -34,7 +35,7 @@ impl CeobeUserLogic {
     /// 新建数据源配置
     pub async fn create_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
-    ) -> LogicResult<()> {
+    ) -> LogicResult<CombIdsResp> {
         // TODO: 验证mob_id是否为小刻食堂旗下mob id
 
         // 获取所有数据源的uuid列表
@@ -50,14 +51,20 @@ impl CeobeUserLogic {
         // 拼接数据
         let user_uncheck = UserPropertyUncheck::builder()
             .mob_id(mob_id.mob_id)
-            .datasource_push(datasource_uuids)
+            .datasource_push(datasource_uuids.clone())
             .build();
         // 验证数据
         let user_checked: UserPropertyChecked =
             UserPropertyChecker::lite_check(user_uncheck).await?;
         // 将用户信息存入数据库
         mongo.ceobe().user().property().create(user_checked).await?;
-        Ok(())
+
+        // 生成组合id并返回给用户
+        let comb_ids = Self::get_datasources_comb_ids(datasource_uuids, db).await?;
+
+        Ok(CombIdsResp {
+            datasource_comb_id: comb_ids,
+        })
     }
 
     /// 获取用户数据源配置
@@ -111,7 +118,7 @@ impl CeobeUserLogic {
     pub async fn update_datasource(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
         datasource_config: Vec<bson::Uuid>, mob_id: UserMobId,
-    ) -> LogicResult<()> {
+    ) -> LogicResult<CombIdsResp> {
         let user_unchecked: UserPropertyUncheck =
             UserPropertyUncheck::builder()
                 .mob_id(mob_id.mob_id)
@@ -133,10 +140,30 @@ impl CeobeUserLogic {
             .property()
             .update_datasource(
                 user_config.mob_id,
-                user_config.datasource_push,
+                user_config.datasource_push.clone(),
             )
             .await?;
+            
+        // 生成组合id并返回给用户
+        let comb_ids = Self::get_datasources_comb_ids(user_config.datasource_push, db).await?;
 
-        Ok(())
+        Ok(CombIdsResp {
+            datasource_comb_id: comb_ids,
+        })
+    }
+
+    async fn get_datasources_comb_ids(datasource_uuid: Vec<bson::Uuid>, db: SqlDatabaseOperate) -> LogicResult<String> {
+        // 通过Vec<uuids>获取Vec<i32>
+        let datasource_ids = db.fetcher().datasource().find_ids_by_uuids(vec_bson_uuid_to_uuid(datasource_uuid)).await?;
+
+        // 根据数据库id生成bitmap
+        let mut comb_ids_map = Bitmap::<256>::new();
+        datasource_ids.into_iter().for_each(|id| {comb_ids_map.set((id-1) as usize, true); ()});
+
+        // 转成特定格式字符串
+        let comb_ids:[u128;2] = comb_ids_map.into();
+        let first_number = comb_ids.first().unwrap().to_string();
+        let second_number = comb_ids.last().unwrap().to_string();
+        Ok(format!(r#"{first_number}-{second_number}"#))
     }
 }

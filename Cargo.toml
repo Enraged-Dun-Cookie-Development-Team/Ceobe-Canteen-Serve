@@ -84,6 +84,7 @@ bakery = { version = "0.1.0", path = "dao/bakery" }
 admin = { version = "0.1.0", path = "dao/admin" }
 page_size =  { version = "0.1.0", path = "./libs/page_size" }
 mysql_func = { version = "0.1.0", path = "./libs/mysql_func" }
+bitmaps = "3.2.0"
 
 [dependencies]
 # Xss
