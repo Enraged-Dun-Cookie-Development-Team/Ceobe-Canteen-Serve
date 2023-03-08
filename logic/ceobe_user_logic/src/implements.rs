@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use abstract_database::{ceobe::ToCeobe, fetcher::ToFetcher};
-use bitmap_convert::bitmap_string::BitmapStringConv;
+use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
@@ -162,6 +162,6 @@ impl CeobeUserLogic {
         datasource_ids.into_iter().for_each(|id| {comb_ids_map.set((id-1) as usize, true); ()});
 
         // 转成特定格式字符串
-        Ok(comb_ids_map.bitmap_to_string()?)
+        Ok(comb_ids_map.to_base_70()?)
     }
 }

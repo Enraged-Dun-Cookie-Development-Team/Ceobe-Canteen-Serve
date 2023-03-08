@@ -1,11 +1,11 @@
 use bitmaps::Bitmap;
 
-pub trait BitmapI32Conv {
+pub trait BitmapVecI32Conv {
     /// 取出bitmap中所有为true的索引位置
     fn bitmap_to_i32(&self) -> Vec<i32>;
 }
 
-impl BitmapI32Conv for Bitmap<256> {
+impl BitmapVecI32Conv for Bitmap<256> {
     fn bitmap_to_i32(&self) -> Vec<i32> {
         let mut index_array = Vec::<i32>::new();
 

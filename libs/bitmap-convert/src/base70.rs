@@ -6,26 +6,24 @@ use crate::error::Error;
 const BASE_70: &str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~._()!*";
 
 
-pub trait BitmapStringConv {
+pub trait BitmapBase70Conv {
     type Error;
 
-    fn bitmap_to_string(&self) -> Result<String, Self::Error>;
+    fn to_base_70(&self) -> Result<String, Self::Error>;
 
-    fn string_to_bitmap(string: String) -> Result<Self, Self::Error> where Self: Sized;
+    fn base_70_to(string: String) -> Result<Self, Self::Error> where Self: Sized;
 }
 
-impl BitmapStringConv for Bitmap::<256> {
+impl BitmapBase70Conv for Bitmap::<256> {
     type Error = Error;
 
-    fn bitmap_to_string(&self) -> Result<String, Self::Error> {
+    fn to_base_70(&self) -> Result<String, Self::Error> {
         // 将字符串转换成索引
         let mut char_to_index: [u8; 127] = [0; 127];
         let index_to_char:Vec<char> = BASE_70.chars().collect();
-        let radix: u32 = index_to_char.len().try_into().unwrap();
-        let mut i: u8 = 0;
-        for c in index_to_char.clone() {
-            char_to_index[c as usize] = i;
-            i = i + 1;
+        let radix = index_to_char.len() as u32;
+        for (i, c) in index_to_char.iter().copied().enumerate() {
+            char_to_index[c as usize] = i as u8;
         }
 
         // 转换bitmap成u8数组
@@ -42,15 +40,13 @@ impl BitmapStringConv for Bitmap::<256> {
     }
 
     
-    fn string_to_bitmap(string: String) -> Result<Self, Self::Error> where Self: Sized {
+    fn base_70_to(string: String) -> Result<Self, Self::Error> where Self: Sized {
         // 将字符串转换成索引
         let mut char_to_index: [u8; 127] = [0; 127];
         let index_to_char:Vec<char> = BASE_70.chars().collect();
-        let radix: u32 = index_to_char.len().try_into().unwrap();
-        let mut i: u8 = 0;
-        for c in index_to_char {
-            char_to_index[c as usize] = i;
-            i = i + 1;
+        let radix = index_to_char.len() as u32;
+        for (i, c) in index_to_char.into_iter().enumerate() {
+            char_to_index[c as usize] = i as u8;
         }
 
         // 转换成u8数组

@@ -1,3 +1,3 @@
-pub mod bitmap_i32;
-pub mod bitmap_string;
+pub mod vec_i32;
+pub mod base70;
 pub mod error;
