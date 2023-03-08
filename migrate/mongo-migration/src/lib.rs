@@ -12,9 +12,9 @@ impl MigratorTrait for Migrator {
         manage
             .append(migrations::bakery::mansion::Migration)
             .await?
-            .append(migrations::ceobe_operation::plugin_version::Migration)
+            .append(migrations::ceobe::operation::plugin_version::Migration)
             .await?
-            .append(migrations::ceobe::user_property::Migration)
+            .append(migrations::ceobe::user::property::Migration)
             .await?;
 
         Ok(())
