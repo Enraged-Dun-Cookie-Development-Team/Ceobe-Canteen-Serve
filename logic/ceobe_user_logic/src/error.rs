@@ -6,6 +6,7 @@ use db_ops_prelude::{
     sql_models::fetcher::datasource_config::checkers::CheckError as DatasourceConfigCheckError,
 };
 use fetcher::datasource_config::OperateError as DatasourceConfigOperateError;
+use bitmap_convert::error::Error as BitmapConvError;
 use status_err::StatusErr;
 use thiserror::Error;
 
@@ -26,6 +27,10 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     CeobeUserPropertyCheckerror(#[from] CeobeUserPropertyCheckerror),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    BitmapConvError(#[from] BitmapConvError),
 
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),

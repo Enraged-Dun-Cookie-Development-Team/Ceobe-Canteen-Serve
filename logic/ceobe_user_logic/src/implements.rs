@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 
 use abstract_database::{ceobe::ToCeobe, fetcher::ToFetcher};
+use bitmap_convert::bitmap_string::BitmapStringConv;
 use bitmaps::Bitmap;
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
@@ -161,9 +162,6 @@ impl CeobeUserLogic {
         datasource_ids.into_iter().for_each(|id| {comb_ids_map.set((id-1) as usize, true); ()});
 
         // 转成特定格式字符串
-        let comb_ids:[u128;2] = comb_ids_map.into();
-        let first_number = comb_ids.first().unwrap().to_string();
-        let second_number = comb_ids.last().unwrap().to_string();
-        Ok(format!(r#"{first_number}-{second_number}"#))
+        Ok(comb_ids_map.bitmap_to_string()?)
     }
 }
