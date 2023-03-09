@@ -22,7 +22,8 @@ members = [
     "./macros/*",
     "./middle-server/*",
     "./logic/*",
-    "./global/*"
+    "./global/*",
+    "./dao/*"
 ]
 
 [workspace.dependencies]
@@ -82,6 +83,7 @@ ceobe-operate = { version = "0.1.0", path = "dao/ceobe-operate" }
 fetcher = { version = "0.1.0", path = "dao/fetcher" }
 bakery = { version = "0.1.0", path = "dao/bakery" }
 admin = { version = "0.1.0", path = "dao/admin" }
+ceobe-cookie = { version = "0.1.0", path = "dao/ceobe-cookie" }
 page_size =  { version = "0.1.0", path = "./libs/page_size" }
 mysql_func = { version = "0.1.0", path = "./libs/mysql_func" }
 bitmap-convert = { version = "0.1.0", path = "./libs/bitmap-convert" }
@@ -196,4 +198,7 @@ path = "./logic/fetcher_logic"
 
 [dependencies.ceobe_user_logic]
 path = "./logic/ceobe_user_logic"
+
+[dependencies.ceobe_cookie_logic]
+path = "./logic/ceobe_cookie_logic"
 

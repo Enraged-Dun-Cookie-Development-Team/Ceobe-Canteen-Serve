@@ -1,3 +1,4 @@
+use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
@@ -7,11 +8,18 @@ use typed_builder::TypedBuilder;
 #[sub_model(
     none(
         vis = "pub",
+        name = "CookieId",
+        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
+    ),
+    none(
+        vis = "pub",
         name = "SingleData",
-        extra(derive(Debug, Clone, TypedBuilder))
+        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
     )
 )]
 pub struct TempListModel {
+    #[sub_model(want("CookieId"))]
+    pub _id: ObjectId,
     pub platform: String,
     pub source: String,
     pub source_config_id: i32,
