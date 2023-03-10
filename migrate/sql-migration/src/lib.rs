@@ -1,3 +1,4 @@
+mod fetcher_datasource_combination;
 mod admin;
 mod ceobe_operation_announcement;
 mod ceobe_operation_app_version;
@@ -40,6 +41,7 @@ impl MigratorTrait for Migrator {
             fetcher_config::m20221231_205557_alter_group_name::Migration
             fetcher_config::m20230101_013601_create_index::Migration
             fetcher_datasource_config::m20230217_135012_add_sort_detele::Migration
+            fetcher_datasource_combination::m20230310_213209_create::Migration
         ]
     }
 }
