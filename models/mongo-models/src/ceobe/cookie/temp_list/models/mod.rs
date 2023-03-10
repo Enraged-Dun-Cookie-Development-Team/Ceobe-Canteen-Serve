@@ -8,22 +8,21 @@ use typed_builder::TypedBuilder;
 #[sub_model(
     none(
         vis = "pub",
-        name = "CookieId",
-        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
-    ),
-    none(
-        vis = "pub",
         name = "SingleData",
         extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
     )
 )]
 pub struct TempListModel {
-    #[sub_model(want("CookieId"))]
-    pub _id: ObjectId,
     pub platform: String,
     pub source: String,
     pub source_config_id: i32,
     pub time: i32,
     #[sub_model(want("SingleData"))]
     pub data: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+
+pub struct CookieId {
+    pub _id: ObjectId,
 }

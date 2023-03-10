@@ -29,7 +29,7 @@ where
             .doing(|collection| {
                 collection.find(
                     filter,
-                    FindOptions::builder().sort(doc! {"_id": -1}).limit(page_number).build(),
+                    FindOptions::builder().projection(doc! {"data":1, "_id":0}).sort(doc! {"_id": -1}).limit(page_number).build(),
                 )
             })
             .await?;
@@ -51,7 +51,7 @@ where
             .doing(|collection| {
                 collection.find_one(
                     filter,
-                    FindOneOptions::builder().sort(doc! {"_id": -1}).skip(page_number).build(),
+                    FindOneOptions::builder().projection(doc! {"_id":1}).sort(doc! {"_id": -1}).skip(page_number).build(),
                 )
             })
             .await?;
