@@ -47,7 +47,8 @@ impl MigrationTrait for Migration {
                 ColumnDef::new(FetcherDatasourceCombination::Bitmap4)
                     .bit(Some(64))
                     .not_null(),
-            );
+            )
+            .col(ColumnDef::new(FetcherDatasourceCombination::LastAccessTime).date_time().not_null());
         table.index(
             Index::create()
                 .col(FetcherDatasourceCombination::Bitmap1)

@@ -11,4 +11,5 @@ enum FetcherDatasourceCombination {
     Bitmap2,
     Bitmap3,
     Bitmap4,
+    LastAccessTime,
 }
