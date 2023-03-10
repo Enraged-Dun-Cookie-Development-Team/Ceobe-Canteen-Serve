@@ -1,5 +1,4 @@
 use select_only_model_derive::SelectOnlyModel;
-
 use sql_models::ceobe_operation::announcement::Entity;
 fn main() {}
 

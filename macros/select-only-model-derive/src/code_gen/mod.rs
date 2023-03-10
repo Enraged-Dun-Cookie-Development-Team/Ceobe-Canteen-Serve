@@ -1,6 +1,5 @@
-use crate::derive_input::container::DeriveInput;
-
 use self::{field_conv::SelectCols, trait_impl_code_gen::TraitImpl};
+use crate::derive_input::container::DeriveInput;
 
 pub mod field_conv;
 pub mod trait_impl_code_gen;
