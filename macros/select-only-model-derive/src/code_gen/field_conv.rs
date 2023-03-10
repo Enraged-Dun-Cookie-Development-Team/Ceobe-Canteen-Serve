@@ -25,14 +25,15 @@ impl<'s> SelectCols<'s> {
     pub fn from(src: &'s ModelFieldDefine, entity: &'s Type) -> Self {
         if let Some(expr) = &src.from_col {
             Self::ColAs(entity, expr, src.ident.as_ref().unwrap())
-        } else {
+        }
+        else {
             Self::Col(src.ident.as_ref().unwrap(), entity)
         }
     }
 
     fn get_entity(&self) -> &'s Type {
         match self {
-            SelectCols::Col(_, t) | SelectCols::ColAs(t, _, _) => t,
+            SelectCols::Col(_, t) | SelectCols::ColAs(t, ..) => t,
         }
     }
 
