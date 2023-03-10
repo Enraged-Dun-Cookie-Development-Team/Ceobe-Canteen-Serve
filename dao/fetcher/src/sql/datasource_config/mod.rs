@@ -19,13 +19,13 @@ use thiserror::Error;
 pub enum OperateError {
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
-    #[error("蹲饼器 Datasource {0} 不存在")]
+    #[error("蹲饼器 Datasource {0}:{1:?} 不存在")]
     #[status_err(err(
         err_code = 0x0007,
         prefix = "ErrPrefix::NOT_FOUND",
         resp_msg = "蹲饼器数据源不存在"
     ))]
-    DatasourceNotFound(i32),
+    DatasourceNotFound(i32, Option<String>),
     #[error("Datasources有不存在")]
     #[status_err(err(
         err_code = 0x0008,

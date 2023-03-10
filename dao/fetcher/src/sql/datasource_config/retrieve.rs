@@ -1,14 +1,16 @@
 use std::ops::Deref;
 
 use db_ops_prelude::database_operates::NoConnect;
+use db_ops_prelude::ext_traits::select_only_model::SelectPartial;
 use db_ops_prelude::get_connect::GetDatabaseConnect;
 use db_ops_prelude::get_zero_data_time;
+
 use page_size::{database::WithPagination, request::Paginator};
 use db_ops_prelude::sea_orm::{
     ColumnTrait, Condition, ConnectionTrait, EntityTrait, PaginatorTrait,
     QueryFilter, QuerySelect,
 };
-use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource};
+use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource, NewCookiePushInfo};
 use db_ops_prelude::smallvec::SmallVec;
 use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourcePlatform;
 use tap::TapFallible;
@@ -20,7 +22,8 @@ use super::{
 
 impl DatasourceOperate<'_, NoConnect> {
     pub async fn find_platform_by_id(
-        db: &impl ConnectionTrait, id: i32,
+        db: &impl ConnectionTrait,
+        id: i32,
     ) -> OperateResult<DatasourcePlatform> {
         Entity::find_by_id(id)
             .select_only()
@@ -29,11 +32,13 @@ impl DatasourceOperate<'_, NoConnect> {
             .into_model()
             .one(db)
             .await?
-            .ok_or(OperateError::DatasourceNotFound(id))
+            .ok_or(OperateError::DatasourceNotFound(id, None))
     }
 
     pub async fn find_delete_model_by_datasource_and_unique_key(
-        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
+        db: &impl ConnectionTrait,
+        datasource: &str,
+        unique_key: &str,
     ) -> OperateResult<Model> {
         Entity::find()
             .filter(Column::Datasource.eq(datasource))
@@ -54,7 +59,9 @@ where
     #[instrument(skip(self))]
     /// 分页获取全部数据源列表
     pub async fn find_all_with_paginator(
-        &self, page_size: Paginator, platform: Option<String>,
+        &self,
+        page_size: Paginator,
+        platform: Option<String>,
         datasource: Option<String>,
     ) -> OperateResult<Vec<BackendDatasource>> {
         info!(
@@ -92,7 +99,8 @@ where
     #[instrument(skip(self))]
     /// 获取单个平台下的全部数据源列表
     pub async fn find_by_platform(
-        &self, platform: &str,
+        &self,
+        platform: &str,
     ) -> OperateResult<Vec<DataSourceForFetcherConfig>> {
         info!(datasourceList.platform = platform,);
         let db = self.get_connect();
@@ -161,7 +169,9 @@ where
     #[instrument(skip(self), ret)]
     /// 获取数据源总数
     pub async fn count(
-        &self, platform: Option<String>, datasource: Option<String>,
+        &self,
+        platform: Option<String>,
+        datasource: Option<String>,
     ) -> OperateResult<u64> {
         let db = self.get_connect();
         Entity::find()
@@ -203,5 +213,31 @@ where
                     info!(datasourceList.len = list.len(),  datasourceList.datasource = ?list );
                 });
             })
+    }
+
+    pub async fn find_pushing_info_by_datasource_id_and_db_unique_key(
+        &self,
+        datasource: &str,
+        unique_key: &str,
+    ) -> OperateResult<NewCookiePushInfo> {
+        let db = self.get_connect();
+
+        let v = Entity::find()
+            .filter(
+                Condition::all()
+                    .add(Column::Datasource.eq(datasource))
+                    .add(Column::DbUniqueKey.eq(unique_key)),
+            )
+            .select_for()
+            .one(db)
+            .await?
+            .ok_or_else(|| {
+                OperateError::DatasourceNotFound(
+                    0,
+                    Some(datasource.to_string()),
+                )
+            })?;
+
+        Ok(v)
     }
 }

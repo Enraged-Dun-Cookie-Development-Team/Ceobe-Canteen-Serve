@@ -31,7 +31,7 @@ where
             config.into_active_model().update(db).await?;
         }
         else {
-            return Err(OperateError::DatasourceNotFound(config.id.unwrap()));
+            return Err(OperateError::DatasourceNotFound(config.id.unwrap(),None));
         };
 
         Ok(())
