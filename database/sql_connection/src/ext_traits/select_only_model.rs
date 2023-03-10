@@ -3,7 +3,10 @@ use sea_orm::{
 };
 
 pub trait SelectOnlyModel {
-    fn select_cols<E: EntityTrait>(selector: Select<E>) -> Select<E>;
+    fn select_cols<E: EntityTrait>(selector: Select<E>) -> Select<E>{
+        selector.select_only()
+        // .column_as(col, "a")
+    }
 }
 
 pub trait SelectPartial {
