@@ -22,8 +22,7 @@ use super::{
 
 impl DatasourceOperate<'_, NoConnect> {
     pub async fn find_platform_by_id(
-        db: &impl ConnectionTrait,
-        id: i32,
+        db: &impl ConnectionTrait, id: i32,
     ) -> OperateResult<DatasourcePlatform> {
         Entity::find_by_id(id)
             .select_only()
@@ -57,9 +56,7 @@ where
     #[instrument(skip(self))]
     /// 分页获取全部数据源列表
     pub async fn find_all_with_paginator(
-        &self,
-        page_size: Paginator,
-        platform: Option<String>,
+        &self, page_size: Paginator, platform: Option<String>,
         datasource: Option<String>,
     ) -> OperateResult<Vec<BackendDatasource>> {
         info!(
@@ -97,8 +94,7 @@ where
     #[instrument(skip(self))]
     /// 获取单个平台下的全部数据源列表
     pub async fn find_by_platform(
-        &self,
-        platform: &str,
+        &self, platform: &str,
     ) -> OperateResult<Vec<DataSourceForFetcherConfig>> {
         info!(datasourceList.platform = platform,);
         let db = self.get_connect();
@@ -170,9 +166,7 @@ where
     #[instrument(skip(self), ret)]
     /// 获取数据源总数
     pub async fn count(
-        &self,
-        platform: Option<String>,
-        datasource: Option<String>,
+        &self, platform: Option<String>, datasource: Option<String>,
     ) -> OperateResult<u64> {
         let db = self.get_connect();
         Entity::find()
