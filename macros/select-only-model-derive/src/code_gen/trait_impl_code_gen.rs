@@ -16,11 +16,9 @@ impl<'s> ToTokens for TraitImpl<'s> {
         let token = quote! {
 
             impl ::sql_connection::SelectOnlyModel for #ident{
-                fn select_cols<E: EntityTrait>(selector: Select<E>) -> Select<E>{
-                    use ::sql_connection::EntityTrait;
-                    selector
+                fn select_cols<E: ::sql_connection::EntityTrait>(selector: ::sql_connection::Select<E>) -> ::sql_connection::Select<E>{
                     #(#iter)*
-
+                    selector
                 }
             }
         };

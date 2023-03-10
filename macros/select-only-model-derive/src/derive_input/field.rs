@@ -7,7 +7,7 @@ use darling::FromField;
 pub struct ModelFieldDefine{
     pub(crate) ident:Option<syn::Ident>,
     #[darling(default)]
-    pub(crate) from_col:Option<syn::Expr>,
+    pub(crate) from_col:Option<syn::Ident>,
 }
 
 impl ModelFieldDefine {
