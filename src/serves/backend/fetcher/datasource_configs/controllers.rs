@@ -1,5 +1,6 @@
 use abstract_database::fetcher::ToFetcher;
-use axum::{extract::Query, Json};
+use axum::{extract::{Query, multipart::MultipartRejection, Multipart}, Json};
+use ceobe_qiniu_upload::QiniuUploader;
 use checker::CheckExtract;
 use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform};
 use fetcher_logic::{
@@ -12,6 +13,7 @@ use fetcher_logic::{
 use futures::future;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use qiniu_cdn_upload::upload;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
@@ -20,7 +22,7 @@ use super::{
     error::{DatasourceConfigError, DatasourceConfigRResult},
     FetcherDatasourceCheck, PageSizePretreatment,
 };
-use crate::router::FetcherConfigControllers;
+use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::{view::AvatarId, error::FieldNotExist, DataSourceAvatarPayload}};
 
 impl FetcherConfigControllers {
     /// 获取平台与数据源类型列表
@@ -149,6 +151,27 @@ impl FetcherConfigControllers {
                 .find_by_platform(&filter.type_id)
                 .await?;
             let resp = list.into_iter().map(Into::into).collect();
+            Ok(resp)
+        })
+        .await
+    }
+
+    /// 上传数据源头像
+    #[instrument(ret, skip(uploader))]
+    pub async fn upload_avatar(
+        uploader: QiniuUploader,
+        multipart: Result<Multipart, MultipartRejection>,
+    ) -> DatasourceConfigRResult<AvatarId> {
+        resp_result::resp_try(async move {
+            let mut multipart = multipart?;
+            let field =
+                multipart.next_field().await?.ok_or(FieldNotExist)?;
+
+            let resp =
+                upload(&uploader, field, DataSourceAvatarPayload::new())
+                    .await
+                    .map(|resp| AvatarId::from_resp(resp, &uploader))?;
+
             Ok(resp)
         })
         .await
