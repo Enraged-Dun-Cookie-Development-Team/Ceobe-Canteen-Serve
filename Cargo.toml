@@ -148,6 +148,7 @@ page_size.workspace = true
 fetcher.workspace = true
 bakery.workspace = true
 admin.workspace = true
+ceobe-cookie.workspace = true
 
 [dependencies.tokio]
 workspace = true
