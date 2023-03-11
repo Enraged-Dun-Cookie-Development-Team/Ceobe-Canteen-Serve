@@ -24,6 +24,7 @@ bitmaps.workspace = true
 bitmap-convert.workspace = true
 bnum = "0.5.0"
 ceobe-qiniu-upload.workspace = true
+ceobe-cookie.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"

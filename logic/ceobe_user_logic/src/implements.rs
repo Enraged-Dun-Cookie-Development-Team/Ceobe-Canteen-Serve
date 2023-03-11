@@ -4,6 +4,7 @@ use abstract_database::{ceobe::ToCeobe, fetcher::ToFetcher};
 use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
 use bnum::{types::U256, BUint};
+use ceobe_cookie::ToCookie;
 use ceobe_qiniu_upload::QiniuUploader;
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
@@ -29,7 +30,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error,
     error::{LogicResult, LogicError},
-    view::{DatasourceConfig, MobIdReq},
+    view::{DatasourceConfig, MobIdReq, CombIdToCookieIdPlayLoad},
 };
 
 pub struct CeobeUserLogic;
@@ -68,7 +69,8 @@ impl CeobeUserLogic {
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        mob_id: UserMobId, uploader: QiniuUploader,
+        uploader: QiniuUploader, 
+        mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
@@ -97,8 +99,13 @@ impl CeobeUserLogic {
             .map(|bson_uuid| bson_uuid.into())
             .collect::<Vec<uuid::Uuid>>();
 
-        // 生成组合id并返回给用户
-        let comb_ids = Self::get_datasources_comb_ids(handle_user_set.clone(), db, uploader).await?;
+        // 获取数据源ids
+        let datasource_ids = db.fetcher().datasource().find_ids_by_uuids(handle_user_set.clone()).await?;
+        // 获取数据源组合下最新饼id
+        let cookie_id = mongo.ceobe().cookie().temp_list().get_first_cookie_id(datasource_ids.clone()).await?;
+
+        // 生成组合id，并且上传到对象储存
+        let comb_ids = Self::get_datasources_comb_ids(db, uploader, datasource_ids, cookie_id).await?;
 
         // 获取用户设置有且数据源存在的列表
         let resp = DatasourceConfig {
@@ -152,9 +159,7 @@ impl CeobeUserLogic {
         Ok(())
     }
 
-    async fn get_datasources_comb_ids(datasource_uuid: Vec<Uuid>, db: SqlDatabaseOperate, uploader: QiniuUploader) -> LogicResult<String> {
-        // 通过Vec<uuids>获取Vec<i32>
-        let datasource_ids = db.fetcher().datasource().find_ids_by_uuids(datasource_uuid).await?;
+    async fn get_datasources_comb_ids(db:SqlDatabaseOperate, uploader: QiniuUploader, datasource_ids: Vec<i32>, cookie_id: Option<String>) -> LogicResult<String> {
 
         // 根据数据库id生成bitmap
         let mut comb_ids_map = Bitmap::<256>::new();
@@ -165,8 +170,6 @@ impl CeobeUserLogic {
         // 转换bitmap成u64数组
         let value = U256::from_radix_le(comb_ids_map.as_bytes(), 256).ok_or(bitmap_convert::error::Error::from(bitmap_convert::error::Error::LargeThen256))?;
         let datasource_vec: [u64; 4] = value.into();
-        
-        // TODO: 上传数据源组合到对象储存
 
         // 创建数据源组合并记录
         let info = CombinationInfo {
@@ -176,7 +179,16 @@ impl CeobeUserLogic {
             bitmap3: datasource_vec[2],
             bitmap4: datasource_vec[3],
         };
-        db.fetcher().datasource_combination().create(info).await?;
+        // 如果数据库存在数据源就不创建
+        if let false = db.fetcher().datasource_combination().is_comb_id_exist(&comb_id).await? {
+            db.fetcher().datasource_combination().create(info).await?;
+            
+            // 上传数据源组合到对象储存
+            uploader.upload_json(CombIdToCookieIdPlayLoad {
+                cookie_id,
+                file_name: String::from("datasource-comb/") + &comb_id,
+            }).await?;
+        }
 
 
         // 转成特定格式字符串

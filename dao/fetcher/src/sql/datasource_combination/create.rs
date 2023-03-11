@@ -24,9 +24,6 @@ where
         );
 
         let db = self.get_connect();
-        if let true = DatasourceCombinationOperate::is_comb_id_exist(db, &comb_id_info.combination_id).await? {
-            return Ok(())
-        }
 
         comb_id_info.into_active_model_with_access_time().save(db).await?;
         Ok(())

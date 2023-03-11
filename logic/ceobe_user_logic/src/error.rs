@@ -9,9 +9,14 @@ use fetcher::{
     datasource_config::OperateError as DatasourceConfigOperateError,
     datasource_combination::OperateError as DatasourceCombinationOperateError
 };
+use ceobe_cookie:: {
+    temp_list::OperateError as TemporaryListOperateError,
+};
 use bitmap_convert::error::Error as BitmapConvError;
 use status_err::StatusErr;
 use thiserror::Error;
+
+use ceobe_qiniu_upload::Error as QiniuError;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
@@ -37,6 +42,10 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
+    TemporaryListOperateError(#[from] TemporaryListOperateError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
     BitmapConvError(#[from] BitmapConvError),
 
     #[error("查询数据库异常: {0}")]
@@ -44,6 +53,10 @@ pub enum LogicError {
 
     #[error("Mongo异常: {0}")]
     Mongo(#[from] MongoDbError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    Upload(#[from] QiniuError)
 }
 
 #[allow(dead_code)]

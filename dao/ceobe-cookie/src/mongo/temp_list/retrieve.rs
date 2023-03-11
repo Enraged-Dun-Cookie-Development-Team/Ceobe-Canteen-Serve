@@ -18,6 +18,7 @@ impl<'db, Conn> TempListOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, TempListModel>,
 {
+    /// 分页查询饼数据
     #[instrument(skip(self), ret)]
     pub async fn get_data_by_paginate(
         &'db self, first_id: String, datasources: Vec<i32>, page_number: i64
@@ -40,6 +41,7 @@ where
         Ok(res)
     }
 
+    /// 获取下一页的饼id
     #[instrument(skip(self), ret)]
     pub async fn get_next_page_cookie_id(
         &'db self, first_id: String, datasources: Vec<i32>, page_number: u64
@@ -52,6 +54,31 @@ where
                 collection.find_one(
                     filter,
                     FindOneOptions::builder().projection(doc! {"_id":1}).sort(doc! {"_id": -1}).skip(page_number).build(),
+                )
+            })
+            .await?;
+
+        let res = match cookie_id {
+            Some(id) => Some(id._id.to_string()),
+            None => None,
+        };
+
+        Ok(res)
+    }
+
+    /// 获取数据源第一个饼id
+    #[instrument(skip(self), ret)]
+    pub async fn get_first_cookie_id(
+        &'db self, datasources: Vec<i32>
+    ) -> OperateResult<Option<String>> {
+        let collection = self.get_collection()?;
+        let collection: &CollectionGuard<CookieId> = &collection.with_mapping();
+        let filter = doc! {"source_config_id": {"$in":datasources}};
+        let cookie_id = collection
+            .doing(|collection| {
+                collection.find_one(
+                    filter,
+                    FindOneOptions::builder().projection(doc! {"_id":1}).sort(doc! {"_id": -1}).build(),
                 )
             })
             .await?;
