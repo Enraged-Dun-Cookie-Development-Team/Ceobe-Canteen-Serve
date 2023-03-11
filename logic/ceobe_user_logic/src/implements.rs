@@ -159,7 +159,7 @@ impl CeobeUserLogic {
 
         // 根据数据库id生成bitmap
         let mut comb_ids_map = Bitmap::<256>::new();
-        datasource_ids.into_iter().for_each(|id| {comb_ids_map.set((id-1) as usize, true); ()});
+        datasource_ids.into_iter().for_each(|id| {comb_ids_map.set(id as usize, true); ()});
 
         // 转成特定格式字符串
         Ok(comb_ids_map.to_base_70()?)
