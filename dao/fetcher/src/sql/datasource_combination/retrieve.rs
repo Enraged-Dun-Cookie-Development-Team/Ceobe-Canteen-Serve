@@ -1,26 +1,20 @@
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, ActiveModelTrait, EntityTrait, QuerySelect, Condition, DbBackend, Statement}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{self, Entity, Column, CombinationId}};
+use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, ActiveModelTrait, EntityTrait, QuerySelect, Condition, DbBackend, Statement}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{self, Entity, Column, CombinationId}, database_operates::NoConnect};
 use tracing::{info, instrument};
 
 use crate::datasource_combination::OperateError;
 
 use super::{DatasourceCombinationOperate, OperateResult};
 
-
-
-impl<'c, C> DatasourceCombinationOperate<'c, C>
-where
-    C: GetDatabaseConnect,
-    C::Connect: ConnectionTrait,
-{
-    #[instrument(ret, skip(self))]
-    /// 根据一个数据源查找对应的数据源组合id
-    pub async fn find_comb_id_by_one_datasource(
-        &self, datasource_id: i32,
+impl DatasourceCombinationOperate<'_, NoConnect> {
+    #[instrument(ret, skip(db))]
+    /// 创建数据源组合数据
+    pub async fn find_comb_id_by_one_datasource_not_db(
+        db: &impl ConnectionTrait, datasource_id: i32
     ) -> OperateResult<Vec<String>> {
         info!(
             datasourceComb.datasource_id = datasource_id,
         );
-        let db = self.get_connect();
+
         let mut sql = String::from("SELECT combination_id FROM fetcher_datasource_combination");
         
         let index: u64 = (datasource_id % 64).try_into().unwrap();
@@ -43,5 +37,22 @@ where
             .into_iter()
             .map(|id| id.combination_id)
             .collect())
+    }
+}
+
+impl<'c, C> DatasourceCombinationOperate<'c, C>
+where
+    C: GetDatabaseConnect,
+    C::Connect: ConnectionTrait,
+{
+    /// 根据一个数据源查找对应的数据源组合id
+    pub async fn find_comb_id_by_one_datasource(
+        &self, datasource_id: i32,
+    ) -> OperateResult<Vec<String>> {
+        info!(
+            datasourceComb.datasource_id = datasource_id,
+        );
+        let db = self.get_connect();
+        Ok(DatasourceCombinationOperate::find_comb_id_by_one_datasource_not_db(db, datasource_id).await?)
     }
 }

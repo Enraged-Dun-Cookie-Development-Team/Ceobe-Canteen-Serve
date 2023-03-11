@@ -1,3 +1,4 @@
+pub mod verify;
 pub mod delete;
 pub mod retrieve;
 pub mod create;
