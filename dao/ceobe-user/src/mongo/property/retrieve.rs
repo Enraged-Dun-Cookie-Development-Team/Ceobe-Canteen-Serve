@@ -1,11 +1,14 @@
 use db_ops_prelude::{
-    mongo_connection::{CollectionGuard, MongoDbCollectionTrait},
+    futures::TryStreamExt,
+    mongo_connection::{
+        CollectionGuard, MongoDbCollectionTrait, MongoDbError,
+    },
     mongo_models::ceobe::user_property::models::{
         UserDatasource, UserMobId, UserPropertyModel,
     },
     mongodb::{
         bson::{doc, Document, Uuid},
-        options::FindOneOptions,
+        options::{FindOneOptions, FindOptions},
     },
     tap::Tap,
 };
@@ -39,7 +42,8 @@ where
 
     /// 根据用户mob查询数据源配置
     pub async fn find_datasource_list_by_mob(
-        &'db self, mob_id: UserMobId,
+        &'db self,
+        mob_id: UserMobId,
     ) -> OperateResult<Vec<Uuid>> {
         info!(user.mob_id = %mob_id.mob_id);
         let collection = self.get_collection()?;
@@ -48,5 +52,36 @@ where
             &collection.with_mapping(),
         )
         .await
+    }
+
+    pub async fn find_all_subscribed_user_mob_id(
+        &'db self,
+        datasource_id: Uuid,
+    ) -> OperateResult<Vec<UserMobId>> {
+        info!(datasource.uuid = %datasource_id);
+
+        let collection = self.get_collection()?;
+
+        let v = collection
+            .with_mapping()
+            .doing(|collection| {
+                collection.find(
+                    doc! {
+                        "datasource_push": {
+                            "$in": [
+                                datasource_id
+                                ]
+                        }
+                    },
+                    FindOptions::builder()
+                        .projection(doc! {"mob_id": 1})
+                        .build(),
+                )
+            })
+            .await?
+            .map_err(MongoDbError::from)
+            .try_collect()
+            .await?;
+        Ok(v)
     }
 }
