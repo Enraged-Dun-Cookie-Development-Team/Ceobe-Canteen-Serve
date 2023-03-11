@@ -51,7 +51,7 @@ use crate::{
 pub struct Model {
     /// 平台type
     #[sea_orm(primary_key)]
-    #[sub_model(want("DataSourceForFetcherConfig"))]
+    #[sub_model(want("DataSourceForFetcherConfig"),want("NewCookiePushInfo"))]
     pub id: i32,
     #[sub_model(want("DatasourcePlatform"))]
     pub platform: String,
@@ -78,7 +78,8 @@ pub struct Model {
     #[sub_model(
         ignore("BackendDatasource"),
         want("FrontendDatasource"),
-        want("DatasourceUuid")
+        want("DatasourceUuid"),
+        want("NewCookiePushInfo")
     )]
     pub unique_id: Uuid,
     /// 数据库使用的Unique Key
