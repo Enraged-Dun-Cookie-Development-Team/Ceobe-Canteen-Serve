@@ -71,7 +71,8 @@ pub struct Model {
     #[sub_model(
         ignore("BackendDatasource"),
         want("FrontendDatasource"),
-        want("DatasourceUuid")
+        want("DatasourceUuid"),
+        want("NewCookiePushInfo")
     )]
     pub unique_id: Uuid,
     /// 数据库使用的Unique Key
