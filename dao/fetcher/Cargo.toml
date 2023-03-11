@@ -14,3 +14,4 @@ abstract_database.workspace = true
 tap.workspace = true
 uuid.workspace = true
 page_size.workspace = true
+bitmaps.workspace = true
