@@ -1,6 +1,8 @@
 use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, ActiveModelTrait, EntityTrait, QuerySelect, Condition, DbBackend, Statement}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{self, Entity, Column, CombinationId}};
 use tracing::{info, instrument};
 
+use crate::datasource_combination::OperateError;
+
 use super::{DatasourceCombinationOperate, OperateResult};
 
 
@@ -10,7 +12,7 @@ where
     C: GetDatabaseConnect,
     C::Connect: ConnectionTrait,
 {
-    #[instrument(skip(self))]
+    #[instrument(ret, skip(self))]
     /// 根据一个数据源查找对应的数据源组合id
     pub async fn find_comb_id_by_one_datasource(
         &self, datasource_id: i32,
@@ -29,7 +31,7 @@ where
             1 => {sql += &format!(r#" WHERE bitmap2 & {datasource_base2} = {datasource_base2}"#)},
             2 => {sql += &format!(r#" WHERE bitmap3 & {datasource_base2} = {datasource_base2}"#)},
             3 => {sql += &format!(r#" WHERE bitmap4 & {datasource_base2} = {datasource_base2}"#)},
-            _ => todo!(),
+            _ => return Err(OperateError::LargeThen256),
         }
 
 

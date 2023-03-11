@@ -1,3 +1,4 @@
+pub mod delete;
 pub mod retrieve;
 pub mod create;
 use std::ops::Deref;
@@ -21,6 +22,13 @@ pub enum OperateError {
         http_code = "HttpCode::CONFLICT"
     ))]
     DatasourceCombExist(String),
+    #[error("数据源超出256个")]
+    #[status_err(err(
+        prefix = "ErrPrefix::CHECKER",
+        err_code = 0x001A,
+        resp_msg = "数据源超出上限，请联系管理员"
+    ))]
+    LargeThen256,
 }
 
 type OperateResult<T> = Result<T, OperateError>;
