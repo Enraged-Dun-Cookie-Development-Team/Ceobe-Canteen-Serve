@@ -31,7 +31,7 @@ pub enum OperateError {
     #[error("CookieId错误")]
     #[status_err(err(
         prefix = "ErrPrefix::CHECKER",
-        err_code = 0x0008,
+        err_code = 0x001B,
         http_code = "HttpCode::CONFLICT",
         resp_msg = "饼id错误，请检查"
     ))]
