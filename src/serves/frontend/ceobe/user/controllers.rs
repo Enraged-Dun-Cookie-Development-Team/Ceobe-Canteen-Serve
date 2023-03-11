@@ -3,7 +3,7 @@ use axum::Json;
 use ceobe_user::ToCeobeUser;
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
-    view::{DatasourceConfig, MobIdReq, CombIdsResp},
+    view::{DatasourceConfig, MobIdReq},
 };
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
@@ -21,9 +21,9 @@ impl CeobeUserFrontend {
     pub async fn register(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         MapReject(mob_id): MapReject<Json<MobIdReq>, CeobeUserError>,
-    ) -> CeobeUserRResult<CombIdsResp> {
-        Ok(rtry!(CeobeUserLogic::create_user(mongo, db, mob_id).await)
-        ).into()
+    ) -> CeobeUserRResult<()> {
+        rtry!(CeobeUserLogic::create_user(mongo, db, mob_id).await);
+        Ok(()).into()
     }
 
     /// 获取用户数据源配置
@@ -47,8 +47,8 @@ impl CeobeUserFrontend {
             Json<UserDatasource>,
             CeobeUserError,
         >,
-    ) -> CeobeUserRResult<CombIdsResp> {
-        Ok(rtry!(
+    ) -> CeobeUserRResult<()> {
+        rtry!(
             CeobeUserLogic::update_datasource(
                 mongo,
                 db,
@@ -56,8 +56,8 @@ impl CeobeUserFrontend {
                 mob_id
             )
             .await
-        ))
-        .into()
+        );
+        Ok(()).into()
     }
 
     /// 更新用户最后活跃时间

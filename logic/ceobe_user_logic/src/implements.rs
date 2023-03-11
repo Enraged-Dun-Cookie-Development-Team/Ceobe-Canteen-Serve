@@ -27,7 +27,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error,
     error::LogicResult,
-    view::{DatasourceConfig, MobIdReq, CombIdsResp},
+    view::{DatasourceConfig, MobIdReq},
 };
 
 pub struct CeobeUserLogic;
@@ -36,7 +36,7 @@ impl CeobeUserLogic {
     /// 新建数据源配置
     pub async fn create_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
-    ) -> LogicResult<CombIdsResp> {
+    ) -> LogicResult<()> {
         // TODO: 验证mob_id是否为小刻食堂旗下mob id
 
         // 获取所有数据源的uuid列表
@@ -60,12 +60,7 @@ impl CeobeUserLogic {
         // 将用户信息存入数据库
         mongo.ceobe().user().property().create(user_checked).await?;
 
-        // 生成组合id并返回给用户
-        let comb_ids = Self::get_datasources_comb_ids(datasource_uuids, db).await?;
-
-        Ok(CombIdsResp {
-            datasource_comb_id: comb_ids,
-        })
+        Ok(())
     }
 
     /// 获取用户数据源配置
@@ -91,15 +86,22 @@ impl CeobeUserLogic {
         let user_config_set: HashSet<bson::Uuid> =
             HashSet::from_iter(user_datasource_config.clone());
 
+        // 去除已被删除的数据源后的结果
+        let handle_user_set = user_config_set
+            .into_iter()
+            .filter(|uuid| {
+                datasource_set.contains(&uuid.to_owned().into())
+            })
+            .map(|bson_uuid| bson_uuid.into())
+            .collect::<Vec<uuid::Uuid>>();
+
+        // 生成组合id并返回给用户
+        let comb_ids = Self::get_datasources_comb_ids(handle_user_set.clone(), db).await?;
+
         // 获取用户设置有且数据源存在的列表
         let resp = DatasourceConfig {
-            datasource_config: user_config_set
-                .into_iter()
-                .filter(|uuid| {
-                    datasource_set.contains(&uuid.to_owned().into())
-                })
-                .map(|bson_uuid| bson_uuid.into())
-                .collect::<Vec<uuid::Uuid>>(),
+            datasource_config: handle_user_set,
+            datasource_comb_id: comb_ids
         };
 
         // 将删除过已不存在的数据源列表存回数据库
@@ -119,7 +121,7 @@ impl CeobeUserLogic {
     pub async fn update_datasource(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
         datasource_config: Vec<bson::Uuid>, mob_id: UserMobId,
-    ) -> LogicResult<CombIdsResp> {
+    ) -> LogicResult<()> {
         let user_unchecked: UserPropertyUncheck =
             UserPropertyUncheck::builder()
                 .mob_id(mob_id.mob_id)
@@ -144,18 +146,13 @@ impl CeobeUserLogic {
                 user_config.datasource_push.clone(),
             )
             .await?;
-            
-        // 生成组合id并返回给用户
-        let comb_ids = Self::get_datasources_comb_ids(user_config.datasource_push, db).await?;
 
-        Ok(CombIdsResp {
-            datasource_comb_id: comb_ids,
-        })
+        Ok(())
     }
 
-    async fn get_datasources_comb_ids(datasource_uuid: Vec<bson::Uuid>, db: SqlDatabaseOperate) -> LogicResult<String> {
+    async fn get_datasources_comb_ids(datasource_uuid: Vec<Uuid>, db: SqlDatabaseOperate) -> LogicResult<String> {
         // 通过Vec<uuids>获取Vec<i32>
-        let datasource_ids = db.fetcher().datasource().find_ids_by_uuids(vec_bson_uuid_to_uuid(datasource_uuid)).await?;
+        let datasource_ids = db.fetcher().datasource().find_ids_by_uuids(datasource_uuid).await?;
 
         // 根据数据库id生成bitmap
         let mut comb_ids_map = Bitmap::<256>::new();
