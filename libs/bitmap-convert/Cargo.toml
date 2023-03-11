@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bitmaps = "3.2.0"
+bitmaps.workspace = true
 bnum = "0.5.0"
 status-err = { version = "0.1.0", path = "../status-err" }
 thiserror.workspace = true

@@ -5,7 +5,10 @@ use db_ops_prelude::{
     sea_orm,
     sql_models::fetcher::datasource_config::checkers::CheckError as DatasourceConfigCheckError,
 };
-use fetcher::datasource_config::OperateError as DatasourceConfigOperateError;
+use fetcher::{
+    datasource_config::OperateError as DatasourceConfigOperateError,
+    datasource_combination::OperateError as DatasourceCombinationOperateError
+};
 use bitmap_convert::error::Error as BitmapConvError;
 use status_err::StatusErr;
 use thiserror::Error;
@@ -15,6 +18,10 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     DatasourceConfigOperateError(#[from] DatasourceConfigOperateError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    DatasourceCombinationOperateError(#[from] DatasourceCombinationOperateError),
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
