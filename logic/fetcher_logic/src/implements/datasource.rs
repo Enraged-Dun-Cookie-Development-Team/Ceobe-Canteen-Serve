@@ -1,7 +1,7 @@
 use bool_or::TrueOrError;
 use fetcher::{
     config::ConfigOperate, datasource_config::DatasourceOperate,
-    platform_config::PlatformOperate,
+    platform_config::PlatformOperate, datasource_combination::DatasourceCombinationOperate,
 };
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
@@ -52,6 +52,13 @@ impl FetcherConfigLogic {
 
         // 删除数据源
         DatasourceOperate::delete_one(&ctx, id).await?;
+
+        // 删除数据源组合
+        let comb_ids = DatasourceCombinationOperate::find_comb_id_by_one_datasource_not_db(&ctx, id).await?;
+        // TODO: 删除对象储存中的数据源组合文件
+
+        // 删除数据源组合
+        DatasourceCombinationOperate::delete_by_datasource(&ctx, comb_ids).await?;
 
         // 提交事务
         ctx.submit().await?;
