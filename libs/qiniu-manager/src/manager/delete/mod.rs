@@ -13,7 +13,7 @@ impl Manager {
         );
 
         let bucket = &self.bucket;
-        bucket.delete_object(&object_name.object_name()).call()?;
+        bucket.delete_object(&object_name.object_name()).async_call().await?;
         
         Ok(())
     }
