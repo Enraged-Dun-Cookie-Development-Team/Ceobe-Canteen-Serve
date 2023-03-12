@@ -20,7 +20,7 @@ impl CeobeCookieLogic {
         let datasource_vec = datasource_map
             .bitmap_to_i32()
             .into_iter()
-            .map(|id| id + 1)
+            .map(|id| id)
             .collect::<Vec<i32>>();
 
         let (cookie_list, next_cookie_id) = future::join(
