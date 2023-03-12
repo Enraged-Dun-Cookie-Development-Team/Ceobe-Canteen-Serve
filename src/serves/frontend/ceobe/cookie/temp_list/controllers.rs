@@ -1,5 +1,5 @@
 use axum::extract::Query;
-use ceobe_cookie_logic::{implement::CeobeCookieLogic, view::{CookieListResp, CookieListReq}};
+use ceobe_cookie_logic::{impletements::CeobeCookieLogic, view::{CookieListResp, CookieListReq}};
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;

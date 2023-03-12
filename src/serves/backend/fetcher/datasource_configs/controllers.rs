@@ -116,9 +116,10 @@ impl FetcherConfigControllers {
     }
 
     // 删除数据源配置
-    #[instrument(ret, skip(db, notifier))]
+    #[instrument(ret, skip(db, notifier, manager))]
     pub async fn delete_datasource_config(
         db: SqlDatabaseOperate, notifier: SchedulerNotifier,
+        manager: QiniuManager,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
@@ -128,6 +129,7 @@ impl FetcherConfigControllers {
             FetcherConfigLogic::delete_datasource_by_id(
                 &notifier,
                 db,
+                manager,
                 datasource.id
             )
             .await

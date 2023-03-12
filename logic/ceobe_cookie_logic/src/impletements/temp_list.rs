@@ -8,7 +8,7 @@ use futures::future;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use serde_json::Value;
 
-use crate::implement::CeobeCookieLogic;
+use crate::impletements::CeobeCookieLogic;
 use crate::view::{CookieListReq, CookieListResp};
 
 impl CeobeCookieLogic {

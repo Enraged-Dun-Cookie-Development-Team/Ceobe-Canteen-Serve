@@ -10,7 +10,7 @@ pub use mime;
 pub use mime_guess;
 pub use manager::{
     ByteUploader, FilePayload, JsonPayload, ManagedUploader, PayloadContent,
-    PayloadLocal, ResponsePayload, Manager, ManagerBuilder,
+    PayloadLocal, ResponsePayload, Manager, ManagerBuilder, ObjectName
 };
 
 pub use crate::axum_starter::{

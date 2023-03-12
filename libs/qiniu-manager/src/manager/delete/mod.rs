@@ -8,7 +8,7 @@ use super::ObjectName;
 impl Manager {
     /// 删除对象储存文件，包含三次重试
     pub async fn delete(
-        &self, object_name: impl ObjectName,
+        &self, object_name: impl ObjectName<'_>,
     ) -> Result<(), Error> {
         info!(
             qiniu.bucket.delete = object_name.object_name(),

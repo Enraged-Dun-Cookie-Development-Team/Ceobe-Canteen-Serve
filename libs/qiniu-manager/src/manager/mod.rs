@@ -29,14 +29,14 @@ impl Manager {
     }
 }
 
-pub trait ObjectName {
-    const DIR: Option<String>;
+pub trait ObjectName<'s> {
+    const DIR: Option<&'s str>;
 
     fn file_name(&self) -> &str;
     
     fn object_name(&self) -> String {
         match Self::DIR {
-            Some(dir) => dir + self.file_name(),
+            Some(dir) => dir.to_owned() +"/"+ self.file_name(),
             None => self.file_name().to_owned()
         }
     }
