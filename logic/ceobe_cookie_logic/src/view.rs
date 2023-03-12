@@ -10,6 +10,7 @@ pub struct CookieListResp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+#[serde(deny_unknown_fields)]
 pub struct CookieListReq {
     pub datasource_comb_id: String,
     pub cookie_id: String,
