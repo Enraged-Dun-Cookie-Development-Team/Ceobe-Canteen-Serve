@@ -5,7 +5,7 @@ use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
 use bnum::{types::U256, BUint};
 use ceobe_cookie::ToCookie;
-use ceobe_qiniu_upload::QiniuUploader;
+use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
 use db_ops_prelude::{
@@ -22,21 +22,22 @@ use fetcher::{datasource_config::{
     OperateError as FetcherDatasourceOperateError, ToDatasource,
 }, datasource_combination::ToDatasourceCombination};
 use futures::future;
+use qiniu_cdn_upload::upload;
 use tokio::task;
-use tracing::warn;
+use tracing::{warn, log::error};
 use uuid::Uuid;
 use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
     error,
     error::{LogicResult, LogicError},
-    view::{DatasourceConfig, MobIdReq, CombIdToCookieIdPlayLoad},
+    view::{DatasourceConfig, MobIdReq, CombIdToCookieIdPlayLoad, CombIdToCookieId},
 };
 
 pub struct CeobeUserLogic;
 
 impl CeobeUserLogic {
-    /// 新建数据源配置
+    /// 新建手机端用户
     pub async fn create_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
     ) -> LogicResult<()> {
@@ -69,7 +70,7 @@ impl CeobeUserLogic {
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        uploader: QiniuUploader, 
+        qiniu: QiniuManager, 
         mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
@@ -105,7 +106,7 @@ impl CeobeUserLogic {
         let cookie_id = mongo.ceobe().cookie().temp_list().get_first_cookie_id(datasource_ids.clone()).await?;
 
         // 生成组合id，并且上传到对象储存
-        let comb_ids = Self::get_datasources_comb_ids(db, uploader, datasource_ids, cookie_id).await?;
+        let comb_ids = Self::get_datasources_comb_ids(db, qiniu, datasource_ids, cookie_id).await?;
 
         // 获取用户设置有且数据源存在的列表
         let resp = DatasourceConfig {
@@ -159,7 +160,7 @@ impl CeobeUserLogic {
         Ok(())
     }
 
-    async fn get_datasources_comb_ids(db:SqlDatabaseOperate, uploader: QiniuUploader, datasource_ids: Vec<i32>, cookie_id: Option<String>) -> LogicResult<String> {
+    async fn get_datasources_comb_ids(db:SqlDatabaseOperate, qiniu: QiniuManager, datasource_ids: Vec<i32>, cookie_id: Option<String>) -> LogicResult<String> {
 
         // 根据数据库id生成bitmap
         let mut comb_ids_map = Bitmap::<256>::new();
@@ -180,14 +181,25 @@ impl CeobeUserLogic {
             bitmap4: datasource_vec[3],
         };
         // 如果数据库存在数据源就不创建
-        if let false = db.fetcher().datasource_combination().is_comb_id_exist(&comb_id).await? {
+        if !db.fetcher().datasource_combination().is_comb_id_exist(&comb_id).await? {
             db.fetcher().datasource_combination().create(info).await?;
+
+            let source = CombIdToCookieId{cookie_id: cookie_id };
+            let payload = CombIdToCookieIdPlayLoad {
+                file_name: &comb_id,
+            };
             
-            // 上传数据源组合到对象储存
-            uploader.upload_json(CombIdToCookieIdPlayLoad {
-                cookie_id,
-                file_name: String::from("datasource-comb/") + &comb_id,
-            }).await?;
+            // 上传数据源组合到对象储存[重试3次]
+            let mut result =  Option::<ceobe_qiniu_upload::Error>::None;
+            for _ in 0..3 {
+                result = upload(&qiniu,  &source, payload).await.err();
+                if result.is_none() {
+                    break;
+                }
+            }
+            if let Some(err) = result {
+                Err(err)?;
+            }
         }
 
 
