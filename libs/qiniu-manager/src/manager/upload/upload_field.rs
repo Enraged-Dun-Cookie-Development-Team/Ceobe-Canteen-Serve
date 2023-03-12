@@ -1,9 +1,9 @@
 use tracing::instrument;
 
-use super::{payload::ByteUploader, ResponsePayload};
-use crate::{error, PayloadLocal, Uploader};
+use super::{payload::{ByteUploader, PayloadLocal}, ResponsePayload};
+use crate::{error, Manager};
 
-impl Uploader {
+impl Manager {
     #[instrument(skip_all, fields(
         content_type = field.content_type(),
         qiniu.obj = local.obj_name(),

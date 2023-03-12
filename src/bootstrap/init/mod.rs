@@ -15,7 +15,7 @@ pub mod service_init;
 pub struct State {
     request_client: RequestClient,
 
-    qiniu: Arc<ceobe_qiniu_upload::Uploader>,
+    qiniu: Arc<ceobe_qiniu_upload::Manager>,
     bili: QueryBiliVideo,
     qiniu_base_url: QiniuBaseUrl,
     // fetcher request url

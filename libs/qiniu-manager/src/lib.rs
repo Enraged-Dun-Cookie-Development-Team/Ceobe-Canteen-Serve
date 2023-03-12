@@ -2,17 +2,17 @@ mod axum_starter;
 mod error;
 
 mod config;
-mod uploader;
+mod manager;
 
 pub use config::{BaseUrl, GetBucket, SecretConfig};
 pub use error::{Error, UploaderNotFound};
 pub use mime;
 pub use mime_guess;
-pub use uploader::{
+pub use manager::{
     ByteUploader, FilePayload, JsonPayload, ManagedUploader, PayloadContent,
-    PayloadLocal, ResponsePayload, Uploader, UploaderBuilder,
+    PayloadLocal, ResponsePayload, Manager, ManagerBuilder,
 };
 
 pub use crate::axum_starter::{
-    QiniuBaseUrl, QiniuUpload, QiniuUploadState, QiniuUploader,
+    QiniuBaseUrl, QiniuUpload, QiniuUploadState, QiniuManager,
 };

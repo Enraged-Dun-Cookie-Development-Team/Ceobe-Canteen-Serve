@@ -15,7 +15,7 @@ use axum_starter::{
 };
 use ceobe_qiniu_upload::{
     BaseUrl, GetBucket, QiniuBaseUrl, QiniuUpload, QiniuUploadState,
-    QiniuUploader, ResponsePayload, SecretConfig,
+    QiniuManager, ResponsePayload, SecretConfig,
 };
 use futures::FutureExt;
 use qiniu_cdn_upload::{
@@ -24,7 +24,7 @@ use qiniu_cdn_upload::{
 };
 
 async fn upload(
-    uploader: QiniuUploader, mut file: Multipart,
+    uploader: QiniuManager, mut file: Multipart,
 ) -> Result<axum::Json<ResponsePayload>, String> {
     let source = file
         .next_field()

@@ -7,9 +7,9 @@ use super::{
     payload::{PayloadContent, PayloadLocal},
     ResponsePayload,
 };
-use crate::{error, Uploader};
+use crate::{error, Manager};
 
-impl Uploader {
+impl Manager {
     #[instrument(
         skip_all,
         fields(

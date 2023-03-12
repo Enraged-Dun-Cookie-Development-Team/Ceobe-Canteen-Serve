@@ -1,6 +1,6 @@
 use abstract_database::fetcher::ToFetcher;
 use axum::{extract::{Query, multipart::MultipartRejection, Multipart}, Json};
-use ceobe_qiniu_upload::QiniuUploader;
+use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
 use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform};
 use fetcher_logic::{
@@ -157,9 +157,9 @@ impl FetcherConfigControllers {
     }
 
     /// 上传数据源头像
-    #[instrument(ret, skip(uploader))]
+    #[instrument(ret, skip(qiniu))]
     pub async fn upload_avatar(
-        uploader: QiniuUploader,
+        qiniu: QiniuManager,
         multipart: Result<Multipart, MultipartRejection>,
     ) -> DatasourceConfigRResult<AvatarId> {
         resp_result::resp_try(async move {
@@ -168,9 +168,9 @@ impl FetcherConfigControllers {
                 multipart.next_field().await?.ok_or(FieldNotExist)?;
 
             let resp =
-                upload(&uploader, field, DataSourceAvatarPayload::new())
+                upload(&qiniu, field, DataSourceAvatarPayload::new())
                     .await
-                    .map(|resp| AvatarId::from_resp(resp, &uploader))?;
+                    .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
 
             Ok(resp)
         })

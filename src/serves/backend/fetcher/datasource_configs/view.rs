@@ -1,4 +1,4 @@
-use ceobe_qiniu_upload::{QiniuUploader, ResponsePayload};
+use ceobe_qiniu_upload::{QiniuManager, ResponsePayload};
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -9,10 +9,10 @@ pub struct AvatarId {
 impl AvatarId {
     pub(super) fn from_resp(
         ResponsePayload { key, .. }: ResponsePayload,
-        uploader: &QiniuUploader,
+        qiniu: &QiniuManager,
     ) -> Self {
         Self {
-            url: uploader.concat_url(key),
+            url: qiniu.concat_url(key),
         }
     }
 }

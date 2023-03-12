@@ -33,7 +33,7 @@ axum = { version = "0.6", features = ["multipart", "macros"] }
 axum-core = "0.3"
 axum-starter = { version = "0.5", features = ["logger"] }
 chrono = "0.4"
-ceobe-qiniu-upload = { version = "0.1.0", path = "libs/qiniu-upload" }
+ceobe-qiniu-upload = { version = "0.1.0", path = "libs/qiniu-manager" }
 futures = "0.3"
 tracing = { version = "0.1" }
 mongodb = "2"
@@ -88,6 +88,7 @@ page_size =  { version = "0.1.0", path = "./libs/page_size" }
 mysql_func = { version = "0.1.0", path = "./libs/mysql_func" }
 bitmap-convert = { version = "0.1.0", path = "./libs/bitmap-convert" }
 bitmaps = "3.2.0"
+qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 
 [dependencies]
 # Xss
@@ -135,7 +136,6 @@ axum-macros = "0.3"
 tracing = { workspace = true }
 dotenv = "0.15"
 tracing-unwrap = { workspace = true }
-qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 uuid = { version = "1.2.2", features = ["v4"] }
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 general-request-client.workspace = true
@@ -149,6 +149,7 @@ fetcher.workspace = true
 bakery.workspace = true
 admin.workspace = true
 ceobe-cookie.workspace = true
+qiniu-cdn-upload.workspace = true
 
 [dependencies.tokio]
 workspace = true

@@ -13,6 +13,7 @@ bytes = { version = "1.2.1", features = ["serde"] }
 futures = { workspace = true }
 mime = "0.3.16"
 mime_guess = "2.0.4"
+qiniu-objects-manager = { version = "0.2.0", features = ["async", "reqwest"] }
 qiniu-upload-manager = { version = "0.2.0", features = ["async", "reqwest"] }
 qiniu-upload-token = "0.2.0"
 serde = { workspace = true }

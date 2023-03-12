@@ -1,15 +1,17 @@
 use std::time::Duration;
 
+use qiniu_objects_manager::{ObjectsManager, Bucket};
 use qiniu_upload_manager::{AutoUploader, UploadManager, UploadTokenSigner};
 use qiniu_upload_token::credential::Credential;
 
 use crate::SecretConfig;
 
-pub struct UploaderBuilder {
+pub struct ManagerBuilder {
     uploader: ManagedUploader,
+    bucket: Bucket
 }
 
-impl UploaderBuilder {
+impl ManagerBuilder {
     pub fn new(
         secret: &impl SecretConfig, name: &(impl AsRef<str> + ?Sized),
     ) -> Self {
@@ -17,7 +19,7 @@ impl UploaderBuilder {
             Credential::new(secret.access_key(), secret.secret_key());
         let manage = UploadManager::builder(
             UploadTokenSigner::new_credential_provider(
-                credential,
+                credential.clone(),
                 name.as_ref(),
                 Duration::from_secs(3600),
             ),
@@ -25,12 +27,14 @@ impl UploaderBuilder {
         .build();
         Self {
             uploader: ManagedUploader::new(manage),
+            bucket: ObjectsManager::new(credential).bucket(name.as_ref()),
         }
     }
 
-    pub fn build(self) -> super::Uploader {
-        crate::Uploader {
+    pub fn build(self) -> super::Manager {
+        crate::Manager {
             uploader: self.uploader,
+            bucket: self.bucket
         }
     }
 }

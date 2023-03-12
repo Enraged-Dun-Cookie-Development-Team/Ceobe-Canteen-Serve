@@ -1,5 +1,5 @@
 use ceobe_qiniu_upload::{
-    FilePayload, JsonPayload, PayloadLocal, SecretConfig, Uploader,
+    FilePayload, JsonPayload, PayloadLocal, SecretConfig, Manager,
 };
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -35,7 +35,7 @@ fn read_config() -> SecretConfigure {
 async fn test_json_upload() {
     let cfg = read_config();
     let u = {
-        let t = Uploader::builder(&cfg, "frozen-string").build();
+        let t = Manager::builder(&cfg, "frozen-string").build();
         t
     };
 
@@ -86,7 +86,7 @@ async fn test_json_upload() {
 async fn test_file_upload() {
     let cfg = read_config();
     let u = {
-        let t = Uploader::builder(&cfg, "frozen-string").build();
+        let t = Manager::builder(&cfg, "frozen-string").build();
         t
     };
 

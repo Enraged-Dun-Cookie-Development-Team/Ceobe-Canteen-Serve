@@ -1,6 +1,6 @@
 use abstract_database::ceobe::ToCeobe;
 use axum::Json;
-use ceobe_qiniu_upload::QiniuUploader;
+use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
@@ -28,13 +28,13 @@ impl CeobeUserFrontend {
     }
 
     /// 获取用户数据源配置
-    #[instrument(ret, skip(db, mongo, uploader))]
+    #[instrument(ret, skip(db, mongo, qiniu))]
     pub async fn get_datasource_config_by_user(
-        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate, uploader: QiniuUploader, 
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate, qiniu: QiniuManager, 
         MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
-            CeobeUserLogic::get_datasource_by_user(mongo, db, uploader, mob_id).await
+            CeobeUserLogic::get_datasource_by_user(mongo, db, qiniu, mob_id).await
         ))
         .into()
     }

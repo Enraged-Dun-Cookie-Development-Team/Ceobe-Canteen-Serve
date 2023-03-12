@@ -1,32 +1,17 @@
-mod builder;
-mod payload;
-mod upload_field;
-mod upload_file;
-mod upload_json;
-use std::fmt::Debug;
-
 use futures::Future;
-use qiniu_upload_manager::AutoUploaderObjectParams;
 use tracing::info;
-pub use upload_json::JsonPayload;
+use qiniu_upload_manager::AutoUploaderObjectParams;
 
-pub use self::{
-    builder::{ManagedUploader, UploaderBuilder},
-    payload::{ByteUploader, FilePayload, PayloadContent, PayloadLocal},
-};
-use crate::{error, SecretConfig};
-#[derive(Debug)]
-pub struct Uploader {
-    pub(crate) uploader: ManagedUploader,
-}
+use crate::{Manager, ManagedUploader, error};
 
-impl Uploader {
-    pub fn builder(
-        secret: &impl SecretConfig, name: &(impl AsRef<str> + ?Sized),
-    ) -> builder::UploaderBuilder {
-        UploaderBuilder::new(secret, name)
-    }
+use self::payload::{PayloadLocal, PayloadContent};
 
+pub mod payload;
+pub mod upload_field;
+pub mod upload_file;
+pub mod upload_json;
+
+impl Manager {
     pub async fn custom_upload<'l, F, Fut, O>(
         &self, handle: F,
     ) -> Result<O, error::Error>
@@ -69,6 +54,7 @@ impl Uploader {
         Ok(response)
     }
 }
+
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct ResponsePayload {

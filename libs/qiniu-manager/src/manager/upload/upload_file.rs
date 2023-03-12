@@ -1,10 +1,10 @@
 use qiniu_upload_manager::AutoUploaderObjectParams;
 use tracing::{info, instrument};
 
-use super::ResponsePayload;
-use crate::{error, FilePayload, PayloadLocal, Uploader};
+use super::{ResponsePayload, payload::{FilePayload, PayloadLocal}};
+use crate::{error, Manager};
 
-impl Uploader {
+impl Manager {
     #[instrument(skip_all, fields(
         filename = ?payload.file_path().as_ref(),
         qiniu.obj = payload.obj_name(),

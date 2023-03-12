@@ -14,7 +14,7 @@ use axum_starter::{
 };
 use ceobe_qiniu_upload::{
     BaseUrl, GetBucket, PayloadLocal, QiniuBaseUrl, QiniuUpload,
-    QiniuUploader, SecretConfig, Uploader,
+    QiniuManager, SecretConfig, Manager,
 };
 use log::SetLoggerError;
 use url::Url;
@@ -41,7 +41,7 @@ async fn main() {
 
 #[derive(Debug, FromStateCollector, FromRef, Clone)]
 struct State {
-    uploader: Arc<Uploader>,
+    uploader: Arc<Manager>,
     qiniu_base: QiniuBaseUrl,
 }
 
@@ -89,7 +89,7 @@ fn router<S, B>() -> impl PrepareRouteEffect<S, B>
 where
     B: Send + Sync + 'static + HttpBody,
     S: Send + Sync + 'static + Clone,
-    Arc<Uploader>: FromRef<S>,
+    Arc<Manager>: FromRef<S>,
     QiniuBaseUrl: FromRef<S>,
     axum::body::Bytes: From<<B as HttpBody>::Data>,
     <B as HttpBody>::Error: std::error::Error + Send + Sync,
@@ -98,7 +98,7 @@ where
 }
 
 async fn upload_img(
-    qiniu: QiniuUploader, mut payload: Multipart,
+    qiniu: QiniuManager, mut payload: Multipart,
 ) -> Result<&'static str, String> {
     // obj name
     let obj_name = payload
