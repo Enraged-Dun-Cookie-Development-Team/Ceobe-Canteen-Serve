@@ -1,15 +1,15 @@
-pub mod verify;
+pub mod create;
 pub mod delete;
 pub mod retrieve;
-pub mod create;
+pub mod verify;
 use std::ops::Deref;
 
 use abstract_database::fetcher::FetcherDatabaseOperate;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
-    sea_orm
+    sea_orm,
 };
-use status_err::{ErrPrefix, StatusErr, HttpCode};
+use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
@@ -53,5 +53,7 @@ pub trait ToDatasourceCombination<C> {
 }
 
 impl<C> ToDatasourceCombination<C> for FetcherDatabaseOperate<'_, C> {
-    fn datasource_combination(&self) -> DatasourceCombinationOperate<'_, C> { self.child() }
+    fn datasource_combination(&self) -> DatasourceCombinationOperate<'_, C> {
+        self.child()
+    }
 }

@@ -1,10 +1,9 @@
 use futures::Future;
-use tracing::info;
 use qiniu_upload_manager::AutoUploaderObjectParams;
+use tracing::info;
 
-use crate::{Manager, ManagedUploader, error};
-
-use self::payload::{PayloadLocal, PayloadContent};
+use self::payload::{PayloadContent, PayloadLocal};
+use crate::{error, ManagedUploader, Manager};
 
 pub mod payload;
 pub mod upload_field;
@@ -54,7 +53,6 @@ impl Manager {
         Ok(response)
     }
 }
-
 
 #[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct ResponsePayload {

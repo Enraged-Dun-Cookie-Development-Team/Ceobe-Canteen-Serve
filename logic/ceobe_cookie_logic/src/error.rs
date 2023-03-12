@@ -1,7 +1,7 @@
+use bitmap_convert::error::Error as BitmapConvError;
 use ceobe_cookie::temp_list::OperateError as TempListOperateError;
 use status_err::StatusErr;
 use thiserror::Error;
-use bitmap_convert::error::Error as BitmapConvError;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
@@ -14,7 +14,7 @@ pub enum LogicError {
     BitmapConvError(#[from] BitmapConvError),
 
     #[error("Json 反/序列化失败 {0}")]
-    Json(#[from] serde_json::Error)
+    Json(#[from] serde_json::Error),
 }
 
 pub(crate) type LogicResult<T> = Result<T, LogicError>;

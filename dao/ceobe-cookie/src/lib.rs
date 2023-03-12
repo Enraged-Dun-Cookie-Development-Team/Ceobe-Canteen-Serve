@@ -1,7 +1,9 @@
 use std::ops::Deref;
 
 use abstract_database::ceobe::CeobeDatabaseOperate;
-use db_ops_prelude::database_operates::sub_operate::{SubOperate, SuperOperate};
+use db_ops_prelude::database_operates::sub_operate::{
+    SubOperate, SuperOperate,
+};
 
 #[path = "mongo/temp_list/mod.rs"] pub mod temp_list;
 

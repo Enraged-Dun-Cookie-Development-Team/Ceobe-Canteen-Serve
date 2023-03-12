@@ -208,7 +208,7 @@ where
     #[instrument(skip(self))]
     /// 根据数据源uuid获取数据源id
     pub async fn find_ids_by_uuids(
-        &self, uuids: Vec<Uuid>
+        &self, uuids: Vec<Uuid>,
     ) -> OperateResult<Vec<i32>> {
         let db = self.get_connect();
         Ok(Entity::find()

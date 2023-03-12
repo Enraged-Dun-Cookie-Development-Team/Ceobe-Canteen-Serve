@@ -1,5 +1,5 @@
 use ceobe_qiniu_upload::{
-    Error, PayloadContent, PayloadLocal, ResponsePayload, Manager,
+    Error, Manager, PayloadContent, PayloadLocal, ResponsePayload,
 };
 use mime::Mime;
 use update_payload::UploadPayload;

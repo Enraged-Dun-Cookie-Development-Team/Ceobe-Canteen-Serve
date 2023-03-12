@@ -8,8 +8,7 @@ pub struct AvatarId {
 
 impl AvatarId {
     pub(super) fn from_resp(
-        ResponsePayload { key, .. }: ResponsePayload,
-        qiniu: &QiniuManager,
+        ResponsePayload { key, .. }: ResponsePayload, qiniu: &QiniuManager,
     ) -> Self {
         Self {
             url: qiniu.concat_url(key),

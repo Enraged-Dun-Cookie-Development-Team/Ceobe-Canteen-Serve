@@ -3,15 +3,12 @@ use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
-
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
-#[sub_model(
-    none(
-        vis = "pub",
-        name = "SingleData",
-        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
-    )
-)]
+#[sub_model(none(
+    vis = "pub",
+    name = "SingleData",
+    extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
+))]
 pub struct TempListModel {
     pub platform: String,
     pub source: String,

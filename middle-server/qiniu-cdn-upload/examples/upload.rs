@@ -14,8 +14,8 @@ use axum_starter::{
     ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    BaseUrl, GetBucket, QiniuBaseUrl, QiniuUpload, QiniuUploadState,
-    QiniuManager, ResponsePayload, SecretConfig,
+    BaseUrl, GetBucket, QiniuBaseUrl, QiniuManager, QiniuUpload,
+    QiniuUploadState, ResponsePayload, SecretConfig,
 };
 use futures::FutureExt;
 use qiniu_cdn_upload::{

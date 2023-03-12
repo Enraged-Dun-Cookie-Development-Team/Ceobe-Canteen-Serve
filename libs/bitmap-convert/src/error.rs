@@ -1,4 +1,3 @@
-
 use status_err::{ErrPrefix, StatusErr};
 
 #[derive(Debug, thiserror::Error, StatusErr)]

@@ -1,5 +1,5 @@
 use ceobe_qiniu_upload::{
-    FilePayload, JsonPayload, PayloadLocal, SecretConfig, Manager,
+    FilePayload, JsonPayload, Manager, PayloadLocal, SecretConfig,
 };
 use serde::Deserialize;
 use serde_json::{json, Value};

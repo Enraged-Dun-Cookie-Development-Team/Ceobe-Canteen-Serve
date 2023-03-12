@@ -41,7 +41,5 @@ pub enum OperateError {
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> CookieDatabaseOperate<'db, Conn> {
-    pub fn temp_list(&self) -> TempListOperate<'_, Conn> {
-        self.child()
-    }
+    pub fn temp_list(&self) -> TempListOperate<'_, Conn> { self.child() }
 }

@@ -1,4 +1,8 @@
-use axum::extract::{rejection::{JsonRejection, QueryRejection}, multipart::{MultipartError, MultipartRejection}};
+use axum::extract::{
+    multipart::{MultipartError, MultipartRejection},
+    rejection::{JsonRejection, QueryRejection},
+};
+use ceobe_qiniu_upload::Error as QiniuError;
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use fetcher::{
     datasource_config::OperateError as DatasourceOperateError,
@@ -8,7 +12,6 @@ use fetcher_logic::error::LogicError;
 use orm_migrate::sql_models::fetcher::datasource_config::checkers::CheckError;
 use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
-use ceobe_qiniu_upload::Error as QiniuError;
 
 use crate::error_generate;
 

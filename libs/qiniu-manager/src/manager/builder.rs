@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use qiniu_objects_manager::{ObjectsManager, Bucket};
+use qiniu_objects_manager::{Bucket, ObjectsManager};
 use qiniu_upload_manager::{AutoUploader, UploadManager, UploadTokenSigner};
 use qiniu_upload_token::credential::Credential;
 
@@ -8,7 +8,7 @@ use crate::SecretConfig;
 
 pub struct ManagerBuilder {
     uploader: ManagedUploader,
-    bucket: Bucket
+    bucket: Bucket,
 }
 
 impl ManagerBuilder {
@@ -34,7 +34,7 @@ impl ManagerBuilder {
     pub fn build(self) -> super::Manager {
         crate::Manager {
             uploader: self.uploader,
-            bucket: self.bucket
+            bucket: self.bucket,
         }
     }
 }

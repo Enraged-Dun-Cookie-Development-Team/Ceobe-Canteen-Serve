@@ -1,5 +1,8 @@
 use abstract_database::fetcher::ToFetcher;
-use axum::{extract::{Query, multipart::MultipartRejection, Multipart}, Json};
+use axum::{
+    extract::{multipart::MultipartRejection, Multipart, Query},
+    Json,
+};
 use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
 use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform};
@@ -22,7 +25,12 @@ use super::{
     error::{DatasourceConfigError, DatasourceConfigRResult},
     FetcherDatasourceCheck, PageSizePretreatment,
 };
-use crate::{router::FetcherConfigControllers, serves::backend::fetcher::datasource_configs::{view::AvatarId, error::FieldNotExist, DataSourceAvatarPayload}};
+use crate::{
+    router::FetcherConfigControllers,
+    serves::backend::fetcher::datasource_configs::{
+        error::FieldNotExist, view::AvatarId, DataSourceAvatarPayload,
+    },
+};
 
 impl FetcherConfigControllers {
     /// 获取平台与数据源类型列表
@@ -161,18 +169,15 @@ impl FetcherConfigControllers {
     /// 上传数据源头像
     #[instrument(ret, skip(qiniu))]
     pub async fn upload_avatar(
-        qiniu: QiniuManager,
-        multipart: Result<Multipart, MultipartRejection>,
+        qiniu: QiniuManager, multipart: Result<Multipart, MultipartRejection>,
     ) -> DatasourceConfigRResult<AvatarId> {
         resp_result::resp_try(async move {
             let mut multipart = multipart?;
-            let field =
-                multipart.next_field().await?.ok_or(FieldNotExist)?;
+            let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
 
-            let resp =
-                upload(&qiniu, field, DataSourceAvatarPayload::new())
-                    .await
-                    .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
+            let resp = upload(&qiniu, field, DataSourceAvatarPayload::new())
+                .await
+                .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
 
             Ok(resp)
         })

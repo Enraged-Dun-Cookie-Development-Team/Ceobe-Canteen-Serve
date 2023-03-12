@@ -1,3 +1,6 @@
+use bitmap_convert::error::Error as BitmapConvError;
+use ceobe_cookie::temp_list::OperateError as TemporaryListOperateError;
+use ceobe_qiniu_upload::Error as QiniuError;
 use ceobe_user::property::OperateError as CeobeUserOperateError;
 use db_ops_prelude::{
     mongo_connection::MongoDbError,
@@ -6,17 +9,11 @@ use db_ops_prelude::{
     sql_models::fetcher::datasource_config::checkers::CheckError as DatasourceConfigCheckError,
 };
 use fetcher::{
+    datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceConfigOperateError,
-    datasource_combination::OperateError as DatasourceCombinationOperateError
 };
-use ceobe_cookie:: {
-    temp_list::OperateError as TemporaryListOperateError,
-};
-use bitmap_convert::error::Error as BitmapConvError;
 use status_err::StatusErr;
 use thiserror::Error;
-
-use ceobe_qiniu_upload::Error as QiniuError;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
@@ -26,7 +23,9 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
-    DatasourceCombinationOperateError(#[from] DatasourceCombinationOperateError),
+    DatasourceCombinationOperateError(
+        #[from] DatasourceCombinationOperateError,
+    ),
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
@@ -56,7 +55,7 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
-    Upload(#[from] QiniuError)
+    Upload(#[from] QiniuError),
 }
 
 #[allow(dead_code)]

@@ -1,7 +1,10 @@
 use qiniu_upload_manager::AutoUploaderObjectParams;
 use tracing::{info, instrument};
 
-use super::{ResponsePayload, payload::{FilePayload, PayloadLocal}};
+use super::{
+    payload::{FilePayload, PayloadLocal},
+    ResponsePayload,
+};
 use crate::{error, Manager};
 
 impl Manager {

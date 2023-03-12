@@ -1,24 +1,22 @@
+mod builder;
 pub mod delete;
 pub mod upload;
-mod builder;
 use std::fmt::Debug;
 
-use futures::Future;
-use qiniu_objects_manager::{ObjectsManager, Bucket};
-use qiniu_upload_manager::AutoUploaderObjectParams;
-use tracing::info;
-pub use upload::upload_json::JsonPayload;
-pub use upload::ResponsePayload;
+use qiniu_objects_manager::Bucket;
+pub use upload::{upload_json::JsonPayload, ResponsePayload};
 
 pub use self::{
     builder::{ManagedUploader, ManagerBuilder},
-    upload::payload::{ByteUploader, FilePayload, PayloadContent, PayloadLocal},
+    upload::payload::{
+        ByteUploader, FilePayload, PayloadContent, PayloadLocal,
+    },
 };
-use crate::{error, SecretConfig};
+use crate::SecretConfig;
 #[derive(Debug)]
 pub struct Manager {
     pub(crate) uploader: ManagedUploader,
-    pub(crate) bucket: Bucket
+    pub(crate) bucket: Bucket,
 }
 
 impl Manager {
@@ -33,11 +31,11 @@ pub trait ObjectName<'s> {
     const DIR: Option<&'s str>;
 
     fn file_name(&self) -> &str;
-    
+
     fn object_name(&self) -> String {
         match Self::DIR {
-            Some(dir) => dir.to_owned() +"/"+ self.file_name(),
-            None => self.file_name().to_owned()
+            Some(dir) => dir.to_owned() + "/" + self.file_name(),
+            None => self.file_name().to_owned(),
         }
     }
 }

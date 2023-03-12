@@ -1,6 +1,6 @@
-use sea_orm::{entity::prelude::*, Set, IntoActiveModel};
+use sea_orm::{entity::prelude::*, Set};
+use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
-use serde::{Serialize, Deserialize};
 
 use crate::get_now_naive_date_time;
 
@@ -11,9 +11,14 @@ use crate::get_now_naive_date_time;
         name = "CombinationId",
         extra(derive(sea_orm::FromQueryResult, Debug))
     ),
-    all (
+    all(
         name = "CombinationInfo",
-        extra(derive(sea_orm::FromQueryResult, Debug, Serialize, Deserialize))
+        extra(derive(
+            sea_orm::FromQueryResult,
+            Debug,
+            Serialize,
+            Deserialize
+        ))
     )
 )]
 pub struct Model {

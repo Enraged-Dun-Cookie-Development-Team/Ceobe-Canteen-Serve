@@ -13,8 +13,8 @@ use axum_starter::{
     PrepareRouteEffect, ServeAddress, ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    BaseUrl, GetBucket, PayloadLocal, QiniuBaseUrl, QiniuUpload,
-    QiniuManager, SecretConfig, Manager,
+    BaseUrl, GetBucket, Manager, PayloadLocal, QiniuBaseUrl, QiniuManager,
+    QiniuUpload, SecretConfig,
 };
 use log::SetLoggerError;
 use url::Url;

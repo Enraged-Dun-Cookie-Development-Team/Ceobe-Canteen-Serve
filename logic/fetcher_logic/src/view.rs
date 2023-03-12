@@ -192,15 +192,12 @@ where
     })
 }
 
-
 pub struct DeleteObjectName {
-    pub file_name: String
+    pub file_name: String,
 }
 
 impl<'s> ObjectName<'s> for DeleteObjectName {
     const DIR: Option<&'s str> = Some("datasource-comb");
 
-    fn file_name(&self) -> &str {
-        &self.file_name
-    }
+    fn file_name(&self) -> &str { &self.file_name }
 }

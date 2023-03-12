@@ -12,14 +12,9 @@ impl BitmapVecI32Conv for Bitmap<256> {
         if let Some(index) = self.first_index() {
             index_array.push(index as i32);
             let mut i = index;
-            loop {
-                match self.next_index(i) {
-                    Some(index) => {
-                        i = index;
-                        index_array.push(index as i32);
-                    }
-                    None => break,
-                }
+            while let Some(index) = self.next_index(i) {
+                i = index;
+                index_array.push(index as i32);
             }
         };
 

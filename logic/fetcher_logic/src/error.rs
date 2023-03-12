@@ -1,7 +1,7 @@
 use fetcher::{
     config::OperateError as FetcherConfigOperateError,
-    datasource_config::OperateError as DatasourceConfigOperateError,
     datasource_combination::OperateError as DatasourceCombinationOperateError,
+    datasource_config::OperateError as DatasourceConfigOperateError,
     global_config::OperateError as GlobalConfigOperateError,
     platform_config::OperateError as PlatformConfigOperateError,
 };
@@ -30,7 +30,9 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
-    DatasourceCombinationOperateError(#[from] DatasourceCombinationOperateError),
+    DatasourceCombinationOperateError(
+        #[from] DatasourceCombinationOperateError,
+    ),
 
     #[error(transparent)]
     #[status_err(err = "transparent")]

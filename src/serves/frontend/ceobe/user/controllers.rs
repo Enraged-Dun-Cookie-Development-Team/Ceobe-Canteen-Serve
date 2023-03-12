@@ -30,11 +30,12 @@ impl CeobeUserFrontend {
     /// 获取用户数据源配置
     #[instrument(ret, skip(db, mongo, qiniu))]
     pub async fn get_datasource_config_by_user(
-        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate, qiniu: QiniuManager, 
-        MobIdInfo(mob_id): MobIdInfo,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        qiniu: QiniuManager, MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
-            CeobeUserLogic::get_datasource_by_user(mongo, db, qiniu, mob_id).await
+            CeobeUserLogic::get_datasource_by_user(mongo, db, qiniu, mob_id)
+                .await
         ))
         .into()
     }

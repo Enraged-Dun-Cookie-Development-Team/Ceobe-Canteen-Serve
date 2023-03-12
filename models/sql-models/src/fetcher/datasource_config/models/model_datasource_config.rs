@@ -38,16 +38,13 @@ use crate::{
     ),
     none(
         name = "DatasourceId",
-        extra(
-            derive(sea_orm::FromQueryResult),
-            doc = "取得数据源对应id"
-        )
+        extra(derive(sea_orm::FromQueryResult), doc = "取得数据源对应id")
     )
 )]
 pub struct Model {
     /// 平台type
     #[sea_orm(primary_key)]
-    #[sub_model(want("DataSourceForFetcherConfig"),want("DatasourceId"))]
+    #[sub_model(want("DataSourceForFetcherConfig"), want("DatasourceId"))]
     pub id: i32,
     #[sub_model(want("DatasourcePlatform"))]
     pub platform: String,

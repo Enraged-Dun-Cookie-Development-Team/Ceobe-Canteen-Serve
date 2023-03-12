@@ -1,6 +1,9 @@
 use tracing::instrument;
 
-use super::{payload::{ByteUploader, PayloadLocal}, ResponsePayload};
+use super::{
+    payload::{ByteUploader, PayloadLocal},
+    ResponsePayload,
+};
 use crate::{error, Manager};
 
 impl Manager {

@@ -7,7 +7,7 @@ impl DatasourceCombinationOperate<'_, NoConnect> {
     /// 根据组合id删除数据
     #[instrument(ret, skip(db))]
     pub async fn delete_by_datasource(
-        db: &impl ConnectionTrait, comb_ids: Vec<String>
+        db: &impl ConnectionTrait, comb_ids: Vec<String>,
     ) -> OperateResult<()> {
         info! {
             datasourceCombDelete.comb_ids = ?comb_ids
@@ -16,7 +16,7 @@ impl DatasourceCombinationOperate<'_, NoConnect> {
             .filter(Column::CombinationId.is_in(comb_ids))
             .exec(db)
             .await?;
-        
+
         Ok(())
     }
 }
