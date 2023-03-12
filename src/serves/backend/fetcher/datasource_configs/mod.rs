@@ -28,7 +28,7 @@ impl DataSourceAvatarPayload {
 impl UploadPayload for DataSourceAvatarPayload {
     type Source = FieldSource;
 
-    const DIR: &'static str = "data-source-avatar";
+    const DIR: &'static str = "datasource-avatar";
 
     fn obj_name(&self) -> &str { &self.0 }
 }
