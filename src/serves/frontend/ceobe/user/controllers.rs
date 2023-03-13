@@ -1,4 +1,4 @@
-use abstract_database::ceobe::ToCeobe;
+use ceobe_user::ToCeobe;
 use axum::Json;
 use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;

@@ -6,3 +6,5 @@ pub mod datasource_config;
 #[path = "sql/global_config/mod.rs"] pub mod global_config;
 #[path = "sql/platform_config/mod.rs"]
 pub mod platform_config;
+
+pub use abstract_database::fetcher::ToFetcher;

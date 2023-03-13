@@ -1,4 +1,4 @@
-use db_ops_prelude::{get_connect::{GetDatabaseConnect}, sea_orm::{ConnectionTrait, ActiveModelTrait}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{CombinationInfo}};
+use db_ops_prelude::{get_connect::{GetDatabaseConnect}, sea_orm::{ConnectionTrait, ActiveModelTrait}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{ActiveModel}};
 use tracing::{info, instrument};
 
 use super::{DatasourceCombinationOperate, OperateResult};
@@ -11,22 +11,21 @@ where
     #[instrument(ret, skip(self))]
     /// 创建数据源组合数据
     pub async fn create(
-        &self, comb_id_info: CombinationInfo,
+        &self, comb_id: String, bitmaps: [u64; 4]
     ) -> OperateResult<()> {
         info!(
-            datasourceCombCreate.comb_id = comb_id_info.combination_id,
-            datasourceCombCreate.bitmap1 = comb_id_info.bitmap1,
-            datasourceCombCreate.bitmap2 = comb_id_info.bitmap1,
-            datasourceCombCreate.bitmap3 = comb_id_info.bitmap1,
-            datasourceCombCreate.bitmap4 = comb_id_info.bitmap1,
+            datasourceCombCreate.comb_id = comb_id,
+            datasourceCombCreate.bitmap1 = bitmaps[0],
+            datasourceCombCreate.bitmap2 = bitmaps[1],
+            datasourceCombCreate.bitmap3 = bitmaps[2],
+            datasourceCombCreate.bitmap4 = bitmaps[3],
         );
 
         let db = self.get_connect();
 
-        comb_id_info
-            .into_active_model_with_access_time()
-            .save(db)
-            .await?;
+        ActiveModel::new(comb_id, bitmaps).save(db)
+        .await?;
+            
         Ok(())
     }
 }

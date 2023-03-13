@@ -1,4 +1,4 @@
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, EntityTrait, DbBackend, Statement}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{Entity, CombinationId}, database_operates::NoConnect};
+use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, EntityTrait, DbBackend, Statement, sea_query::{Query, Expr}, QueryFilter, StatementBuilder}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{Entity, CombinationId, Column}, database_operates::NoConnect};
 use tracing::{info, instrument};
 
 use crate::datasource_combination::OperateError;
@@ -8,48 +8,32 @@ use super::{DatasourceCombinationOperate, OperateResult};
 impl DatasourceCombinationOperate<'_, NoConnect> {
     #[instrument(ret, skip(db))]
     /// 创建数据源组合数据
-    pub async fn find_comb_id_by_one_datasource_not_db(
+    pub async fn find_comb_id_by_one_datasource_raw(
         db: &impl ConnectionTrait, datasource_id: i32,
     ) -> OperateResult<Vec<String>> {
         info!(datasourceComb.datasource_id = datasource_id,);
 
-        let mut sql = String::from(
-            "SELECT combination_id FROM fetcher_datasource_combination",
-        );
+        let mut query = Query::select();
 
+        // SELECT combination_id
+        query.expr(Expr::col(
+            Column::CombinationId,
+        ));
+
+        // FROM fetcher_datasource_combination
+        query.from(Entity);
         let index: u64 = (datasource_id % 64).try_into().unwrap();
         let datasource_base2: u64 = 1 << index;
-        // 获取对应的bitmap
-        match datasource_id / 64 {
-            0 => {
-                sql += &format!(
-                    r#" WHERE bitmap1 & {datasource_base2} = {datasource_base2}"#
-                )
-            }
-            1 => {
-                sql += &format!(
-                    r#" WHERE bitmap2 & {datasource_base2} = {datasource_base2}"#
-                )
-            }
-            2 => {
-                sql += &format!(
-                    r#" WHERE bitmap3 & {datasource_base2} = {datasource_base2}"#
-                )
-            }
-            3 => {
-                sql += &format!(
-                    r#" WHERE bitmap4 & {datasource_base2} = {datasource_base2}"#
-                )
-            }
-            _ => return Err(OperateError::LargeThen256),
-        }
+        let bitmap_number = (datasource_id / 64 + 1).try_into().unwrap();
+        // where
+        query.and_where(Expr::cust_with_values(
+            "bitmap? & ? = ?",
+            [bitmap_number, datasource_base2, datasource_base2],
+        ));
+
 
         Ok(Entity::find()
-            .from_raw_sql(Statement::from_sql_and_values(
-                DbBackend::MySql,
-                &sql,
-                [],
-            ))
+            .from_raw_sql(StatementBuilder::build(&query, &db.get_database_backend()))
             .into_model::<CombinationId>()
             .all(db)
             .await?
@@ -70,10 +54,50 @@ where
     ) -> OperateResult<Vec<String>> {
         info!(datasourceComb.datasource_id = datasource_id,);
         let db = self.get_connect();
-        DatasourceCombinationOperate::find_comb_id_by_one_datasource_not_db(
+        DatasourceCombinationOperate::find_comb_id_by_one_datasource_raw(
             db,
             datasource_id,
         )
         .await
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use db_ops_prelude::{
+        sea_orm::sea_query::{Expr, Query, SelectStatement, MysqlQueryBuilder},
+        sql_models::fetcher::datasource_combination::models::model_datasource_combination,
+    };
+
+    /// 生成Statement 为 检查给定的id的平台下时候有数据源
+    fn gen_query_find_comb_id_by_one_datasource(
+        datasource_id: i32,
+    ) -> SelectStatement {
+        let mut query = Query::select();
+
+        // SELECT combination_id
+        query.expr(Expr::col(
+            model_datasource_combination::Column::CombinationId,
+        ));
+
+        // FROM fetcher_datasource_combination
+        query.from(model_datasource_combination::Entity);
+        let index: u64 = (datasource_id % 64).try_into().unwrap();
+        let datasource_base2: u64 = 1 << index;
+        let bitmap_number = (datasource_id / 64 + 1).try_into().unwrap();
+        // join
+        query.and_where(Expr::cust_with_values(
+            "bitmap? & ? = ?",
+            [bitmap_number, datasource_base2, datasource_base2],
+        ));
+
+        query
+    }
+
+    #[test]
+    fn test_gen_sql() {
+        let query = gen_query_find_comb_id_by_one_datasource(10);
+        let sql_str = query.to_string(MysqlQueryBuilder).to_lowercase();
+        println!("{sql_str}");
     }
 }

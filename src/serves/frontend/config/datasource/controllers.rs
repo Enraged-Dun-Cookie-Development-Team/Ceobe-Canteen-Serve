@@ -1,4 +1,4 @@
-use abstract_database::fetcher::ToFetcher;
+use fetcher::ToFetcher;
 use fetcher::datasource_config::ToDatasource;
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,

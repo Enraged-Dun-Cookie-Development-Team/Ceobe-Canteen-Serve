@@ -1,10 +1,10 @@
-use abstract_database::ceobe::ToCeobe;
 use axum::{
     body::{Body, BoxBody},
     extract::FromRequestParts,
     response::{IntoResponse, Response},
 };
 use bool_or::TrueOrError;
+use ceobe_cookie::ToCeobe;
 use ceobe_user::ToCeobeUser;
 use futures::future::BoxFuture;
 use http::Request;

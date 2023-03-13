@@ -17,7 +17,6 @@ uuid.workspace = true
 tokio.workspace = true
 tracing = { workspace = true }
 db-ops-prelude.workspace = true
-abstract_database.workspace = true
 ceobe-user.workspace = true
 fetcher.workspace = true
 bitmaps.workspace = true

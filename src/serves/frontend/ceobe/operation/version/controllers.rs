@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use abstract_database::ceobe::ToCeobe;
+use ceobe_operate::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use checker::CheckExtract;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;

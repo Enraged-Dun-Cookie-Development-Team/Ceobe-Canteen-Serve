@@ -1,4 +1,4 @@
-use abstract_database::ceobe::ToCeobe;
+use ceobe_operate::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use modify_cache::CacheMode;
 use orm_migrate::sql_connection::SqlDatabaseOperate;

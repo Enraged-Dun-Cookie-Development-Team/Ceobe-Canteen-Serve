@@ -1,9 +1,8 @@
-use abstract_database::fetcher::ToFetcher;
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, LiteChecker,
     ToCheckRequire,
 };
-use fetcher::global_config::ToGlobal;
+use fetcher::{global_config::ToGlobal, ToFetcher};
 use serde_json::{Map, Value};
 use sql_models::{
     fetcher::global_config::{

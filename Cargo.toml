@@ -142,7 +142,6 @@ general-request-client.workspace = true
 scheduler-notifier.workspace = true
 ceobe-operate.workspace = true
 bool_or.workspace = true
-abstract_database.workspace = true
 ceobe-user.workspace = true
 page_size.workspace = true
 fetcher.workspace = true

@@ -1,5 +1,4 @@
-use abstract_database::fetcher::ToFetcher;
-use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform};
+use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform, ToFetcher};
 use page_size::request::Paginator;
 use sql_models::{
     fetcher::platform_config::models::model_platform_config::PlatformHasDatasource,

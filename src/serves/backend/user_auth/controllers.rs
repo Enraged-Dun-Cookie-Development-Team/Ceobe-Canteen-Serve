@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use abstract_database::admin::ToAdmin;
+use admin::ToAdmin;
 use admin::user::ToUser;
 use axum::{extract::Query, Json};
 use checker::CheckExtract;

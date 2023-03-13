@@ -1,10 +1,9 @@
 use std::collections::HashSet;
 
-use abstract_database::{ceobe::ToCeobe, fetcher::ToFetcher};
 use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
 use bnum::{types::U256};
-use ceobe_cookie::ToCookie;
+use ceobe_cookie::{ToCookie, ToCeobe};
 use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
@@ -16,11 +15,11 @@ use db_ops_prelude::{
         models::{UserMobId, UserPropertyChecked},
     },
     mongodb::bson,
-    SqlDatabaseOperate, sql_models::fetcher::datasource_combination::models::model_datasource_combination::CombinationInfo,
+    SqlDatabaseOperate
 };
 use fetcher::{datasource_config::{
     OperateError as FetcherDatasourceOperateError, ToDatasource,
-}, datasource_combination::ToDatasourceCombination};
+}, datasource_combination::ToDatasourceCombination, ToFetcher};
 use futures::future;
 use qiniu_cdn_upload::upload;
 use tokio::task;
@@ -190,13 +189,6 @@ impl CeobeUserLogic {
         let datasource_vec: [u64; 4] = value.into();
 
         // 创建数据源组合并记录
-        let info = CombinationInfo {
-            combination_id: comb_id.clone(),
-            bitmap1: datasource_vec[0],
-            bitmap2: datasource_vec[1],
-            bitmap3: datasource_vec[2],
-            bitmap4: datasource_vec[3],
-        };
         // 如果数据库存在数据源就不创建
         if !db
             .fetcher()
@@ -204,7 +196,7 @@ impl CeobeUserLogic {
             .is_comb_id_exist(&comb_id)
             .await?
         {
-            db.fetcher().datasource_combination().create(info).await?;
+            db.fetcher().datasource_combination().create(comb_id.clone(), datasource_vec).await?;
 
             let source = CombIdToCookieId { cookie_id };
             let payload = CombIdToCookieIdPlayLoad {

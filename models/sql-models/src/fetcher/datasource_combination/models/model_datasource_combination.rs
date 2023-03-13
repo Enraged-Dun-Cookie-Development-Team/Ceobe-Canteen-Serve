@@ -11,19 +11,9 @@ use crate::get_now_naive_date_time;
         name = "CombinationId",
         extra(derive(sea_orm::FromQueryResult, Debug))
     ),
-    all(
-        name = "CombinationInfo",
-        extra(derive(
-            sea_orm::FromQueryResult,
-            Debug,
-            Serialize,
-            Deserialize
-        ))
-    )
 )]
 pub struct Model {
     #[sea_orm(primary_key)]
-    #[sub_model(ignore("CombinationInfo"))]
     pub id: i32,
     #[sub_model(want("CombinationId"))]
     pub combination_id: String,
@@ -31,7 +21,6 @@ pub struct Model {
     pub bitmap2: u64,
     pub bitmap3: u64,
     pub bitmap4: u64,
-    #[sub_model(ignore("CombinationInfo"))]
     pub last_access_time: DateTime,
 }
 
@@ -44,16 +33,14 @@ impl RelationTrait for Relation {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-impl ActiveModel {}
-
-impl CombinationInfo {
-    pub fn into_active_model_with_access_time(self) -> ActiveModel {
+impl ActiveModel {
+    pub fn new(combination_id: String, bitmaps: [u64; 4]) -> ActiveModel {
         ActiveModel {
-            combination_id: Set(self.combination_id),
-            bitmap1: Set(self.bitmap1),
-            bitmap2: Set(self.bitmap2),
-            bitmap3: Set(self.bitmap3),
-            bitmap4: Set(self.bitmap4),
+            combination_id: Set(combination_id),
+            bitmap1: Set(bitmaps[0]),
+            bitmap2: Set(bitmaps[1]),
+            bitmap3: Set(bitmaps[2]),
+            bitmap4: Set(bitmaps[3]),
             last_access_time: Set(get_now_naive_date_time()),
             ..Default::default()
         }

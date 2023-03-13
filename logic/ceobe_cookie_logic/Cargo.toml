@@ -12,7 +12,6 @@ serde_json.workspace = true
 typed-builder.workspace = true
 thiserror.workspace = true
 status-err = { path = "../../libs/status-err" }
-abstract_database.workspace = true
 futures.workspace = true
 bitmaps.workspace = true
 bitmap-convert.workspace = true

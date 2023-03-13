@@ -1,4 +1,5 @@
 use std::ops::Deref;
+pub use abstract_database::ceobe::ToCeobe;
 
 use abstract_database::ceobe::CeobeDatabaseOperate;
 use db_ops_prelude::database_operates::sub_operate::{

@@ -1,4 +1,4 @@
-use abstract_database::ceobe::ToCeobe;
+use ceobe_operate::ToCeobe;
 use ceobe_operate::ToCeobeOperation;
 use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{

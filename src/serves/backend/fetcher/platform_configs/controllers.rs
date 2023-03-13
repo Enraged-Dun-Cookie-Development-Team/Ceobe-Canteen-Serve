@@ -1,4 +1,4 @@
-use abstract_database::fetcher::ToFetcher;
+use fetcher::ToFetcher;
 use axum::Json;
 use checker::CheckExtract;
 use fetcher::platform_config::ToPlatform;
