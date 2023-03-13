@@ -1,5 +1,4 @@
 use sea_orm::{entity::prelude::*, Set};
-use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 
 use crate::get_now_naive_date_time;
