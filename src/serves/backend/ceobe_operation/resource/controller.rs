@@ -1,5 +1,4 @@
-use ceobe_operate::ToCeobe;
-use ceobe_operate::ToCeobeOperation;
+use ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::{CheckExtract, JsonCheckExtract};
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate, sql_models::ceobe_operation::resource,

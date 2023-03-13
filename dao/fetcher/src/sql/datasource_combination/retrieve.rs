@@ -1,7 +1,5 @@
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, EntityTrait, DbBackend, Statement, sea_query::{Query, Expr}, QueryFilter, StatementBuilder}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{Entity, CombinationId, Column}, database_operates::NoConnect};
+use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, EntityTrait, sea_query::{Query, Expr}, StatementBuilder}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{Entity, CombinationId, Column}, database_operates::NoConnect};
 use tracing::{info, instrument};
-
-use crate::datasource_combination::OperateError;
 
 use super::{DatasourceCombinationOperate, OperateResult};
 
@@ -16,9 +14,7 @@ impl DatasourceCombinationOperate<'_, NoConnect> {
         let mut query = Query::select();
 
         // SELECT combination_id
-        query.expr(Expr::col(
-            Column::CombinationId,
-        ));
+        query.expr(Expr::col(Column::CombinationId));
 
         // FROM fetcher_datasource_combination
         query.from(Entity);
@@ -31,9 +27,11 @@ impl DatasourceCombinationOperate<'_, NoConnect> {
             [bitmap_number, datasource_base2, datasource_base2],
         ));
 
-
         Ok(Entity::find()
-            .from_raw_sql(StatementBuilder::build(&query, &db.get_database_backend()))
+            .from_raw_sql(StatementBuilder::build(
+                &query,
+                &db.get_database_backend(),
+            ))
             .into_model::<CombinationId>()
             .all(db)
             .await?
@@ -65,7 +63,9 @@ where
 #[cfg(test)]
 mod test {
     use db_ops_prelude::{
-        sea_orm::sea_query::{Expr, Query, SelectStatement, MysqlQueryBuilder},
+        sea_orm::sea_query::{
+            Expr, MysqlQueryBuilder, Query, SelectStatement,
+        },
         sql_models::fetcher::datasource_combination::models::model_datasource_combination,
     };
 

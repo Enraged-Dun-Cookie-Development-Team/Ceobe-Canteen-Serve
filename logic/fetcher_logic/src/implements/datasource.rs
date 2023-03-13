@@ -58,7 +58,11 @@ impl FetcherConfigLogic {
         DatasourceOperate::delete_one(&ctx, id).await?;
 
         // 删除数据源组合
-        let comb_ids = DatasourceCombinationOperate::find_comb_id_by_one_datasource_raw(&ctx, id).await?;
+        let comb_ids =
+            DatasourceCombinationOperate::find_comb_id_by_one_datasource_raw(
+                &ctx, id,
+            )
+            .await?;
         let mut delete_comb_ids = Vec::<String>::new();
         // 删除对象储存中的数据源组合文件
         for comb_id in comb_ids {

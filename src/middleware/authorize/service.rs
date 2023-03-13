@@ -1,6 +1,9 @@
 use std::marker::PhantomData;
 
-use admin::{user::{OperateError, ToUser}, ToAdmin};
+use admin::{
+    user::{OperateError, ToUser},
+    ToAdmin,
+};
 use axum::{
     body::{Body, BoxBody},
     extract::FromRequestParts,

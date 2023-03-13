@@ -11,7 +11,7 @@ pub trait BitmapBase70Conv {
 
     fn to_base_70(&self) -> Result<String, Self::Error>;
 
-    fn from_base_70 (string: String) -> Result<Self, Self::Error>
+    fn from_base_70(string: String) -> Result<Self, Self::Error>
     where
         Self: Sized;
 }
@@ -32,13 +32,15 @@ impl BitmapBase70Conv for Bitmap<256> {
         let value = U256::from_radix_le(self.as_bytes(), 256)
             .ok_or(Error::LargeThen256)?;
         let bytes = value.to_radix_le(radix);
-        
+
         // 转换为70进制的字符
-        Ok(bytes.into_iter().map(|b|index_to_char[b as usize])
-        .collect())
+        Ok(bytes
+            .into_iter()
+            .map(|b| index_to_char[b as usize])
+            .collect())
     }
 
-    fn from_base_70 (string: String) -> Result<Self, Self::Error>
+    fn from_base_70(string: String) -> Result<Self, Self::Error>
     where
         Self: Sized,
     {

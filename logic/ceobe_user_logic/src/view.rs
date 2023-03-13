@@ -1,4 +1,7 @@
-use db_ops_prelude::{mongo_models::ceobe::user_property::models::UserMobId, mongodb::bson::oid::ObjectId};
+use db_ops_prelude::{
+    mongo_models::ceobe::user_property::models::UserMobId,
+    mongodb::bson::oid::ObjectId,
+};
 use futures::{
     future::{ready, Ready},
     io::Cursor,

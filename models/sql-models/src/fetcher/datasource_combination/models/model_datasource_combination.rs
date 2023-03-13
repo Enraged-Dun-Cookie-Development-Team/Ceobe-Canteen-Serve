@@ -6,12 +6,10 @@ use crate::get_now_naive_date_time;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_combination")]
-#[sub_model(
-    none(
-        name = "CombinationId",
-        extra(derive(sea_orm::FromQueryResult, Debug))
-    ),
-)]
+#[sub_model(none(
+    name = "CombinationId",
+    extra(derive(sea_orm::FromQueryResult, Debug))
+))]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,

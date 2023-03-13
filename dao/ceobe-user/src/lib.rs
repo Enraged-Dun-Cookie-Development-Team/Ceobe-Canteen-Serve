@@ -1,7 +1,7 @@
 use std::ops::Deref;
-pub use abstract_database::ceobe::ToCeobe;
 
 use abstract_database::ceobe::CeobeDatabaseOperate;
+pub use abstract_database::ceobe::ToCeobe;
 use db_ops_prelude::database_operates::sub_operate::{
     SubOperate, SuperOperate,
 };

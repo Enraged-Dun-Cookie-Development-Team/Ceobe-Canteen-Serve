@@ -1,11 +1,12 @@
-use fetcher::ToFetcher;
 use axum::{
     extract::{multipart::MultipartRejection, Multipart, Query},
     Json,
 };
 use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
-use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform};
+use fetcher::{
+    datasource_config::ToDatasource, platform_config::ToPlatform, ToFetcher,
+};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{

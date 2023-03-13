@@ -2,8 +2,8 @@ use std::collections::HashSet;
 
 use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
-use bnum::{types::U256};
-use ceobe_cookie::{ToCookie, ToCeobe};
+use bnum::types::U256;
+use ceobe_cookie::{ToCeobe, ToCookie};
 use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
@@ -15,22 +15,29 @@ use db_ops_prelude::{
         models::{UserMobId, UserPropertyChecked},
     },
     mongodb::bson::{self, oid::ObjectId},
-    SqlDatabaseOperate
+    SqlDatabaseOperate,
 };
-use fetcher::{datasource_config::{
-    OperateError as FetcherDatasourceOperateError, ToDatasource,
-}, datasource_combination::ToDatasourceCombination, ToFetcher};
+use fetcher::{
+    datasource_combination::ToDatasourceCombination,
+    datasource_config::{
+        OperateError as FetcherDatasourceOperateError, ToDatasource,
+    },
+    ToFetcher,
+};
 use futures::future;
 use qiniu_cdn_upload::upload;
 use tokio::task;
-use tracing::{warn};
+use tracing::warn;
 use uuid::Uuid;
 use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
     error,
-    error::{LogicResult},
-    view::{DatasourceConfig, MobIdReq, CombIdToCookieIdPlayLoad, CombIdToCookieId},
+    error::LogicResult,
+    view::{
+        CombIdToCookieId, CombIdToCookieIdPlayLoad, DatasourceConfig,
+        MobIdReq,
+    },
 };
 
 pub struct CeobeUserLogic;
@@ -196,7 +203,10 @@ impl CeobeUserLogic {
             .is_comb_id_exist(&comb_id)
             .await?
         {
-            db.fetcher().datasource_combination().create(comb_id.clone(), datasource_vec).await?;
+            db.fetcher()
+                .datasource_combination()
+                .create(comb_id.clone(), datasource_vec)
+                .await?;
 
             let source = CombIdToCookieId { cookie_id };
             let payload = CombIdToCookieIdPlayLoad {

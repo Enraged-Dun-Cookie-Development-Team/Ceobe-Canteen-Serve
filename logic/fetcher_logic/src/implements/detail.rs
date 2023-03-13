@@ -5,7 +5,8 @@ use checker::prefabs::post_checker::PostChecker;
 use fetcher::{
     config::{ConfigOperate, ToConfig},
     datasource_config::DatasourceOperate,
-    platform_config::PlatformOperate, ToFetcher,
+    platform_config::PlatformOperate,
+    ToFetcher,
 };
 use redis::AsyncCommands;
 use redis_global::redis_key::fetcher::FetcherConfigKey;

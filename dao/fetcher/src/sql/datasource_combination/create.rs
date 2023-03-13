@@ -11,7 +11,7 @@ where
     #[instrument(ret, skip(self))]
     /// 创建数据源组合数据
     pub async fn create(
-        &self, comb_id: String, bitmaps: [u64; 4]
+        &self, comb_id: String, bitmaps: [u64; 4],
     ) -> OperateResult<()> {
         info!(
             datasourceCombCreate.comb_id = comb_id,
@@ -23,9 +23,8 @@ where
 
         let db = self.get_connect();
 
-        ActiveModel::new(comb_id, bitmaps).save(db)
-        .await?;
-            
+        ActiveModel::new(comb_id, bitmaps).save(db).await?;
+
         Ok(())
     }
 }

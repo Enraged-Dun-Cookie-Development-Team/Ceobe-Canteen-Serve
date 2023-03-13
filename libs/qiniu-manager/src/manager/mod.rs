@@ -34,7 +34,7 @@ pub trait ObjectName<'s> {
 
     fn object_name(&self) -> String {
         match Self::DIR {
-            Some(dir) => format!("{}/{}", dir.to_owned() , self.file_name()),
+            Some(dir) => format!("{}/{}", dir.to_owned(), self.file_name()),
             None => self.file_name().to_owned(),
         }
     }

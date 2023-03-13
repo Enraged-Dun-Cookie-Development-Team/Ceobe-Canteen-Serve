@@ -1,5 +1,3 @@
-use std::str::FromStr;
-
 use db_ops_prelude::{
     futures::StreamExt,
     mongo_connection::{
@@ -16,7 +14,6 @@ use db_ops_prelude::{
 use tracing::instrument;
 
 use super::{OperateResult, TempListOperate};
-use crate::temp_list::OperateError;
 
 impl<'db, Conn> TempListOperate<'db, Conn>
 where
@@ -25,7 +22,8 @@ where
     /// 分页查询饼数据
     #[instrument(skip(self), ret)]
     pub async fn get_data_by_paginate(
-        &'db self, first_id: ObjectId, datasources: Vec<i32>, page_number: i64,
+        &'db self, first_id: ObjectId, datasources: Vec<i32>,
+        page_number: i64,
     ) -> OperateResult<Vec<String>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<SingleData> =
@@ -66,7 +64,8 @@ where
     /// 获取下一页的饼id
     #[instrument(skip(self), ret)]
     pub async fn get_next_page_cookie_id(
-        &'db self, first_id: ObjectId, datasources: Vec<i32>, page_number: u64,
+        &'db self, first_id: ObjectId, datasources: Vec<i32>,
+        page_number: u64,
     ) -> OperateResult<Option<ObjectId>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieId> =
