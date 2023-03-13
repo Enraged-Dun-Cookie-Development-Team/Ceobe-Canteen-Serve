@@ -25,7 +25,7 @@ where
     /// 分页查询饼数据
     #[instrument(skip(self), ret)]
     pub async fn get_data_by_paginate(
-        &'db self, first_id: String, datasources: Vec<i32>, page_number: i64,
+        &'db self, first_id: ObjectId, datasources: Vec<i32>, page_number: i64,
     ) -> OperateResult<Vec<String>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<SingleData> =
@@ -39,7 +39,7 @@ where
                 },
                 {
                     "_id": {
-                        "$lte": ObjectId::from_str(&first_id).map_err(|_| OperateError::CookieIdError(first_id))?
+                        "$lte": first_id
                     }
                 }
             ]
@@ -66,8 +66,8 @@ where
     /// 获取下一页的饼id
     #[instrument(skip(self), ret)]
     pub async fn get_next_page_cookie_id(
-        &'db self, first_id: String, datasources: Vec<i32>, page_number: u64,
-    ) -> OperateResult<Option<String>> {
+        &'db self, first_id: ObjectId, datasources: Vec<i32>, page_number: u64,
+    ) -> OperateResult<Option<ObjectId>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieId> =
             &collection.with_mapping();
@@ -80,7 +80,7 @@ where
                 },
                 {
                     "_id": {
-                        "$lte": ObjectId::from_str(&first_id).map_err(|_| OperateError::CookieIdError(first_id))?
+                        "$lte":first_id
                     }
                 }
             ]
@@ -98,7 +98,7 @@ where
             })
             .await?;
 
-        let res = cookie_id.map(|id| id._id.to_string());
+        let res = cookie_id.map(|id| id._id);
 
         Ok(res)
     }
@@ -107,7 +107,7 @@ where
     #[instrument(skip(self), ret)]
     pub async fn get_first_cookie_id(
         &'db self, datasources: Vec<i32>,
-    ) -> OperateResult<Option<String>> {
+    ) -> OperateResult<Option<ObjectId>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieId> =
             &collection.with_mapping();
@@ -124,7 +124,7 @@ where
             })
             .await?;
 
-        let res = cookie_id.map(|id| id._id.to_string());
+        let res = cookie_id.map(|id| id._id);
 
         Ok(res)
     }

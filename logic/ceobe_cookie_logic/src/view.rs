@@ -1,3 +1,4 @@
+use mongo_migration::mongo_models::mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use typed_builder::TypedBuilder;
@@ -6,12 +7,12 @@ use typed_builder::TypedBuilder;
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieListResp {
     pub cookies: Vec<Value>,
-    pub next_page_id: Option<String>,
+    pub next_page_id: Option<ObjectId>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 #[serde(deny_unknown_fields)]
 pub struct CookieListReq {
     pub datasource_comb_id: String,
-    pub cookie_id: String,
+    pub cookie_id: ObjectId,
 }

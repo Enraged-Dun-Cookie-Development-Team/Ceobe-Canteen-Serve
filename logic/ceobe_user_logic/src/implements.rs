@@ -14,7 +14,7 @@ use db_ops_prelude::{
         check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
         models::{UserMobId, UserPropertyChecked},
     },
-    mongodb::bson,
+    mongodb::bson::{self, oid::ObjectId},
     SqlDatabaseOperate
 };
 use fetcher::{datasource_config::{
@@ -173,7 +173,7 @@ impl CeobeUserLogic {
 
     async fn get_datasources_comb_ids(
         db: SqlDatabaseOperate, qiniu: QiniuManager,
-        datasource_ids: Vec<i32>, cookie_id: Option<String>,
+        datasource_ids: Vec<i32>, cookie_id: Option<ObjectId>,
     ) -> LogicResult<String> {
         // 根据数据库id生成bitmap
         let mut comb_ids_map = Bitmap::<256>::new();
