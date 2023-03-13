@@ -1,3 +1,4 @@
+mod cdn;
 mod back_end;
 mod front_end;
 
@@ -11,18 +12,22 @@ pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
     CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend,
-    CookieTempFrontend,
+};
+
+pub use cdn::{
+    CdnCookieTempFrontend
 };
 
 pub type ServerRoute = Router<State>;
 
-use self::{back_end::back_end_router, front_end::front_end_router};
+use self::{back_end::back_end_router, front_end::front_end_router, cdn::cdn_router};
 use crate::bootstrap::init::State;
 
 pub fn root_route() -> ServerRoute {
     Router::new()
         .nest("/canteen", front_end_router())
         .nest("/admin", back_end_router())
+        .nest("/cdn", cdn_router())
         .route(
             "/panic",
             get(|| async {

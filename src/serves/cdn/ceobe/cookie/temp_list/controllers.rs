@@ -8,9 +8,9 @@ use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
 use super::error::{CeobeCookieRResult, CeobeCookieTempListError};
-use crate::router::CookieTempFrontend;
+use crate::router::CdnCookieTempFrontend;
 
-impl CookieTempFrontend {
+impl CdnCookieTempFrontend {
     #[instrument(ret, skip(mongo))]
     pub async fn cookie_list(
         mongo: MongoDatabaseOperate,
