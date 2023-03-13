@@ -17,11 +17,7 @@ impl CeobeCookieLogic {
     ) -> LogicResult<CookieListResp> {
         let datasource_map: Bitmap<256> =
             BitmapBase70Conv::base_70_to(cookie_info.datasource_comb_id)?;
-        let datasource_vec = datasource_map
-            .bitmap_to_i32()
-            .into_iter()
-            .map(|id| id)
-            .collect::<Vec<i32>>();
+        let datasource_vec = datasource_map.bitmap_to_i32();
 
         let (cookie_list, next_cookie_id) = future::join(
             db.ceobe().cookie().temp_list().get_data_by_paginate(

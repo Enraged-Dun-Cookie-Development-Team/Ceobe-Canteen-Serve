@@ -12,8 +12,8 @@ pub use operation::{
 pub use user::CeobeUserFrontend;
 
 use self::{
-    bakery_mansion::bakery_mansion_router, config::config_router, operation::ceobe_operation_router,
-    user::ceobe_user_router,
+    bakery_mansion::bakery_mansion_router, config::config_router,
+    operation::ceobe_operation_router, user::ceobe_user_router,
 };
 use super::ServerRoute;
 pub(super) fn front_end_router() -> ServerRoute {
