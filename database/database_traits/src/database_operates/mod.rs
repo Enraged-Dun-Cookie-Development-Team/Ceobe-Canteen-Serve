@@ -3,6 +3,7 @@ use std::ops::{Deref, DerefMut};
 mod db_op_impls;
 pub mod sub_operate;
 
+#[derive(Debug,Clone)]
 pub struct DatabaseOperate<C> {
     connect: C,
 }

@@ -65,6 +65,12 @@ async fn main_task() {
     ServerPrepare::with_config(config)
         .init_logger()
         .expect("日志初始化失败")
+        // database
+        .prepare_concurrent(|set| {
+            set.join_state(MysqlDbConnect)
+                .join_state(MongoDbConnect)
+                .join_state(RedisDbConnect)
+        })
         // components
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
