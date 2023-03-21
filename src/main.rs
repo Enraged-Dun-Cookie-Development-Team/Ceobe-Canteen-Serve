@@ -64,6 +64,12 @@ async fn main_task() {
     ServerPrepare::with_config(config)
         .init_logger()
         .expect("日志初始化失败")
+        // database
+        .prepare_concurrent(|set| {
+            set.join_state(MysqlDbConnect)
+                .join_state(MongoDbConnect)
+                .join_state(RedisDbConnect)
+        })
         // components
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
@@ -71,12 +77,6 @@ async fn main_task() {
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
         .prepare_state(BiliClientPrepare)
         .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
-        // database
-        .prepare_concurrent(|set| {
-            set.join_state(MysqlDbConnect)
-                .join_state(MongoDbConnect)
-                .join_state(RedisDbConnect)
-        })
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)

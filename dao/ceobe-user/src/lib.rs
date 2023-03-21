@@ -4,7 +4,7 @@ use abstract_database::ceobe::CeobeDatabaseOperate;
 use db_ops_prelude::database_operates::sub_operate::{
     SubOperate, SuperOperate,
 };
-
+pub use abstract_database::ceobe::ToCeobe;
 #[path = "mongo/property/mod.rs"] pub mod property;
 
 pub struct UserDatabaseOperate<'db, Conn>(&'db Conn);

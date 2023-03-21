@@ -41,6 +41,7 @@ pub struct ManagedUploader {
     manage: UploadManager,
 }
 
+
 impl ManagedUploader {
     fn new(manage: UploadManager) -> Self {
         let default = manage.auto_uploader();

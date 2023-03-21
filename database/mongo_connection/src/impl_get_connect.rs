@@ -11,7 +11,7 @@ use crate::{
     CollectionGuard, DatabaseManage, MongoDbError,
 };
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default,Clone)]
 pub struct MongoConnect;
 
 impl<S: Send + Sync> FromRequestParts<S> for MongoConnect {
