@@ -1,4 +1,4 @@
-use std::{borrow::Cow, hash::Hash};
+use std::borrow::Cow;
 
 use crate::{
     push_notify::{android::AndroidNotify, ios::IosNotify},
@@ -7,7 +7,6 @@ use crate::{
 
 /// the trait of Entity for Push
 pub trait PushEntity: 'static + Sync + Send {
-
     /// 获取当前推送消息的推送正文
     type Content: AsRef<str> + 'static + Sync + ?Sized;
 
