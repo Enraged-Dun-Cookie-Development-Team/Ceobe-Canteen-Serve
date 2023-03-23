@@ -1,4 +1,4 @@
-mod app_info;
+pub(crate) mod app_info;
 
 // use once_cell::sync::OnceCell;
 
