@@ -1,6 +1,6 @@
 use std::{sync::Arc, time::Duration};
 
-use axum_starter::{PrepareStateEffect, state::AddState, prepare};
+use axum_starter::{prepare, state::AddState, PrepareStateEffect};
 use secrecy::SecretString;
 use tokio::sync::{mpsc, oneshot};
 

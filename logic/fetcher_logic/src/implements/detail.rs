@@ -171,9 +171,7 @@ impl FetcherConfigLogic {
                     server
                         .remove(&idx)
                         .into_iter()
-                        .flat_map(|map| {
-                            map.into_iter().map(|(_, group)| group)
-                        })
+                        .flat_map(|map| map.into_values())
                         .into()
                 });
                 BackEndFetcherConfig::new(number, servers)

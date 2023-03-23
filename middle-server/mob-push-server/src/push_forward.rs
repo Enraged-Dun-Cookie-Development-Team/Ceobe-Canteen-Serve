@@ -16,21 +16,13 @@ pub enum PushForward {
 }
 
 impl PushForward {
-    pub fn new_to_home_page() -> Self {
-        Self::HomePage
-    }
+    pub fn new_to_home_page() -> Self { Self::HomePage }
 
-    pub fn new_to_link(url: Url) -> Self {
-        Self::Link(url)
-    }
+    pub fn new_to_link(url: Url) -> Self { Self::Link(url) }
 
-    pub fn new_to_scheme(scheme: Scheme) -> Self {
-        Self::Scheme(scheme)
-    }
+    pub fn new_to_scheme(scheme: Scheme) -> Self { Self::Scheme(scheme) }
 
-    pub fn new_to_internet(url: Url) -> Self {
-        Self::Internet(url)
-    }
+    pub fn new_to_internet(url: Url) -> Self { Self::Internet(url) }
 }
 
 impl NotifySerialize for PushForward {
@@ -39,7 +31,8 @@ impl NotifySerialize for PushForward {
             PushForward::HomePage => 1,
             PushForward::Link(_) => 2,
             PushForward::Scheme(Scheme { uri, value, .. }) => {
-                2 + if uri.is_none() { 1 } else { 0 } + if value.is_none() { 1 } else { 0 }
+                2 + if uri.is_none() { 1 } else { 0 }
+                    + if value.is_none() { 1 } else { 0 }
             }
             PushForward::Internet(_) => 2,
         }
@@ -61,7 +54,9 @@ impl NotifySerialize for PushForward {
 
         match self {
             PushForward::HomePage => (),
-            PushForward::Link(url) => struct_serialize.serialize_field("url", url)?,
+            PushForward::Link(url) => {
+                struct_serialize.serialize_field("url", url)?
+            }
             PushForward::Scheme(Scheme { scheme, uri, value }) => {
                 struct_serialize.serialize_field("scheme", scheme)?;
                 if let Some(url) = uri {
@@ -69,11 +64,15 @@ impl NotifySerialize for PushForward {
                 }
 
                 if let Some(map) = value {
-                    struct_serialize
-                        .serialize_field("schemeDataList", &map.iter().collect::<Vec<_>>())?;
+                    struct_serialize.serialize_field(
+                        "schemeDataList",
+                        &map.iter().collect::<Vec<_>>(),
+                    )?;
                 }
             }
-            PushForward::Internet(url) => struct_serialize.serialize_field("intentUrl", url)?,
+            PushForward::Internet(url) => {
+                struct_serialize.serialize_field("intentUrl", url)?
+            }
         };
 
         Ok(())

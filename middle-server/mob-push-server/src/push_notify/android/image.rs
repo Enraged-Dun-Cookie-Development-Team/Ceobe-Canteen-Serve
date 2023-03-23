@@ -18,7 +18,7 @@ impl Image {
         Self::Icon(icon_url.into())
     }
 
-    ///推送大图标的url地址
+    /// 推送大图标的url地址
     ///
     /// ## Notify
     ///
@@ -32,9 +32,7 @@ impl Image {
 }
 
 impl NotifySerialize for Image {
-    fn serialize_field(&self) -> usize {
-        1
-    }
+    fn serialize_field(&self) -> usize { 1 }
 
     fn serialize<S: serde::Serializer>(
         &self,
@@ -42,7 +40,9 @@ impl NotifySerialize for Image {
     ) -> Result<(), <S as serde::Serializer>::Error> {
         match self {
             Image::Icon(url) => struct_serialize.serialize_field("icon", url),
-            Image::Image(url) => struct_serialize.serialize_field("image", url),
+            Image::Image(url) => {
+                struct_serialize.serialize_field("image", url)
+            }
         }
     }
 }

@@ -1,8 +1,14 @@
 use std::borrow::Cow;
 
-use serde::{Serialize, ser::SerializeStruct};
+use serde::{ser::SerializeStruct, Serialize};
 
-use crate::{PushForward, PushEntity, push_notify::{NotifySerialize, Notify, android::AndroidNotify, ios::IosNotify, SerializeInformation}};
+use crate::{
+    push_notify::{
+        android::AndroidNotify, ios::IosNotify, Notify, NotifySerialize,
+        SerializeInformation,
+    },
+    PushEntity, PushForward,
+};
 
 pub struct Forward(PushForward);
 

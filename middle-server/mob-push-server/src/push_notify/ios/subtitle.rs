@@ -5,20 +5,14 @@ use crate::push_notify::NotifySerialize;
 pub struct Subtitle(pub String);
 
 impl From<&str> for Subtitle {
-    fn from(s: &str) -> Self {
-        Self(s.to_string())
-    }
+    fn from(s: &str) -> Self { Self(s.to_string()) }
 }
 impl From<String> for Subtitle {
-    fn from(s: String) -> Self {
-        Self(s)
-    }
+    fn from(s: String) -> Self { Self(s) }
 }
 
 impl NotifySerialize for Subtitle {
-    fn serialize_field(&self) -> usize {
-        1
-    }
+    fn serialize_field(&self) -> usize { 1 }
 
     fn serialize<S: serde::Serializer>(
         &self,

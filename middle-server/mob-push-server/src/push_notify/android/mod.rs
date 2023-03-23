@@ -7,7 +7,6 @@ pub use self::{
     notify_style::NotifyStyle,
     sound::{Sound, Warn},
 };
-
 use super::{NotifySerialize, SerializeInformation};
 
 pub mod badge;
@@ -29,18 +28,22 @@ impl AndroidNotify {
         self.notify_style.replace(style);
         self
     }
+
     pub fn set_badge(&mut self, badge: Badge) -> &mut Self {
         self.badge.replace(badge);
         self
     }
+
     pub fn set_image(&mut self, image: Image) -> &mut Self {
         self.image.replace(image);
         self
     }
+
     pub fn set_sound(&mut self, sound: Sound) -> &mut Self {
         self.sound.replace(sound);
         self
     }
+
     pub fn set_warn(&mut self, warn: Warn) -> &mut Self {
         self.warn.replace(warn);
         self
@@ -48,9 +51,7 @@ impl AndroidNotify {
 }
 
 impl SerializeInformation for AndroidNotify {
-    fn serialize_name() -> &'static str {
-        "androidNotify"
-    }
+    fn serialize_name() -> &'static str { "androidNotify" }
 }
 
 impl NotifySerialize for AndroidNotify {
@@ -77,14 +78,13 @@ impl NotifySerialize for AndroidNotify {
 
 #[cfg(test)]
 mod test {
-    use crate::push_notify::{Notify, SerializeInformation};
-
     use super::{
         badge::Badge,
         notify_style::{CustomStyle, NotifyStyle, StyleId},
         sound::WarnSound,
         AndroidNotify,
     };
+    use crate::push_notify::{Notify, SerializeInformation};
 
     #[test]
     fn test_builder() {
@@ -99,7 +99,8 @@ mod test {
         .warn(WarnSound::Prompt & WarnSound::IndicatorLight & WarnSound::Vibration)
         .build();
 
-        let string = serde_json::to_string_pretty(&Notify::new(notify)).unwrap();
+        let string =
+            serde_json::to_string_pretty(&Notify::new(notify)).unwrap();
 
         println!("{string}")
     }

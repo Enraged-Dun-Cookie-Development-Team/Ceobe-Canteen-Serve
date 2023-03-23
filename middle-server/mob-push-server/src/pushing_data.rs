@@ -13,9 +13,7 @@ pub trait PushEntity: 'static + Sync + Send {
     fn get_send_content(&self) -> &Self::Content;
 
     /// 获取当前推送消息的标题
-    fn get_title(&self) -> Cow<'_, str> {
-        "新饼来袭".into()
-    }
+    fn get_title(&self) -> Cow<'_, str> { "新饼来袭".into() }
     /// 获取当前推送消息的安卓端配置
     fn android_notify(&self, _notify: &mut AndroidNotify) {}
 

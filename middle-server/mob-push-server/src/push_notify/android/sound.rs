@@ -9,15 +9,11 @@ use crate::push_notify::NotifySerialize;
 pub struct Sound(pub String);
 
 impl From<&str> for Sound {
-    fn from(s: &str) -> Self {
-        Self(s.into())
-    }
+    fn from(s: &str) -> Self { Self(s.into()) }
 }
 
 impl NotifySerialize for Sound {
-    fn serialize_field(&self) -> usize {
-        1
-    }
+    fn serialize_field(&self) -> usize { 1 }
 
     fn serialize<S: serde::Serializer>(
         &self,
@@ -39,21 +35,15 @@ pub enum WarnSound {
 }
 
 impl From<WarnSound> for Warn {
-    fn from(s: WarnSound) -> Self {
-        Warn(vec![s])
-    }
+    fn from(s: WarnSound) -> Self { Warn(vec![s]) }
 }
 
 impl WarnSound {
-    pub fn new_prompt() -> Self {
-        Self::Prompt
-    }
-    pub fn new_vibration() -> Self {
-        Self::Vibration
-    }
-    pub fn new_indicator_light() -> Self {
-        Self::IndicatorLight
-    }
+    pub fn new_prompt() -> Self { Self::Prompt }
+
+    pub fn new_vibration() -> Self { Self::Vibration }
+
+    pub fn new_indicator_light() -> Self { Self::IndicatorLight }
 }
 
 impl WarnSound {
@@ -72,9 +62,7 @@ impl WarnSound {
 pub struct Warn(pub Vec<WarnSound>);
 
 impl NotifySerialize for Warn {
-    fn serialize_field(&self) -> usize {
-        1
-    }
+    fn serialize_field(&self) -> usize { 1 }
 
     fn serialize<S: serde::Serializer>(
         &self,
@@ -88,9 +76,7 @@ impl NotifySerialize for Warn {
 impl BitAnd<WarnSound> for WarnSound {
     type Output = Warn;
 
-    fn bitand(self, rhs: Self) -> Self::Output {
-        Warn(vec![self, rhs])
-    }
+    fn bitand(self, rhs: Self) -> Self::Output { Warn(vec![self, rhs]) }
 }
 
 impl BitAnd<Warn> for WarnSound {

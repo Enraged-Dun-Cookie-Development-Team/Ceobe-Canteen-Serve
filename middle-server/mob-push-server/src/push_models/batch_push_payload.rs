@@ -1,10 +1,11 @@
-use serde::{Serialize, ser::SerializeStruct};
+use serde::{ser::SerializeStruct, Serialize};
 
-use crate::{
-    PushEntity,
+use super::{
+    batch_user::BatchUsers,
+    push_action::{Forward, PushNotify},
+    BATCH_SIZE,
 };
-
-use super::{batch_user::BatchUsers, BATCH_SIZE, push_action::{PushNotify, Forward}};
+use crate::PushEntity;
 
 pub(crate) struct BatchPush<'u, 's, 'p, 'key> {
     pub(crate) users: BatchUsers<'u, 's, BATCH_SIZE>,
@@ -15,7 +16,8 @@ pub(crate) struct BatchPush<'u, 's, 'p, 'key> {
 
 impl<'u, 's, 'p, 'key> BatchPush<'u, 's, 'p, 'key> {
     pub(crate) fn new<E: PushEntity>(
-        users: BatchUsers<'u,'s,BATCH_SIZE>, entity: &'p E, secret_key: &'key str,
+        users: BatchUsers<'u, 's, BATCH_SIZE>, entity: &'p E,
+        secret_key: &'key str,
     ) -> Self {
         Self {
             users,

@@ -7,15 +7,11 @@ use crate::push_notify::NotifySerialize;
 pub struct Category(pub String);
 
 impl From<&str> for Category {
-    fn from(s: &str) -> Self {
-        Self(s.to_string())
-    }
+    fn from(s: &str) -> Self { Self(s.to_string()) }
 }
 
 impl NotifySerialize for Category {
-    fn serialize_field(&self) -> usize {
-        1
-    }
+    fn serialize_field(&self) -> usize { 1 }
 
     fn serialize<S: serde::Serializer>(
         &self,
@@ -52,9 +48,7 @@ impl Serialize for IosPushSound {
 }
 
 impl NotifySerialize for IosPushSound {
-    fn serialize_field(&self) -> usize {
-        1
-    }
+    fn serialize_field(&self) -> usize { 1 }
 
     fn serialize<S: serde::Serializer>(
         &self,

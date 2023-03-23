@@ -13,9 +13,9 @@ impl NotifySerialize for IosRichTextType {
     fn serialize_field(&self) -> usize {
         match self {
             IosRichTextType::None => 1,
-            IosRichTextType::Picture(_) | IosRichTextType::Video(_) | IosRichTextType::Voice(_) => {
-                3
-            }
+            IosRichTextType::Picture(_)
+            | IosRichTextType::Video(_)
+            | IosRichTextType::Voice(_) => 3,
         }
     }
 
@@ -25,7 +25,8 @@ impl NotifySerialize for IosRichTextType {
     ) -> Result<(), <S as serde::Serializer>::Error> {
         let enable = if let IosRichTextType::None = self {
             0
-        } else {
+        }
+        else {
             1
         };
         struct_serialize.serialize_field("mutableContent", &enable)?;

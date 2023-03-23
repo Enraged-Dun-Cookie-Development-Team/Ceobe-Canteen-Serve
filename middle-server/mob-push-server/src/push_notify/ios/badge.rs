@@ -11,9 +11,7 @@ pub enum IosBadgeType {
 }
 
 impl NotifySerialize for IosBadgeType {
-    fn serialize_field(&self) -> usize {
-        2
-    }
+    fn serialize_field(&self) -> usize { 2 }
 
     fn serialize<S: serde::Serializer>(
         &self,

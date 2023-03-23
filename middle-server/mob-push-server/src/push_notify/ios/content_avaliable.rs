@@ -8,9 +8,7 @@ use crate::push_notify::NotifySerialize;
 pub struct ContentAvailable;
 
 impl NotifySerialize for ContentAvailable {
-    fn serialize_field(&self) -> usize {
-        1
-    }
+    fn serialize_field(&self) -> usize { 1 }
 
     fn serialize<S: serde::Serializer>(
         &self,

@@ -9,24 +9,22 @@ mod requester;
 
 mod pushing_data;
 pub use config::app_info::MobPushConfigTrait;
+pub use error::MobPushError;
 use general_request_client::client::RequestClient;
+pub use push_forward::{PushForward, Scheme};
 pub use push_manager::PushManager;
 pub use pushing_data::PushEntity;
 
-pub use error::MobPushError;
-pub use push_forward::{PushForward, Scheme};
-
 use crate::push_models::response::Respond;
 
-
 /// 通过使用给定的request 客户端，发起mob推送.
-/// 
+///
 /// - 推送内容使用 `content` 定义
 /// - 推送用户通过 `user_list` 提供
 ///
 /// # Errors
 ///
-/// This function will return an error if 
+/// This function will return an error if
 /// - 构造 requester 时，json 序列化异常
 /// - 发送请求时异常
 /// - 读取响应体时异常

@@ -2,9 +2,12 @@ pub mod content_avaliable;
 pub mod subtitle;
 use typed_builder::TypedBuilder;
 
-use self::{apn::Category, content_avaliable::ContentAvailable, subtitle::Subtitle};
-pub use self::{apn::IosPushSound, badge::IosBadgeType, rich_text::IosRichTextType};
-
+use self::{
+    apn::Category, content_avaliable::ContentAvailable, subtitle::Subtitle,
+};
+pub use self::{
+    apn::IosPushSound, badge::IosBadgeType, rich_text::IosRichTextType,
+};
 use super::{NotifySerialize, SerializeInformation};
 
 mod apn;
@@ -47,9 +50,7 @@ impl NotifySerialize for IosNotify {
 }
 
 impl SerializeInformation for IosNotify {
-    fn serialize_name() -> &'static str {
-        "iosNotify"
-    }
+    fn serialize_name() -> &'static str { "iosNotify" }
 }
 
 impl IosNotify {
@@ -57,25 +58,29 @@ impl IosNotify {
         self.badge.replace(badge);
         self
     }
+
     pub fn set_category(&mut self, category: Category) -> &mut Self {
         self.category.replace(category);
         self
     }
+
     pub fn set_sound(&mut self, sound: IosPushSound) -> &mut Self {
         self.sound.replace(sound);
         self
     }
+
     pub fn set_subtitle(&mut self, subtitle: Subtitle) -> &mut Self {
         self.subtitle.replace(subtitle);
         self
     }
+
     pub fn set_content_available(
-        &mut self,
-        content_available: Option<ContentAvailable>,
+        &mut self, content_available: Option<ContentAvailable>,
     ) -> &mut Self {
         self.content_available = content_available;
         self
     }
+
     pub fn set_rich_text(&mut self, rich_text: IosRichTextType) -> &mut Self {
         self.rich_text.replace(rich_text);
         self
@@ -85,9 +90,8 @@ impl IosNotify {
 #[cfg(test)]
 mod test {
 
-    use crate::push_notify::SerializeInformation;
-
     use super::{content_avaliable::ContentAvailable, IosNotify};
+    use crate::push_notify::SerializeInformation;
 
     #[test]
     fn test() {

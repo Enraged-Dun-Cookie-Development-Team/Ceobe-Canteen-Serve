@@ -12,10 +12,12 @@ impl Respond {
     pub(crate) fn to_result(self) -> Result<Self, MobPushError> {
         match self.status {
             200 => Ok(self),
-            state => Err(MobPushError::Mob {
-                state,
-                msg: self.error.unwrap(),
-            }),
+            state => {
+                Err(MobPushError::Mob {
+                    state,
+                    msg: self.error.unwrap(),
+                })
+            }
         }
     }
 }
