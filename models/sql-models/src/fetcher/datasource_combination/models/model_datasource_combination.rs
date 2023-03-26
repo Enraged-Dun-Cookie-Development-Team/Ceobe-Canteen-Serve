@@ -31,7 +31,10 @@ impl RelationTrait for Relation {
 impl ActiveModelBehavior for ActiveModel {}
 
 impl ActiveModel {
-    pub fn new(combination_id: String, [bitmat1,bitmat2,bitmap3,bitmap4]: [u64; 4]) -> ActiveModel {
+    pub fn new(
+        combination_id: String,
+        [bitmat1, bitmat2, bitmap3, bitmap4]: [u64; 4],
+    ) -> ActiveModel {
         ActiveModel {
             combination_id: Set(combination_id),
             bitmap1: Set(bitmat1),
