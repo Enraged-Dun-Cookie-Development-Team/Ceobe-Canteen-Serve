@@ -31,13 +31,13 @@ impl RelationTrait for Relation {
 impl ActiveModelBehavior for ActiveModel {}
 
 impl ActiveModel {
-    pub fn new(combination_id: String, bitmaps: [u64; 4]) -> ActiveModel {
+    pub fn new(combination_id: String, [bitmat1,bitmat2,bitmap3,bitmap4]: [u64; 4]) -> ActiveModel {
         ActiveModel {
             combination_id: Set(combination_id),
-            bitmap1: Set(bitmaps[0]),
-            bitmap2: Set(bitmaps[1]),
-            bitmap3: Set(bitmaps[2]),
-            bitmap4: Set(bitmaps[3]),
+            bitmap1: Set(bitmat1),
+            bitmap2: Set(bitmat2),
+            bitmap3: Set(bitmap3),
+            bitmap4: Set(bitmap4),
             last_access_time: Set(get_now_naive_date_time()),
             ..Default::default()
         }
