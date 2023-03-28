@@ -1,7 +1,12 @@
-use abstract_database::fetcher::ToFetcher;
-use axum::{extract::Query, Json};
+use axum::{
+    extract::{multipart::MultipartRejection, Multipart, Query},
+    Json,
+};
+use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
-use fetcher::{datasource_config::ToDatasource, platform_config::ToPlatform};
+use fetcher::{
+    datasource_config::ToDatasource, platform_config::ToPlatform, ToFetcher,
+};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{
@@ -12,6 +17,7 @@ use fetcher_logic::{
 use futures::future;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use qiniu_cdn_upload::upload;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
@@ -20,7 +26,12 @@ use super::{
     error::{DatasourceConfigError, DatasourceConfigRResult},
     FetcherDatasourceCheck, PageSizePretreatment,
 };
-use crate::router::FetcherConfigControllers;
+use crate::{
+    router::FetcherConfigControllers,
+    serves::backend::fetcher::datasource_configs::{
+        error::FieldNotExist, view::AvatarId, DataSourceAvatarPayload,
+    },
+};
 
 impl FetcherConfigControllers {
     /// 获取平台与数据源类型列表
@@ -114,9 +125,10 @@ impl FetcherConfigControllers {
     }
 
     // 删除数据源配置
-    #[instrument(ret, skip(db, notifier))]
+    #[instrument(ret, skip(db, notifier, manager))]
     pub async fn delete_datasource_config(
         db: SqlDatabaseOperate, notifier: SchedulerNotifier,
+        manager: QiniuManager,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
@@ -126,6 +138,7 @@ impl FetcherConfigControllers {
             FetcherConfigLogic::delete_datasource_by_id(
                 &notifier,
                 db,
+                manager,
                 datasource.id
             )
             .await
@@ -149,6 +162,24 @@ impl FetcherConfigControllers {
                 .find_by_platform(&filter.type_id)
                 .await?;
             let resp = list.into_iter().map(Into::into).collect();
+            Ok(resp)
+        })
+        .await
+    }
+
+    /// 上传数据源头像
+    #[instrument(ret, skip(qiniu))]
+    pub async fn upload_avatar(
+        qiniu: QiniuManager, multipart: Result<Multipart, MultipartRejection>,
+    ) -> DatasourceConfigRResult<AvatarId> {
+        resp_result::resp_try(async move {
+            let mut multipart = multipart?;
+            let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
+
+            let resp = upload(&qiniu, field, DataSourceAvatarPayload::new())
+                .await
+                .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
+
             Ok(resp)
         })
         .await

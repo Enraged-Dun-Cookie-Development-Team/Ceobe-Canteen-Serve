@@ -1,5 +1,5 @@
 use ceobe_qiniu_upload::{
-    Error, PayloadContent, PayloadLocal, ResponsePayload, Uploader,
+    Error, Manager, PayloadContent, PayloadLocal, ResponsePayload,
 };
 use mime::Mime;
 use update_payload::UploadPayload;
@@ -14,7 +14,7 @@ pub mod update_source;
 /// 通用七牛云上传接口
 ///
 /// - `uploader`: [`&Uploader`](Uploader) 七牛云上传器，可以通过
-///   [`QiniuUploader`](ceobe_qiniu_upload::QiniuUploader)
+///   [`QiniuManager`](ceobe_qiniu_upload::QiniuManager)
 /// 解引用获得
 /// - `source`: 原始待上传信息，可以从中获得待上传的内容和待上传的
 ///   `Content-Type`
@@ -28,7 +28,7 @@ pub mod update_source;
 /// 2. json 序列化/反序列化异常
 /// 3. 读取 Multipart 时异常
 pub async fn upload<Payload>(
-    uploader: &Uploader,
+    uploader: &Manager,
     source: <Payload::Source as UploadSource>::Source<'_>, payload: Payload,
 ) -> Result<ResponsePayload, Error>
 where

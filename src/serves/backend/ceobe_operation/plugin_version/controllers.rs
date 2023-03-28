@@ -1,5 +1,4 @@
-use abstract_database::ceobe::ToCeobe;
-use ceobe_operate::ToCeobeOperation;
+use ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::{CheckExtract, JsonCheckExtract};
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,

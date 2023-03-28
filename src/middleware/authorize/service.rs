@@ -1,7 +1,9 @@
 use std::marker::PhantomData;
 
-use abstract_database::admin::ToAdmin;
-use admin::user::{OperateError, ToUser};
+use admin::{
+    user::{OperateError, ToUser},
+    ToAdmin,
+};
 use axum::{
     body::{Body, BoxBody},
     extract::FromRequestParts,

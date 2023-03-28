@@ -1,0 +1,21 @@
+[package]
+name = "ceobe_cookie_logic"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ceobe-cookie.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+typed-builder.workspace = true
+thiserror.workspace = true
+status-err = { path = "../../libs/status-err" }
+futures.workspace = true
+bitmaps.workspace = true
+bitmap-convert.workspace = true
+
+
+[dependencies.mongo-migration]
+path = "../../migrate/mongo-migration"

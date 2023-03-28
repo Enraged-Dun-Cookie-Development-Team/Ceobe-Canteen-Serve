@@ -1,5 +1,4 @@
-use abstract_database::bakery::ToBakery;
-use bakery::mansion::ToMansion;
+use bakery::{mansion::ToMansion, ToBakery};
 use checker::CheckExtract;
 use modify_cache::CacheMode;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;

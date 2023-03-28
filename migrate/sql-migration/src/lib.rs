@@ -4,6 +4,7 @@ mod ceobe_operation_app_version;
 mod ceobe_operation_resource;
 mod ceobe_operation_video;
 mod fetcher_config;
+mod fetcher_datasource_combination;
 mod fetcher_datasource_config;
 mod fetcher_global_config;
 mod fetcher_platform_config;
@@ -40,6 +41,7 @@ impl MigratorTrait for Migrator {
             fetcher_config::m20221231_205557_alter_group_name::Migration
             fetcher_config::m20230101_013601_create_index::Migration
             fetcher_datasource_config::m20230217_135012_add_sort_detele::Migration
+            fetcher_datasource_combination::m20230310_213209_create::Migration
         ]
     }
 }

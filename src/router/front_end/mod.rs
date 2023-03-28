@@ -1,5 +1,5 @@
 mod bakery_mansion;
-pub mod config;
+mod config;
 mod operation;
 mod user;
 use axum::Router;

@@ -1,7 +1,9 @@
 use bool_or::TrueOrError;
+use ceobe_qiniu_upload::QiniuManager;
 use fetcher::{
-    config::ConfigOperate, datasource_config::DatasourceOperate,
-    platform_config::PlatformOperate,
+    config::ConfigOperate,
+    datasource_combination::DatasourceCombinationOperate,
+    datasource_config::DatasourceOperate, platform_config::PlatformOperate,
 };
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
@@ -20,6 +22,7 @@ use sql_models::{
 use crate::{
     error::{LogicError, LogicResult},
     implements::FetcherConfigLogic,
+    view::DeleteObjectName,
 };
 
 impl FetcherConfigLogic {
@@ -39,7 +42,8 @@ impl FetcherConfigLogic {
 
     /// 删除一个数据源
     pub async fn delete_datasource_by_id(
-        notifier: &SchedulerNotifier, db: SqlDatabaseOperate, id: i32,
+        notifier: &SchedulerNotifier, db: SqlDatabaseOperate,
+        manager: QiniuManager, id: i32,
     ) -> LogicResult<()> {
         // 开事务
         let ctx = db.get_transaction().await?;
@@ -52,6 +56,37 @@ impl FetcherConfigLogic {
 
         // 删除数据源
         DatasourceOperate::delete_one(&ctx, id).await?;
+
+        // 删除数据源组合
+        let comb_ids =
+            DatasourceCombinationOperate::find_comb_id_by_one_datasource_raw(
+                &ctx, id,
+            )
+            .await?;
+        let mut delete_comb_ids = Vec::<String>::new();
+        // 删除对象储存中的数据源组合文件
+        for comb_id in comb_ids {
+            let err = manager
+                .delete(DeleteObjectName {
+                    file_name: comb_id.clone(),
+                })
+                .await
+                .err();
+            if err.is_some() {
+                // TODO: qq频道告警
+            }
+            else {
+                delete_comb_ids.push(comb_id);
+            }
+        }
+        // TODO: qq频道告警
+
+        // 删除数据源组合
+        DatasourceCombinationOperate::delete_by_datasource(
+            &ctx,
+            delete_comb_ids,
+        )
+        .await?;
 
         // 提交事务
         ctx.submit().await?;

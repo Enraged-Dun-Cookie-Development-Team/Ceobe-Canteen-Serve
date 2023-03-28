@@ -17,9 +17,14 @@ uuid.workspace = true
 tokio.workspace = true
 tracing = { workspace = true }
 db-ops-prelude.workspace = true
-abstract_database.workspace = true
 ceobe-user.workspace = true
 fetcher.workspace = true
+bitmaps.workspace = true
+bitmap-convert.workspace = true
+bnum = "0.5.0"
+ceobe-qiniu-upload.workspace = true
+ceobe-cookie.workspace = true
+qiniu-cdn-upload.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"
