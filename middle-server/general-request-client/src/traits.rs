@@ -24,7 +24,7 @@ pub type ClientResult<C> =
     Result<<C as ClientTrait>::Response, <C as ClientTrait>::Error>;
 
 pub trait RequestBuilder: Sized {
-    type Body;
+    type Body: From<Vec<u8>>;
     type Request;
     type Error;
 
