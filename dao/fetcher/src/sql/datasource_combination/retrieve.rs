@@ -1,11 +1,11 @@
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, EntityTrait, sea_query::{Query, Expr}, StatementBuilder}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{Entity, CombinationId, Column}, database_operates::NoConnect};
+use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, EntityTrait, sea_query::{Query, Expr, MysqlQueryBuilder}, StatementBuilder, Statement}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{Entity, CombinationId, Column}, database_operates::NoConnect};
 use tracing::{info, instrument};
 
 use super::{DatasourceCombinationOperate, OperateResult};
 
 impl DatasourceCombinationOperate<'_, NoConnect> {
     #[instrument(ret, skip(db))]
-    /// 创建数据源组合数据
+    /// 根据数据源查询数据源组合
     pub async fn find_comb_id_by_one_datasource_raw(
         db: &impl ConnectionTrait, datasource_id: i32,
     ) -> OperateResult<Vec<String>> {
@@ -28,9 +28,10 @@ impl DatasourceCombinationOperate<'_, NoConnect> {
         ));
 
         Ok(Entity::find()
-            .from_raw_sql(StatementBuilder::build(
-                &query,
-                &db.get_database_backend(),
+            .from_raw_sql(Statement::from_sql_and_values(
+                db.get_database_backend(),
+                &query.to_string(MysqlQueryBuilder).to_lowercase(),
+                [],
             ))
             .into_model::<CombinationId>()
             .all(db)
