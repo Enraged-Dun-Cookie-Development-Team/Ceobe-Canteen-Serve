@@ -6,7 +6,7 @@ use tokio::sync::{mpsc, oneshot};
 
 use crate::{MobPushConfigTrait, PushManager};
 
-#[prepare(MobPush 'arg)]
+#[prepare(MobPushPrepare 'arg)]
 pub async fn init_mob_push<'arg, C>(
     config: &'arg C,
 ) -> impl PrepareStateEffect
