@@ -1,7 +1,7 @@
-mod inside;
 mod back_end;
 mod cdn;
 mod front_end;
+mod inside;
 
 use axum::{routing::get, Router};
 pub use back_end::{
@@ -20,7 +20,8 @@ pub use inside::AnalyzeCookieInside;
 pub type ServerRoute = Router<State>;
 
 use self::{
-    back_end::back_end_router, cdn::cdn_router, front_end::front_end_router, inside::inside_router
+    back_end::back_end_router, cdn::cdn_router, front_end::front_end_router,
+    inside::inside_router,
 };
 use crate::bootstrap::init::State;
 

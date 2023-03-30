@@ -15,10 +15,10 @@ use bootstrap::{
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
-    auth_config::AuthConfig, qiniu_secret::QiniuUploadConfig,
-    resp_result_config::RespResultConfig,
+    auth_config::AuthConfig, mob_config::MobPushConfig,
+    qiniu_secret::QiniuUploadConfig, resp_result_config::RespResultConfig,
     schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
-    CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML, mob_config::MobPushConfig,
+    CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;

@@ -10,9 +10,8 @@ mod requester;
 mod pushing_data;
 pub use config::app_info::MobPushConfigTrait;
 pub use error::MobPushError;
-
 pub use push_forward::{PushForward, Scheme};
-pub use push_manager::{PushManager,PartPushManagerState};
+pub use push_manager::{PartPushManagerState, PushManager};
 pub use pushing_data::PushEntity;
 
 use crate::push_models::response::Respond;
@@ -31,9 +30,7 @@ use crate::push_models::response::Respond;
 /// - 反序列响应体时异常
 /// - MobPush 响应的推送异常
 pub async fn mob_push<'mid, I, Mid, C>(
-    manager: &mut PushManager,
-    content: &C,
-    user_list: I,
+    manager: &mut PushManager, content: &C, user_list: I,
 ) -> Result<(), crate::error::MobPushError>
 where
     I: IntoIterator<Item = &'mid Mid>,
@@ -55,7 +52,7 @@ where
         let resp = client.send_request(requester).await?;
 
         let _resp = serde_json::from_slice::<Respond>(&resp.bytes().await?)?
-            .to_result()?;
+            .into_result()?;
 
         delayer.delay().await;
     }

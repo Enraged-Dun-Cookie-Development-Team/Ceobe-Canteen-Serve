@@ -12,7 +12,8 @@ pub struct MobPushRequester<'key> {
 
 impl<'key> Requester for MobPushRequester<'key> {
     const METHOD: Method = Method::POST;
-    const VERSION: general_request_client::Version = general_request_client::Version::HTTP_11;
+    const VERSION: general_request_client::Version =
+        general_request_client::Version::HTTP_11;
 
     fn get_url(&self) -> Url {
         "http://api.push.mob.com/v3/push/createPush"

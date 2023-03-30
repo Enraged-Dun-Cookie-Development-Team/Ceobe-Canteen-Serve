@@ -1,13 +1,13 @@
 use bitmap_convert::error::Error as BitmapConvError;
 use ceobe_cookie::temp_list::OperateError as TempListOperateError;
-use mob_push_server::MobPushError;
-use status_err::{StatusErr, HttpCode, ErrPrefix};
-use thiserror::Error;
 use ceobe_user::property::OperateError as CeobeUserOperateError;
 use fetcher::{
+    datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceOperateError,
-    datasource_combination::OperateError as DatasourceCombinationOperateError
 };
+use mob_push_server::MobPushError;
+use status_err::{ErrPrefix, HttpCode, StatusErr};
+use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
@@ -32,7 +32,9 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
-    DatasourceCombinationOperateError(#[from] DatasourceCombinationOperateError),
+    DatasourceCombinationOperateError(
+        #[from] DatasourceCombinationOperateError,
+    ),
 
     #[error(transparent)]
     #[status_err(err(

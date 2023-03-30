@@ -1,13 +1,16 @@
-
+use ceobe_qiniu_upload::ObjectName;
 use futures::{
     future::{ready, Ready},
     io::Cursor,
 };
-
-use ceobe_qiniu_upload::ObjectName;
-use mob_push_server::{PushEntity, push_notify::android::{Image, NotifyStyle, Warn, sound::WarnSound}};
+use mob_push_server::{
+    push_notify::android::{sound::WarnSound, Image, NotifyStyle, Warn},
+    PushEntity,
+};
 use mongo_migration::mongo_models::mongodb::bson::oid::ObjectId;
-use qiniu_cdn_upload::{update_payload::UploadPayload, update_source::UploadSource};
+use qiniu_cdn_upload::{
+    update_payload::UploadPayload, update_source::UploadSource,
+};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use typed_builder::TypedBuilder;
@@ -41,7 +44,7 @@ pub struct CookieContentReq {
 pub struct NewCookieReq {
     pub source: CookieDatasourceReq,
     pub content: CookieContentReq,
-    pub cookie_id: ObjectId
+    pub cookie_id: ObjectId,
 }
 
 pub struct PushInfo {
@@ -57,17 +60,21 @@ impl PushEntity for PushInfo {
     fn get_send_content(&self) -> &Self::Content {
         if let Some(content) = &self.content {
             content
-        } else {
+        }
+        else {
             ""
         }
     }
 
-    fn get_title(&self) -> std::borrow::Cow<'_, str> { 
+    fn get_title(&self) -> std::borrow::Cow<'_, str> {
         let name = &self.datasource_name;
-        format!(r#"小刻在【{name}】找到了一个饼！！"#).into() 
+        format!(r#"小刻在【{name}】找到了一个饼！！"#).into()
     }
 
-    fn android_notify(&self, notify: &mut mob_push_server::push_notify::android::AndroidNotify) {
+    fn android_notify(
+        &self,
+        notify: &mut mob_push_server::push_notify::android::AndroidNotify,
+    ) {
         if let Some(image) = &self.image_url {
             notify.set_notify_style(NotifyStyle::new_big_vision(image));
         }

@@ -15,7 +15,7 @@ use crate::{
     PushEntity,
 };
 
-#[derive(Debug,Clone,)]
+#[derive(Debug, Clone)]
 pub struct PartPushManagerState {
     push_admission: mpsc::Sender<oneshot::Sender<()>>,
     key: Arc<SecretString>,
@@ -25,8 +25,7 @@ pub struct PartPushManagerState {
 impl PartPushManagerState {
     pub(crate) fn new(
         push_admission: mpsc::Sender<oneshot::Sender<()>>,
-        key: Arc<SecretString>,
-        secret: Arc<SecretString>,
+        key: Arc<SecretString>, secret: Arc<SecretString>,
     ) -> Self {
         Self {
             push_admission,
@@ -73,8 +72,7 @@ where
     type Rejection = Infallible;
 
     fn from_request_parts<'life0, 'life1, 'async_trait>(
-        _: &'life0 mut Parts,
-        state: &'life1 S,
+        _: &'life0 mut Parts, state: &'life1 S,
     ) -> Pin<
         Box<
             dyn Future<Output = Result<Self, Self::Rejection>>
@@ -96,14 +94,9 @@ where
     }
 }
 
-
 impl PushManager {
-    
-
     pub fn new_requester<'s, 'user, 'string, 'payload, E: PushEntity>(
-        &'s mut self,
-        users: &'user [&'string str],
-        content: &'payload E,
+        &'s mut self, users: &'user [&'string str], content: &'payload E,
     ) -> RequesterIter<'user, 'string, 'payload, 's, BATCH_SIZE, E> {
         RequesterIter {
             buffer: &mut self.buffer,

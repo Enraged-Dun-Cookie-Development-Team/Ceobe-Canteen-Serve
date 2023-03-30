@@ -4,7 +4,7 @@ use axum_macros::FromRef;
 use axum_starter::FromStateCollector;
 use ceobe_qiniu_upload::QiniuBaseUrl;
 use general_request_client::client::RequestClient;
-use mob_push_server::{PushManager, PartPushManagerState};
+use mob_push_server::{PartPushManagerState, PushManager};
 use request_clients::bili_client::QueryBiliVideo;
 use scheduler_notifier::SchedulerUrl;
 

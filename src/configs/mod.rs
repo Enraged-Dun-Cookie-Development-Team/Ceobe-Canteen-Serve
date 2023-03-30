@@ -1,8 +1,8 @@
-pub mod mob_config;
 pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
+pub mod mob_config;
 pub mod qiniu_secret;
 pub mod resp_result_config;
 pub mod schedule_notifier_config;

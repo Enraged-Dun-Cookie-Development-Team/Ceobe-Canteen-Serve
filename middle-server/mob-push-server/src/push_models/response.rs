@@ -9,7 +9,7 @@ pub(crate) struct Respond {
 }
 
 impl Respond {
-    pub(crate) fn to_result(self) -> Result<Self, MobPushError> {
+    pub(crate) fn into_result(self) -> Result<Self, MobPushError> {
         match self.status {
             200 => Ok(self),
             state => {

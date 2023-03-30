@@ -1,5 +1,8 @@
 use db_ops_prelude::{
-    mongo_connection::{CollectionGuard, MongoDbCollectionTrait, MongoDbError},
+    futures::StreamExt,
+    mongo_connection::{
+        CollectionGuard, MongoDbCollectionTrait, MongoDbError,
+    },
     mongo_models::ceobe::user_property::models::{
         UserDatasource, UserMobId, UserPropertyModel,
     },
@@ -7,7 +10,7 @@ use db_ops_prelude::{
         bson::{doc, Document, Uuid},
         options::{FindOneOptions, FindOptions},
     },
-    tap::Tap, futures::StreamExt,
+    tap::Tap,
 };
 use tracing::info;
 
@@ -37,8 +40,8 @@ where
             .tap(|list| info!(mansionList.ids = ?list)))
     }
 
-     /// 根据数据源查询用户列表
-     pub async fn find_user_list_by_filter(
+    /// 根据数据源查询用户列表
+    pub async fn find_user_list_by_filter(
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<UserMobId>,
     ) -> OperateResult<Vec<String>> {
@@ -55,7 +58,7 @@ where
         let mut res = Vec::<String>::new();
         while let Some(v) = vec.next().await {
             res.push(v.map_err(MongoDbError::from)?.mob_id);
-        };
+        }
         Ok(res)
     }
 
@@ -79,7 +82,7 @@ where
         info!(user.mob_id = %datasource_uuid);
         let collection = self.get_collection()?;
         Self::find_user_list_by_filter(
-            doc!{"datasource_push": datasource_uuid},
+            doc! {"datasource_push": datasource_uuid},
             &collection.with_mapping(),
         )
         .await
