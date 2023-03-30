@@ -4,12 +4,10 @@ use ceobe_user::ToCeobeUser;
 use db_ops_prelude::{get_connect::GetDatabaseConnect, SqlDatabaseOperate};
 use fetcher::{
     datasource_combination::{
-        DatasourceCombinationOperate, ToDatasourceCombination,
+        DatasourceCombinationOperate,
     },
     datasource_config::DatasourceOperate,
-    ToFetcher,
 };
-use general_request_client::client::RequestClient;
 use mob_push_server::{mob_push, PushManager};
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use qiniu_cdn_upload::upload;
@@ -26,7 +24,7 @@ use crate::{
 impl CeobeCookieLogic {
     pub async fn new_cookie(
         mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
-        request_client: RequestClient, mut mob: PushManager,
+        mut mob: PushManager,
         qiniu: QiniuManager, new_cookie: NewCookieReq,
     ) -> LogicResult<()> {
         let db = sql.get_connect();
@@ -82,7 +80,7 @@ impl CeobeCookieLogic {
                     break;
                 }
             }
-            if let Some(err) = result {
+            if let Some(_err) = result {
                 // TODO: qq频道告警
             }
         }
@@ -94,7 +92,7 @@ impl CeobeCookieLogic {
             image_url: new_cookie.content.image_url,
             icon_url: datasource_info.avatar,
         };
-        if mob_push::<'_, _, String, _>(&mut mob, &content, &user_list)
+        if mob_push::<_, String, _>(&mut mob, &content, &user_list)
             .await
             .is_err()
         {

@@ -31,8 +31,8 @@ impl NotifySerialize for PushForward {
             PushForward::HomePage => 1,
             PushForward::Link(_) => 2,
             PushForward::Scheme(Scheme { uri, value, .. }) => {
-                2 + if uri.is_none() { 1 } else { 0 }
-                    + if value.is_none() { 1 } else { 0 }
+                2 + usize::from(uri.is_none())
+                    + usize::from(value.is_none())
             }
             PushForward::Internet(_) => 2,
         }

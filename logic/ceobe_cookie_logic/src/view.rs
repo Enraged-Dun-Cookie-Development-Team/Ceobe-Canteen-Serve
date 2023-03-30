@@ -4,7 +4,7 @@ use futures::{
     io::Cursor,
 };
 use mob_push_server::{
-    push_notify::android::{sound::WarnSound, Image, NotifyStyle, Warn},
+    push_notify::android::{Image, NotifyStyle},
     PushEntity,
 };
 use mongo_migration::mongo_models::mongodb::bson::oid::ObjectId;
@@ -14,7 +14,6 @@ use qiniu_cdn_upload::{
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use typed_builder::TypedBuilder;
-use uuid::Uuid;
 
 // 分页饼列表返回模型
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
