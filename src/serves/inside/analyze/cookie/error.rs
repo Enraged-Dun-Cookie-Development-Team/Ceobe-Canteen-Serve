@@ -1,4 +1,4 @@
-use axum::extract::rejection::{JsonRejection};
+use axum::extract::rejection::JsonRejection;
 use ceobe_cookie_logic::error::LogicError;
 use resp_result::RespResult;
 

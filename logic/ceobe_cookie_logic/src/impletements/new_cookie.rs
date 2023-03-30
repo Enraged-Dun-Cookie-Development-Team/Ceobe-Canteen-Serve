@@ -3,9 +3,7 @@ use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;
 use db_ops_prelude::{get_connect::GetDatabaseConnect, SqlDatabaseOperate};
 use fetcher::{
-    datasource_combination::{
-        DatasourceCombinationOperate,
-    },
+    datasource_combination::DatasourceCombinationOperate,
     datasource_config::DatasourceOperate,
 };
 use mob_push_server::{mob_push, PushManager};
@@ -24,8 +22,7 @@ use crate::{
 impl CeobeCookieLogic {
     pub async fn new_cookie(
         mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
-        mut mob: PushManager,
-        qiniu: QiniuManager, new_cookie: NewCookieReq,
+        mut mob: PushManager, qiniu: QiniuManager, new_cookie: NewCookieReq,
     ) -> LogicResult<()> {
         let db = sql.get_connect();
         // 查询数据源相关信息

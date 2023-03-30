@@ -1,4 +1,4 @@
-use axum::{Json};
+use axum::Json;
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::NewCookieReq,
 };
@@ -16,8 +16,7 @@ impl AnalyzeCookieInside {
     #[instrument(ret, skip(mongo, sql, mob, qiniu))]
     pub async fn new_cookie(
         mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
-        mob: PushManager,
-        qiniu: QiniuManager,
+        mob: PushManager, qiniu: QiniuManager,
         MapReject(cookie_req_info): MapReject<
             Json<NewCookieReq>,
             AnalyzeCookieError,
