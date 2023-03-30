@@ -10,9 +10,9 @@ mod requester;
 mod pushing_data;
 pub use config::app_info::MobPushConfigTrait;
 pub use error::MobPushError;
-use general_request_client::client::RequestClient;
+
 pub use push_forward::{PushForward, Scheme};
-pub use push_manager::PushManager;
+pub use push_manager::{PushManager,PartPushManagerState};
 pub use pushing_data::PushEntity;
 
 use crate::push_models::response::Respond;
@@ -31,7 +31,8 @@ use crate::push_models::response::Respond;
 /// - 反序列响应体时异常
 /// - MobPush 响应的推送异常
 pub async fn mob_push<'mid, I, Mid, C>(
-    client: &RequestClient, manager: &mut PushManager, content: &C,
+    manager: &mut PushManager,
+    content: &C,
     user_list: I,
 ) -> Result<(), crate::error::MobPushError>
 where
@@ -44,6 +45,7 @@ where
         .map(AsRef::<str>::as_ref)
         .collect::<Vec<_>>();
     let mut delayer = manager.batch_delay();
+    let client = manager.client.clone();
     let requester_iter = manager.new_requester(&users, content);
 
     delayer.delay().await;
