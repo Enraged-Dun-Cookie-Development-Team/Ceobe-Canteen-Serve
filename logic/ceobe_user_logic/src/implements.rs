@@ -208,7 +208,9 @@ impl CeobeUserLogic {
                 .create(comb_id.clone(), datasource_vec)
                 .await?;
 
-            let source = CombIdToCookieId { cookie_id };
+            let source = CombIdToCookieId {
+                cookie_id: cookie_id.map(|id| id.to_string()),
+            };
             let payload = CombIdToCookieIdPlayLoad {
                 file_name: &comb_id,
             };

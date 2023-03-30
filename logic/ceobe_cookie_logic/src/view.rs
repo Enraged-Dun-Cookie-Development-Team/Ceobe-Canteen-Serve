@@ -19,10 +19,10 @@ use typed_builder::TypedBuilder;
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieListResp {
     pub cookies: Vec<Value>,
-    pub next_page_id: Option<ObjectId>,
+    pub next_page_id: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+#[derive(Debug, Clone, Deserialize, TypedBuilder)]
 #[serde(deny_unknown_fields)]
 pub struct CookieListReq {
     pub datasource_comb_id: String,
@@ -39,7 +39,7 @@ pub struct CookieContentReq {
     pub text: Option<String>,
     pub image_url: Option<String>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+#[derive(Debug, Clone, Deserialize, TypedBuilder)]
 pub struct NewCookieReq {
     pub source: CookieDatasourceReq,
     pub content: CookieContentReq,
@@ -94,7 +94,7 @@ impl<'s> ObjectName<'s> for DeleteObjectName {
 /// 数据源组合id-最新饼id 上传对象储存
 #[derive(Debug, Clone, Serialize)]
 pub struct CombIdToCookieId {
-    pub cookie_id: Option<ObjectId>,
+    pub cookie_id: Option<String>,
 }
 #[derive(Debug, Clone, Copy)]
 pub struct CombIdToCookieIdPlayLoad<'s> {

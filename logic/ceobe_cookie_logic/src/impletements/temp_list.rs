@@ -45,7 +45,7 @@ impl CeobeCookieLogic {
 
         Ok(CookieListResp {
             cookies: cookie_list,
-            next_page_id: next_cookie_id?,
+            next_page_id: next_cookie_id?.map(|id| id.to_string()),
         })
     }
 }

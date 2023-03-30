@@ -1,7 +1,4 @@
-use db_ops_prelude::{
-    mongo_models::ceobe::user_property::models::UserMobId,
-    mongodb::bson::oid::ObjectId,
-};
+use db_ops_prelude::mongo_models::ceobe::user_property::models::UserMobId;
 use futures::{
     future::{ready, Ready},
     io::Cursor,
@@ -37,7 +34,7 @@ pub struct DatasourceConfig {
 /// 数据源组合id-最新饼id 上传对象储存
 #[derive(Debug, Clone, Serialize)]
 pub struct CombIdToCookieId {
-    pub cookie_id: Option<ObjectId>,
+    pub cookie_id: Option<String>,
 }
 #[derive(Debug, Clone, Copy)]
 pub struct CombIdToCookieIdPlayLoad<'s> {

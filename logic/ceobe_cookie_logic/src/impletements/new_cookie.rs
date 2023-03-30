@@ -63,7 +63,7 @@ impl CeobeCookieLogic {
             }
 
             let source = CombIdToCookieId {
-                cookie_id: Some(new_cookie.cookie_id),
+                cookie_id: Some(new_cookie.cookie_id.to_string()),
             };
             let payload = CombIdToCookieIdPlayLoad {
                 file_name: &comb_id,
