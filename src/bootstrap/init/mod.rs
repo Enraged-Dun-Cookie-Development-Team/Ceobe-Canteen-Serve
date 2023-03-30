@@ -4,6 +4,7 @@ use axum_macros::FromRef;
 use axum_starter::FromStateCollector;
 use ceobe_qiniu_upload::QiniuBaseUrl;
 use general_request_client::client::RequestClient;
+use mob_push_server::PushManager;
 use request_clients::bili_client::QueryBiliVideo;
 use scheduler_notifier::SchedulerUrl;
 
@@ -20,4 +21,5 @@ pub struct State {
     qiniu_base_url: QiniuBaseUrl,
     // fetcher request url
     scheduler_url: SchedulerUrl,
+    mob_push: PushManager,
 }
