@@ -15,6 +15,14 @@ status-err = { path = "../../libs/status-err" }
 futures.workspace = true
 bitmaps.workspace = true
 bitmap-convert.workspace = true
+uuid.workspace = true
+db-ops-prelude.workspace = true
+mob-push-server.workspace = true
+general-request-client.workspace = true
+fetcher.workspace = true
+ceobe-user.workspace = true
+qiniu-cdn-upload.workspace = true
+ceobe-qiniu-upload.workspace = true
 
 
 [dependencies.mongo-migration]
