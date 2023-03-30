@@ -15,15 +15,13 @@ impl Display for Error {
             Error::TooLarge { require, get } => {
                 write!(
                     f,
-                    "Out of Length Limit: require < {} but get {}",
-                    require, get
+                    "Out of Length Limit: require < {require} but get {get}"
                 )
             }
             Error::TooSmall { require, get } => {
                 write!(
                     f,
-                    "Out of Length Limit: require > {} but get {}",
-                    require, get
+                    "Out of Length Limit: require > {require} but get {get}"
                 )
             }
             Error::FixSize { require, get } => {

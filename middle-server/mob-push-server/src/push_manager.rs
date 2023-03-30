@@ -171,7 +171,7 @@ impl<
         hasher.update(self.secret);
 
         let md5 = hasher.finalize();
-        let md5 = format!("{:x}", md5);
+        let md5 = format!("{md5:x}");
 
         Some(Ok(MobPushRequester {
             content: self.buffer.clone(),
