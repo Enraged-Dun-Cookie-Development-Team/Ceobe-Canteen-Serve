@@ -34,9 +34,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error,
     error::LogicResult,
-    view::{DatasourceConfig,
-        MobIdReq,
-    },
+    view::{DatasourceConfig, MobIdReq},
 };
 
 pub struct CeobeUserLogic;
@@ -207,7 +205,12 @@ impl CeobeUserLogic {
                 .create(comb_id.clone(), datasource_vec)
                 .await?;
 
-            QiniuService::create_datasource_comb(&qiniu, cookie_id.map(|id| id.to_string()), comb_id.clone()).await?;
+            QiniuService::create_datasource_comb(
+                &qiniu,
+                cookie_id.map(|id| id.to_string()),
+                comb_id.clone(),
+            )
+            .await?;
         }
 
         // 转成特定格式字符串

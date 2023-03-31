@@ -66,7 +66,10 @@ impl FetcherConfigLogic {
         let mut delete_comb_ids = Vec::<String>::new();
         // 删除对象储存中的数据源组合文件
         for comb_id in comb_ids {
-            if !QiniuService::delete_datasource_comb(&qiniu, comb_id.clone()).await.is_err() {
+            if QiniuService::delete_datasource_comb(&qiniu, comb_id.clone())
+                .await
+                .is_ok()
+            {
                 delete_comb_ids.push(comb_id);
             }
         }

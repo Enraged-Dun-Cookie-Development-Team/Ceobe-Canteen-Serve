@@ -1,6 +1,5 @@
 use bitmap_convert::error::Error as BitmapConvError;
 use ceobe_cookie::temp_list::OperateError as TemporaryListOperateError;
-use ceobe_qiniu_upload::Error as QiniuError;
 use ceobe_user::property::OperateError as CeobeUserOperateError;
 use db_ops_prelude::{
     mongo_connection::MongoDbError,

@@ -14,9 +14,7 @@ use qiniu_service::QiniuService;
 use crate::{
     error::LogicResult,
     impletements::CeobeCookieLogic,
-    view::{
-        NewCookieReq, PushInfo,
-    },
+    view::{NewCookieReq, PushInfo},
 };
 
 impl CeobeCookieLogic {
@@ -33,7 +31,7 @@ impl CeobeCookieLogic {
                 &new_cookie.source.unique,
             )
             .await?;
-        
+
         let (datasource_error, qiniu_err) = future::join(
             async {
                 // 查询用户列表
@@ -52,14 +50,14 @@ impl CeobeCookieLogic {
                         .image_url(new_cookie.content.image_url)
                         .icon_url(datasource_info.avatar)
                         .build();
-                    
+
                         if mob.mob_push::<_, String, _>(&content, &user_list)
                             .await
                             .is_err()
                         {
                             // TODO: qq频道告警
                         }
-                    
+
                         Ok(())
                     },
                     Err(err) => Err(err),
@@ -85,11 +83,9 @@ impl CeobeCookieLogic {
             }
         )
         .await;
-        
-        datasource_error?; 
+
+        datasource_error?;
         qiniu_err?;
-        
-        
 
         Ok(())
     }

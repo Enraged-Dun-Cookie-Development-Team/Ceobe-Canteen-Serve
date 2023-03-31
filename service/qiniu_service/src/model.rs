@@ -2,10 +2,10 @@ use std::future::{ready, Ready};
 
 use ceobe_qiniu_upload::ObjectName;
 use futures::io::Cursor;
-use qiniu_cdn_upload::{update_payload::UploadPayload, update_source::UploadSource};
+use qiniu_cdn_upload::{
+    update_payload::UploadPayload, update_source::UploadSource,
+};
 use serde::Serialize;
-
-
 
 pub struct DeleteObjectName {
     pub file_name: String,

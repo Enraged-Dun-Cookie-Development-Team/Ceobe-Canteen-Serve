@@ -51,5 +51,4 @@ impl From<Infallible> for LogicError {
     fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
 }
 
-
 pub(crate) type LogicResult<T> = Result<T, LogicError>;
