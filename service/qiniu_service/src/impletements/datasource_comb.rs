@@ -1,5 +1,6 @@
 use ceobe_qiniu_upload::QiniuManager;
 use qiniu_cdn_upload::upload;
+use tokio::task::JoinHandle;
 
 use crate::{
     error::ServiceResult,
@@ -51,26 +52,30 @@ impl QiniuService {
 
     /// 更新数据源组合文件（删除+新增）
     pub async fn update_datasource_comb(
-        qiniu: &QiniuManager, cookie_id: Option<String>, comb_id: String,
+        qiniu: QiniuManager, cookie_id: Option<String>, comb_id: String,
     ) {
-        if Self::delete_datasource_comb(qiniu, comb_id.clone())
+        if Self::delete_datasource_comb(&qiniu, comb_id.clone())
             .await
             .is_ok()
         {
-            let _ = Self::create_datasource_comb(qiniu, cookie_id, comb_id)
+            let _ = Self::create_datasource_comb(&qiniu, cookie_id, comb_id)
                 .await
                 .is_err();
         }
     }
 
-    /// 批量删除数据源组合文件
+    /// 批量更新数据源组合文件
     pub async fn update_multi_datasource_comb(
-        qiniu: &QiniuManager, cookie_id: Option<String>,
-        comb_ids: Vec<String>,
+        qiniu: QiniuManager, cookie_id: Option<String>, comb_ids: Vec<String>,
     ) {
+        let mut handles = Vec::<JoinHandle<()>>::new();
         for comb_id in comb_ids {
-            Self::update_datasource_comb(qiniu, cookie_id.clone(), comb_id)
-                .await;
+            handles.push(tokio::spawn(Self::update_datasource_comb(
+                qiniu.clone(),
+                cookie_id.clone(),
+                comb_id,
+            )));
         }
+        futures::future::join_all(handles).await;
     }
 }

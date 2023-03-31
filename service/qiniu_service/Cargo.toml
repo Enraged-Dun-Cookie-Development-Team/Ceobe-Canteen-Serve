@@ -14,3 +14,4 @@ status-err = { path = "../../libs/status-err" }
 futures.workspace = true
 qiniu-cdn-upload.workspace = true
 ceobe-qiniu-upload.workspace = true
+tokio.workspace = true

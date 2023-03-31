@@ -75,7 +75,7 @@ impl CeobeCookieLogic {
                     Ok(comb_ids) => {
                         // 更新最新饼id对象储存
                         // 删除对象储存中的数据源组合文件
-                        QiniuService::update_multi_datasource_comb(&qiniu, Some(new_cookie.cookie_id.to_string()), comb_ids).await;
+                        QiniuService::update_multi_datasource_comb(qiniu, Some(new_cookie.cookie_id.to_string()), comb_ids).await;
                         Ok(())
                     },
                     Err(err) => Err(err),
