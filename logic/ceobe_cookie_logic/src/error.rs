@@ -1,3 +1,5 @@
+use std::convert::Infallible;
+
 use bitmap_convert::error::Error as BitmapConvError;
 use ceobe_cookie::temp_list::OperateError as TempListOperateError;
 use ceobe_user::property::OperateError as CeobeUserOperateError;
@@ -44,5 +46,10 @@ pub enum LogicError {
     ))]
     MobPushError(#[from] MobPushError),
 }
+
+impl From<Infallible> for LogicError {
+    fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
+}
+
 
 pub(crate) type LogicResult<T> = Result<T, LogicError>;

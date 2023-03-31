@@ -12,6 +12,7 @@ use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceConfigOperateError,
 };
+use qiniu_service::error::ServiceError as QiniuServiceError;
 use status_err::StatusErr;
 use thiserror::Error;
 
@@ -55,7 +56,7 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
-    Upload(#[from] QiniuError),
+    QiniuService(#[from] QiniuServiceError),
 }
 
 #[allow(dead_code)]

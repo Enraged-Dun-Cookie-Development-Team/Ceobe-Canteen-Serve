@@ -21,8 +21,8 @@ mob-push-server.workspace = true
 general-request-client.workspace = true
 fetcher.workspace = true
 ceobe-user.workspace = true
-qiniu-cdn-upload.workspace = true
 ceobe-qiniu-upload.workspace = true
+qiniu_service.workspace = true
 
 
 [dependencies.mongo-migration]

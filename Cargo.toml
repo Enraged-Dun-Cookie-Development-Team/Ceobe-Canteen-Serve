@@ -23,7 +23,8 @@ members = [
     "./middle-server/*",
     "./logic/*",
     "./global/*",
-    "./dao/*"
+    "./dao/*",
+    "./service/*"
 ]
 
 [workspace.dependencies]
@@ -90,6 +91,8 @@ bitmap-convert = { version = "0.1.0", path = "./libs/bitmap-convert" }
 bitmaps = "3.2.0"
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 mob-push-server = { version = "0.1.0", path = "middle-server/mob-push-server" }
+qiniu_service = { version = "0.1.0", path = "service/qiniu_service" }
+
 
 [dependencies]
 # Xss

@@ -8,13 +8,12 @@ use fetcher::{
 };
 use mob_push_server::PushManager;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
-use qiniu_cdn_upload::upload;
+use qiniu_service::QiniuService;
 
 use crate::{
     error::LogicResult,
     impletements::CeobeCookieLogic,
     view::{
-        CombIdToCookieId, CombIdToCookieIdPlayLoad, DeleteObjectName,
         NewCookieReq, PushInfo,
     },
 };
@@ -51,37 +50,8 @@ impl CeobeCookieLogic {
             .await?;
         // 更新最新饼id对象储存
         // 删除对象储存中的数据源组合文件
-        for comb_id in comb_ids {
-            let err = qiniu
-                .delete(DeleteObjectName {
-                    file_name: comb_id.clone(),
-                })
-                .await
-                .err();
-            if err.is_some() {
-                // TODO: qq频道告警
-            }
-
-            let source = CombIdToCookieId {
-                cookie_id: Some(new_cookie.cookie_id.to_string()),
-            };
-            let payload = CombIdToCookieIdPlayLoad {
-                file_name: &comb_id,
-            };
-
-            // 上传数据源组合到对象储存[重试3次]
-            let mut result = Option::<ceobe_qiniu_upload::Error>::None;
-            for _ in 0..3 {
-                result = upload(&qiniu, &source, payload).await.err();
-                if result.is_none() {
-                    break;
-                }
-            }
-            if let Some(_err) = result {
-                // TODO: qq频道告警
-            }
-        }
-
+        QiniuService::update_multi_datasource_comb(&qiniu, Some(new_cookie.cookie_id.to_string()), comb_ids).await;
+        
         // mob推送新饼
         let content = PushInfo::builder()
             .content(new_cookie.content.text)
