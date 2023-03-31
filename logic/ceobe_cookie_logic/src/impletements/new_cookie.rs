@@ -6,7 +6,7 @@ use fetcher::{
     datasource_combination::DatasourceCombinationOperate,
     datasource_config::DatasourceOperate,
 };
-use mob_push_server::{mob_push, PushManager};
+use mob_push_server::PushManager;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use qiniu_cdn_upload::upload;
 
@@ -89,7 +89,7 @@ impl CeobeCookieLogic {
             image_url: new_cookie.content.image_url,
             icon_url: datasource_info.avatar,
         };
-        if mob_push::<_, String, _>(&mut mob, &content, &user_list)
+        if mob.mob_push::<_, String, _>(&content, &user_list)
             .await
             .is_err()
         {

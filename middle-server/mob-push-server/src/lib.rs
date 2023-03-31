@@ -29,33 +29,36 @@ use crate::push_models::response::Respond;
 /// - 读取响应体时异常
 /// - 反序列响应体时异常
 /// - MobPush 响应的推送异常
-pub async fn mob_push<'mid, I, Mid, C>(
-    manager: &mut PushManager, content: &C, user_list: I,
-) -> Result<(), crate::error::MobPushError>
-where
-    I: IntoIterator<Item = &'mid Mid>,
-    Mid: AsRef<str> + 'mid,
-    C: PushEntity,
-{
-    let users = user_list
-        .into_iter()
-        .map(AsRef::<str>::as_ref)
-        .collect::<Vec<_>>();
-    let mut delayer = manager.batch_delay();
-    let client = manager.client.clone();
-    let requester_iter = manager.new_requester(&users, content);
-
-    delayer.delay().await;
-    for requester in requester_iter {
-        let requester = requester?;
-
-        let resp = client.send_request(requester).await?;
-
-        let _resp = serde_json::from_slice::<Respond>(&resp.bytes().await?)?
-            .into_result()?;
-
+impl PushManager {
+    pub async fn mob_push<'mid, I, Mid, C>(
+        &mut self, content: &C, user_list: I,
+    ) -> Result<(), crate::error::MobPushError>
+    where
+        I: IntoIterator<Item = &'mid Mid>,
+        Mid: AsRef<str> + 'mid,
+        C: PushEntity,
+    {
+        let users = user_list
+            .into_iter()
+            .map(AsRef::<str>::as_ref)
+            .collect::<Vec<_>>();
+        let mut delayer = self.batch_delay();
+        let client = self.client.clone();
+        let requester_iter = self.new_requester(&users, content);
+    
         delayer.delay().await;
+        for requester in requester_iter {
+            let requester = requester?;
+    
+            let resp = client.send_request(requester).await?;
+    
+            let _resp = serde_json::from_slice::<Respond>(&resp.bytes().await?)?
+                .into_result()?;
+    
+            delayer.delay().await;
+        }
+    
+        Ok(())
     }
-
-    Ok(())
+    
 }
