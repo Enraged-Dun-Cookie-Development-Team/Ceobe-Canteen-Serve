@@ -83,12 +83,13 @@ impl CeobeCookieLogic {
         }
 
         // mob推送新饼
-        let content = PushInfo {
-            content: new_cookie.content.text,
-            datasource_name: datasource_info.nickname,
-            image_url: new_cookie.content.image_url,
-            icon_url: datasource_info.avatar,
-        };
+        let content = PushInfo::builder()
+            .content(new_cookie.content.text)
+            .datasource_name(datasource_info.nickname)
+            .image_url(new_cookie.content.image_url)
+            .icon_url(datasource_info.avatar)
+            .build();
+        
         if mob.mob_push::<_, String, _>(&content, &user_list)
             .await
             .is_err()

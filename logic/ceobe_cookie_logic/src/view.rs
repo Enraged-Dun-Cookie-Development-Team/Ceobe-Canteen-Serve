@@ -46,6 +46,7 @@ pub struct NewCookieReq {
     pub cookie_id: ObjectId,
 }
 
+#[derive(Debug, Clone, TypedBuilder)]
 pub struct PushInfo {
     pub content: Option<String>,
     pub datasource_name: String,
@@ -61,7 +62,7 @@ impl PushEntity for PushInfo {
             content
         }
         else {
-            ""
+            " "
         }
     }
 
