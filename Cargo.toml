@@ -131,7 +131,8 @@ tower-http = { version = "0.3", features = [
     "catch-panic",
     "set-header",
     "compression-full",
-    "auth"
+    "auth",
+    "add-extension"
 ] }
 typed-builder = { workspace = true }
 url = { workspace = true }
