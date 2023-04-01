@@ -1,5 +1,5 @@
 
-use std::{sync::Arc, ops::Deref};
+use std::{sync::Arc};
 
 use axum::{Json, Extension};
 use ceobe_cookie_logic::{
