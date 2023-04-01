@@ -1,7 +1,6 @@
+use std::sync::Arc;
 
-use std::{sync::Arc};
-
-use axum::{Json, Extension};
+use axum::{Extension, Json};
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::NewCookieReq,
 };
