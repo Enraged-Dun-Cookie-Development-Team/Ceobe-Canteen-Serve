@@ -1,5 +1,5 @@
 use db_ops_prelude::{
-    futures::{StreamExt, TryStreamExt},
+    futures::TryStreamExt,
     mongo_connection::{
         CollectionGuard, MongoDbCollectionTrait, MongoDbError,
     },
