@@ -36,9 +36,12 @@ impl DatasourceOperate<'_, NoConnect> {
         db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
     ) -> OperateResult<Model> {
         Entity::find()
-            .filter(Column::Datasource.eq(datasource))
-            .filter(Column::DbUniqueKey.eq(unique_key))
-            .filter(Column::DeleteAt.ne(get_zero_data_time()))
+            .filter(
+                Condition::all()
+                    .add(Column::Datasource.eq(datasource))
+                    .add(Column::DbUniqueKey.eq(unique_key))
+                    .add(Column::DeleteAt.ne(get_zero_data_time())),
+            )
             .into_model()
             .one(db)
             .await?
@@ -50,9 +53,12 @@ impl DatasourceOperate<'_, NoConnect> {
         db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
     ) -> OperateResult<Model> {
         Entity::find()
-            .filter(Column::Datasource.eq(datasource))
-            .filter(Column::DbUniqueKey.eq(unique_key))
-            .filter(Column::DeleteAt.eq(get_zero_data_time()))
+            .filter(
+                Condition::all()
+                    .add(Column::Datasource.eq(datasource))
+                    .add(Column::DbUniqueKey.eq(unique_key))
+                    .add(Column::DeleteAt.eq(get_zero_data_time())),
+            )
             .into_model()
             .one(db)
             .await?
@@ -112,8 +118,11 @@ where
         let db = self.get_connect();
 
         Ok(Entity::find()
-            .filter(Column::Platform.eq(platform))
-            .filter(Column::DeleteAt.eq(get_zero_data_time()))
+            .filter(
+                Condition::all()
+                    .add(Column::Platform.eq(platform))
+                    .add(Column::DeleteAt.eq(get_zero_data_time())),
+            )
             .into_model::<DataSourceForFetcherConfig>()
             .all(db)
             .await?).tap_ok(|list| {

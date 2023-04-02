@@ -1,5 +1,5 @@
 use db_ops_prelude::{
-    futures::StreamExt,
+    futures::{StreamExt, TryStreamExt},
     mongo_connection::{
         CollectionGuard, MongoDbCollectionTrait, MongoDbError,
     },
@@ -45,7 +45,7 @@ where
         filter: impl Into<Option<Document>>,
         collection: &CollectionGuard<UserMobId>,
     ) -> OperateResult<Vec<String>> {
-        let mut vec = collection
+        let res = collection
             .doing(|collection| {
                 collection.find(
                     filter,
@@ -54,11 +54,11 @@ where
                         .build(),
                 )
             })
-            .await?;
-        let mut res = Vec::<String>::new();
-        while let Some(v) = vec.next().await {
-            res.push(v.map_err(MongoDbError::from)?.mob_id);
-        }
+            .await?
+            .map_ok(|id| id.mob_id)
+            .try_collect::<Vec<String>>()
+            .await
+            .map_err(MongoDbError::from)?;
         Ok(res)
     }
 
