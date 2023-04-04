@@ -23,7 +23,8 @@ members = [
     "./middle-server/*",
     "./logic/*",
     "./global/*",
-    "./dao/*"
+    "./dao/*",
+    "./service/*"
 ]
 
 [workspace.dependencies]
@@ -89,6 +90,9 @@ mysql_func = { version = "0.1.0", path = "./libs/mysql_func" }
 bitmap-convert = { version = "0.1.0", path = "./libs/bitmap-convert" }
 bitmaps = "3.2.0"
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
+mob-push-server = { version = "0.1.0", path = "middle-server/mob-push-server" }
+qiniu_service = { version = "0.1.0", path = "service/qiniu_service" }
+
 
 [dependencies]
 # Xss
@@ -127,7 +131,8 @@ tower-http = { version = "0.3", features = [
     "catch-panic",
     "set-header",
     "compression-full",
-    "auth"
+    "auth",
+    "add-extension"
 ] }
 typed-builder = { workspace = true }
 url = { workspace = true }
@@ -149,6 +154,7 @@ bakery.workspace = true
 admin.workspace = true
 ceobe-cookie.workspace = true
 qiniu-cdn-upload.workspace = true
+mob-push-server.workspace = true
 
 [dependencies.tokio]
 workspace = true

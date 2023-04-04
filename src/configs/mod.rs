@@ -2,6 +2,7 @@ pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
+pub mod mob_config;
 pub mod qiniu_secret;
 pub mod resp_result_config;
 pub mod schedule_notifier_config;
@@ -70,4 +71,8 @@ pub struct GlobalConfig {
     #[serde(alias = "schedule")]
     #[provider(transparent, ref)]
     pub schedule_manage: schedule_notifier_config::ScheduleNotifierConfig,
+    /// mob push推送
+    #[serde(alias = "mob")]
+    #[provider(transparent, ref)]
+    pub mob_push: mob_config::MobPushConfig,
 }

@@ -33,6 +33,7 @@ where
 #[derive(Debug, Clone)]
 pub struct QiniuBaseUrl(Arc<Url>);
 
+#[derive(Debug, Clone)]
 pub struct QiniuManager {
     inner: Arc<Manager>,
     url: Arc<Url>,

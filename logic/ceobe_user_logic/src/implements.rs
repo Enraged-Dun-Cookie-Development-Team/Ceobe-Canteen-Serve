@@ -25,7 +25,7 @@ use fetcher::{
     ToFetcher,
 };
 use futures::future;
-use qiniu_cdn_upload::upload;
+use qiniu_service::QiniuService;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
@@ -34,10 +34,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error,
     error::LogicResult,
-    view::{
-        CombIdToCookieId, CombIdToCookieIdPlayLoad, DatasourceConfig,
-        MobIdReq,
-    },
+    view::{DatasourceConfig, MobIdReq},
 };
 
 pub struct CeobeUserLogic;
@@ -208,22 +205,12 @@ impl CeobeUserLogic {
                 .create(comb_id.clone(), datasource_vec)
                 .await?;
 
-            let source = CombIdToCookieId { cookie_id };
-            let payload = CombIdToCookieIdPlayLoad {
-                file_name: &comb_id,
-            };
-
-            // 上传数据源组合到对象储存[重试3次]
-            let mut result = Option::<ceobe_qiniu_upload::Error>::None;
-            for _ in 0..3 {
-                result = upload(&qiniu, &source, payload).await.err();
-                if result.is_none() {
-                    break;
-                }
-            }
-            if let Some(err) = result {
-                Err(err)?;
-            }
+            QiniuService::create_datasource_comb(
+                &qiniu,
+                cookie_id.map(|id| id.to_string()),
+                comb_id.clone(),
+            )
+            .await?;
         }
 
         // 转成特定格式字符串

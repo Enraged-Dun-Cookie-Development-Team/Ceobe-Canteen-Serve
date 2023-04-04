@@ -1,6 +1,7 @@
 mod back_end;
 mod cdn;
 mod front_end;
+mod inside;
 
 use axum::{routing::get, Router};
 pub use back_end::{
@@ -14,11 +15,13 @@ pub use front_end::{
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
     CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend,
 };
+pub use inside::AnalyzeCookieInside;
 
 pub type ServerRoute = Router<State>;
 
 use self::{
     back_end::back_end_router, cdn::cdn_router, front_end::front_end_router,
+    inside::inside_router,
 };
 use crate::bootstrap::init::State;
 
@@ -27,6 +30,7 @@ pub fn root_route() -> ServerRoute {
         .nest("/canteen", front_end_router())
         .nest("/admin", back_end_router())
         .nest("/cdn", cdn_router())
+        .nest("/inside", inside_router())
         .route(
             "/panic",
             get(|| async {

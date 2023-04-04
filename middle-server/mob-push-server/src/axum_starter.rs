@@ -4,9 +4,9 @@ use axum_starter::{prepare, state::AddState, PrepareStateEffect};
 use secrecy::SecretString;
 use tokio::sync::{mpsc, oneshot};
 
-use crate::{MobPushConfigTrait, PushManager};
+use crate::{push_manager::PartPushManagerState, MobPushConfigTrait};
 
-#[prepare(MobPush 'arg)]
+#[prepare(MobPushPrepare 'arg)]
 pub async fn init_mob_push<'arg, C>(
     config: &'arg C,
 ) -> impl PrepareStateEffect
@@ -16,11 +16,10 @@ where
     // start
     let push_admission = start_delay().await;
 
-    let manager = PushManager::new(
+    let manager = PartPushManagerState::new(
         push_admission,
         Arc::new(SecretString::new(config.get_key().to_string())),
         Arc::new(SecretString::new(config.get_secret().to_string())),
-        Vec::new(),
     );
 
     AddState(manager)

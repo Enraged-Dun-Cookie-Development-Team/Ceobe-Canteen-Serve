@@ -1,4 +1,3 @@
-use ceobe_qiniu_upload::ObjectName;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 use sql_models::fetcher::{
@@ -190,14 +189,4 @@ where
         Some("") | None => None,
         _ => value,
     })
-}
-
-pub struct DeleteObjectName {
-    pub file_name: String,
-}
-
-impl<'s> ObjectName<'s> for DeleteObjectName {
-    const DIR: Option<&'s str> = Some("datasource-comb");
-
-    fn file_name(&self) -> &str { &self.file_name }
 }

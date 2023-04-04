@@ -2,7 +2,7 @@ use core::{future::Future, marker::Send, pin::Pin};
 use std::{convert::Infallible, sync::Arc};
 
 use axum_core::extract::{FromRef, FromRequestParts};
-use general_request_client::http::request::Parts;
+use general_request_client::{client::RequestClient, http::request::Parts};
 use md5::Digest;
 use secrecy::{ExposeSecret, SecretString};
 use tokio::sync::{mpsc, oneshot};
@@ -15,17 +15,58 @@ use crate::{
     PushEntity,
 };
 
+#[derive(Debug, Clone)]
+pub struct PartPushManagerState {
+    push_admission: mpsc::Sender<oneshot::Sender<()>>,
+    key: Arc<SecretString>,
+    secret: Arc<SecretString>,
+}
+
+impl PartPushManagerState {
+    pub(crate) fn new(
+        push_admission: mpsc::Sender<oneshot::Sender<()>>,
+        key: Arc<SecretString>, secret: Arc<SecretString>,
+    ) -> Self {
+        Self {
+            push_admission,
+            key,
+            secret,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct PushManager {
     push_admission: mpsc::Sender<oneshot::Sender<()>>,
     key: Arc<SecretString>,
     secret: Arc<SecretString>,
     buffer: Vec<u8>,
+    pub(crate) client: RequestClient,
+}
+
+impl PushManager {
+    fn new_from_state(
+        PartPushManagerState {
+            push_admission,
+            key,
+            secret,
+        }: PartPushManagerState,
+        client: RequestClient,
+    ) -> Self {
+        Self {
+            push_admission,
+            key,
+            secret,
+            buffer: Vec::new(),
+            client,
+        }
+    }
 }
 
 impl<S> FromRequestParts<S> for PushManager
 where
-    PushManager: FromRef<S>,
+    PartPushManagerState: FromRef<S>,
+    RequestClient: FromRef<S>,
     S: Sync,
 {
     type Rejection = Infallible;
@@ -44,34 +85,16 @@ where
         'life1: 'async_trait,
         Self: 'async_trait,
     {
-        Box::pin(async { Ok(PushManager::from_ref(state)) })
-    }
-}
-
-impl Clone for PushManager {
-    fn clone(&self) -> Self {
-        Self {
-            push_admission: self.push_admission.clone(),
-            key: self.key.clone(),
-            secret: self.secret.clone(),
-            buffer: Vec::new(),
-        }
+        Box::pin(async {
+            Ok(PushManager::new_from_state(
+                PartPushManagerState::from_ref(state),
+                RequestClient::from_ref(state),
+            ))
+        })
     }
 }
 
 impl PushManager {
-    pub(crate) fn new(
-        push_admission: mpsc::Sender<oneshot::Sender<()>>,
-        key: Arc<SecretString>, secret: Arc<SecretString>, buffer: Vec<u8>,
-    ) -> Self {
-        Self {
-            push_admission,
-            key,
-            secret,
-            buffer,
-        }
-    }
-
     pub fn new_requester<'s, 'user, 'string, 'payload, E: PushEntity>(
         &'s mut self, users: &'user [&'string str], content: &'payload E,
     ) -> RequesterIter<'user, 'string, 'payload, 's, BATCH_SIZE, E> {
@@ -148,7 +171,7 @@ impl<
         hasher.update(self.secret);
 
         let md5 = hasher.finalize();
-        let md5 = format!("{:x}", md5);
+        let md5 = format!("{md5:x}");
 
         Some(Ok(MobPushRequester {
             content: self.buffer.clone(),
