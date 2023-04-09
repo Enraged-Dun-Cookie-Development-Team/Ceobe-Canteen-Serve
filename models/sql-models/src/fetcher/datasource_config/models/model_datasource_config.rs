@@ -57,8 +57,7 @@ pub struct Model {
     /// 数据源名字
     #[sub_model(
         want("DataSourceForFetcherConfig"),
-        want("FrontendDatasource"),
-        want("NewCookiePushInfo")
+        want("FrontendDatasource"),want("NewCookiePushInfo")
     )]
     pub nickname: String,
     /// 数据源头像
@@ -102,7 +101,9 @@ impl RelationTrait for Relation {
 }
 
 impl Related<model_platform_config::Entity> for Entity {
-    fn to() -> RelationDef { Relation::PlatForm.def() }
+    fn to() -> RelationDef {
+        Relation::PlatForm.def()
+    }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
