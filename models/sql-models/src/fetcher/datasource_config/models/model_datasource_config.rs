@@ -35,17 +35,6 @@ use crate::{
             derive(sea_orm::FromQueryResult),
             doc = "取得数据源所属的平台"
         )
-    ),
-    none(
-        name = "NewCookiePushInfo",
-        extra(
-            derive(
-                sea_orm::FromQueryResult,
-                sql_connection::SelectOnlyModel
-            ),
-            select_only(origin = "Entity"),
-            doc = "Mob push 推送新饼数据"
-        )
     )
 )]
 pub struct Model {
@@ -64,11 +53,11 @@ pub struct Model {
     /// 数据源名字
     #[sub_model(
         want("DataSourceForFetcherConfig"),
-        want("FrontendDatasource"),want("NewCookiePushInfo")
+        want("FrontendDatasource")
     )]
     pub nickname: String,
     /// 数据源头像
-    #[sub_model(want("FrontendDatasource"), want("NewCookiePushInfo"))]
+    #[sub_model(want("FrontendDatasource"))]
     pub avatar: String,
     /// 数据源配置
     #[sub_model(want("DataSourceForFetcherConfig"))]
@@ -108,9 +97,7 @@ impl RelationTrait for Relation {
 }
 
 impl Related<model_platform_config::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::PlatForm.def()
-    }
+    fn to() -> RelationDef { Relation::PlatForm.def() }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
