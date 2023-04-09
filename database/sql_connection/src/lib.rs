@@ -15,3 +15,4 @@ pub type SqlDatabaseOperate =
 
 pub use ext_traits::select_only_model::SelectOnlyModel;
 pub use sea_orm::{EntityTrait, QuerySelect, Select};
+pub use select_only_model_derive::SelectOnlyModel;

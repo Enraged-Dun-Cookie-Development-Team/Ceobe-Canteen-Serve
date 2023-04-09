@@ -11,3 +11,4 @@ database_traits = { path = "../database_traits" }
 sea-orm = { workspace = true }
 tracing = { workspace = true }
 async-trait = "0.1.61"
+select-only-model-derive = { version = "0.1.0", path = "../../macros/select-only-model-derive" }
