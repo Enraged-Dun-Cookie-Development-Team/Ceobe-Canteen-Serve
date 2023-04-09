@@ -44,6 +44,19 @@ impl DatasourceOperate<'_, NoConnect> {
             .await?
             .ok_or(OperateError::DatasourcesNotFound)
     }
+
+    pub async fn find_model_by_datasource_and_unique_key(
+        db: &impl ConnectionTrait, datasource: &str, unique_key: &str,
+    ) -> OperateResult<Model> {
+        Entity::find()
+            .filter(Column::Datasource.eq(datasource))
+            .filter(Column::DbUniqueKey.eq(unique_key))
+            .filter(Column::DeleteAt.eq(get_zero_data_time()))
+            .into_model()
+            .one(db)
+            .await?
+            .ok_or(OperateError::DatasourcesNotFound)
+    }
 }
 
 impl<'c, C> DatasourceOperate<'c, C>
