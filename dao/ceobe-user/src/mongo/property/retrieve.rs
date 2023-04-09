@@ -42,8 +42,7 @@ where
 
     /// 根据用户mob查询数据源配置
     pub async fn find_datasource_list_by_mob(
-        &'db self,
-        mob_id: UserMobId,
+        &'db self, mob_id: UserMobId,
     ) -> OperateResult<Vec<Uuid>> {
         info!(user.mob_id = %mob_id.mob_id);
         let collection = self.get_collection()?;
@@ -55,8 +54,7 @@ where
     }
 
     pub async fn find_all_subscribed_user_mob_id(
-        &'db self,
-        datasource_id: Uuid,
+        &'db self, datasource_id: Uuid,
     ) -> OperateResult<Vec<UserMobId>> {
         info!(datasource.uuid = %datasource_id);
 

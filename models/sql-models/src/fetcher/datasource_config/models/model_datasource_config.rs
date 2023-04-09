@@ -40,7 +40,10 @@ use crate::{
 pub struct Model {
     /// 平台type
     #[sea_orm(primary_key)]
-    #[sub_model(want("DataSourceForFetcherConfig"),want("NewCookiePushInfo"))]
+    #[sub_model(
+        want("DataSourceForFetcherConfig"),
+        want("NewCookiePushInfo")
+    )]
     pub id: i32,
     #[sub_model(want("DatasourcePlatform"))]
     pub platform: String,
