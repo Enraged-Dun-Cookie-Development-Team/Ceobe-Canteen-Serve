@@ -12,3 +12,7 @@ pub use sea_orm;
 
 pub type SqlDatabaseOperate =
     database_traits::database_operates::DatabaseOperate<SqlConnect>;
+
+pub use ext_traits::select_only_model::{SelectOnlyModel,SelectPartial};
+pub use sea_orm::{EntityTrait,Select,QuerySelect};
+pub use select_only_model_derive::SelectOnlyModel;

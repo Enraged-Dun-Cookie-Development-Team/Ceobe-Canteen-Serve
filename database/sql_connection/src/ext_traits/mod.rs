@@ -2,6 +2,7 @@ use sea_orm::{DbErr, FromQueryResult, QueryResult};
 pub mod active_or_set;
 pub mod check_all_exist;
 pub mod select_count;
+pub mod select_only_model;
 const COUNT_NAME: &str = "count";
 
 #[derive(Debug, Clone, Copy)]
