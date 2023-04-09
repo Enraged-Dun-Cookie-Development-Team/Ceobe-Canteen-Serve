@@ -58,7 +58,7 @@ impl<'s> ToTokens for SelectCols<'s> {
             SelectCols::Col(..) => {
                 quote!(let selector = ::sql_connection::QuerySelect::column(selector, #col_value);)
             }
-            SelectCols::ColAs(_, as_field, ..) => {
+            SelectCols::ColAs(_,_, as_field) => {
                 let s = as_field.to_string();
                 quote!(let selector = ::sql_connection::QuerySelect::column_as(selector, #col_value, #s);)
             }
