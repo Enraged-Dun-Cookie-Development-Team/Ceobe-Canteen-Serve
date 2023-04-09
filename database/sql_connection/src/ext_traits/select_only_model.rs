@@ -4,8 +4,6 @@ use sea_orm::{
 
 pub trait SelectOnlyModel {
     fn select_cols<E: EntityTrait>(selector: Select<E>) -> Select<E>;
-
-    
 }
 
 pub trait SelectPartial {
@@ -16,7 +14,7 @@ pub trait SelectPartial {
         self,
     ) -> Self::Selector<M>;
 
-    fn select_for_cols<M:SelectOnlyModel>(self)->Self;
+    fn select_for_cols<M: SelectOnlyModel>(self) -> Self;
 }
 
 impl<E: EntityTrait> SelectPartial for Select<E> {
@@ -28,7 +26,7 @@ impl<E: EntityTrait> SelectPartial for Select<E> {
         self.select_for_cols::<M>().into_model::<M>()
     }
 
-    fn select_for_cols<M:SelectOnlyModel>(self)->Self{
+    fn select_for_cols<M: SelectOnlyModel>(self) -> Self {
         M::select_cols(self.select_only())
     }
 }

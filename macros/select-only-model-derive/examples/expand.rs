@@ -1,9 +1,8 @@
 use select_only_model_derive::SelectOnlyModel;
-use sql_connection::sea_orm;
-use sql_connection::sea_orm::sea_query::MySqlQueryBuilder;
 use sql_connection::{
     ext_traits::select_only_model::SelectPartial,
-    sea_orm::{FromQueryResult, QueryTrait},
+    sea_orm,
+    sea_orm::{sea_query::MySqlQueryBuilder, FromQueryResult, QueryTrait},
     EntityTrait,
 };
 use sql_models::ceobe_operation::announcement::Entity;
