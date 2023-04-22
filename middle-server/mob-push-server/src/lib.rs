@@ -1,5 +1,6 @@
 pub mod axum_starter;
 mod config;
+mod device_info;
 mod error;
 pub mod push_forward;
 mod push_manager;
@@ -9,12 +10,15 @@ mod requester;
 
 mod pushing_data;
 pub use config::app_info::MobPushConfigTrait;
+use device_info::DeviceInfo;
 pub use error::MobPushError;
 pub use push_forward::{PushForward, Scheme};
 pub use push_manager::{PartPushManagerState, PushManager};
 pub use pushing_data::PushEntity;
 
-use crate::push_models::response::Respond;
+use crate::{
+    push_models::response::Respond, requester::FetchDeviceInfoRequester,
+};
 
 impl PushManager {
     /// 通过使用给定的request 客户端，发起mob推送.
@@ -31,7 +35,9 @@ impl PushManager {
     /// - 反序列响应体时异常
     /// - MobPush 响应的推送异常
     pub async fn mob_push<'mid, I, Mid, C>(
-        &mut self, content: &C, user_list: I,
+        &mut self,
+        content: &C,
+        user_list: I,
     ) -> Result<(), crate::error::MobPushError>
     where
         I: IntoIterator<Item = &'mid Mid>,
@@ -44,7 +50,7 @@ impl PushManager {
             .collect::<Vec<_>>();
         let mut delayer = self.batch_delay();
         let client = self.client.clone();
-        let requester_iter = self.new_requester(&users, content);
+        let requester_iter = self.new_push_requester(&users, content);
 
         delayer.delay().await;
         for requester in requester_iter {
@@ -60,5 +66,22 @@ impl PushManager {
         }
 
         Ok(())
+    }
+
+    pub async fn fetch_device_info(
+        &self,
+        mob_id: &impl AsRef<str>,
+    ) -> Result<DeviceInfo, MobPushError> {
+        let mut delayer = self.batch_delay();
+        let client = self.client.clone();
+
+        delayer.delay().await;
+        let resp = client
+            .send_request(self.new_fetch_device_info_request(mob_id.as_ref()))
+            .await?;
+
+        let resp = serde_json::from_slice(&resp.bytes().await?)?;
+
+        Ok(resp)
     }
 }

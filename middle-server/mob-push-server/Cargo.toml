@@ -18,3 +18,4 @@ thiserror.workspace = true
 tokio.workspace = true
 typed-builder.workspace = true
 url.workspace = true
+urlencoding.workspace = true

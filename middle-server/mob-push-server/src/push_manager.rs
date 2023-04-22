@@ -11,7 +11,7 @@ use crate::{
     push_models::{
         batch_push_payload::BatchPush, batch_user::BatchUsers, BATCH_SIZE,
     },
-    requester::MobPushRequester,
+    requester::{FetchDeviceInfoRequester, MobPushRequester},
     PushEntity,
 };
 
@@ -25,7 +25,8 @@ pub struct PartPushManagerState {
 impl PartPushManagerState {
     pub(crate) fn new(
         push_admission: mpsc::Sender<oneshot::Sender<()>>,
-        key: Arc<SecretString>, secret: Arc<SecretString>,
+        key: Arc<SecretString>,
+        secret: Arc<SecretString>,
     ) -> Self {
         Self {
             push_admission,
@@ -72,7 +73,8 @@ where
     type Rejection = Infallible;
 
     fn from_request_parts<'life0, 'life1, 'async_trait>(
-        _: &'life0 mut Parts, state: &'life1 S,
+        _: &'life0 mut Parts,
+        state: &'life1 S,
     ) -> Pin<
         Box<
             dyn Future<Output = Result<Self, Self::Rejection>>
@@ -95,8 +97,21 @@ where
 }
 
 impl PushManager {
-    pub fn new_requester<'s, 'user, 'string, 'payload, E: PushEntity>(
-        &'s mut self, users: &'user [&'string str], content: &'payload E,
+    pub fn new_fetch_device_info_request<'key, 'mob>(
+        &'key self,
+        mob_id: &'mob str,
+    ) -> FetchDeviceInfoRequester<'key, 'mob> {
+        FetchDeviceInfoRequester::new(
+            mob_id,
+            self.secret.expose_secret(),
+            self.key.expose_secret(),
+        )
+    }
+
+    pub fn new_push_requester<'s, 'user, 'string, 'payload, E: PushEntity>(
+        &'s mut self,
+        users: &'user [&'string str],
+        content: &'payload E,
     ) -> RequesterIter<'user, 'string, 'payload, 's, BATCH_SIZE, E> {
         RequesterIter {
             buffer: &mut self.buffer,
