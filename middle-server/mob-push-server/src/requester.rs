@@ -23,8 +23,7 @@ impl<'key> Requester for MobPushRequester<'key> {
     }
 
     fn prepare_request<B: RequestBuilder>(
-        self,
-        builder: B,
+        self, builder: B,
     ) -> Result<B::Request, B::Error> {
         builder
             .header(|map| {
@@ -48,9 +47,7 @@ pub struct FetchDeviceInfoRequester<'key, 'mid> {
 
 impl<'key, 'mid> FetchDeviceInfoRequester<'key, 'mid> {
     pub(crate) fn new(
-        mob_id: &'mid str,
-        secret: &str,
-        key: &'key str,
+        mob_id: &'mid str, secret: &str, key: &'key str,
     ) -> Self {
         let mut digit = <md5::Md5 as Digest>::new();
         digit.update(secret);
@@ -64,6 +61,7 @@ impl<'key, 'mid> FetchDeviceInfoRequester<'key, 'mid> {
 impl<'key, 'mid> Requester for FetchDeviceInfoRequester<'key, 'mid> {
     const METHOD: Method = Method::GET;
     const VERSION: Version = Version::HTTP_11;
+
     fn get_url(&self) -> Url {
         Url::parse(&format!(
             "http://api.push.mob.com/device-v3/getById/{}",
@@ -73,8 +71,7 @@ impl<'key, 'mid> Requester for FetchDeviceInfoRequester<'key, 'mid> {
     }
 
     fn prepare_request<B: RequestBuilder>(
-        self,
-        builder: B,
+        self, builder: B,
     ) -> Result<B::Request, B::Error> {
         builder
             .header(|header_map| {

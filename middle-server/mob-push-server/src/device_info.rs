@@ -33,10 +33,12 @@ impl<'de> Deserialize<'de> for OpenPush {
             0 => Ok(OpenPush::Close),
             1 => Ok(OpenPush::Open),
 
-            num => Err(de::Error::invalid_value(
-                Unexpected::Unsigned(num as _),
-                &"1u8 or 0u8" as &dyn Expected,
-            )),
+            num => {
+                Err(de::Error::invalid_value(
+                    Unexpected::Unsigned(num as _),
+                    &"1u8 or 0u8" as &dyn Expected,
+                ))
+            }
         }
     }
 }
@@ -64,10 +66,12 @@ impl<'de> Deserialize<'de> for Status {
             1 => Ok(Status::Fine),
             3 => Ok(Status::Uninstalled),
 
-            num => Err(de::Error::invalid_value(
-                Unexpected::Unsigned(num as _),
-                &"3u8 or 1u8 or 0u8" as &dyn Expected,
-            )),
+            num => {
+                Err(de::Error::invalid_value(
+                    Unexpected::Unsigned(num as _),
+                    &"3u8 or 1u8 or 0u8" as &dyn Expected,
+                ))
+            }
         }
     }
 }
