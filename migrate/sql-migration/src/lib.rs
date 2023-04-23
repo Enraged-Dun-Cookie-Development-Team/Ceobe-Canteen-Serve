@@ -42,6 +42,7 @@ impl MigratorTrait for Migrator {
             fetcher_config::m20230101_013601_create_index::Migration
             fetcher_datasource_config::m20230217_135012_add_sort_detele::Migration
             fetcher_datasource_combination::m20230310_213209_create::Migration
+            ceobe_operation_resource::m20230422_150425_add_type::Migration
         ]
     }
 }
