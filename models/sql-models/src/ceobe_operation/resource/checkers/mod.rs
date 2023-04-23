@@ -2,6 +2,8 @@ pub mod countdown;
 pub mod resource_all_available;
 pub mod resource_data;
 
+use std::convert::Infallible;
+
 use status_err::StatusErr;
 use thiserror::Error;
 
@@ -12,4 +14,8 @@ pub enum CheckError {
 
     #[error("日期格式不正确 {0}")]
     DateFormat(#[from] chrono::ParseError),
+}
+
+impl From<Infallible> for CheckError {
+    fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
 }

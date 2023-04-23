@@ -27,6 +27,7 @@ pub mod countdown {
             CountdownUncheck as Uncheck,
         },
         models::model_resource::Countdown as Model,
+        models::countdown_type::CountdownType,
     };
 }
 
