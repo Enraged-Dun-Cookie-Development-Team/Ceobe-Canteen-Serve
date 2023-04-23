@@ -1,4 +1,3 @@
-#![recursion_limit = "256"]
 use std::{
     io::{stdout, Write},
     time::Duration,
