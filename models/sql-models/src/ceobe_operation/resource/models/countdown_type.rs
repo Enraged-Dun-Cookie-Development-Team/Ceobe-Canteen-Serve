@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
     Serialize,
 )]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "countdown_type")]
-pub enum CountdownType {    
+pub enum CountdownType {
     #[serde(rename = "activity")]
     #[sea_orm(string_value = "activity")]
     Activity,

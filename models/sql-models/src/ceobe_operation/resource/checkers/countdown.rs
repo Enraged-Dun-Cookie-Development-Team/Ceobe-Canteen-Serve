@@ -1,6 +1,6 @@
 use checker::prefabs::{
-    date_time_format::DateTimeFormatChecker,
-    str_len_checker::StrMaxCharLenChecker, option_checker::OptionChecker, no_check::NoCheck,
+    date_time_format::DateTimeFormatChecker, no_check::NoCheck,
+    option_checker::OptionChecker, str_len_checker::StrMaxCharLenChecker,
 };
 use chrono::NaiveDateTime;
 use sea_orm::Set;
@@ -8,9 +8,10 @@ use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
 use super::CheckError;
-use crate::ceobe_operation::resource::{models::{
-    model_resource::ActiveModel, resource_type::ResourceType,
-}, countdown::CountdownType};
+use crate::ceobe_operation::resource::{
+    countdown::CountdownType,
+    models::{model_resource::ActiveModel, resource_type::ResourceType},
+};
 
 #[derive(Debug, TypedBuilder)]
 pub struct CountdownCheck {

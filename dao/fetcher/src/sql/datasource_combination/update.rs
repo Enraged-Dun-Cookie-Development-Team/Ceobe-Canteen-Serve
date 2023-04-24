@@ -3,8 +3,6 @@ use tracing::info;
 
 use super::{DatasourceCombinationOperate, OperateResult};
 
-
-
 impl<'c, C> DatasourceCombinationOperate<'c, C>
 where
     C: GetDatabaseConnect,
@@ -16,7 +14,14 @@ where
     ) -> OperateResult<()> {
         info!(datasourceComb.combination_id = comb_id);
         let db = self.get_connect();
-        Entity::update_many().col_expr(Column::LastAccessTime, Expr::value(get_now_naive_date_time())).filter(Column::CombinationId.eq(comb_id)).exec(db).await?;
+        Entity::update_many()
+            .col_expr(
+                Column::LastAccessTime,
+                Expr::value(get_now_naive_date_time()),
+            )
+            .filter(Column::CombinationId.eq(comb_id))
+            .exec(db)
+            .await?;
         Ok(())
     }
 }

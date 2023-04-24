@@ -1,7 +1,7 @@
-pub mod update;
 pub mod create;
 pub mod delete;
 pub mod retrieve;
+pub mod update;
 pub mod verify;
 use std::ops::Deref;
 

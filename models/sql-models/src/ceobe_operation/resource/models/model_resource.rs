@@ -2,7 +2,7 @@ use chrono::Local;
 use sea_orm::{entity::prelude::*, ActiveValue, FromQueryResult, Set};
 use sub_model::SubModel;
 
-use super::{resource_type::ResourceType, countdown_type::CountdownType};
+use super::{countdown_type::CountdownType, resource_type::ResourceType};
 use crate::{NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]

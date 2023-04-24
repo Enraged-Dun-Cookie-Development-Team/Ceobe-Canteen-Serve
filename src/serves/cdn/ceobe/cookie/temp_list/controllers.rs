@@ -14,8 +14,7 @@ use crate::router::CdnCookieTempFrontend;
 impl CdnCookieTempFrontend {
     #[instrument(ret, skip(db, mongo))]
     pub async fn cookie_list(
-        db: SqlDatabaseOperate,
-        mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         MapReject(cookie_req_info): MapReject<
             Query<CookieListReq>,
             CeobeCookieTempListError,

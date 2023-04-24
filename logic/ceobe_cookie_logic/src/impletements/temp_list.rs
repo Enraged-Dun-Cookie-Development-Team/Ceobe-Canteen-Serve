@@ -4,7 +4,7 @@ use bitmap_convert::{
 use bitmaps::Bitmap;
 use ceobe_cookie::{ToCeobe, ToCookie};
 use db_ops_prelude::SqlDatabaseOperate;
-use fetcher::{ToFetcher, datasource_combination::ToDatasourceCombination};
+use fetcher::{datasource_combination::ToDatasourceCombination, ToFetcher};
 use futures::future;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 
@@ -16,10 +16,12 @@ use crate::{
 
 impl CeobeCookieLogic {
     pub async fn get_temp_cookies_by_pagenation(
-        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate, cookie_info: CookieListReq, 
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        cookie_info: CookieListReq,
     ) -> LogicResult<CookieListResp> {
-        let datasource_map: Bitmap<256> =
-            BitmapBase70Conv::from_base_70(cookie_info.datasource_comb_id.clone())?;
+        let datasource_map: Bitmap<256> = BitmapBase70Conv::from_base_70(
+            cookie_info.datasource_comb_id.clone(),
+        )?;
         let datasource_vec = datasource_map
             .bitmap_to_usize()
             .into_iter()
@@ -46,7 +48,10 @@ impl CeobeCookieLogic {
             .collect();
 
         // 更新该数据源组合活跃时间
-        db.fetcher().datasource_combination().update_access_time(&cookie_info.datasource_comb_id).await?;
+        db.fetcher()
+            .datasource_combination()
+            .update_access_time(&cookie_info.datasource_comb_id)
+            .await?;
 
         Ok(CookieListResp {
             cookies: cookie_list,
