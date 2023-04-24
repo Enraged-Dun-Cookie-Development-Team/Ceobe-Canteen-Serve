@@ -1,3 +1,4 @@
+use ceobe_operate::resource::countdown::CountdownType;
 use orm_migrate::sql_models::ceobe_operation::resource::countdown;
 use serde::Serialize;
 
@@ -9,6 +10,7 @@ pub struct Countdown {
     message: String,
     #[serde(rename = "remark")]
     banner_info: String,
+    countdown_type: Option<CountdownType>,
     #[serde(rename = "time")]
     countdown_end: String,
     start_time: String,
@@ -22,12 +24,14 @@ impl From<countdown::Model> for Countdown {
             countdown_end,
             banner_info,
             over_time,
+            countdown_type,
             ..
         }: countdown::Model,
     ) -> Self {
         Self {
             message,
             banner_info,
+            countdown_type,
             countdown_end: naive_date_time_format(countdown_end),
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
