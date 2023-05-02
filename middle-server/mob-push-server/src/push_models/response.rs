@@ -1,10 +1,12 @@
+use serde::Deserialize;
+
 use crate::MobPushError;
 
 #[derive(Debug, serde::Deserialize)]
-pub(crate) struct Respond {
+pub(crate) struct Respond<Body = ResBody> {
     pub(crate) status: u16,
-    #[serde(rename = "res")]
-    pub(crate) _res: Option<ResBody>,
+    #[serde(bound(deserialize = "Body: Deserialize<'de>"))]
+    pub(crate) res: Option<Body>,
     pub(crate) error: Option<String>,
 }
 

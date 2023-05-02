@@ -11,7 +11,7 @@ use crate::{
     push_models::{
         batch_push_payload::BatchPush, batch_user::BatchUsers, BATCH_SIZE,
     },
-    requester::MobPushRequester,
+    requester::{FetchDeviceInfoRequester, MobPushRequester},
     PushEntity,
 };
 
@@ -45,7 +45,7 @@ pub struct PushManager {
 }
 
 impl PushManager {
-    fn new_from_state(
+    pub fn new_from_state(
         PartPushManagerState {
             push_admission,
             key,
@@ -95,7 +95,17 @@ where
 }
 
 impl PushManager {
-    pub fn new_requester<'s, 'user, 'string, 'payload, E: PushEntity>(
+    pub fn new_fetch_device_info_request<'key, 'mob>(
+        &'key self, mob_id: &'mob str,
+    ) -> FetchDeviceInfoRequester<'key, 'mob> {
+        FetchDeviceInfoRequester::new(
+            mob_id,
+            self.secret.expose_secret(),
+            self.key.expose_secret(),
+        )
+    }
+
+    pub fn new_push_requester<'s, 'user, 'string, 'payload, E: PushEntity>(
         &'s mut self, users: &'user [&'string str], content: &'payload E,
     ) -> RequesterIter<'user, 'string, 'payload, 's, BATCH_SIZE, E> {
         RequesterIter {
