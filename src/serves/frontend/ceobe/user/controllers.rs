@@ -20,7 +20,8 @@ impl CeobeUserFrontend {
     /// 新建用户（注册mobid入库）
     #[instrument(ret, skip(db, mongo))]
     pub async fn register(
-        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate, mob: PushManager,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        mob: PushManager,
         MapReject(mob_id): MapReject<Json<MobIdReq>, CeobeUserError>,
     ) -> CeobeUserRResult<()> {
         rtry!(CeobeUserLogic::create_user(mongo, db, mob, mob_id).await);

@@ -34,7 +34,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
     error,
-    error::{LogicResult, LogicError},
+    error::{LogicError, LogicResult},
     view::{DatasourceConfig, MobIdReq},
 };
 
@@ -43,7 +43,8 @@ pub struct CeobeUserLogic;
 impl CeobeUserLogic {
     /// 新建手机端用户
     pub async fn create_user(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob: PushManager, mob_id: MobIdReq,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        mob: PushManager, mob_id: MobIdReq,
     ) -> LogicResult<()> {
         // 验证mob_id是否为小刻食堂旗下mob id
         if mob.fetch_device_info(&mob_id.mob_id).await?.is_none() {

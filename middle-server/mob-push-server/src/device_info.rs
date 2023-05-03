@@ -5,12 +5,12 @@ use serde::{
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DeviceInfo {
-    #[serde(alias="registrationId")]
+    #[serde(alias = "registrationId")]
     registration_id: String,
     tags: Option<Vec<String>>,
     alias: Option<String>,
     mobile: Option<String>,
-    #[serde(alias="openPush")]
+    #[serde(alias = "openPush")]
     open_push: OpenPush,
     status: Status,
 }

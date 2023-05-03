@@ -13,7 +13,7 @@ use fetcher::{
 };
 use mob_push_server::MobPushError;
 use qiniu_service::error::ServiceError as QiniuServiceError;
-use status_err::{StatusErr, ErrPrefix, HttpCode};
+use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
@@ -55,10 +55,7 @@ pub enum LogicError {
     Mongo(#[from] MongoDbError),
 
     #[error(transparent)]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x001B,
-    ))]
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001B,))]
     MobPushError(#[from] MobPushError),
 
     #[error("mobId不存在")]
