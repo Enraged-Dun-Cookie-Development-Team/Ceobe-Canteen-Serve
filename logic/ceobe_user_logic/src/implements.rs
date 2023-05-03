@@ -25,6 +25,7 @@ use fetcher::{
     ToFetcher,
 };
 use futures::future;
+use mob_push_server::PushManager;
 use qiniu_service::QiniuService;
 use tokio::task;
 use tracing::warn;
@@ -33,7 +34,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
     error,
-    error::LogicResult,
+    error::{LogicResult, LogicError},
     view::{DatasourceConfig, MobIdReq},
 };
 
@@ -42,9 +43,12 @@ pub struct CeobeUserLogic;
 impl CeobeUserLogic {
     /// 新建手机端用户
     pub async fn create_user(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob_id: MobIdReq,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate, mob: PushManager, mob_id: MobIdReq,
     ) -> LogicResult<()> {
-        // TODO: 验证mob_id是否为小刻食堂旗下mob id
+        // 验证mob_id是否为小刻食堂旗下mob id
+        if mob.fetch_device_info(&mob_id.mob_id).await?.is_none() {
+            return Err(LogicError::MobIdNotExist);
+        }
 
         // 获取所有数据源的uuid列表
         let datasource_uuids = db

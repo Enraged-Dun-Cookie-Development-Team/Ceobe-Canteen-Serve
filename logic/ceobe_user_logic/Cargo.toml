@@ -25,6 +25,7 @@ bnum = "0.5.0"
 ceobe-qiniu-upload.workspace = true
 ceobe-cookie.workspace = true
 qiniu_service.workspace = true
+mob-push-server.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"
