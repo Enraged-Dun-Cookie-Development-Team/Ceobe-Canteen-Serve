@@ -15,7 +15,7 @@ async fn task() {
     let manager = PushManager::new_from_state(manager, client);
 
     let ret = manager
-        .fetch_device_info("65l05lvwtep0fls")
+        .fetch_device_info("65l0adnbyoe8m4g")
         .await
         .expect("bad mid");
 

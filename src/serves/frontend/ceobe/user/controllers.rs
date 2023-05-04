@@ -5,6 +5,7 @@ use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceConfig, MobIdReq},
 };
+use mob_push_server::PushManager;
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
     mongo_models::ceobe::user_property::models::UserDatasource,
@@ -20,9 +21,10 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo))]
     pub async fn register(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        mob: PushManager,
         MapReject(mob_id): MapReject<Json<MobIdReq>, CeobeUserError>,
     ) -> CeobeUserRResult<()> {
-        rtry!(CeobeUserLogic::create_user(mongo, db, mob_id).await);
+        rtry!(CeobeUserLogic::create_user(mongo, db, mob, mob_id).await);
         Ok(()).into()
     }
 
