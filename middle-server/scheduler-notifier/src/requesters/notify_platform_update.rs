@@ -21,7 +21,7 @@ impl<'query> NotifyRequester for NotifyPlatformUpdate<'query> {
 }
 
 impl<'query> NotifyPath for NotifyPlatformUpdate<'query> {
-    const PATH: &'static str = "/update-config";
+    const PATH: &'static str = "/schedular-update-config";
 }
 
 impl<'query> NotifyPlatformUpdate<'query> {
