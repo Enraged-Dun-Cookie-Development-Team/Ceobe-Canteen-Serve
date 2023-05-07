@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodule: true
       - name: Rust toolchain Stable
         uses: actions-rs/toolchain@v1
         with:
@@ -29,8 +31,6 @@ jobs:
           components:  rustfmt
       - name: Install Protoc
         uses: arduino/setup-protoc@v1
-      - run: git submodule init
-      - run: git submodule update
       - run: ls -l assets\proto\protos
       - run: cargo +nightly fmt --check
       - run: cargo clippy
