@@ -1,3 +1,4 @@
+pub mod qq_channel;
 pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
@@ -33,46 +34,37 @@ pub const CONFIG_FILE_YAML: &str = "./Config.yaml";
     logger(func = "|this|this.logger.init_log()", error = "::logger::Error"),
     server
 )]
+#[provider(transparent, ref)]
 pub struct GlobalConfig {
     /// 数据库连接相关配置
     #[serde(alias = "db")]
-    #[provider(transparent, ref)]
     pub database: DbConfig,
     #[serde(alias = "mongo")]
-    #[provider(transparent, ref)]
     pub mongodb: MongoDbConfig,
-    #[provider(transparent, ref)]
     pub redis: RedisDbConfig,
     /// 日志文件相关配置
     #[serde(alias = "log")]
-    #[provider(transparent, ref)]
     pub logger: LoggerConfig,
     /// resp Result
     #[serde(alias = "rresult")]
-    #[provider(transparent, ref)]
     pub resp_result: RespResultConfig,
     #[serde(alias = "auth", default = "Default::default")]
-    #[provider(transparent, ref)]
     pub user_auth: AuthConfig,
     #[serde(alias = "user")]
-    #[provider(transparent, ref)]
     pub admin_user: FirstUserConfig,
     #[serde(alias = "http", default = "Default::default")]
     #[provider(
-        transparent,
-        ref,
         map_to(ty = "SocketAddr", by = "HttpConfig::socket")
     )]
     pub http_listen: HttpListenConfig,
     #[serde(alias = "qiniu")]
-    #[provider(transparent, ref)]
     pub qiniu_secret: QiniuUploadConfig,
 
     #[serde(alias = "schedule")]
-    #[provider(transparent, ref)]
     pub schedule_manage: schedule_notifier_config::ScheduleNotifierConfig,
     /// mob push推送
     #[serde(alias = "mob")]
-    #[provider(transparent, ref)]
     pub mob_push: mob_config::MobPushConfig,
+    #[serde(alias = "qq")]
+    pub qq_channel:qq_channel::QqChannelConfig
 }

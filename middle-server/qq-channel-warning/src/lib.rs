@@ -10,4 +10,4 @@ pub use error::Error;
 pub use grpc_client::QqChannelGrpcService;
 pub use proto_reexport::{LogRequest, LogType};
 
-pub use self::axum_starter::{QqChannel, QqChannelGrpcState};
+pub use self::axum_starter::{QqChannelPrepare, QqChannelGrpcState};

@@ -19,11 +19,12 @@ pub use inside::AnalyzeCookieInside;
 
 pub type ServerRoute = Router<State>;
 
+use crate::bootstrap::State;
+
 use self::{
     back_end::back_end_router, cdn::cdn_router, front_end::front_end_router,
     inside::inside_router,
 };
-use crate::bootstrap::init::State;
 
 pub fn root_route() -> ServerRoute {
     Router::new()

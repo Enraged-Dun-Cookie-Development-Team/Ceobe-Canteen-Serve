@@ -15,13 +15,15 @@ use bootstrap::{
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, mob_config::MobPushConfig,
-    qiniu_secret::QiniuUploadConfig, resp_result_config::RespResultConfig,
+    qiniu_secret::QiniuUploadConfig, qq_channel::QqChannelConfig,
+    resp_result_config::RespResultConfig,
     schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
     CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
 use mob_push_server::axum_starter::MobPushPrepare;
+use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::{
@@ -72,6 +74,7 @@ async fn main_task() {
         .prepare_state(BiliClientPrepare)
         .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
         .prepare_state(MobPushPrepare::<_, MobPushConfig>)
+        .prepare_state(QqChannelPrepare::<_, QqChannelConfig>)
         // database
         .prepare_concurrent(|set| {
             set.join_state(MysqlDbConnect)

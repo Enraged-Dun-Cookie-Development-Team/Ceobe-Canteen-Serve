@@ -9,7 +9,7 @@ pub struct QqChannelGrpcState {
     pub(crate) uri: Endpoint,
 }
 
-#[prepare(QqChannel? 'arg)]
+#[prepare(QqChannelPrepare? 'arg)]
 pub fn qq_channel_logger<'arg, C: GrpcConfigTrait>(
     cfg: &'arg C,
 ) -> Result<AddState<QqChannelGrpcState>, InvalidUri> {
