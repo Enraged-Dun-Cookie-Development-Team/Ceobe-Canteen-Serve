@@ -27,6 +27,7 @@ use fetcher::{
 use futures::future;
 use mob_push_server::PushManager;
 use qiniu_service::QiniuService;
+use qq_channel_warning::QqChannelGrpcService;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
@@ -43,8 +44,10 @@ pub struct CeobeUserLogic;
 impl CeobeUserLogic {
     /// 新建手机端用户
     pub async fn create_user(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        mob: PushManager, mob_id: MobIdReq,
+        mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate,
+        mob: PushManager,
+        mob_id: MobIdReq,
     ) -> LogicResult<()> {
         // 验证mob_id是否为小刻食堂旗下mob id
         if mob.fetch_device_info(&mob_id.mob_id).await?.is_none() {
@@ -77,8 +80,11 @@ impl CeobeUserLogic {
 
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        qiniu: QiniuManager, mob_id: UserMobId,
+        mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate,
+        qiniu: QiniuManager,
+        qq_channel: QqChannelGrpcService,
+        mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
@@ -123,6 +129,7 @@ impl CeobeUserLogic {
         let comb_ids = Self::get_datasources_comb_ids(
             db,
             qiniu,
+            qq_channel,
             datasource_ids,
             cookie_id,
         )
@@ -149,8 +156,10 @@ impl CeobeUserLogic {
 
     /// 更新用户数据源配置
     pub async fn update_datasource(
-        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        datasource_config: Vec<bson::Uuid>, mob_id: UserMobId,
+        mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate,
+        datasource_config: Vec<bson::Uuid>,
+        mob_id: UserMobId,
     ) -> LogicResult<()> {
         let user_unchecked: UserPropertyUncheck =
             UserPropertyUncheck::builder()
@@ -181,8 +190,11 @@ impl CeobeUserLogic {
     }
 
     async fn get_datasources_comb_ids(
-        db: SqlDatabaseOperate, qiniu: QiniuManager,
-        datasource_ids: Vec<i32>, cookie_id: Option<ObjectId>,
+        db: SqlDatabaseOperate,
+        qiniu: QiniuManager,
+        mut qq_channel: QqChannelGrpcService,
+        datasource_ids: Vec<i32>,
+        cookie_id: Option<ObjectId>,
     ) -> LogicResult<String> {
         // 根据数据库id生成bitmap
         let mut comb_ids_map = Bitmap::<256>::new();
@@ -212,6 +224,7 @@ impl CeobeUserLogic {
 
             QiniuService::create_datasource_comb(
                 &qiniu,
+                &mut qq_channel,
                 cookie_id.map(|id| id.to_string()),
                 comb_id.clone(),
             )

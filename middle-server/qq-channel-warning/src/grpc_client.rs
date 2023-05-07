@@ -7,6 +7,7 @@ use crate::{
     error,
     proto_reexport::{LogClient, LogRequest},
 };
+#[derive(Debug,Clone)]
 pub struct QqChannelGrpcService {
     client: LogClient<Channel>,
 }

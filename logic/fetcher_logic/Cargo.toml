@@ -20,6 +20,7 @@ fetcher.workspace = true
 bool_or.workspace = true
 ceobe-qiniu-upload.workspace = true
 qiniu_service.workspace = true
+qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
 
 [dependencies.sql-models]
 path = "../../models/sql-models"

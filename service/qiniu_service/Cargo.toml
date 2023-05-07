@@ -15,3 +15,4 @@ futures.workspace = true
 qiniu-cdn-upload.workspace = true
 ceobe-qiniu-upload.workspace = true
 tokio.workspace = true
+qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }

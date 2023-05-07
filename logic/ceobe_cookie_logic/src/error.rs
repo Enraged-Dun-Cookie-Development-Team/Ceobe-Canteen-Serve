@@ -45,6 +45,8 @@ pub enum LogicError {
         http_code = "HttpCode::CONFLICT"
     ))]
     MobPushError(#[from] MobPushError),
+    #[error(transparent)]
+    QqChannelError(#[from]qq_channel_warning::Error)
 }
 
 impl From<Infallible> for LogicError {
