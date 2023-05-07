@@ -7,7 +7,5 @@ pub struct QqChannelConfig {
 }
 
 impl GrpcConfigTrait for QqChannelConfig {
-    fn get_uri(&self) -> &str {
-        &self.uri
-    }
+    fn get_uri(&self) -> &str { &self.uri }
 }

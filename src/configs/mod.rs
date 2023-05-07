@@ -1,10 +1,10 @@
-pub mod qq_channel;
 pub mod auth_config;
 pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
 pub mod mob_config;
 pub mod qiniu_secret;
+pub mod qq_channel;
 pub mod resp_result_config;
 pub mod schedule_notifier_config;
 use std::net::SocketAddr;
@@ -53,9 +53,7 @@ pub struct GlobalConfig {
     #[serde(alias = "user")]
     pub admin_user: FirstUserConfig,
     #[serde(alias = "http", default = "Default::default")]
-    #[provider(
-        map_to(ty = "SocketAddr", by = "HttpConfig::socket")
-    )]
+    #[provider(map_to(ty = "SocketAddr", by = "HttpConfig::socket"))]
     pub http_listen: HttpListenConfig,
     #[serde(alias = "qiniu")]
     pub qiniu_secret: QiniuUploadConfig,
@@ -66,5 +64,5 @@ pub struct GlobalConfig {
     #[serde(alias = "mob")]
     pub mob_push: mob_config::MobPushConfig,
     #[serde(alias = "qq")]
-    pub qq_channel:qq_channel::QqChannelConfig
+    pub qq_channel: qq_channel::QqChannelConfig,
 }
