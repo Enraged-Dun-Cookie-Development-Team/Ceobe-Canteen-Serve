@@ -20,6 +20,10 @@ use crate::{
         name = "FrontendDatasource",
         extra(derive(sea_orm::FromQueryResult, serde::Serialize, Debug))
     ),
+    none(
+        name = "DatasourceBasicInfo",
+        extra(derive(sea_orm::FromQueryResult, serde::Serialize, Debug))
+    ),
     none(name = "DatasourceUuid", extra(derive(sea_orm::FromQueryResult))),
     none(
         name = "SingleDatasourceInfo",
@@ -44,7 +48,7 @@ use crate::{
 pub struct Model {
     /// 平台type
     #[sea_orm(primary_key)]
-    #[sub_model(want("DataSourceForFetcherConfig"), want("DatasourceId"))]
+    #[sub_model(want("DataSourceForFetcherConfig"), want("DatasourceId"), want("DatasourceBasicInfo"))]
     pub id: i32,
     #[sub_model(want("DatasourcePlatform"))]
     pub platform: String,
@@ -57,11 +61,13 @@ pub struct Model {
     /// 数据源名字
     #[sub_model(
         want("DataSourceForFetcherConfig"),
-        want("FrontendDatasource")
+        want("FrontendDatasource"),
+        want("DatasourceBasicInfo")
     )]
     pub nickname: String,
     /// 数据源头像
-    #[sub_model(want("FrontendDatasource"))]
+    #[sub_model(want("FrontendDatasource"),
+    want("DatasourceBasicInfo"))]
     pub avatar: String,
     /// 数据源配置
     #[sub_model(want("DataSourceForFetcherConfig"))]
