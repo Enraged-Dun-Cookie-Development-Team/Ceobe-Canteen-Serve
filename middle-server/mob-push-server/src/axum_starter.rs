@@ -1,6 +1,6 @@
 use std::{sync::Arc, time::Duration};
 
-use axum_starter::{prepare, state::AddState, PrepareStateEffect};
+use axum_starter::{prepare, state::AddState};
 use secrecy::SecretString;
 use tokio::sync::{mpsc, oneshot};
 
@@ -9,7 +9,7 @@ use crate::{push_manager::PartPushManagerState, MobPushConfigTrait};
 #[prepare(MobPushPrepare 'arg)]
 pub async fn init_mob_push<'arg, C>(
     config: &'arg C,
-) -> impl PrepareStateEffect
+) -> AddState<PartPushManagerState>
 where
     C: MobPushConfigTrait,
 {

@@ -11,8 +11,9 @@ use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceConfigOperateError,
 };
+use mob_push_server::MobPushError;
 use qiniu_service::error::ServiceError as QiniuServiceError;
-use status_err::StatusErr;
+use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
@@ -52,6 +53,18 @@ pub enum LogicError {
 
     #[error("Mongo异常: {0}")]
     Mongo(#[from] MongoDbError),
+
+    #[error(transparent)]
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001B,))]
+    MobPushError(#[from] MobPushError),
+
+    #[error("mobId不存在")]
+    #[status_err(err(
+        prefix = "ErrPrefix::CHECKER",
+        err_code = 0x001D,
+        resp_msg = "注册失败，请联系开发者"
+    ))]
+    MobIdNotExist,
 
     #[error(transparent)]
     #[status_err(err = "transparent")]

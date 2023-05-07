@@ -41,7 +41,7 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err(
         prefix = "ErrPrefix::CHECKER",
-        err_code = 0x0008,
+        err_code = 0x001B,
         http_code = "HttpCode::CONFLICT"
     ))]
     MobPushError(#[from] MobPushError),

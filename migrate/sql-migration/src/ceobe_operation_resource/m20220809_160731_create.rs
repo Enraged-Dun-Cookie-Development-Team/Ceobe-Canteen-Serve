@@ -70,7 +70,7 @@ use sql_models::get_zero_data_time;
 use CeobeOperationResource::{Table as DbTable, *};
 
 #[derive(Debug, Iden)]
-enum CeobeOperationResource {
+pub(super) enum CeobeOperationResource {
     Table,
     Id,
     // type
@@ -80,6 +80,7 @@ enum CeobeOperationResource {
     CountdownEnd,
     StartTime,
     OverTime,
+    CountdownType,
 
     // soft remove
     CreateAt,

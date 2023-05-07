@@ -26,7 +26,9 @@ pub mod countdown {
             CountdownCheck as Checked, CountdownChecker as Checker,
             CountdownUncheck as Uncheck,
         },
-        models::model_resource::Countdown as Model,
+        models::{
+            countdown_type::CountdownType, model_resource::Countdown as Model,
+        },
     };
 }
 
