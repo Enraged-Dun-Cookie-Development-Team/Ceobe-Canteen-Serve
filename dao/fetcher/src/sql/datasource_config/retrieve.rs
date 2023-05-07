@@ -8,7 +8,7 @@ use db_ops_prelude::sea_orm::{
     ColumnTrait, Condition, ConnectionTrait, EntityTrait, PaginatorTrait,
     QueryFilter, QuerySelect,
 };
-use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource, DatasourceId};
+use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::{Entity, Column, Model, BackendDatasource, DataSourceForFetcherConfig, DatasourceUuid, SingleDatasourceInfo, FrontendDatasource, DatasourceId, DatasourceBasicInfo};
 use db_ops_prelude::smallvec::SmallVec;
 use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourcePlatform;
 use tap::TapFallible;
@@ -244,5 +244,22 @@ where
             .into_iter()
             .map(|datasource| datasource.id)
             .collect::<Vec<i32>>())
+    }
+
+    #[instrument(skip(self))]
+    /// 根据数据源id获取数据源
+    pub async fn find_basic_info_by_ids(
+        &self, ids: Vec<i32>,
+    ) -> OperateResult<Vec<DatasourceBasicInfo>> {
+        let db = self.get_connect();
+        Ok(Entity::find()
+            .select_only()
+            .column(Column::Id)
+            .column(Column::Nickname)
+            .column(Column::Avatar)
+            .filter(Column::Id.is_in(ids))
+            .into_model::<DatasourceBasicInfo>()
+            .all(db)
+            .await?)
     }
 }
