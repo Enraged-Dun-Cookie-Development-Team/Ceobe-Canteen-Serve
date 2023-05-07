@@ -30,5 +30,6 @@ jobs:
       - name: Install Protoc
         uses: arduino/setup-protoc@v1
       - run: git submodule foreach 'git pull origin master'
+      - run: ls -l assets\proto\protos
       - run: cargo +nightly fmt --check
       - run: cargo clippy
