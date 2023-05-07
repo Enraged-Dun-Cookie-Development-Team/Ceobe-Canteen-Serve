@@ -63,6 +63,8 @@ impl ErrPrefix {
     /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', HttpCode::UNAUTHORIZED);
 
+    pub const LOGGER_REPORT:Self = Self('R', HttpCode::INTERNAL_SERVER_ERROR);
+
     #[inline]
     pub const fn new(sign: char, status: HttpCode) -> Self {
         ErrPrefix(sign, status)

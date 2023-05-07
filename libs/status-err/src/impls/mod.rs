@@ -3,13 +3,13 @@ mod redis;
 mod sea_orm;
 use std::{convert::Infallible, num::ParseIntError};
 
+use crate::{status_error, ErrPrefix, StatusErr};
 use axum::extract::rejection::{
     JsonRejection, PathRejection, QueryRejection,
 };
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use http::StatusCode;
-
-use crate::{status_error, ErrPrefix, StatusErr};
+use tonic::transport;
 
 // io prefix
 status_error!(
@@ -153,9 +153,13 @@ use checker::prefabs::{
 };
 
 impl<const RHS: u64> StatusErr for HasRemError<RHS> {
-    fn prefix(&self) -> ErrPrefix { ErrPrefix::CHECKER }
+    fn prefix(&self) -> ErrPrefix {
+        ErrPrefix::CHECKER
+    }
 
-    fn code(&self) -> u16 { 0x0014 }
+    fn code(&self) -> u16 {
+        0x0014
+    }
 }
 
 status_error!(
@@ -163,4 +167,18 @@ status_error!(
         ErrPrefix::CHECKER,
         0x0014
     ]->"Json 对象不符合预期"
+);
+
+status_error!(
+    transport::Error[
+        ErrPrefix::LOGGER_REPORT,
+        0x00_01
+    ]->"与Grpc服务端建立连接失败"
+);
+
+status_error!(
+    tonic::Status[
+        ErrPrefix::LOGGER_REPORT,
+        0x00_02
+    ]->"Grpc service返回异常响应"
 );
