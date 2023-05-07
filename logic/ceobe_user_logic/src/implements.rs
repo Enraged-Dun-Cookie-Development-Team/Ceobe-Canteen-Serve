@@ -115,7 +115,7 @@ impl CeobeUserLogic {
         let cookie_id = mongo
             .ceobe()
             .cookie()
-            .temp_list()
+            .analyze()
             .get_first_cookie_id(datasource_ids.clone())
             .await?;
 
