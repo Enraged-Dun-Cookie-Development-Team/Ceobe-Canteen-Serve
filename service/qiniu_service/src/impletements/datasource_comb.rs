@@ -12,10 +12,8 @@ use crate::{
 impl QiniuService {
     /// 新增数据源组合对应最新饼id文件到对象存储
     pub async fn create_datasource_comb(
-        qiniu: &QiniuManager,
-        qq_channel: &mut QqChannelGrpcService,
-        cookie_id: Option<String>,
-        comb_id: String,
+        qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
+        cookie_id: Option<String>, comb_id: String,
     ) -> ServiceResult<()> {
         let source = CombIdToCookieId { cookie_id };
         let payload = CombIdToCookieIdPlayLoad {
@@ -46,8 +44,7 @@ impl QiniuService {
 
     /// 删除数据源组合对应最新饼id文件
     pub async fn delete_datasource_comb(
-        qiniu: &QiniuManager,
-        qq_channel: &mut QqChannelGrpcService,
+        qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
         comb_id: String,
     ) -> ServiceResult<()> {
         let result = qiniu
@@ -74,10 +71,8 @@ impl QiniuService {
 
     /// 更新数据源组合文件（删除+新增）
     pub async fn update_datasource_comb(
-        qiniu: QiniuManager,
-        mut qq_channel: QqChannelGrpcService,
-        cookie_id: Option<String>,
-        comb_id: String,
+        qiniu: QiniuManager, mut qq_channel: QqChannelGrpcService,
+        cookie_id: Option<String>, comb_id: String,
     ) {
         if Self::delete_datasource_comb(
             &qiniu,
@@ -100,10 +95,8 @@ impl QiniuService {
 
     /// 批量更新数据源组合文件
     pub async fn update_multi_datasource_comb(
-        qiniu: QiniuManager,
-        cookie_id: Option<String>,
-        qq_channel: QqChannelGrpcService,
-        comb_ids: Vec<String>,
+        qiniu: QiniuManager, cookie_id: Option<String>,
+        qq_channel: QqChannelGrpcService, comb_ids: Vec<String>,
     ) {
         let mut handles = Vec::<JoinHandle<()>>::new();
         for comb_id in comb_ids {

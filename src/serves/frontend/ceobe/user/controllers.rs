@@ -21,8 +21,7 @@ impl CeobeUserFrontend {
     /// 新建用户（注册mobid入库）
     #[instrument(ret, skip(db, mongo))]
     pub async fn register(
-        db: SqlDatabaseOperate,
-        mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         mob: PushManager,
         MapReject(mob_id): MapReject<Json<MobIdReq>, CeobeUserError>,
     ) -> CeobeUserRResult<()> {
@@ -33,10 +32,8 @@ impl CeobeUserFrontend {
     /// 获取用户数据源配置
     #[instrument(ret, skip(db, mongo, qiniu))]
     pub async fn get_datasource_config_by_user(
-        db: SqlDatabaseOperate,
-        mongo: MongoDatabaseOperate,
-        qq_channel: QqChannelGrpcService,
-        qiniu: QiniuManager,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
         MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
@@ -51,8 +48,7 @@ impl CeobeUserFrontend {
     /// 更新用户数据源配置
     #[instrument(ret, skip(db, mongo))]
     pub async fn update_datasource_config_by_user(
-        db: SqlDatabaseOperate,
-        mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         MobIdInfo(mob_id): MobIdInfo,
         MapReject(datasource_config): MapReject<
             Json<UserDatasource>,
@@ -74,8 +70,7 @@ impl CeobeUserFrontend {
     /// 更新用户最后活跃时间
     #[instrument(ret, skip(mongo))]
     pub async fn update_user_access_time(
-        mongo: MongoDatabaseOperate,
-        MobIdInfo(mob_id): MobIdInfo,
+        mongo: MongoDatabaseOperate, MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
             mongo

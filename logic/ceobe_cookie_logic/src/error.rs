@@ -46,7 +46,7 @@ pub enum LogicError {
     ))]
     MobPushError(#[from] MobPushError),
     #[error(transparent)]
-    QqChannelError(#[from]qq_channel_warning::Error)
+    QqChannelError(#[from] qq_channel_warning::Error),
 }
 
 impl From<Infallible> for LogicError {

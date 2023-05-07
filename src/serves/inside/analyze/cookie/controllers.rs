@@ -20,7 +20,8 @@ impl AnalyzeCookieInside {
     #[instrument(ret, skip(mongo, sql, mob, qiniu))]
     pub async fn new_cookie(
         mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
-        mob: PushManager, qiniu: QiniuManager,qq_channel:QqChannelGrpcService,
+        mob: PushManager, qiniu: QiniuManager,
+        qq_channel: QqChannelGrpcService,
         Extension(mutex): Extension<Arc<Mutex<()>>>,
         MapReject(cookie_req_info): MapReject<
             Json<NewCookieReq>,
@@ -33,7 +34,8 @@ impl AnalyzeCookieInside {
             CeobeCookieLogic::new_cookie(
                 mongo,
                 sql,
-                mob,qq_channel,
+                mob,
+                qq_channel,
                 qiniu,
                 cookie_req_info,
             )

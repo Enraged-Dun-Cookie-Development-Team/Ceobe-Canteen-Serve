@@ -9,7 +9,7 @@ pub enum ServiceError {
     Upload(#[from] QiniuError),
 
     #[error(transparent)]
-    QqChannel(#[from]qq_channel_warning::Error)
+    QqChannel(#[from] qq_channel_warning::Error),
 }
 
 pub(crate) type ServiceResult<T> = Result<T, ServiceError>;

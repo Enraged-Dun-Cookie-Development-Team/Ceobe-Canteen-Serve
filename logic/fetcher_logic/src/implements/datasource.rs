@@ -29,8 +29,7 @@ use crate::{
 impl FetcherConfigLogic {
     /// 新建数据源配置
     pub async fn create_datasource_config(
-        db: SqlDatabaseOperate,
-        datasource_config: FetcherDatasourceConfig,
+        db: SqlDatabaseOperate, datasource_config: FetcherDatasourceConfig,
     ) -> LogicResult<()> {
         let db = db.get_connect();
         // 验证平台存在
@@ -44,11 +43,8 @@ impl FetcherConfigLogic {
 
     /// 删除一个数据源
     pub async fn delete_datasource_by_id(
-        notifier: &SchedulerNotifier,
-        db: SqlDatabaseOperate,
-        mut qq_channel: QqChannelGrpcService,
-        qiniu: QiniuManager,
-        id: i32,
+        notifier: &SchedulerNotifier, db: SqlDatabaseOperate,
+        mut qq_channel: QqChannelGrpcService, qiniu: QiniuManager, id: i32,
     ) -> LogicResult<()> {
         // 开事务
         let ctx = db.get_transaction().await?;
@@ -71,9 +67,13 @@ impl FetcherConfigLogic {
         let mut delete_comb_ids = Vec::<String>::new();
         // 删除对象储存中的数据源组合文件
         for comb_id in comb_ids {
-            if QiniuService::delete_datasource_comb(&qiniu,&mut qq_channel, comb_id.clone())
-                .await
-                .is_ok()
+            if QiniuService::delete_datasource_comb(
+                &qiniu,
+                &mut qq_channel,
+                comb_id.clone(),
+            )
+            .await
+            .is_ok()
             {
                 delete_comb_ids.push(comb_id);
             }

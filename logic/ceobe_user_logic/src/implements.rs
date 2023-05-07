@@ -44,10 +44,8 @@ pub struct CeobeUserLogic;
 impl CeobeUserLogic {
     /// 新建手机端用户
     pub async fn create_user(
-        mongo: MongoDatabaseOperate,
-        db: SqlDatabaseOperate,
-        mob: PushManager,
-        mob_id: MobIdReq,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        mob: PushManager, mob_id: MobIdReq,
     ) -> LogicResult<()> {
         // 验证mob_id是否为小刻食堂旗下mob id
         if mob.fetch_device_info(&mob_id.mob_id).await?.is_none() {
@@ -80,10 +78,8 @@ impl CeobeUserLogic {
 
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
-        mongo: MongoDatabaseOperate,
-        db: SqlDatabaseOperate,
-        qiniu: QiniuManager,
-        qq_channel: QqChannelGrpcService,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
         mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
@@ -156,10 +152,8 @@ impl CeobeUserLogic {
 
     /// 更新用户数据源配置
     pub async fn update_datasource(
-        mongo: MongoDatabaseOperate,
-        db: SqlDatabaseOperate,
-        datasource_config: Vec<bson::Uuid>,
-        mob_id: UserMobId,
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        datasource_config: Vec<bson::Uuid>, mob_id: UserMobId,
     ) -> LogicResult<()> {
         let user_unchecked: UserPropertyUncheck =
             UserPropertyUncheck::builder()
@@ -190,10 +184,8 @@ impl CeobeUserLogic {
     }
 
     async fn get_datasources_comb_ids(
-        db: SqlDatabaseOperate,
-        qiniu: QiniuManager,
-        mut qq_channel: QqChannelGrpcService,
-        datasource_ids: Vec<i32>,
+        db: SqlDatabaseOperate, qiniu: QiniuManager,
+        mut qq_channel: QqChannelGrpcService, datasource_ids: Vec<i32>,
         cookie_id: Option<ObjectId>,
     ) -> LogicResult<String> {
         // 根据数据库id生成bitmap

@@ -20,12 +20,9 @@ use crate::{
 
 impl CeobeCookieLogic {
     pub async fn new_cookie(
-        mongo: MongoDatabaseOperate,
-        sql: SqlDatabaseOperate,
-        mut mob: PushManager,
-        qq_channel: QqChannelGrpcService,
-        qiniu: QiniuManager,
-        new_cookie: NewCookieReq,
+        mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
+        mut mob: PushManager, qq_channel: QqChannelGrpcService,
+        qiniu: QiniuManager, new_cookie: NewCookieReq,
     ) -> LogicResult<()> {
         let db = sql.get_connect();
         // 查询数据源相关信息

@@ -128,10 +128,8 @@ impl FetcherConfigControllers {
     // 删除数据源配置
     #[instrument(ret, skip(db, notifier, manager))]
     pub async fn delete_datasource_config(
-        db: SqlDatabaseOperate,
-        notifier: SchedulerNotifier,
-        qq_channel: QqChannelGrpcService,
-        manager: QiniuManager,
+        db: SqlDatabaseOperate, notifier: SchedulerNotifier,
+        qq_channel: QqChannelGrpcService, manager: QiniuManager,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
@@ -174,8 +172,7 @@ impl FetcherConfigControllers {
     /// 上传数据源头像
     #[instrument(ret, skip(qiniu))]
     pub async fn upload_avatar(
-        qiniu: QiniuManager,
-        multipart: Result<Multipart, MultipartRejection>,
+        qiniu: QiniuManager, multipart: Result<Multipart, MultipartRejection>,
     ) -> DatasourceConfigRResult<AvatarId> {
         resp_result::resp_try(async move {
             let mut multipart = multipart?;
