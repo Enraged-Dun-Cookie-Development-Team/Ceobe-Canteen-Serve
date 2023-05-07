@@ -33,7 +33,8 @@ impl QiniuService {
                 .send_logger(
                     LogRequest::builder()
                         .level(LogType::Error)
-                        .info(format!("upload datasource failure: {err}"))
+                        .info(format!("上传七牛云数据源对应最新饼id文件失败，组合id：{comb_id}"))
+                        .extra(format!("报错：{err}"))
                         .build(),
                 )
                 .await?;
@@ -59,8 +60,9 @@ impl QiniuService {
                     LogRequest::builder()
                         .level(LogType::Error)
                         .info(format!(
-                            "delete datasourece bitmap failure: {err}"
+                            "删除七牛云数据源对应最新饼id文件失败，组合id：{comb_id}"
                         ))
+                        .extra(format!("报错：{err}"))
                         .build(),
                 )
                 .await?;
