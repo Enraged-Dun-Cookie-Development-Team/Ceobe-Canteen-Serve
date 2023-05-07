@@ -1,21 +1,12 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+mod axum_starter;
+mod config;
+mod error;
+mod grpc_client;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+mod proto_reexport;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
-
-tonic::include_proto!("pb");
-
-
-fn fate() {
-    
-}
+pub use self::axum_starter::{QqChannel, QqChannelGrpcState};
+pub use config::GrpcConfigTrait;
+pub use error::Error;
+pub use grpc_client::QqChannelGrpcService;
+pub use proto_reexport::{LogRequest, LogType};
