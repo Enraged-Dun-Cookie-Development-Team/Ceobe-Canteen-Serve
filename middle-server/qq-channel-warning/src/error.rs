@@ -1,5 +1,4 @@
-use status_err::ErrPrefix;
-use status_err::StatusErr;
+use status_err::{ErrPrefix, StatusErr};
 #[derive(Debug, thiserror::Error, StatusErr)]
 #[status_err(resp_err)]
 pub enum Error {

@@ -41,6 +41,8 @@ impl ErrPrefix {
     pub const CHECKER: Self = Self('C', HttpCode::BAD_REQUEST);
     /// IO 过程中异常
     pub const IO: Self = Self('I', HttpCode::INTERNAL_SERVER_ERROR);
+    pub const LOGGER_REPORT: Self =
+        Self('R', HttpCode::INTERNAL_SERVER_ERROR);
     /// MongoDb 数据库异常
     pub const MONGO_DB: Self =
         Self::new('G', HttpCode::INTERNAL_SERVER_ERROR);
@@ -62,8 +64,6 @@ impl ErrPrefix {
     pub const SERVE: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
     /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', HttpCode::UNAUTHORIZED);
-
-    pub const LOGGER_REPORT:Self = Self('R', HttpCode::INTERNAL_SERVER_ERROR);
 
     #[inline]
     pub const fn new(sign: char, status: HttpCode) -> Self {

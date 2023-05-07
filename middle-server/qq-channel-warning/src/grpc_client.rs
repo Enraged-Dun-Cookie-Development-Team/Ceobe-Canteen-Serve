@@ -1,11 +1,12 @@
-use crate::{
-    axum_starter::QqChannelGrpcState,
-    error,
-};
 use axum::extract::{FromRef, FromRequestParts};
 use resp_result::RespResult;
 use tonic::transport::Channel;
-use crate::proto_reexport::{LogClient,LogRequest};
+
+use crate::{
+    axum_starter::QqChannelGrpcState,
+    error,
+    proto_reexport::{LogClient, LogRequest},
+};
 pub struct QqChannelGrpcService {
     client: LogClient<Channel>,
 }
@@ -18,8 +19,7 @@ where
     type Rejection = RespResult<resp_result::Nil, error::Error>;
 
     fn from_request_parts<'life0, 'life1, 'async_trait>(
-        _parts: &'life0 mut axum::http::request::Parts,
-        state: &'life1 S,
+        _parts: &'life0 mut axum::http::request::Parts, state: &'life1 S,
     ) -> core::pin::Pin<
         Box<
             dyn core::future::Future<Output = Result<Self, Self::Rejection>>
@@ -46,8 +46,7 @@ where
 impl QqChannelGrpcService {
     /// send logger info to qq channel by the Grpc service
     pub async fn send_logger(
-        &mut self,
-        log_info: LogRequest,
+        &mut self, log_info: LogRequest,
     ) -> Result<(), error::Error> {
         let resp = self.client.push_log(log_info).await?;
         if !resp.into_inner().success {

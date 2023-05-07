@@ -3,13 +3,14 @@ mod redis;
 mod sea_orm;
 use std::{convert::Infallible, num::ParseIntError};
 
-use crate::{status_error, ErrPrefix, StatusErr};
 use axum::extract::rejection::{
     JsonRejection, PathRejection, QueryRejection,
 };
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use http::StatusCode;
 use tonic::transport;
+
+use crate::{status_error, ErrPrefix, StatusErr};
 
 // io prefix
 status_error!(
@@ -153,13 +154,9 @@ use checker::prefabs::{
 };
 
 impl<const RHS: u64> StatusErr for HasRemError<RHS> {
-    fn prefix(&self) -> ErrPrefix {
-        ErrPrefix::CHECKER
-    }
+    fn prefix(&self) -> ErrPrefix { ErrPrefix::CHECKER }
 
-    fn code(&self) -> u16 {
-        0x0014
-    }
+    fn code(&self) -> u16 { 0x0014 }
 }
 
 status_error!(
