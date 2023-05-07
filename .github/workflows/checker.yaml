@@ -31,6 +31,6 @@ jobs:
           components:  rustfmt
       - name: Install Protoc
         uses: arduino/setup-protoc@v1
-      - run: ls -l assets\proto\protos
+      - run: ls -l ./assets/proto/protos
       - run: cargo +nightly fmt --check
       - run: cargo clippy
