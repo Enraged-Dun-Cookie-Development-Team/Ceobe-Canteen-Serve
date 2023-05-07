@@ -27,5 +27,8 @@ jobs:
         with:
           toolchain: nightly
           components:  rustfmt
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+      - run: git submodule foreach 'git pull origin master'
       - run: cargo +nightly fmt --check
       - run: cargo clippy
