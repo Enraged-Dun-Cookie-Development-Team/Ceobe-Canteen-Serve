@@ -58,7 +58,8 @@ impl CeobeCookieLogic {
                         {
                             qq_channel_tmp.send_logger(LogRequest::builder()
                             .level(LogType::Error)
-                            .info(format!("mob pushing error: {err}")).build()).await?;
+                            .info("推送新饼失败".to_string())
+                            .extra(format!("报错：{err}")).build()).await?;
                         }
 
                         Ok(())
