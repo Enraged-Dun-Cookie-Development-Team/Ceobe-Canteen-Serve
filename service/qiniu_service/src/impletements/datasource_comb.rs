@@ -15,7 +15,9 @@ impl QiniuService {
         qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
         cookie_id: Option<String>, comb_id: String,
     ) -> ServiceResult<()> {
-        let source = CombIdToCookieId { cookie_id: cookie_id.clone() };
+        let source = CombIdToCookieId {
+            cookie_id: cookie_id.clone(),
+        };
         let payload = CombIdToCookieIdPlayLoad {
             file_name: &comb_id,
         };
@@ -35,7 +37,10 @@ impl QiniuService {
                         .level(LogType::Error)
                         .manual()
                         .info("上传七牛云数据源对应最新饼id文件失败".into())
-                        .extra(format!("报错：{err}\n组合id：{comb_id}\n饼id：{:#?}", cookie_id))
+                        .extra(format!(
+                            "报错：{err}\n组合id：{comb_id}\n饼id：{:#?}",
+                            cookie_id
+                        ))
                         .build(),
                 )
                 .await?;
@@ -61,9 +66,7 @@ impl QiniuService {
                     LogRequest::builder()
                         .level(LogType::Error)
                         .manual()
-                        .info(
-                            "删除七牛云数据源对应最新饼id文件失败".into()
-                        )
+                        .info("删除七牛云数据源对应最新饼id文件失败".into())
                         .extra(format!("报错：{err}\n组合id：{comb_id}"))
                         .build(),
                 )
