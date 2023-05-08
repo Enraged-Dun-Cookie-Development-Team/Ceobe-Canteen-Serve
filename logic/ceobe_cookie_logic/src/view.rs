@@ -35,7 +35,8 @@ pub struct SingleCookie {
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DefaultCookie {
     pub text: String,
-    pub images: Option<Vec<String>>
+    pub images: Option<Vec<String>>,
+    pub compress_images: Option<Vec<Option<String>>>,
 }
 
 

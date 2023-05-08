@@ -44,7 +44,7 @@ where
                 collection.find(
                     filter,
                     FindOptions::builder()
-                        .projection(doc! {"_id": 0, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "tags": 1})
+                        .projection(doc! {"_id": 0, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "compress_images": 1, "tags": 1})
                         .sort(doc! {"_id": -1})
                         .limit(page_number)
                         .build(),

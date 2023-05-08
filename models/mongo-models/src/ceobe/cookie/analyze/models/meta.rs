@@ -36,8 +36,7 @@ pub struct Item {
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 pub struct Timestamp {
     pub platform: Option<i64>,
-    // TODO: 改命名格式（蛇形）
-    pub platformPrecision: PlatformPrecision,
+    pub platform_precision: PlatformPrecision,
     pub fetcher: i64,
 }
 

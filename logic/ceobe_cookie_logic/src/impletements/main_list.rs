@@ -69,7 +69,7 @@ impl CeobeCookieLogic {
                     .icon(datasource_info[&cookie.source_config_id].avatar.clone())
                     .jump_url(cookie.meta.item.url)
                     .timestamp(cookie.meta.timestamp)
-                    .default_cookie(DefaultCookie::builder().text(cookie.text).images(cookie.images).build()
+                    .default_cookie(DefaultCookie::builder().text(cookie.text).images(cookie.images).compress_images(cookie.compress_images).build()
                     ).build()
             );
         }
