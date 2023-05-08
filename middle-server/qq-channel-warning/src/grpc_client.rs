@@ -66,7 +66,7 @@ mod test {
     #[tokio::test]
     async fn test_send() {
         let channel =
-            Channel::from_shared("http://127.0.0.1:8001").expect("Bad URL");
+            Channel::from_shared("http://127.0.0.1:8003").expect("Bad URL");
         let client = LogClient::connect(channel)
             .await
             .expect("connect to grpc service failure");
@@ -77,7 +77,7 @@ mod test {
             .send_logger(
                 LogRequest::builder()
                     .level(LogType::Info)
-                    .info(String::from("ABC"))
+                    .info(String::from("测试 测试"))
                     .manual()
                     .extra(format!(
                         "[{}:{}/{}]",
