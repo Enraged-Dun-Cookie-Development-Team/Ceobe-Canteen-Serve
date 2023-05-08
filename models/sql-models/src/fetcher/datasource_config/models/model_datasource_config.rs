@@ -48,7 +48,11 @@ use crate::{
 pub struct Model {
     /// 平台type
     #[sea_orm(primary_key)]
-    #[sub_model(want("DataSourceForFetcherConfig"), want("DatasourceId"), want("DatasourceBasicInfo"))]
+    #[sub_model(
+        want("DataSourceForFetcherConfig"),
+        want("DatasourceId"),
+        want("DatasourceBasicInfo")
+    )]
     pub id: i32,
     #[sub_model(want("DatasourcePlatform"))]
     pub platform: String,
@@ -66,8 +70,7 @@ pub struct Model {
     )]
     pub nickname: String,
     /// 数据源头像
-    #[sub_model(want("FrontendDatasource"),
-    want("DatasourceBasicInfo"))]
+    #[sub_model(want("FrontendDatasource"), want("DatasourceBasicInfo"))]
     pub avatar: String,
     /// 数据源配置
     #[sub_model(want("DataSourceForFetcherConfig"))]

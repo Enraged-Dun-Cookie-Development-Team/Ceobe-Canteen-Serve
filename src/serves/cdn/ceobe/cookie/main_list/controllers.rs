@@ -1,17 +1,15 @@
 use axum::extract::Query;
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
-    view::{CookieListReq, CookieTempListResp, CookieListResp},
+    view::{CookieListReq, CookieListResp},
 };
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
-use super::error::{CeobeCookieRResult, CeobeCookieMainListError};
+use super::error::{CeobeCookieMainListError, CeobeCookieRResult};
 use crate::router::CdnCookieMainListFrontend;
-
-
 
 impl CdnCookieMainListFrontend {
     #[instrument(ret, skip(db, mongo))]
@@ -23,12 +21,7 @@ impl CdnCookieMainListFrontend {
         >,
     ) -> CeobeCookieRResult<CookieListResp> {
         Ok(rtry!(
-            CeobeCookieLogic::cookie_list(
-                db,
-                mongo,
-                cookie_req_info
-            )
-            .await
+            CeobeCookieLogic::cookie_list(db, mongo, cookie_req_info).await
         ))
         .into()
     }

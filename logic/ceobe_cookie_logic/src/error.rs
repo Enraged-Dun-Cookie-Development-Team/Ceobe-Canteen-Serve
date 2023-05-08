@@ -1,7 +1,10 @@
 use std::convert::Infallible;
 
 use bitmap_convert::error::Error as BitmapConvError;
-use ceobe_cookie::{temp_list::OperateError as TempListOperateError, analyze::OperateError as AnalyzeOperateError};
+use ceobe_cookie::{
+    analyze::OperateError as AnalyzeOperateError,
+    temp_list::OperateError as TempListOperateError,
+};
 use ceobe_user::property::OperateError as CeobeUserOperateError;
 use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
@@ -52,10 +55,7 @@ pub enum LogicError {
     MobPushError(#[from] MobPushError),
 
     #[error(transparent)]
-    #[status_err(err(
-        prefix = "ErrPrefix::SERVE",
-        err_code = 0x0003,
-    ))]
+    #[status_err(err(prefix = "ErrPrefix::SERVE", err_code = 0x0003,))]
     JoinError(#[from] JoinError),
 }
 

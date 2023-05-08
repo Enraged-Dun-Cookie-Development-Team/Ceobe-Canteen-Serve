@@ -1,10 +1,8 @@
 pub mod meta;
 
-use std::default;
-
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
-use serde_json::{ Value};
+use serde_json::Value;
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
@@ -28,7 +26,7 @@ pub struct AnalyzeModel {
     pub compress_images: Option<Vec<Option<String>>>,
     pub tags: Option<Value>,
     #[sub_model(ignore("CookieInfo"))]
-    pub keywords: Option<Value>
+    pub keywords: Option<Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -38,8 +36,11 @@ pub struct CookieId {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CookieAnalyzeStatus {
-    #[serde(rename = "ANALYZE_WITHOUT_IO_SUCCESS", alias = "ANALYZE_WITHOUT_IO_SUCCESS")]
+    #[serde(
+        rename = "ANALYZE_WITHOUT_IO_SUCCESS",
+        alias = "ANALYZE_WITHOUT_IO_SUCCESS"
+    )]
     AnalyzeWithoutIoSuccess,
     #[serde(rename = "ANALYZE_SUCCESS", alias = "ANALYZE_SUCCESS")]
-    AnalyzeSuccess
+    AnalyzeSuccess,
 }

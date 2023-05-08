@@ -1,5 +1,5 @@
 use axum::Router;
-pub use cookie::{CdnCookieTempFrontend, CdnCookieMainListFrontend};
+pub use cookie::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 
 use self::cookie::cookie_router;
 use super::ServerRoute;

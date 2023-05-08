@@ -15,7 +15,6 @@ pub struct CookieTempListResp {
     pub next_page_id: Option<String>,
 }
 
-
 // 分页临时饼列表返回模型
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieListResp {
@@ -30,7 +29,7 @@ pub struct SingleCookie {
     pub icon: String,
     pub jump_url: String,
     pub timestamp: CookieTimestamp,
-    pub default_cookie: DefaultCookie
+    pub default_cookie: DefaultCookie,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DefaultCookie {
@@ -39,7 +38,6 @@ pub struct DefaultCookie {
     pub compress_images: Option<Vec<Option<String>>>,
 }
 
-
 // 饼列表请求
 #[derive(Debug, Clone, Deserialize, TypedBuilder)]
 #[serde(deny_unknown_fields)]
@@ -47,7 +45,6 @@ pub struct CookieListReq {
     pub datasource_comb_id: String,
     pub cookie_id: ObjectId,
 }
-
 
 // 从分析器来的新饼信息
 #[derive(Debug, Clone, Deserialize, TypedBuilder)]
@@ -66,8 +63,6 @@ pub struct CookieContentReq {
     pub text: Option<String>,
     pub image_url: Option<String>,
 }
-
-
 
 // app推送信息
 #[derive(Debug, Clone, TypedBuilder)]

@@ -3,14 +3,17 @@ use db_ops_prelude::{
     mongo_connection::{
         CollectionGuard, MongoDbCollectionTrait, MongoDbError,
     },
+    mongo_models::ceobe::cookie::analyze::models::{
+        AnalyzeModel, CookieId, CookieInfo,
+    },
     mongodb::{
         bson::{doc, oid::ObjectId},
         options::{FindOneOptions, FindOptions},
-    }, mongo_models::ceobe::cookie::analyze::models::{CookieId, AnalyzeModel, CookieInfo},
+    },
 };
 use tracing::instrument;
 
-use super::{OperateResult, AnalyzeOperate};
+use super::{AnalyzeOperate, OperateResult};
 
 impl<'db, Conn> AnalyzeOperate<'db, Conn>
 where

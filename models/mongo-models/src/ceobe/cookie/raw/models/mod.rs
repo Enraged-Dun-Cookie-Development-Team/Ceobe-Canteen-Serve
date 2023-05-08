@@ -1,7 +1,6 @@
-
 use mongodb::bson::{oid::ObjectId, Binary};
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::Value;
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
@@ -14,12 +13,10 @@ pub struct RawModel {
     pub raw_cookie: RawCookie,
 }
 
-
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieId {
     pub _id: ObjectId,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 pub struct RawCookie {

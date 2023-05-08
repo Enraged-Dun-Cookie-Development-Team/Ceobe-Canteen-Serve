@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
@@ -8,12 +8,12 @@ pub struct Meta {
     pub source: Source,
     pub account: Account,
     pub item: Item,
-    pub timestamp: Timestamp
+    pub timestamp: Timestamp,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 pub struct Source {
-    #[serde(rename="type", alias="type")]
+    #[serde(rename = "type", alias = "type")]
     pub ty: String,
     pub data: String,
 }
@@ -55,6 +55,3 @@ pub enum PlatformPrecision {
     #[serde(rename = "ms", alias = "ms")]
     Ms,
 }
-
-
-
