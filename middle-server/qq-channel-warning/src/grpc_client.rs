@@ -20,8 +20,7 @@ where
     type Rejection = RespResult<resp_result::Nil, error::Error>;
 
     fn from_request_parts<'life0, 'life1, 'async_trait>(
-        _parts: &'life0 mut axum::http::request::Parts,
-        state: &'life1 S,
+        _parts: &'life0 mut axum::http::request::Parts, state: &'life1 S,
     ) -> core::pin::Pin<
         Box<
             dyn core::future::Future<Output = Result<Self, Self::Rejection>>
@@ -48,8 +47,7 @@ where
 impl QqChannelGrpcService {
     /// send logger info to qq channel by the Grpc service
     pub async fn send_logger(
-        &mut self,
-        log_info: LogRequest,
+        &mut self, log_info: LogRequest,
     ) -> Result<(), error::Error> {
         let resp = self.client.push_log(log_info).await?;
         if !resp.into_inner().success {
@@ -61,26 +59,32 @@ impl QqChannelGrpcService {
 
 #[cfg(test)]
 mod test {
-    use super::QqChannelGrpcService;
-    use crate::LogRequest;
-    use crate::{proto_reexport::LogClient, LogType};
     use tonic::transport::Channel;
+
+    use super::QqChannelGrpcService;
+    use crate::{proto_reexport::LogClient, LogRequest, LogType};
     #[tokio::test]
     async fn test_send() {
-        let channel = Channel::from_shared("http://127.0.0.1:8001").expect("Bad URL");
+        let channel =
+            Channel::from_shared("http://127.0.0.1:8001").expect("Bad URL");
         let client = LogClient::connect(channel)
             .await
             .expect("connect to grpc service failure");
 
         let mut server = QqChannelGrpcService { client };
 
-         server
+        server
             .send_logger(
                 LogRequest::builder()
                     .level(LogType::Info)
                     .info(String::from("ABC"))
                     .manual()
-                    .extra(format!("[{}:{}/{}]",module_path!(),line!(),column!()))
+                    .extra(format!(
+                        "[{}:{}/{}]",
+                        module_path!(),
+                        line!(),
+                        column!()
+                    ))
                     .build(),
             )
             .await

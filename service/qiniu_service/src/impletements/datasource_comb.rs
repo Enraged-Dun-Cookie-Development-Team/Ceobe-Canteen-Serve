@@ -33,7 +33,10 @@ impl QiniuService {
                 .send_logger(
                     LogRequest::builder()
                         .level(LogType::Error)
-                        .info(format!("上传七牛云数据源对应最新饼id文件失败，组合id：{comb_id}"))
+                        .info(format!(
+                            "上传七牛云数据源对应最新饼id文件失败，组合id：\
+                             {comb_id}"
+                        ))
                         .extra(format!("报错：{err}"))
                         .build(),
                 )
@@ -60,7 +63,8 @@ impl QiniuService {
                     LogRequest::builder()
                         .level(LogType::Error)
                         .info(format!(
-                            "删除七牛云数据源对应最新饼id文件失败，组合id：{comb_id}"
+                            "删除七牛云数据源对应最新饼id文件失败，组合id：\
+                             {comb_id}"
                         ))
                         .extra(format!("报错：{err}"))
                         .build(),

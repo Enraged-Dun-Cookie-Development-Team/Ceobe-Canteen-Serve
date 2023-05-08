@@ -8,7 +8,5 @@ pub struct QqChannelConfig {
 }
 
 impl GrpcConfigTrait for QqChannelConfig {
-    fn get_url(&self) -> Url {
-        self.uri.clone()
-    }
+    fn get_url(&self) -> Url { self.uri.clone() }
 }

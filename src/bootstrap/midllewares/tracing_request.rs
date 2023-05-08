@@ -9,9 +9,7 @@ use tower_http::{
 use tracing::Level;
 
 #[prepare(PrepareRequestTracker)]
-pub fn prepare_track_request() -> RequestTracker {
-    RequestTracker
-}
+pub fn prepare_track_request() -> RequestTracker { RequestTracker }
 
 pub struct RequestTracker;
 

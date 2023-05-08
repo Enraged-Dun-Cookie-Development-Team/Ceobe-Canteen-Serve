@@ -12,7 +12,6 @@ pub struct QqChannelGrpcState {
 pub fn qq_channel_logger<'arg, C: GrpcConfigTrait>(
     cfg: &'arg C,
 ) -> AddState<QqChannelGrpcState> {
-
     AddState(QqChannelGrpcState {
         uri: Channel::builder(cfg.get_uri()),
     })

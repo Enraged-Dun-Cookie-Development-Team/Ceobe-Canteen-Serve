@@ -1,5 +1,5 @@
 use axum::{body::BoxBody, response::IntoResponse};
-use axum_starter::{PrepareMiddlewareEffect, prepare};
+use axum_starter::{prepare, PrepareMiddlewareEffect};
 use database_traits::get_connect::FromRequestParts;
 use qq_channel_warning::{
     qq_channel_logger, GrpcConfigTrait, LogRequest, LogType,
@@ -46,16 +46,16 @@ impl ResponseForPanic for PanicReportHandle {
 
     #[instrument(skip_all)]
     fn response_for_panic(
-        &mut self,
-        err: Box<dyn std::any::Any + Send + 'static>,
+        &mut self, err: Box<dyn std::any::Any + Send + 'static>,
     ) -> http::Response<Self::ResponseBody> {
         let err = if let Some(msg) = err
             .downcast_ref::<String>()
             .map(String::as_str)
-            .or_else(|| err.downcast_ref::<&str>().map(|s| *s))
+            .or_else(|| err.downcast_ref::<&str>().copied())
         {
             msg
-        } else {
+        }
+        else {
             "Unknown Panic Message"
         }
         .to_owned();
