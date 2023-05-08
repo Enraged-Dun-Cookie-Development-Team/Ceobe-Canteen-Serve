@@ -11,7 +11,7 @@ use bootstrap::{
         db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
-    midllewares::{
+    middleware::{
         panic_report::PrepareCatchPanic,
         tracing_request::PrepareRequestTracker,
     },
