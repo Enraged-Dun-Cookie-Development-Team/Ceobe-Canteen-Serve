@@ -3,6 +3,7 @@ use std::{
     time::Duration,
 };
 
+use axum::routing::Route;
 use axum_starter::ServerPrepare;
 use bootstrap::{
     init::{
@@ -10,7 +11,10 @@ use bootstrap::{
         db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
-    midllewares::tracing_request::tracing_request,
+    midllewares::{
+        panic_report::PrepareCatchPanic,
+        tracing_request::PrepareRequestTracker,
+    },
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
@@ -84,9 +88,12 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
+        .prepare_middleware::<Route, _>(
+            PrepareCatchPanic::<_, QqChannelConfig>,
+        )
         .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
-        .layer(tracing_request())
+        .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
         .convert_state()
         .prepare_start()

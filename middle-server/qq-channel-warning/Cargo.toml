@@ -15,6 +15,7 @@ status-err = { version = "0.1.0", path = "../../libs/status-err" }
 thiserror.workspace = true
 tonic = "0.9.1"
 typed-builder = "0.14.0"
+url.workspace = true
 
 [build-dependencies]
 tonic-build = "0.9.1"

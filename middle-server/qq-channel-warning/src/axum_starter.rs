@@ -1,4 +1,3 @@
-use axum::http::uri::InvalidUri;
 use axum_starter::{prepare, state::AddState};
 use tonic::transport::{Channel, Endpoint};
 
@@ -9,11 +8,12 @@ pub struct QqChannelGrpcState {
     pub(crate) uri: Endpoint,
 }
 
-#[prepare(QqChannelPrepare? 'arg)]
+#[prepare(QqChannelPrepare 'arg)]
 pub fn qq_channel_logger<'arg, C: GrpcConfigTrait>(
     cfg: &'arg C,
-) -> Result<AddState<QqChannelGrpcState>, InvalidUri> {
-    Ok(AddState(QqChannelGrpcState {
-        uri: Channel::from_shared(cfg.get_uri().to_string())?,
-    }))
+) -> AddState<QqChannelGrpcState> {
+
+    AddState(QqChannelGrpcState {
+        uri: Channel::builder(cfg.get_uri()),
+    })
 }
