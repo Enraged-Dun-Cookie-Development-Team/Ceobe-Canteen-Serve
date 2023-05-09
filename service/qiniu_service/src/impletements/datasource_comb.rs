@@ -39,9 +39,7 @@ impl QiniuService {
                         .info("上传七牛云数据源对应最新饼id文件失败".into())
                         .extra(format!(
                             "报错：{}\n组合id：{}\n饼id：{:#?}",
-                            err,
-                            comb_id,
-                            cookie_id
+                            err, comb_id, cookie_id
                         ))
                         .build(),
                 )
