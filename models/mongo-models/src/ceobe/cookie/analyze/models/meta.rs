@@ -41,17 +41,12 @@ pub struct Timestamp {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum PlatformPrecision {
-    #[serde(rename = "none", alias = "none")]
     None,
-    #[serde(rename = "day", alias = "day")]
     Day,
-    #[serde(rename = "hour", alias = "hour")]
     Hour,
-    #[serde(rename = "minute", alias = "minute")]
     Minute,
-    #[serde(rename = "second", alias = "second")]
     Second,
-    #[serde(rename = "ms", alias = "ms")]
     Ms,
 }
