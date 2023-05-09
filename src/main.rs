@@ -3,6 +3,7 @@ use std::{
     time::Duration,
 };
 
+use axum::routing::Route;
 use axum_starter::ServerPrepare;
 use bootstrap::{
     init::{
@@ -10,18 +11,23 @@ use bootstrap::{
         db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
-    midllewares::tracing_request::tracing_request,
+    middleware::{
+        panic_report::PrepareCatchPanic,
+        tracing_request::PrepareRequestTracker,
+    },
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, mob_config::MobPushConfig,
-    qiniu_secret::QiniuUploadConfig, resp_result_config::RespResultConfig,
+    qiniu_secret::QiniuUploadConfig, qq_channel::QqChannelConfig,
+    resp_result_config::RespResultConfig,
     schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
     CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
 use mob_push_server::axum_starter::MobPushPrepare;
+use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::{
@@ -72,6 +78,7 @@ async fn main_task() {
         .prepare_state(BiliClientPrepare)
         .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
         .prepare_state(MobPushPrepare::<_, MobPushConfig>)
+        .prepare_state(QqChannelPrepare::<_, QqChannelConfig>)
         // database
         .prepare_concurrent(|set| {
             set.join_state(MysqlDbConnect)
@@ -81,9 +88,12 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
+        .prepare_middleware::<Route, _>(
+            PrepareCatchPanic::<_, QqChannelConfig>,
+        )
         .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
-        .layer(tracing_request())
+        .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
         .convert_state()
         .prepare_start()

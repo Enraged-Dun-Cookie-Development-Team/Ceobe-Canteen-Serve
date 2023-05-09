@@ -18,6 +18,7 @@ use futures::future;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use qiniu_cdn_upload::upload;
+use qq_channel_warning::QqChannelGrpcService;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
@@ -128,7 +129,7 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db, notifier, manager))]
     pub async fn delete_datasource_config(
         db: SqlDatabaseOperate, notifier: SchedulerNotifier,
-        manager: QiniuManager,
+        qq_channel: QqChannelGrpcService, manager: QiniuManager,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
@@ -138,6 +139,7 @@ impl FetcherConfigControllers {
             FetcherConfigLogic::delete_datasource_by_id(
                 &notifier,
                 db,
+                qq_channel,
                 manager,
                 datasource.id
             )

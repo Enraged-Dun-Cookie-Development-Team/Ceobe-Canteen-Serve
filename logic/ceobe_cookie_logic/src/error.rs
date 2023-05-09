@@ -55,6 +55,9 @@ pub enum LogicError {
     MobPushError(#[from] MobPushError),
 
     #[error(transparent)]
+    QqChannelError(#[from] qq_channel_warning::Error),
+
+    #[error(transparent)]
     #[status_err(err(prefix = "ErrPrefix::SERVE", err_code = 0x0003,))]
     JoinError(#[from] JoinError),
 }

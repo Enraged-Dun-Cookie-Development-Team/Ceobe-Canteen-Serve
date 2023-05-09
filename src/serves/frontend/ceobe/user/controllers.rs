@@ -11,6 +11,7 @@ use mongo_migration::{
     mongo_models::ceobe::user_property::models::UserDatasource,
 };
 use orm_migrate::sql_connection::SqlDatabaseOperate;
+use qq_channel_warning::QqChannelGrpcService;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
@@ -32,11 +33,14 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo, qiniu))]
     pub async fn get_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        qiniu: QiniuManager, MobIdInfo(mob_id): MobIdInfo,
+        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
+        MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
-            CeobeUserLogic::get_datasource_by_user(mongo, db, qiniu, mob_id)
-                .await
+            CeobeUserLogic::get_datasource_by_user(
+                mongo, db, qiniu, qq_channel, mob_id
+            )
+            .await
         ))
         .into()
     }

@@ -26,6 +26,7 @@ ceobe-qiniu-upload.workspace = true
 ceobe-cookie.workspace = true
 qiniu_service.workspace = true
 mob-push-server.workspace = true
+qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
 
 [dependencies.checker]
 path = "../../libs/checker"
