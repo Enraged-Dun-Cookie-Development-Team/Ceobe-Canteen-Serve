@@ -108,7 +108,6 @@ impl CeobeCookieLogic {
                         DefaultCookie::builder()
                             .text(cookie.text)
                             .images(cookie.images)
-                            .compress_images(cookie.compress_images)
                             .build(),
                     )
                     .build(),

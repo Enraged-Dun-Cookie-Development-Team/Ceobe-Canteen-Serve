@@ -7,6 +7,7 @@ use mongo_migration::mongo_models::mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use typed_builder::TypedBuilder;
+use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::images::CookieImages;
 
 // 分页临时饼列表返回模型
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -34,8 +35,7 @@ pub struct SingleCookie {
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DefaultCookie {
     pub text: String,
-    pub images: Option<Vec<String>>,
-    pub compress_images: Option<Vec<Option<String>>>,
+    pub images: Option<Vec<CookieImages>>,
 }
 
 // 饼列表请求

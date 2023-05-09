@@ -1,3 +1,4 @@
+pub mod images;
 pub mod meta;
 
 use mongodb::bson::oid::ObjectId;
@@ -5,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
+use images::CookieImages;
 
 use self::meta::Meta;
 
@@ -22,8 +24,7 @@ pub struct AnalyzeModel {
     pub text: String,
     #[sub_model(ignore("CookieInfo"))]
     pub status: CookieAnalyzeStatus,
-    pub images: Option<Vec<String>>,
-    pub compress_images: Option<Vec<Option<String>>>,
+    pub images: Option<Vec<CookieImages>>,
     pub tags: Option<Value>,
     #[sub_model(ignore("CookieInfo"))]
     pub keywords: Option<Value>,
