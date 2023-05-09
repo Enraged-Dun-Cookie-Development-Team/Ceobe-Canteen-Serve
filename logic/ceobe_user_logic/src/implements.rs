@@ -116,7 +116,7 @@ impl CeobeUserLogic {
             .ceobe()
             .cookie()
             .analyze()
-            .get_first_cookie_id(datasource_ids.clone())
+            .get_first_cookie_id(&datasource_ids)
             .await?;
 
         // 生成组合id，并且上传到对象储存

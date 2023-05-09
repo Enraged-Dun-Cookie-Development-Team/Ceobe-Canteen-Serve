@@ -14,10 +14,12 @@ use db_ops_prelude::{
     sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
     SqlDatabaseOperate,
 };
-use fetcher::datasource_config::ToDatasource;
 use fetcher::{
     datasource_combination::ToDatasourceCombination,
-    datasource_config::OperateError as DatasourceOperateError, ToFetcher,
+    datasource_config::{
+        OperateError as DatasourceOperateError, ToDatasource,
+    },
+    ToFetcher,
 };
 use tokio::task::{self, JoinHandle};
 
@@ -29,8 +31,7 @@ use crate::{
 
 impl CeobeCookieLogic {
     pub async fn cookie_list(
-        db: SqlDatabaseOperate,
-        mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         cookie_info: CookieListReq,
     ) -> LogicResult<CookieListResp> {
         // 转换数据源组合id成数据源ids
@@ -66,17 +67,18 @@ impl CeobeCookieLogic {
         let next_cookie_id = task::spawn({
             let datasource_indexes = Arc::clone(&datasource_indexes);
             async move {
-            mongo
-                .ceobe()
-                .cookie()
-                .analyze()
-                .get_next_page_cookie_id(
-                    cookie_info.cookie_id,
-                    &datasource_indexes,
-                    10,
-                )
-                .await
-        }});
+                mongo
+                    .ceobe()
+                    .cookie()
+                    .analyze()
+                    .get_next_page_cookie_id(
+                        cookie_info.cookie_id,
+                        &datasource_indexes,
+                        10,
+                    )
+                    .await
+            }
+        });
         // 获取数据源基本信息
         let db_copy = db.clone();
         let datasource_info: JoinHandle<Result<_, DatasourceOperateError>> =
@@ -121,7 +123,8 @@ impl CeobeCookieLogic {
                         }) = datasource_info.get(&source_config_id)
                         {
                             (nickname.to_owned(), avatar.to_owned())
-                        } else {
+                        }
+                        else {
                             unreachable!("cannot find match datasource")
                         };
                     SingleCookie::builder()

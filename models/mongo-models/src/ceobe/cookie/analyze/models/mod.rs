@@ -37,7 +37,6 @@ pub struct CookieId {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum CookieAnalyzeStatus {
-
     AnalyzeWithoutIoSuccess,
     AnalyzeSuccess,
 }

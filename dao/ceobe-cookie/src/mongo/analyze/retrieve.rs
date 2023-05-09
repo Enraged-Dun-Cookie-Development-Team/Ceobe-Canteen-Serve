@@ -22,10 +22,7 @@ where
     /// 分页查询饼数据
     #[instrument(skip(self), ret)]
     pub async fn get_data_by_paginate(
-        &'db self,
-        first_id: ObjectId,
-        datasources: &[i32],
-        page_size: i64,
+        &'db self, first_id: ObjectId, datasources: &[i32], page_size: i64,
     ) -> OperateResult<Vec<CookieInfo>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieInfo> =
@@ -66,10 +63,7 @@ where
     /// 获取下一页的饼id
     #[instrument(skip(self), ret)]
     pub async fn get_next_page_cookie_id(
-        &'db self,
-        first_id: ObjectId,
-        datasources: &[i32],
-        page_size: u64,
+        &'db self, first_id: ObjectId, datasources: &[i32], page_size: u64,
     ) -> OperateResult<Option<ObjectId>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieId> =
@@ -109,8 +103,7 @@ where
     /// 获取数据源第一个饼id
     #[instrument(skip(self), ret)]
     pub async fn get_first_cookie_id(
-        &'db self,
-        datasources: Vec<i32>,
+        &'db self, datasources: &[i32],
     ) -> OperateResult<Option<ObjectId>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieId> =

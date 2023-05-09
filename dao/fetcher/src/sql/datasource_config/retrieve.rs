@@ -257,7 +257,7 @@ where
             .column(Column::Id)
             .column(Column::Nickname)
             .column(Column::Avatar)
-            .filter(Column::Id.is_in(ids.into_iter().copied()))
+            .filter(Column::Id.is_in(ids.iter().copied()))
             .into_model::<DatasourceBasicInfo>()
             .all(db)
             .await?)
