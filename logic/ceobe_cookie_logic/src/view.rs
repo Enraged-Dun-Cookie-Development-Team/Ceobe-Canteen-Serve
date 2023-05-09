@@ -1,4 +1,5 @@
 use ceobe_cookie::CookieTimestamp;
+use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::images::CookieImages;
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
     PushEntity,
@@ -7,7 +8,6 @@ use mongo_migration::mongo_models::mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use typed_builder::TypedBuilder;
-use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::images::CookieImages;
 
 // 分页临时饼列表返回模型
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]

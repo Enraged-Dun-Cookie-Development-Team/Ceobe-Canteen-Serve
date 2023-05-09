@@ -1,12 +1,12 @@
 pub mod images;
 pub mod meta;
 
+use images::CookieImages;
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
-use images::CookieImages;
 
 use self::meta::Meta;
 

@@ -112,7 +112,6 @@ impl CeobeCookieLogic {
                      source_config_id,
                      text,
                      images,
-                     compress_images,
                      ..
                  }| {
                     let (nickname, avatar) =
@@ -132,11 +131,7 @@ impl CeobeCookieLogic {
                         .icon(avatar)
                         .jump_url(url)
                         .timestamp(timestamp)
-                        .default_cookie(DefaultCookie {
-                            text,
-                            images,
-                            compress_images,
-                        })
+                        .default_cookie(DefaultCookie { text, images })
                         .build()
                 },
             )
