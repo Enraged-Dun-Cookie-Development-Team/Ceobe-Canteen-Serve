@@ -9,7 +9,7 @@ pub use back_end::{
     CeobeOperationAnnouncement, CeobeOperationVideo,
     FetcherConfigControllers, UserAuthBackend,
 };
-pub use cdn::CdnCookieTempFrontend;
+pub use cdn::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,

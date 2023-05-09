@@ -11,14 +11,14 @@ use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use crate::{
     error::LogicResult,
     impletements::CeobeCookieLogic,
-    view::{CookieListReq, CookieListResp},
+    view::{CookieListReq, CookieTempListResp},
 };
 
 impl CeobeCookieLogic {
     pub async fn get_temp_cookies_by_pagenation(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         cookie_info: CookieListReq,
-    ) -> LogicResult<CookieListResp> {
+    ) -> LogicResult<CookieTempListResp> {
         let datasource_map: Bitmap<256> = BitmapBase70Conv::from_base_70(
             cookie_info.datasource_comb_id.clone(),
         )?;
@@ -53,7 +53,7 @@ impl CeobeCookieLogic {
             .update_access_time(&cookie_info.datasource_comb_id)
             .await?;
 
-        Ok(CookieListResp {
+        Ok(CookieTempListResp {
             cookies: cookie_list,
             next_page_id: next_cookie_id?.map(|id| id.to_string()),
         })

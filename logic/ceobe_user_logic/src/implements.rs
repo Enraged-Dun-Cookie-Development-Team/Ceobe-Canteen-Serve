@@ -115,8 +115,8 @@ impl CeobeUserLogic {
         let cookie_id = mongo
             .ceobe()
             .cookie()
-            .temp_list()
-            .get_first_cookie_id(datasource_ids.clone())
+            .analyze()
+            .get_first_cookie_id(&datasource_ids)
             .await?;
 
         // 生成组合id，并且上传到对象储存
