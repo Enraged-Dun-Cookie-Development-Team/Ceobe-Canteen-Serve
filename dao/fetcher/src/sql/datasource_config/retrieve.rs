@@ -249,7 +249,7 @@ where
     #[instrument(skip(self))]
     /// 根据数据源id获取数据源
     pub async fn find_basic_info_by_ids(
-        &self, ids: Vec<i32>,
+        &self, ids: &[i32],
     ) -> OperateResult<Vec<DatasourceBasicInfo>> {
         let db = self.get_connect();
         Ok(Entity::find()
@@ -257,7 +257,7 @@ where
             .column(Column::Id)
             .column(Column::Nickname)
             .column(Column::Avatar)
-            .filter(Column::Id.is_in(ids))
+            .filter(Column::Id.is_in(ids.into_iter().copied()))
             .into_model::<DatasourceBasicInfo>()
             .all(db)
             .await?)
