@@ -1,7 +1,7 @@
 use axum::extract::Query;
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
-    view::{CookieListReq, CookieListResp},
+    view::{CookieListReq, CookieTempListResp},
 };
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
@@ -19,7 +19,7 @@ impl CdnCookieTempFrontend {
             Query<CookieListReq>,
             CeobeCookieTempListError,
         >,
-    ) -> CeobeCookieRResult<CookieListResp> {
+    ) -> CeobeCookieRResult<CookieTempListResp> {
         Ok(rtry!(
             CeobeCookieLogic::get_temp_cookies_by_pagenation(
                 db,

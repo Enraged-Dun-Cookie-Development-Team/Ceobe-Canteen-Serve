@@ -8,6 +8,7 @@ use axum::extract::rejection::{
 };
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use http::StatusCode;
+use tonic::transport;
 
 use crate::{status_error, ErrPrefix, StatusErr};
 
@@ -163,4 +164,18 @@ status_error!(
         ErrPrefix::CHECKER,
         0x0014
     ]->"Json 对象不符合预期"
+);
+
+status_error!(
+    transport::Error[
+        ErrPrefix::LOGGER_REPORT,
+        0x00_01
+    ]->"与Grpc服务端建立连接失败"
+);
+
+status_error!(
+    tonic::Status[
+        ErrPrefix::LOGGER_REPORT,
+        0x00_02
+    ]->"Grpc service返回异常响应"
 );

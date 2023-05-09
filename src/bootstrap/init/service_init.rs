@@ -7,8 +7,7 @@ use axum_starter::{
 use futures::FutureExt;
 use tracing::info;
 
-use super::State;
-use crate::{error::not_exist, router};
+use crate::{bootstrap::State, error::not_exist, router};
 
 /// 配置router
 #[prepare(RouteV1)]

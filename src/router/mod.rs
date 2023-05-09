@@ -9,7 +9,7 @@ pub use back_end::{
     CeobeOperationAnnouncement, CeobeOperationVideo,
     FetcherConfigControllers, UserAuthBackend,
 };
-pub use cdn::CdnCookieTempFrontend;
+pub use cdn::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
@@ -23,7 +23,7 @@ use self::{
     back_end::back_end_router, cdn::cdn_router, front_end::front_end_router,
     inside::inside_router,
 };
-use crate::bootstrap::init::State;
+use crate::bootstrap::State;
 
 pub fn root_route() -> ServerRoute {
     Router::new()
