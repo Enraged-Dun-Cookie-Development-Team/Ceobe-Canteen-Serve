@@ -17,6 +17,10 @@ impl MigratorTrait for Migrator {
             .append(migrations::ceobe::user::property::Migration)
             .await?
             .append(migrations::ceobe::cookie::temp_list::Migration)
+            .await?
+            .append(migrations::ceobe::cookie::analyze::Migration)
+            .await?
+            .append(migrations::ceobe::cookie::raw::Migration)
             .await?;
 
         Ok(())
