@@ -48,6 +48,7 @@ impl ResponseForPanic for PanicReportHandle {
     fn response_for_panic(
         &mut self, err: Box<dyn std::any::Any + Send + 'static>,
     ) -> http::Response<Self::ResponseBody> {
+        // TODO: 推送panic到频道好像有问题
         let err = if let Some(msg) = err
             .downcast_ref::<String>()
             .map(String::as_str)
