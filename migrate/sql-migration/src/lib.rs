@@ -46,7 +46,6 @@ impl MigratorTrait for Migrator {
         ]
     }
 }
-#[macro_export(crate)]
 macro_rules! migrate_group {
     [$($t:expr)*] => {
         vec![

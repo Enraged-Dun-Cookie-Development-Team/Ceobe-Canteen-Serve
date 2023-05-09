@@ -25,7 +25,7 @@ where
         &'db self,
         first_id: ObjectId,
         datasources: &[i32],
-        page_number: i64,
+        page_size: i64,
     ) -> OperateResult<Vec<CookieInfo>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieInfo> =
@@ -51,7 +51,7 @@ where
                     FindOptions::builder()
                         .projection(doc! {"_id": 0, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "compress_images": 1, "tags": 1})
                         .sort(doc! {"_id": -1})
-                        .limit(page_number)
+                        .limit(page_size)
                         .build(),
                 )
             })
@@ -69,7 +69,7 @@ where
         &'db self,
         first_id: ObjectId,
         datasources: &[i32],
-        page_number: u64,
+        page_size: u64,
     ) -> OperateResult<Option<ObjectId>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieId> =
@@ -95,7 +95,7 @@ where
                     FindOneOptions::builder()
                         .projection(doc! {"_id": 1})
                         .sort(doc! {"_id": -1})
-                        .skip(page_number)
+                        .skip(page_size)
                         .build(),
                 )
             })
