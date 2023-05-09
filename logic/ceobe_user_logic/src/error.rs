@@ -1,5 +1,5 @@
 use bitmap_convert::error::Error as BitmapConvError;
-use ceobe_cookie::temp_list::OperateError as TemporaryListOperateError;
+use ceobe_cookie::analyze::OperateError as AnalyzeOperateError;
 use ceobe_user::property::OperateError as CeobeUserOperateError;
 use db_ops_prelude::{
     mongo_connection::MongoDbError,
@@ -42,7 +42,7 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
-    TemporaryListOperateError(#[from] TemporaryListOperateError),
+    AnalyzeOperateError(#[from] AnalyzeOperateError),
 
     #[error(transparent)]
     #[status_err(err = "transparent")]

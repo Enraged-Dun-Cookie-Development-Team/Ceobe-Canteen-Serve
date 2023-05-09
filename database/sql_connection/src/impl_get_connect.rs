@@ -18,7 +18,7 @@ use sea_orm::{
 
 use crate::static_vars::{get_sql_database, get_sql_transaction};
 
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Default)]
 pub struct SqlConnect;
 
 impl<S> FromRequestParts<S> for SqlConnect {

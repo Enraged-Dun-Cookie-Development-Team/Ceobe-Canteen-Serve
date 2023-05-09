@@ -1,7 +1,10 @@
 use std::convert::Infallible;
 
 use bitmap_convert::error::Error as BitmapConvError;
-use ceobe_cookie::temp_list::OperateError as TempListOperateError;
+use ceobe_cookie::{
+    analyze::OperateError as AnalyzeOperateError,
+    temp_list::OperateError as TempListOperateError,
+};
 use ceobe_user::property::OperateError as CeobeUserOperateError;
 use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
@@ -10,12 +13,17 @@ use fetcher::{
 use mob_push_server::MobPushError;
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
+use tokio::task::JoinError;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     TempListOperateError(#[from] TempListOperateError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    AnalyzeOperateError(#[from] AnalyzeOperateError),
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
@@ -45,8 +53,13 @@ pub enum LogicError {
         http_code = "HttpCode::CONFLICT"
     ))]
     MobPushError(#[from] MobPushError),
+
     #[error(transparent)]
     QqChannelError(#[from] qq_channel_warning::Error),
+
+    #[error(transparent)]
+    #[status_err(err(prefix = "ErrPrefix::SERVE", err_code = 0x0003,))]
+    JoinError(#[from] JoinError),
 }
 
 impl From<Infallible> for LogicError {
