@@ -105,7 +105,7 @@ impl CeobeCookieLogic {
                 |CookieInfo {
                      meta:
                          Meta {
-                             item: Item { url, .. },
+                             item,
                              timestamp,
                              ..
                          },
@@ -129,7 +129,7 @@ impl CeobeCookieLogic {
                     SingleCookie::builder()
                         .datasource(nickname)
                         .icon(avatar)
-                        .jump_url(url)
+                        .item(item)
                         .timestamp(timestamp)
                         .default_cookie(DefaultCookie { text, images })
                         .build()

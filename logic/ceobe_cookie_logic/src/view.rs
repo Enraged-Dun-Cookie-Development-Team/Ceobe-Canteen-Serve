@@ -1,5 +1,5 @@
 use ceobe_cookie::CookieTimestamp;
-use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::images::CookieImages;
+use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::{images::CookieImages, meta::Item};
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
     PushEntity,
@@ -28,9 +28,9 @@ pub struct SingleCookie {
     pub datasource: String,
     // 数据源icon
     pub icon: String,
-    pub jump_url: String,
     pub timestamp: CookieTimestamp,
     pub default_cookie: DefaultCookie,
+    pub item: Item,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DefaultCookie {
