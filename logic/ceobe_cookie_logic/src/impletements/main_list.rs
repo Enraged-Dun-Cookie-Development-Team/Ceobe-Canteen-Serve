@@ -7,10 +7,7 @@ use bitmaps::Bitmap;
 use ceobe_cookie::{ToCeobe, ToCookie};
 use db_ops_prelude::{
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::cookie::analyze::models::{
-        meta::{Item, Meta},
-        CookieInfo,
-    },
+    mongo_models::ceobe::cookie::analyze::models::{meta::Meta, CookieInfo},
     sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
     SqlDatabaseOperate,
 };
@@ -105,9 +102,7 @@ impl CeobeCookieLogic {
                 |CookieInfo {
                      meta:
                          Meta {
-                             item,
-                             timestamp,
-                             ..
+                             item, timestamp, ..
                          },
                      source_config_id,
                      text,

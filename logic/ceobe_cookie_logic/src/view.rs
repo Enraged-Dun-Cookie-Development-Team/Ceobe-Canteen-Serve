@@ -1,5 +1,7 @@
 use ceobe_cookie::CookieTimestamp;
-use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::{images::CookieImages, meta::Item};
+use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::{
+    images::CookieImages, meta::Item,
+};
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
     PushEntity,
