@@ -17,7 +17,7 @@ pub struct FetcherConfigControllers;
 pub fn fetcher_config() -> ServerRoute {
     Router::new()
         .route(
-            "/uploadAvatar",
+            "/uploadDatasourceAvatar",
             post(FetcherConfigControllers::upload_avatar),
         )
         .merge(fetcher_platform_config())
