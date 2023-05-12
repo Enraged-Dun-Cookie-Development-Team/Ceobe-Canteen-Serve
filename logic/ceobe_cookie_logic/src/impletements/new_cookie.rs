@@ -22,18 +22,24 @@ impl CeobeCookieLogic {
     pub async fn new_cookie(
         mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
         mut mob: PushManager, qq_channel: QqChannelGrpcService,
-        qiniu: QiniuManager, new_cookie: NewCookieReq,
+        qiniu: QiniuManager, new_cookies: Vec<NewCookieReq>,
     ) -> LogicResult<()> {
+        // 处理数组为空的情况 
+        if new_cookies.is_empty() {
+            return Ok(());
+        }
         let db = sql.get_connect();
         // 查询数据源相关信息
         let datasource_info =
             DatasourceOperate::find_model_by_datasource_and_unique_key(
                 db,
-                &new_cookie.source.datasource,
-                &new_cookie.source.unique,
+                &new_cookies[0].source.datasource,
+                &new_cookies[0].source.unique,
             )
             .await?;
         let mut qq_channel_tmp = qq_channel.clone();
+        // 最新的一个饼
+        let newest_cookies = new_cookies.clone().into_iter().last().unwrap();
         let (datasource_error, qiniu_err) = future::join(
             async {
                 // 查询用户列表
@@ -45,21 +51,23 @@ impl CeobeCookieLogic {
                     .await;
                 match result {
                     Ok(user_list) => {
-                        // mob推送新饼
-                        let content = PushInfo::builder()
-                        .content(new_cookie.content.text)
-                        .datasource_name(datasource_info.nickname)
-                        .image_url(new_cookie.content.image_url)
-                        .icon_url(datasource_info.avatar)
-                        .build();
+                        for new_cookie in new_cookies {
+                            // mob推送新饼
+                            let content = PushInfo::builder()
+                            .content(new_cookie.content.text)
+                            .datasource_name(datasource_info.nickname.clone())
+                            .image_url(new_cookie.content.image_url)
+                            .icon_url(datasource_info.avatar.clone())
+                            .build();
 
-                        if let Err(err) = mob.mob_push::<_, String, _>(&content, &user_list)
-                            .await
-                        {
-                            qq_channel_tmp.send_logger(LogRequest::builder()
-                            .level(LogType::Error)
-                            .info("推送新饼失败".to_string())
-                            .extra(format!("报错：{err}")).build()).await?;
+                            if let Err(err) = mob.mob_push::<_, String, _>(&content, &user_list)
+                                .await
+                            {
+                                qq_channel_tmp.send_logger(LogRequest::builder()
+                                .level(LogType::Error)
+                                .info("推送新饼失败".to_string())
+                                .extra(format!("报错：{err}")).build()).await?;
+                            }
                         }
 
                         Ok(())
@@ -79,7 +87,7 @@ impl CeobeCookieLogic {
                     Ok(comb_ids) => {
                         // 更新最新饼id对象储存
                         // 删除对象储存中的数据源组合文件
-                        QiniuService::update_multi_datasource_comb(qiniu, Some(new_cookie.cookie_id.to_string()),qq_channel, comb_ids).await;
+                        QiniuService::update_multi_datasource_comb(qiniu, Some(newest_cookies.cookie_id.to_string()),qq_channel, comb_ids).await;
                         Ok(())
                     },
                     Err(err) => Err(err),
