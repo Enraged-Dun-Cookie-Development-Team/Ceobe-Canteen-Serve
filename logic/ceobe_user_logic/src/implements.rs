@@ -218,6 +218,7 @@ impl CeobeUserLogic {
                 &qiniu,
                 &mut qq_channel,
                 cookie_id.map(|id| id.to_string()),
+                cookie_id.map(|id| id.to_string()),
                 comb_id.clone(),
             )
             .await?;

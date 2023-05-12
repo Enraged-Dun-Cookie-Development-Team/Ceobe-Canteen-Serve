@@ -13,10 +13,11 @@ impl QiniuService {
     /// 新增数据源组合对应最新饼id文件到对象存储
     pub async fn create_datasource_comb(
         qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
-        cookie_id: Option<String>, comb_id: String,
+        cookie_id: Option<String>, update_cookie_id: Option<String>, comb_id: String,
     ) -> ServiceResult<()> {
         let source = CombIdToCookieId {
             cookie_id: cookie_id.clone(),
+            update_cookie_id: update_cookie_id.clone()
         };
         let payload = CombIdToCookieIdPlayLoad {
             file_name: &comb_id,
@@ -38,8 +39,8 @@ impl QiniuService {
                         .manual()
                         .info("上传七牛云数据源对应最新饼id文件失败".into())
                         .extra(format!(
-                            "报错：{err}\n组合id：{comb_id}\n饼id：\
-                             {cookie_id:#?}",
+                            "报错：{err}\n组合id：{comb_id}\n最新饼id：\
+                             {cookie_id:#?}\n更新饼id：{update_cookie_id:#?}",
                         ))
                         .build(),
                 )
@@ -79,7 +80,7 @@ impl QiniuService {
     /// 更新数据源组合文件（删除+新增）
     pub async fn update_datasource_comb(
         qiniu: QiniuManager, mut qq_channel: QqChannelGrpcService,
-        cookie_id: Option<String>, comb_id: String,
+        cookie_id: Option<String>, update_cookie_id: Option<String>, comb_id: String,
     ) {
         if Self::delete_datasource_comb(
             &qiniu,
@@ -93,6 +94,7 @@ impl QiniuService {
                 &qiniu,
                 &mut qq_channel,
                 cookie_id,
+                update_cookie_id,
                 comb_id,
             )
             .await
@@ -102,7 +104,7 @@ impl QiniuService {
 
     /// 批量更新数据源组合文件
     pub async fn update_multi_datasource_comb(
-        qiniu: QiniuManager, cookie_id: Option<String>,
+        qiniu: QiniuManager, cookie_id: Option<String>, update_cookie_id: Option<String>,
         qq_channel: QqChannelGrpcService, comb_ids: Vec<String>,
     ) {
         let mut handles = Vec::<JoinHandle<()>>::new();
@@ -111,6 +113,7 @@ impl QiniuService {
                 qiniu.clone(),
                 qq_channel.clone(),
                 cookie_id.clone(),
+                update_cookie_id.clone(),
                 comb_id,
             )));
         }

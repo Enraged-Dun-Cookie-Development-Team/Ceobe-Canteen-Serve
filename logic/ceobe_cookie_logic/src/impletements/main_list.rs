@@ -9,7 +9,7 @@ use db_ops_prelude::{
     mongo_connection::MongoDatabaseOperate,
     mongo_models::ceobe::cookie::analyze::models::{meta::Meta, CookieInfo},
     sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
-    SqlDatabaseOperate,
+    SqlDatabaseOperate, get_connect::GetMutDatabaseConnect,
 };
 use fetcher::{
     datasource_combination::ToDatasourceCombination,
@@ -18,19 +18,26 @@ use fetcher::{
     },
     ToFetcher,
 };
+use redis::AsyncCommands;
+use redis_connection::RedisConnect;
+use redis_global::redis_key::cookie_list::CookieListKey;
 use tokio::task::{self, JoinHandle};
 
 use super::CeobeCookieLogic;
 use crate::{
-    error::LogicResult,
+    error::{LogicResult, LogicError},
     view::{CookieListReq, CookieListResp, DefaultCookie, SingleCookie},
 };
 
 impl CeobeCookieLogic {
     pub async fn cookie_list(
-        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate, mut redis_client: RedisConnect,
         cookie_info: CookieListReq,
     ) -> LogicResult<CookieListResp> {
+        let redis = redis_client.mut_connect();
+        if !redis.exists(format!("{}{}", CookieListKey::NEW_UPDATE_COOKIE_ID, cookie_info.update_cookie_id.to_string())).await? {
+            return Err(LogicError::UpdateCookieCacheExpire(cookie_info.update_cookie_id.to_string()));
+        }
         // 转换数据源组合id成数据源ids
         let datasource_bitmap: Bitmap<256> = BitmapBase70Conv::from_base_70(
             cookie_info.datasource_comb_id.clone(),

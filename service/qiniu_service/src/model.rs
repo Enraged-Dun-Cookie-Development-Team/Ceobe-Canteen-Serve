@@ -19,7 +19,10 @@ impl<'s> ObjectName<'s> for DeleteObjectName {
 /// 数据源组合id-最新饼id 上传对象储存
 #[derive(Debug, Clone, Serialize)]
 pub struct CombIdToCookieId {
+    // 最新饼id
     pub cookie_id: Option<String>,
+    // 后更新的饼id
+    pub update_cookie_id: Option<String>,
 }
 #[derive(Debug, Clone, Copy)]
 pub struct CombIdToCookieIdPlayLoad<'s> {
