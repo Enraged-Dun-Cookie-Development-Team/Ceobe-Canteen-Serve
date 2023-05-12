@@ -6,7 +6,7 @@ use ceobe_cookie::{
     temp_list::OperateError as TempListOperateError,
 };
 use ceobe_user::property::OperateError as CeobeUserOperateError;
-use db_ops_prelude::{mongodb::bson};
+use db_ops_prelude::mongodb::bson;
 use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceOperateError,
@@ -67,18 +67,12 @@ pub enum LogicError {
     Redis(#[from] RedisError),
 
     #[error(transparent)]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x001C,
-    ))]
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001C,))]
     BsonOidErr(#[from] bson::oid::Error),
 
     #[error("更新饼id缓存失效：{0}")]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x001D,
-    ))]
-    UpdateCookieCacheExpire(String)
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001D,))]
+    UpdateCookieCacheExpire(String),
 }
 
 impl From<Infallible> for LogicError {

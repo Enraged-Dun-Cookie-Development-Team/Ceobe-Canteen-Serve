@@ -3,7 +3,11 @@ use std::str::FromStr;
 use ceobe_cookie::ToCeobe;
 use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;
-use db_ops_prelude::{get_connect::{GetDatabaseConnect, GetMutDatabaseConnect}, SqlDatabaseOperate, mongodb::bson::oid::ObjectId};
+use db_ops_prelude::{
+    get_connect::{GetDatabaseConnect, GetMutDatabaseConnect},
+    mongodb::bson::oid::ObjectId,
+    SqlDatabaseOperate,
+};
 use fetcher::{
     datasource_combination::DatasourceCombinationOperate,
     datasource_config::DatasourceOperate,
@@ -25,11 +29,12 @@ use crate::{
 
 impl CeobeCookieLogic {
     pub async fn new_cookie(
-        mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate, mut redis_client: RedisConnect,
-        mut mob: PushManager, qq_channel: QqChannelGrpcService,
-        qiniu: QiniuManager, new_cookies: Vec<NewCookieReq>,
+        mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
+        mut redis_client: RedisConnect, mut mob: PushManager,
+        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
+        new_cookies: Vec<NewCookieReq>,
     ) -> LogicResult<()> {
-        // 处理数组为空的情况 
+        // 处理数组为空的情况
         if new_cookies.is_empty() {
             return Ok(());
         }

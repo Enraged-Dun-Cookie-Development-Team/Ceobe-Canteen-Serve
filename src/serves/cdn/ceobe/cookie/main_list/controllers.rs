@@ -15,14 +15,21 @@ use crate::router::CdnCookieMainListFrontend;
 impl CdnCookieMainListFrontend {
     #[instrument(ret, skip(db, redis_client, mongo))]
     pub async fn cookie_list(
-        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,  redis_client: RedisConnect,
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        redis_client: RedisConnect,
         MapReject(cookie_req_info): MapReject<
             Query<CookieListReq>,
             CeobeCookieMainListError,
         >,
     ) -> CeobeCookieRResult<CookieListResp> {
         Ok(rtry!(
-            CeobeCookieLogic::cookie_list(db, mongo, redis_client, cookie_req_info).await
+            CeobeCookieLogic::cookie_list(
+                db,
+                mongo,
+                redis_client,
+                cookie_req_info
+            )
+            .await
         ))
         .into()
     }
