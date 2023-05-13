@@ -27,7 +27,6 @@ ceobe-cookie.workspace = true
 qiniu_service.workspace = true
 mob-push-server.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
-redis = { workspace = true }
 
 [dependencies.checker]
 path = "../../libs/checker"
@@ -38,5 +37,3 @@ path = "../../libs/uuids-convert"
 [dependencies.redis_connection]
 path = "../../database/redis_connection"
 
-[dependencies.redis_global]
-path = "../../global/redis_global"

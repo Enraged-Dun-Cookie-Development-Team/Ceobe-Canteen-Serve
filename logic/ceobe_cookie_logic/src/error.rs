@@ -66,10 +66,6 @@ pub enum LogicError {
     #[error("Redis异常: {0}")]
     Redis(#[from] RedisError),
 
-    #[error(transparent)]
-    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001C,))]
-    BsonOidErr(#[from] bson::oid::Error),
-
     #[error("更新饼id缓存失效：{0}")]
     #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001D,))]
     UpdateCookieCacheExpire(String),
