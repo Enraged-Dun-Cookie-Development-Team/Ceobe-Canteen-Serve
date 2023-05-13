@@ -80,7 +80,10 @@ async fn test_exist() {
 
     let conn = redis.mut_connect();
     let _: Option<()> = conn.set("key", "foo").await.expect("error");
-    println!("{:?}",conn.exists::<_, bool>("key").await.expect("EXIST_ERROR"));
+    println!(
+        "{:?}",
+        conn.exists::<_, bool>("key").await.expect("EXIST_ERROR")
+    );
 }
 
 #[tokio::test]
@@ -90,5 +93,10 @@ async fn test_hexist() {
     let mut redis = RedisConnect::from_static();
 
     let conn = redis.mut_connect();
-    println!("{:?}",conn.hexists::<_, _, bool>("key", "field").await.expect("EXIST_ERROR"));
+    println!(
+        "{:?}",
+        conn.hexists::<_, _, bool>("key", "field")
+            .await
+            .expect("EXIST_ERROR")
+    );
 }

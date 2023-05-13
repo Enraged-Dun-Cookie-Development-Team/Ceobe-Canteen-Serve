@@ -192,9 +192,7 @@ impl QiniuService {
                     LogRequest::builder()
                         .level(LogType::Error)
                         .manual()
-                        .info(
-                            "删除七牛云数据源对应最新饼id文件失败".into(),
-                        )
+                        .info("删除七牛云数据源对应最新饼id文件失败".into())
                         .extra(format!("报错：{err}\n组合id：{comb_id}"))
                         .build(),
                 )
