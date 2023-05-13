@@ -63,28 +63,28 @@ pub struct CookieDatasourceReq {
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieContentReq {
-    #[serde(deserialize_with = "empty_change_to_space")]
-    pub text: String,
+    #[serde(deserialize_with = "empty_change_to_none")]
+    pub text: Option<String>,
     pub image_url: Option<String>,
 }
 
-fn empty_change_to_space<'de, D: Deserializer<'de>>(
+fn empty_change_to_none<'de, D: Deserializer<'de>>(
     d: D,
-) -> Result<String, D::Error>
+) -> Result<Option<String>, D::Error>
 where
     D: Deserializer<'de>,
 {
-    let value: String = String::deserialize(d)?;
-    Ok(match value.is_empty() {
-        true => " ".to_owned(),
-        _ => value.to_owned(),
+    let value = Option::<String>::deserialize(d)?;
+    Ok(match value.as_deref() {
+        Some("") | None => None,
+        _ => value,
     })
 }
 
 // app推送信息
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct PushInfo {
-    pub content: String,
+    pub content: Option<String>,
     pub datasource_name: String,
     pub image_url: Option<String>,
     pub icon_url: String,
@@ -92,7 +92,9 @@ pub struct PushInfo {
 impl PushEntity for PushInfo {
     type Content = str;
 
-    fn get_send_content(&self) -> &Self::Content { &self.content }
+    fn get_send_content(&self) -> &Self::Content {
+        &self.content.as_deref().unwrap_or(" ")
+    }
 
     fn get_title(&self) -> std::borrow::Cow<'_, str> {
         let name = &self.datasource_name;
