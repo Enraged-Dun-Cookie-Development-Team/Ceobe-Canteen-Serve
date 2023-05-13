@@ -8,6 +8,7 @@ use redis::aio::ConnectionManager;
 
 use crate::static_var::get_redis_client;
 
+#[derive(Clone)]
 pub struct RedisConnect(ConnectionManager);
 
 impl RedisConnect {

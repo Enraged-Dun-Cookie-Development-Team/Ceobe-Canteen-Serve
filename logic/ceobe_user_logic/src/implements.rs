@@ -15,7 +15,7 @@ use db_ops_prelude::{
         models::{UserMobId, UserPropertyChecked},
     },
     mongodb::bson::{self, oid::ObjectId},
-    SqlDatabaseOperate,
+    SqlDatabaseOperate, get_connect::GetMutDatabaseConnect,
 };
 use fetcher::{
     datasource_combination::ToDatasourceCombination,
@@ -28,6 +28,9 @@ use futures::future;
 use mob_push_server::PushManager;
 use qiniu_service::QiniuService;
 use qq_channel_warning::QqChannelGrpcService;
+use redis::AsyncCommands;
+use redis_connection::RedisConnect;
+use redis_global::redis_key::cookie_list::CookieListKey;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
@@ -79,7 +82,7 @@ impl CeobeUserLogic {
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
+        qiniu: QiniuManager, qq_channel: QqChannelGrpcService, redis_client: RedisConnect,
         mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
@@ -126,6 +129,7 @@ impl CeobeUserLogic {
             db,
             qiniu,
             qq_channel,
+            redis_client,
             datasource_ids,
             cookie_id,
         )
@@ -185,7 +189,7 @@ impl CeobeUserLogic {
 
     async fn get_datasources_comb_ids(
         db: SqlDatabaseOperate, qiniu: QiniuManager,
-        mut qq_channel: QqChannelGrpcService, datasource_ids: Vec<i32>,
+        mut qq_channel: QqChannelGrpcService,  mut redis_client:RedisConnect,datasource_ids: Vec<i32>,
         cookie_id: Option<ObjectId>,
     ) -> LogicResult<String> {
         // 根据数据库id生成bitmap
@@ -217,11 +221,14 @@ impl CeobeUserLogic {
             QiniuService::create_datasource_comb(
                 &qiniu,
                 &mut qq_channel,
+                &mut redis_client,
                 cookie_id.map(|id| id.to_string()),
-                cookie_id.map(|id| id.to_string()),
+                None,
                 comb_id.clone(),
+                None
             )
             .await?;
+
         }
 
         // 转成特定格式字符串

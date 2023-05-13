@@ -46,7 +46,7 @@ pub struct DefaultCookie {
 pub struct CookieListReq {
     pub datasource_comb_id: String,
     pub cookie_id: ObjectId,
-    pub update_cookie_id: ObjectId,
+    pub update_cookie_id: Option<ObjectId>,
 }
 
 // 从分析器来的新饼信息

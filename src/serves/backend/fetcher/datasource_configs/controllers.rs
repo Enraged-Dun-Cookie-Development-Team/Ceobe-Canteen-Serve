@@ -19,6 +19,7 @@ use orm_migrate::sql_connection::SqlDatabaseOperate;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use qiniu_cdn_upload::upload;
 use qq_channel_warning::QqChannelGrpcService;
+use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
@@ -126,10 +127,10 @@ impl FetcherConfigControllers {
     }
 
     // 删除数据源配置
-    #[instrument(ret, skip(db, notifier, manager))]
+    #[instrument(ret, skip(db, notifier, manager, redis_client))]
     pub async fn delete_datasource_config(
         db: SqlDatabaseOperate, notifier: SchedulerNotifier,
-        qq_channel: QqChannelGrpcService, manager: QiniuManager,
+        qq_channel: QqChannelGrpcService, manager: QiniuManager, redis_client: RedisConnect,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
@@ -141,6 +142,7 @@ impl FetcherConfigControllers {
                 db,
                 qq_channel,
                 manager,
+                redis_client,
                 datasource.id
             )
             .await

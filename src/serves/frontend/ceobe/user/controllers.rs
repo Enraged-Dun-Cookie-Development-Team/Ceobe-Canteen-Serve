@@ -12,6 +12,7 @@ use mongo_migration::{
 };
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use qq_channel_warning::QqChannelGrpcService;
+use redis_connection::RedisConnect;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
@@ -30,15 +31,15 @@ impl CeobeUserFrontend {
     }
 
     /// 获取用户数据源配置
-    #[instrument(ret, skip(db, mongo, qiniu))]
+    #[instrument(ret, skip(db, mongo, qiniu, redis_client))]
     pub async fn get_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
+        qq_channel: QqChannelGrpcService, qiniu: QiniuManager, redis_client: RedisConnect,
         MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
             CeobeUserLogic::get_datasource_by_user(
-                mongo, db, qiniu, qq_channel, mob_id
+                mongo, db, qiniu, qq_channel, redis_client, mob_id
             )
             .await
         ))

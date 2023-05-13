@@ -1,5 +1,7 @@
 use ceobe_qiniu_upload::Error as QiniuError;
-use status_err::StatusErr;
+use mongodb::bson;
+use redis::RedisError;
+use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
@@ -10,6 +12,13 @@ pub enum ServiceError {
 
     #[error(transparent)]
     QqChannel(#[from] qq_channel_warning::Error),
+
+    #[error("Redis异常: {0}")]
+    Redis(#[from] RedisError),
+
+    #[error(transparent)]
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001C,))]
+    BsonOidErr(#[from] bson::oid::Error),
 }
 
 pub(crate) type ServiceResult<T> = Result<T, ServiceError>;

@@ -13,6 +13,7 @@ use fetcher::{
 };
 use mob_push_server::MobPushError;
 use qiniu_service::error::ServiceError as QiniuServiceError;
+use redis::RedisError;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
@@ -69,6 +70,9 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     QiniuService(#[from] QiniuServiceError),
+
+    #[error("Redis异常: {0}")]
+    Redis(#[from] RedisError),
 }
 
 #[allow(dead_code)]

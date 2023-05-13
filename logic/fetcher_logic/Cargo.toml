@@ -31,3 +31,6 @@ path = "../../libs/checker"
 [dependencies.redis_global]
 path = "../../global/redis_global"
 
+[dependencies.redis_connection]
+path = "../../database/redis_connection"
+
