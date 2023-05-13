@@ -15,7 +15,7 @@ use db_ops_prelude::{
         models::{UserMobId, UserPropertyChecked},
     },
     mongodb::bson::{self, oid::ObjectId},
-    SqlDatabaseOperate, get_connect::GetMutDatabaseConnect,
+    SqlDatabaseOperate,
 };
 use fetcher::{
     datasource_combination::ToDatasourceCombination,
@@ -80,8 +80,8 @@ impl CeobeUserLogic {
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        qiniu: QiniuManager, qq_channel: QqChannelGrpcService, redis_client: RedisConnect,
-        mob_id: UserMobId,
+        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
+        redis_client: RedisConnect, mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
         // 获取用户数据源配置
@@ -187,8 +187,8 @@ impl CeobeUserLogic {
 
     async fn get_datasources_comb_ids(
         db: SqlDatabaseOperate, qiniu: QiniuManager,
-        mut qq_channel: QqChannelGrpcService,  mut redis_client:RedisConnect,datasource_ids: Vec<i32>,
-        cookie_id: Option<ObjectId>,
+        mut qq_channel: QqChannelGrpcService, mut redis_client: RedisConnect,
+        datasource_ids: Vec<i32>, cookie_id: Option<ObjectId>,
     ) -> LogicResult<String> {
         // 根据数据库id生成bitmap
         let mut comb_ids_map = Bitmap::<256>::new();
@@ -223,10 +223,9 @@ impl CeobeUserLogic {
                 cookie_id.map(|id| id.to_string()),
                 None,
                 comb_id.clone(),
-                None
+                None,
             )
             .await?;
-
         }
 
         // 转成特定格式字符串

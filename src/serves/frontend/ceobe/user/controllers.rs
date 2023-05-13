@@ -34,12 +34,17 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo, qiniu, redis_client))]
     pub async fn get_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        qq_channel: QqChannelGrpcService, qiniu: QiniuManager, redis_client: RedisConnect,
-        MobIdInfo(mob_id): MobIdInfo,
+        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
+        redis_client: RedisConnect, MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
             CeobeUserLogic::get_datasource_by_user(
-                mongo, db, qiniu, qq_channel, redis_client, mob_id
+                mongo,
+                db,
+                qiniu,
+                qq_channel,
+                redis_client,
+                mob_id
             )
             .await
         ))

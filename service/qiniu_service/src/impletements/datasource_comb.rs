@@ -5,7 +5,9 @@ use mongodb::bson::oid::ObjectId;
 use qiniu_cdn_upload::upload;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis::AsyncCommands;
-use redis_connection::{RedisConnect, database_traits::get_connect::GetMutDatabaseConnect};
+use redis_connection::{
+    database_traits::get_connect::GetMutDatabaseConnect, RedisConnect,
+};
 use redis_global::redis_key::cookie_list::CookieListKey;
 use tokio::task::JoinHandle;
 
@@ -18,22 +20,27 @@ use crate::{
 impl QiniuService {
     /// 新增数据源组合对应最新饼id文件到对象存储
     pub async fn create_datasource_comb(
-        qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService, redis_client: &mut RedisConnect,
-        mut cookie_id: Option<String>, mut update_cookie_id: Option<String>,
-        comb_id: String, datasource: Option<String>
+        qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
+        redis_client: &mut RedisConnect, mut cookie_id: Option<String>,
+        update_cookie_id: Option<String>, comb_id: String,
+        datasource: Option<String>,
     ) -> ServiceResult<()> {
         let redis = redis_client.mut_connect();
         // 获取该数据源组合目前最新的饼
-        if cookie_id.is_some() {
-            if redis.hexists(CookieListKey::NEWEST_COOKIES, &comb_id).await? {
-                let last_cookie_id:String = redis.hget(CookieListKey::NEWEST_COOKIES, &comb_id).await?;
-                let last_cookie_id = ObjectId::from_str(&last_cookie_id)?;
-                let mut object_cookie_id = ObjectId::from_str(&cookie_id.unwrap())?;
-                object_cookie_id = object_cookie_id.max(last_cookie_id);
-                cookie_id = Some(object_cookie_id.to_string());
-            }
+        if cookie_id.is_some()
+            && redis
+                .hexists(CookieListKey::NEWEST_COOKIES, &comb_id)
+                .await?
+        {
+            let last_cookie_id: String =
+                redis.hget(CookieListKey::NEWEST_COOKIES, &comb_id).await?;
+            let last_cookie_id = ObjectId::from_str(&last_cookie_id)?;
+            let mut object_cookie_id =
+                ObjectId::from_str(&cookie_id.unwrap())?;
+            object_cookie_id = object_cookie_id.max(last_cookie_id);
+            cookie_id = Some(object_cookie_id.to_string());
         }
-        
+
         let source = CombIdToCookieId {
             cookie_id: cookie_id.clone(),
             update_cookie_id: update_cookie_id.clone(),
@@ -57,10 +64,13 @@ impl QiniuService {
                         LogRequest::builder()
                             .level(LogType::Error)
                             .manual()
-                            .info("上传七牛云数据源对应最新饼id文件失败".into())
+                            .info(
+                                "上传七牛云数据源对应最新饼id文件失败".into(),
+                            )
                             .extra(format!(
                                 "报错：{err}\n组合id：{comb_id}\n最新饼id：\
-                                {cookie_id:#?}\n更新饼id：{update_cookie_id:#?}",
+                                 {cookie_id:#?}\n更新饼id：\
+                                 {update_cookie_id:#?}",
                             ))
                             .build(),
                     )
@@ -69,30 +79,71 @@ impl QiniuService {
             }
             None => {
                 if cookie_id.is_some() {
-                    redis.hset(CookieListKey::NEWEST_COOKIES, &comb_id, &cookie_id).await?;
+                    redis
+                        .hset(
+                            CookieListKey::NEWEST_COOKIES,
+                            &comb_id,
+                            &cookie_id,
+                        )
+                        .await?;
                 }
                 if let Some(update_id) = update_cookie_id {
                     // 更新[更新最新饼id]到redis
-                    redis.set_nx(format!("{}:{}", CookieListKey::NEW_UPDATE_COOKIE_ID, &update_id), true).await?;
-                    if redis.hexists(CookieListKey::NEW_UPDATE_COOKIES, &datasource).await? {
-                        let update_cookie:String = redis.hget(CookieListKey::NEW_UPDATE_COOKIES, &datasource).await?;
+                    redis
+                        .set_nx(
+                            format!(
+                                "{}:{}",
+                                CookieListKey::NEW_UPDATE_COOKIE_ID,
+                                &update_id
+                            ),
+                            true,
+                        )
+                        .await?;
+                    if redis
+                        .hexists(
+                            CookieListKey::NEW_UPDATE_COOKIES,
+                            &datasource,
+                        )
+                        .await?
+                    {
+                        let update_cookie: String = redis
+                            .hget(
+                                CookieListKey::NEW_UPDATE_COOKIES,
+                                &datasource,
+                            )
+                            .await?;
                         if update_id != update_cookie {
                             // 对已经被替换下的饼id设置ttl，2小时
-                            redis.set_ex(format!("{}:{}", CookieListKey::NEW_UPDATE_COOKIE_ID, update_cookie), true, 2*60*60).await?;
-                            redis.hset(CookieListKey::NEW_UPDATE_COOKIES, &datasource, &update_id).await?;
-
+                            redis
+                                .set_ex(
+                                    format!(
+                                        "{}:{}",
+                                        CookieListKey::NEW_UPDATE_COOKIE_ID,
+                                        update_cookie
+                                    ),
+                                    true,
+                                    2 * 60 * 60,
+                                )
+                                .await?;
+                            redis
+                                .hset(
+                                    CookieListKey::NEW_UPDATE_COOKIES,
+                                    &datasource,
+                                    &update_id,
+                                )
+                                .await?;
                         }
                     }
                 }
-            },
+            }
         }
         Ok(())
     }
 
     /// 删除数据源组合对应最新饼id文件
     pub async fn delete_datasource_comb(
-        qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService, redis_client: &mut RedisConnect,
-        comb_id: String,
+        qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
+        redis_client: &mut RedisConnect, comb_id: String,
     ) -> ServiceResult<()> {
         let result = qiniu
             .delete(DeleteObjectName {
@@ -107,7 +158,9 @@ impl QiniuService {
                         LogRequest::builder()
                             .level(LogType::Error)
                             .manual()
-                            .info("删除七牛云数据源对应最新饼id文件失败".into())
+                            .info(
+                                "删除七牛云数据源对应最新饼id文件失败".into(),
+                            )
                             .extra(format!("报错：{err}\n组合id：{comb_id}"))
                             .build(),
                     )
@@ -117,17 +170,17 @@ impl QiniuService {
             None => {
                 let redis = redis_client.mut_connect();
                 redis.hdel(CookieListKey::NEWEST_COOKIES, &comb_id).await?;
-            },
-            
+            }
         }
         Ok(())
     }
 
     /// 更新数据源组合文件（删除+新增）
     pub async fn update_datasource_comb(
-        qiniu: QiniuManager, mut qq_channel: QqChannelGrpcService, mut redis_client: RedisConnect,
-        cookie_id: Option<String>, update_cookie_id: Option<String>, 
-        comb_id: String, datasource: Option<String>
+        qiniu: QiniuManager, mut qq_channel: QqChannelGrpcService,
+        mut redis_client: RedisConnect, cookie_id: Option<String>,
+        update_cookie_id: Option<String>, comb_id: String,
+        datasource: Option<String>,
     ) {
         if Self::delete_datasource_comb(
             &qiniu,
@@ -145,7 +198,7 @@ impl QiniuService {
                 cookie_id,
                 update_cookie_id,
                 comb_id,
-                datasource
+                datasource,
             )
             .await
             .is_err();
@@ -155,8 +208,9 @@ impl QiniuService {
     /// 批量更新数据源组合文件
     pub async fn update_multi_datasource_comb(
         qiniu: QiniuManager, cookie_id: Option<String>,
-        update_cookie_id: Option<String>, qq_channel: QqChannelGrpcService, redis_client: RedisConnect,
-        comb_ids: Vec<String>, datasource: Option<String>
+        update_cookie_id: Option<String>, qq_channel: QqChannelGrpcService,
+        redis_client: RedisConnect, comb_ids: Vec<String>,
+        datasource: Option<String>,
     ) {
         let mut handles = Vec::<JoinHandle<()>>::new();
         for comb_id in comb_ids {
@@ -167,7 +221,7 @@ impl QiniuService {
                 cookie_id.clone(),
                 update_cookie_id.clone(),
                 comb_id,
-                datasource.clone()
+                datasource.clone(),
             )));
         }
         futures::future::join_all(handles).await;

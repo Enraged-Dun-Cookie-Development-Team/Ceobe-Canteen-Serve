@@ -36,13 +36,14 @@ impl CeobeCookieLogic {
         mut redis_client: RedisConnect, cookie_info: CookieListReq,
     ) -> LogicResult<CookieListResp> {
         let redis = redis_client.mut_connect();
-        if cookie_info.update_cookie_id.is_some() && !redis
-            .exists(format!(
-                "{}{}",
-                CookieListKey::NEW_UPDATE_COOKIE_ID,
-                cookie_info.update_cookie_id.unwrap()
-            ))
-            .await?
+        if cookie_info.update_cookie_id.is_some()
+            && !redis
+                .exists(format!(
+                    "{}{}",
+                    CookieListKey::NEW_UPDATE_COOKIE_ID,
+                    cookie_info.update_cookie_id.unwrap()
+                ))
+                .await?
         {
             return Err(LogicError::UpdateCookieCacheExpire(
                 cookie_info.update_cookie_id.unwrap().to_string(),

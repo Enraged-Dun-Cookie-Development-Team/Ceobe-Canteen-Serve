@@ -7,9 +7,7 @@ use fetcher::{
 };
 use qiniu_service::QiniuService;
 use qq_channel_warning::QqChannelGrpcService;
-use redis::AsyncCommands;
-use redis_connection::{RedisConnect, database_traits::get_connect::GetMutDatabaseConnect};
-use redis_global::redis_key::cookie_list::CookieListKey;
+use redis_connection::RedisConnect;
 use scheduler_notifier::SchedulerNotifier;
 use sql_models::{
     fetcher::datasource_config::{
@@ -46,8 +44,9 @@ impl FetcherConfigLogic {
 
     /// 删除一个数据源
     pub async fn delete_datasource_by_id(
-        notifier: &SchedulerNotifier, db: SqlDatabaseOperate, 
-        mut qq_channel: QqChannelGrpcService, qiniu: QiniuManager, mut redis_client: RedisConnect,  id: i32,
+        notifier: &SchedulerNotifier, db: SqlDatabaseOperate,
+        mut qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
+        mut redis_client: RedisConnect, id: i32,
     ) -> LogicResult<()> {
         // 开事务
         let ctx = db.get_transaction().await?;

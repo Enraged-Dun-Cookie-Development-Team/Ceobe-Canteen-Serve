@@ -1,13 +1,7 @@
-use std::str::FromStr;
-
 use ceobe_cookie::ToCeobe;
 use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::ToCeobeUser;
-use db_ops_prelude::{
-    get_connect::{GetDatabaseConnect, GetMutDatabaseConnect},
-    mongodb::bson::oid::ObjectId,
-    SqlDatabaseOperate,
-};
+use db_ops_prelude::{get_connect::GetDatabaseConnect, SqlDatabaseOperate};
 use fetcher::{
     datasource_combination::DatasourceCombinationOperate,
     datasource_config::DatasourceOperate,
@@ -17,9 +11,7 @@ use mob_push_server::PushManager;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use qiniu_service::QiniuService;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
-use redis::AsyncCommands;
 use redis_connection::RedisConnect;
-use redis_global::redis_key::cookie_list::CookieListKey;
 
 use crate::{
     error::{LogicError, LogicResult},
@@ -48,8 +40,6 @@ impl CeobeCookieLogic {
             )
             .await?;
         let mut qq_channel_tmp = qq_channel.clone();
-        let mut redis_client_other = redis_client.clone();
-        let redis = redis_client_other.mut_connect();
         // 最新的一个饼
         let newest_cookies = new_cookies.clone().into_iter().last().unwrap();
         let (datasource_error, qiniu_err): (_,  Result<(), LogicError>) = future::join(

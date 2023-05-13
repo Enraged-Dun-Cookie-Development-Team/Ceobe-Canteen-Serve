@@ -130,7 +130,8 @@ impl FetcherConfigControllers {
     #[instrument(ret, skip(db, notifier, manager, redis_client))]
     pub async fn delete_datasource_config(
         db: SqlDatabaseOperate, notifier: SchedulerNotifier,
-        qq_channel: QqChannelGrpcService, manager: QiniuManager, redis_client: RedisConnect,
+        qq_channel: QqChannelGrpcService, manager: QiniuManager,
+        redis_client: RedisConnect,
         MapReject(datasource): MapReject<
             Json<OneIdReq>,
             DatasourceConfigError,
