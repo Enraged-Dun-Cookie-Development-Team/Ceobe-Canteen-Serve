@@ -1,7 +1,7 @@
 use ceobe_qiniu_upload::Error as QiniuError;
 use mongodb::bson;
 use redis::RedisError;
-use status_err::{ErrPrefix, StatusErr};
+use status_err::StatusErr;
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
