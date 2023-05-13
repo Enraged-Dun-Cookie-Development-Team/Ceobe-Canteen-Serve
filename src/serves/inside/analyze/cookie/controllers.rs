@@ -20,9 +20,16 @@ use crate::router::AnalyzeCookieInside;
 impl AnalyzeCookieInside {
     #[instrument(ret, skip(mongo, sql, redis_client, mob, qiniu))]
     pub async fn new_cookie(
-        mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
-        redis_client: RedisConnect, mob: PushManager, qiniu: QiniuManager,
-        qq_channel: QqChannelGrpcService,
+        (mongo, sql, redis_client): (
+            MongoDatabaseOperate,
+            SqlDatabaseOperate,
+            RedisConnect,
+        ),
+        (mob, qiniu, qq_channel): (
+            PushManager,
+            QiniuManager,
+            QqChannelGrpcService,
+        ),
         Extension(mutex): Extension<Arc<Mutex<()>>>,
         MapReject(cookie_req_info): MapReject<
             Json<Vec<NewCookieReq>>,
