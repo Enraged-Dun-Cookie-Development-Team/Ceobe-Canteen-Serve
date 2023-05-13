@@ -67,7 +67,7 @@ pub enum LogicError {
 
     #[error("更新饼id缓存失效：{0}")]
     #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001D,))]
-    UpdateCookieCacheExpire(String),
+    UpdateCookieIdCacheFailure(String),
 }
 
 impl From<Infallible> for LogicError {

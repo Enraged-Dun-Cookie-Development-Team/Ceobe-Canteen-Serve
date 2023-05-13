@@ -18,11 +18,11 @@ impl<'s> ObjectName<'s> for DeleteObjectName {
 }
 /// 数据源组合id-最新饼id 上传对象储存
 #[derive(Debug, Clone, Serialize)]
-pub struct CombIdToCookieId {
-    // 最新饼id
-    pub cookie_id: Option<String>,
-    // 后更新的饼id
-    pub update_cookie_id: Option<String>,
+pub struct CombIdToCookieId<'s> {
+    /// 最新饼id
+    pub cookie_id: Option<& 's str>,
+    /// 后更新的饼id
+    pub update_cookie_id: Option<& 's str>,
 }
 #[derive(Debug, Clone, Copy)]
 pub struct CombIdToCookieIdPlayLoad<'s> {
@@ -42,7 +42,7 @@ impl UploadSource for CombIdToCookieSource {
     type Error = serde_json::error::Error;
     type Read = Cursor<Vec<u8>>;
     type ReadFuture<'f> = Ready<Result<Self::Read, Self::Error>>;
-    type Source<'r> = &'r CombIdToCookieId;
+    type Source<'r> = &'r CombIdToCookieId<'r>;
 
     fn read_data(payload: Self::Source<'_>) -> Self::ReadFuture<'_> {
         ready(serde_json::to_vec(payload).map(Cursor::new))

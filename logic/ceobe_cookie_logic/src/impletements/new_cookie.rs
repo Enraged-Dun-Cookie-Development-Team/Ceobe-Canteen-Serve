@@ -35,8 +35,8 @@ impl CeobeCookieLogic {
         let datasource_info =
             DatasourceOperate::find_model_by_datasource_and_unique_key(
                 db,
-                &new_cookies[0].source.datasource,
-                &new_cookies[0].source.unique,
+                &new_cookies.first().unwrap().source.datasource,
+                &new_cookies.first().unwrap().source.unique,
             )
             .await?;
         let mut qq_channel_tmp = qq_channel.clone();

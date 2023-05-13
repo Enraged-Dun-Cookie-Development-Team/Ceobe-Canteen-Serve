@@ -17,7 +17,6 @@ pub enum ServiceError {
     Redis(#[from] RedisError),
 
     #[error(transparent)]
-    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001C,))]
     BsonOidErr(#[from] bson::oid::Error),
 }
 

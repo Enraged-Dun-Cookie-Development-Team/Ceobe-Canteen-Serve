@@ -8,6 +8,7 @@ use axum::extract::rejection::{
 };
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use http::StatusCode;
+use ::mongodb::bson;
 use tonic::transport;
 
 use crate::{status_error, ErrPrefix, StatusErr};
@@ -178,4 +179,11 @@ status_error!(
         ErrPrefix::LOGGER_REPORT,
         0x00_02
     ]->"Grpc service返回异常响应"
+);
+
+status_error!(
+    bson::oid::Error[
+        ErrPrefix::CHECKER,
+        0x001C
+    ]->"ObjectId反序列化失败"
 );

@@ -8,7 +8,7 @@ use redis::AsyncCommands;
 use redis_connection::{
     database_traits::get_connect::GetMutDatabaseConnect, RedisConnect,
 };
-use redis_global::redis_key::cookie_list::CookieListKey;
+use redis_global::redis_key::{cookie_list::CookieListKey, concat_key};
 use tokio::task::JoinHandle;
 
 use crate::{
@@ -21,29 +21,31 @@ impl QiniuService {
     /// 新增数据源组合对应最新饼id文件到对象存储
     pub async fn create_datasource_comb(
         qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
-        redis_client: &mut RedisConnect, mut cookie_id: Option<String>,
+        redis_client: &mut RedisConnect, cookie_id: Option<String>,
         update_cookie_id: Option<String>, comb_id: String,
         datasource: Option<String>,
     ) -> ServiceResult<()> {
         let redis = redis_client.mut_connect();
         // 获取该数据源组合目前最新的饼
-        if cookie_id.is_some()
-            && redis
+        let cookie_id = if let (Some(cookie_id_string), true) = (cookie_id.clone()
+            , redis
                 .hexists(CookieListKey::NEWEST_COOKIES, &comb_id)
-                .await?
+                .await?)
         {
             let last_cookie_id: String =
                 redis.hget(CookieListKey::NEWEST_COOKIES, &comb_id).await?;
             let last_cookie_id = ObjectId::from_str(&last_cookie_id)?;
             let mut object_cookie_id =
-                ObjectId::from_str(&cookie_id.unwrap())?;
+                ObjectId::from_str(&cookie_id_string)?;
             object_cookie_id = object_cookie_id.max(last_cookie_id);
-            cookie_id = Some(object_cookie_id.to_string());
-        }
+            Some(object_cookie_id.to_string())
+        } else {
+            None
+        };
 
         let source = CombIdToCookieId {
-            cookie_id: cookie_id.clone(),
-            update_cookie_id: update_cookie_id.clone(),
+            cookie_id: cookie_id.as_deref(),
+            update_cookie_id: update_cookie_id.as_deref(),
         };
         let payload = CombIdToCookieIdPlayLoad {
             file_name: &comb_id,
@@ -91,11 +93,7 @@ impl QiniuService {
                     // 更新[更新最新饼id]到redis
                     redis
                         .set_nx(
-                            format!(
-                                "{}{}",
-                                CookieListKey::NEW_UPDATE_COOKIE_ID,
-                                &update_id
-                            ),
+                            concat_key(CookieListKey::NEW_UPDATE_COOKIE_ID, &update_id),
                             true,
                         )
                         .await?;
@@ -116,11 +114,7 @@ impl QiniuService {
                             // 对已经被替换下的饼id设置ttl，2小时
                             redis
                                 .set_ex(
-                                    format!(
-                                        "{}{}",
-                                        CookieListKey::NEW_UPDATE_COOKIE_ID,
-                                        update_cookie
-                                    ),
+                                    concat_key(CookieListKey::NEW_UPDATE_COOKIE_ID, &update_cookie),
                                     true,
                                     2 * 60 * 60,
                                 )
