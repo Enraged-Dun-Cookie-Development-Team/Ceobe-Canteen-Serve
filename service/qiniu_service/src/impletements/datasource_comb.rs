@@ -92,7 +92,7 @@ impl QiniuService {
                     redis
                         .set_nx(
                             format!(
-                                "{}:{}",
+                                "{}{}",
                                 CookieListKey::NEW_UPDATE_COOKIE_ID,
                                 &update_id
                             ),
@@ -117,7 +117,7 @@ impl QiniuService {
                             redis
                                 .set_ex(
                                     format!(
-                                        "{}:{}",
+                                        "{}{}",
                                         CookieListKey::NEW_UPDATE_COOKIE_ID,
                                         update_cookie
                                     ),
@@ -125,14 +125,14 @@ impl QiniuService {
                                     2 * 60 * 60,
                                 )
                                 .await?;
-                            redis
-                                .hset(
-                                    CookieListKey::NEW_UPDATE_COOKIES,
-                                    &datasource,
-                                    &update_id,
-                                )
-                                .await?;
                         }
+                        redis
+                            .hset(
+                                CookieListKey::NEW_UPDATE_COOKIES,
+                                &datasource,
+                                &update_id,
+                            )
+                            .await?;
                     }
                 }
             }
@@ -175,6 +175,35 @@ impl QiniuService {
         Ok(())
     }
 
+    /// 删除数据源组合对应最新饼id文件,没有redis操作
+    pub async fn delete_datasource_comb_without_redis(
+        qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
+        comb_id: String,
+    ) -> ServiceResult<()> {
+        let result = qiniu
+            .delete(DeleteObjectName {
+                file_name: comb_id.clone(),
+            })
+            .await
+            .err();
+        if let Some(err) = result {
+            qq_channel
+                .send_logger(
+                    LogRequest::builder()
+                        .level(LogType::Error)
+                        .manual()
+                        .info(
+                            "删除七牛云数据源对应最新饼id文件失败".into(),
+                        )
+                        .extra(format!("报错：{err}\n组合id：{comb_id}"))
+                        .build(),
+                )
+                .await?;
+            Err(err)?;
+        }
+        Ok(())
+    }
+
     /// 更新数据源组合文件（删除+新增）
     pub async fn update_datasource_comb(
         qiniu: QiniuManager, mut qq_channel: QqChannelGrpcService,
@@ -182,10 +211,9 @@ impl QiniuService {
         update_cookie_id: Option<String>, comb_id: String,
         datasource: Option<String>,
     ) {
-        if Self::delete_datasource_comb(
+        if Self::delete_datasource_comb_without_redis(
             &qiniu,
             &mut qq_channel,
-            &mut redis_client,
             comb_id.clone(),
         )
         .await
