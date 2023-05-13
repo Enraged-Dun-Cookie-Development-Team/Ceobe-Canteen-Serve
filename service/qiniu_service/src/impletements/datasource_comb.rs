@@ -8,7 +8,7 @@ use redis::AsyncCommands;
 use redis_connection::{
     database_traits::get_connect::GetMutDatabaseConnect, RedisConnect,
 };
-use redis_global::redis_key::{cookie_list::CookieListKey, concat_key};
+use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
 use tokio::task::JoinHandle;
 
 use crate::{
@@ -27,19 +27,20 @@ impl QiniuService {
     ) -> ServiceResult<()> {
         let redis = redis_client.mut_connect();
         // 获取该数据源组合目前最新的饼
-        let cookie_id = if let (Some(cookie_id_string), true) = (cookie_id.clone()
-            , redis
+        let cookie_id = if let (Some(cookie_id_string), true) = (
+            cookie_id.clone(),
+            redis
                 .hexists(CookieListKey::NEWEST_COOKIES, &comb_id)
-                .await?)
-        {
+                .await?,
+        ) {
             let last_cookie_id: String =
                 redis.hget(CookieListKey::NEWEST_COOKIES, &comb_id).await?;
             let last_cookie_id = ObjectId::from_str(&last_cookie_id)?;
-            let mut object_cookie_id =
-                ObjectId::from_str(&cookie_id_string)?;
+            let mut object_cookie_id = ObjectId::from_str(&cookie_id_string)?;
             object_cookie_id = object_cookie_id.max(last_cookie_id);
             Some(object_cookie_id.to_string())
-        } else {
+        }
+        else {
             None
         };
 
@@ -93,7 +94,10 @@ impl QiniuService {
                     // 更新[更新最新饼id]到redis
                     redis
                         .set_nx(
-                            concat_key(CookieListKey::NEW_UPDATE_COOKIE_ID, &update_id),
+                            concat_key(
+                                CookieListKey::NEW_UPDATE_COOKIE_ID,
+                                &update_id,
+                            ),
                             true,
                         )
                         .await?;
@@ -114,7 +118,10 @@ impl QiniuService {
                             // 对已经被替换下的饼id设置ttl，2小时
                             redis
                                 .set_ex(
-                                    concat_key(CookieListKey::NEW_UPDATE_COOKIE_ID, &update_cookie),
+                                    concat_key(
+                                        CookieListKey::NEW_UPDATE_COOKIE_ID,
+                                        &update_cookie,
+                                    ),
                                     true,
                                     2 * 60 * 60,
                                 )

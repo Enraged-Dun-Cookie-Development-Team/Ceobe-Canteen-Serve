@@ -3,12 +3,12 @@ mod redis;
 mod sea_orm;
 use std::{convert::Infallible, num::ParseIntError};
 
+use ::mongodb::bson;
 use axum::extract::rejection::{
     JsonRejection, PathRejection, QueryRejection,
 };
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use http::StatusCode;
-use ::mongodb::bson;
 use tonic::transport;
 
 use crate::{status_error, ErrPrefix, StatusErr};

@@ -21,7 +21,7 @@ use fetcher::{
 };
 use redis::AsyncCommands;
 use redis_connection::RedisConnect;
-use redis_global::redis_key::{cookie_list::CookieListKey, concat_key};
+use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
 use tokio::task::{self, JoinHandle};
 
 use super::CeobeCookieLogic;
@@ -38,9 +38,10 @@ impl CeobeCookieLogic {
         let redis = redis_client.mut_connect();
         if cookie_info.update_cookie_id.is_some()
             && !redis
-                .exists(
-                    concat_key(CookieListKey::NEW_UPDATE_COOKIE_ID, &cookie_info.update_cookie_id.unwrap().to_string())
-                )
+                .exists(concat_key(
+                    CookieListKey::NEW_UPDATE_COOKIE_ID,
+                    &cookie_info.update_cookie_id.unwrap().to_string(),
+                ))
                 .await?
         {
             return Err(LogicError::UpdateCookieIdCacheFailure(

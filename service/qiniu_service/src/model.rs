@@ -20,9 +20,9 @@ impl<'s> ObjectName<'s> for DeleteObjectName {
 #[derive(Debug, Clone, Serialize)]
 pub struct CombIdToCookieId<'s> {
     /// 最新饼id
-    pub cookie_id: Option<& 's str>,
+    pub cookie_id: Option<&'s str>,
     /// 后更新的饼id
-    pub update_cookie_id: Option<& 's str>,
+    pub update_cookie_id: Option<&'s str>,
 }
 #[derive(Debug, Clone, Copy)]
 pub struct CombIdToCookieIdPlayLoad<'s> {

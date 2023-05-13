@@ -1,6 +1,5 @@
 use std::ops::{Deref, DerefMut};
 
-
 mod db_op_impls;
 pub mod sub_operate;
 

@@ -8,4 +8,3 @@ impl CookieListKey {
     /// string：带时间缓存的更新饼id
     pub const NEW_UPDATE_COOKIE_ID: &str = "cookie:list:new:update:id:";
 }
-
