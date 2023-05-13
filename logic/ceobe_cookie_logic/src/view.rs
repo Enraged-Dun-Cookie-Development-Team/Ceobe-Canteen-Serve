@@ -93,7 +93,7 @@ impl PushEntity for PushInfo {
     type Content = str;
 
     fn get_send_content(&self) -> &Self::Content {
-        &self.content.as_deref().unwrap_or(" ")
+        self.content.as_deref().unwrap_or(" ")
     }
 
     fn get_title(&self) -> std::borrow::Cow<'_, str> {
