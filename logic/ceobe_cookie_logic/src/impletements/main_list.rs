@@ -45,7 +45,7 @@ impl CeobeCookieLogic {
                 .await?
             {
                 return Err(LogicError::UpdateCookieIdCacheFailure(
-                    update_cookie_id.to_string(),
+                    update_cookie_id,
                 ));
             }
         }

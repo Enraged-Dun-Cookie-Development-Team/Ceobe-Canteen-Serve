@@ -6,6 +6,7 @@ use ceobe_cookie::{
     temp_list::OperateError as TempListOperateError,
 };
 use ceobe_user::property::OperateError as CeobeUserOperateError;
+use db_ops_prelude::mongodb::bson::oid::ObjectId;
 use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceOperateError,
@@ -67,7 +68,7 @@ pub enum LogicError {
 
     #[error("更新饼id缓存失效：{0}")]
     #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001D,))]
-    UpdateCookieIdCacheFailure(String),
+    UpdateCookieIdCacheFailure(ObjectId),
 }
 
 impl From<Infallible> for LogicError {
