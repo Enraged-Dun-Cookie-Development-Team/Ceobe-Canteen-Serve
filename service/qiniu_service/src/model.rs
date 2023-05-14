@@ -17,7 +17,7 @@ impl<'s> ObjectName<'s> for DeleteObjectName {
     fn file_name(&self) -> &str { &self.file_name }
 }
 /// 数据源组合id-最新饼id 上传对象储存
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Copy, Serialize)]
 pub struct CombIdToCookieId<'s> {
     /// 最新饼id
     pub cookie_id: Option<&'s str>,

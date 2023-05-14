@@ -31,12 +31,13 @@ impl CeobeCookieLogic {
             return Ok(());
         }
         let db = sql.get_connect();
+        let source = &new_cookies.first().unwrap().source;
         // 查询数据源相关信息
         let datasource_info =
             DatasourceOperate::find_model_by_datasource_and_unique_key(
                 db,
-                &new_cookies.first().unwrap().source.datasource,
-                &new_cookies.first().unwrap().source.unique,
+                &source.datasource,
+                &source.unique,
             )
             .await?;
         let mut qq_channel_tmp = qq_channel.clone();

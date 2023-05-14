@@ -36,17 +36,18 @@ impl CeobeCookieLogic {
         mut redis_client: RedisConnect, cookie_info: CookieListReq,
     ) -> LogicResult<CookieListResp> {
         let redis = redis_client.mut_connect();
-        if cookie_info.update_cookie_id.is_some()
-            && !redis
+        if let Some(update_cookie_id) = cookie_info.update_cookie_id {
+            if !redis
                 .exists(concat_key(
                     CookieListKey::NEW_UPDATE_COOKIE_ID,
-                    &cookie_info.update_cookie_id.unwrap().to_string(),
+                    &update_cookie_id.to_string(),
                 ))
                 .await?
-        {
-            return Err(LogicError::UpdateCookieIdCacheFailure(
-                cookie_info.update_cookie_id.unwrap().to_string(),
-            ));
+            {
+                return Err(LogicError::UpdateCookieIdCacheFailure(
+                    update_cookie_id.to_string(),
+                ));
+            }
         }
         // 转换数据源组合id成数据源ids
         let datasource_bitmap: Bitmap<256> = BitmapBase70Conv::from_base_70(
