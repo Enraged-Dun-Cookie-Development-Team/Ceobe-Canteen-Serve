@@ -9,6 +9,7 @@ use mob_push_server::PushManager;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use qq_channel_warning::QqChannelGrpcService;
+use redis_connection::RedisConnect;
 use resp_result::{resp_try, MapReject};
 use tokio::sync::Mutex;
 use tracing::instrument;
@@ -17,14 +18,21 @@ use super::error::{AnalyzeCookieError, AnalyzeCookieRResult};
 use crate::router::AnalyzeCookieInside;
 
 impl AnalyzeCookieInside {
-    #[instrument(ret, skip(mongo, sql, mob, qiniu))]
+    #[instrument(ret, skip(mongo, sql, redis_client, mob, qiniu))]
     pub async fn new_cookie(
-        mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
-        mob: PushManager, qiniu: QiniuManager,
-        qq_channel: QqChannelGrpcService,
+        (mongo, sql, redis_client): (
+            MongoDatabaseOperate,
+            SqlDatabaseOperate,
+            RedisConnect,
+        ),
+        (mob, qiniu, qq_channel): (
+            PushManager,
+            QiniuManager,
+            QqChannelGrpcService,
+        ),
         Extension(mutex): Extension<Arc<Mutex<()>>>,
         MapReject(cookie_req_info): MapReject<
-            Json<NewCookieReq>,
+            Json<Vec<NewCookieReq>>,
             AnalyzeCookieError,
         >,
     ) -> AnalyzeCookieRResult<()> {
@@ -34,6 +42,7 @@ impl AnalyzeCookieInside {
             CeobeCookieLogic::new_cookie(
                 mongo,
                 sql,
+                redis_client,
                 mob,
                 qq_channel,
                 qiniu,

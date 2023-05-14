@@ -6,11 +6,13 @@ use ceobe_cookie::{
     temp_list::OperateError as TempListOperateError,
 };
 use ceobe_user::property::OperateError as CeobeUserOperateError;
+use db_ops_prelude::mongodb::bson::oid::ObjectId;
 use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceOperateError,
 };
 use mob_push_server::MobPushError;
+use redis::RedisError;
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 use tokio::task::JoinError;
@@ -60,6 +62,13 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err(prefix = "ErrPrefix::SERVE", err_code = 0x0003,))]
     JoinError(#[from] JoinError),
+
+    #[error("Redis异常: {0}")]
+    Redis(#[from] RedisError),
+
+    #[error("更新饼id缓存失效：{0}")]
+    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001D,))]
+    UpdateCookieIdCacheFailure(ObjectId),
 }
 
 impl From<Infallible> for LogicError {

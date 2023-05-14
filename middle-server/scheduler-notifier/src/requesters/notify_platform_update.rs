@@ -21,7 +21,7 @@ impl<'query> NotifyRequester for NotifyPlatformUpdate<'query> {
 }
 
 impl<'query> NotifyPath for NotifyPlatformUpdate<'query> {
-    const PATH: &'static str = "/update-config";
+    const PATH: &'static str = "/schedular-update-config";
 }
 
 impl<'query> NotifyPlatformUpdate<'query> {
@@ -35,6 +35,7 @@ impl<'query> NotifyPlatformUpdate<'query> {
 
 impl<'query> Requester for NotifyPlatformUpdate<'query> {
     const METHOD: Method = Method::POST;
+    const VERSION: http::Version = http::Version::HTTP_11;
 
     fn get_url(&self) -> Url { self.url.to_owned() }
 

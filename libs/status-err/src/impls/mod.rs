@@ -3,6 +3,7 @@ mod redis;
 mod sea_orm;
 use std::{convert::Infallible, num::ParseIntError};
 
+use ::mongodb::bson;
 use axum::extract::rejection::{
     JsonRejection, PathRejection, QueryRejection,
 };
@@ -178,4 +179,11 @@ status_error!(
         ErrPrefix::LOGGER_REPORT,
         0x00_02
     ]->"Grpc service返回异常响应"
+);
+
+status_error!(
+    bson::oid::Error[
+        ErrPrefix::CHECKER,
+        0x001C
+    ]->"ObjectId反序列化失败"
 );

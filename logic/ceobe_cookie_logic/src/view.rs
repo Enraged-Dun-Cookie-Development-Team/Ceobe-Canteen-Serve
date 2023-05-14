@@ -1,11 +1,13 @@
 use ceobe_cookie::CookieTimestamp;
-use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::images::CookieImages;
+use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::{
+    images::CookieImages, meta::Item,
+};
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
     PushEntity,
 };
 use mongo_migration::mongo_models::mongodb::bson::oid::ObjectId;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 use typed_builder::TypedBuilder;
 
@@ -28,9 +30,9 @@ pub struct SingleCookie {
     pub datasource: String,
     // 数据源icon
     pub icon: String,
-    pub jump_url: String,
     pub timestamp: CookieTimestamp,
     pub default_cookie: DefaultCookie,
+    pub item: Item,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DefaultCookie {
@@ -44,6 +46,7 @@ pub struct DefaultCookie {
 pub struct CookieListReq {
     pub datasource_comb_id: String,
     pub cookie_id: ObjectId,
+    pub update_cookie_id: Option<ObjectId>,
 }
 
 // 从分析器来的新饼信息
@@ -60,8 +63,22 @@ pub struct CookieDatasourceReq {
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieContentReq {
+    #[serde(deserialize_with = "empty_change_to_none")]
     pub text: Option<String>,
     pub image_url: Option<String>,
+}
+
+fn empty_change_to_none<'de, D: Deserializer<'de>>(
+    d: D,
+) -> Result<Option<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = Option::<String>::deserialize(d)?;
+    Ok(match value.as_deref() {
+        Some("") | None => None,
+        _ => value,
+    })
 }
 
 // app推送信息

@@ -16,3 +16,11 @@ qiniu-cdn-upload.workspace = true
 ceobe-qiniu-upload.workspace = true
 tokio.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
+redis.workspace = true
+mongodb.workspace = true
+
+[dependencies.redis_global]
+path = "../../global/redis_global"
+
+[dependencies.redis_connection]
+path = "../../database/redis_connection"

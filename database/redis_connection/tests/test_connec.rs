@@ -71,3 +71,32 @@ async fn test_set_timeout() {
     println!("ttl: {ttl}");
     assert_eq!(expired, None)
 }
+
+#[tokio::test]
+async fn test_exist() {
+    init_connect().await;
+
+    let mut redis = RedisConnect::from_static();
+
+    let conn = redis.mut_connect();
+    let _: Option<()> = conn.set("key", "foo").await.expect("error");
+    println!(
+        "{:?}",
+        conn.exists::<_, bool>("key").await.expect("EXIST_ERROR")
+    );
+}
+
+#[tokio::test]
+async fn test_hexist() {
+    init_connect().await;
+
+    let mut redis = RedisConnect::from_static();
+
+    let conn = redis.mut_connect();
+    println!(
+        "{:?}",
+        conn.hexists::<_, _, bool>("key", "field")
+            .await
+            .expect("EXIST_ERROR")
+    );
+}
