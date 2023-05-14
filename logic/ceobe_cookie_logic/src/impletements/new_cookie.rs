@@ -41,7 +41,8 @@ impl CeobeCookieLogic {
             .await?;
         let mut qq_channel_tmp = qq_channel.clone();
         // 最新的一个饼
-        let newest_cookies = new_cookies.clone().into_iter().last().unwrap();
+        let newest_cookie_id =
+            new_cookies.last().map(|cookie| cookie.cookie_id);
         let (datasource_error, qiniu_err): (_,  Result<(), LogicError>) = future::join(
             async {
                 // 查询用户列表
@@ -89,7 +90,7 @@ impl CeobeCookieLogic {
                     Ok(comb_ids) => {
                         // 更新最新饼id对象储存
                         // 删除对象储存中的数据源组合文件
-                        QiniuService::update_multi_datasource_comb(qiniu, Some(newest_cookies.cookie_id.to_string()), Some(newest_cookies.cookie_id.to_string()), qq_channel, redis_client, comb_ids, Some(format!("{}:{}", &datasource_info.datasource, &datasource_info.db_unique_key))).await;
+                        QiniuService::update_multi_datasource_comb(qiniu, newest_cookie_id, newest_cookie_id, qq_channel, redis_client, comb_ids, Some(format!("{}:{}", &datasource_info.datasource, &datasource_info.db_unique_key))).await;
                         Ok(())
                     },
                     Err(err) => Err(LogicError::from(err)),

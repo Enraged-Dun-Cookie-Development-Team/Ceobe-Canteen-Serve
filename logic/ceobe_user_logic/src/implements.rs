@@ -220,7 +220,7 @@ impl CeobeUserLogic {
                 &qiniu,
                 &mut qq_channel,
                 &mut redis_client,
-                cookie_id.map(|id| id.to_string()),
+                cookie_id,
                 None,
                 comb_id.clone(),
                 None,

@@ -21,14 +21,14 @@ impl QiniuService {
     /// 新增数据源组合对应最新饼id文件到对象存储
     pub async fn create_datasource_comb(
         qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
-        redis_client: &mut RedisConnect, cookie_id: Option<String>,
-        update_cookie_id: Option<String>, comb_id: String,
+        redis_client: &mut RedisConnect, cookie_id: Option<ObjectId>,
+        update_cookie_id: Option<ObjectId>, comb_id: String,
         datasource: Option<String>,
     ) -> ServiceResult<()> {
         let redis = redis_client.mut_connect();
         // 获取该数据源组合目前最新的饼
-        let cookie_id = if let (Some(cookie_id_string), true) = (
-            cookie_id.clone(),
+        let cookie_id = if let (Some(mut newest_cookie_id), true) = (
+            cookie_id,
             redis
                 .hexists(CookieListKey::NEWEST_COOKIES, &comb_id)
                 .await?,
@@ -36,17 +36,18 @@ impl QiniuService {
             let last_cookie_id: String =
                 redis.hget(CookieListKey::NEWEST_COOKIES, &comb_id).await?;
             let last_cookie_id = ObjectId::from_str(&last_cookie_id)?;
-            let mut object_cookie_id = ObjectId::from_str(&cookie_id_string)?;
-            object_cookie_id = object_cookie_id.max(last_cookie_id);
-            Some(object_cookie_id.to_string())
+            newest_cookie_id = newest_cookie_id.max(last_cookie_id);
+            Some(newest_cookie_id.to_string())
         }
         else {
             None
         };
 
+        let update_cookie_id_string =
+            update_cookie_id.map(|id| id.to_string());
         let source = CombIdToCookieId {
             cookie_id: cookie_id.as_deref(),
-            update_cookie_id: update_cookie_id.as_deref(),
+            update_cookie_id: update_cookie_id_string.as_deref(),
         };
         let payload = CombIdToCookieIdPlayLoad {
             file_name: &comb_id,
@@ -96,7 +97,7 @@ impl QiniuService {
                         .set_nx(
                             concat_key(
                                 CookieListKey::NEW_UPDATE_COOKIE_ID,
-                                &update_id,
+                                &update_id.to_string(),
                             ),
                             true,
                         )
@@ -114,7 +115,7 @@ impl QiniuService {
                                 &datasource,
                             )
                             .await?;
-                        if update_id != update_cookie {
+                        if update_id.to_string() != update_cookie {
                             // 对已经被替换下的饼id设置ttl，2小时
                             redis
                                 .set_ex(
@@ -131,7 +132,7 @@ impl QiniuService {
                             .hset(
                                 CookieListKey::NEW_UPDATE_COOKIES,
                                 &datasource,
-                                &update_id,
+                                &update_id.to_string(),
                             )
                             .await?;
                     }
@@ -206,8 +207,8 @@ impl QiniuService {
     /// 更新数据源组合文件（删除+新增）
     pub async fn update_datasource_comb(
         qiniu: QiniuManager, mut qq_channel: QqChannelGrpcService,
-        mut redis_client: RedisConnect, cookie_id: Option<String>,
-        update_cookie_id: Option<String>, comb_id: String,
+        mut redis_client: RedisConnect, cookie_id: Option<ObjectId>,
+        update_cookie_id: Option<ObjectId>, comb_id: String,
         datasource: Option<String>,
     ) {
         if Self::delete_datasource_comb_without_redis(
@@ -234,8 +235,8 @@ impl QiniuService {
 
     /// 批量更新数据源组合文件
     pub async fn update_multi_datasource_comb(
-        qiniu: QiniuManager, cookie_id: Option<String>,
-        update_cookie_id: Option<String>, qq_channel: QqChannelGrpcService,
+        qiniu: QiniuManager, cookie_id: Option<ObjectId>,
+        update_cookie_id: Option<ObjectId>, qq_channel: QqChannelGrpcService,
         redis_client: RedisConnect, comb_ids: Vec<String>,
         datasource: Option<String>,
     ) {
@@ -245,8 +246,8 @@ impl QiniuService {
                 qiniu.clone(),
                 qq_channel.clone(),
                 redis_client.clone(),
-                cookie_id.clone(),
-                update_cookie_id.clone(),
+                cookie_id,
+                update_cookie_id,
                 comb_id,
                 datasource.clone(),
             )));
