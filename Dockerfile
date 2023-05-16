@@ -1,5 +1,9 @@
 # syntax=docker/dockerfile:1.2
 FROM lukemathwalker/cargo-chef:latest-rust-1.67 AS chef
+RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  apt update && apt-get --no-install-recommends install -y protobuf-compiler
 WORKDIR app
 
 FROM chef AS planner
