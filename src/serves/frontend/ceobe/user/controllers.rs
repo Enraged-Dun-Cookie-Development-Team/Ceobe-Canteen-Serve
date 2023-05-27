@@ -3,7 +3,7 @@ use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::{ToCeobe, ToCeobeUser};
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
-    view::{DatasourceConfig, MobIdReq, DatasourceCombResp},
+    view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 use mob_push_server::PushManager;
 use mongo_migration::{
@@ -94,7 +94,7 @@ impl CeobeUserFrontend {
     pub async fn get_comb_by_datasources(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
-        redis_client: RedisConnect,  
+        redis_client: RedisConnect,
         MapReject(datasource_config): MapReject<
             Json<UserDatasource>,
             CeobeUserError,

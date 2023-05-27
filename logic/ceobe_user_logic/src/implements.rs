@@ -37,7 +37,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error,
     error::{LogicError, LogicResult},
-    view::{DatasourceConfig, MobIdReq, DatasourceCombResp},
+    view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 
 pub struct CeobeUserLogic;
@@ -97,10 +97,16 @@ impl CeobeUserLogic {
 
         let user_datasource_config = user_datasource_config?;
 
-        let resp = Self::remove_delete_datasource_upload_cdn( mongo.clone(), db,
-            qiniu, qq_channel,
-            redis_client, datasource_list?,
-            user_datasource_config.clone()).await?;
+        let resp = Self::remove_delete_datasource_upload_cdn(
+            mongo.clone(),
+            db,
+            qiniu,
+            qq_channel,
+            redis_client,
+            datasource_list?,
+            user_datasource_config.clone(),
+        )
+        .await?;
 
         // 将删除过已不存在的数据源列表存回数据库
         // 异步执行，无论成功与否都继续~
@@ -119,18 +125,27 @@ impl CeobeUserLogic {
     pub async fn get_comb_by_datasources(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
         qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
-        redis_client: RedisConnect, user_datasource_config: Vec<bson::Uuid>
+        redis_client: RedisConnect, user_datasource_config: Vec<bson::Uuid>,
     ) -> LogicResult<DatasourceCombResp> {
         if user_datasource_config.is_empty() {
-            return Err(LogicError::DatasourcesEmpty)
+            return Err(LogicError::DatasourcesEmpty);
         }
-        let datasource_list = db.fetcher().datasource().find_all_uuid().await?;
-        let DatasourceConfig{ datasource_comb_id, .. } = Self::remove_delete_datasource_upload_cdn( mongo, db,
-            qiniu, qq_channel,
-            redis_client, datasource_list,
-            user_datasource_config).await?;
+        let datasource_list =
+            db.fetcher().datasource().find_all_uuid().await?;
+        let DatasourceConfig {
+            datasource_comb_id, ..
+        } = Self::remove_delete_datasource_upload_cdn(
+            mongo,
+            db,
+            qiniu,
+            qq_channel,
+            redis_client,
+            datasource_list,
+            user_datasource_config,
+        )
+        .await?;
 
-        Ok(DatasourceCombResp{datasource_comb_id})
+        Ok(DatasourceCombResp { datasource_comb_id })
     }
 
     /// 排除已删除数据源并且上传七牛云
@@ -138,8 +153,8 @@ impl CeobeUserLogic {
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
         qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
         redis_client: RedisConnect, datasource_list: Vec<Uuid>,
-        user_datasource_config: Vec<bson::Uuid>
-    ) -> LogicResult<DatasourceConfig>{
+        user_datasource_config: Vec<bson::Uuid>,
+    ) -> LogicResult<DatasourceConfig> {
         let datasource_set: HashSet<Uuid> =
             HashSet::from_iter(datasource_list);
         let user_config_set: HashSet<bson::Uuid> =
