@@ -23,4 +23,5 @@ pub(super) fn ceobe_user_router() -> ServerRoute {
         )
         .route_layer(MobVerifyLayer::new())
         .route("/createUser", post(CeobeUserFrontend::register))
+        .route("/getDatasourceComb", post(CeobeUserFrontend::get_comb_by_datasources))
 }
