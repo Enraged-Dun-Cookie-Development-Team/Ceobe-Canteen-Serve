@@ -18,7 +18,8 @@ impl DatasourceOperate<'_, NoConnect> {
             datasource.datasource = config.datasource,
             datasource.name = config.nickname,
             datasource.avatar = config.avatar.to_string(),
-            datasouce.config = ?config.config
+            datasouce.config = ?config.config,
+            datasouce.jump_url = ?config.jump_url,
         );
         match Self::find_delete_model_by_datasource_and_unique_key(
             db,

@@ -214,6 +214,7 @@ where
             .column(Column::Nickname)
             .column(Column::Avatar)
             .column(Column::UniqueId)
+            .column(Column::JumpUrl)
             .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .into_model::<FrontendDatasource>()
             .all(db)

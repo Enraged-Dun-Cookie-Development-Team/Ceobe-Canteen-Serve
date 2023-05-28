@@ -128,6 +128,7 @@ pub struct DatasourceList {
     pub nickname: String,
     pub avatar: String,
     pub config: Value,
+    pub jump_url: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -147,6 +148,7 @@ impl From<BackendDatasource> for DatasourceList {
             nickname,
             avatar,
             config,
+            jump_url,
         }: BackendDatasource,
     ) -> Self {
         Self {
@@ -156,6 +158,7 @@ impl From<BackendDatasource> for DatasourceList {
             nickname,
             avatar,
             config: serde_json::from_str(&config).unwrap(),
+            jump_url,
         }
     }
 }
