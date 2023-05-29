@@ -66,6 +66,12 @@ status_error!(
         0x0007: StatusCode::INTERNAL_SERVER_ERROR
     ] -> "非法 Http 请求头内容"
 );
+status_error!(
+    bson::de::Error[
+        ErrPrefix::PARSE,
+        0x0009
+    ] -> "bson反序列化"
+);
 
 // check prefix
 status_error!(
