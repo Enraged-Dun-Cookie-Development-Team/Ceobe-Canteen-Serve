@@ -1,4 +1,3 @@
-use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;

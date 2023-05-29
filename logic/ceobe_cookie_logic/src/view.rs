@@ -114,6 +114,11 @@ impl PushEntity for PushInfo {
 }
 
 
+/// 泰拉记事社漫画cid
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct TerraCidReq {
+    pub comic: String
+} 
 /// 泰拉记事社漫画信息响应体
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct TerraComicListResp {
