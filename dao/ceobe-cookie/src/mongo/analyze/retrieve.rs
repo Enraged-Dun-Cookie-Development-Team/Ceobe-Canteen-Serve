@@ -4,10 +4,11 @@ use db_ops_prelude::{
         CollectionGuard, MongoDbCollectionTrait, MongoDbError,
     },
     mongo_models::ceobe::cookie::analyze::models::{
-        AnalyzeModel, CookieId, CookieInfo, TerraComicAggregate, TerraComicEpisodeInfo,
+        AnalyzeModel, CookieId, CookieInfo, TerraComicAggregate,
+        TerraComicEpisodeInfo,
     },
     mongodb::{
-        bson::{doc, oid::ObjectId, Document, self, Bson},
+        bson::{self, doc, oid::ObjectId, Bson, Document},
         options::{FindOneOptions, FindOptions},
     },
 };
@@ -129,16 +130,16 @@ where
     // 获取泰拉记事社漫画各漫画集数量、最后更新时间
     #[instrument(skip(self), ret)]
     pub async fn get_each_terra_comic_count(
-        &'db self
-    ) -> OperateResult<Vec<TerraComicAggregate>> {  
+        &'db self,
+    ) -> OperateResult<Vec<TerraComicAggregate>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<TerraComicAggregate> =
             &collection.with_mapping();
         let mut pipeline = Vec::<Document>::new();
         let group = doc! {
             "$group": {
-                "_id": {"comic": "$meta.item.comic"}, 
-                "count": {"$sum": 1}, 
+                "_id": {"comic": "$meta.item.comic"},
+                "count": {"$sum": 1},
                 "update_time": {"$max": "$meta.timestamp.platform"}
             }
         };
@@ -148,7 +149,7 @@ where
                 "_id": 0,
                 "comic": "$_id.comic",
                 "update_time": "$update_time",
-                "count": "$count" 
+                "count": "$count"
             }
         };
         pipeline.push(project);
@@ -158,7 +159,9 @@ where
             }
         };
         pipeline.push(match_pipeline);
-        let mut vec = collection.doing(|collection| collection.aggregate(pipeline, None)).await?;
+        let mut vec = collection
+            .doing(|collection| collection.aggregate(pipeline, None))
+            .await?;
         let mut res = Vec::<TerraComicAggregate>::new();
         while let Some(v) = vec.next().await {
             res.push(bson::from_document(v.map_err(MongoDbError::from)?)?);
@@ -169,7 +172,7 @@ where
     /// 获取特定漫画集各章节信息
     #[instrument(skip(self), ret)]
     pub async fn get_terra_comic_episode_list(
-        &'db self, comic_id: String
+        &'db self, comic_id: String,
     ) -> OperateResult<Vec<TerraComicEpisodeInfo>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<TerraComicEpisodeInfo> =

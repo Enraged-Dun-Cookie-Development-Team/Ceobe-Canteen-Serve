@@ -16,5 +16,5 @@ pub struct TerraComicModel {
     pub authors: Vec<String>,
     pub keywords: Vec<String>,
     pub subtitle: String,
-    pub title: String
+    pub title: String,
 }

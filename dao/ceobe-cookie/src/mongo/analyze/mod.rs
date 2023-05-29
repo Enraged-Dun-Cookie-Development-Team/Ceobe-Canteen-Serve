@@ -4,7 +4,8 @@ use std::ops::Deref;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
     mongo_connection::MongoDbError,
-    ErrPrefix, HttpCode, StatusErr, ThisError, mongodb::bson,
+    mongodb::bson,
+    StatusErr, ThisError,
 };
 
 use crate::CookieDatabaseOperate;

@@ -1,8 +1,10 @@
 use ceobe_cookie::CookieTimestamp;
-use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::{
-    images::CookieImages, meta::Item, TerraComicAggregate,
+use db_ops_prelude::mongo_models::ceobe::cookie::{
+    analyze::models::{
+        images::CookieImages, meta::Item, TerraComicAggregate,
+    },
+    terra_comic::models::ComicInfoWithoutCid,
 };
-use db_ops_prelude::mongo_models::ceobe::cookie::terra_comic::models::ComicInfoWithoutCid;
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
     PushEntity,
@@ -113,12 +115,11 @@ impl PushEntity for PushInfo {
     }
 }
 
-
 /// 泰拉记事社漫画cid
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct TerraCidReq {
-    pub comic: String
-} 
+    pub comic: String,
+}
 /// 泰拉记事社漫画信息响应体
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct TerraComicListResp {

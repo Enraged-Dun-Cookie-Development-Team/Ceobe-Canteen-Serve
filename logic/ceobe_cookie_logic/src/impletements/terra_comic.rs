@@ -1,17 +1,19 @@
 use std::collections::HashMap;
 
-use crate::error::LogicResult;
-use crate::view::TerraComicListResp;
-use ceobe_cookie::terra_comic::OperateError as TerraComicOperateError;
-use ceobe_cookie::{ToCeobe, ToCookie};
-use db_ops_prelude::mongo_models::ceobe::cookie::terra_comic::models::ComicInfoWithoutCid;
+use ceobe_cookie::{
+    terra_comic::OperateError as TerraComicOperateError, ToCeobe, ToCookie,
+};
 use db_ops_prelude::{
     mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::cookie::analyze::models::TerraComicEpisodeInfo,
+    mongo_models::ceobe::cookie::{
+        analyze::models::TerraComicEpisodeInfo,
+        terra_comic::models::ComicInfoWithoutCid,
+    },
 };
 use tokio::task::{self, JoinHandle};
 
 use super::CeobeCookieLogic;
+use crate::{error::LogicResult, view::TerraComicListResp};
 
 impl CeobeCookieLogic {
     /// 获取漫画列表
@@ -63,8 +65,7 @@ impl CeobeCookieLogic {
 
     /// 获取一个漫画下集列表信息
     pub async fn comic_episode_list(
-        mongo: MongoDatabaseOperate,
-        comic_id: String,
+        mongo: MongoDatabaseOperate, comic_id: String,
     ) -> LogicResult<Vec<TerraComicEpisodeInfo>> {
         Ok(mongo
             .ceobe()
