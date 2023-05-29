@@ -9,10 +9,11 @@ use typed_builder::TypedBuilder;
     extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
 ))]
 pub struct TerraComicModel {
+    #[sub_model(ignore("ComicInfoWithoutCid"))]
     pub cid: String,
     pub cover: String,
     pub introduction: String,
-    pub author: Vec<String>,
+    pub authors: Vec<String>,
     pub keywords: Vec<String>,
     pub subtitle: String,
     pub title: String

@@ -43,7 +43,7 @@ pub struct TerraComicAggregate {
     /// 漫画最后更新时间 
     pub update_time: i64,
     /// 该漫画总数量 
-    pub count: String
+    pub count: i32
 }
 
 // 泰拉记事社漫画小章节信息

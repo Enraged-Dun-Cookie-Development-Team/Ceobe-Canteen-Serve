@@ -11,7 +11,7 @@ impl<'db, Conn> TerraComicOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, TerraComicModel>,
 {
-    /// 分页查询饼数据
+    /// 查询所有漫画
     #[instrument(skip(self), ret)]
     pub async fn find_all_comic(
         &'db self

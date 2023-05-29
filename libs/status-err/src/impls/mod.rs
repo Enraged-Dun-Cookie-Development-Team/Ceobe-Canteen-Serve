@@ -70,7 +70,7 @@ status_error!(
     bson::de::Error[
         ErrPrefix::PARSE,
         0x0009
-    ] -> "bson反序列化"
+    ] -> "bson反序列化错误"
 );
 
 // check prefix
