@@ -4,7 +4,7 @@ use db_ops_prelude::{
         CollectionGuard, MongoDbCollectionTrait, MongoDbError,
     },
     mongo_models::ceobe::cookie::analyze::models::{
-        AnalyzeModel, CookieId, CookieInfo, TerraComicAggregate, TerraComicListInfo,
+        AnalyzeModel, CookieId, CookieInfo, TerraComicAggregate, TerraComicEpisodeInfo,
     },
     mongodb::{
         bson::{doc, oid::ObjectId, Document, self, Bson},
@@ -168,11 +168,11 @@ where
 
     /// 获取特定漫画集各章节信息
     #[instrument(skip(self), ret)]
-    pub async fn get_terra_comic_list(
+    pub async fn get_terra_comic_episode_list(
         &'db self, comic_id: String
-    ) -> OperateResult<Vec<TerraComicListInfo>> {
+    ) -> OperateResult<Vec<TerraComicEpisodeInfo>> {
         let collection = self.get_collection()?;
-        let collection: &CollectionGuard<TerraComicListInfo> =
+        let collection: &CollectionGuard<TerraComicEpisodeInfo> =
             &collection.with_mapping();
         let filter = doc! {
             "meta.item.comic": comic_id
@@ -188,7 +188,7 @@ where
                 )
             })
             .await?;
-        let mut res = Vec::<TerraComicListInfo>::new();
+        let mut res = Vec::<TerraComicEpisodeInfo>::new();
         while let Some(v) = vec.next().await {
             res.push(v.map_err(MongoDbError::from)?);
         }

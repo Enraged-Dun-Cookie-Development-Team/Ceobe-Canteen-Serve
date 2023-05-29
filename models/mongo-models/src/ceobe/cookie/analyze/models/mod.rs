@@ -48,7 +48,7 @@ pub struct TerraComicAggregate {
 
 // 泰拉记事社漫画小章节信息
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-pub struct TerraComicListInfo {
+pub struct TerraComicEpisodeInfo {
     /// 漫画id 
     pub comic: String,
     /// 跳转链接

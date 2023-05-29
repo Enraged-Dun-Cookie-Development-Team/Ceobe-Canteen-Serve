@@ -5,6 +5,7 @@ use ceobe_cookie::{
     analyze::OperateError as AnalyzeOperateError,
     temp_list::OperateError as TempListOperateError,
 };
+use ceobe_cookie::terra_comic::OperateError as  TerraComicOperateError;
 use ceobe_user::property::OperateError as CeobeUserOperateError;
 use db_ops_prelude::mongodb::bson::oid::ObjectId;
 use fetcher::{
@@ -47,6 +48,10 @@ pub enum LogicError {
     DatasourceCombinationOperateError(
         #[from] DatasourceCombinationOperateError,
     ),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    TerraComicOperateError(#[from] TerraComicOperateError),
 
     #[error(transparent)]
     #[status_err(err(
