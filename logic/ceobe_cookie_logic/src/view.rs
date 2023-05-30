@@ -126,7 +126,7 @@ pub struct TerraComicListResp {
     /// 该漫画总集数和最新更新时间
     #[serde(flatten)]
     pub time_count: TerraComicAggregate,
-    /// 改漫画基础信息
+    /// 该漫画基础信息
     #[serde(flatten)]
     pub info: ComicInfoWithoutCid,
 }
