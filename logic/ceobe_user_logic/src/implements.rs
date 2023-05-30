@@ -97,7 +97,7 @@ impl CeobeUserLogic {
 
         let user_datasource_config = user_datasource_config?;
 
-        let resp = Self::remove_delete_datasource_upload_cdn(
+        let resp = Self::remove_deleted_datasource_upload_cdn(
             mongo.clone(),
             db,
             qiniu,
@@ -134,7 +134,7 @@ impl CeobeUserLogic {
             db.fetcher().datasource().find_all_uuid().await?;
         let DatasourceConfig {
             datasource_comb_id, ..
-        } = Self::remove_delete_datasource_upload_cdn(
+        } = Self::remove_deleted_datasource_upload_cdn(
             mongo,
             db,
             qiniu,
@@ -149,7 +149,7 @@ impl CeobeUserLogic {
     }
 
     /// 排除已删除数据源并且上传七牛云
-    async fn remove_delete_datasource_upload_cdn(
+    async fn remove_deleted_datasource_upload_cdn(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
         qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
         redis_client: RedisConnect, datasource_list: Vec<Uuid>,
