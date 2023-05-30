@@ -49,23 +49,23 @@ impl CeobeCookieLogic {
         let comics_set = comics_set.await??;
         let comics_aggregate_list = comics_aggregate_list.await??;
 
-        let mut resp = Vec::<TerraComicListResp>::new();
-        for comic in comics_aggregate_list {
-            if !comics_set.contains_key(&comic.comic) {
-                continue;
-            }
-            resp.push(TerraComicListResp {
+        let resp = comics_aggregate_list
+            .into_iter()
+            .filter(|comic| comics_set.contains_key(&comic.comic))
+            .map(|comic| TerraComicListResp {
                 time_count: comic.clone(),
                 info: comics_set.get(&comic.comic).unwrap().clone(),
-            });
-        }
+            })
+            .collect();
+
 
         Ok(resp)
     }
 
     /// 获取一个漫画下集列表信息
     pub async fn comic_episode_list(
-        mongo: MongoDatabaseOperate, comic_id: String,
+        mongo: MongoDatabaseOperate,
+        comic_id: String,
     ) -> LogicResult<Vec<TerraComicEpisodeInfo>> {
         Ok(mongo
             .ceobe()
