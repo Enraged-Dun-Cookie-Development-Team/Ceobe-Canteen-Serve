@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::ceobe::cookie::terra_comic::models::TerraComicModel;
-use mongodb::{IndexModel, options::IndexOptions, bson::doc};
+use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 pub struct Migration;
 

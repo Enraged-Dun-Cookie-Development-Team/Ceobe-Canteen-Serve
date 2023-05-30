@@ -52,20 +52,20 @@ impl CeobeCookieLogic {
         let resp = comics_aggregate_list
             .into_iter()
             .filter(|comic| comics_set.contains_key(&comic.comic))
-            .map(|comic| TerraComicListResp {
-                time_count: comic.clone(),
-                info: comics_set.get(&comic.comic).unwrap().clone(),
+            .map(|comic| {
+                TerraComicListResp {
+                    time_count: comic.clone(),
+                    info: comics_set.get(&comic.comic).unwrap().clone(),
+                }
             })
             .collect();
-
 
         Ok(resp)
     }
 
     /// 获取一个漫画下集列表信息
     pub async fn comic_episode_list(
-        mongo: MongoDatabaseOperate,
-        comic_id: String,
+        mongo: MongoDatabaseOperate, comic_id: String,
     ) -> LogicResult<Vec<TerraComicEpisodeInfo>> {
         Ok(mongo
             .ceobe()
