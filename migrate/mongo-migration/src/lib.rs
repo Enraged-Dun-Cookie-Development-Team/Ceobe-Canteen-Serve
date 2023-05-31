@@ -21,6 +21,8 @@ impl MigratorTrait for Migrator {
             .append(migrations::ceobe::cookie::analyze::Migration)
             .await?
             .append(migrations::ceobe::cookie::raw::Migration)
+            .await?
+            .append(migrations::ceobe::cookie::terra_comic::Migration)
             .await?;
 
         Ok(())

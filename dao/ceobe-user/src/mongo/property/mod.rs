@@ -50,7 +50,7 @@ pub enum OperateError {
     #[error("用户Mob ID:{0:?} 不存在")]
     #[status_err(err(
         prefix = "ErrPrefix::NOT_FOUND",
-        err_code = 0x009,
+        err_code = 0x0009,
         resp_msg = "Mob Id不存在，请加群联系管理"
     ))]
     UserMobIdNotExist(String),

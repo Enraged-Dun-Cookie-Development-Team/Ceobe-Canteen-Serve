@@ -54,7 +54,7 @@ pub struct Model {
         want("DatasourceBasicInfo")
     )]
     pub id: i32,
-    #[sub_model(want("DatasourcePlatform"))]
+    #[sub_model(want("FrontendDatasource"), want("DatasourcePlatform"))]
     pub platform: String,
     /// 数据源type
     #[sub_model(
