@@ -1,6 +1,9 @@
 use ceobe_cookie::CookieTimestamp;
-use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::{
-    images::CookieImages, meta::Item,
+use db_ops_prelude::mongo_models::ceobe::cookie::{
+    analyze::models::{
+        images::CookieImages, meta::Item, TerraComicAggregate,
+    },
+    terra_comic::models::ComicInfoWithoutCid,
 };
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
@@ -110,4 +113,20 @@ impl PushEntity for PushInfo {
         }
         notify.set_image(Image::new_image(&self.icon_url));
     }
+}
+
+/// 泰拉记事社漫画cid
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct TerraCidReq {
+    pub comic: String,
+}
+/// 泰拉记事社漫画信息响应体
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct TerraComicListResp {
+    /// 该漫画总集数和最新更新时间
+    #[serde(flatten)]
+    pub time_count: TerraComicAggregate,
+    /// 该漫画基础信息
+    #[serde(flatten)]
+    pub info: ComicInfoWithoutCid,
 }

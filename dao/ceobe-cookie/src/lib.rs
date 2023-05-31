@@ -9,6 +9,7 @@ pub use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::meta::Time
 
 #[path = "mongo/analyze/mod.rs"] pub mod analyze;
 #[path = "mongo/temp_list/mod.rs"] pub mod temp_list;
+#[path = "mongo/terra_comic/mod.rs"] pub mod terra_comic;
 
 pub struct CookieDatabaseOperate<'db, Conn>(&'db Conn);
 
