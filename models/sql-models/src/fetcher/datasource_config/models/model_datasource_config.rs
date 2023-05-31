@@ -88,6 +88,9 @@ pub struct Model {
     /// field for soft delete
     #[sub_model(ignore("BackendDatasource"))]
     pub(in crate::fetcher::datasource_config) delete_at: DateTime,
+    /// 数据源跳转链接
+    #[sub_model(want("FrontendDatasource"))]
+    pub jump_url: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

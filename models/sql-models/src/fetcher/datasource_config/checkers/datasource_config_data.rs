@@ -36,6 +36,7 @@ pub struct PreCheckFetcherDatasourceConfigChecker {
     pub avatar: UrlChecker,
     pub unique_key: OptionChecker<NoCheck<String>>,
     pub config: NoCheck<Map<String, Value>>,
+    pub jump_url: OptionChecker<UrlChecker>,
 }
 
 pub type FetcherDatasourceConfigChecker = PostChecker<
@@ -57,6 +58,7 @@ impl IntoActiveModel<ActiveModel> for FetcherDatasourceConfig {
             config: Set(serde_json::to_string(&self.config)
                 .expect_or_log("config为非法json格式")),
             db_unique_key: Set(self.unique_key),
+            jump_url: Set(self.jump_url.map(|url| url.to_string())),
             ..Default::default()
         };
         active.id.set_optional(self.id);
@@ -87,6 +89,7 @@ impl Model {
             unique_id: Set(self.unique_id),
             db_unique_key: Set(self.db_unique_key),
             delete_at: Set(self.delete_at),
+            jump_url: Set(new_model.jump_url.map(|url| url.to_string())),
         };
         active.soft_recover();
         active

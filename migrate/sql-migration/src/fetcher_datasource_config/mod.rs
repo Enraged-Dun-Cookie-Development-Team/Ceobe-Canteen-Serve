@@ -13,6 +13,8 @@ enum FetcherDatasourceConfig {
     UniqueId,
     DbUniqueKey,
     DeleteAt,
+    JumpUrl,
 }
 pub mod m20221231_200206_alter_nickname;
 pub mod m20230217_135012_add_sort_detele;
+pub mod m20230528_110010_add_jump_url;
