@@ -8,6 +8,7 @@ mod fetcher_datasource_combination;
 mod fetcher_datasource_config;
 mod fetcher_global_config;
 mod fetcher_platform_config;
+mod ceobe_cookie_search_content;
 
 pub use sea_orm_migration::MigratorTrait;
 use sea_orm_migration::{async_trait, MigrationTrait};
@@ -53,6 +54,7 @@ impl MigratorTrait for Migrator {
             fetcher_datasource_combination::m20230310_213209_create::Migration
             ceobe_operation_resource::m20230422_150425_add_type::Migration
             fetcher_datasource_config::m20230528_110010_add_jump_url::Migration
+            ceobe_cookie_search_content::m20230606_135941_create::Migration
         ]
     }
 }

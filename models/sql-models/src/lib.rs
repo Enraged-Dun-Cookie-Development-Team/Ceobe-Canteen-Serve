@@ -1,3 +1,4 @@
+pub mod ceobe_cookie;
 pub mod admin_user;
 pub mod ceobe_operation;
 pub mod fetcher;
