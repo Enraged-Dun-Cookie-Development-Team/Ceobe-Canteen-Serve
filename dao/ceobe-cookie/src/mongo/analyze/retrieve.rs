@@ -197,4 +197,35 @@ where
         }
         Ok(res)
     }
+
+    /// 根据object_id获取相应的饼
+    #[instrument(skip(self), ret)]
+    pub async fn get_data_by_object_ids(
+        &'db self, object_ids: Vec<ObjectId>,
+    ) -> OperateResult<Vec<CookieInfo>> {
+        let collection = self.get_collection()?;
+        let collection: &CollectionGuard<CookieInfo> =
+            &collection.with_mapping();
+        let filter = doc! {
+            "_id": {
+                "$in": object_ids
+            }
+        };
+        let mut vec = collection
+            .doing(|collection| {
+                collection.find(
+                    filter,
+                    FindOptions::builder()
+                        .projection(doc! {"_id": 0, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "compress_images": 1, "tags": 1})
+                        .sort(doc! {"_id": -1})
+                        .build(),
+                )
+            })
+            .await?;
+        let mut res = Vec::<CookieInfo>::new();
+        while let Some(v) = vec.next().await {
+            res.push(v.map_err(MongoDbError::from)?);
+        }
+        Ok(res)
+    }
 }

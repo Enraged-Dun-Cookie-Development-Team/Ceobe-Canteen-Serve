@@ -25,6 +25,8 @@ impl StatusErr for sea_orm::DbErr {
             sea_orm::DbErr::UnpackInsertId => 0x00_0C,
             sea_orm::DbErr::UpdateGetPrimaryKey => 0x00_0D,
             sea_orm::DbErr::AttrNotSet(_) => 0x00_0E,
+            sea_orm::DbErr::RecordNotInserted => 0x00_0F,
+            sea_orm::DbErr::RecordNotUpdated => 0x00_11,
         }
     }
 

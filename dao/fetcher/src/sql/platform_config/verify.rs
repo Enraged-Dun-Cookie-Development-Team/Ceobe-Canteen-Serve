@@ -68,8 +68,8 @@ mod test {
         query.left_join(
             model_datasource_config::Entity,
             Expr::tbl(Entity, model_platform_config::Column::TypeId).equals(
-                model_datasource_config::Entity,
-                model_datasource_config::Column::Platform,
+                (model_datasource_config::Entity,
+                model_datasource_config::Column::Platform)
             ),
         );
 

@@ -1,4 +1,4 @@
-use sea_query::Iden;
+use sea_query::{Iden};
 
 // MariaDb 不可用
 pub struct UuidToBin;
@@ -22,5 +22,19 @@ pub struct UUID;
 impl Iden for UUID {
     fn unquoted(&self, s: &mut dyn std::fmt::Write) {
         write!(s, "UUID").unwrap();
+    }
+}
+
+pub struct MATCH;
+impl Iden for MATCH {
+    fn unquoted(&self, s: &mut dyn std::fmt::Write) {
+        write!(s, "MATCH").unwrap();
+    }
+}
+
+pub struct AGAINST;
+impl Iden for AGAINST {
+    fn unquoted(&self, s: &mut dyn std::fmt::Write) {
+        write!(s, "AGAINST").unwrap();
     }
 }
