@@ -4,8 +4,8 @@ use db_ops_prelude::{
         CollectionGuard, MongoDbCollectionTrait, MongoDbError,
     },
     mongo_models::ceobe::cookie::analyze::models::{
-        AnalyzeModel, CookieId, CookieInfo, TerraComicAggregate,
-        TerraComicEpisodeInfo, CookieInfoWithId,
+        AnalyzeModel, CookieId, CookieInfo, CookieInfoWithId,
+        TerraComicAggregate, TerraComicEpisodeInfo,
     },
     mongodb::{
         bson::{self, doc, oid::ObjectId, Bson, Document},

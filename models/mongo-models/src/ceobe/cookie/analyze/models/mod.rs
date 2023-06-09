@@ -39,7 +39,7 @@ pub struct CookieId {
 pub struct CookieInfoWithId {
     pub _id: ObjectId,
     #[serde(flatten)]
-    pub cookie_info: CookieInfo
+    pub cookie_info: CookieInfo,
 }
 
 // 泰拉记事社漫画数量与最终更新时间

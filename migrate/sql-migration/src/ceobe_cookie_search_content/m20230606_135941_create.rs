@@ -1,12 +1,12 @@
-
 use sea_orm_migration::prelude::*;
 
 use super::CeobeCookieSearchContent;
 
-
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str { "m20230606_135941_ceobe_cookie_search_content_create" }
+    fn name(&self) -> &str {
+        "m20230606_135941_ceobe_cookie_search_content_create"
+    }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -38,13 +38,12 @@ impl MigrationTrait for Migration {
                     .text()
                     .not_null(),
             );
-        table
-            .index(
-                Index::create()
-                    .col(CeobeCookieSearchContent::Content)
-                    .full_text()
-                    .name("content"),
-            );
+        table.index(
+            Index::create()
+                .col(CeobeCookieSearchContent::Content)
+                .full_text()
+                .name("content"),
+        );
         table.character_set("utf8mb4").collate("utf8mb4_general_ci");
         table.engine("Mroonga");
         manager.create_table(table).await?;

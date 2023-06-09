@@ -1,29 +1,36 @@
-use std::{sync::Arc, collections::HashMap, str::FromStr};
+use std::{collections::HashMap, str::FromStr};
 
-use bitmap_convert::{base70::BitmapBase70Conv, vec_usize::BitmapVecUsizeConv};
+use bitmap_convert::{
+    base70::BitmapBase70Conv, vec_usize::BitmapVecUsizeConv,
+};
 use bitmaps::Bitmap;
 use ceobe_cookie::{ToCeobe, ToCookie};
-use db_ops_prelude::{SqlDatabaseOperate, mongo_connection::MongoDatabaseOperate, sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourceBasicInfo, mongo_models::ceobe::cookie::analyze::models::{CookieInfo, meta::Meta, CookieInfoWithId}, mongodb::bson::oid::ObjectId};
-use redis_global::redis_key::concat_key;
-use tokio::task::{self, JoinHandle};
+use db_ops_prelude::{
+    mongo_connection::MongoDatabaseOperate,
+    mongo_models::ceobe::cookie::analyze::models::{meta::Meta, CookieInfo},
+    mongodb::bson::oid::ObjectId,
+    sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
+    SqlDatabaseOperate,
+};
 use fetcher::{
     datasource_config::{
         OperateError as DatasourceOperateError, ToDatasource,
     },
     ToFetcher,
 };
-
-use crate::{error::{LogicError, LogicResult}, view::{CookieListResp, SearchListReq, SingleCookie, DefaultCookie}};
+use tokio::task::{self, JoinHandle};
 
 use super::CeobeCookieLogic;
-
+use crate::{
+    error::{LogicError, LogicResult},
+    view::{CookieListResp, DefaultCookie, SearchListReq, SingleCookie},
+};
 
 impl CeobeCookieLogic {
     pub async fn search_list(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         search_info: SearchListReq,
     ) -> LogicResult<CookieListResp> {
-        
         // 转换数据源组合id成数据源ids
         let datasource_bitmap: Bitmap<256> = BitmapBase70Conv::from_base_70(
             search_info.datasource_comb_id.clone(),
@@ -35,27 +42,30 @@ impl CeobeCookieLogic {
             .collect::<Vec<i32>>();
 
         // 获取饼列表
-        let cookie_list: JoinHandle<Result<Vec<CookieInfo>, LogicError>> = task::spawn({
-            let db = db.clone();
-            let datasource_indexes = datasource_indexes.clone();
-            let search_info = search_info.clone();
-            async move{
-                let object_id_str_list = db
+        let cookie_list: JoinHandle<Result<Vec<CookieInfo>, LogicError>> =
+            task::spawn({
+                let db = db.clone();
+                let datasource_indexes = datasource_indexes.clone();
+                let search_info = search_info.clone();
+                async move {
+                    let object_id_str_list = db
                         .ceobe()
                         .cookie()
                         .search_content()
                         .get_page_cookie_ids(
-                            search_info.cookie_id.map(|item| item.to_string()),
+                            search_info
+                                .cookie_id
+                                .map(|item| item.to_string()),
                             &search_info.search_word,
                             datasource_indexes,
                             10,
                         )
                         .await?;
-                let mut object_id_list = Vec::new::<>();
-                for object_id in object_id_str_list.into_iter() {
-                    object_id_list.push(ObjectId::from_str(&object_id)?);
-                }
-                let cookies_map = mongo
+                    let mut object_id_list = Vec::new();
+                    for object_id in object_id_str_list.into_iter() {
+                        object_id_list.push(ObjectId::from_str(&object_id)?);
+                    }
+                    let cookies_map = mongo
                         .ceobe()
                         .cookie()
                         .analyze()
@@ -64,19 +74,19 @@ impl CeobeCookieLogic {
                         .into_iter()
                         .map(|info| (info._id, info.cookie_info))
                         .collect::<HashMap<ObjectId, CookieInfo>>();
-                Ok(object_id_list
-                    .into_iter()
-                    .filter(|id| cookies_map.contains_key(id))
-                    .map(|id| cookies_map.get(&id).unwrap().to_owned())
-                    .collect())
-        }});
+                    Ok(object_id_list
+                        .into_iter()
+                        .filter(|id| cookies_map.contains_key(id))
+                        .map(|id| cookies_map.get(&id).unwrap().to_owned())
+                        .collect())
+                }
+            });
         // 获取下一页页饼id
         let next_cookie_id = task::spawn({
             let db = db.clone();
             let datasource_indexes = datasource_indexes.clone();
             async move {
-                db
-                    .ceobe()
+                db.ceobe()
                     .cookie()
                     .search_content()
                     .get_next_page_cookie_id(

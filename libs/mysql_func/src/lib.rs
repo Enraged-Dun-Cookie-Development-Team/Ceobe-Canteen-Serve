@@ -1,4 +1,4 @@
-use sea_query::{Iden};
+use sea_query::Iden;
 
 // MariaDb 不可用
 pub struct UuidToBin;

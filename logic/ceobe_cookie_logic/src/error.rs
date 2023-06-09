@@ -3,12 +3,12 @@ use std::convert::Infallible;
 use bitmap_convert::error::Error as BitmapConvError;
 use ceobe_cookie::{
     analyze::OperateError as AnalyzeOperateError,
+    search_content::OperateError as SearchContentOperateError,
     temp_list::OperateError as TempListOperateError,
     terra_comic::OperateError as TerraComicOperateError,
-    search_content::OperateError as SearchContentOperateError,
 };
 use ceobe_user::property::OperateError as CeobeUserOperateError;
-use db_ops_prelude::mongodb::bson::{oid::ObjectId, self};
+use db_ops_prelude::mongodb::bson::{self, oid::ObjectId};
 use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceOperateError,

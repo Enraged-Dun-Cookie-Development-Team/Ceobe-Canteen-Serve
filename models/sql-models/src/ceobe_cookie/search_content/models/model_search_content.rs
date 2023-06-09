@@ -1,4 +1,4 @@
-use sea_orm::{entity::prelude::*};
+use sea_orm::entity::prelude::*;
 use sub_model::SubModel;
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
@@ -25,6 +25,4 @@ impl RelationTrait for Relation {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-impl ActiveModel {
-    
-}
+impl ActiveModel {}

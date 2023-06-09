@@ -3,7 +3,7 @@ use std::ops::Deref;
 
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
-    StatusErr, ThisError, sea_orm,
+    sea_orm, StatusErr, ThisError,
 };
 
 use crate::CookieDatabaseOperate;
@@ -31,5 +31,7 @@ pub enum OperateError {
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> CookieDatabaseOperate<'db, Conn> {
-    pub fn search_content(&self) -> SearchContentOperate<'_, Conn> { self.child() }
+    pub fn search_content(&self) -> SearchContentOperate<'_, Conn> {
+        self.child()
+    }
 }

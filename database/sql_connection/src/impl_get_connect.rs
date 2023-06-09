@@ -145,7 +145,21 @@ impl ConnectionTrait for SqlTransaction {
         self.0.query_all(stmt)
     }
 
-    fn execute_unprepared<'life0,'life1,'async_trait>(&'life0 self,sql: &'life1 str) ->  core::pin::Pin<Box<dyn core::future::Future<Output = Result<sea_orm::ExecResult,DbErr> > + core::marker::Send+'async_trait> >where 'life0:'async_trait,'life1:'async_trait,Self:'async_trait {
+    fn execute_unprepared<'life0, 'life1, 'async_trait>(
+        &'life0 self, sql: &'life1 str,
+    ) -> core::pin::Pin<
+        Box<
+            dyn core::future::Future<
+                    Output = Result<sea_orm::ExecResult, DbErr>,
+                > + core::marker::Send
+                + 'async_trait,
+        >,
+    >
+    where
+        'life0: 'async_trait,
+        'life1: 'async_trait,
+        Self: 'async_trait,
+    {
         self.0.execute_unprepared(sql)
     }
 }

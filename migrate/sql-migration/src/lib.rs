@@ -1,4 +1,5 @@
 mod admin;
+mod ceobe_cookie_search_content;
 mod ceobe_operation_announcement;
 mod ceobe_operation_app_version;
 mod ceobe_operation_resource;
@@ -8,7 +9,6 @@ mod fetcher_datasource_combination;
 mod fetcher_datasource_config;
 mod fetcher_global_config;
 mod fetcher_platform_config;
-mod ceobe_cookie_search_content;
 
 pub use sea_orm_migration::MigratorTrait;
 use sea_orm_migration::{async_trait, MigrationTrait};

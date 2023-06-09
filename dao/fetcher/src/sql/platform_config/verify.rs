@@ -67,10 +67,11 @@ mod test {
         // join
         query.left_join(
             model_datasource_config::Entity,
-            Expr::col((Entity, model_platform_config::Column::TypeId)).equals(
-                (model_datasource_config::Entity,
-                model_datasource_config::Column::Platform)
-            ),
+            Expr::col((Entity, model_platform_config::Column::TypeId))
+                .equals((
+                    model_datasource_config::Entity,
+                    model_datasource_config::Column::Platform,
+                )),
         );
 
         // where

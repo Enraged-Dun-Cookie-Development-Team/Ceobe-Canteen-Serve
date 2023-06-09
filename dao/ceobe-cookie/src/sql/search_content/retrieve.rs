@@ -1,4 +1,4 @@
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, StreamTrait, EntityTrait, sea_query::{Expr, Func, SelectStatement}, ColumnTrait, Order, DatabaseBackend, StatementBuilder, QueryFilter, Condition, QueryOrder, QuerySelect}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Entity, SearchOid, Column}, mysql_func::{AGAINST, MATCH}};
+use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, StreamTrait, EntityTrait, sea_query::{Expr, Func}, ColumnTrait, Order, QueryFilter, Condition, QueryOrder, QuerySelect}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Entity, SearchOid, Column}, mysql_func::{AGAINST, MATCH}};
 use tracing::instrument;
 
 use super::{OperateResult, SearchContentOperate};
@@ -10,23 +10,27 @@ where
 {
     #[instrument(skip(self))]
     pub async fn get_page_cookie_ids(
-        &self,
-        object_id: Option<String>,
-        search_word: &str,
-        datasources: Vec<i32>,
-        page_size: u64,
+        &self, object_id: Option<String>, search_word: &str,
+        datasources: Vec<i32>, page_size: u64,
     ) -> OperateResult<Vec<String>> {
         let db: &<C as GetDatabaseConnect>::Connect = self.get_connect();
         Ok(Entity::find()
-            .filter(Condition::all()
-                .add_option(object_id.map(|id| Expr::col(Column::ObjectId).lte(id)))
-                .add(Column::SourceConfigId.is_in(datasources))
-                .add(Expr::cust_with_exprs(
-                    "? ?",
-                    [
-                        Func::cust(MATCH).arg(Expr::col(Column::Content)).into(),
-                        Func::cust(AGAINST).arg(search_word).into(),
-                    ]))
+            .filter(
+                Condition::all()
+                    .add_option(
+                        object_id
+                            .map(|id| Expr::col(Column::ObjectId).lte(id)),
+                    )
+                    .add(Column::SourceConfigId.is_in(datasources))
+                    .add(Expr::cust_with_exprs(
+                        "? ?",
+                        [
+                            Func::cust(MATCH)
+                                .arg(Expr::col(Column::Content))
+                                .into(),
+                            Func::cust(AGAINST).arg(search_word).into(),
+                        ],
+                    )),
             )
             .order_by(Column::ObjectId, Order::Desc)
             .limit(page_size)
@@ -40,23 +44,27 @@ where
 
     #[instrument(skip(self))]
     pub async fn get_next_page_cookie_id(
-        &self,
-        object_id: Option<String>,
-        search_word: &str,
-        datasources: Vec<i32>,
-        page_size: u64,
+        &self, object_id: Option<String>, search_word: &str,
+        datasources: Vec<i32>, page_size: u64,
     ) -> OperateResult<Option<String>> {
         let db: &<C as GetDatabaseConnect>::Connect = self.get_connect();
         Ok(Entity::find()
-            .filter(Condition::all()
-                .add_option(object_id.map(|id| Expr::col(Column::ObjectId).lte(id)))
-                .add(Column::SourceConfigId.is_in(datasources))
-                .add(Expr::cust_with_exprs(
-                    "? ?",
-                    [
-                        Func::cust(MATCH).arg(Expr::col(Column::Content)).into(),
-                        Func::cust(AGAINST).arg(search_word).into(),
-                    ]))
+            .filter(
+                Condition::all()
+                    .add_option(
+                        object_id
+                            .map(|id| Expr::col(Column::ObjectId).lte(id)),
+                    )
+                    .add(Column::SourceConfigId.is_in(datasources))
+                    .add(Expr::cust_with_exprs(
+                        "? ?",
+                        [
+                            Func::cust(MATCH)
+                                .arg(Expr::col(Column::Content))
+                                .into(),
+                            Func::cust(AGAINST).arg(search_word).into(),
+                        ],
+                    )),
             )
             .order_by(Column::ObjectId, Order::Desc)
             .limit(1)
