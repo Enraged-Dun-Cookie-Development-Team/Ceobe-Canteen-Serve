@@ -37,7 +37,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error,
     error::{LogicError, LogicResult},
-    view::{DatasourceConfig, MobIdReq},
+    view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 
 pub struct CeobeUserLogic;
@@ -96,13 +96,71 @@ impl CeobeUserLogic {
         .await;
 
         let user_datasource_config = user_datasource_config?;
+
+        let resp = Self::remove_deleted_datasource_upload_cdn(
+            mongo.clone(),
+            db,
+            qiniu,
+            qq_channel,
+            redis_client,
+            datasource_list?,
+            user_datasource_config.clone(),
+        )
+        .await?;
+
+        // 将删除过已不存在的数据源列表存回数据库
+        // 异步执行，无论成功与否都继续~
+        if resp.datasource_config.len() < user_datasource_config.len() {
+            tokio::spawn(mongo.ceobe().user().property().update_datasource(
+                mob_id.mob_id,
+                vec_uuid_to_bson_uuid(resp.datasource_config.clone()),
+            ));
+            task::yield_now().await;
+        }
+
+        Ok(resp)
+    }
+
+    /// 根据数据源列表获取对应数据源组合id
+    pub async fn get_comb_by_datasources(
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
+        redis_client: RedisConnect, user_datasource_config: Vec<bson::Uuid>,
+    ) -> LogicResult<DatasourceCombResp> {
+        if user_datasource_config.is_empty() {
+            return Err(LogicError::DatasourcesEmpty);
+        }
+        let datasource_list =
+            db.fetcher().datasource().find_all_uuid().await?;
+        let DatasourceConfig {
+            datasource_comb_id, ..
+        } = Self::remove_deleted_datasource_upload_cdn(
+            mongo,
+            db,
+            qiniu,
+            qq_channel,
+            redis_client,
+            datasource_list,
+            user_datasource_config,
+        )
+        .await?;
+
+        Ok(DatasourceCombResp { datasource_comb_id })
+    }
+
+    /// 排除已删除数据源并且上传七牛云
+    async fn remove_deleted_datasource_upload_cdn(
+        mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
+        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
+        redis_client: RedisConnect, datasource_list: Vec<Uuid>,
+        user_datasource_config: Vec<bson::Uuid>,
+    ) -> LogicResult<DatasourceConfig> {
         let datasource_set: HashSet<Uuid> =
-            HashSet::from_iter(datasource_list?);
+            HashSet::from_iter(datasource_list);
         let user_config_set: HashSet<bson::Uuid> =
             HashSet::from_iter(user_datasource_config.clone());
-
         // 去除已被删除的数据源后的结果
-        let handle_user_set = user_config_set
+        let handle_user_list = user_config_set
             .into_iter()
             .filter(|uuid| datasource_set.contains(&uuid.to_owned().into()))
             .map(|bson_uuid| bson_uuid.into())
@@ -112,7 +170,7 @@ impl CeobeUserLogic {
         let datasource_ids = db
             .fetcher()
             .datasource()
-            .find_ids_by_uuids(handle_user_set.clone())
+            .find_ids_by_uuids(handle_user_list.clone())
             .await?;
         // 获取数据源组合下最新饼id
         let cookie_id = mongo
@@ -134,22 +192,10 @@ impl CeobeUserLogic {
         .await?;
 
         // 获取用户设置有且数据源存在的列表
-        let resp = DatasourceConfig {
-            datasource_config: handle_user_set,
+        Ok(DatasourceConfig {
+            datasource_config: handle_user_list,
             datasource_comb_id: comb_ids,
-        };
-
-        // 将删除过已不存在的数据源列表存回数据库
-        // 异步执行，无论成功与否都继续~
-        if resp.datasource_config.len() < user_datasource_config.len() {
-            tokio::spawn(mongo.ceobe().user().property().update_datasource(
-                mob_id.mob_id,
-                vec_uuid_to_bson_uuid(resp.datasource_config.clone()),
-            ));
-            task::yield_now().await;
-        }
-
-        Ok(resp)
+        })
     }
 
     /// 更新用户数据源配置
