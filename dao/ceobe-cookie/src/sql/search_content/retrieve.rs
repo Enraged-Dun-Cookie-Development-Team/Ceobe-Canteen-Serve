@@ -9,7 +9,7 @@ where
     C::Connect: ConnectionTrait + StreamTrait,
 {
     #[instrument(skip(self))]
-    pub async fn find_page_object_ids(
+    pub async fn get_page_cookie_ids(
         &self,
         object_id: Option<String>,
         search_word: &str,
@@ -39,7 +39,7 @@ where
     }
 
     #[instrument(skip(self))]
-    pub async fn find_next_page_object_id(
+    pub async fn get_next_page_cookie_id(
         &self,
         object_id: Option<String>,
         search_word: &str,

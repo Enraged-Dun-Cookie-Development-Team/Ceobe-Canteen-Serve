@@ -5,7 +5,7 @@ use db_ops_prelude::{
     },
     mongo_models::ceobe::cookie::analyze::models::{
         AnalyzeModel, CookieId, CookieInfo, TerraComicAggregate,
-        TerraComicEpisodeInfo,
+        TerraComicEpisodeInfo, CookieInfoWithId,
     },
     mongodb::{
         bson::{self, doc, oid::ObjectId, Bson, Document},
@@ -202,9 +202,9 @@ where
     #[instrument(skip(self), ret)]
     pub async fn get_data_by_object_ids(
         &'db self, object_ids: Vec<ObjectId>,
-    ) -> OperateResult<Vec<CookieInfo>> {
+    ) -> OperateResult<Vec<CookieInfoWithId>> {
         let collection = self.get_collection()?;
-        let collection: &CollectionGuard<CookieInfo> =
+        let collection: &CollectionGuard<CookieInfoWithId> =
             &collection.with_mapping();
         let filter = doc! {
             "_id": {
@@ -222,7 +222,7 @@ where
                 )
             })
             .await?;
-        let mut res = Vec::<CookieInfo>::new();
+        let mut res = Vec::<CookieInfoWithId>::new();
         while let Some(v) = vec.next().await {
             res.push(v.map_err(MongoDbError::from)?);
         }

@@ -130,3 +130,11 @@ pub struct TerraComicListResp {
     #[serde(flatten)]
     pub info: ComicInfoWithoutCid,
 }
+
+/// 搜索列表的请求体
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct SearchListReq {
+    pub cookie_id: Option<ObjectId>,
+    pub datasource_comb_id: String,
+    pub search_word: String,
+}
