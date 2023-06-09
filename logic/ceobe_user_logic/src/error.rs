@@ -69,6 +69,14 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     QiniuService(#[from] QiniuServiceError),
+
+    #[error("数据源列表为空")]
+    #[status_err(err(
+        prefix = "ErrPrefix::CHECKER",
+        err_code = 0x001E,
+        resp_msg = "数据源列表为空"
+    ))]
+    DatasourcesEmpty,
 }
 
 #[allow(dead_code)]

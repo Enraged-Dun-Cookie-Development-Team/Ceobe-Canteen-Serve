@@ -17,9 +17,15 @@ impl From<MobIdReq> for UserMobId {
     }
 }
 
-/// MobId请求
+/// 返回数据源列表与组合id
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, Default)]
 pub struct DatasourceConfig {
     pub datasource_config: Vec<Uuid>,
+    pub datasource_comb_id: String,
+}
+
+/// 返回数据源组合id
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct DatasourceCombResp {
     pub datasource_comb_id: String,
 }

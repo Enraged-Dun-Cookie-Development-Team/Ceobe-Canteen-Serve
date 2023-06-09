@@ -3,7 +3,7 @@ use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user::{ToCeobe, ToCeobeUser};
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
-    view::{DatasourceConfig, MobIdReq},
+    view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 use mob_push_server::PushManager;
 use mongo_migration::{
@@ -85,6 +85,31 @@ impl CeobeUserFrontend {
                 .property()
                 .update_access_time(mob_id.mob_id)
                 .await
+        ))
+        .into()
+    }
+
+    // 获取用户数据源配置
+    #[instrument(ret, skip(db, mongo, qiniu, redis_client))]
+    pub async fn get_comb_by_datasources(
+        db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
+        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
+        redis_client: RedisConnect,
+        MapReject(datasource_config): MapReject<
+            Json<UserDatasource>,
+            CeobeUserError,
+        >,
+    ) -> CeobeUserRResult<DatasourceCombResp> {
+        Ok(rtry!(
+            CeobeUserLogic::get_comb_by_datasources(
+                mongo,
+                db,
+                qiniu,
+                qq_channel,
+                redis_client,
+                datasource_config.datasource_push
+            )
+            .await
         ))
         .into()
     }
