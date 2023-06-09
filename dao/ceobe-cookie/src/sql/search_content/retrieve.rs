@@ -1,7 +1,7 @@
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, StreamTrait, EntityTrait, sea_query::{Query, Expr, Func, SelectStatement}, ColumnTrait, Order, DatabaseBackend, StatementBuilder}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Entity, SearchOid, Column}, mysql_func::AGAINST};
+use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, StreamTrait, EntityTrait, sea_query::{Expr, Func, SelectStatement}, ColumnTrait, Order, DatabaseBackend, StatementBuilder, QueryFilter, Condition, QueryOrder, QuerySelect}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Entity, SearchOid, Column}, mysql_func::{AGAINST, MATCH}};
 use tracing::instrument;
 
-use super::{SearchContentOperate, OperateResult};
+use super::{OperateResult, SearchContentOperate};
 
 impl<'c, C> SearchContentOperate<'c, C>
 where
@@ -9,43 +9,84 @@ where
     C::Connect: ConnectionTrait + StreamTrait,
 {
     #[instrument(skip(self))]
-    pub async fn find_page_object_ids(&self, object_id: Option<String>, search_word: &str, datasources: Vec<i32>, page_size: u64) -> OperateResult<Vec<String>> {
+    pub async fn find_page_object_ids(
+        &self,
+        object_id: Option<String>,
+        search_word: &str,
+        datasources: Vec<i32>,
+        page_size: u64,
+    ) -> OperateResult<Vec<String>> {
         let db: &<C as GetDatabaseConnect>::Connect = self.get_connect();
-        let mut query = gen_search_content_condition_sql(object_id,search_word, datasources);
-        query.limit(page_size);
-        let query = StatementBuilder::build(&query, &DatabaseBackend::MySql);
         Ok(Entity::find()
-            .from_raw_sql(query)
+            .filter(Condition::all()
+                .add_option(object_id.map(|id| Expr::col(Column::ObjectId).lte(id)))
+                .add(Column::SourceConfigId.is_in(datasources))
+                .add(Expr::cust_with_exprs(
+                    "? ?",
+                    [
+                        Func::cust(MATCH).arg(Expr::col(Column::Content)).into(),
+                        Func::cust(AGAINST).arg(search_word).into(),
+                    ]))
+            )
+            .order_by(Column::ObjectId, Order::Desc)
+            .limit(page_size)
             .into_model::<SearchOid>()
             .all(db)
             .await?
             .into_iter()
             .map(|item| item.object_id)
             .collect())
-        
     }
 
     #[instrument(skip(self))]
-    pub async fn find_next_page_object_id(&self, object_id: Option<String>, search_word: &str, datasources: Vec<i32>, page_size: u64) -> OperateResult<Option<String>> {
+    pub async fn find_next_page_object_id(
+        &self,
+        object_id: Option<String>,
+        search_word: &str,
+        datasources: Vec<i32>,
+        page_size: u64,
+    ) -> OperateResult<Option<String>> {
         let db: &<C as GetDatabaseConnect>::Connect = self.get_connect();
-        let mut query = gen_search_content_condition_sql(object_id,search_word, datasources);
-        query.limit(1).offset(page_size);
-        let query = StatementBuilder::build(&query, &DatabaseBackend::MySql);
         Ok(Entity::find()
-                .from_raw_sql(query)
-                .into_model::<SearchOid>()
-                .one(db)
-                .await?
-                .map(|item| item.object_id))
+            .filter(Condition::all()
+                .add_option(object_id.map(|id| Expr::col(Column::ObjectId).lte(id)))
+                .add(Column::SourceConfigId.is_in(datasources))
+                .add(Expr::cust_with_exprs(
+                    "? ?",
+                    [
+                        Func::cust(MATCH).arg(Expr::col(Column::Content)).into(),
+                        Func::cust(AGAINST).arg(search_word).into(),
+                    ]))
+            )
+            .order_by(Column::ObjectId, Order::Desc)
+            .limit(1)
+            .offset(page_size)
+            .into_model::<SearchOid>()
+            .one(db)
+            .await?
+            .map(|item| item.object_id))
     }
 }
 
-pub fn gen_search_content_condition_sql(object_id: Option<String>, search_word: &str, datasources: Vec<i32>) -> SelectStatement {
-    let mut query = Query::select();
+#[cfg(test)]
+mod test {
+    use db_ops_prelude::{sea_orm::{sea_query::{Query, Expr, Func, MysqlQueryBuilder}, ColumnTrait, Order}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Column, Entity}, mysql_func::{AGAINST, MATCH}};
+
+    #[test]
+    fn test_gen_sql() {
+        let object_id: Option<String> = None;
+        let mut datasources: Vec<i32> = Vec::new();
+        let search_word: &str =
+            "市组准标取';Select * from ceobe_cookie_search_content;";
+
+        datasources.push(1);
+        datasources.push(3);
+        datasources.push(4);
+        datasources.push(6);
+
+        let mut query = Query::select();
         // SELECT combination_id
-        query.expr(Expr::col(
-            Column::ObjectId,
-        ));
+        query.expr(Expr::col(Column::ObjectId));
 
         // FROM fetcher_datasource_combination
         query.from(Entity);
@@ -53,11 +94,19 @@ pub fn gen_search_content_condition_sql(object_id: Option<String>, search_word: 
         if let Some(object_id_str) = object_id {
             query.and_where(Column::ObjectId.lte(object_id_str));
         }
-        
+
         query.and_where(Column::SourceConfigId.is_in(datasources));
 
-        query.and_where(Expr::cust_with_exprs("MATCH ? ?", [Expr::cust("content"), Func::cust(AGAINST).arg(search_word).into()]));
+        query.and_where(Expr::cust_with_exprs(
+            "? ?",
+            [
+                Func::cust(MATCH).arg(Expr::col(Column::Content)).into(),
+                Func::cust(AGAINST).arg(search_word).into(),
+            ],
+        ));
 
         query.order_by(Column::ObjectId, Order::Desc);
-        query
+
+        print!("{}", query.to_string(MysqlQueryBuilder))
+    }
 }
