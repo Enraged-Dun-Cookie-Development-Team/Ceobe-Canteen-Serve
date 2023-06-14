@@ -38,7 +38,7 @@ impl QiniuService {
             Some(newest_cookie_id.to_string())
         }
         else {
-            None
+            cookie_id.map(|id| id.to_string())
         };
 
         let update_cookie_id_string =
