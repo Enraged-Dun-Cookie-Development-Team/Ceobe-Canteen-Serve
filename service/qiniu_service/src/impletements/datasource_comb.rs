@@ -112,14 +112,14 @@ impl QiniuService {
                             )
                             .await?;
                     }
-                    redis
-                        .hset(
-                            CookieListKey::NEW_UPDATE_COOKIES,
-                            &datasource,
-                            &update_id.to_string(),
-                        )
-                        .await?;
                 }
+                redis
+                    .hset(
+                        CookieListKey::NEW_UPDATE_COOKIES,
+                        &datasource,
+                        &update_id.to_string(),
+                    )
+                    .await?;
             }
             Ok(())
         }
