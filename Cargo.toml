@@ -32,7 +32,7 @@ ahash = "0.8"
 async-trait = "0.1"
 axum = { version = "0.6", features = ["multipart", "macros"] }
 axum-core = "0.3"
-axum-starter = { version = "0.6.1", features = ["logger"]}
+axum-starter = { version = "0.6.2", features = ["logger"]}
 chrono = "0.4"
 ceobe-qiniu-upload = { version = "0.1.0", path = "libs/qiniu-manager" }
 futures = "0.3"
