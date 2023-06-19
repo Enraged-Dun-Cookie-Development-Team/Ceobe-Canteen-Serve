@@ -5,6 +5,7 @@ use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 const SOURCE_CONFIG_ID_IDX: &str = "source_config_id_idx";
 const KEYWORD_IDX: &str = "keyword_idx";
+const TAG_IDX: &str = "tag_idx";
 
 pub struct Migration;
 
@@ -41,6 +42,21 @@ impl MigrationTrait for Migration {
                     .options(
                         IndexOptions::builder()
                             .name(KEYWORD_IDX.to_owned())
+                            .build(),
+                    )
+                    .build(),
+                None,
+            )
+            .await?;
+        collection
+            .create_idx_if_not_exist(
+                IndexModel::builder()
+                    .keys(doc! {
+                        "tags.$**": 1i32,
+                    })
+                    .options(
+                        IndexOptions::builder()
+                            .name(TAG_IDX.to_owned())
                             .build(),
                     )
                     .build(),

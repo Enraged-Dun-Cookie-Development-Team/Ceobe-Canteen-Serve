@@ -197,4 +197,39 @@ where
         }
         Ok(res)
     }
+
+    /// 获取tag分类饼数量
+    #[instrument(skip(self), ret)]
+    pub async fn get_tags_cookie_count(
+        &'db self, tags: Vec<&str>,
+    ) -> OperateResult<u64> {
+        let collection = self.get_collection()?;
+
+        let conditions = tags.into_iter().map(|tag| doc! {"tags.".to_owned() + tag: {"$exists": true}}).collect::<Vec<Document>>();
+        let filter = doc! {"$or": conditions};
+    
+        let count = collection
+            .doing(|collection| {
+                collection.count_documents(
+                    filter,
+                    None,
+                )
+            })
+            .await?;
+        Ok(count)
+    }
+
+    /// 获取所有饼数量
+    #[instrument(skip(self), ret)]
+    pub async fn get_cookie_count(
+        &'db self, 
+    ) -> OperateResult<u64> {
+        let collection = self.get_collection()?;
+        let count = collection
+            .doing(|collection| {
+                collection.count_documents(None, None)
+            })
+            .await?;
+        Ok(count)
+    }
 }
