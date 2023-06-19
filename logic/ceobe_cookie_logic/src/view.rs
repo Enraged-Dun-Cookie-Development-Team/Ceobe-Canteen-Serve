@@ -131,18 +131,17 @@ pub struct TerraComicListResp {
     pub info: ComicInfoWithoutCid,
 }
 
-
 /// 饼数量接口
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieNumberResp {
     // 总饼数量
     pub total_count: u64,
-    /// 服饰数量 
+    /// 服饰数量
     pub costumes_count: u64,
-    /// 干员数量 
+    /// 干员数量
     pub operator_count: u64,
-    /// 活动数量 
+    /// 活动数量
     pub activity_count: u64,
-    /// ep数量 
+    /// ep数量
     pub ep_count: u64,
 }

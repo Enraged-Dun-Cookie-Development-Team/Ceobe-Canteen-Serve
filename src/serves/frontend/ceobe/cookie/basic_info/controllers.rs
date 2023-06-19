@@ -1,16 +1,11 @@
-use axum::extract::Query;
 use ceobe_cookie_logic::{
-    impletements::CeobeCookieLogic,
-    view::{TerraCidReq, TerraComicListResp, CookieNumberResp},
+    impletements::CeobeCookieLogic, view::CookieNumberResp,
 };
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::cookie::analyze::models::TerraComicEpisodeInfo,
-};
-use resp_result::{rtry, MapReject};
+use mongo_migration::mongo_connection::MongoDatabaseOperate;
+use resp_result::rtry;
 use tracing::instrument;
 
-use super::error::{CeobeCookieRResult};
+use super::error::CeobeCookieRResult;
 use crate::router::CookieInfoFrontend;
 
 impl CookieInfoFrontend {

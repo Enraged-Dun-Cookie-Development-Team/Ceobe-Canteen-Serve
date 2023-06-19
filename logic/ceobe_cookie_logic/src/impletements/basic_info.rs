@@ -2,9 +2,8 @@ use ceobe_cookie::{ToCeobe, ToCookie};
 use db_ops_prelude::mongo_connection::MongoDatabaseOperate;
 use tokio::task;
 
-use crate::{view::CookieNumberResp, error::LogicResult};
-
 use super::CeobeCookieLogic;
+use crate::{error::LogicResult, view::CookieNumberResp};
 
 impl CeobeCookieLogic {
     pub async fn cookie_number(
@@ -14,12 +13,7 @@ impl CeobeCookieLogic {
         let cookie_count = task::spawn({
             let mongo = mongo.clone();
             async move {
-                mongo
-                    .ceobe()
-                    .cookie()
-                    .analyze()
-                    .get_cookie_count()
-                    .await
+                mongo.ceobe().cookie().analyze().get_cookie_count().await
             }
         });
         // 获取皮肤饼数量
@@ -85,15 +79,12 @@ impl CeobeCookieLogic {
         let activity_count = activity_count.await??;
         let ep_count = ep_count.await??;
 
-
-
         Ok(CookieNumberResp::builder()
             .total_count(cookie_count)
             .costumes_count(costumes_count)
             .operator_count(operator_count)
             .activity_count(activity_count)
             .ep_count(ep_count)
-            .build()
-        )
+            .build())
     }
 }

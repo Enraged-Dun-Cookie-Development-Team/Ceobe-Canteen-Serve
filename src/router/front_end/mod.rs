@@ -6,7 +6,7 @@ mod user;
 use axum::Router;
 pub use bakery_mansion::BakeryMansionFrontend;
 pub use config::ConfigDatasourceFrontend;
-pub use cookie::{CookieTerraComicFrontend, CookieInfoFrontend};
+pub use cookie::{CookieInfoFrontend, CookieTerraComicFrontend};
 pub use operation::{
     CeobeOperationAnnouncementFrontend, CeobeOperationResourceFrontend,
     CeobeOperationVersionFrontend, CeobeOperationVideoFrontend,

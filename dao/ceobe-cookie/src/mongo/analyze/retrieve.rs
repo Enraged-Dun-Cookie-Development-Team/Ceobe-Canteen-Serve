@@ -205,30 +205,24 @@ where
     ) -> OperateResult<u64> {
         let collection = self.get_collection()?;
 
-        let conditions = tags.into_iter().map(|tag| doc! {"tags.".to_owned() + tag: {"$exists": true}}).collect::<Vec<Document>>();
+        let conditions = tags
+            .into_iter()
+            .map(|tag| doc! {"tags.".to_owned() + tag: {"$exists": true}})
+            .collect::<Vec<Document>>();
         let filter = doc! {"$or": conditions};
-    
+
         let count = collection
-            .doing(|collection| {
-                collection.count_documents(
-                    filter,
-                    None,
-                )
-            })
+            .doing(|collection| collection.count_documents(filter, None))
             .await?;
         Ok(count)
     }
 
     /// 获取所有饼数量
     #[instrument(skip(self), ret)]
-    pub async fn get_cookie_count(
-        &'db self, 
-    ) -> OperateResult<u64> {
+    pub async fn get_cookie_count(&'db self) -> OperateResult<u64> {
         let collection = self.get_collection()?;
         let count = collection
-            .doing(|collection| {
-                collection.count_documents(None, None)
-            })
+            .doing(|collection| collection.count_documents(None, None))
             .await?;
         Ok(count)
     }
