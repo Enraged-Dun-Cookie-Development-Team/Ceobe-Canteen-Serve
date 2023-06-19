@@ -137,7 +137,7 @@ pub struct CookieNumberResp {
     // 总饼数量
     pub total_count: u64,
     /// 服饰数量
-    pub costumes_count: u64,
+    pub skin_count: u64,
     /// 干员数量
     pub operator_count: u64,
     /// 活动数量

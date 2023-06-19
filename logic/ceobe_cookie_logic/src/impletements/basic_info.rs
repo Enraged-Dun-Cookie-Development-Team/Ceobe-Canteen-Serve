@@ -17,7 +17,7 @@ impl CeobeCookieLogic {
             }
         });
         // 获取皮肤饼数量
-        let costumes_count = task::spawn({
+        let skin_count = task::spawn({
             let mongo = mongo.clone();
             let mut tags: Vec<&str> = Vec::<&str>::new();
             tags.push("皮肤");
@@ -74,14 +74,14 @@ impl CeobeCookieLogic {
             }
         });
         let cookie_count = cookie_count.await??;
-        let costumes_count = costumes_count.await??;
+        let skin_count = skin_count.await??;
         let operator_count = operator_count.await??;
         let activity_count = activity_count.await??;
         let ep_count = ep_count.await??;
 
         Ok(CookieNumberResp::builder()
             .total_count(cookie_count)
-            .costumes_count(costumes_count)
+            .skin_count(skin_count)
             .operator_count(operator_count)
             .activity_count(activity_count)
             .ep_count(ep_count)
