@@ -1,11 +1,12 @@
-use std::{thread::JoinHandle, slice::SplitN};
-
-use ceobe_cookie::{ToCeobe, ToCookie, analyze::OperateError};
+use ceobe_cookie::{ToCeobe, ToCookie};
 use db_ops_prelude::mongo_connection::MongoDatabaseOperate;
 use tokio::task;
 
 use super::CeobeCookieLogic;
-use crate::{error::{LogicResult, LogicError}, view::CookieNumberResp};
+use crate::{
+    error::{LogicError, LogicResult},
+    view::CookieNumberResp,
+};
 
 impl CeobeCookieLogic {
     pub async fn cookie_number(
@@ -18,24 +19,41 @@ impl CeobeCookieLogic {
                 mongo.ceobe().cookie().analyze().get_cookie_count().await
             }
         });
-        let tags_list:[&[&str]; 4]  = [&["皮肤"], &["干员"], &["故事集", "SideStory"], &["EP"]];
-        let count_list = futures::future::join_all(tags_list.into_iter().map(|tags| task::spawn({
-            let mongo = mongo.clone();
-            async move {
-                mongo
-                    .ceobe()
-                    .cookie()
-                    .analyze()
-                    .get_tags_cookie_count(tags)
-                    .await
-            }
-        }))).await;
+        let tags_list: [&[&str]; 4] =
+            [&["皮肤"], &["干员"], &["故事集", "SideStory"], &["EP"]];
+        let count_list =
+            futures::future::join_all(tags_list.into_iter().map(|tags| {
+                task::spawn({
+                    let mongo = mongo.clone();
+                    async move {
+                        mongo
+                            .ceobe()
+                            .cookie()
+                            .analyze()
+                            .get_tags_cookie_count(tags)
+                            .await
+                    }
+                })
+            }))
+            .await;
 
-        let count_list =  count_list.into_iter().try_fold::<_, _, Result<Vec<u64>, LogicError>>(Vec::<u64>::new(), |mut vec, x| {vec.push(x??);Ok(vec)})?;
-        let [skin_count, operator_count, activity_count, ep_count] = match count_list.as_slice() {
-            &[skin_count, operator_count, activity_count, ep_count] => [skin_count, operator_count, activity_count, ep_count],
-            _ => unreachable!()
-        };
+        let count_list = count_list.into_iter().try_fold::<_, _, Result<
+            Vec<u64>,
+            LogicError,
+        >>(
+            Vec::<u64>::new(),
+            |mut vec, x| {
+                vec.push(x??);
+                Ok(vec)
+            },
+        )?;
+        let [skin_count, operator_count, activity_count, ep_count] =
+            match count_list.as_slice() {
+                &[skin_count, operator_count, activity_count, ep_count] => {
+                    [skin_count, operator_count, activity_count, ep_count]
+                }
+                _ => unreachable!(),
+            };
 
         let cookie_count = cookie_count.await??;
 
