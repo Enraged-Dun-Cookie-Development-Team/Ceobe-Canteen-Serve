@@ -11,9 +11,8 @@ use db_ops_prelude::{
         bson::{self, doc, oid::ObjectId, Bson, Document},
         options::{FindOneOptions, FindOptions},
     },
-    sea_orm::sea_query::Keyword,
 };
-use tracing::{instrument, log::kv::Key};
+use tracing::instrument;
 
 use super::{AnalyzeOperate, OperateResult};
 
@@ -239,39 +238,43 @@ where
         let collection: &CollectionGuard<CookieInfo> =
             &collection.with_mapping();
         let filter = match first_id {
-            Some(id) => doc! {
-                "$and": [
-                    {
-                        "source_config_id": {
-                            "$in":datasources
+            Some(id) => {
+                doc! {
+                    "$and": [
+                        {
+                            "source_config_id": {
+                                "$in":datasources
+                            }
+                        },
+                        {
+                            "_id": {
+                                "$lte": id
+                            }
+                        },
+                        {
+                            "keywords.".to_string() + keyword: {
+                                "$exists": true
+                            }
                         }
-                    },
-                    {
-                        "_id": {
-                            "$lte": id
+                    ]
+                }
+            }
+            None => {
+                doc! {
+                    "$and": [
+                        {
+                            "source_config_id": {
+                                "$in":datasources
+                            }
+                        },
+                        {
+                            "keywords.".to_string() + keyword: {
+                                "$exists": true
+                            }
                         }
-                    },
-                    {
-                        "keywords.".to_string() + keyword: {
-                            "$exists": true
-                        }
-                    }
-                ]
-            },
-            None => doc! {
-                "$and": [
-                    {
-                        "source_config_id": {
-                            "$in":datasources
-                        }
-                    },
-                    {
-                        "keywords.".to_string() + keyword: {
-                            "$exists": true
-                        }
-                    }
-                ]
-            },
+                    ]
+                }
+            }
         };
         let mut vec = collection
             .doing(|collection| {
@@ -302,39 +305,43 @@ where
         let collection: &CollectionGuard<CookieId> =
             &collection.with_mapping();
         let filter = match first_id {
-            Some(id) => doc! {
-                "$and": [
-                    {
-                        "source_config_id": {
-                            "$in":datasources
+            Some(id) => {
+                doc! {
+                    "$and": [
+                        {
+                            "source_config_id": {
+                                "$in":datasources
+                            }
+                        },
+                        {
+                            "_id": {
+                                "$lte": id
+                            }
+                        },
+                        {
+                            "keywords.".to_string() + keyword: {
+                                "$exists": true
+                            }
                         }
-                    },
-                    {
-                        "_id": {
-                            "$lte": id
+                    ]
+                }
+            }
+            None => {
+                doc! {
+                    "$and": [
+                        {
+                            "source_config_id": {
+                                "$in":datasources
+                            }
+                        },
+                        {
+                            "keywords.".to_string() + keyword: {
+                                "$exists": true
+                            }
                         }
-                    },
-                    {
-                        "keywords.".to_string() + keyword: {
-                            "$exists": true
-                        }
-                    }
-                ]
-            },
-            None => doc! {
-                "$and": [
-                    {
-                        "source_config_id": {
-                            "$in":datasources
-                        }
-                    },
-                    {
-                        "keywords.".to_string() + keyword: {
-                            "$exists": true
-                        }
-                    }
-                ]
-            },
+                    ]
+                }
+            }
         };
         let cookie_id = collection
             .doing(|collection| {

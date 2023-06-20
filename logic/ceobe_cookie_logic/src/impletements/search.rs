@@ -119,7 +119,8 @@ impl CeobeCookieLogic {
                 }
             });
             cookie_list = cookie_list_handle.await??;
-        } else {
+        }
+        else {
             next_cookie_id = task::spawn({
                 let datasource_indexes = datasource_indexes.clone();
                 async move {
@@ -181,7 +182,8 @@ impl CeobeCookieLogic {
                         }) = datasource_info.get(&source_config_id)
                         {
                             (nickname.to_owned(), avatar.to_owned())
-                        } else {
+                        }
+                        else {
                             unreachable!("cannot find match datasource")
                         };
                     SingleCookie::builder()
