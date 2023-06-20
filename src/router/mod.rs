@@ -15,6 +15,7 @@ pub use front_end::{
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
     CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend,
     CookieSearchFrontend, CookieTerraComicFrontend,
+    CookieInfoFrontend,
 };
 pub use inside::AnalyzeCookieInside;
 

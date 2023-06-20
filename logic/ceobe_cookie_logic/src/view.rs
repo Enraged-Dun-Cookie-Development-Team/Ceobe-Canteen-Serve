@@ -138,3 +138,18 @@ pub struct SearchListReq {
     pub datasource_comb_id: String,
     pub search_word: String,
 }
+
+/// 饼数量接口
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct CookieNumberResp {
+    // 总饼数量
+    pub total_count: u64,
+    /// 服饰数量
+    pub skin_count: u64,
+    /// 干员数量
+    pub operator_count: u64,
+    /// 活动数量
+    pub activity_count: u64,
+    /// ep数量
+    pub ep_count: u64,
+}
