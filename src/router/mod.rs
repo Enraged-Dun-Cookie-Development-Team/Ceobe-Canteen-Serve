@@ -14,8 +14,7 @@ pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
     CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend,
-    CookieSearchFrontend, CookieTerraComicFrontend,
-    CookieInfoFrontend,
+    CookieInfoFrontend, CookieSearchFrontend, CookieTerraComicFrontend,
 };
 pub use inside::AnalyzeCookieInside;
 

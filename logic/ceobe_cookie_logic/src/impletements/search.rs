@@ -74,7 +74,7 @@ impl CeobeCookieLogic {
                                 .cookie_id
                                 .map(|item| item.to_string()),
                             &search_info.search_word,
-                            datasource_indexes,
+                            &datasource_indexes,
                             10,
                         )
                         .await?;
@@ -86,7 +86,7 @@ impl CeobeCookieLogic {
                         .ceobe()
                         .cookie()
                         .analyze()
-                        .get_data_by_object_ids(object_id_list.clone())
+                        .get_data_by_object_ids(&object_id_list)
                         .await?
                         .into_iter()
                         .map(|info| (info._id, info.cookie_info))
@@ -111,7 +111,7 @@ impl CeobeCookieLogic {
                                 .cookie_id
                                 .map(|item| item.to_string()),
                             &search_info.search_word,
-                            datasource_indexes,
+                            &datasource_indexes,
                             10,
                         )
                         .await

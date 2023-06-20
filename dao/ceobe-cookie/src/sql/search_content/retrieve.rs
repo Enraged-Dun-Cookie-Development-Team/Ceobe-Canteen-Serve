@@ -11,7 +11,7 @@ where
     #[instrument(skip(self))]
     pub async fn get_page_cookie_ids(
         &self, object_id: Option<String>, search_word: &str,
-        datasources: Vec<i32>, page_size: u64,
+        datasources: &[i32], page_size: u64,
     ) -> OperateResult<Vec<String>> {
         let db: &<C as GetDatabaseConnect>::Connect = self.get_connect();
         Ok(Entity::find()
@@ -21,7 +21,10 @@ where
                         object_id
                             .map(|id| Expr::col(Column::ObjectId).lte(id)),
                     )
-                    .add(Column::SourceConfigId.is_in(datasources))
+                    .add(
+                        Column::SourceConfigId
+                            .is_in(datasources.iter().copied()),
+                    )
                     .add(Expr::cust_with_exprs(
                         "? ?",
                         [
@@ -45,7 +48,7 @@ where
     #[instrument(skip(self))]
     pub async fn get_next_page_cookie_id(
         &self, object_id: Option<String>, search_word: &str,
-        datasources: Vec<i32>, page_size: u64,
+        datasources: &[i32], page_size: u64,
     ) -> OperateResult<Option<String>> {
         let db: &<C as GetDatabaseConnect>::Connect = self.get_connect();
         Ok(Entity::find()
@@ -55,7 +58,10 @@ where
                         object_id
                             .map(|id| Expr::col(Column::ObjectId).lte(id)),
                     )
-                    .add(Column::SourceConfigId.is_in(datasources))
+                    .add(
+                        Column::SourceConfigId
+                            .is_in(datasources.iter().copied()),
+                    )
                     .add(Expr::cust_with_exprs(
                         "? ?",
                         [

@@ -48,12 +48,12 @@ where
                     filter,
                     FindOptions::builder()
                         .projection(doc! {
-                            "_id": 0, 
-                            "meta": 1, 
-                            "source_config_id": 1, 
-                            "text": 1, 
-                            "images": 1, 
-                            "compress_images": 1, 
+                            "_id": 0,
+                            "meta": 1,
+                            "source_config_id": 1,
+                            "text": 1,
+                            "images": 1,
+                            "compress_images": 1,
                             "tags": 1
                         })
                         .sort(doc! {"_id": -1})
@@ -194,10 +194,10 @@ where
                     filter,
                     FindOptions::builder()
                         .projection(doc! {
-                            "_id": -1, 
-                            "comic": 
-                            "$meta.item.comic", 
-                            "jump_url": "$meta.item.url", 
+                            "_id": -1,
+                            "comic":
+                            "$meta.item.comic",
+                            "jump_url": "$meta.item.url",
                             "short_title": "$text"
                         })
                         .sort(doc! {"meta.timestamp.platform": -1})
@@ -231,12 +231,12 @@ where
                     filter,
                     FindOptions::builder()
                         .projection(doc! {
-                            "_id": 1, 
-                            "meta": 1, 
-                            "source_config_id": 1, 
-                            "text": 1, 
-                            "images": 1, 
-                            "compress_images": 1, 
+                            "_id": 1,
+                            "meta": 1,
+                            "source_config_id": 1,
+                            "text": 1,
+                            "images": 1,
+                            "compress_images": 1,
                             "tags": 1
                         })
                         .sort(doc! {"_id": -1})
@@ -304,12 +304,12 @@ where
                     filter,
                     FindOptions::builder()
                         .projection(doc! {
-                            "_id": 0, 
-                            "meta": 1, 
-                            "source_config_id": 1, 
-                            "text": 1, 
-                            "images": 1, 
-                            "compress_images": 1, 
+                            "_id": 0,
+                            "meta": 1,
+                            "source_config_id": 1,
+                            "text": 1,
+                            "images": 1,
+                            "compress_images": 1,
                             "tags": 1
                         })
                         .sort(doc! {"_id": -1})
