@@ -207,7 +207,7 @@ where
 
         let conditions = tags
             .iter()
-            .map(|tag| doc! {"tags.".to_owned() + tag: {"$exists": true}})
+            .map(|tag| doc! {format!("tags.{tag}"): {"$exists": true}})
             .collect::<Vec<Document>>();
         let filter = doc! {"$or": conditions};
 

@@ -47,13 +47,7 @@ impl CeobeCookieLogic {
                 Ok(vec)
             },
         )?;
-        let [skin_count, operator_count, activity_count, ep_count] =
-            match count_list.as_slice() {
-                &[skin_count, operator_count, activity_count, ep_count] => {
-                    [skin_count, operator_count, activity_count, ep_count]
-                }
-                _ => unreachable!(),
-            };
+        let &[skin_count, operator_count, activity_count, ep_count] = count_list.as_slice() else {unreachable!()};
 
         let cookie_count = cookie_count.await??;
 
