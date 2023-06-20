@@ -11,8 +11,9 @@ use db_ops_prelude::{
         bson::{self, doc, oid::ObjectId, Bson, Document},
         options::{FindOneOptions, FindOptions},
     },
+    sea_orm::sea_query::Keyword,
 };
-use tracing::instrument;
+use tracing::{instrument, log::kv::Key};
 
 use super::{AnalyzeOperate, OperateResult};
 
@@ -226,6 +227,130 @@ where
         while let Some(v) = vec.next().await {
             res.push(v.map_err(MongoDbError::from)?);
         }
+        Ok(res)
+    }
+
+    /// 根据keywords分页查询饼数据
+    pub async fn get_data_by_paginate_and_keyword(
+        &'db self, first_id: Option<ObjectId>, datasources: &[i32],
+        page_size: i64, keyword: &str,
+    ) -> OperateResult<Vec<CookieInfo>> {
+        let collection = self.get_collection()?;
+        let collection: &CollectionGuard<CookieInfo> =
+            &collection.with_mapping();
+        let filter = match first_id {
+            Some(id) => doc! {
+                "$and": [
+                    {
+                        "source_config_id": {
+                            "$in":datasources
+                        }
+                    },
+                    {
+                        "_id": {
+                            "$lte": id
+                        }
+                    },
+                    {
+                        "keywords.".to_string() + keyword: {
+                            "$exists": true
+                        }
+                    }
+                ]
+            },
+            None => doc! {
+                "$and": [
+                    {
+                        "source_config_id": {
+                            "$in":datasources
+                        }
+                    },
+                    {
+                        "keywords.".to_string() + keyword: {
+                            "$exists": true
+                        }
+                    }
+                ]
+            },
+        };
+        let mut vec = collection
+            .doing(|collection| {
+                collection.find(
+                    filter,
+                    FindOptions::builder()
+                        .projection(doc! {"_id": 0, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "compress_images": 1, "tags": 1})
+                        .sort(doc! {"_id": -1})
+                        .limit(page_size)
+                        .build(),
+                )
+            })
+            .await?;
+        let mut res = Vec::<CookieInfo>::new();
+        while let Some(v) = vec.next().await {
+            res.push(v.map_err(MongoDbError::from)?);
+        }
+        Ok(res)
+    }
+
+    /// 根据keywords获取下一页的饼id
+    #[instrument(skip(self), ret)]
+    pub async fn get_next_page_cookie_id_by_keyword(
+        &'db self, first_id: Option<ObjectId>, datasources: &[i32],
+        page_size: u64, keyword: &str,
+    ) -> OperateResult<Option<ObjectId>> {
+        let collection = self.get_collection()?;
+        let collection: &CollectionGuard<CookieId> =
+            &collection.with_mapping();
+        let filter = match first_id {
+            Some(id) => doc! {
+                "$and": [
+                    {
+                        "source_config_id": {
+                            "$in":datasources
+                        }
+                    },
+                    {
+                        "_id": {
+                            "$lte": id
+                        }
+                    },
+                    {
+                        "keywords.".to_string() + keyword: {
+                            "$exists": true
+                        }
+                    }
+                ]
+            },
+            None => doc! {
+                "$and": [
+                    {
+                        "source_config_id": {
+                            "$in":datasources
+                        }
+                    },
+                    {
+                        "keywords.".to_string() + keyword: {
+                            "$exists": true
+                        }
+                    }
+                ]
+            },
+        };
+        let cookie_id = collection
+            .doing(|collection| {
+                collection.find_one(
+                    filter,
+                    FindOneOptions::builder()
+                        .projection(doc! {"_id": 1})
+                        .sort(doc! {"_id": -1})
+                        .skip(page_size)
+                        .build(),
+                )
+            })
+            .await?;
+
+        let res = cookie_id.map(|id| id._id);
+
         Ok(res)
     }
 }

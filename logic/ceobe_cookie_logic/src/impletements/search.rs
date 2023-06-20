@@ -41,9 +41,26 @@ impl CeobeCookieLogic {
             .map(|index| index as i32)
             .collect::<Vec<i32>>();
 
-        // 获取饼列表
-        let cookie_list: JoinHandle<Result<Vec<CookieInfo>, LogicError>> =
-            task::spawn({
+        // mongo关键词搜索
+        let mut cookie_list = mongo
+            .ceobe()
+            .cookie()
+            .analyze()
+            .get_data_by_paginate_and_keyword(
+                search_info.cookie_id,
+                datasource_indexes.as_slice(),
+                10,
+                &search_info.search_word,
+            )
+            .await?;
+
+        let next_cookie_id: JoinHandle<Result<Option<String>, LogicError>>;
+        // 如果关键词搜索没有搜索到结构，采用sql全文搜索
+        if cookie_list.is_empty() {
+            // 获取饼列表
+            let cookie_list_handle: JoinHandle<
+                Result<Vec<CookieInfo>, LogicError>,
+            > = task::spawn({
                 let db = db.clone();
                 let datasource_indexes = datasource_indexes.clone();
                 let search_info = search_info.clone();
@@ -81,23 +98,50 @@ impl CeobeCookieLogic {
                         .collect())
                 }
             });
-        // 获取下一页页饼id
-        let next_cookie_id = task::spawn({
-            let db = db.clone();
-            let datasource_indexes = datasource_indexes.clone();
-            async move {
-                db.ceobe()
-                    .cookie()
-                    .search_content()
-                    .get_next_page_cookie_id(
-                        search_info.cookie_id.map(|item| item.to_string()),
-                        &search_info.search_word,
-                        datasource_indexes,
-                        10,
-                    )
-                    .await
-            }
-        });
+            // 获取下一页页饼id
+            next_cookie_id = task::spawn({
+                let db = db.clone();
+                let datasource_indexes = datasource_indexes.clone();
+                async move {
+                    db.ceobe()
+                        .cookie()
+                        .search_content()
+                        .get_next_page_cookie_id(
+                            search_info
+                                .cookie_id
+                                .map(|item| item.to_string()),
+                            &search_info.search_word,
+                            datasource_indexes,
+                            10,
+                        )
+                        .await
+                        .map_err(|err| err.into())
+                }
+            });
+            cookie_list = cookie_list_handle.await??;
+        } else {
+            next_cookie_id = task::spawn({
+                let datasource_indexes = datasource_indexes.clone();
+                async move {
+                    mongo
+                        .ceobe()
+                        .cookie()
+                        .analyze()
+                        .get_next_page_cookie_id_by_keyword(
+                            search_info.cookie_id,
+                            datasource_indexes.as_slice(),
+                            10,
+                            &search_info.search_word,
+                        )
+                        .await
+                        .map(|option_oid| {
+                            option_oid.map(|oid| oid.to_string())
+                        })
+                        .map_err(|err| err.into())
+                }
+            });
+        }
+
         // 获取数据源基本信息
         let db_copy = db.clone();
         let datasource_info: JoinHandle<Result<_, DatasourceOperateError>> =
@@ -112,7 +156,6 @@ impl CeobeCookieLogic {
                     .map(|info| (info.id, info))
                     .collect::<HashMap<i32, DatasourceBasicInfo>>())
             });
-        let cookie_list = cookie_list.await??;
         let next_cookie_id = next_cookie_id.await??;
         let datasource_info = datasource_info.await??;
 
@@ -138,8 +181,7 @@ impl CeobeCookieLogic {
                         }) = datasource_info.get(&source_config_id)
                         {
                             (nickname.to_owned(), avatar.to_owned())
-                        }
-                        else {
+                        } else {
                             unreachable!("cannot find match datasource")
                         };
                     SingleCookie::builder()
