@@ -1,9 +1,11 @@
-use ceobe_cookie::{ToCeobe, ToCookie};
+use std::{thread::JoinHandle, slice::SplitN};
+
+use ceobe_cookie::{ToCeobe, ToCookie, analyze::OperateError};
 use db_ops_prelude::mongo_connection::MongoDatabaseOperate;
 use tokio::task;
 
 use super::CeobeCookieLogic;
-use crate::{error::LogicResult, view::CookieNumberResp};
+use crate::{error::{LogicResult, LogicError}, view::CookieNumberResp};
 
 impl CeobeCookieLogic {
     pub async fn cookie_number(
@@ -16,11 +18,9 @@ impl CeobeCookieLogic {
                 mongo.ceobe().cookie().analyze().get_cookie_count().await
             }
         });
-        // 获取皮肤饼数量
-        let skin_count = task::spawn({
+        let tags_list:[&[&str]; 4]  = [&["皮肤"], &["干员"], &["故事集", "SideStory"], &["EP"]];
+        let count_list = futures::future::join_all(tags_list.into_iter().map(|tags| task::spawn({
             let mongo = mongo.clone();
-            let mut tags: Vec<&str> = Vec::<&str>::new();
-            tags.push("皮肤");
             async move {
                 mongo
                     .ceobe()
@@ -29,55 +29,15 @@ impl CeobeCookieLogic {
                     .get_tags_cookie_count(tags)
                     .await
             }
-        });
-        // 获取干员饼数量
-        let operator_count = task::spawn({
-            let mongo = mongo.clone();
-            let mut tags: Vec<&str> = Vec::<&str>::new();
-            tags.push("干员");
-            async move {
-                mongo
-                    .ceobe()
-                    .cookie()
-                    .analyze()
-                    .get_tags_cookie_count(tags)
-                    .await
-            }
-        });
-        // 获取活动饼数量
-        let activity_count = task::spawn({
-            let mongo = mongo.clone();
-            let mut tags: Vec<&str> = Vec::<&str>::new();
-            tags.push("SideStory");
-            tags.push("故事集");
-            async move {
-                mongo
-                    .ceobe()
-                    .cookie()
-                    .analyze()
-                    .get_tags_cookie_count(tags)
-                    .await
-            }
-        });
-        // 获取ep饼数量
-        let ep_count = task::spawn({
-            let mongo = mongo.clone();
-            let mut tags = Vec::<&str>::new();
-            tags.push("EP");
-            async move {
-                mongo
-                    .ceobe()
-                    .cookie()
-                    .analyze()
-                    .get_tags_cookie_count(tags)
-                    .await
-            }
-        });
+        }))).await;
+
+        let count_list =  count_list.into_iter().try_fold::<_, _, Result<Vec<u64>, LogicError>>(Vec::<u64>::new(), |mut vec, x| {vec.push(x??);Ok(vec)})?;
+        let [skin_count, operator_count, activity_count, ep_count] = match count_list.as_slice() {
+            &[skin_count, operator_count, activity_count, ep_count] => [skin_count, operator_count, activity_count, ep_count],
+            _ => unreachable!()
+        };
+
         let cookie_count = cookie_count.await??;
-        let skin_count = skin_count.await??;
-        let operator_count = operator_count.await??;
-        let activity_count = activity_count.await??;
-        let ep_count = ep_count.await??;
 
         Ok(CookieNumberResp::builder()
             .total_count(cookie_count)
