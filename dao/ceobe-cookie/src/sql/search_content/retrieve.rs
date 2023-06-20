@@ -45,6 +45,7 @@ where
             .collect())
     }
 
+    /// 获取下一页的饼id
     #[instrument(skip(self))]
     pub async fn get_next_page_cookie_id(
         &self, object_id: Option<String>, search_word: &str,
@@ -52,6 +53,8 @@ where
     ) -> OperateResult<Option<String>> {
         let db: &<C as GetDatabaseConnect>::Connect = self.get_connect();
         Ok(Entity::find()
+            .select_only()
+            .column(Column::ObjectId)
             .filter(
                 Condition::all()
                     .add_option(
