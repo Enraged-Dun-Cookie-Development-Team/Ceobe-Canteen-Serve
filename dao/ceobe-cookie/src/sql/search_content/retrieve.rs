@@ -83,14 +83,9 @@ mod test {
     #[test]
     fn test_gen_sql() {
         let object_id: Option<String> = None;
-        let mut datasources: Vec<i32> = Vec::new();
+        let datasources = vec![1i32, 3, 4, 6];
         let search_word: &str =
             "市组准标取';Select * from ceobe_cookie_search_content;";
-
-        datasources.push(1);
-        datasources.push(3);
-        datasources.push(4);
-        datasources.push(6);
 
         let mut query = Query::select();
         // SELECT combination_id

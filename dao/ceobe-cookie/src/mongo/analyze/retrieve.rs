@@ -47,7 +47,15 @@ where
                 collection.find(
                     filter,
                     FindOptions::builder()
-                        .projection(doc! {"_id": 0, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "compress_images": 1, "tags": 1})
+                        .projection(doc! {
+                            "_id": 0, 
+                            "meta": 1, 
+                            "source_config_id": 1, 
+                            "text": 1, 
+                            "images": 1, 
+                            "compress_images": 1, 
+                            "tags": 1
+                        })
                         .sort(doc! {"_id": -1})
                         .limit(page_size)
                         .build(),
@@ -185,7 +193,13 @@ where
                 collection.find(
                     filter,
                     FindOptions::builder()
-                        .projection(doc! {"_id": -1, "comic": "$meta.item.comic", "jump_url": "$meta.item.url", "short_title": "$text"})
+                        .projection(doc! {
+                            "_id": -1, 
+                            "comic": 
+                            "$meta.item.comic", 
+                            "jump_url": "$meta.item.url", 
+                            "short_title": "$text"
+                        })
                         .sort(doc! {"meta.timestamp.platform": -1})
                         .build(),
                 )
@@ -201,7 +215,7 @@ where
     /// 根据object_id获取相应的饼
     #[instrument(skip(self), ret)]
     pub async fn get_data_by_object_ids(
-        &'db self, object_ids: Vec<ObjectId>,
+        &'db self, object_ids: &[ObjectId],
     ) -> OperateResult<Vec<CookieInfoWithId>> {
         let collection = self.get_collection()?;
         let collection: &CollectionGuard<CookieInfoWithId> =
@@ -216,7 +230,15 @@ where
                 collection.find(
                     filter,
                     FindOptions::builder()
-                        .projection(doc! {"_id": 1, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "compress_images": 1, "tags": 1})
+                        .projection(doc! {
+                            "_id": 1, 
+                            "meta": 1, 
+                            "source_config_id": 1, 
+                            "text": 1, 
+                            "images": 1, 
+                            "compress_images": 1, 
+                            "tags": 1
+                        })
                         .sort(doc! {"_id": -1})
                         .build(),
                 )
@@ -281,7 +303,15 @@ where
                 collection.find(
                     filter,
                     FindOptions::builder()
-                        .projection(doc! {"_id": 0, "meta": 1, "source_config_id": 1, "text": 1, "images": 1, "compress_images": 1, "tags": 1})
+                        .projection(doc! {
+                            "_id": 0, 
+                            "meta": 1, 
+                            "source_config_id": 1, 
+                            "text": 1, 
+                            "images": 1, 
+                            "compress_images": 1, 
+                            "tags": 1
+                        })
                         .sort(doc! {"_id": -1})
                         .limit(page_size)
                         .build(),
