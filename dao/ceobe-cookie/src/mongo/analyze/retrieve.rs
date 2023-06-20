@@ -252,7 +252,7 @@ where
                             }
                         },
                         {
-                            "keywords.".to_string() + keyword: {
+                            format!("keywords.{keyword}"): {
                                 "$exists": true
                             }
                         }
@@ -268,7 +268,7 @@ where
                             }
                         },
                         {
-                            "keywords.".to_string() + keyword: {
+                            format!("keywords.{keyword}"): {
                                 "$exists": true
                             }
                         }
