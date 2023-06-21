@@ -30,7 +30,7 @@ impl CeobeCookieLogic {
                             .ceobe()
                             .cookie()
                             .analyze()
-                            .get_tags_cookie_count(tags)
+                            .get_cookie_count_by_tags(tags)
                             .await
                     }
                 })

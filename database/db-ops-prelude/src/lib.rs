@@ -19,7 +19,9 @@ pub use thiserror::Error as ThisError;
 pub use tracing;
 
 pub mod sql_models {
-    pub use ::sql_models::{admin_user, ceobe_operation, fetcher};
+    pub use ::sql_models::{
+        admin_user, ceobe_cookie, ceobe_operation, fetcher,
+    };
 }
 
 pub mod mongo_models {

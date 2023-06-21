@@ -1,4 +1,5 @@
 mod admin;
+mod ceobe_cookie_search_content;
 mod ceobe_operation_announcement;
 mod ceobe_operation_app_version;
 mod ceobe_operation_resource;
@@ -53,6 +54,7 @@ impl MigratorTrait for Migrator {
             fetcher_datasource_combination::m20230310_213209_create::Migration
             ceobe_operation_resource::m20230422_150425_add_type::Migration
             fetcher_datasource_config::m20230528_110010_add_jump_url::Migration
+            ceobe_cookie_search_content::m20230606_135941_create::Migration
         ]
     }
 }

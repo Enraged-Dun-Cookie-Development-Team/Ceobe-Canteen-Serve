@@ -35,6 +35,13 @@ pub struct CookieId {
     pub _id: ObjectId,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct CookieInfoWithId {
+    pub _id: ObjectId,
+    #[serde(flatten)]
+    pub cookie_info: CookieInfo,
+}
+
 // 泰拉记事社漫画数量与最终更新时间
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct TerraComicAggregate {
