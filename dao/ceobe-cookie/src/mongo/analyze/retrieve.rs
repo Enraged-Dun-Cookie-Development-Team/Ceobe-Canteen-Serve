@@ -5,7 +5,7 @@ use db_ops_prelude::{
     },
     mongo_models::ceobe::cookie::analyze::models::{
         AnalyzeModel, CookieId, CookieInfo, CookieInfoWithId,
-        TerraComicAggregate, TerraComicEpisodeInfo,
+        TerraComicAggregate, TerraComicEpisodeInfo, CookieSimpleInfo,
     },
     mongodb::{
         bson::{self, doc, oid::ObjectId, Bson, Document},
@@ -236,7 +236,6 @@ where
                             "source_config_id": 1,
                             "text": 1,
                             "images": 1,
-                            "compress_images": 1,
                             "tags": 1
                         })
                         .sort(doc! {"_id": -1})
@@ -309,7 +308,6 @@ where
                             "source_config_id": 1,
                             "text": 1,
                             "images": 1,
-                            "compress_images": 1,
                             "tags": 1
                         })
                         .sort(doc! {"_id": -1})
@@ -418,5 +416,31 @@ where
             .doing(|collection| collection.count_documents(None, None))
             .await?;
         Ok(count)
+    }
+
+    /// 获取泰拉记事社最新一个小章节漫画
+    #[instrument(skip(self), ret)]
+    pub async fn get_newest_terra_comic_episode(
+        &'db self,
+    ) -> OperateResult<Option<CookieSimpleInfo>> {
+        let collection = self.get_collection()?;
+        let collection: &CollectionGuard<CookieSimpleInfo> =
+            &collection.with_mapping();
+        let res = collection
+            .doing(|collection| {
+                collection.find_one(
+                    doc!{"meta.item.comic": {"$exists":true}},
+                    FindOneOptions::builder()
+                        .projection(doc! {
+                            "meta": 1,
+                            "text": 1,
+                            "images": 1,
+                        })
+                        .sort(doc! {"_id": -1})
+                        .build(),
+                )
+            })
+            .await?;
+        Ok(res)
     }
 }
