@@ -1,6 +1,7 @@
 #[macro_export]
 /// 辅助构造Status error 的宏
 /// 1. 新建Unit 类型的异常，并为其实现[crate::StatusErr](crate::StatusErr)
+///
 ///     ```rust
 ///         status_error!{
 ///            //|----------新建异常类型的可见性
@@ -17,6 +18,7 @@
 ///         }
 ///     ```
 /// 2. 为已有类型实现 [crate::StatusErr](crate::StatusErr)
+///
 ///     ```rust
 ///         status_error!(
 ///               // |-------------已有类型名称
