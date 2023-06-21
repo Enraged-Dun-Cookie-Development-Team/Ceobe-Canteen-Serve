@@ -5,7 +5,7 @@ use db_ops_prelude::{
     },
     mongo_models::ceobe::cookie::analyze::models::{
         AnalyzeModel, CookieId, CookieInfo, CookieInfoWithId,
-        TerraComicAggregate, TerraComicEpisodeInfo, CookieSimpleInfo,
+        CookieSimpleInfo, TerraComicAggregate, TerraComicEpisodeInfo,
     },
     mongodb::{
         bson::{self, doc, oid::ObjectId, Bson, Document},
@@ -429,7 +429,7 @@ where
         let res = collection
             .doing(|collection| {
                 collection.find_one(
-                    doc!{"meta.item.comic": {"$exists":true}},
+                    doc! {"meta.item.comic": {"$exists":true}},
                     FindOneOptions::builder()
                         .projection(doc! {
                             "meta": 1,

@@ -52,6 +52,6 @@ pub enum PlatformPrecision {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TerraHistoricusExtra{
-    pub comic: String
+pub struct TerraHistoricusExtra {
+    pub comic: String,
 }

@@ -154,12 +154,12 @@ pub struct CookieNumberResp {
     pub ep_count: u64,
 }
 
-/// 泰拉记事社最新漫画接口 
+/// 泰拉记事社最新漫画接口
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct TerraEntryResp {
     pub title: String,
     pub sub_title: String,
     pub cover_url: Option<String>,
     pub episode_short_title: String,
-    pub updated_time: i64
+    pub updated_time: i64,
 }

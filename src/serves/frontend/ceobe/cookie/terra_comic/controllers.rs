@@ -39,9 +39,6 @@ impl CookieTerraComicFrontend {
     pub async fn newest_episode(
         mongo: MongoDatabaseOperate,
     ) -> CeobeCookieRResult<Option<TerraEntryResp>> {
-        Ok(rtry!(
-            CeobeCookieLogic::newest_episode(mongo).await
-        ))
-        .into()
+        Ok(rtry!(CeobeCookieLogic::newest_episode(mongo).await)).into()
     }
 }

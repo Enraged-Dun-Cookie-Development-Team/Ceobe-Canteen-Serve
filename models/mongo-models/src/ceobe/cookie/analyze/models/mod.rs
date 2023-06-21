@@ -11,16 +11,18 @@ use typed_builder::TypedBuilder;
 use self::meta::Meta;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
-#[sub_model(all(
-    vis = "pub",
-    name = "CookieInfo",
-    extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
-),
-none(
-    vis = "pub",
-    name = "CookieSimpleInfo",
-    extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
-))]
+#[sub_model(
+    all(
+        vis = "pub",
+        name = "CookieInfo",
+        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
+    ),
+    none(
+        vis = "pub",
+        name = "CookieSimpleInfo",
+        extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
+    )
+)]
 pub struct AnalyzeModel {
     #[sub_model(want("CookieSimpleInfo"))]
     pub meta: Meta,

@@ -28,15 +28,17 @@ where
         Ok(res)
     }
 
-     /// 查询指定漫画信息
-     #[instrument(skip(self), ret)]
-     pub async fn find_comic_by_id(
-         &'db self, comic_id: &str
-     ) -> OperateResult<Option<TerraComicModel>> {
-         let collection = self.get_collection()?;
-         let res = collection
-             .doing(|collection| collection.find_one(doc! {"_id": comic_id}, None))
-             .await?;
-         Ok(res)
-     }
+    /// 查询指定漫画信息
+    #[instrument(skip(self), ret)]
+    pub async fn find_comic_by_id(
+        &'db self, comic_id: &str,
+    ) -> OperateResult<Option<TerraComicModel>> {
+        let collection = self.get_collection()?;
+        let res = collection
+            .doing(|collection| {
+                collection.find_one(doc! {"_id": comic_id}, None)
+            })
+            .await?;
+        Ok(res)
+    }
 }
