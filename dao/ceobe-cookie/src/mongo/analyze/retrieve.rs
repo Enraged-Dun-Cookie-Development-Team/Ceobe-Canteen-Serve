@@ -393,7 +393,7 @@ where
 
     /// 获取tag分类饼数量
     #[instrument(skip(self), ret)]
-    pub async fn get_tags_cookie_count(
+    pub async fn get_cookie_count_by_tags(
         &'db self, tags: &[&str],
     ) -> OperateResult<u64> {
         let collection = self.get_collection()?;
