@@ -15,15 +15,23 @@ use self::meta::Meta;
     vis = "pub",
     name = "CookieInfo",
     extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
+),
+none(
+    vis = "pub",
+    name = "CookieSimpleInfo",
+    extra(derive(Debug, Clone, Serialize, Deserialize, TypedBuilder))
 ))]
 pub struct AnalyzeModel {
+    #[sub_model(want("CookieSimpleInfo"))]
     pub meta: Meta,
     #[sub_model(ignore("CookieInfo"))]
     pub raw_id: ObjectId,
     pub source_config_id: i32,
+    #[sub_model(want("CookieSimpleInfo"))]
     pub text: String,
     #[sub_model(ignore("CookieInfo"))]
     pub status: CookieAnalyzeStatus,
+    #[sub_model(want("CookieSimpleInfo"))]
     pub images: Option<Vec<CookieImages>>,
     pub tags: Option<Value>,
     #[sub_model(ignore("CookieInfo"))]

@@ -1,7 +1,7 @@
 use axum::extract::Query;
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
-    view::{TerraCidReq, TerraComicListResp},
+    view::{TerraCidReq, TerraComicListResp, TerraEntryResp},
 };
 use mongo_migration::{
     mongo_connection::MongoDatabaseOperate,
@@ -31,6 +31,16 @@ impl CookieTerraComicFrontend {
     ) -> CeobeCookieRResult<Vec<TerraComicEpisodeInfo>> {
         Ok(rtry!(
             CeobeCookieLogic::comic_episode_list(mongo, comic).await
+        ))
+        .into()
+    }
+
+    #[instrument(ret, skip(mongo))]
+    pub async fn newest_episode(
+        mongo: MongoDatabaseOperate,
+    ) -> CeobeCookieRResult<Option<TerraEntryResp>> {
+        Ok(rtry!(
+            CeobeCookieLogic::newest_episode(mongo).await
         ))
         .into()
     }

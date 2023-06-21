@@ -11,4 +11,8 @@ pub(super) fn terra_comic_router() -> ServerRoute {
             "/episodeList",
             get(CookieTerraComicFrontend::comic_episode_list),
         )
+        .route(
+            "/newestEpisode",
+            get(CookieTerraComicFrontend::newest_episode),
+        )
 }
