@@ -2,7 +2,6 @@ use axum::extract::rejection::QueryRejection;
 use bakery::mansion::OperateError;
 use bakery_logic::error::LogicError;
 use mongo_migration::mongo_models::bakery::mansion::checkers::CheckError;
-use resp_result::RespResult;
 
 use crate::error_generate;
 
@@ -16,5 +15,3 @@ error_generate!(
     ModifyVerify = modify_cache::Error
     BakeryLogic = LogicError
 );
-
-

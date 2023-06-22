@@ -1,15 +1,21 @@
-use std::{iter::Iterator, fmt::Debug, ops::Add};
+use std::{iter::Iterator, ops::Add};
 
 use db_ops_prelude::{
-    chrono::{Duration, Local, format::{DelayedFormat, StrftimeItems}, self},
+    chrono::{
+        self,
+        format::{DelayedFormat, StrftimeItems},
+        Duration, Local,
+    },
     futures::StreamExt,
     get_connect::GetDatabaseCollection,
-    mongo_connection::{CollectionGuard, MongoDbCollectionTrait, MongoDbError},
+    mongo_connection::{
+        CollectionGuard, MongoDbCollectionTrait, MongoDbError,
+    },
     mongo_models::bakery::mansion::preludes::{
         MansionId, Mid, ModelMansion, ModifyAt, RecentPredict,
     },
     mongodb::{
-        bson::{doc, DateTime, Document, self},
+        bson::{self, doc, DateTime, Document},
         options::FindOptions,
     },
     tap::Tap,
@@ -139,12 +145,14 @@ where
         .await
     }
 
-    /// 获取最近一天的预测（明天后最近的预测）-如果同时多个大厦符合，获取新大厦的
+    /// 获取最近一天的预测（明天后最近的预测）-如果同时多个大厦符合，
+    /// 获取新大厦的
     pub async fn get_recent_predict(
-        &'db self
+        &'db self,
     ) -> OperateResult<Option<RecentPredict>> {
         let fmt = "%Y-%m-%d";
-        let now: chrono::prelude::DateTime<Local> = Local::now().add(Duration::days(1));
+        let now: chrono::prelude::DateTime<Local> =
+            Local::now().add(Duration::days(1));
         let dft: DelayedFormat<StrftimeItems> = now.format(fmt);
         let str_now: String = dft.to_string();
 
@@ -169,8 +177,8 @@ where
 
         let project = doc! {
             "$project": {
-                "_id": 0, 
-                "id": "$id", 
+                "_id": 0,
+                "id": "$id",
                 "description":"$description",
                 "daily": "$daily"
             }
@@ -190,24 +198,24 @@ where
         pipeline.push(limit);
 
         let mut vec = collection
-        .doing(|collection| collection.aggregate(pipeline, None))
-        .await?;
+            .doing(|collection| collection.aggregate(pipeline, None))
+            .await?;
         let mut res = Vec::<RecentPredict>::new();
         while let Some(v) = vec.next().await {
             res.push(bson::from_document(v.map_err(MongoDbError::from)?)?);
         }
-        
+
         Ok(match res.is_empty() {
             true => None,
             false => Some(res.get(0).unwrap().clone()),
         })
     }
 
-
-    /// 获取最近一天的结果（今天前最近的预测）-如果同时多个大厦符合，获取新大厦的
+    /// 获取最近一天的结果（今天前最近的预测）-如果同时多个大厦符合，
+    /// 获取新大厦的
     #[instrument(skip(self), ret)]
     pub async fn get_recent_result(
-        &'db self
+        &'db self,
     ) -> OperateResult<Option<RecentPredict>> {
         let fmt = "%Y-%m-%d";
         let now: chrono::prelude::DateTime<Local> = Local::now();
@@ -235,8 +243,8 @@ where
 
         let project = doc! {
             "$project": {
-                "_id": 0, 
-                "id": "$id", 
+                "_id": 0,
+                "id": "$id",
                 "description":"$description",
                 "daily": "$daily"
             }
@@ -256,13 +264,13 @@ where
         pipeline.push(limit);
 
         let mut vec = collection
-        .doing(|collection| collection.aggregate(pipeline, None))
-        .await?;
+            .doing(|collection| collection.aggregate(pipeline, None))
+            .await?;
         let mut res = Vec::<RecentPredict>::new();
         while let Some(v) = vec.next().await {
             res.push(bson::from_document(v.map_err(MongoDbError::from)?)?);
         }
-        
+
         Ok(match res.is_empty() {
             true => None,
             false => Some(res.get(0).unwrap().clone()),

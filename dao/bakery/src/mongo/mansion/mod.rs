@@ -3,7 +3,8 @@ use std::ops::Deref;
 use abstract_database::bakery::BakeryDatabaseOperate;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
-    mongo_connection::MongoDbError, mongodb::bson,
+    mongo_connection::MongoDbError,
+    mongodb::bson,
 };
 
 mod create;

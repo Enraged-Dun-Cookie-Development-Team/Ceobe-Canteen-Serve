@@ -11,5 +11,8 @@ pub(super) fn mansion_router() -> ServerRoute {
             get(BakeryMansionFrontend::get_mansion_with_time),
         )
         .route("/mansionId", get(BakeryMansionFrontend::get_all_id))
-        .route("/mansion/recentPredict", get(BakeryMansionFrontend::recent_mansion_predict))
+        .route(
+            "/mansion/recentPredict",
+            get(BakeryMansionFrontend::recent_mansion_predict),
+        )
 }

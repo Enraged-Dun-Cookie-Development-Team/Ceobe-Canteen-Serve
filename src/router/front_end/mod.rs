@@ -4,7 +4,6 @@ mod cookie;
 mod operation;
 mod user;
 use axum::Router;
-pub use self::bakery::BakeryMansionFrontend;
 pub use config::ConfigDatasourceFrontend;
 pub use cookie::{
     CookieInfoFrontend, CookieSearchFrontend, CookieTerraComicFrontend,
@@ -15,6 +14,7 @@ pub use operation::{
 };
 pub use user::CeobeUserFrontend;
 
+pub use self::bakery::BakeryMansionFrontend;
 use self::{
     bakery::bakery_router, config::config_router,
     cookie::ceobe_cookie_router, operation::ceobe_operation_router,

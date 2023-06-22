@@ -1,4 +1,6 @@
-use db_ops_prelude::mongo_models::bakery::mansion::preludes::{Daily, RecentPredict};
+use db_ops_prelude::mongo_models::bakery::mansion::preludes::{
+    Daily, RecentPredict,
+};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -9,14 +11,14 @@ pub struct MansionRecentPredictResp {
     pub daily: Daily,
 }
 
-impl Into<MansionRecentPredictResp> for RecentPredict {
-    fn into(self) -> MansionRecentPredictResp {
-        let RecentPredict{
+impl From<RecentPredict> for MansionRecentPredictResp {
+    fn from(val: RecentPredict) -> Self {
+        let RecentPredict {
             id,
             description,
             daily,
-        } = self;
-        MansionRecentPredictResp {
+        } = val;
+        Self {
             id: id.to_string(),
             description,
             daily,

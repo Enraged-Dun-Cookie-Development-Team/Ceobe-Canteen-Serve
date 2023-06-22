@@ -1,7 +1,7 @@
 use std::convert::Infallible;
 
 use bakery::mansion::OperateError as MansionOperateError;
-use status_err::{StatusErr};
+use status_err::StatusErr;
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
