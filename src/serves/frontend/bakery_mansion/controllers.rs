@@ -1,12 +1,13 @@
 use bakery::{mansion::ToMansion, ToBakery};
+use bakery_logic::{impletements::BakeryLogic, view::MansionRecentPredictResp};
 use checker::CheckExtract;
 use modify_cache::CacheMode;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
-use resp_result::{resp_try, FlagWrap};
+use mongo_migration::{mongo_connection::MongoDatabaseOperate, mongo_models::bakery::mansion::preludes::RecentPredict};
+use resp_result::{resp_try, FlagWrap, rtry};
 use tracing::instrument;
 
 use super::{
-    models::MidCheckerPretreatment, view::MansionIds, FlagMansionRResult,
+    models::MidCheckerPretreatment, view::MansionIds, FlagMansionRResult, MansionRResult
 };
 use crate::{
     router::BakeryMansionFrontend,
@@ -46,5 +47,15 @@ impl BakeryMansionFrontend {
             Ok(FlagWrap::new(MansionIds::into_inner(data), extra))
         })
         .await
+    }
+
+    #[instrument(skip(mongo))]
+    pub async fn recent_mansion_predict(
+        mongo: MongoDatabaseOperate
+    ) -> MansionRResult<Option<MansionRecentPredictResp>> {
+        Ok(rtry!(
+            BakeryLogic::recent_mansion_predict(mongo).await
+        ))
+        .into()
     }
 }
