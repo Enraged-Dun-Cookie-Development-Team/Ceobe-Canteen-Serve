@@ -124,3 +124,11 @@ impl MansionId {
         }
     }
 }
+
+// 最近的一个预测信息
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct RecentPredict {
+    pub id: MansionId,
+    pub description: String,
+    pub daily: Daily,
+}

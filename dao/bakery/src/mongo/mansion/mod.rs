@@ -3,7 +3,7 @@ use std::ops::Deref;
 use abstract_database::bakery::BakeryDatabaseOperate;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
-    mongo_connection::MongoDbError,
+    mongo_connection::MongoDbError, mongodb::bson,
 };
 
 mod create;
@@ -32,6 +32,9 @@ pub enum OperateError {
         http_code = "HttpCode::CONFLICT"
     ))]
     MansionIdExist(String),
+
+    #[error("bson序列化错误")]
+    MongoDeError(#[from] bson::de::Error),
 }
 
 pub struct MansionOperate<'db, Conn>(&'db Conn);

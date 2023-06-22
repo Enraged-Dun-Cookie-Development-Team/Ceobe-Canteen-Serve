@@ -1,15 +1,15 @@
-use std::iter::Iterator;
+use std::{iter::Iterator, fmt::Debug, ops::Add};
 
 use db_ops_prelude::{
-    chrono::{Duration, Local},
+    chrono::{Duration, Local, format::{DelayedFormat, StrftimeItems}, self},
     futures::StreamExt,
     get_connect::GetDatabaseCollection,
-    mongo_connection::{CollectionGuard, MongoDbCollectionTrait},
+    mongo_connection::{CollectionGuard, MongoDbCollectionTrait, MongoDbError},
     mongo_models::bakery::mansion::preludes::{
-        MansionId, Mid, ModelMansion, ModifyAt,
+        MansionId, Mid, ModelMansion, ModifyAt, RecentPredict,
     },
     mongodb::{
-        bson::{doc, DateTime, Document},
+        bson::{doc, DateTime, Document, self},
         options::FindOptions,
     },
     tap::Tap,
@@ -137,5 +137,135 @@ where
             &collection.with_mapping(),
         )
         .await
+    }
+
+    /// 获取最近一天的预测（明天后最近的预测）-如果同时多个大厦符合，获取新大厦的
+    pub async fn get_recent_predict(
+        &'db self
+    ) -> OperateResult<Option<RecentPredict>> {
+        let fmt = "%Y-%m-%d";
+        let now: chrono::prelude::DateTime<Local> = Local::now().add(Duration::days(1));
+        let dft: DelayedFormat<StrftimeItems> = now.format(fmt);
+        let str_now: String = dft.to_string();
+
+        let collection = self.get_collection()?;
+        let collection: &CollectionGuard<RecentPredict> =
+            &collection.with_mapping();
+        let mut pipeline = Vec::<Document>::new();
+
+        let unwind = doc! {
+            "$unwind": "$daily"
+        };
+        pipeline.push(unwind);
+
+        let match_op = doc! {
+            "$match": {
+                "daily.datetime": {
+                    "$gte": str_now
+                }
+            }
+        };
+        pipeline.push(match_op);
+
+        let project = doc! {
+            "$project": {
+                "_id": 0, 
+                "id": "$id", 
+                "description":"$description",
+                "daily": "$daily"
+            }
+        };
+        pipeline.push(project);
+
+        let sort = doc! {
+            "$sort": {
+                "daily.datetime": 1, "id": -1
+            }
+        };
+        pipeline.push(sort);
+
+        let limit = doc! {
+            "$limit": 1
+        };
+        pipeline.push(limit);
+
+        let mut vec = collection
+        .doing(|collection| collection.aggregate(pipeline, None))
+        .await?;
+        let mut res = Vec::<RecentPredict>::new();
+        while let Some(v) = vec.next().await {
+            res.push(bson::from_document(v.map_err(MongoDbError::from)?)?);
+        }
+        
+        Ok(match res.is_empty() {
+            true => None,
+            false => Some(res.get(0).unwrap().clone()),
+        })
+    }
+
+
+    /// 获取最近一天的结果（今天前最近的预测）-如果同时多个大厦符合，获取新大厦的
+    #[instrument(skip(self), ret)]
+    pub async fn get_recent_result(
+        &'db self
+    ) -> OperateResult<Option<RecentPredict>> {
+        let fmt = "%Y-%m-%d";
+        let now: chrono::prelude::DateTime<Local> = Local::now();
+        let dft: DelayedFormat<StrftimeItems> = now.format(fmt);
+        let str_now: String = dft.to_string();
+
+        let collection = self.get_collection()?;
+        let collection: &CollectionGuard<RecentPredict> =
+            &collection.with_mapping();
+        let mut pipeline = Vec::<Document>::new();
+
+        let unwind = doc! {
+            "$unwind": "$daily"
+        };
+        pipeline.push(unwind);
+
+        let match_op = doc! {
+            "$match": {
+                "daily.datetime": {
+                    "$lte": str_now
+                }
+            }
+        };
+        pipeline.push(match_op);
+
+        let project = doc! {
+            "$project": {
+                "_id": 0, 
+                "id": "$id", 
+                "description":"$description",
+                "daily": "$daily"
+            }
+        };
+        pipeline.push(project);
+
+        let sort = doc! {
+            "$sort": {
+                "daily.datetime": -1, "id": -1
+            }
+        };
+        pipeline.push(sort);
+
+        let limit = doc! {
+            "$limit": 1
+        };
+        pipeline.push(limit);
+
+        let mut vec = collection
+        .doing(|collection| collection.aggregate(pipeline, None))
+        .await?;
+        let mut res = Vec::<RecentPredict>::new();
+        while let Some(v) = vec.next().await {
+            res.push(bson::from_document(v.map_err(MongoDbError::from)?)?);
+        }
+        
+        Ok(match res.is_empty() {
+            true => None,
+            false => Some(res.get(0).unwrap().clone()),
+        })
     }
 }
