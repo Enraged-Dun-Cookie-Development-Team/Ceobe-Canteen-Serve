@@ -204,7 +204,11 @@ where
         let res = vec.next().await;
 
         Ok(match res {
-            Some(predict) => Some(bson::from_document::<RecentPredict>(predict.map_err(MongoDbError::from)?)?),
+            Some(predict) => {
+                Some(bson::from_document::<RecentPredict>(
+                    predict.map_err(MongoDbError::from)?,
+                )?)
+            }
             None => None,
         })
     }
@@ -267,7 +271,11 @@ where
         let res = vec.next().await;
 
         Ok(match res {
-            Some(predict) => Some(bson::from_document::<RecentPredict>(predict.map_err(MongoDbError::from)?)?),
+            Some(predict) => {
+                Some(bson::from_document::<RecentPredict>(
+                    predict.map_err(MongoDbError::from)?,
+                )?)
+            }
             None => None,
         })
     }
