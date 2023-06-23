@@ -7,7 +7,7 @@ use status_err::ErrPrefix;
 use tracing::{error, instrument, warn};
 
 #[macro_export]
-/// 1. 辅助构造枚举形式的Error,  
+/// 1. 辅助构造枚举形式的Error,
 /// 并提供 [Form](std::convert::Form)转换实现，
 /// 和 [StatusErr](status_err::StatusErr)实现
 ///     ```rust
@@ -21,6 +21,7 @@ use tracing::{error, instrument, warn};
 ///     );
 ///     ```
 /// 2. 为现有类型生成包装类型
+///
 ///     ```rust
 ///         error_generate!(
 ///         //   |------------新建包装类型的可见性
