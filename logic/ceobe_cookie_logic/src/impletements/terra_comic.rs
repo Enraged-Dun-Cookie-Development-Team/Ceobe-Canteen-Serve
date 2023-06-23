@@ -7,7 +7,8 @@ use db_ops_prelude::{
     mongo_connection::MongoDatabaseOperate,
     mongo_models::ceobe::cookie::{
         analyze::models::{
-            meta::TerraHistoricusExtra, TerraComicEpisodeInfo,
+            meta::TerraHistoricusExtra, CookieSimpleInfo,
+            TerraComicEpisodeInfo,
         },
         terra_comic::models::ComicInfoWithoutCid,
     },
@@ -84,7 +85,12 @@ impl CeobeCookieLogic {
     pub async fn newest_episode(
         mongo: MongoDatabaseOperate,
     ) -> LogicResult<Option<TerraEntryResp>> {
-        let episode: Option<db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::CookieSimpleInfo> = mongo.ceobe().cookie().analyze().get_newest_terra_comic_episode().await?;
+        let episode: Option<CookieSimpleInfo> = mongo
+            .ceobe()
+            .cookie()
+            .analyze()
+            .get_newest_terra_comic_episode()
+            .await?;
 
         if let Some(episode) = episode {
             // 这边在数据库查询时候已经保证这个字段存在
