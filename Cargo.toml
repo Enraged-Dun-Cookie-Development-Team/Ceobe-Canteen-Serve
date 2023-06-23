@@ -210,3 +210,6 @@ path = "./logic/ceobe_user_logic"
 [dependencies.ceobe_cookie_logic]
 path = "./logic/ceobe_cookie_logic"
 
+[dependencies.bakery_logic]
+path = "./logic/bakery_logic"
+

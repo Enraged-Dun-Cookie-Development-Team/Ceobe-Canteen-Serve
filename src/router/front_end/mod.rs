@@ -1,10 +1,9 @@
-mod bakery_mansion;
+mod bakery;
 mod config;
 mod cookie;
 mod operation;
 mod user;
 use axum::Router;
-pub use bakery_mansion::BakeryMansionFrontend;
 pub use config::ConfigDatasourceFrontend;
 pub use cookie::{
     CookieInfoFrontend, CookieSearchFrontend, CookieTerraComicFrontend,
@@ -15,15 +14,16 @@ pub use operation::{
 };
 pub use user::CeobeUserFrontend;
 
+pub use self::bakery::BakeryMansionFrontend;
 use self::{
-    bakery_mansion::bakery_mansion_router, config::config_router,
+    bakery::bakery_router, config::config_router,
     cookie::ceobe_cookie_router, operation::ceobe_operation_router,
     user::ceobe_user_router,
 };
 use super::ServerRoute;
 pub(super) fn front_end_router() -> ServerRoute {
     Router::new()
-        .nest("/bakery", bakery_mansion_router())
+        .nest("/bakery", bakery_router())
         .nest("/operate", ceobe_operation_router())
         .nest("/user", ceobe_user_router())
         .nest("/config", config_router())
