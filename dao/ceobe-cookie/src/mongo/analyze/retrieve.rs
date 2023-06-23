@@ -167,6 +167,12 @@ where
             }
         };
         pipeline.push(match_pipeline);
+        let sort = doc! {
+            "$sort": {
+                "update_time": -1
+            }
+        };
+        pipeline.push(sort);
         let mut vec = collection
             .doing(|collection| collection.aggregate(pipeline, None))
             .await?;
