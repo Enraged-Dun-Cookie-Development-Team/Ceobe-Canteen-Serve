@@ -150,10 +150,10 @@ where
     pub async fn get_recent_predict(
         &'db self,
     ) -> OperateResult<Option<RecentPredict>> {
-        let fmt = "%Y-%m-%d";
+        const FMT: &str = "%Y-%m-%d";
         let now: chrono::prelude::DateTime<Local> =
             Local::now().add(Duration::days(1));
-        let dft: DelayedFormat<StrftimeItems> = now.format(fmt);
+        let dft: DelayedFormat<StrftimeItems> = now.format(FMT);
         let str_now: String = dft.to_string();
 
         let collection = self.get_collection()?;
@@ -200,14 +200,12 @@ where
         let mut vec = collection
             .doing(|collection| collection.aggregate(pipeline, None))
             .await?;
-        let mut res = Vec::<RecentPredict>::new();
-        while let Some(v) = vec.next().await {
-            res.push(bson::from_document(v.map_err(MongoDbError::from)?)?);
-        }
 
-        Ok(match res.is_empty() {
-            true => None,
-            false => Some(res.get(0).unwrap().clone()),
+        let res = vec.next().await;
+
+        Ok(match res {
+            Some(predict) => Some(bson::from_document::<RecentPredict>(predict.map_err(MongoDbError::from)?)?),
+            None => None,
         })
     }
 
@@ -217,9 +215,9 @@ where
     pub async fn get_recent_result(
         &'db self,
     ) -> OperateResult<Option<RecentPredict>> {
-        let fmt = "%Y-%m-%d";
+        const FMT: &str = "%Y-%m-%d";
         let now: chrono::prelude::DateTime<Local> = Local::now();
-        let dft: DelayedFormat<StrftimeItems> = now.format(fmt);
+        let dft: DelayedFormat<StrftimeItems> = now.format(FMT);
         let str_now: String = dft.to_string();
 
         let collection = self.get_collection()?;
@@ -266,14 +264,11 @@ where
         let mut vec = collection
             .doing(|collection| collection.aggregate(pipeline, None))
             .await?;
-        let mut res = Vec::<RecentPredict>::new();
-        while let Some(v) = vec.next().await {
-            res.push(bson::from_document(v.map_err(MongoDbError::from)?)?);
-        }
+        let res = vec.next().await;
 
-        Ok(match res.is_empty() {
-            true => None,
-            false => Some(res.get(0).unwrap().clone()),
+        Ok(match res {
+            Some(predict) => Some(bson::from_document::<RecentPredict>(predict.map_err(MongoDbError::from)?)?),
+            None => None,
         })
     }
 }
