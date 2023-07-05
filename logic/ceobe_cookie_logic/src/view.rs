@@ -1,7 +1,7 @@
 use ceobe_cookie::CookieTimestamp;
 use db_ops_prelude::mongo_models::ceobe::cookie::{
     analyze::models::{
-        images::CookieImages, meta::Item, TerraComicAggregate,
+        images::CookieImages, meta::{Item, Source}, TerraComicAggregate,
     },
     terra_comic::models::ComicInfoWithoutCid,
 };
@@ -36,6 +36,7 @@ pub struct SingleCookie {
     pub timestamp: CookieTimestamp,
     pub default_cookie: DefaultCookie,
     pub item: Item,
+    pub source: Source,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DefaultCookie {

@@ -167,7 +167,7 @@ impl CeobeCookieLogic {
                 |CookieInfo {
                      meta:
                          Meta {
-                             item, timestamp, ..
+                             item, timestamp, source, ..
                          },
                      source_config_id,
                      text,
@@ -192,6 +192,7 @@ impl CeobeCookieLogic {
                         .item(item)
                         .timestamp(timestamp)
                         .default_cookie(DefaultCookie { text, images })
+                        .source(source)
                         .build()
                 },
             )
