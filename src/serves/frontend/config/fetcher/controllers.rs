@@ -4,7 +4,7 @@ use bitmap_convert::{
 };
 use bitmaps::Bitmap;
 use general_request_client::{client::RequestClient, traits::Requester};
-use http::Method;
+use http::{Method, Version};
 use resp_result::resp_try;
 use scheduler_notifier::SchedulerUrl;
 use serde_json::{json, Value};
@@ -27,7 +27,8 @@ impl ConfigFetcherFrontend {
         }
 
         impl Requester for StandAloneFetcherConfigRequester {
-            const METHOD: http::Method = Method::POST;
+            const METHOD: Method = Method::POST;
+            const VERSION: Version = Version::HTTP_11;
 
             fn get_url(&self) -> Url { self.url.take_url() }
 
