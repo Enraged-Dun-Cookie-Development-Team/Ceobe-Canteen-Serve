@@ -1,7 +1,7 @@
 use ceobe_cookie::CookieTimestamp;
 use db_ops_prelude::mongo_models::ceobe::cookie::{
     analyze::models::{
-        images::CookieImages, meta::Item, TerraComicAggregate,
+        images::CookieImages, meta::{Item, Source}, TerraComicAggregate,
     },
     terra_comic::models::ComicInfoWithoutCid,
 };
@@ -36,6 +36,7 @@ pub struct SingleCookie {
     pub timestamp: CookieTimestamp,
     pub default_cookie: DefaultCookie,
     pub item: Item,
+    pub source: Source,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DefaultCookie {
@@ -129,4 +130,37 @@ pub struct TerraComicListResp {
     /// 该漫画基础信息
     #[serde(flatten)]
     pub info: ComicInfoWithoutCid,
+}
+
+/// 搜索列表的请求体
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct SearchListReq {
+    pub cookie_id: Option<ObjectId>,
+    pub datasource_comb_id: String,
+    pub search_word: String,
+}
+
+/// 饼数量接口
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct CookieNumberResp {
+    // 总饼数量
+    pub total_count: u64,
+    /// 服饰数量
+    pub skin_count: u64,
+    /// 干员数量
+    pub operator_count: u64,
+    /// 活动数量
+    pub activity_count: u64,
+    /// ep数量
+    pub ep_count: u64,
+}
+
+/// 泰拉记事社最新漫画接口
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct TerraEntryResp {
+    pub title: String,
+    pub sub_title: String,
+    pub cover_url: Option<String>,
+    pub episode_short_title: String,
+    pub updated_time: i64,
 }

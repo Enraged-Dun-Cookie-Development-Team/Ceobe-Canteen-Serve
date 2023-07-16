@@ -53,10 +53,10 @@ mod test {
 
         // select count (fetcher_datasource_config.id) as count
         query.expr_as(
-            Expr::tbl(
+            Expr::col((
                 model_datasource_config::Entity,
                 model_datasource_config::Column::Id,
-            )
+            ))
             .count(),
             Alias::new("count"),
         );
@@ -67,15 +67,16 @@ mod test {
         // join
         query.left_join(
             model_datasource_config::Entity,
-            Expr::tbl(Entity, model_platform_config::Column::TypeId).equals(
-                model_datasource_config::Entity,
-                model_datasource_config::Column::Platform,
-            ),
+            Expr::col((Entity, model_platform_config::Column::TypeId))
+                .equals((
+                    model_datasource_config::Entity,
+                    model_datasource_config::Column::Platform,
+                )),
         );
 
         // where
         query.and_where(
-            Expr::tbl(Entity, model_platform_config::Column::Id).eq(pid),
+            Expr::col((Entity, model_platform_config::Column::Id)).eq(pid),
         );
 
         query

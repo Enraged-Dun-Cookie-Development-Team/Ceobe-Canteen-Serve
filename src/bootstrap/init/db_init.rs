@@ -20,7 +20,7 @@ async fn connect_mysql_db_with_migrate<'arg>(
     database: &'arg DbConfig, admin_user: &'arg FirstUserConfig,
 ) -> Result<(), DbErr> {
     connect_db_with_migrate::<SqlDatabase, _, _>(database, |db| {
-        async {
+        async move {
             Migrator::up(db, None).await?;
             // 创建初始后台用户
             create_default_user(db, admin_user).await;

@@ -3,11 +3,12 @@ use std::convert::Infallible;
 use bitmap_convert::error::Error as BitmapConvError;
 use ceobe_cookie::{
     analyze::OperateError as AnalyzeOperateError,
+    search_content::OperateError as SearchContentOperateError,
     temp_list::OperateError as TempListOperateError,
     terra_comic::OperateError as TerraComicOperateError,
 };
 use ceobe_user::property::OperateError as CeobeUserOperateError;
-use db_ops_prelude::mongodb::bson::oid::ObjectId;
+use db_ops_prelude::mongodb::bson::{self, oid::ObjectId};
 use fetcher::{
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceOperateError,
@@ -45,6 +46,10 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
+    SearchContentOperateError(#[from] SearchContentOperateError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
     DatasourceCombinationOperateError(
         #[from] DatasourceCombinationOperateError,
     ),
@@ -74,6 +79,9 @@ pub enum LogicError {
     #[error("更新饼id缓存失效：{0}")]
     #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001D,))]
     UpdateCookieIdCacheFailure(ObjectId),
+
+    #[error(transparent)]
+    BsonOidErr(#[from] bson::oid::Error),
 }
 
 impl From<Infallible> for LogicError {

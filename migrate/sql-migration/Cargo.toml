@@ -13,5 +13,5 @@ path = "src/lib.rs"
 [dependencies]
 tokio = { workspace = true }
 chrono = { workspace = true }
-sea-orm-migration = { version = "0.10" }
+sea-orm-migration = { version = "0.11" }
 sql-models = { path = "../../models/sql-models" }

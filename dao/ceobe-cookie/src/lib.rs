@@ -8,6 +8,8 @@ use db_ops_prelude::database_operates::sub_operate::{
 pub use db_ops_prelude::mongo_models::ceobe::cookie::analyze::models::meta::Timestamp as CookieTimestamp;
 
 #[path = "mongo/analyze/mod.rs"] pub mod analyze;
+#[path = "sql/search_content/mod.rs"]
+pub mod search_content;
 #[path = "mongo/temp_list/mod.rs"] pub mod temp_list;
 #[path = "mongo/terra_comic/mod.rs"] pub mod terra_comic;
 
