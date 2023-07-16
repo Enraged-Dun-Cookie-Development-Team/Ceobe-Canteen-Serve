@@ -11,7 +11,7 @@ pub(super) fn datasource_router() -> ServerRoute {
     Router::new()
         .route("/list", get(ConfigDatasourceFrontend::datasource_list))
         .route(
-            "/standalone_fetcher_config/:combine_id",
+            "/standaloneFetcherConfig/:combine_id",
             post(ConfigDatasourceFrontend::standalone_fetcher_config),
         )
 }
