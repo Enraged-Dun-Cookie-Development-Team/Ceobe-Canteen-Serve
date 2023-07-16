@@ -17,12 +17,16 @@ where
 {
     type Service = AsyncRequireAuthorization<S, MobVerify>;
 
-    fn layer(&self, inner: S) -> Self::Service { self.0.layer(inner) }
+    fn layer(&self, inner: S) -> Self::Service {
+        self.0.layer(inner)
+    }
 }
 
 impl MobVerifyLayer {
     #[allow(dead_code)]
-    pub fn new() -> Self { Self(InnerLayer::new(MobVerify::default())) }
+    pub fn new() -> Self {
+        Self(InnerLayer::new(MobVerify))
+    }
 }
 
 type InnerLayer = AsyncRequireAuthorizationLayer<service::MobVerify>;

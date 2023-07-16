@@ -7,7 +7,7 @@ where
     E: Encoder + Default,
 {
     fn from(s: String) -> Self {
-        CryptoWarp(PhantomData::default(), CryptoString::new_raw(s))
+        CryptoWarp(PhantomData, CryptoString::new_raw(s))
     }
 }
 
@@ -16,7 +16,7 @@ where
     E: Encoder + Default,
 {
     fn from(s: String) -> Self {
-        CryptoWarp(PhantomData::default(), CryptoString::new_crypto(s))
+        CryptoWarp(PhantomData, CryptoString::new_crypto(s))
     }
 }
 
