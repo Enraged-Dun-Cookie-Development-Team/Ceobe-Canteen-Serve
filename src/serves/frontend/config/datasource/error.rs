@@ -9,8 +9,6 @@ error_generate! {
 
     Query = QueryRejection
     DatasourceOperate = DatasourceOperateError
-    Base70ConvBitmap = bitmap_convert::error::Error
-    RequestError = reqwest::Error
 }
 
 pub type DatasourceRResult<T> = RespResult<T, DatasourceError>;
