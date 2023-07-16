@@ -32,6 +32,7 @@ impl ConfigDatasourceFrontend {
         ))
         .into()
     }
+
     #[instrument(skip(request_client))]
     // #[axum_macros::debug_handler]
     pub async fn standalone_fetcher_config(
@@ -47,9 +48,8 @@ impl ConfigDatasourceFrontend {
         impl Requester for StandAloneFetcherConfigRequester {
             const METHOD: http::Method = Method::POST;
 
-            fn get_url(&self) -> Url {
-                self.url.take_url()
-            }
+            fn get_url(&self) -> Url { self.url.take_url() }
+
             fn prepare_request<
                 B: general_request_client::traits::RequestBuilder,
             >(
