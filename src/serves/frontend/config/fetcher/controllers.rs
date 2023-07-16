@@ -1,5 +1,3 @@
-use super::error::FetcherRResult;
-use crate::router::ConfigFetcherFrontend;
 use axum::extract::{Path, State};
 use bitmap_convert::{
     base70::BitmapBase70Conv, vec_usize::BitmapVecUsizeConv,
@@ -12,6 +10,9 @@ use scheduler_notifier::SchedulerUrl;
 use serde_json::{json, Value};
 use tracing::instrument;
 use url::Url;
+
+use super::error::FetcherRResult;
+use crate::router::ConfigFetcherFrontend;
 
 impl ConfigFetcherFrontend {
     #[instrument(skip(request_client))]
@@ -28,9 +29,7 @@ impl ConfigFetcherFrontend {
         impl Requester for StandAloneFetcherConfigRequester {
             const METHOD: http::Method = Method::POST;
 
-            fn get_url(&self) -> Url {
-                self.url.take_url()
-            }
+            fn get_url(&self) -> Url { self.url.take_url() }
 
             fn prepare_request<
                 B: general_request_client::traits::RequestBuilder,
