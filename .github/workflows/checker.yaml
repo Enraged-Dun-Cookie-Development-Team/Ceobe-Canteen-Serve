@@ -2,7 +2,7 @@ name: check CI
 
 on:
   pull_request:
-    branches: [ master, deploy ]
+    branches: [master, deploy]
     paths-ignore:
       - "**.md"
       - "**.py"
@@ -28,7 +28,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly
-          components:  rustfmt
+          components: rustfmt
       - name: Install Protoc
         uses: arduino/setup-protoc@v1
       - run: ls -l ./assets/proto/protos

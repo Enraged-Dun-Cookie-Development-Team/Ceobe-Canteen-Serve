@@ -21,7 +21,8 @@ impl DatasourceOperate<'_, NoConnect> {
         <T as IntoIterator>::IntoIter: Send,
     {
         let mut ids = ids.into_iter();
-        let Some(first) = ids.next() else{
+        let Some(first) = ids.next()
+        else {
             return Ok(true);
         };
         // let query = gen_query_verify_all_datasource_id_exist(first, ids);
@@ -107,7 +108,8 @@ where
         let db = self.get_connect();
 
         let mut uuids = uuids.into_iter();
-        let Some(first) = uuids.next() else{
+        let Some(first) = uuids.next()
+        else {
             return Ok(true);
         };
         let first =

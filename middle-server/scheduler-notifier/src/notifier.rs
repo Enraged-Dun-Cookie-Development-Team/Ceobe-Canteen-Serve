@@ -24,6 +24,8 @@ impl SchedulerUrl {
     pub fn new_cfg(cfg: &impl SchedulerNotifierConfig) -> Self {
         Self::new(cfg.base_url())
     }
+
+    pub fn take_url(&self) -> Url { Url::clone(&self.0) }
 }
 
 pub type SchedulerNotifier = NotifySender;

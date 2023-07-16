@@ -156,6 +156,8 @@ ceobe-cookie.workspace = true
 qiniu-cdn-upload.workspace = true
 mob-push-server.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "middle-server/qq-channel-warning" }
+bitmap-convert.workspace = true
+bitmaps.workspace = true
 
 [dependencies.tokio]
 workspace = true

@@ -42,36 +42,45 @@ impl Checker for UniqueKeyChecker {
     type Unchecked = PreCheckFetcherDatasourceConfig;
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        ready('checker: {
-            // if not provide unique key using 0
-            let Some(unique_key) = uncheck.unique_key else{
-                break 'checker Ok("-")
-            };
+        ready(
+            'checker: {
+                // if not provide unique key using 0
+                let Some(unique_key) = uncheck.unique_key
+                else {
+                    break 'checker Ok("-");
+                };
 
-            // try get the unique for number
-            let Some(Value::String(identify))= uncheck.config.get(&unique_key) else{
-                break 'checker Err(super::CheckError::UniqueKeyInvalid(unique_key))
-            };
+                // try get the unique for number
+                let Some(Value::String(identify)) =
+                    uncheck.config.get(&unique_key)
+                else {
+                    break 'checker Err(super::CheckError::UniqueKeyInvalid(
+                        unique_key,
+                    ));
+                };
 
-            if let Err(err)= StrMaxCharLenChecker::<_,64>::ref_checker((),identify).into_inner(){
-                break 'checker Err(err.into())
+                if let Err(err) =
+                    StrMaxCharLenChecker::<_, 64>::ref_checker((), identify)
+                        .into_inner()
+                {
+                    break 'checker Err(err.into());
+                }
+
+                Ok(identify.as_str())
             }
-
-            Ok(
-                identify.as_str()
-                )
-        }
-        .map(ToOwned::to_owned)
-        .map(|unique|{
-            FetcherDatasourceConfig::builder()
-            .id(uncheck.id)
-            .avatar(uncheck.avatar)
-            .config(uncheck.config)
-            .datasource(uncheck.datasource)
-            .platform(uncheck.platform)
-            .nickname(uncheck.nickname).unique_key(unique)
-            .jump_url(uncheck.jump_url)
-            .build()
-        }))
+            .map(ToOwned::to_owned)
+            .map(|unique| {
+                FetcherDatasourceConfig::builder()
+                    .id(uncheck.id)
+                    .avatar(uncheck.avatar)
+                    .config(uncheck.config)
+                    .datasource(uncheck.datasource)
+                    .platform(uncheck.platform)
+                    .nickname(uncheck.nickname)
+                    .unique_key(unique)
+                    .jump_url(uncheck.jump_url)
+                    .build()
+            }),
+        )
     }
 }

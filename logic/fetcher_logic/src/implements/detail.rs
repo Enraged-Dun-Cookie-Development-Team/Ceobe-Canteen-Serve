@@ -112,7 +112,11 @@ impl FetcherConfigLogic {
             FetcherConfigSliceChecker::lite_check(upload_configs_uncheck)
                 .await?;
         // 取出第一个，如果没有，那将无效果，返回
-        let Some(platform) = upload_config.first().map(FetcherConfig::get_platform_type_id).map(ToOwned::to_owned) else{
+        let Some(platform) = upload_config
+            .first()
+            .map(FetcherConfig::get_platform_type_id)
+            .map(ToOwned::to_owned)
+        else {
             return Ok(());
         };
 

@@ -21,17 +21,16 @@ use tracing::{error, instrument, warn};
 ///     );
 ///     ```
 /// 2. 为现有类型生成包装类型
-///
-///     ```rust
-///         error_generate!(
-///         //   |------------新建包装类型的可见性
-///         //   |     |------新建包装类型的类型名称
-///             pub JsonError
-///             (      
-///                 Error  // 内部包装的类型
-///             )"反序列化异常" // 为包装类型添加额外的异常信息
-///         );
-///     ```
+/// ```rust
+///     error_generate!(
+///     //   |------------新建包装类型的可见性
+///     //   |     |------新建包装类型的类型名称
+///         pub JsonError
+///         (      
+///             Error  // 内部包装的类型
+///         )"反序列化异常" // 为包装类型添加额外的异常信息
+///     );
+/// ```
 macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
         #[derive(Debug, status_err::ThisError, status_err::StatusErr)]

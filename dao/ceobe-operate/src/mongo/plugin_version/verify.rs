@@ -20,11 +20,12 @@ impl PluginVersionOperate<'_, NoConnect> {
             }
         };
         // checker version exist
-        let 0  =  collect
+        let 0 = collect
             .doing(|collect| collect.count_documents(filter, None))
-            .await? else {
+            .await?
+        else {
             warn!(pluginVersion.version = %version, pluginVersion.exist = true);
-            return Err(OperateError::ConflictVersion(version))
+            return Err(OperateError::ConflictVersion(version));
         };
 
         Ok(())

@@ -4,7 +4,7 @@ mod cookie;
 mod operation;
 mod user;
 use axum::Router;
-pub use config::ConfigDatasourceFrontend;
+pub use config::{ConfigDatasourceFrontend, ConfigFetcherFrontend};
 pub use cookie::{
     CookieInfoFrontend, CookieSearchFrontend, CookieTerraComicFrontend,
 };
