@@ -35,9 +35,10 @@ impl AsyncAuthorizeRequest<Body> for MobVerify {
         Box::pin(
             async move {
                 let result = 'auth: {
-                    let Some(mob_id) = get_mob_information(&request) else{
-                    break 'auth Err(MobVerifyError::MobIdFieldNotFound)
-                };
+                    let Some(mob_id) = get_mob_information(&request)
+                    else {
+                        break 'auth Err(MobVerifyError::MobIdFieldNotFound);
+                    };
 
                     let mob_id = mob_id.to_string();
 

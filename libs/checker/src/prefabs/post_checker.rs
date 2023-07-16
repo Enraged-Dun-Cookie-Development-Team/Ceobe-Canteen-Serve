@@ -91,11 +91,12 @@ where
                         let pined_fut =
                             unsafe { Pin::new_unchecked(&mut fut) };
                         // poll it
-                        let Poll::Ready(result) = pined_fut.poll(cx)else{
+                        let Poll::Ready(result) = pined_fut.poll(cx)
+                        else {
                             // if pending update self
                             self.set(PostCheckFut::PostChecker(fut));
                             // keep pending
-                            return Poll::Pending
+                            return Poll::Pending;
                         };
                         // if ready return
                         Poll::Ready(result.map_err(E::from))

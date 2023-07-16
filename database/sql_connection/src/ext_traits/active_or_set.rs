@@ -6,7 +6,8 @@ pub trait ActiveOrSet<V> {
 
 impl<V: Into<Value>> ActiveOrSet<V> for ActiveValue<V> {
     fn set_optional(&mut self, value: Option<V>) {
-        let Some(v) = value else{
+        let Some(v) = value
+        else {
             return;
         };
 

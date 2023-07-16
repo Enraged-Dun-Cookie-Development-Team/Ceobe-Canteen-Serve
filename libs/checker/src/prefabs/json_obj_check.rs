@@ -24,8 +24,9 @@ impl<Fields: RequireFields> Checker for JsonObjectChecker<Fields> {
 
     fn check(_: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         ready('check: {
-            let Value::Object(ref map) = uncheck else{
-                break 'check Err(JsonObjError::NotAObject)
+            let Value::Object(ref map) = uncheck
+            else {
+                break 'check Err(JsonObjError::NotAObject);
             };
 
             let mut key_set =

@@ -19,8 +19,9 @@ impl RefChecker for PlatformSameChecker {
             .map(|FetcherConfig { platform, .. }| platform.as_str());
 
         ready('checker: {
-            let Some(refer )= iter.next()else{
-                break 'checker Ok(())
+            let Some(refer) = iter.next()
+            else {
+                break 'checker Ok(());
             };
 
             iter.all(|platform| refer == platform)
