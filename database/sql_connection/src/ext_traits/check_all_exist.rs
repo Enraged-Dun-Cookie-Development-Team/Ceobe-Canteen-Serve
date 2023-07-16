@@ -102,12 +102,12 @@ fn gen_statement(
     // 填充Null
     query.left_join(
         entity,
-        Expr::tbl(entity, pk).equals(TempTable::Table, TempTable::Id),
+        Expr::col((entity, pk)).equals((TempTable::Table, TempTable::Id)),
     );
     // where
     // 根据上面left join 的结果， 通过where 只保留 填充为null 的值
     // 也就是 序列中希望存在但是不存在的 行
-    query.and_where(Expr::tbl(entity, pk).is_null());
+    query.and_where(Expr::col((entity, pk)).is_null());
 
     query
 }
