@@ -8,6 +8,7 @@ use http::{Method, Version};
 use resp_result::resp_try;
 use scheduler_notifier::SchedulerUrl;
 use serde_json::{json, Value};
+use tap::Tap;
 use tracing::instrument;
 use url::Url;
 
@@ -30,7 +31,11 @@ impl ConfigFetcherFrontend {
             const METHOD: Method = Method::POST;
             const VERSION: Version = Version::HTTP_11;
 
-            fn get_url(&self) -> Url { self.url.take_url() }
+            fn get_url(&self) -> Url {
+                self.url.take_url().tap_mut(|url| {
+                    url.set_path("/standalone-fetcher-get-config")
+                })
+            }
 
             fn prepare_request<
                 B: general_request_client::traits::RequestBuilder,
