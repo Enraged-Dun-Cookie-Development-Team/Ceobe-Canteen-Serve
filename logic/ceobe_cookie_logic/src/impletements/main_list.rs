@@ -120,7 +120,10 @@ impl CeobeCookieLogic {
                 |CookieInfo {
                      meta:
                          Meta {
-                             item, timestamp, source, ..
+                             item,
+                             timestamp,
+                             source,
+                             ..
                          },
                      source_config_id,
                      text,

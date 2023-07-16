@@ -1,7 +1,9 @@
 use ceobe_cookie::CookieTimestamp;
 use db_ops_prelude::mongo_models::ceobe::cookie::{
     analyze::models::{
-        images::CookieImages, meta::{Item, Source}, TerraComicAggregate,
+        images::CookieImages,
+        meta::{Item, Source},
+        TerraComicAggregate,
     },
     terra_comic::models::ComicInfoWithoutCid,
 };
