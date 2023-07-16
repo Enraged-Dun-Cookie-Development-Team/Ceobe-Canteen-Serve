@@ -19,10 +19,16 @@ use crate::{
 pub struct SchedulerUrl(Arc<Url>);
 
 impl SchedulerUrl {
-    pub fn new(url: Url) -> Self { Self(Arc::new(url)) }
+    pub fn new(url: Url) -> Self {
+        Self(Arc::new(url))
+    }
 
     pub fn new_cfg(cfg: &impl SchedulerNotifierConfig) -> Self {
         Self::new(cfg.base_url())
+    }
+
+    pub fn take_url(&self) -> Url {
+        Url::clone(&self.0)
     }
 }
 
