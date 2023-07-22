@@ -20,7 +20,7 @@ impl LogToStdout {
         tracing_subscriber::fmt::layer()
             .event_format(
                 format()
-                    // .pretty()
+                    .pretty()
                     .with_ansi(true)
                     .with_level(true)
                     .with_timer(TimeFormat),
@@ -34,9 +34,13 @@ pub struct BufferStdout(Stdout);
 impl<'writer> MakeWriter<'writer> for BufferStdout {
     type Writer = StdoutLock<'writer>;
 
-    fn make_writer(&'writer self) -> Self::Writer { self.0.lock() }
+    fn make_writer(&'writer self) -> Self::Writer {
+        self.0.lock()
+    }
 }
 
 impl Default for BufferStdout {
-    fn default() -> Self { Self(stdout()) }
+    fn default() -> Self {
+        Self(stdout())
+    }
 }
