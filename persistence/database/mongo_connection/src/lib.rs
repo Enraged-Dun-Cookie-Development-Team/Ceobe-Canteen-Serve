@@ -13,6 +13,7 @@ mod impl_initial;
 mod mongo_connect;
 
 mod static_vars;
+pub mod utils;
 
 pub type MongoDb = mongodb::Database;
 pub type MongoClient = mongodb::Client;

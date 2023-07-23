@@ -14,6 +14,7 @@ thiserror = { workspace = true }
 async-trait = { workspace = true }
 database_traits = { path = "../database_traits" }
 tracing = { workspace = true }
+time-utils = { workspace = true, features = ["with-mongo"] }
 
 [dependencies.status-err]
 path = "../../../libs/status-err"
