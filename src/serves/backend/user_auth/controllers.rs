@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use admin::{user::ToUser, ToAdmin};
+use persistence::admin::{user::ToUser, ToAdmin};
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
 use crypto_str::Encoder;

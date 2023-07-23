@@ -4,7 +4,7 @@ use axum::{
 };
 use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
-use fetcher::{
+use persistence::fetcher::{
     datasource_config::ToDatasource, platform_config::ToPlatform, ToFetcher,
 };
 use fetcher_logic::{

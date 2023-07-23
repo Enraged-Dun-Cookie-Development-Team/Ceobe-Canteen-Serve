@@ -1,6 +1,6 @@
 use axum::Json;
 use checker::CheckExtract;
-use fetcher::{platform_config::ToPlatform, ToFetcher};
+use persistence::fetcher::{platform_config::ToPlatform, ToFetcher};
 use fetcher_logic::{implements::FetcherConfigLogic, view::OneIdReq};
 use futures::future;
 use orm_migrate::{

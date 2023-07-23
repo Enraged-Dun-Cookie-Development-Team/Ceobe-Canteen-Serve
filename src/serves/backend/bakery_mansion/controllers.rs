@@ -1,4 +1,4 @@
-use bakery::{mansion::ToMansion, ToBakery};
+use persistence::bakery::{mansion::ToMansion, ToBakery};
 use checker::CheckExtract;
 use chrono::Duration;
 use mongo_migration::mongo_connection::MongoDatabaseOperate;

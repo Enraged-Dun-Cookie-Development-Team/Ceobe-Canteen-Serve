@@ -14,6 +14,16 @@ pub use db_prelude;
 #[cfg(any(feature = "model-fetcher", feature = "prelude"))]
 pub use fetcher;
 
+#[cfg(any(feature = "sql-models",feature = "mongo-models"))]
+pub mod models{
+    #[cfg(all(feature = "sql-models" ,not(feature = "mongo-models")))]
+    pub use sql_models::*;
+    #[cfg(all(feature = "mongo-models" ,not(feature = "sql-models")))]
+    pub use mongo_models::*;
+    #[cfg(all(feature = "sql-models",feature = "mongo-models"))]
+    pub use {sql_models as mysql,mongo_models as mongo};
+}
+
 #[cfg(any(feature = "mongodb", feature = "mongo-migrate", ))]
 pub mod mongodb {
     pub use mongo_connect::*;

@@ -1,4 +1,4 @@
-use ceobe_operate::{ToCeobe, ToCeobeOperation};
+use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,

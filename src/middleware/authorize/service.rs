@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use admin::{
+use persistence::admin::{
     user::{OperateError, ToUser},
     ToAdmin,
 };

@@ -4,7 +4,7 @@ use axum::extract::{
 };
 use ceobe_qiniu_upload::Error as QiniuError;
 use checker::prefabs::num_check::NonZeroUnsignedError;
-use fetcher::{
+use persistence::fetcher::{
     datasource_config::OperateError as DatasourceOperateError,
     platform_config::OperateError as PlatformOperateError,
 };

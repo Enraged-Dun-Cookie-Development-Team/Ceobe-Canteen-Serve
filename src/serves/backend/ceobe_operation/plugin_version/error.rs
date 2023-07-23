@@ -1,5 +1,5 @@
 use axum::extract::rejection::JsonRejection;
-use ceobe_operate::plugin_version::{CheckError, OperateError};
+use persistence::ceobe_operate::plugin_version::{CheckError, OperateError};
 use resp_result::RespResult;
 
 use crate::error_generate;

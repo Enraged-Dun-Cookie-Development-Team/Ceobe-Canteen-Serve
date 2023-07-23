@@ -1,4 +1,4 @@
-use orm_migrate::sql_models::ceobe_operation::video;
+use persistence::ceobe_operate::video;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
