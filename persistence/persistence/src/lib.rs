@@ -31,7 +31,9 @@ pub mod ceobe_user{
 }
 /// prelude export
 #[cfg(feature = "prelude")]
-pub use db_prelude;
+pub mod prelude{
+    pub use db_prelude::*;
+}
 #[cfg(any(feature = "model-fetcher", feature = "prelude"))]
 pub mod fetcher{
     pub use dao_fetcher::*;
