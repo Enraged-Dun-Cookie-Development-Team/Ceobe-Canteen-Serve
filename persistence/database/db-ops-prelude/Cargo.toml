@@ -4,15 +4,18 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default=["database_traits","mongo-models","sql-models"]
+help-crates-only = []
 
 [dependencies]
 chrono.workspace = true
-database_traits = { version = "0.1.0", path = "../database_traits" }
+database_traits = { version = "0.1.0", path = "../database_traits", optional = true }
 futures.workspace = true
-mongo-models = { version = "0.1.0", path = "../../models/mongo-models" }
+mongo-models = { version = "0.1.0", path = "../../models/mongo-models", optional = true }
 smallstr.workspace = true
 smallvec.workspace = true
-sql-models = { version = "0.1.0", path = "../../models/sql-models" }
+sql-models = { version = "0.1.0", path = "../../models/sql-models", optional = true }
 status-err = { version = "0.1.0", path = "../../../libs/status-err" }
 tap.workspace = true
 thiserror.workspace = true
