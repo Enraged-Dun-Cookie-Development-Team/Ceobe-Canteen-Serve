@@ -1,10 +1,10 @@
-use persistence::ceobe_operate::plugin_version::{
-    DownloadResource, PluginVersion, SpareLink,
+use persistence::ceobe_operate::{
+    models::app_version,
+    plugin_version::{DownloadResource, PluginVersion, SpareLink},
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
-use persistence::ceobe_operate::models::app_version;
 
 /// app版本
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]

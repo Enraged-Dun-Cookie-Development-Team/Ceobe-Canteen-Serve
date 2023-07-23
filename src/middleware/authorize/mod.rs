@@ -2,8 +2,8 @@ use async_trait::async_trait;
 use axum::extract::FromRequestParts;
 use http::request::Parts;
 pub use layer::AuthorizeLayer;
-use resp_result::{Nil, RespResult};
 use persistence::admin;
+use resp_result::{Nil, RespResult};
 
 pub use self::error::AuthorizeError;
 

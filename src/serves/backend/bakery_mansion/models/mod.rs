@@ -1,7 +1,8 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use persistence::bakery::models::mansion::preludes::id_checker::{MidChecker, OpMidChecker};
-use persistence::bakery::models::mansion::preludes::mansion::MansionChecker;
-
+use persistence::bakery::models::mansion::preludes::{
+    id_checker::{MidChecker, OpMidChecker},
+    mansion::MansionChecker,
+};
 
 use crate::serves::backend::bakery_mansion::error::MansionError;
 

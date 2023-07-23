@@ -2,8 +2,8 @@ use async_trait::async_trait;
 use axum::extract::FromRequestParts;
 use http::request::Parts;
 pub use layer::MobVerifyLayer;
-use resp_result::{Nil, RespResult};
 use persistence::ceobe_user::models::models::UserMobId;
+use resp_result::{Nil, RespResult};
 
 use self::error::MobVerifyError;
 

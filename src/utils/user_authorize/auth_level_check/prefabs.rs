@@ -1,4 +1,5 @@
 use persistence::admin::models::AuthLevel;
+
 use super::AuthLevelVerify;
 
 #[derive(Clone)]

@@ -1,9 +1,9 @@
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::CookieNumberResp,
 };
+use persistence::mongodb::MongoDatabaseOperate;
 use resp_result::rtry;
 use tracing::instrument;
-use persistence::mongodb::MongoDatabaseOperate;
 
 use super::error::CeobeCookieRResult;
 use crate::router::CookieInfoFrontend;

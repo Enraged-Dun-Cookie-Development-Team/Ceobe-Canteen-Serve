@@ -2,26 +2,27 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use bool_or::TrueOrError;
 use checker::prefabs::post_checker::PostChecker;
-use persistence::fetcher::{
-    config::{ConfigOperate, ToConfig},
-    datasource_config::DatasourceOperate,
-    platform_config::PlatformOperate,
-    ToFetcher,
+use persistence::{
+    fetcher::{
+        config::{ConfigOperate, ToConfig},
+        datasource_config::DatasourceOperate,
+        models::config::{
+            checkers::config_data::{
+                FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
+            },
+            models::model_config::Model as FetcherConfigModel,
+        },
+        platform_config::PlatformOperate,
+        ToFetcher,
+    },
+    mysql::SqlDatabaseOperate,
+    operate::{
+        GetDatabaseTransaction, GetMutDatabaseConnect, TransactionOps,
+    },
 };
 use redis::AsyncCommands;
 use redis_global::redis_key::fetcher::FetcherConfigKey;
 use scheduler_notifier::SchedulerNotifier;
-use persistence::fetcher::models::config::{
-    checkers::config_data::{
-        FetcherConfig, FetcherConfigUncheck, FetcherConfigVecChecker,
-    },
-    models::model_config::Model as FetcherConfigModel,
-};
-use persistence::operate::{
-    GetDatabaseTransaction, GetMutDatabaseConnect, TransactionOps,
-};
-use persistence::mysql::SqlDatabaseOperate;
-
 
 use super::FetcherConfigLogic;
 use crate::{

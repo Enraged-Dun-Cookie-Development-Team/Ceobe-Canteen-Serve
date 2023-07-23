@@ -1,6 +1,5 @@
 //! 带有等级鉴定功能的鉴权模块
 
-
 use persistence::admin::models::AuthLevel;
 
 pub mod prefabs;

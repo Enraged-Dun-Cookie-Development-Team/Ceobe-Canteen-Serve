@@ -1,19 +1,19 @@
 use axum::Json;
 use ceobe_qiniu_upload::QiniuManager;
-use persistence::ceobe_user::{ToCeobe, ToCeobeUser};
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 use mob_push_server::PushManager;
-
+use persistence::{
+    ceobe_user::{models::models::UserDatasource, ToCeobe, ToCeobeUser},
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+    redis::RedisConnect,
+};
 use qq_channel_warning::QqChannelGrpcService;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
-use persistence::ceobe_user::models::models::UserDatasource;
-use persistence::mongodb::MongoDatabaseOperate;
-use persistence::mysql::SqlDatabaseOperate;
-use persistence::redis::RedisConnect;
 
 use super::error::{CeobeUserError, CeobeUserRResult};
 use crate::{middleware::mob::MobIdInfo, router::CeobeUserFrontend};

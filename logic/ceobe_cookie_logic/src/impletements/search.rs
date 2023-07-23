@@ -5,18 +5,20 @@ use bitmap_convert::{
 };
 use bitmaps::Bitmap;
 use persistence::{
-    prelude::mongodb::bson::oid::ObjectId,
-    ceobe_cookie::models::analyze::models::{meta::Meta, CookieInfo},
-    mongodb::MongoDatabaseOperate,
-    mysql::SqlDatabaseOperate,
-    ceobe_cookie::{ToCeobe, ToCookie},
-    fetcher::models::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
+    ceobe_cookie::{
+        models::analyze::models::{meta::Meta, CookieInfo},
+        ToCeobe, ToCookie,
+    },
     fetcher::{
         datasource_config::{
             OperateError as DatasourceOperateError, ToDatasource,
         },
+        models::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
         ToFetcher,
-    }
+    },
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+    prelude::mongodb::bson::oid::ObjectId,
 };
 use tokio::task::{self, JoinHandle};
 

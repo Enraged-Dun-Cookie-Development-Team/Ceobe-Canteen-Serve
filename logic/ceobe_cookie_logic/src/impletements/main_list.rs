@@ -5,19 +5,22 @@ use bitmap_convert::{
 };
 use bitmaps::Bitmap;
 use persistence::{
-    ceobe_cookie::{ToCeobe, ToCookie, models::analyze::models::{meta::Meta, CookieInfo}},
-    mysql::SqlDatabaseOperate,
-    mongodb::MongoDatabaseOperate,
-    redis::RedisConnect,
-    operate::GetMutDatabaseConnect,
+    ceobe_cookie::{
+        models::analyze::models::{meta::Meta, CookieInfo},
+        ToCeobe, ToCookie,
+    },
     fetcher::{
         datasource_combination::ToDatasourceCombination,
         datasource_config::{
             OperateError as DatasourceOperateError, ToDatasource,
         },
+        models::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
         ToFetcher,
-        models::datasource_config::models::model_datasource_config::DatasourceBasicInfo
-    }
+    },
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+    operate::GetMutDatabaseConnect,
+    redis::RedisConnect,
 };
 use redis::AsyncCommands;
 use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};

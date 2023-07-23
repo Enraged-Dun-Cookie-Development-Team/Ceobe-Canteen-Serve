@@ -1,18 +1,18 @@
 use std::borrow::Cow;
 
-use persistence::admin::{user::ToUser, ToAdmin};
 use axum::{extract::Query, Json};
 use checker::CheckExtract;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
-
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use persistence::{
+    admin::{models::AuthLevel, user::ToUser, ToAdmin},
+    mysql::SqlDatabaseOperate,
+};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use resp_result::{resp_try, rtry, MapReject};
 use tracing::{debug, instrument};
-use persistence::mysql::SqlDatabaseOperate;
-use persistence::admin::models::AuthLevel;
 
 use super::{
     error::AdminUserError,

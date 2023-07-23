@@ -1,9 +1,11 @@
 use std::time::Duration;
 
-use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
+use persistence::{
+    ceobe_operate::{ToCeobe, ToCeobeOperation},
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
-use persistence::mysql::SqlDatabaseOperate;
 
 use super::{error::FlagResourceRespResult, view::Resource};
 use crate::router::CeobeOperationResourceFrontend;

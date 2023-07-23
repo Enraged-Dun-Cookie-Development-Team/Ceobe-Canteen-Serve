@@ -1,14 +1,20 @@
 use axum::Json;
 use checker::CheckExtract;
-use persistence::fetcher::{platform_config::ToPlatform, ToFetcher};
 use fetcher_logic::{implements::FetcherConfigLogic, view::OneIdReq};
 use futures::future;
-
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use persistence::{
+    fetcher::{
+        models::platform_config::models::model_platform_config::{
+            PlatformBasicInfo, PlatformHasDatasource,
+        },
+        platform_config::ToPlatform,
+        ToFetcher,
+    },
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::{resp_try, rtry, MapReject};
 use tracing::instrument;
-use persistence::fetcher::models::platform_config::models::model_platform_config::{PlatformBasicInfo, PlatformHasDatasource};
-use persistence::mysql::SqlDatabaseOperate;
 
 use super::{
     error::PlatformConfigError, FetcherPlatformCheck, PageSizePretreatment,

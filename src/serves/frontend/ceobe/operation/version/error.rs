@@ -1,7 +1,8 @@
 use axum::extract::rejection::QueryRejection;
-use persistence::ceobe_operate;
-use persistence::ceobe_operate::models::plugin_version;
-use persistence::ceobe_operate::models::app_version;
+use persistence::{
+    ceobe_operate,
+    ceobe_operate::models::{app_version, plugin_version},
+};
 use resp_result::FlagRespResult;
 
 use crate::error_generate;

@@ -1,8 +1,10 @@
-use persistence::ceobe_operate::plugin_version::{self, version};
 use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
+use persistence::ceobe_operate::{
+    models::app_version,
+    plugin_version::{self, version},
+};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use persistence::ceobe_operate::models::app_version;
 
 use super::error::CeobeOperationVersionError;
 

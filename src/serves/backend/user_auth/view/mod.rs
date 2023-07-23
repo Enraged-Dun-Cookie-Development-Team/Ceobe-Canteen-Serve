@@ -1,4 +1,4 @@
-use persistence::admin::models::{UserList,AuthLevel};
+use persistence::admin::models::{AuthLevel, UserList};
 crate::quick_struct! {
     pub CreateUser {
         username: String

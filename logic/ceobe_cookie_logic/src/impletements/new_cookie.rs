@@ -1,18 +1,18 @@
 use ceobe_qiniu_upload::QiniuManager;
+use futures::future;
+use mob_push_server::PushManager;
 use persistence::{
+    ceobe_cookie::ToCeobe,
+    ceobe_user::ToCeobeUser,
     fetcher::{
         datasource_combination::DatasourceCombinationOperate,
         datasource_config::DatasourceOperate,
     },
+    mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
     operate::GetDatabaseConnect,
-    ceobe_user::ToCeobeUser,
-    ceobe_cookie::ToCeobe,
-    mongodb::MongoDatabaseOperate,
-    redis::RedisConnect
+    redis::RedisConnect,
 };
-use futures::future;
-use mob_push_server::PushManager;
 use qiniu_service::QiniuService;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 

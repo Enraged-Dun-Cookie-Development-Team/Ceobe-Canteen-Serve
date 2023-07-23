@@ -1,6 +1,5 @@
-
-use serde::Serialize;
 use persistence::ceobe_operate::models::resource;
+use serde::Serialize;
 
 pub use self::{all_available::AllAvailable, countdown::Countdown};
 

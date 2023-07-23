@@ -1,5 +1,5 @@
-use serde::Serialize;
 use persistence::ceobe_operate::models::resource::all_available;
+use serde::Serialize;
 
 use crate::utils::time_format::naive_date_time_format;
 

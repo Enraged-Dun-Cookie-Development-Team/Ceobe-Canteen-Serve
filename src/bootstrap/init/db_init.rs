@@ -1,14 +1,12 @@
 use axum_starter::prepare;
-
-use tracing::instrument;
 use persistence::{
     connect::{connect_db, connect_db_with_migrate},
     mongodb,
     mongodb::{mongo_connection, MongoDbConfig, MongoDbError},
-    mysql::{DbConfig, Migrator, MigratorTrait, SqlDatabase},
-    mysql::sea_orm::DbErr,
-    redis::{RedisDatabase, RedisDbConfig, RedisError}
+    mysql::{sea_orm::DbErr, DbConfig, Migrator, MigratorTrait, SqlDatabase},
+    redis::{RedisDatabase, RedisDbConfig, RedisError},
 };
+use tracing::instrument;
 
 use crate::{
     bootstrap::default_user::create_default_user,

@@ -1,10 +1,10 @@
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
+use persistence::ceobe_operate::models::announcement;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
-use persistence::ceobe_operate::models::announcement;
 
 use crate::utils::time_format::naive_date_time_format;
 

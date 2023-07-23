@@ -1,10 +1,10 @@
 use std::net::SocketAddr;
 
 use axum_starter::{Configure, Provider};
+use persistence::{
+    mongodb::MongoDbConfig, mysql::DbConfig, redis::RedisDbConfig,
+};
 use serde::Deserialize;
-use persistence::mongodb::MongoDbConfig;
-use persistence::mysql::DbConfig;
-use persistence::redis::RedisDbConfig;
 
 use self::{
     auth_config::AuthConfig,

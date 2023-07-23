@@ -1,9 +1,13 @@
-use persistence::fetcher::{datasource_config::ToDatasource, ToFetcher};
-
+use persistence::{
+    fetcher::{
+        datasource_config::ToDatasource,
+        models::datasource_config::models::model_datasource_config::FrontendDatasource,
+        ToFetcher,
+    },
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::rtry;
 use tracing::instrument;
-use persistence::fetcher::models::datasource_config::models::model_datasource_config::FrontendDatasource;
-use persistence::mysql::SqlDatabaseOperate;
 
 use crate::{
     router::ConfigDatasourceFrontend,

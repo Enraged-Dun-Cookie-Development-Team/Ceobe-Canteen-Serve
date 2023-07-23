@@ -3,12 +3,12 @@ use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
     view::{CookieListReq, CookieListResp},
 };
-
+use persistence::{
+    mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate,
+    redis::RedisConnect,
+};
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
-use persistence::mongodb::MongoDatabaseOperate;
-use persistence::mysql::SqlDatabaseOperate;
-use persistence::redis::RedisConnect;
 
 use super::error::{CeobeCookieMainListError, CeobeCookieRResult};
 use crate::router::CdnCookieMainListFrontend;

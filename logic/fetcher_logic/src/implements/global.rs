@@ -2,16 +2,20 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, LiteChecker,
     ToCheckRequire,
 };
-use persistence::fetcher::{global_config::ToGlobal, ToFetcher};
-use serde_json::{Map, Value};
-use persistence::fetcher::models::global_config::{
-    checkers::global_config_data::{
-        FetcherGlobalConfigChecker, FetcherGlobalConfigUncheck,
+use persistence::{
+    fetcher::{
+        global_config::ToGlobal,
+        models::global_config::{
+            checkers::global_config_data::{
+                FetcherGlobalConfigChecker, FetcherGlobalConfigUncheck,
+            },
+            models::model_global_config::Model,
+        },
+        ToFetcher,
     },
-    models::model_global_config::Model,
+    mysql::SqlDatabaseOperate,
 };
-use persistence::mysql::SqlDatabaseOperate;
-
+use serde_json::{Map, Value};
 
 use super::FetcherConfigLogic;
 use crate::error::LogicResult;

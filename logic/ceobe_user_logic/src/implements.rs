@@ -3,32 +3,34 @@ use std::collections::HashSet;
 use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
 use bnum::types::U256;
-use checker::LiteChecker;
 use ceobe_qiniu_upload::QiniuManager;
+use checker::LiteChecker;
+use futures::future;
+use mob_push_server::PushManager;
 use persistence::{
-    prelude::{
-        bool_or::TrueOrError,
-        mongodb::bson::{self, oid::ObjectId},
-    },
-    mysql::SqlDatabaseOperate,
-    mongodb::MongoDatabaseOperate,
-    redis::RedisConnect,
-    ceobe_user::models::{
-        check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
-        models::{UserMobId, UserPropertyChecked},
-    },
-    ceobe_user::ToCeobeUser,
     ceobe_cookie::{ToCeobe, ToCookie},
+    ceobe_user::{
+        models::{
+            check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
+            models::{UserMobId, UserPropertyChecked},
+        },
+        ToCeobeUser,
+    },
     fetcher::{
         datasource_combination::ToDatasourceCombination,
         datasource_config::{
             OperateError as FetcherDatasourceOperateError, ToDatasource,
         },
         ToFetcher,
-    }
+    },
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+    prelude::{
+        bool_or::TrueOrError,
+        mongodb::bson::{self, oid::ObjectId},
+    },
+    redis::RedisConnect,
 };
-use futures::future;
-use mob_push_server::PushManager;
 use qiniu_service::QiniuService;
 use qq_channel_warning::QqChannelGrpcService;
 use tokio::task;

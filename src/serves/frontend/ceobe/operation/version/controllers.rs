@@ -1,11 +1,13 @@
 use std::time::Duration;
 
-use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::CheckExtract;
+use persistence::{
+    ceobe_operate::{ToCeobe, ToCeobeOperation},
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
-use persistence::mongodb::MongoDatabaseOperate;
-use persistence::mysql::SqlDatabaseOperate;
 
 use super::{
     error::FlagVersionRespResult,

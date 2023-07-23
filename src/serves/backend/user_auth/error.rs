@@ -1,6 +1,7 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use crypto_str::inner_encoders::bcrypt::BcryptError;
+
 use crate::utils::user_authorize::error::AuthError;
 
 crate::error_generate!(

@@ -3,10 +3,9 @@ use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
     view::{CookieListReq, CookieTempListResp},
 };
+use persistence::{mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate};
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
-use persistence::mongodb::MongoDatabaseOperate;
-use persistence::mysql::SqlDatabaseOperate;
 
 use super::error::{CeobeCookieRResult, CeobeCookieTempListError};
 use crate::router::CdnCookieTempFrontend;

@@ -4,9 +4,6 @@ use axum::{
 };
 use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
-use persistence::fetcher::{
-    datasource_config::ToDatasource, platform_config::ToPlatform, ToFetcher,
-};
 use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{
@@ -16,13 +13,19 @@ use fetcher_logic::{
 };
 use futures::future;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
+use persistence::{
+    fetcher::{
+        datasource_config::ToDatasource, platform_config::ToPlatform,
+        ToFetcher,
+    },
+    mysql::SqlDatabaseOperate,
+    redis::RedisConnect,
+};
 use qiniu_cdn_upload::upload;
 use qq_channel_warning::QqChannelGrpcService;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
-use persistence::mysql::SqlDatabaseOperate;
-use persistence::redis::RedisConnect;
 
 use super::{
     error::{DatasourceConfigError, DatasourceConfigRResult},

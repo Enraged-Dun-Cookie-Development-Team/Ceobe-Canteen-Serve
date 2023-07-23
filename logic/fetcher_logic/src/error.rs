@@ -1,20 +1,20 @@
-use persistence::fetcher::{
-    config::OperateError as FetcherConfigOperateError,
-    datasource_combination::OperateError as DatasourceCombinationOperateError,
-    datasource_config::OperateError as DatasourceConfigOperateError,
-    global_config::OperateError as GlobalConfigOperateError,
-    platform_config::OperateError as PlatformConfigOperateError,
-};
-use redis::RedisError;
 use persistence::{
-    fetcher::models::{
-        config::checkers::CheckError as FetcherConfigCheckError,
-        datasource_config::checkers::CheckError as DatasourceConfigCheckError,
-        global_config::checkers::CheckError as GlobalConfigCheckError,
-        platform_config::checkers::CheckError as PlatformConfigCheckError,
+    fetcher::{
+        config::OperateError as FetcherConfigOperateError,
+        datasource_combination::OperateError as DatasourceCombinationOperateError,
+        datasource_config::OperateError as DatasourceConfigOperateError,
+        global_config::OperateError as GlobalConfigOperateError,
+        models::{
+            config::checkers::CheckError as FetcherConfigCheckError,
+            datasource_config::checkers::CheckError as DatasourceConfigCheckError,
+            global_config::checkers::CheckError as GlobalConfigCheckError,
+            platform_config::checkers::CheckError as PlatformConfigCheckError,
+        },
+        platform_config::OperateError as PlatformConfigOperateError,
     },
     prelude::sea_orm,
 };
+use redis::RedisError;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 

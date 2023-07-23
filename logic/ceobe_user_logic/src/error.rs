@@ -1,17 +1,19 @@
 use bitmap_convert::error::Error as BitmapConvError;
+use mob_push_server::MobPushError;
 use persistence::{
-    fetcher::models::datasource_config::checkers::CheckError as DatasourceConfigCheckError,
-    prelude::sea_orm,
-    ceobe_user::models::check::CheckError as CeobeUserPropertyCheckError,
-    mongodb::MongoDbError,
-    ceobe_user::property::OperateError as CeobeUserOperateError,
     ceobe_cookie::analyze::OperateError as AnalyzeOperateError,
+    ceobe_user::{
+        models::check::CheckError as CeobeUserPropertyCheckError,
+        property::OperateError as CeobeUserOperateError,
+    },
     fetcher::{
         datasource_combination::OperateError as DatasourceCombinationOperateError,
         datasource_config::OperateError as DatasourceConfigOperateError,
-    }
+        models::datasource_config::checkers::CheckError as DatasourceConfigCheckError,
+    },
+    mongodb::MongoDbError,
+    prelude::sea_orm,
 };
-use mob_push_server::MobPushError;
 use qiniu_service::error::ServiceError as QiniuServiceError;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;

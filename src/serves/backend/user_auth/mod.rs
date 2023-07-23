@@ -1,6 +1,6 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use persistence::admin::models::username::Checker;
 use page_size::request::PageSizeChecker;
+use persistence::admin::models::username::Checker;
 use resp_result::RespResult;
 
 use self::error::AdminUserError;

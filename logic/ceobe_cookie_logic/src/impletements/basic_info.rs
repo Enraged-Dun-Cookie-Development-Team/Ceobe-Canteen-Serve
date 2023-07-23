@@ -1,6 +1,6 @@
 use persistence::{
     ceobe_cookie::{ToCeobe, ToCookie},
-    mongodb::MongoDatabaseOperate
+    mongodb::MongoDatabaseOperate,
 };
 use tokio::task;
 

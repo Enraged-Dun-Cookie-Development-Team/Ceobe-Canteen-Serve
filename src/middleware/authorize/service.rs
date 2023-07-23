@@ -1,9 +1,5 @@
 use std::marker::PhantomData;
 
-use persistence::admin::{
-    user::{OperateError, ToUser},
-    ToAdmin,
-};
 use axum::{
     body::{Body, BoxBody},
     extract::FromRequestParts,
@@ -11,12 +7,18 @@ use axum::{
 };
 use futures::future::BoxFuture;
 use http::Request;
+use persistence::{
+    admin::{
+        user::{OperateError, ToUser},
+        ToAdmin,
+    },
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::RespResult;
 use tap::Tap;
 use tower_http::auth::AsyncAuthorizeRequest;
 use tracing::{info, warn, Instrument};
 use tracing_unwrap::OptionExt;
-use persistence::mysql::SqlDatabaseOperate;
 
 use super::{error::AuthorizeError, AuthorizeInfo};
 use crate::utils::user_authorize::{
