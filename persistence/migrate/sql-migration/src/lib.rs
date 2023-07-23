@@ -1,6 +1,5 @@
 pub use sea_orm_migration::MigratorTrait;
 use sea_orm_migration::{async_trait, MigrationTrait};
-pub use sql_models::{self, sql_connection};
 
 mod admin;
 mod ceobe_cookie_search_content;

@@ -1,6 +1,5 @@
 use async_trait::async_trait;
 use mongo_migrate_util::{Manager, MigratorTrait};
-pub use mongo_models::{self, mongo_connection};
 use mongodb::error::Error;
 
 mod migrations;
