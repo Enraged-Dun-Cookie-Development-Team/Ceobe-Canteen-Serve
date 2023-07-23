@@ -15,3 +15,4 @@ tokio = { workspace = true }
 chrono = { workspace = true }
 sea-orm-migration = { version = "0.11" }
 sql-models = { path = "../../models/sql-models" }
+time-utils = { workspace = true, features = ["with-sea-orm"] }

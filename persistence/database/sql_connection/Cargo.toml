@@ -11,4 +11,4 @@ database_traits = { path = "../database_traits" }
 sea-orm = { workspace = true }
 tracing = { workspace = true }
 async-trait = "0.1.61"
-time-utils.workspace = true
+time-utils = { workspace = true, features = ["with-sea-orm"] }
