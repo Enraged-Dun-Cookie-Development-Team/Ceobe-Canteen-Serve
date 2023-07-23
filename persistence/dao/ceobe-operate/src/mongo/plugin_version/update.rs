@@ -1,10 +1,6 @@
-use db_ops_prelude::{
-    mongo_connection::MongoDbCollectionTrait,
-    mongo_models::{
-        ceobe::operation::plugin_version::PluginVersion, SetRecordUnit,
-    },
-    RecordUnit,
-};
+use db_ops_prelude::{mongo_connection::MongoDbCollectionTrait, mongo_models::{
+    ceobe::operation::plugin_version::PluginVersion,
+}, RecordUnit, SetRecordUnit};
 use tracing::{info, instrument};
 
 use super::{Checked, OperateResult, PluginVersionOperate};
