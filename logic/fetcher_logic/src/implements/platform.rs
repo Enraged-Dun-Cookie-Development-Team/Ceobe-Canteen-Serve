@@ -1,11 +1,10 @@
-use fetcher::{
+use persistence::fetcher::{
     datasource_config::ToDatasource, platform_config::ToPlatform, ToFetcher,
 };
 use page_size::request::Paginator;
-use sql_models::{
-    fetcher::platform_config::models::model_platform_config::PlatformHasDatasource,
-    sql_connection::SqlDatabaseOperate,
-};
+use persistence::fetcher::models::platform_config::models::model_platform_config::PlatformHasDatasource;
+use persistence::mysql::SqlDatabaseOperate;
+
 
 use crate::{error::LogicResult, implements::FetcherConfigLogic};
 

@@ -16,21 +16,14 @@ range-limit = { path = "../../libs/range-limit" }
 page_size = {path = "../../libs/page_size"}
 futures.workspace = true
 scheduler-notifier.workspace = true
-fetcher.workspace = true
 bool_or.workspace = true
 ceobe-qiniu-upload.workspace = true
 qiniu_service.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
-
-[dependencies.sql-models]
-path = "../../persistence/models/sql-models"
+persistence = { workspace = true, features = ["redis", "model-fetcher", "help-crates"] }
 
 [dependencies.checker]
 path = "../../libs/checker"
 
 [dependencies.redis_global]
 path = "../../global/redis_global"
-
-[dependencies.redis_connection]
-path = "../../persistence/database/redis_connection"
-

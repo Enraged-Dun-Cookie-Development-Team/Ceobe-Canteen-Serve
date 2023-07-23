@@ -1,7 +1,7 @@
 use bool_or::TrueOrError;
 use checker::RefChecker;
 use futures::future::{ready, Ready};
-use sql_models::fetcher::config::checkers::config_data::FetcherConfig;
+use persistence::fetcher::models::config::checkers::config_data::FetcherConfig;
 
 use crate::error::LogicError;
 

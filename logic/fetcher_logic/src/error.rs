@@ -1,4 +1,4 @@
-use fetcher::{
+use persistence::fetcher::{
     config::OperateError as FetcherConfigOperateError,
     datasource_combination::OperateError as DatasourceCombinationOperateError,
     datasource_config::OperateError as DatasourceConfigOperateError,
@@ -6,14 +6,14 @@ use fetcher::{
     platform_config::OperateError as PlatformConfigOperateError,
 };
 use redis::RedisError;
-use sql_models::{
-    fetcher::{
+use persistence::{
+    fetcher::models::{
         config::checkers::CheckError as FetcherConfigCheckError,
         datasource_config::checkers::CheckError as DatasourceConfigCheckError,
         global_config::checkers::CheckError as GlobalConfigCheckError,
         platform_config::checkers::CheckError as PlatformConfigCheckError,
     },
-    sql_connection::sea_orm,
+    prelude::sea_orm,
 };
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;

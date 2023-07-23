@@ -1,12 +1,11 @@
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
-use sql_models::fetcher::{
-    config::models,
-    datasource_config::models::model_datasource_config::{
-        BackendDatasource, DataSourceForFetcherConfig,
-    },
-};
+
 use typed_builder::TypedBuilder;
+use persistence::{
+    fetcher::models::config::models,
+    fetcher::models::datasource_config::models::model_datasource_config::{BackendDatasource, DataSourceForFetcherConfig}
+};
 
 /// 返回蹲饼器配置与上传蹲饼器配置的组数据
 #[derive(

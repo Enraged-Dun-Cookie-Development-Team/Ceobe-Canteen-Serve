@@ -1,26 +1,20 @@
 use bool_or::TrueOrError;
 use ceobe_qiniu_upload::QiniuManager;
-use fetcher::{
+use persistence::fetcher::{
     config::ConfigOperate,
     datasource_combination::DatasourceCombinationOperate,
     datasource_config::DatasourceOperate, platform_config::PlatformOperate,
-};
-use qiniu_service::QiniuService;
-use qq_channel_warning::QqChannelGrpcService;
-use redis_connection::RedisConnect;
-use scheduler_notifier::SchedulerNotifier;
-use sql_models::{
-    fetcher::datasource_config::{
+    models::datasource_config::{
         checkers::FetcherDatasourceConfig,
         models::model_datasource_config::DatasourcePlatform,
     },
-    sql_connection::{
-        database_traits::get_connect::{
-            GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
-        },
-        SqlDatabaseOperate,
-    },
 };
+use qiniu_service::QiniuService;
+use qq_channel_warning::QqChannelGrpcService;
+use persistence::redis::RedisConnect;
+use scheduler_notifier::SchedulerNotifier;
+use persistence::mysql::SqlDatabaseOperate;
+use persistence::operate::{GetDatabaseConnect,GetDatabaseTransaction,TransactionOps};
 
 use crate::{
     error::{LogicError, LogicResult},
