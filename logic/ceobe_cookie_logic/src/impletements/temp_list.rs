@@ -2,11 +2,13 @@ use bitmap_convert::{
     base70::BitmapBase70Conv, vec_usize::BitmapVecUsizeConv,
 };
 use bitmaps::Bitmap;
-use ceobe_cookie::{ToCeobe, ToCookie};
-use db_ops_prelude::SqlDatabaseOperate;
-use fetcher::{datasource_combination::ToDatasourceCombination, ToFetcher};
+use persistence::{
+    fetcher::{datasource_combination::ToDatasourceCombination, ToFetcher},
+    mysql::SqlDatabaseOperate,
+    ceobe_cookie::{ToCeobe, ToCookie},
+    mongodb::MongoDatabaseOperate
+};
 use futures::future;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
 
 use crate::{
     error::LogicResult,

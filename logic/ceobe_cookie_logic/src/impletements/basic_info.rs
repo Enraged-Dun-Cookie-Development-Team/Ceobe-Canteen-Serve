@@ -1,5 +1,7 @@
-use ceobe_cookie::{ToCeobe, ToCookie};
-use db_ops_prelude::mongo_connection::MongoDatabaseOperate;
+use persistence::{
+    ceobe_cookie::{ToCeobe, ToCookie},
+    mongodb::MongoDatabaseOperate
+};
 use tokio::task;
 
 use super::CeobeCookieLogic;

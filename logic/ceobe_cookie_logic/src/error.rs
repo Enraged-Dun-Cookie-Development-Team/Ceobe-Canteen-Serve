@@ -1,17 +1,19 @@
 use std::convert::Infallible;
 
 use bitmap_convert::error::Error as BitmapConvError;
-use ceobe_cookie::{
-    analyze::OperateError as AnalyzeOperateError,
-    search_content::OperateError as SearchContentOperateError,
-    temp_list::OperateError as TempListOperateError,
-    terra_comic::OperateError as TerraComicOperateError,
-};
-use ceobe_user::property::OperateError as CeobeUserOperateError;
-use db_ops_prelude::mongodb::bson::{self, oid::ObjectId};
-use fetcher::{
-    datasource_combination::OperateError as DatasourceCombinationOperateError,
-    datasource_config::OperateError as DatasourceOperateError,
+use persistence::{
+    prelude::mongodb::bson::{self, oid::ObjectId},
+    ceobe_user::property::OperateError as CeobeUserOperateError,
+    ceobe_cookie::{
+        analyze::OperateError as AnalyzeOperateError,
+        search_content::OperateError as SearchContentOperateError,
+        temp_list::OperateError as TempListOperateError,
+        terra_comic::OperateError as TerraComicOperateError,
+    },
+    fetcher::{
+        datasource_combination::OperateError as DatasourceCombinationOperateError,
+        datasource_config::OperateError as DatasourceOperateError,
+    }
 };
 use mob_push_server::MobPushError;
 use redis::RedisError;
