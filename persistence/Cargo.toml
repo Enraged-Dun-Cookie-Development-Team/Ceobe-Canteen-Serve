@@ -1,2 +1,2 @@
 [workspace]
-members = ["dao/*", "database/*", "migrate/*", "models/*"]
+members = ["dao/*", "database/*", "migrate/*", "models/*","persistence"]

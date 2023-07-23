@@ -16,7 +16,7 @@ strip = true
 [workspace]
 members = [
     "libs/*",
-    "persistence",
+    "persistence/persistence",
     "./macros/*",
     "./middle-server/*",
     "./logic/*",
@@ -89,7 +89,7 @@ bitmaps = "3.2.0"
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 mob-push-server = { version = "0.1.0", path = "middle-server/mob-push-server" }
 qiniu_service = { version = "0.1.0", path = "service/qiniu_service" }
-
+persistence = { version = "0.1.0", path = "persistence/persistence" }
 
 [dependencies]
 # Xss
