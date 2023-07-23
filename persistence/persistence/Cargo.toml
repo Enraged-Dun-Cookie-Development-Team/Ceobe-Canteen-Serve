@@ -7,7 +7,7 @@ edition = "2021"
 
 [features]
 help-crates=["db-prelude","db-prelude/help-crates-only"]
-prelude = ["db-prelude",
+prelude = ["help-crates",
     "model-admin",
     "model-bakery",
     "model-ceobe-cookie",
@@ -45,7 +45,7 @@ dao-bakery = { version = "0.1.0", path = "../dao/bakery", optional = true ,packa
 dao-ceobe-cookie = { version = "0.1.0", path = "../dao/ceobe-cookie", optional = true ,package = "ceobe-cookie"}
 dao-ceobe-operate = { version = "0.1.0", path = "../dao/ceobe-operate", optional = true ,package = "ceobe-operate"}
 dao-ceobe-user = { version = "0.1.0", path = "../dao/ceobe-user", optional = true, package = "ceobe-user"}
-db-prelude = { version = "0.1.0", path = "../database/db-ops-prelude", package = "db-ops-prelude", optional = true }
+db-prelude = { version = "0.1.0", path = "../database/db-ops-prelude", package = "db-ops-prelude", optional = true,default-features = false}
 dao-fetcher = { version = "0.1.0", path = "../dao/fetcher", optional = true ,package = "fetcher"}
 mongo-connect = { version = "0.1.0", path = "../database/mongo_connection", package = "mongo_connection", optional = true }
 mongo-migration = { version = "0.1.0", path = "../migrate/mongo-migration", optional = true }

@@ -30,7 +30,7 @@ pub mod ceobe_user{
     pub use mongo_models::ceobe::user_property as models;
 }
 /// prelude export
-#[cfg(feature = "prelude")]
+#[cfg(any(feature = "prelude",feature = "help-crates"))]
 pub mod prelude{
     pub use db_prelude::*;
 }

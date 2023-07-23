@@ -18,13 +18,13 @@ pub use tap;
 pub use thiserror::Error as ThisError;
 pub use tracing;
 
-#[cfg(not(feature = "help-crates-only"))]
+#[cfg(feature = "default")]
 pub mod sql_models {
     pub use ::sql_models::{
         admin_user, ceobe_cookie, ceobe_operation, fetcher,
     };
 }
-#[cfg(not(feature = "help-crates-only"))]
+#[cfg(feature = "default")]
 pub mod mongo_models {
     pub use ::mongo_models::{
         bakery, ceobe, RecordUnitUpdater, SetRecordUnit,
