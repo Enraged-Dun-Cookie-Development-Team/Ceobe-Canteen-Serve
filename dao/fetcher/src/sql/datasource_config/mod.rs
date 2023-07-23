@@ -1,9 +1,3 @@
-pub mod create;
-pub mod delete;
-pub mod retrieve;
-pub mod update;
-pub mod verify;
-
 use std::ops::Deref;
 
 use abstract_database::fetcher::FetcherDatabaseOperate;
@@ -14,6 +8,12 @@ use db_ops_prelude::{
 };
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
+
+pub mod create;
+pub mod delete;
+pub mod retrieve;
+pub mod update;
+pub mod verify;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {

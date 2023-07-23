@@ -7,6 +7,7 @@ use crate::{
     error,
     proto_reexport::{LogClient, LogRequest},
 };
+
 #[derive(Debug, Clone)]
 pub struct QqChannelGrpcService {
     client: LogClient<Channel>,
@@ -63,6 +64,7 @@ mod test {
 
     use super::QqChannelGrpcService;
     use crate::{proto_reexport::LogClient, LogRequest, LogType};
+
     #[tokio::test]
     async fn test_send() {
         let channel =

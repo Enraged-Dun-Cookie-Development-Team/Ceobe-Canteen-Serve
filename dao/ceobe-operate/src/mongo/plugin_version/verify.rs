@@ -7,6 +7,7 @@ use tracing::warn;
 use super::{
     OperateError, OperateResult, PluginVersion, PluginVersionOperate, Version,
 };
+
 impl PluginVersionOperate<'_, NoConnect> {
     pub async fn verify_version(
         version: Version, collect: &CollectionGuard<PluginVersion>,

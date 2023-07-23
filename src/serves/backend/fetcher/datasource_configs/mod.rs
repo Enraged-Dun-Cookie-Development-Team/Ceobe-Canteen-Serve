@@ -1,4 +1,3 @@
-pub mod view;
 use checker::{JsonCheckExtract, QueryCheckExtract};
 use orm_migrate::sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfigChecker;
 use page_size::request::PageSizeChecker;
@@ -11,6 +10,7 @@ use self::error::DatasourceConfigError;
 
 mod controllers;
 mod error;
+pub mod view;
 
 type PageSizePretreatment =
     QueryCheckExtract<PageSizeChecker, DatasourceConfigError>;

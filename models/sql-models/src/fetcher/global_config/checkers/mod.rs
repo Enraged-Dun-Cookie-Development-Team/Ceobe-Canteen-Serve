@@ -1,8 +1,8 @@
-pub mod global_config_data;
-
 use status_err::StatusErr;
 use thiserror::Error;
 pub use CheckError::*;
+
+pub mod global_config_data;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

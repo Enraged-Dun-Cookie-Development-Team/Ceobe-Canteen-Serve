@@ -1,8 +1,3 @@
-mod bakery;
-mod config;
-mod cookie;
-mod operation;
-mod user;
 use axum::Router;
 pub use config::{ConfigDatasourceFrontend, ConfigFetcherFrontend};
 pub use cookie::{
@@ -21,6 +16,13 @@ use self::{
     user::ceobe_user_router,
 };
 use super::ServerRoute;
+
+mod bakery;
+mod config;
+mod cookie;
+mod operation;
+mod user;
+
 pub(super) fn front_end_router() -> ServerRoute {
     Router::new()
         .nest("/bakery", bakery_router())

@@ -1,5 +1,6 @@
 use sea_orm_migration::prelude::*;
 use sql_models::admin_user::{AuthLevel, Column::*};
+
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str { "m20220324_222712_create_user" }

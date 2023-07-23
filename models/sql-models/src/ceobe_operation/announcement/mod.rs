@@ -1,6 +1,3 @@
-mod checkers;
-mod models;
-
 pub use checkers::{
     announcement_data::{
         CeobeOpAnnouncement as Checked,
@@ -12,3 +9,6 @@ pub use checkers::{
 pub use models::model_announcement::{
     ActiveModel, Column, Entity, Model, Relation,
 };
+
+mod checkers;
+mod models;

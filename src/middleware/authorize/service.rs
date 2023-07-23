@@ -24,6 +24,7 @@ use crate::utils::user_authorize::{
     config::get_authorize_information,
     decrypt_token, User,
 };
+
 pub struct AdminAuthorize<L>(PhantomData<L>);
 
 impl<L> Clone for AdminAuthorize<L> {

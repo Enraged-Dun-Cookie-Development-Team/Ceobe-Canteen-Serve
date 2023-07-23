@@ -1,6 +1,3 @@
-mod builder;
-pub mod delete;
-pub mod upload;
 use std::fmt::Debug;
 
 use qiniu_objects_manager::Bucket;
@@ -13,6 +10,11 @@ pub use self::{
     },
 };
 use crate::SecretConfig;
+
+mod builder;
+pub mod delete;
+pub mod upload;
+
 #[derive(Debug)]
 pub struct Manager {
     pub(crate) uploader: ManagedUploader,

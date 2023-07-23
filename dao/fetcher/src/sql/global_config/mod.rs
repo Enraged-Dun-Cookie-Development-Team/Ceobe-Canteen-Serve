@@ -1,6 +1,3 @@
-pub mod retrieve;
-pub mod update;
-
 use std::ops::Deref;
 
 use abstract_database::fetcher::FetcherDatabaseOperate;
@@ -10,6 +7,9 @@ use db_ops_prelude::{
 };
 use status_err::StatusErr;
 use thiserror::Error;
+
+pub mod retrieve;
+pub mod update;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum OperateError {

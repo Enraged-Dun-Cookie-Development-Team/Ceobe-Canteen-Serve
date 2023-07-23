@@ -1,14 +1,14 @@
-pub mod admin_user;
-pub mod ceobe_cookie;
-pub mod ceobe_operation;
-pub mod fetcher;
-
 use std::pin::Pin;
 
 use chrono::{Local, NaiveDateTime};
 use futures::Stream;
 use sea_orm::{ActiveValue, DbErr, Set, Value};
 pub use sql_connection;
+
+pub mod admin_user;
+pub mod ceobe_cookie;
+pub mod ceobe_operation;
+pub mod fetcher;
 
 pub type StreamResult<'b, M> =
     Pin<Box<dyn Stream<Item = Result<M, DbErr>> + 'b + Send>>;

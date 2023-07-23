@@ -22,6 +22,7 @@ use crate::{
     },
     SoftDelete,
 };
+
 #[check_obj(
     uncheck = FetcherDatasourceConfigUncheck,
     checked = PreCheckFetcherDatasourceConfig,

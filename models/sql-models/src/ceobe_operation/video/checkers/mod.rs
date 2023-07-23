@@ -1,9 +1,9 @@
+use status_err::{ErrPrefix, StatusErr};
+use thiserror::Error;
+
 pub mod bv;
 pub mod bv_arg_checker;
 pub mod video_data;
-
-use status_err::{ErrPrefix, StatusErr};
-use thiserror::Error;
 
 #[derive(Debug, Error, PartialEq, Eq, StatusErr)]
 pub enum CheckError {

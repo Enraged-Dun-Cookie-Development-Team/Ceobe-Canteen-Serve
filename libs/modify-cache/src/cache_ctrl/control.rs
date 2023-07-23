@@ -131,7 +131,6 @@ impl<'c> Add<&'c CacheControl> for ExtraFlags {
 
 #[cfg(test)]
 mod test {
-
     use std::time::Duration;
 
     use super::CacheControl;

@@ -9,6 +9,7 @@ use db_ops_prelude::{
 use tracing::{info, instrument};
 
 use super::{AppVersionOperate, Checked, OperateError, OperateResult};
+
 impl<'c, C> AppVersionOperate<'c, C>
 where
     C: GetDatabaseConnect + 'c,

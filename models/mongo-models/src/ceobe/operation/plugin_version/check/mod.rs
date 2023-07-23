@@ -1,14 +1,14 @@
-pub mod download_resource_checker;
-pub mod plugin_version_checker;
-pub mod spare_link_checker;
-
-pub mod version_checker;
-
 use status_err::{ErrPrefix, StatusErr};
 
 pub(self) use super::models::{
     DownloadResource, PluginVersionChecked, SpareLink, Version,
 };
+
+pub mod download_resource_checker;
+pub mod plugin_version_checker;
+pub mod spare_link_checker;
+
+pub mod version_checker;
 
 #[derive(Debug, thiserror::Error, StatusErr)]
 pub enum CheckError {

@@ -1,11 +1,12 @@
-#[macro_use]
-mod utils;
-mod code_gen;
-mod input_loading;
 use darling::FromDeriveInput;
 use input_loading::derive_info::StatusErrorDeriveInfo;
 use proc_macro::TokenStream;
 use syn::{parse_macro_input, spanned::Spanned, Data, DeriveInput};
+
+#[macro_use]
+mod utils;
+mod code_gen;
+mod input_loading;
 
 /// Status Err Derive Macro 辅助实现[StatusErr](status_err::StatusErr)
 ///

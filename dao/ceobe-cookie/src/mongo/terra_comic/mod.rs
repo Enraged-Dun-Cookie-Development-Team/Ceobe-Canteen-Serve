@@ -1,4 +1,3 @@
-pub mod retrieve;
 use std::ops::Deref;
 
 use db_ops_prelude::{
@@ -8,6 +7,8 @@ use db_ops_prelude::{
 };
 
 use crate::CookieDatabaseOperate;
+
+pub mod retrieve;
 
 pub struct TerraComicOperate<'db, Conn>(&'db Conn);
 

@@ -5,6 +5,7 @@ use db_ops_prelude::{
 use tracing::info;
 
 use super::{Checked, Entity, OperateResult, ResourceOperate};
+
 impl<C> ResourceOperate<'_, C> {
     pub async fn create_new_resource_set(
         db: &impl ConnectionTrait, resource: Checked, now: NaiveDateTime,

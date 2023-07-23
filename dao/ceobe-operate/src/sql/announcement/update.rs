@@ -5,6 +5,7 @@ use db_ops_prelude::{
 use tracing::{info, instrument};
 
 use super::{AnnouncementOperate, Checked, Entity, OperateResult};
+
 impl<'c, C> AnnouncementOperate<'c, C>
 where
     C: GetDatabaseTransaction<Error = DbErr> + 'c,

@@ -1,3 +1,7 @@
+pub use sea_orm_migration::MigratorTrait;
+use sea_orm_migration::{async_trait, MigrationTrait};
+pub use sql_models::{self, sql_connection};
+
 mod admin;
 mod ceobe_cookie_search_content;
 mod ceobe_operation_announcement;
@@ -10,9 +14,6 @@ mod fetcher_datasource_config;
 mod fetcher_global_config;
 mod fetcher_platform_config;
 
-pub use sea_orm_migration::MigratorTrait;
-use sea_orm_migration::{async_trait, MigrationTrait};
-pub use sql_models::{self, sql_connection};
 macro_rules! migrate_group {
     [$($t:expr)*] => {
         vec![

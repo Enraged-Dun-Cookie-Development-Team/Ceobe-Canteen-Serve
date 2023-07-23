@@ -1,6 +1,8 @@
-mod resource;
-mod version;
+pub use announcement::CeobeOperationAnnouncement;
 use axum::Router;
+pub use resource::CeobeOpResource;
+pub use version::CeobeOpVersion;
+pub use video::CeobeOperationVideo;
 
 use self::{
     announcement::announcement_router, resource::resource_router,
@@ -13,12 +15,9 @@ use crate::{
 };
 
 mod announcement;
+mod resource;
+mod version;
 mod video;
-
-pub use announcement::CeobeOperationAnnouncement;
-pub use resource::CeobeOpResource;
-pub use version::CeobeOpVersion;
-pub use video::CeobeOperationVideo;
 
 pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
     Router::new()

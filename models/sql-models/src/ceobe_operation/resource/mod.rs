@@ -1,6 +1,3 @@
-mod checkers;
-mod models;
-
 pub use checkers::{
     resource_data::{
         CeobeOperationResource as Checked,
@@ -9,6 +6,13 @@ pub use checkers::{
     },
     CheckError,
 };
+pub use models::{
+    model_resource::{ActiveModel, Column, Entity, Model, Relation},
+    resource_type::ResourceType,
+};
+
+mod checkers;
+mod models;
 
 pub mod all_available {
     pub use super::{
@@ -31,8 +35,3 @@ pub mod countdown {
         },
     };
 }
-
-pub use models::{
-    model_resource::{ActiveModel, Column, Entity, Model, Relation},
-    resource_type::ResourceType,
-};

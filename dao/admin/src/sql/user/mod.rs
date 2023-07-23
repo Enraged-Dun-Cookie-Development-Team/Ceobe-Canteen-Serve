@@ -1,7 +1,3 @@
-mod delete;
-mod retrieve;
-mod update;
-mod verify;
 use std::ops::Deref;
 
 use abstract_database::admin::AdminDatabaseOperate;
@@ -9,10 +5,15 @@ use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
     sea_orm::{self, FromQueryResult},
 };
-
-mod create;
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
+
+mod create;
+mod delete;
+mod retrieve;
+mod update;
+mod verify;
+
 #[derive(FromQueryResult)]
 struct UserCounts {
     pub(crate) count: i64,

@@ -1,8 +1,3 @@
-mod create;
-mod delete;
-mod retrieve;
-mod update;
-
 use std::ops::Deref;
 
 pub use db_ops_prelude::sql_models::ceobe_operation::resource::*;
@@ -10,6 +5,14 @@ use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
     sea_orm, StatusErr, ThisError,
 };
+use status_err::{ErrPrefix, HttpCode};
+
+use crate::OperationDatabaseOperate;
+
+mod create;
+mod delete;
+mod retrieve;
+mod update;
 
 pub struct ResourceOperate<'op, C: 'op>(&'op C);
 
@@ -24,10 +27,6 @@ impl<'c, C> SubOperate<'c> for ResourceOperate<'c, C> {
 
     fn from_parent(parent: &Self::Parent) -> Self { Self(parent.0) }
 }
-
-use status_err::{ErrPrefix, HttpCode};
-
-use crate::OperationDatabaseOperate;
 
 #[derive(Debug, ThisError, StatusErr)]
 pub enum OperateError {

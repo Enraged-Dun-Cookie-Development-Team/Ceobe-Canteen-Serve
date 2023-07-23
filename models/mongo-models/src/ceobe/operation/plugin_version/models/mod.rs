@@ -1,5 +1,3 @@
-pub mod spare_link;
-pub mod version;
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
@@ -11,6 +9,10 @@ use url::Url;
 pub use version::Version;
 
 use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
+
+pub mod spare_link;
+pub mod version;
+
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 
 pub struct DownloadResource {

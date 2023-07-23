@@ -50,6 +50,7 @@ impl QiniuManager {
 #[cfg(test)]
 mod test {
     use url::Url;
+
     #[test]
     fn test_url_concat() {
         let mut url = Url::parse("https://example.net").unwrap();

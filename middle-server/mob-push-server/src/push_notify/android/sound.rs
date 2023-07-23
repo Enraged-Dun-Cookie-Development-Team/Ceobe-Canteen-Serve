@@ -3,6 +3,7 @@ use std::ops::BitAnd;
 use serde::ser::SerializeStruct;
 
 use crate::push_notify::NotifySerialize;
+
 #[derive(Debug, Clone)]
 
 /// 自定义声音

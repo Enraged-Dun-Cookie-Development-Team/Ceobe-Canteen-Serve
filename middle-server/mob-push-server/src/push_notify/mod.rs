@@ -1,8 +1,9 @@
-pub mod android;
-pub mod ios;
 use std::ops::{Deref, DerefMut};
 
 use serde::{ser::SerializeStruct, Serialize, Serializer};
+
+pub mod android;
+pub mod ios;
 
 pub trait NotifySerialize {
     fn serialize_field(&self) -> usize;

@@ -1,11 +1,11 @@
-pub mod platform_config_data;
-
 use std::convert::Infallible;
 
 use checker::prefabs::no_remainder_checker::HasRemError;
 use status_err::StatusErr;
 use thiserror::Error;
 pub use CheckError::*;
+
+pub mod platform_config_data;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

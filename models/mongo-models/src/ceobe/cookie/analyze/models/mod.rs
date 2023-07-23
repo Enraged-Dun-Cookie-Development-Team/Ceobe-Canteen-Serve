@@ -1,6 +1,3 @@
-pub mod images;
-pub mod meta;
-
 use images::CookieImages;
 use mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
@@ -9,6 +6,9 @@ use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
 use self::meta::Meta;
+
+pub mod images;
+pub mod meta;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(

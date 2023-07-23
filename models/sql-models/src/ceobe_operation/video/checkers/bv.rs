@@ -77,6 +77,7 @@ mod test {
 
     use super::BvChecker;
     use crate::ceobe_operation::video::checkers::CheckError;
+
     #[tokio::test]
     async fn test_bv_succeed() {
         let uncheck = CheckRequire::new(BvChecker, "BV1ZB4y1Y7Hm".into());

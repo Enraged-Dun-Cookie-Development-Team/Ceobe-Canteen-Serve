@@ -1,3 +1,4 @@
+use ::checker::ToCheckRequire;
 use checker::{
     check_obj,
     prefabs::{
@@ -28,7 +29,7 @@ pub struct FetcherConfig {
 impl FetcherConfig {
     pub fn get_platform_type_id(&self) -> &str { &self.platform }
 }
-use ::checker::ToCheckRequire;
+
 #[check_obj(
     uncheck = FetcherConfigUncheck,
     checked = FetcherConfig,

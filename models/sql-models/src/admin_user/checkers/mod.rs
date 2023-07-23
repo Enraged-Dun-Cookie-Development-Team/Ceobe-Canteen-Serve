@@ -1,7 +1,7 @@
-pub mod username;
-
 use status_err::StatusErr;
 use thiserror::Error;
+
+pub mod username;
 
 #[derive(Debug, Error, PartialEq, Eq, StatusErr)]
 pub enum CheckError {

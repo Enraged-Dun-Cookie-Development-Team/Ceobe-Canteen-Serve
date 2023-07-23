@@ -5,6 +5,7 @@ use hmac::{digest::KeyInit, Hmac};
 use http::Request;
 use once_cell::sync::OnceCell;
 use sha2::Sha256;
+use tracing::warn;
 
 crate::quick_trait! {
     pub AuthConfig{
@@ -12,8 +13,6 @@ crate::quick_trait! {
         crate::trait_field!{*token_header:String=String::from("Token")}
     }
 }
-use tracing::warn;
-
 static LOCAL_CONFIG: OnceCell<LocalAuthConfig> = OnceCell::new();
 
 struct LocalAuthConfig {

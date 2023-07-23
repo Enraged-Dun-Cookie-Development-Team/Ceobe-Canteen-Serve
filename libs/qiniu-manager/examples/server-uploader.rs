@@ -18,6 +18,7 @@ use ceobe_qiniu_upload::{
 };
 use log::SetLoggerError;
 use url::Url;
+
 #[tokio::main]
 async fn main() {
     let path = std::fs::read_to_string("./qiniu_example.json")

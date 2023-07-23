@@ -1,5 +1,3 @@
-pub mod content_avaliable;
-pub mod subtitle;
 use typed_builder::TypedBuilder;
 
 use self::{
@@ -12,7 +10,9 @@ use super::{NotifySerialize, SerializeInformation};
 
 mod apn;
 mod badge;
+pub mod content_avaliable;
 mod rich_text;
+pub mod subtitle;
 
 #[derive(Debug, TypedBuilder, Default, Clone)]
 #[builder(field_defaults(default, setter(strip_option)))]
@@ -89,7 +89,6 @@ impl IosNotify {
 
 #[cfg(test)]
 mod test {
-
     use super::{content_avaliable::ContentAvailable, IosNotify};
     use crate::push_notify::SerializeInformation;
 

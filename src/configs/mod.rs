@@ -1,12 +1,3 @@
-pub mod auth_config;
-pub mod first_user;
-pub mod http_listen_config;
-pub mod logger;
-pub mod mob_config;
-pub mod qiniu_secret;
-pub mod qq_channel;
-pub mod resp_result_config;
-pub mod schedule_notifier_config;
 use std::net::SocketAddr;
 
 use axum_starter::{Configure, Provider};
@@ -23,6 +14,16 @@ use self::{
     qiniu_secret::QiniuUploadConfig,
     resp_result_config::RespResultConfig,
 };
+
+pub mod auth_config;
+pub mod first_user;
+pub mod http_listen_config;
+pub mod logger;
+pub mod mob_config;
+pub mod qiniu_secret;
+pub mod qq_channel;
+pub mod resp_result_config;
+pub mod schedule_notifier_config;
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";
 pub const CONFIG_FILE_JSON: &str = "./Config.json";

@@ -1,6 +1,3 @@
-mod checkers;
-mod models;
-
 pub use checkers::{
     app_version_checker::AppVersionChecker,
     app_version_data::{
@@ -13,3 +10,6 @@ pub use checkers::{
 pub use models::model_app_version::{
     ActiveModel, Column, Entity, Model, Relation,
 };
+
+mod checkers;
+mod models;

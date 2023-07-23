@@ -16,6 +16,7 @@ use tracing::{info, instrument};
 use super::{
     ActiveModel, Checked, Column, Entity, OperateResult, VideoOperate,
 };
+
 impl VideoOperate<'_, NoConnect> {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,

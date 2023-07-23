@@ -1,5 +1,6 @@
 use http::Uri;
 use url::Url;
+
 pub trait GrpcConfigTrait {
     fn get_url(&self) -> Url;
 

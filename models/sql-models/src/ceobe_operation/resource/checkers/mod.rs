@@ -1,11 +1,11 @@
-pub mod countdown;
-pub mod resource_all_available;
-pub mod resource_data;
-
 use std::convert::Infallible;
 
 use status_err::StatusErr;
 use thiserror::Error;
+
+pub mod countdown;
+pub mod resource_all_available;
+pub mod resource_data;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

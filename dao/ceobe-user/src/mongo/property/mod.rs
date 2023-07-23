@@ -1,9 +1,3 @@
-pub mod create;
-pub mod delete;
-pub mod retrieve;
-pub mod update;
-pub mod verify;
-
 use std::ops::Deref;
 
 use db_ops_prelude::mongo_connection;
@@ -17,6 +11,12 @@ use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
 
 use crate::UserDatabaseOperate;
+
+pub mod create;
+pub mod delete;
+pub mod retrieve;
+pub mod update;
+pub mod verify;
 
 pub struct UserPropertyOperate<'db, Conn>(&'db Conn);
 

@@ -1,4 +1,7 @@
 use sea_orm_migration::prelude::*;
+use sql_models::get_zero_data_time;
+pub use CeobeOperationVideo::{Table as DbTable, *};
+
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str { "m20220724_090218_new_video_model" }
@@ -45,8 +48,6 @@ impl MigrationTrait for Migration {
         Ok(())
     }
 }
-use sql_models::get_zero_data_time;
-pub use CeobeOperationVideo::{Table as DbTable, *};
 
 #[derive(Iden)]
 pub enum CeobeOperationVideo {

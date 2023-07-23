@@ -46,7 +46,26 @@ impl PlatformOperate<'_, NoConnect> {
 }
 #[cfg(test)]
 mod test {
+    use db_ops_prelude::{
+        ext_traits::{
+            check_all_exist::QueryAllExist,
+            select_count::{ColumnExpr, QueryCountByColumn},
+        },
+        sea_orm::{
+            sea_query::{
+                Alias, Expr, MysqlQueryBuilder, Query, SelectStatement,
+            },
+            ColumnTrait, DatabaseBackend, EntityTrait, QueryFilter,
+            QueryTrait, Select,
+        },
+        sql_models::fetcher::{
+            datasource_config::models::model_datasource_config,
+            platform_config::models::model_platform_config,
+        },
+    };
+
     use super::Entity;
+
     /// 生成Statement 为 检查给定的id的平台下时候有数据源
     fn gen_query_verify_has_datasource_with_id(pid: i32) -> SelectStatement {
         let mut query = Query::select();
@@ -81,24 +100,6 @@ mod test {
 
         query
     }
-
-    use db_ops_prelude::{
-        ext_traits::{
-            check_all_exist::QueryAllExist,
-            select_count::{ColumnExpr, QueryCountByColumn},
-        },
-        sea_orm::{
-            sea_query::{
-                Alias, Expr, MysqlQueryBuilder, Query, SelectStatement,
-            },
-            ColumnTrait, DatabaseBackend, EntityTrait, QueryFilter,
-            QueryTrait, Select,
-        },
-        sql_models::fetcher::{
-            datasource_config::models::model_datasource_config,
-            platform_config::models::model_platform_config,
-        },
-    };
 
     #[test]
     fn test_gen_sql() {

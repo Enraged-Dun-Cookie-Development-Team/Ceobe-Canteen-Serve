@@ -8,6 +8,7 @@ use db_ops_prelude::{
 use tracing::info;
 
 use super::{AnnouncementOperate, Column, Entity, OperateResult};
+
 impl<C> AnnouncementOperate<'_, C> {
     pub async fn all_soft_remove(
         db: &impl ConnectionTrait,

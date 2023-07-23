@@ -1,6 +1,7 @@
 use serde::ser::SerializeStruct;
 
 use crate::push_notify::NotifySerialize;
+
 #[derive(Debug, Clone)]
 /// 角标
 pub enum IosBadgeType {

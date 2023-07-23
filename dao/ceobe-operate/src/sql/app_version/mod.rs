@@ -1,5 +1,6 @@
 use std::ops::Deref;
 
+pub use db_ops_prelude::sql_models::ceobe_operation::app_version::*;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
     get_connect::GetDatabaseConnect,
@@ -54,8 +55,6 @@ pub enum OperateError {
 }
 
 type OperateResult<T> = Result<T, OperateError>;
-
-pub use db_ops_prelude::sql_models::ceobe_operation::app_version::*;
 
 impl<'db, Conn: GetDatabaseConnect> OperationDatabaseOperate<'db, Conn> {
     pub fn app_version(&self) -> AppVersionOperate<'_, Conn> { self.child() }

@@ -4,6 +4,7 @@ use std::{
     sync::Arc,
 };
 
+pub use collection_guard::CollectionGuard;
 use futures::Future;
 use mongodb::{Client, Collection};
 use serde::{Deserialize, Serialize};
@@ -12,8 +13,6 @@ use super::builder::DatabaseBuilder;
 use crate::{error::MongoDbError, MongoErr};
 
 mod collection_guard;
-
-pub use collection_guard::CollectionGuard;
 
 /// 构建完成后的结构体
 /// 在这种模式下，不允许添加Collection

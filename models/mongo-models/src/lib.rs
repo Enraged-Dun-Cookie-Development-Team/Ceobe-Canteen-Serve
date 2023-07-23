@@ -1,11 +1,11 @@
-pub mod bakery;
-pub mod ceobe;
-
 use chrono::Local;
 pub use mongo_connection;
 pub use mongodb;
 use mongodb::bson::DateTime;
 use serde::{Deserialize, Serialize};
+
+pub mod bakery;
+pub mod ceobe;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RecordUnit {

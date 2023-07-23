@@ -1,6 +1,7 @@
 use async_trait::async_trait;
 use axum::extract::FromRequestParts;
 use http::request::Parts;
+pub use layer::MobVerifyLayer;
 use mongo_migration::mongo_models::ceobe::user_property::models::UserMobId;
 use resp_result::{Nil, RespResult};
 
@@ -37,6 +38,3 @@ where
             .map_err(RespResult::err)?)
     }
 }
-
-pub use layer::MobVerifyLayer;
-pub use service::MobVerify;

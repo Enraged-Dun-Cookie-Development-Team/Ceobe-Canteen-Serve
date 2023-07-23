@@ -6,6 +6,7 @@ use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
 
 use crate::utils::user_authorize::PasswordEncoder;
+
 pub trait FUserConfig {
     fn username(&self) -> String;
     fn password(&self) -> String;

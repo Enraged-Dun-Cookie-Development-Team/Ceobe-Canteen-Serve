@@ -1,4 +1,6 @@
 use sea_orm_migration::prelude::*;
+use sql_models::get_zero_data_time;
+use CeobeOperationResource::{Table as DbTable, *};
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -66,9 +68,6 @@ impl MigrationTrait for Migration {
     }
 }
 
-use sql_models::get_zero_data_time;
-use CeobeOperationResource::{Table as DbTable, *};
-
 #[derive(Debug, Iden)]
 pub(super) enum CeobeOperationResource {
     Table,
@@ -103,6 +102,7 @@ mod test {
     use sea_orm_migration::prelude::Iden;
 
     use super::ResourceType;
+
     #[test]
     fn test() {
         println!("{:?}", ResourceType::Name.to_string());

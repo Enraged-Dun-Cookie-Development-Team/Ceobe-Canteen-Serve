@@ -1,5 +1,6 @@
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, StreamTrait, EntityTrait, sea_query::{Expr, Func}, ColumnTrait, Order, QueryFilter, Condition, QueryOrder, QuerySelect}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Entity, SearchOid, Column}, mysql_func::{AGAINST, MATCH}};
 use tracing::instrument;
+
+use db_ops_prelude::{get_connect::GetDatabaseConnect, mysql_func::{AGAINST, MATCH}, sea_orm::{ColumnTrait, Condition, ConnectionTrait, EntityTrait, Order, QueryFilter, QueryOrder, QuerySelect, sea_query::{Expr, Func}, StreamTrait}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Column, Entity, SearchOid}};
 
 use super::{OperateResult, SearchContentOperate};
 
@@ -87,7 +88,7 @@ where
 
 #[cfg(test)]
 mod test {
-    use db_ops_prelude::{sea_orm::{sea_query::{Query, Expr, Func, MysqlQueryBuilder}, ColumnTrait, Order}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Column, Entity}, mysql_func::{AGAINST, MATCH}};
+    use db_ops_prelude::{mysql_func::{AGAINST, MATCH}, sea_orm::{ColumnTrait, Order, sea_query::{Expr, Func, MysqlQueryBuilder, Query}}, sql_models::ceobe_cookie::search_content::models::model_search_content::{Column, Entity}};
 
     #[test]
     fn test_gen_sql() {

@@ -1,8 +1,10 @@
-mod all_available;
-mod countdown;
-
 use orm_migrate::sql_models::ceobe_operation::resource;
 use serde::Serialize;
+
+pub use self::{all_available::AllAvailable, countdown::Countdown};
+
+mod all_available;
+mod countdown;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Resource {
@@ -10,8 +12,6 @@ pub struct Resource {
     resource_all_available: AllAvailable,
     countdown: Vec<Countdown>,
 }
-
-pub use self::{all_available::AllAvailable, countdown::Countdown};
 
 impl
     From<(

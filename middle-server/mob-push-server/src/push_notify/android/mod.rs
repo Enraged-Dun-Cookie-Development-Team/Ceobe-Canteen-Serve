@@ -1,4 +1,3 @@
-pub mod notify_style;
 use typed_builder::TypedBuilder;
 
 pub use self::{
@@ -11,6 +10,7 @@ use super::{NotifySerialize, SerializeInformation};
 
 pub mod badge;
 pub mod image;
+pub mod notify_style;
 pub mod sound;
 
 #[derive(Debug, TypedBuilder, Default, Clone)]

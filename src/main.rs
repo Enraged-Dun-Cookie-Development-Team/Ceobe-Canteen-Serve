@@ -1,3 +1,5 @@
+extern crate serde;
+
 use std::{
     io::{stdout, Write},
     time::Duration,
@@ -45,8 +47,6 @@ mod middleware;
 mod router;
 mod serves;
 mod utils;
-
-extern crate serde;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");

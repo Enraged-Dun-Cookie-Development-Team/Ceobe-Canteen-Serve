@@ -1,7 +1,3 @@
-mod delete;
-mod retrieve;
-mod update;
-
 use std::ops::Deref;
 
 pub use db_ops_prelude::sql_models::ceobe_operation::announcement::*;
@@ -11,6 +7,10 @@ use db_ops_prelude::{
 };
 
 use crate::OperationDatabaseOperate;
+
+mod delete;
+mod retrieve;
+mod update;
 
 pub struct AnnouncementOperate<'c, C>(&'c C);
 

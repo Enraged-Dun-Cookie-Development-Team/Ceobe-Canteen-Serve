@@ -22,11 +22,11 @@ migrate_dir = "./migrate/sql-migration"
 # migrate dir
 
 import datetime
-from functools import reduce
 import os
 import pathlib
-import sys
 import re
+import sys
+from functools import reduce
 
 mod_patten = re.compile(r'(?:pub )?mod ([a-zA-Z_][a-zA-Z0-9_]*);')
 migrate_patten = re.compile(r'crate::migrate_group!\[([\n\sa-z_:A-Z0-9]+)(?=\n\s+])')

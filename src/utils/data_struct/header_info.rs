@@ -1,8 +1,9 @@
-use std::{convert::Infallible, marker::PhantomData, vec::IntoIter};
+use std::{marker::PhantomData, vec::IntoIter};
 
 use async_trait::async_trait;
 use axum::extract::RequestParts;
 use axum_prehandle::PreHandler;
+
 pub enum HeaderInfo<H> {
     Exist(Vec<String>, PhantomData<H>),
     None(PhantomData<H>),

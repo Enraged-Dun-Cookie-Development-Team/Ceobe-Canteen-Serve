@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{marker::PhantomData, net::Ipv4Addr};
 
 use axum::{
     body::Body,
@@ -18,10 +18,13 @@ use ceobe_qiniu_upload::{
     QiniuUploadState, ResponsePayload, SecretConfig,
 };
 use futures::FutureExt;
+use log::{Level::Debug, SetLoggerError};
 use qiniu_cdn_upload::{
     update_payload::UploadPayload,
     update_source::{FieldSource, UploadSource},
 };
+use simple_logger::init_with_level;
+use tokio::{runtime, signal::ctrl_c};
 
 async fn upload(
     uploader: QiniuManager, mut file: Multipart,
@@ -102,12 +105,6 @@ async fn server() {
         .await
         .expect("服务器异常");
 }
-
-use std::net::Ipv4Addr;
-
-use log::{Level::Debug, SetLoggerError};
-use simple_logger::init_with_level;
-use tokio::{runtime, signal::ctrl_c};
 
 #[derive(Debug, Default, Provider, Configure)]
 #[conf(

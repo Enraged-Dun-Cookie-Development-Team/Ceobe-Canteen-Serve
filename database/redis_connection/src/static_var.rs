@@ -4,6 +4,7 @@ use tracing::{info, instrument};
 use url::Url;
 
 use crate::config::DbConnectConfig;
+
 static REDIS_DATABASE_CLIENT: OnceCell<ConnectionManager> = OnceCell::new();
 
 #[instrument(skip(config))]

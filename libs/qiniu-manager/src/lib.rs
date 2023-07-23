@@ -1,9 +1,3 @@
-mod axum_starter;
-mod error;
-
-mod config;
-mod manager;
-
 pub use config::{BaseUrl, GetBucket, SecretConfig};
 pub use error::{Error, UploaderNotFound};
 pub use manager::{
@@ -17,3 +11,9 @@ pub use mime_guess;
 pub use crate::axum_starter::{
     QiniuBaseUrl, QiniuManager, QiniuUpload, QiniuUploadState,
 };
+
+mod axum_starter;
+mod error;
+
+mod config;
+mod manager;

@@ -1,8 +1,3 @@
-mod back_end;
-mod cdn;
-mod front_end;
-mod inside;
-
 use axum::{routing::get, Router};
 pub use back_end::{
     BakeryMansionBackend, CeobeOpResource, CeobeOpVersion,
@@ -19,13 +14,18 @@ pub use front_end::{
 };
 pub use inside::AnalyzeCookieInside;
 
-pub type ServerRoute = Router<State>;
-
 use self::{
     back_end::back_end_router, cdn::cdn_router, front_end::front_end_router,
     inside::inside_router,
 };
 use crate::bootstrap::State;
+
+mod back_end;
+mod cdn;
+mod front_end;
+mod inside;
+
+pub type ServerRoute = Router<State>;
 
 pub fn root_route() -> ServerRoute {
     Router::new()

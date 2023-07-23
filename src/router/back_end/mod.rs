@@ -1,8 +1,3 @@
-mod bakery_mansion;
-pub mod ceobe_operation;
-pub mod fetcher;
-
-mod user_auth;
 use axum::Router;
 pub use bakery_mansion::BakeryMansionBackend;
 pub use ceobe_operation::{
@@ -17,6 +12,12 @@ use self::{
     ceobe_operation::ceobe_operation_router, fetcher::fetcher_config,
     user_auth::user_auth_router,
 };
+
+mod bakery_mansion;
+pub mod ceobe_operation;
+pub mod fetcher;
+
+mod user_auth;
 
 pub(super) fn back_end_router() -> crate::router::ServerRoute {
     Router::new()

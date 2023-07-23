@@ -8,6 +8,7 @@ use db_ops_prelude::{
 use tracing::{info, instrument};
 
 use super::{Checked, OperateResult, PluginVersionOperate};
+
 impl<'db, Conn> PluginVersionOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, PluginVersion>,

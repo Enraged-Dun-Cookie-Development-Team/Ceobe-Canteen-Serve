@@ -1,4 +1,4 @@
-use mob_push_server::{MobPushConfigTrait, PushManager};
+use mob_push_server::PushManager;
 
 struct Cfg;
 

@@ -1,8 +1,9 @@
-pub mod announcement_data;
 use std::convert::Infallible;
 
 use status_err::StatusErr;
 use thiserror::Error;
+
+pub mod announcement_data;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

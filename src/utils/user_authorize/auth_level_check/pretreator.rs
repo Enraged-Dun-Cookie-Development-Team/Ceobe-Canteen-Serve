@@ -4,10 +4,11 @@ use async_trait::async_trait;
 use axum_prehandle::PreHandler;
 use time_usage::{async_time_usage_with_name, sync_time_usage_with_name};
 
-use super::{error::UnacceptableAuthorizationLevelError, AuthLevelVerify};
 use crate::utils::user_authorize::{
-    error::AuthError, AuthInfo, TokenAuth, VerifiedAuthInfo,
+    AuthInfo, error::AuthError, TokenAuth, VerifiedAuthInfo,
 };
+
+use super::{AuthLevelVerify, error::UnacceptableAuthorizationLevelError};
 
 pub struct AuthLevel<L: AuthLevelVerify>(PhantomData<L>);
 

@@ -1,12 +1,13 @@
+use codegen::check_obj::CheckObj;
+use inner_checker_info::InnerCheckerInfo;
+use proc_macro::TokenStream;
+use syn::{parse_macro_input, ItemStruct};
+
 mod codegen;
 #[macro_use]
 mod utils;
 mod checker_info;
 mod inner_checker_info;
-use codegen::check_obj::CheckObj;
-use inner_checker_info::InnerCheckerInfo;
-use proc_macro::TokenStream;
-use syn::{parse_macro_input, ItemStruct};
 
 /// check obj 过程宏，根据挂载的结构体构造复合 `Checker` 已经包装的 `Uncheck`
 /// 对象以及配套的 [Future](std::future::Future) 对象

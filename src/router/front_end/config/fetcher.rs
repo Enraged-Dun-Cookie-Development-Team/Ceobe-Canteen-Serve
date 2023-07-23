@@ -1,8 +1,8 @@
 use axum::{routing::get, Router};
 
-pub struct ConfigFetcherFrontend;
-
 use crate::router::ServerRoute;
+
+pub struct ConfigFetcherFrontend;
 
 pub fn fetcher_router() -> ServerRoute {
     Router::new().route(

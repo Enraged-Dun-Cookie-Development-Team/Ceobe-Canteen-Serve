@@ -1,6 +1,7 @@
 use http::{HeaderMap, Method, Version};
 use serde::Serialize;
 use url::Url;
+
 pub trait Requester: Sized {
     const METHOD: Method;
     const VERSION: Version = Version::HTTP_2;

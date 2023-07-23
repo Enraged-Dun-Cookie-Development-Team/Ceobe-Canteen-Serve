@@ -1,10 +1,12 @@
+use std::borrow::Cow;
+
+pub use http::StatusCode as HttpCode;
+pub use status_err_derive::StatusErr;
+pub use thiserror::Error as ThisError;
+
 pub mod codegen;
 mod impls;
 pub mod status_code;
-use std::borrow::Cow;
-
-pub use status_err_derive::StatusErr;
-pub use thiserror::Error as ThisError;
 
 pub trait StatusErr: std::error::Error {
     #[inline]
@@ -27,7 +29,6 @@ pub trait StatusErr: std::error::Error {
 
 #[derive(Debug, Clone, Copy)]
 pub struct ErrPrefix(char, http::StatusCode);
-pub use http::StatusCode as HttpCode;
 
 impl std::fmt::Display for ErrPrefix {
     #[inline]

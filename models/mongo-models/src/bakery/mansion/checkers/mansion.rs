@@ -11,6 +11,7 @@ use super::{
     CheckError,
 };
 use crate::bakery::mansion::preludes::{Daily, Mansion};
+
 type MaxLimitString<const H: usize> = RangeBoundLimit<String, MaxLimit<H>>;
 
 #[checker::check_gen(

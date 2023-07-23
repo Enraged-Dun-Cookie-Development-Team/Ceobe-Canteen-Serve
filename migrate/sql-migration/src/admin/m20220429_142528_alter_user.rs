@@ -2,6 +2,7 @@ use sea_orm_migration::prelude::*;
 use sql_models::admin_user::Column::NumPwdChange;
 
 use super::m20220324_222712_create_user::User;
+
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str { "m20220429_142528_alter_user" }

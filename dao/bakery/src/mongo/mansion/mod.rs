@@ -6,15 +6,15 @@ use db_ops_prelude::{
     mongo_connection::MongoDbError,
     mongodb::bson,
 };
+use status_err::{ErrPrefix, HttpCode};
+use thiserror::Error;
+pub use OperateError::*;
 
 mod create;
 mod delete;
 mod retrieve;
 mod update;
 mod verify;
-use status_err::{ErrPrefix, HttpCode};
-use thiserror::Error;
-pub use OperateError::*;
 
 type OperateResult<T> = Result<T, OperateError>;
 

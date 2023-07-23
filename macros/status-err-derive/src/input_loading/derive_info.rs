@@ -18,6 +18,7 @@ mod test {
     use syn::DeriveInput;
 
     use super::StatusErrorDeriveInfo;
+
     #[test]
     fn test_derive_input() {
         let derive_input: DeriveInput = syn::parse_str(

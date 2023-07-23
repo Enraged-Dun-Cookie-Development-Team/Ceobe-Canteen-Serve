@@ -1,3 +1,12 @@
+pub use config::app_info::MobPushConfigTrait;
+use device_info::DeviceInfo;
+pub use error::MobPushError;
+pub use push_forward::{PushForward, Scheme};
+pub use push_manager::{PartPushManagerState, PushManager};
+pub use pushing_data::PushEntity;
+
+use crate::push_models::response::Respond;
+
 pub mod axum_starter;
 mod config;
 mod device_info;
@@ -9,14 +18,6 @@ pub mod push_notify;
 mod requester;
 
 mod pushing_data;
-pub use config::app_info::MobPushConfigTrait;
-use device_info::DeviceInfo;
-pub use error::MobPushError;
-pub use push_forward::{PushForward, Scheme};
-pub use push_manager::{PartPushManagerState, PushManager};
-pub use pushing_data::PushEntity;
-
-use crate::push_models::response::Respond;
 
 impl PushManager {
     /// 通过使用给定的request 客户端，发起mob推送.
