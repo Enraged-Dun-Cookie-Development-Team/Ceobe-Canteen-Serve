@@ -1,27 +1,41 @@
 #[cfg(feature = "model-admin")]
-pub use admin;
+pub mod admin{
+    pub use dao_admin::*;
+    pub use sql_models::admin_user as models;
+}
 #[cfg(feature = "model-bakery", )]
-pub use bakery;
+pub mod bakery{
+    pub use dao_bakery::*;
+    pub use mongo_models::bakery as models;
+}
 #[cfg(feature = "model-ceobe-cookie", )]
-pub use ceobe_cookie;
+pub mod ceobe_cookie{
+    pub use dao_ceobe_cookie::*;
+    pub mod models {
+        pub use sql_models::ceobe_cookie::*;
+        pub use mongo_models::ceobe::cookie::*;
+    }
+}
 #[cfg(feature = "model-ceobe-operate",)]
-pub use ceobe_operate;
+pub mod ceobe_operate{
+    pub use dao_ceobe_operate::*;
+    pub mod models{
+        pub use sql_models::ceobe_operation::*;
+        pub use mongo_models::ceobe::operation::*;
+    }
+}
 #[cfg(feature = "model-ceobe-user",)]
-pub use ceobe_user;
+pub mod ceobe_user{
+    pub use dao_ceobe_user::*;
+    pub use mongo_models::ceobe::user_property as models;
+}
 /// prelude export
 #[cfg(feature = "prelude")]
 pub use db_prelude;
 #[cfg(any(feature = "model-fetcher", feature = "prelude"))]
-pub use fetcher;
-
-#[cfg(any(feature = "sql-models",feature = "mongo-models"))]
-pub mod models{
-    #[cfg(all(feature = "sql-models" ,not(feature = "mongo-models")))]
-    pub use sql_models::*;
-    #[cfg(all(feature = "mongo-models" ,not(feature = "sql-models")))]
-    pub use mongo_models::*;
-    #[cfg(all(feature = "sql-models",feature = "mongo-models"))]
-    pub use {sql_models as mysql,mongo_models as mongo};
+pub mod fetcher{
+    pub use dao_fetcher::*;
+    pub use sql_models::fetcher as models;
 }
 
 #[cfg(any(feature = "mongodb", feature = "mongo-migrate", ))]

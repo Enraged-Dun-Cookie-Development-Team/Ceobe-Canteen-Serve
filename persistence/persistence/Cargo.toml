@@ -27,25 +27,25 @@ migrate = ["mongo-migrate","mysql-migrate"]
 mongo-migrate = ["mongo-migration"]
 mysql-migrate = ["sql-migration"]
 
-model-admin = ["admin", "mysql", "database-operate", "sql-models"]
-model-bakery = ["bakery", "mongodb", "database-operate", "mongo-models"]
-model-ceobe-cookie = ["ceobe-cookie", "mysql", "mongodb", "database-operate", "sql-models", "mongo-models"]
-model-ceobe-operate = ["ceobe-operate", "mongodb", "mysql", "database-operate", "sql-models", "mongo-models"]
-model-ceobe-user = ["ceobe-user", "mongodb", "database-operate", "mongo-models"]
-model-fetcher = ["fetcher", "mysql", "database-operate", "sql-models"]
+model-admin = ["dao-admin", "mysql", "database-operate", "sql-models"]
+model-bakery = ["dao-bakery", "mongodb", "database-operate", "mongo-models"]
+model-ceobe-cookie = ["dao-ceobe-cookie", "mysql", "mongodb", "database-operate", "sql-models", "mongo-models"]
+model-ceobe-operate = ["dao-ceobe-operate", "mongodb", "mysql", "database-operate", "sql-models", "mongo-models"]
+model-ceobe-user = ["dao-ceobe-user", "mongodb", "database-operate", "mongo-models"]
+model-fetcher = ["dao-fetcher", "mysql", "database-operate", "sql-models"]
 
 database-connect = ["traits","traits/initial"]
 database-operate = ["traits","traits/get-connect", "abstract"]
 
 [dependencies]
 abstract = { version = "0.1.0", path = "../database/abstract_database", package = "abstract_database", optional = true }
-admin = { version = "0.1.0", path = "../dao/admin", optional = true }
-bakery = { version = "0.1.0", path = "../dao/bakery", optional = true }
-ceobe-cookie = { version = "0.1.0", path = "../dao/ceobe-cookie", optional = true }
-ceobe-operate = { version = "0.1.0", path = "../dao/ceobe-operate", optional = true }
-ceobe-user = { version = "0.1.0", path = "../dao/ceobe-user", optional = true }
+dao-admin = { version = "0.1.0", path = "../dao/admin", optional = true ,package = "admin"}
+dao-bakery = { version = "0.1.0", path = "../dao/bakery", optional = true ,package = "bakery"}
+dao-ceobe-cookie = { version = "0.1.0", path = "../dao/ceobe-cookie", optional = true ,package = "ceobe-cookie"}
+dao-ceobe-operate = { version = "0.1.0", path = "../dao/ceobe-operate", optional = true ,package = "ceobe-operate"}
+dao-ceobe-user = { version = "0.1.0", path = "../dao/ceobe-user", optional = true, package = "ceobe-user"}
 db-prelude = { version = "0.1.0", path = "../database/db-ops-prelude", package = "db-ops-prelude", optional = true }
-fetcher = { version = "0.1.0", path = "../dao/fetcher", optional = true }
+dao-fetcher = { version = "0.1.0", path = "../dao/fetcher", optional = true ,package = "fetcher"}
 mongo-connect = { version = "0.1.0", path = "../database/mongo_connection", package = "mongo_connection", optional = true }
 mongo-migration = { version = "0.1.0", path = "../migrate/mongo-migration", optional = true }
 mongo-models = { version = "0.1.0", path = "../models/mongo-models", optional = true }
