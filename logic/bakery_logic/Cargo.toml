@@ -6,10 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bakery.workspace = true
 thiserror.workspace = true
 status-err = { path = "../../libs/status-err" }
-db-ops-prelude.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 typed-builder.workspace = true
+persistence = { workspace = true, features = ["model-bakery", "help-crates"] }

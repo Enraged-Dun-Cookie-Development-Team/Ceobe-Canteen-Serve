@@ -1,5 +1,5 @@
-use bakery::{mansion::ToMansion, ToBakery};
-use db_ops_prelude::mongo_connection::MongoDatabaseOperate;
+use persistence::bakery::{mansion::ToMansion, ToBakery};
+use persistence::mongodb::MongoDatabaseOperate;
 
 use super::BakeryLogic;
 use crate::{error::LogicResult, view::MansionRecentPredictResp};

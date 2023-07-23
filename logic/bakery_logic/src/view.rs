@@ -1,9 +1,7 @@
-use db_ops_prelude::{
-    chrono::NaiveDate,
-    mongo_models::bakery::mansion::preludes::{
-        Daily, Info, Predict, RecentPredict,
-    },
+use persistence::bakery::models::mansion::preludes::{
+    Daily, Info, Predict, RecentPredict,
 };
+use persistence::prelude::chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
