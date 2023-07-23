@@ -15,12 +15,15 @@ prelude = ["db-prelude",
     "model-fetcher",
     "mongodb",
     "mysql",
+    "redis",
     "database-connect",
     "database-operate"]
 
 mongodb = ["mongo-connect"]
 redis = ["redis-connect"]
 mysql = ["sql-connect"]
+
+migrate = ["mongo-migrate","mysql-migrate"]
 mongo-migrate = ["mongo-migration"]
 mysql-migrate = ["sql-migration"]
 
@@ -31,8 +34,8 @@ model-ceobe-operate = ["ceobe-operate", "mongodb", "mysql", "database-operate", 
 model-ceobe-user = ["ceobe-user", "mongodb", "database-operate", "mongo-models"]
 model-fetcher = ["fetcher", "mysql", "database-operate", "sql-models"]
 
-database-connect = ["traits/initial"]
-database-operate = ["traits/get-connect", "abstract"]
+database-connect = ["traits","traits/initial"]
+database-operate = ["traits","traits/get-connect", "abstract"]
 
 [dependencies]
 abstract = { version = "0.1.0", path = "../database/abstract_database", package = "abstract_database", optional = true }
