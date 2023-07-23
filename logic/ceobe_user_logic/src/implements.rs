@@ -3,32 +3,34 @@ use std::collections::HashSet;
 use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
 use bnum::types::U256;
-use ceobe_cookie::{ToCeobe, ToCookie};
-use ceobe_qiniu_upload::QiniuManager;
-use ceobe_user::ToCeobeUser;
 use checker::LiteChecker;
-use db_ops_prelude::{
-    bool_or::TrueOrError,
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user_property::{
+use ceobe_qiniu_upload::QiniuManager;
+use persistence::{
+    prelude::{
+        bool_or::TrueOrError,
+        mongodb::bson::{self, oid::ObjectId},
+    },
+    mysql::SqlDatabaseOperate,
+    mongodb::MongoDatabaseOperate,
+    redis::RedisConnect,
+    ceobe_user::models::{
         check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
         models::{UserMobId, UserPropertyChecked},
     },
-    mongodb::bson::{self, oid::ObjectId},
-    SqlDatabaseOperate,
-};
-use fetcher::{
-    datasource_combination::ToDatasourceCombination,
-    datasource_config::{
-        OperateError as FetcherDatasourceOperateError, ToDatasource,
-    },
-    ToFetcher,
+    ceobe_user::ToCeobeUser,
+    ceobe_cookie::{ToCeobe, ToCookie},
+    fetcher::{
+        datasource_combination::ToDatasourceCombination,
+        datasource_config::{
+            OperateError as FetcherDatasourceOperateError, ToDatasource,
+        },
+        ToFetcher,
+    }
 };
 use futures::future;
 use mob_push_server::PushManager;
 use qiniu_service::QiniuService;
 use qq_channel_warning::QqChannelGrpcService;
-use redis_connection::RedisConnect;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;

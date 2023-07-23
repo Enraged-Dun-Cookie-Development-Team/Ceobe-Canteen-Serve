@@ -1,4 +1,4 @@
-use db_ops_prelude::mongo_models::ceobe::user_property::models::UserMobId;
+use persistence::ceobe_user::models::models::UserMobId;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use uuid::Uuid;
