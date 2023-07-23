@@ -84,6 +84,7 @@ qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" 
 mob-push-server = { version = "0.1.0", path = "middle-server/mob-push-server" }
 qiniu_service = { version = "0.1.0", path = "service/qiniu_service" }
 persistence = { version = "0.1.0", path = "persistence/persistence" }
+time-utils = { version = "0.1.0", path = "libs/time-utils" }
 
 [dependencies]
 # Xss
@@ -144,6 +145,7 @@ qq-channel-warning = { version = "0.1.0", path = "middle-server/qq-channel-warni
 bitmap-convert.workspace = true
 bitmaps.workspace = true
 persistence = { workspace = true, features = ["prelude", "migrate"] }
+
 
 [dependencies.tokio]
 workspace = true

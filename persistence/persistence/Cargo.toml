@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-help-crates = ["chrono", "futures", "status-err", "smallstr", "smallvec", "tap", "thiserror", "tracing", "bool_or", "mysql_func", "mongodb", "sea-orm"]
+help-crates = ["chrono", "futures", "status-err", "smallstr", "smallvec", "tap", "thiserror", "tracing", "bool_or", "mysql_func", "mongodb", "sea-orm","time-utils"]
 prelude = ["help-crates", "model-admin", "model-bakery", "model-ceobe-cookie", "model-ceobe-operate", "model-ceobe-user", "model-fetcher", "mysql", "redis", "database-connect", "database-operate"]
 
 mongo = ["mongo-connect"]
@@ -14,8 +14,8 @@ redis = ["redis-connect"]
 mysql = ["sql-connect"]
 
 migrate = ["mongo-migrate", "mysql-migrate"]
-mongo-migrate = ["mongo-migration","mongo"]
-mysql-migrate = ["sql-migration","mysql"]
+mongo-migrate = ["mongo-migration", "mongo"]
+mysql-migrate = ["sql-migration", "mysql"]
 
 model-admin = ["dao-admin", "mysql", "database-operate", "sql-models"]
 model-bakery = ["dao-bakery", "database-operate", "mongo-models"]
@@ -56,4 +56,5 @@ mysql_func = { workspace = true, optional = true }
 status-err = { version = "0.1.0", path = "../../libs/status-err", optional = true }
 sea-orm = { workspace = true,  optional = true }
 mongodb = { workspace = true,  optional = true }
+time-utils = { workspace = true, optional = true }
 
