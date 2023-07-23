@@ -2,7 +2,7 @@ use axum_starter::prepare;
 use persistence::{
     connect::{connect_db, connect_db_with_migrate},
     mongodb,
-    mongodb::{mongo_connection, MongoDbConfig, MongoDbError},
+    mongodb::{ MongoDbConfig, MongoDbError},
     mysql::{sea_orm::DbErr, DbConfig, Migrator, MigratorTrait, SqlDatabase},
     redis::{RedisDatabase, RedisDbConfig, RedisError},
 };
@@ -36,7 +36,7 @@ async fn connect_mysql_db_with_migrate<'arg>(
 async fn connect_mongo_db<'arg>(
     mongodb: &'arg MongoDbConfig,
 ) -> Result<(), MongoDbError> {
-    connect_db_with_migrate::<mongo_connection::DatabaseManage, _, _>(
+    connect_db_with_migrate::<mongodb::DatabaseManage, _, _>(
         mongodb,
         mongodb::Migrator,
     )

@@ -12,7 +12,7 @@ use persistence::{
         },
         platform_config::OperateError as PlatformConfigOperateError,
     },
-    prelude::sea_orm,
+    help_crates::sea_orm,
 };
 use redis::RedisError;
 use status_err::{ErrPrefix, StatusErr};

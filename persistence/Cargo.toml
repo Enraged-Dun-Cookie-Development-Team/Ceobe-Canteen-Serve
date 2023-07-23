@@ -1,6 +1,2 @@
 [workspace]
 members = ["dao/*", "database/*", "migrate/*", "models/*","persistence"]
-
-[workspace.dependences]
-db-ops-prelude = { version = "0.1.0", path = "database/db-ops-prelude" }
-abstract_database = { version = "0.1.0", path = "database/abstract_database" }

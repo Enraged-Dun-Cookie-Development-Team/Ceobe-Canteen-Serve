@@ -1,7 +1,7 @@
 use crypto_str::Encoder;
 use md5::{Digest, Md5};
 use persistence::{
-    admin::user::UserOperate, prelude::sea_orm::TransactionTrait,
+    admin::user::UserOperate, help_crates::sea_orm::TransactionTrait,
 };
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;

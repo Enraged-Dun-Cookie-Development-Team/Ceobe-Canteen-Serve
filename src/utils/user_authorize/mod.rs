@@ -1,6 +1,6 @@
 use hmac::Hmac;
 use persistence::admin;
-pub use persistence::prelude::sql_models::admin_user::AuthLevel;
+pub use persistence::admin::models::AuthLevel;
 pub use set_token::GenerateToken;
 use sha2::Sha256;
 pub use valid_token::decrypt_token;

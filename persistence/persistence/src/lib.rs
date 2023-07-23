@@ -30,9 +30,33 @@ pub mod ceobe_user {
     pub use mongo_models::ceobe::user_property as models;
 }
 /// prelude export
-#[cfg(any(feature = "prelude", feature = "help-crates"))]
-pub mod prelude {
-    pub use db_prelude::*;
+#[cfg(feature = "help-crates")]
+pub mod help_crates {
+    pub use bool_or;
+    pub use chrono;
+    use chrono::{Local, NaiveDateTime};
+    pub use futures;
+    pub use smallstr;
+    pub use smallvec;
+    pub use status_err::{ErrPrefix, HttpCode, StatusErr};
+    pub use tap;
+    pub use thiserror::Error as ThisError;
+    pub use tracing;
+    pub use sea_orm;
+    pub use mongodb;
+    use sea_orm::Value;
+
+    pub fn get_now_naive_date_time_value() -> Value {
+        Local::now().naive_local().into()
+    }
+
+    pub fn get_zero_data_time() -> NaiveDateTime {
+        NaiveDateTime::from_timestamp_opt(0, 0).unwrap()
+    }
+
+    pub fn get_now_naive_date_time() -> NaiveDateTime {
+        Local::now().naive_local()
+    }
 }
 #[cfg(any(feature = "model-fetcher", feature = "prelude"))]
 pub mod fetcher {
@@ -40,7 +64,7 @@ pub mod fetcher {
     pub use sql_models::fetcher as models;
 }
 
-#[cfg(any(feature = "mongodb", feature = "mongo-migrate",))]
+#[cfg(any(feature = "mongo", feature = "mongo-migrate",))]
 pub mod mongodb {
     pub use mongo_connect::*;
     #[cfg(feature = "mongo-migrate")]
@@ -51,6 +75,7 @@ pub mod mongodb {
 pub mod mysql {
     pub use sql_connect::*;
     #[cfg(feature = "sql-migration")] pub use sql_migration::*;
+    #[cfg(feature = "help-crates")]pub use mysql_func;
 }
 
 #[cfg(feature = "redis")]

@@ -2,7 +2,7 @@ use persistence::{
     bakery::models::mansion::preludes::{
         Daily, Info, Predict, RecentPredict,
     },
-    prelude::chrono::NaiveDate,
+    help_crates::chrono::NaiveDate,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;

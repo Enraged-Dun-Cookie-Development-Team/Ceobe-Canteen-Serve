@@ -12,7 +12,7 @@ use persistence::{
         models::datasource_config::checkers::CheckError as DatasourceConfigCheckError,
     },
     mongodb::MongoDbError,
-    prelude::sea_orm,
+    help_crates::sea_orm,
 };
 use qiniu_service::error::ServiceError as QiniuServiceError;
 use status_err::{ErrPrefix, StatusErr};

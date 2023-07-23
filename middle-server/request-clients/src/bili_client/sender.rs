@@ -3,7 +3,7 @@ use std::convert::Infallible;
 use axum_core::extract::{FromRef, FromRequestParts};
 use bytes::Bytes;
 use futures::future::ok;
-use sql_models::ceobe_operation::video::bv;
+use persistence::ceobe_operate::models::video::bv;
 use tokio::sync::{mpsc, oneshot};
 
 use crate::error::ChannelClose;

@@ -1,4 +1,4 @@
-use persistence::prelude::mongodb::bson;
+use persistence::help_crates::mongodb::bson;
 
 pub fn vec_bson_uuid_to_uuid(bson_uuids: Vec<bson::Uuid>) -> Vec<uuid::Uuid> {
     bson_uuids
