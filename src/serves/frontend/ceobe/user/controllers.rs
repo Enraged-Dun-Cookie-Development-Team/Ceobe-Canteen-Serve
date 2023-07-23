@@ -6,15 +6,14 @@ use ceobe_user_logic::{
     view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 use mob_push_server::PushManager;
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user_property::models::UserDatasource,
-};
-use orm_migrate::sql_connection::SqlDatabaseOperate;
+
 use qq_channel_warning::QqChannelGrpcService;
-use redis_connection::RedisConnect;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
+use persistence::ceobe_user::models::models::UserDatasource;
+use persistence::mongodb::MongoDatabaseOperate;
+use persistence::mysql::SqlDatabaseOperate;
+use persistence::redis::RedisConnect;
 
 use super::error::{CeobeUserError, CeobeUserRResult};
 use crate::{middleware::mob::MobIdInfo, router::CeobeUserFrontend};

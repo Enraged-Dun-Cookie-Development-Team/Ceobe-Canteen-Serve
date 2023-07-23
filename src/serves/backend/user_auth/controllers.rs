@@ -6,13 +6,13 @@ use checker::CheckExtract;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
 use md5::{Digest, Md5};
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate, sql_models::admin_user::AuthLevel,
-};
+
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use resp_result::{resp_try, rtry, MapReject};
 use tracing::{debug, instrument};
+use persistence::mysql::SqlDatabaseOperate;
+use persistence::admin::models::AuthLevel;
 
 use super::{
     error::AdminUserError,

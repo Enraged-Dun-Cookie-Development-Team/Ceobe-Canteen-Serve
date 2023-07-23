@@ -9,7 +9,7 @@ use persistence::fetcher::{
     platform_config::OperateError as PlatformOperateError,
 };
 use fetcher_logic::error::LogicError;
-use orm_migrate::sql_models::fetcher::datasource_config::checkers::CheckError;
+use persistence::fetcher::models::datasource_config::checkers::CheckError;
 use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
 

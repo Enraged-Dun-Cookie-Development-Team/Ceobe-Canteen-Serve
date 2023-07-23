@@ -1,12 +1,14 @@
 use axum_starter::prepare;
-use database_traits::initial::{connect_db, connect_db_with_migrate};
-use mongo_migration::mongo_connection::{self, MongoDbConfig, MongoDbError};
-use orm_migrate::{
-    sql_connection::{sea_orm::DbErr, DbConfig, SqlDatabase},
-    Migrator, MigratorTrait,
-};
-use redis_connection::{RedisDatabase, RedisDbConfig, RedisError};
+
 use tracing::instrument;
+use persistence::{
+    connect::{connect_db, connect_db_with_migrate},
+    mongodb,
+    mongodb::{mongo_connection, MongoDbConfig, MongoDbError},
+    mysql::{DbConfig, Migrator, MigratorTrait, SqlDatabase},
+    mysql::sea_orm::DbErr,
+    redis::{RedisDatabase, RedisDbConfig, RedisError}
+};
 
 use crate::{
     bootstrap::default_user::create_default_user,
@@ -38,7 +40,7 @@ async fn connect_mongo_db<'arg>(
 ) -> Result<(), MongoDbError> {
     connect_db_with_migrate::<mongo_connection::DatabaseManage, _, _>(
         mongodb,
-        mongo_migration::Migrator,
+        mongodb::Migrator,
     )
     .await?;
     Ok(())

@@ -1,7 +1,7 @@
 use axum::extract::rejection::QueryRejection;
 use persistence::ceobe_operate;
-use mongo_migration::mongo_models::ceobe::operation::plugin_version;
-use orm_migrate::sql_models::ceobe_operation::app_version;
+use persistence::ceobe_operate::models::plugin_version;
+use persistence::ceobe_operate::models::app_version;
 use resp_result::FlagRespResult;
 
 use crate::error_generate;

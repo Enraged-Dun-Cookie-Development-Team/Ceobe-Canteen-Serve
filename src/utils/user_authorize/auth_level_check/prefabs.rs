@@ -1,5 +1,4 @@
-use orm_migrate::sql_models::admin_user::AuthLevel;
-
+use persistence::admin::models::AuthLevel;
 use super::AuthLevelVerify;
 
 #[derive(Clone)]

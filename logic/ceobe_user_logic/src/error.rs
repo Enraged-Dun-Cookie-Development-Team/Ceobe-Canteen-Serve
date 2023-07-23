@@ -2,7 +2,7 @@ use bitmap_convert::error::Error as BitmapConvError;
 use persistence::{
     fetcher::models::datasource_config::checkers::CheckError as DatasourceConfigCheckError,
     prelude::sea_orm,
-    ceobe_user::check::CheckError as CeobeUserPropertyCheckError,
+    ceobe_user::models::check::CheckError as CeobeUserPropertyCheckError,
     mongodb::MongoDbError,
     ceobe_user::property::OperateError as CeobeUserOperateError,
     ceobe_cookie::analyze::OperateError as AnalyzeOperateError,

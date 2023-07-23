@@ -1,8 +1,7 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use mongo_migration::mongo_models::bakery::mansion::checkers::{
-    id_checker::{MidChecker, OpMidChecker},
-    mansion::MansionChecker,
-};
+use persistence::bakery::models::mansion::preludes::id_checker::{MidChecker, OpMidChecker};
+use persistence::bakery::models::mansion::preludes::mansion::MansionChecker;
+
 
 use crate::serves::backend::bakery_mansion::error::MansionError;
 

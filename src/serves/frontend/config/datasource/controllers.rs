@@ -1,10 +1,9 @@
 use persistence::fetcher::{datasource_config::ToDatasource, ToFetcher};
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-    sql_models::fetcher::datasource_config::models::model_datasource_config::FrontendDatasource,
-};
+
 use resp_result::rtry;
 use tracing::instrument;
+use persistence::fetcher::models::datasource_config::models::model_datasource_config::FrontendDatasource;
+use persistence::mysql::SqlDatabaseOperate;
 
 use crate::{
     router::ConfigDatasourceFrontend,

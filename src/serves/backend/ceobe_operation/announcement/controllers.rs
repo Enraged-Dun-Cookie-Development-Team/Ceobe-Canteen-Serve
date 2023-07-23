@@ -3,12 +3,11 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::announcement,
-};
+
 use resp_result::resp_try;
 use tracing::instrument;
+use persistence::ceobe_operate::models::announcement;
+use persistence::mysql::SqlDatabaseOperate;
 
 use super::{
     error::{AnnouncementRespResult, CeobeOperationAnnouncementError},

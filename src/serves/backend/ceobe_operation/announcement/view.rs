@@ -1,6 +1,6 @@
-use orm_migrate::sql_models::ceobe_operation::announcement;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
+use persistence::ceobe_operate::models::announcement;
 
 use crate::utils::time_format::naive_date_time_format;
 

@@ -4,10 +4,10 @@ pub use all_available::AllAvailable;
 use chrono::NaiveDateTime;
 pub use countdown::Countdown;
 use modify_cache::ModifyState;
-use orm_migrate::sql_models::{
-    ceobe_operation::resource, get_zero_data_time,
-};
+
 use serde::Serialize;
+use persistence::ceobe_operate::models::resource;
+use persistence::prelude::get_zero_data_time;
 
 mod all_available;
 mod countdown;

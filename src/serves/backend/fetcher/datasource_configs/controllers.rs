@@ -15,14 +15,14 @@ use fetcher_logic::{
     },
 };
 use futures::future;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use qiniu_cdn_upload::upload;
 use qq_channel_warning::QqChannelGrpcService;
-use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
+use persistence::mysql::SqlDatabaseOperate;
+use persistence::redis::RedisConnect;
 
 use super::{
     error::{DatasourceConfigError, DatasourceConfigRResult},

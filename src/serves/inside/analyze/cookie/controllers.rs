@@ -6,13 +6,13 @@ use ceobe_cookie_logic::{
 };
 use ceobe_qiniu_upload::QiniuManager;
 use mob_push_server::PushManager;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
 use qq_channel_warning::QqChannelGrpcService;
-use redis_connection::RedisConnect;
 use resp_result::{resp_try, MapReject};
 use tokio::sync::Mutex;
 use tracing::instrument;
+use persistence::mongodb::MongoDatabaseOperate;
+use persistence::mysql::SqlDatabaseOperate;
+use persistence::redis::RedisConnect;
 
 use super::error::{AnalyzeCookieError, AnalyzeCookieRResult};
 use crate::router::AnalyzeCookieInside;

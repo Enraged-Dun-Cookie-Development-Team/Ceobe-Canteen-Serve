@@ -17,7 +17,6 @@ bitmap-convert.workspace = true
 uuid.workspace = true
 mob-push-server.workspace = true
 general-request-client.workspace = true
-fetcher.workspace = true
 ceobe-qiniu-upload.workspace = true
 qiniu_service.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }

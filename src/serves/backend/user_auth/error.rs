@@ -1,7 +1,6 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use crypto_str::inner_encoders::bcrypt::BcryptError;
-
 use crate::utils::user_authorize::error::AuthError;
 
 crate::error_generate!(
@@ -11,6 +10,6 @@ crate::error_generate!(
     Auth = AuthError
     Query = QueryRejection
     OrmDB = persistence::admin::user::OperateError
-    Check = orm_migrate::sql_models::admin_user::CheckError
+    Check = persistence::admin::models::CheckError
     PageSize = NonZeroUnsignedError
 );

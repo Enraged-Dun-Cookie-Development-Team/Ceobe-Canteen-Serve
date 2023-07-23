@@ -1,6 +1,6 @@
 use persistence::ceobe_operate::resource::countdown::CountdownType;
-use orm_migrate::sql_models::ceobe_operation::resource::countdown;
 use serde::Serialize;
+use persistence::ceobe_operate::models::resource::countdown;
 
 use crate::utils::time_format::naive_date_time_format;
 

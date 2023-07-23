@@ -3,15 +3,11 @@ use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
 };
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::video::{
-        self, bv::query::Checked as BvQuery,
-    },
-};
 use request_clients::bili_client::QueryBiliVideo;
 use resp_result::{resp_try, rtry, RespResult};
 use tracing::{event, instrument, Level};
+use persistence::ceobe_operate::models::video::{self,bv::query::Checked as BvQuery};
+use persistence::mysql::SqlDatabaseOperate;
 
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},

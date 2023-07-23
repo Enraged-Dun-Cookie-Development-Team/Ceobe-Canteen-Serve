@@ -2,8 +2,7 @@ use axum::extract::rejection::{
     JsonRejection, PathRejection, QueryRejection,
 };
 use persistence::bakery::mansion::OperateError;
-use mongo_migration::mongo_models::bakery::mansion::checkers::CheckError;
-
+use persistence::bakery::models::mansion::preludes::CheckError;
 use crate::{error_generate, utils::user_authorize::error::AuthError};
 
 error_generate!(

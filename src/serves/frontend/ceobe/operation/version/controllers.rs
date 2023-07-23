@@ -2,10 +2,10 @@ use std::time::Duration;
 
 use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::CheckExtract;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
+use persistence::mongodb::MongoDatabaseOperate;
+use persistence::mysql::SqlDatabaseOperate;
 
 use super::{
     error::FlagVersionRespResult,

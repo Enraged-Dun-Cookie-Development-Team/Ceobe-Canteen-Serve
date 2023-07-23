@@ -1,8 +1,9 @@
 use hmac::Hmac;
-use orm_migrate::sql_models::admin_user;
-pub use orm_migrate::sql_models::admin_user::AuthLevel;
 pub use set_token::GenerateToken;
+pub use persistence::prelude::sql_models::admin_user::AuthLevel;
+
 use sha2::Sha256;
+use persistence::admin;
 pub use valid_token::decrypt_token;
 
 use super::mob_verify;
@@ -31,7 +32,7 @@ crate::quick_struct! {
 }
 
 /// 用户权限信息
-pub type AuthInfo = admin_user::Model;
+pub type AuthInfo = admin::models::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where

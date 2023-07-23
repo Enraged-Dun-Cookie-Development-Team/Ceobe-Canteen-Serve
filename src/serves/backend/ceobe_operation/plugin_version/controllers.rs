@@ -1,11 +1,10 @@
 use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::{CheckExtract, JsonCheckExtract};
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::operation::plugin_version::Checker,
-};
+
 use resp_result::resp_try;
 use tracing::instrument;
+use persistence::ceobe_operate::plugin_version::Checker;
+use persistence::mongodb::MongoDatabaseOperate;
 
 use super::error::{CeobeOperationPluginVersionError, PluginRespResult};
 use crate::router::CeobeOpVersion;

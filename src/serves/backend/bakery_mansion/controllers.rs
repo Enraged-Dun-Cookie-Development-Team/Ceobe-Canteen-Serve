@@ -1,9 +1,9 @@
 use persistence::bakery::{mansion::ToMansion, ToBakery};
 use checker::CheckExtract;
 use chrono::Duration;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use resp_result::resp_try;
 use tracing::{debug, instrument};
+use persistence::mongodb::MongoDatabaseOperate;
 
 use super::{
     models::{

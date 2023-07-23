@@ -4,10 +4,10 @@ use fetcher_logic::{
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
 use persistence::mysql::SqlDatabaseOperate;
-use redis_connection::RedisConnect;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
+use persistence::redis::RedisConnect;
 
 use super::error::{FetcherConfigError, FetcherConfigRResult};
 use crate::router::FetcherConfigControllers;

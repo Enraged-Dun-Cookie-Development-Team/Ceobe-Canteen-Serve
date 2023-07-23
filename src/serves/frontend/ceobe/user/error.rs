@@ -1,7 +1,7 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use persistence::ceobe_user::property::OperateError;
 use ceobe_user_logic::error::LogicError;
-use mongo_migration::mongo_models::ceobe::user_property::check::CheckError as CeobeUserPropertyCheckerror;
+use persistence::ceobe_user::models::check::CheckError as CeobeUserPropertyCheckError;
 use resp_result::RespResult;
 
 use crate::error_generate;
@@ -12,7 +12,7 @@ error_generate! {
     Json = JsonRejection
     Query = QueryRejection
     Logic = LogicError
-    Check = CeobeUserPropertyCheckerror
+    Check = CeobeUserPropertyCheckError
     CeobeUserOperate = OperateError
 }
 

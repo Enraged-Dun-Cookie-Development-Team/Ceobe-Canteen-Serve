@@ -1,5 +1,5 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use orm_migrate::sql_models::admin_user::username::Checker;
+use persistence::admin::models::username::Checker;
 use page_size::request::PageSizeChecker;
 use resp_result::RespResult;
 

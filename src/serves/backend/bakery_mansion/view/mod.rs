@@ -1,7 +1,4 @@
-use mongo_migration::mongo_models::bakery::mansion::preludes::{
-    Daily, Info, Mansion, ModelMansion, Predict,
-};
-
+use persistence::bakery::models::mansion::preludes::{Daily, Info, Mansion, ModelMansion,Predict};
 use crate::utils::time_format::naive_date_format;
 
 crate::quick_struct! {

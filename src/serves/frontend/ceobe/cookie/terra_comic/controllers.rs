@@ -3,12 +3,11 @@ use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
     view::{TerraCidReq, TerraComicListResp, TerraEntryResp},
 };
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::cookie::analyze::models::TerraComicEpisodeInfo,
-};
+
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
+use persistence::ceobe_cookie::models::analyze::models::TerraComicEpisodeInfo;
+use persistence::mongodb::MongoDatabaseOperate;
 
 use super::error::{CeobeCookieRResult, CeobeCookieTerraComicError};
 use crate::router::CookieTerraComicFrontend;

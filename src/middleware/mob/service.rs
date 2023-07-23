@@ -8,15 +8,14 @@ use persistence::ceobe_cookie::ToCeobe;
 use persistence::ceobe_user::ToCeobeUser;
 use futures::future::BoxFuture;
 use http::Request;
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user_property::models::UserMobId,
-};
+
 use resp_result::RespResult;
 use tap::Tap;
 use tower_http::auth::AsyncAuthorizeRequest;
 use tracing::{info, Instrument};
 use tracing_unwrap::OptionExt;
+use persistence::ceobe_user::models::models::UserMobId;
+use persistence::mongodb::MongoDatabaseOperate;
 
 use super::error::MobVerifyError;
 use crate::{

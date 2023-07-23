@@ -1,8 +1,8 @@
 use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
 use modify_cache::CacheMode;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
+use persistence::mysql::SqlDatabaseOperate;
 
 use super::{
     error::FlagAnnouncementRespResult,

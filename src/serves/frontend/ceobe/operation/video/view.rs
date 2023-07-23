@@ -1,9 +1,9 @@
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
-use orm_migrate::sql_models::ceobe_operation::video;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
+use persistence::ceobe_operate::models::video;
 
 use crate::utils::time_format::naive_date_time_format;
 

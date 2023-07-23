@@ -1,5 +1,6 @@
-use orm_migrate::sql_models::ceobe_operation::resource;
+
 use serde::Serialize;
+use persistence::ceobe_operate::models::resource;
 
 pub use self::{all_available::AllAvailable, countdown::Countdown};
 

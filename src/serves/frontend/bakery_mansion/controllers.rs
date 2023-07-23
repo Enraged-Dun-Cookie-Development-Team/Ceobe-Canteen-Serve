@@ -4,9 +4,9 @@ use bakery_logic::{
 };
 use checker::CheckExtract;
 use modify_cache::CacheMode;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
 use resp_result::{resp_try, rtry, FlagWrap};
 use tracing::instrument;
+use persistence::mongodb::MongoDatabaseOperate;
 
 use super::{
     models::MidCheckerPretreatment, view::MansionIds, FlagMansionRResult,
