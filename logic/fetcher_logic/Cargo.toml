@@ -23,7 +23,7 @@ qiniu_service.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
 
 [dependencies.sql-models]
-path = "../../models/sql-models"
+path = "../../persistence/models/sql-models"
 
 [dependencies.checker]
 path = "../../libs/checker"
@@ -32,5 +32,5 @@ path = "../../libs/checker"
 path = "../../global/redis_global"
 
 [dependencies.redis_connection]
-path = "../../database/redis_connection"
+path = "../../persistence/database/redis_connection"
 

@@ -1,0 +1,22 @@
+[package]
+name = "mongo_connection"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+once_cell = { workspace = true }
+serde = { workspace = true }
+mongodb = { workspace = true }
+futures = { workspace = true }
+urlencoding = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+database_traits = { path = "../database_traits" }
+tracing = { workspace = true }
+
+[dependencies.status-err]
+path = "../../../libs/status-err"
+
+[dependencies.mongo-migrate-util]
+path = "../../../libs/mongo-migrate-util"

@@ -23,4 +23,4 @@ mongodb.workspace = true
 path = "../../global/redis_global"
 
 [dependencies.redis_connection]
-path = "../../database/redis_connection"
+path = "../../persistence/database/redis_connection"

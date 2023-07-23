@@ -35,5 +35,5 @@ path = "../../libs/checker"
 path = "../../libs/uuids-convert"
 
 [dependencies.redis_connection]
-path = "../../database/redis_connection"
+path = "../../persistence/database/redis_connection"
 

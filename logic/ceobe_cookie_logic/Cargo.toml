@@ -29,10 +29,10 @@ redis = { workspace = true }
 
 
 [dependencies.mongo-migration]
-path = "../../migrate/mongo-migration"
+path = "../../persistence/migrate/mongo-migration"
 
 [dependencies.redis_global]
 path = "../../global/redis_global"
 
 [dependencies.redis_connection]
-path = "../../database/redis_connection"
+path = "../../persistence/database/redis_connection"

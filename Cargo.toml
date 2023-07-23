@@ -16,14 +16,11 @@ strip = true
 [workspace]
 members = [
     "libs/*",
-    "./models/*",
-    "./migrate/*",
-    "./database/*",
+    "persistence",
     "./macros/*",
     "./middle-server/*",
     "./logic/*",
     "./global/*",
-    "./dao/*",
     "./service/*"
 ]
 
@@ -76,15 +73,15 @@ redis = { version = "0.22", features = [
 ] }
 general-request-client = { path = "./middle-server/general-request-client" }
 scheduler-notifier = { version = "0.1.0", path = "middle-server/scheduler-notifier" }
-db-ops-prelude = { version = "0.1.0", path = "database/db-ops-prelude" }
+db-ops-prelude = { version = "0.1.0", path = "persistence/database/db-ops-prelude" }
 bool_or = {version = "0.1.0", path = "./libs/bool_or"}
-abstract_database = { version = "0.1.0", path = "database/abstract_database" }
-ceobe-user = { version = "0.1.0", path = "dao/ceobe-user" }
-ceobe-operate = { version = "0.1.0", path = "dao/ceobe-operate" }
-fetcher = { version = "0.1.0", path = "dao/fetcher" }
-bakery = { version = "0.1.0", path = "dao/bakery" }
-admin = { version = "0.1.0", path = "dao/admin" }
-ceobe-cookie = { version = "0.1.0", path = "dao/ceobe-cookie" }
+abstract_database = { version = "0.1.0", path = "persistence/database/abstract_database" }
+ceobe-user = { version = "0.1.0", path = "persistence/dao/ceobe-user" }
+ceobe-operate = { version = "0.1.0", path = "persistence/dao/ceobe-operate" }
+fetcher = { version = "0.1.0", path = "persistence/dao/fetcher" }
+bakery = { version = "0.1.0", path = "persistence/dao/bakery" }
+admin = { version = "0.1.0", path = "persistence/dao/admin" }
+ceobe-cookie = { version = "0.1.0", path = "persistence/dao/ceobe-cookie" }
 page_size =  { version = "0.1.0", path = "./libs/page_size" }
 mysql_func = { version = "0.1.0", path = "./libs/mysql_func" }
 bitmap-convert = { version = "0.1.0", path = "./libs/bitmap-convert" }
@@ -189,19 +186,19 @@ path = "./libs/checker"
 
 [dependencies.orm-migrate]
 package = "migration"
-path = "./migrate/sql-migration"
+path = "persistence/migrate/sql-migration"
 
 [dependencies.mongo-migration]
-path = "./migrate/mongo-migration"
+path = "persistence/migrate/mongo-migration"
 
 [dependencies.modify-cache]
 path = "./libs/modify-cache"
 
 [dependencies.database_traits]
-path = "./database/database_traits"
+path = "persistence/database/database_traits"
 
 [dependencies.redis_connection]
-path = "./database/redis_connection"
+path = "persistence/database/redis_connection"
 
 [dependencies.fetcher_logic]
 path = "./logic/fetcher_logic"
