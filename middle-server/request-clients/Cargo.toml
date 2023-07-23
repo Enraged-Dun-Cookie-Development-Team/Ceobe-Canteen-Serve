@@ -10,8 +10,8 @@ axum-starter = { workspace = true }
 bytes = "1.3.0"
 futures = { workspace = true }
 http = { workspace = true }
+persistence = { workspace = true, features = ["model-ceobe-operate"] }
 reqwest = { workspace = true }
-sql-models = { version = "0.1.0", path = "../../persistence/models/sql-models" }
 status-err = { version = "0.1.0", path = "../../libs/status-err" }
 thiserror = { workspace = true }
 tokio = { workspace = true }

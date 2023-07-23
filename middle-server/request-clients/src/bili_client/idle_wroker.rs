@@ -3,7 +3,7 @@ use std::time::Duration;
 use bytes::Bytes;
 use futures::TryFutureExt;
 use reqwest::Client;
-use sql_models::ceobe_operation::video::bv;
+use persistence::ceobe_operate::models::video::bv;
 use tokio::{
     spawn,
     sync::{mpsc, oneshot},
