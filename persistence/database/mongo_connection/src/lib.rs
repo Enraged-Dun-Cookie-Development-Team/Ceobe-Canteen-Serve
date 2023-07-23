@@ -22,3 +22,5 @@ pub type MongoClientOptions = mongodb::options::ClientOptions;
 
 pub type MongoDatabaseOperate =
     database_traits::database_operates::DatabaseOperate<MongoConnect>;
+
+pub use mongodb;
