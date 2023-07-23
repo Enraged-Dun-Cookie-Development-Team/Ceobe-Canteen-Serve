@@ -30,6 +30,7 @@ uuid = { workspace = true }
 tracing-unwrap = { workspace = true }
 sea-query = { workspace = true }
 mysql_func.workspace = true
+time-utils.workspace = true
 
 [dev-dependencies]
 tokio = { version = "1", features = ["test-util", "macros"] }
