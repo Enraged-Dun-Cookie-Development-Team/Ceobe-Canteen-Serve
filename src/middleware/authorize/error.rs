@@ -1,6 +1,6 @@
 use std::fmt::Debug;
 
-use admin::user::OperateError;
+use persistence::admin::user::OperateError;
 use crypto_str::inner_encoders::bcrypt::BcryptError;
 use http::StatusCode;
 use status_err::{ErrPrefix, StatusErr};

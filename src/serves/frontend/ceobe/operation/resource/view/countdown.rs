@@ -1,4 +1,4 @@
-use ceobe_operate::resource::countdown::CountdownType;
+use persistence::ceobe_operate::resource::countdown::CountdownType;
 use orm_migrate::sql_models::ceobe_operation::resource::countdown;
 use serde::Serialize;
 

@@ -1,4 +1,4 @@
-use admin::user::UserOperate;
+use persistence::admin::user::UserOperate;
 use crypto_str::Encoder;
 use md5::{Digest, Md5};
 use orm_migrate::sql_connection::sea_orm::TransactionTrait;

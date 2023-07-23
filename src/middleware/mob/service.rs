@@ -4,8 +4,8 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use bool_or::TrueOrError;
-use ceobe_cookie::ToCeobe;
-use ceobe_user::ToCeobeUser;
+use persistence::ceobe_cookie::ToCeobe;
+use persistence::ceobe_user::ToCeobeUser;
 use futures::future::BoxFuture;
 use http::Request;
 use mongo_migration::{

@@ -1,4 +1,4 @@
-use admin::user::OperateError;
+use persistence::admin::user::OperateError;
 use crypto_str::inner_encoders::bcrypt::BcryptError;
 
 #[derive(Debug, status_err::ThisError, status_err::StatusErr)]

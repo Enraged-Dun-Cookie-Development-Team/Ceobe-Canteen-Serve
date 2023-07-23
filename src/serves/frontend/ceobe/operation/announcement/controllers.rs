@@ -1,4 +1,4 @@
-use ceobe_operate::{ToCeobe, ToCeobeOperation};
+use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
 use modify_cache::CacheMode;
 use orm_migrate::sql_connection::SqlDatabaseOperate;
 use resp_result::{resp_try, FlagWrap};

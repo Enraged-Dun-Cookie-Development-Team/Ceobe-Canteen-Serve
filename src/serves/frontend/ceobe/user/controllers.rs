@@ -1,6 +1,6 @@
 use axum::Json;
 use ceobe_qiniu_upload::QiniuManager;
-use ceobe_user::{ToCeobe, ToCeobeUser};
+use persistence::ceobe_user::{ToCeobe, ToCeobeUser};
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceCombResp, DatasourceConfig, MobIdReq},

@@ -1,4 +1,4 @@
-use bakery::{mansion::ToMansion, ToBakery};
+use persistence::bakery::{mansion::ToMansion, ToBakery};
 use bakery_logic::{
     impletements::BakeryLogic, view::MansionRecentPredictResp,
 };

@@ -1,4 +1,4 @@
-use ceobe_operate::plugin_version::{
+use persistence::ceobe_operate::plugin_version::{
     DownloadResource, PluginVersion, SpareLink,
 };
 use orm_migrate::sql_models::ceobe_operation::app_version;

@@ -1,5 +1,5 @@
 use axum::extract::rejection::QueryRejection;
-use ceobe_operate;
+use persistence::ceobe_operate;
 use mongo_migration::mongo_models::ceobe::operation::plugin_version;
 use orm_migrate::sql_models::ceobe_operation::app_version;
 use resp_result::FlagRespResult;

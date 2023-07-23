@@ -1,4 +1,4 @@
-use fetcher::{datasource_config::ToDatasource, ToFetcher};
+use persistence::fetcher::{datasource_config::ToDatasource, ToFetcher};
 use orm_migrate::{
     sql_connection::SqlDatabaseOperate,
     sql_models::fetcher::datasource_config::models::model_datasource_config::FrontendDatasource,

@@ -1,4 +1,4 @@
-use ceobe_operate::video;
+use persistence::ceobe_operate::video;
 use resp_result::FlagRespResult;
 
 use crate::error_generate;
