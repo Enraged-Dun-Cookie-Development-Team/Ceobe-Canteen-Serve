@@ -36,15 +36,15 @@ pub mod help_crates {
     pub use chrono;
     use chrono::{Local, NaiveDateTime};
     pub use futures;
+    pub use mongodb;
+    pub use sea_orm;
+    use sea_orm::Value;
     pub use smallstr;
     pub use smallvec;
     pub use status_err::{ErrPrefix, HttpCode, StatusErr};
     pub use tap;
     pub use thiserror::Error as ThisError;
     pub use tracing;
-    pub use sea_orm;
-    pub use mongodb;
-    use sea_orm::Value;
 
     pub fn get_now_naive_date_time_value() -> Value {
         Local::now().naive_local().into()
@@ -73,9 +73,9 @@ pub mod mongodb {
 
 #[cfg(any(feature = "mysql", feature = "mysql-migrate",))]
 pub mod mysql {
+    #[cfg(feature = "help-crates")] pub use mysql_func;
     pub use sql_connect::*;
     #[cfg(feature = "sql-migration")] pub use sql_migration::*;
-    #[cfg(feature = "help-crates")]pub use mysql_func;
 }
 
 #[cfg(feature = "redis")]

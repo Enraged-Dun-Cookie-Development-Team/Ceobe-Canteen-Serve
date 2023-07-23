@@ -2,8 +2,8 @@ use std::time::Duration;
 
 use bytes::Bytes;
 use futures::TryFutureExt;
-use reqwest::Client;
 use persistence::ceobe_operate::models::video::bv;
+use reqwest::Client;
 use tokio::{
     spawn,
     sync::{mpsc, oneshot},

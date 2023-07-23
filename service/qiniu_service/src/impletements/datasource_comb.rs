@@ -1,7 +1,6 @@
 use ceobe_qiniu_upload::QiniuManager;
 use mongodb::bson::oid::ObjectId;
-use persistence::operate::GetMutDatabaseConnect;
-use persistence::redis::RedisConnect;
+use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
 use qiniu_cdn_upload::upload;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis::AsyncCommands;
@@ -35,7 +34,8 @@ impl QiniuService {
             let last_cookie_id = last_cookie_id.parse()?;
             newest_cookie_id = newest_cookie_id.max(last_cookie_id);
             Some(newest_cookie_id.to_string())
-        } else {
+        }
+        else {
             cookie_id.map(|id| id.to_string())
         };
 
@@ -72,7 +72,8 @@ impl QiniuService {
                 )
                 .await?;
             Err(err)?
-        } else {
+        }
+        else {
             if cookie_id.is_some() {
                 redis
                     .hset(CookieListKey::NEWEST_COOKIES, &comb_id, &cookie_id)
