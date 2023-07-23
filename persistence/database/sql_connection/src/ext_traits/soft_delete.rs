@@ -1,6 +1,7 @@
 use sea_orm::{ActiveValue, Set};
-use time_utils::chrono::NaiveDateTime;
-use time_utils::{get_now_naive_date_time, get_zero_data_time};
+use time_utils::{
+    chrono::NaiveDateTime, get_now_naive_date_time, get_zero_data_time,
+};
 
 pub trait SoftDelete {
     fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime>;

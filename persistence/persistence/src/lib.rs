@@ -48,8 +48,8 @@ pub mod help_crates {
     pub use status_err::{ErrPrefix, HttpCode, StatusErr};
     pub use tap;
     pub use thiserror::Error as ThisError;
-    pub use tracing;
     pub use time_utils::*;
+    pub use tracing;
 }
 
 #[cfg(any(feature = "model-fetcher", feature = "prelude"))]
@@ -58,20 +58,18 @@ pub mod fetcher {
     pub use sql_models::fetcher as models;
 }
 
-#[cfg(any(feature = "mongo", feature = "mongo-migrate", ))]
+#[cfg(any(feature = "mongo", feature = "mongo-migrate",))]
 pub mod mongodb {
     pub use mongo_connect::*;
     #[cfg(feature = "mongo-migrate")]
     pub use mongo_migration::*;
 }
 
-#[cfg(any(feature = "mysql", feature = "mysql-migrate", ))]
+#[cfg(any(feature = "mysql", feature = "mysql-migrate",))]
 pub mod mysql {
-    #[cfg(feature = "help-crates")]
-    pub use mysql_func;
+    #[cfg(feature = "help-crates")] pub use mysql_func;
     pub use sql_connect::*;
-    #[cfg(feature = "sql-migration")]
-    pub use sql_migration::*;
+    #[cfg(feature = "sql-migration")] pub use sql_migration::*;
 }
 
 #[cfg(feature = "redis")]
