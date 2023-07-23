@@ -1,5 +1,5 @@
 use sea_orm_migration::prelude::*;
-use sql_models::get_zero_data_time;
+use time_utils::get_zero_data_time;
 use CeobeOperationResource::{Table as DbTable, *};
 
 pub struct Migration;
