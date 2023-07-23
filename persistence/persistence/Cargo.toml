@@ -9,9 +9,9 @@ edition = "2021"
 help-crates = ["chrono", "futures", "status-err", "smallstr", "smallvec", "tap", "thiserror", "tracing", "bool_or", "mysql_func", "mongodb", "sea-orm","time-utils"]
 prelude = ["help-crates", "model-admin", "model-bakery", "model-ceobe-cookie", "model-ceobe-operate", "model-ceobe-user", "model-fetcher", "mysql", "redis", "database-connect", "database-operate"]
 
-mongo = ["mongo-connect"]
+mongo = ["mongo-connect","time-utils/with-mongo"]
 redis = ["redis-connect"]
-mysql = ["sql-connect"]
+mysql = ["sql-connect","time-utils/with-sea-orm"]
 
 migrate = ["mongo-migrate", "mysql-migrate"]
 mongo-migrate = ["mongo-migration", "mongo"]
