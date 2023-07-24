@@ -52,20 +52,20 @@ pub mod help_crates {
     pub use tracing;
 }
 
-#[cfg(any(feature = "model-fetcher", feature = "prelude"))]
+#[cfg(feature = "model-fetcher")]
 pub mod fetcher {
     pub use dao_fetcher::*;
     pub use sql_models::fetcher as models;
 }
 
-#[cfg(any(feature = "mongo", feature = "mongo-migrate",))]
+#[cfg(feature = "mongo", )]
 pub mod mongodb {
     pub use mongo_connect::*;
     #[cfg(feature = "mongo-migrate")]
     pub use mongo_migration::*;
 }
 
-#[cfg(any(feature = "mysql", feature = "mysql-migrate",))]
+#[cfg(feature = "mysql", )]
 pub mod mysql {
     #[cfg(feature = "help-crates")] pub use mysql_func;
     pub use sql_connect::*;
