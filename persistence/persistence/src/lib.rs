@@ -58,14 +58,14 @@ pub mod fetcher {
     pub use sql_models::fetcher as models;
 }
 
-#[cfg(feature = "mongo", )]
+#[cfg(feature = "mongo")]
 pub mod mongodb {
     pub use mongo_connect::*;
     #[cfg(feature = "mongo-migrate")]
     pub use mongo_migration::*;
 }
 
-#[cfg(feature = "mysql", )]
+#[cfg(feature = "mysql")]
 pub mod mysql {
     #[cfg(feature = "help-crates")] pub use mysql_func;
     pub use sql_connect::*;
