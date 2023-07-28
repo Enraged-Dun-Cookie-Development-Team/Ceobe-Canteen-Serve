@@ -16,24 +16,18 @@ futures.workspace = true
 uuid.workspace = true
 tokio.workspace = true
 tracing = { workspace = true }
-db-ops-prelude.workspace = true
-ceobe-user.workspace = true
-fetcher.workspace = true
 bitmaps.workspace = true
 bitmap-convert.workspace = true
 bnum = "0.5.0"
 ceobe-qiniu-upload.workspace = true
-ceobe-cookie.workspace = true
 qiniu_service.workspace = true
 mob-push-server.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
+persistence = { workspace = true, features = ["help-crates", "model-ceobe-user", "redis", "model-ceobe-cookie"] }
 
 [dependencies.checker]
 path = "../../libs/checker"
 
 [dependencies.uuids-convert]
 path = "../../libs/uuids-convert"
-
-[dependencies.redis_connection]
-path = "../../database/redis_connection"
 

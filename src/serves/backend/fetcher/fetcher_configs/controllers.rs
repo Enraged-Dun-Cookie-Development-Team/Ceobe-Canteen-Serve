@@ -3,8 +3,7 @@ use fetcher_logic::{
     implements::FetcherConfigLogic,
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
-use orm_migrate::sql_connection::SqlDatabaseOperate;
-use redis_connection::RedisConnect;
+use persistence::{mysql::SqlDatabaseOperate, redis::RedisConnect};
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;

@@ -1,7 +1,7 @@
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::CookieNumberResp,
 };
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
+use persistence::mongodb::MongoDatabaseOperate;
 use resp_result::rtry;
 use tracing::instrument;
 

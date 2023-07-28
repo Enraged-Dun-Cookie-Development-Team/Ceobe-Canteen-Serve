@@ -1,5 +1,5 @@
 use axum::extract::rejection::QueryRejection;
-use fetcher::datasource_config::OperateError as DatasourceOperateError;
+use persistence::fetcher::datasource_config::OperateError as DatasourceOperateError;
 use resp_result::RespResult;
 
 use crate::error_generate;

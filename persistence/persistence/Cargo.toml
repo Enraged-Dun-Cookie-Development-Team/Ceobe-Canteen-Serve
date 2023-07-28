@@ -1,0 +1,60 @@
+[package]
+name = "persistence"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+help-crates = ["chrono", "futures", "status-err", "smallstr", "smallvec", "tap", "thiserror", "tracing", "bool_or", "mysql_func", "mongodb", "sea-orm", "time-utils"]
+prelude = ["help-crates", "model-admin", "model-bakery", "model-ceobe-cookie", "model-ceobe-operate", "model-ceobe-user", "model-fetcher", "mysql", "redis", "database-connect", "database-operate"]
+
+mongo = ["mongo-connect", "time-utils/with-mongo"]
+redis = ["redis-connect"]
+mysql = ["sql-connect", "time-utils/with-sea-orm"]
+
+migrate = ["mongo-migrate", "mysql-migrate"]
+mongo-migrate = ["mongo-migration", "mongo"]
+mysql-migrate = ["sql-migration", "mysql"]
+
+model-admin = ["dao-admin", "mysql", "database-operate", "sql-models"]
+model-bakery = ["dao-bakery", "database-operate", "mongo-models", "mongo"]
+model-ceobe-cookie = ["dao-ceobe-cookie", "mysql", "database-operate", "mongo", "sql-models", "mongo-models"]
+model-ceobe-operate = ["dao-ceobe-operate", "mysql", "database-operate", "mongo", "sql-models", "mongo-models"]
+model-ceobe-user = ["dao-ceobe-user", "database-operate", "mongo-models", "mongo"]
+model-fetcher = ["dao-fetcher", "mysql", "database-operate", "sql-models"]
+
+database-connect = ["traits", "traits/initial"]
+database-operate = ["traits", "traits/get-connect", "abstract"]
+
+[dependencies]
+abstract = { version = "0.1.0", path = "../database/abstract_database", package = "abstract_database", optional = true }
+dao-admin = { version = "0.1.0", path = "../dao/admin", optional = true, package = "admin" }
+dao-bakery = { version = "0.1.0", path = "../dao/bakery", optional = true, package = "bakery" }
+dao-ceobe-cookie = { version = "0.1.0", path = "../dao/ceobe-cookie", optional = true, package = "ceobe-cookie" }
+dao-ceobe-operate = { version = "0.1.0", path = "../dao/ceobe-operate", optional = true, package = "ceobe-operate" }
+dao-ceobe-user = { version = "0.1.0", path = "../dao/ceobe-user", optional = true, package = "ceobe-user" }
+dao-fetcher = { version = "0.1.0", path = "../dao/fetcher", optional = true, package = "fetcher" }
+mongo-connect = { version = "0.1.0", path = "../database/mongo_connection", package = "mongo_connection", optional = true }
+mongo-migration = { version = "0.1.0", path = "../migrate/mongo-migration", optional = true }
+mongo-models = { version = "0.1.0", path = "../models/mongo-models", optional = true }
+redis-connect = { version = "0.1.0", path = "../database/redis_connection", package = "redis_connection", optional = true }
+sql-connect = { version = "0.1.0", path = "../database/sql_connection", package = "sql_connection", optional = true }
+sql-migration = { version = "0.1.0", path = "../migrate/sql-migration", package = "migration", optional = true }
+sql-models = { version = "0.1.0", path = "../models/sql-models", optional = true }
+traits = { version = "0.1.0", path = "../database/database_traits", package = "database_traits", optional = true }
+
+chrono = { workspace = true, optional = true }
+futures = { workspace = true, optional = true }
+smallstr = { workspace = true, optional = true }
+smallvec = { workspace = true, optional = true }
+tap = { workspace = true, optional = true }
+thiserror = { workspace = true, optional = true }
+tracing = { workspace = true, optional = true }
+bool_or = { workspace = true, optional = true }
+mysql_func = { workspace = true, optional = true }
+status-err = { version = "0.1.0", path = "../../libs/status-err", optional = true }
+sea-orm = { workspace = true, optional = true }
+mongodb = { workspace = true, optional = true }
+time-utils = { workspace = true, optional = true }
+

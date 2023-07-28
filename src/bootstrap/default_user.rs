@@ -1,11 +1,13 @@
-use admin::user::UserOperate;
 use crypto_str::Encoder;
 use md5::{Digest, Md5};
-use orm_migrate::sql_connection::sea_orm::TransactionTrait;
+use persistence::{
+    admin::user::UserOperate, help_crates::sea_orm::TransactionTrait,
+};
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
 
 use crate::utils::user_authorize::PasswordEncoder;
+
 pub trait FUserConfig {
     fn username(&self) -> String;
     fn password(&self) -> String;

@@ -1,11 +1,10 @@
-use ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate,
-    sql_models::ceobe_operation::announcement,
+use persistence::{
+    ceobe_operate::{models::announcement, ToCeobe, ToCeobeOperation},
+    mysql::SqlDatabaseOperate,
 };
 use resp_result::resp_try;
 use tracing::instrument;

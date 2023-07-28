@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ceobe-cookie.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 typed-builder.workspace = true
@@ -16,23 +15,14 @@ futures.workspace = true
 bitmaps.workspace = true
 bitmap-convert.workspace = true
 uuid.workspace = true
-db-ops-prelude.workspace = true
 mob-push-server.workspace = true
 general-request-client.workspace = true
-fetcher.workspace = true
-ceobe-user.workspace = true
 ceobe-qiniu-upload.workspace = true
 qiniu_service.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
 tokio.workspace = true
 redis = { workspace = true }
-
-
-[dependencies.mongo-migration]
-path = "../../migrate/mongo-migration"
+persistence = { workspace = true, features = ["help-crates", "model-ceobe-user", "redis", "model-ceobe-cookie", "model-fetcher"] }
 
 [dependencies.redis_global]
 path = "../../global/redis_global"
-
-[dependencies.redis_connection]
-path = "../../database/redis_connection"

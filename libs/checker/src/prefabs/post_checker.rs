@@ -8,6 +8,7 @@ use futures::{ready, Future};
 use pin_project::pin_project;
 
 use crate::Checker;
+
 /// 追加checker
 ///
 /// 执行完成 `C::check` 后使用 `P::ref_check` 进行追加checker

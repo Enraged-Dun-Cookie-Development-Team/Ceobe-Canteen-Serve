@@ -8,6 +8,7 @@ use std::{
     },
     hash::BuildHasher,
 };
+
 pub(super) trait GetOrCreate<K, V> {
     fn get_mut_or_create(&mut self, key: K, value: V) -> &mut V;
     fn get_mut_or_default(&mut self, key: K) -> &mut V

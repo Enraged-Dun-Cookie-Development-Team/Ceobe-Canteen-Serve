@@ -1,11 +1,9 @@
 use ceobe_qiniu_upload::QiniuManager;
 use mongodb::bson::oid::ObjectId;
+use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
 use qiniu_cdn_upload::upload;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis::AsyncCommands;
-use redis_connection::{
-    database_traits::get_connect::GetMutDatabaseConnect, RedisConnect,
-};
 use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
 use tokio::task::JoinHandle;
 

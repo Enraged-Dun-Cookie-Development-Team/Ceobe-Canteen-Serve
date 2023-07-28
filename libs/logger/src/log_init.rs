@@ -6,6 +6,7 @@ use tracing_subscriber::{
 };
 
 use crate::{LogToFile, LogToStdout};
+
 pub struct LogInit<S>(S);
 pub trait GetLogLevel {
     fn get_level(&self) -> LevelFilter { LevelFilter::TRACE }

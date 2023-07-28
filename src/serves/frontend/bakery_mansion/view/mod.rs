@@ -1,9 +1,9 @@
-mod convert;
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
-use mongo_migration::mongo_models::bakery::mansion::preludes::Predict;
+use persistence::bakery::models::mansion::preludes::Predict;
 
+mod convert;
 crate::quick_struct! {
     pub ViewMansionWithTime {
         id:String

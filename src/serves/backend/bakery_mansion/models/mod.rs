@@ -1,5 +1,5 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use mongo_migration::mongo_models::bakery::mansion::checkers::{
+use persistence::bakery::models::mansion::preludes::{
     id_checker::{MidChecker, OpMidChecker},
     mansion::MansionChecker,
 };

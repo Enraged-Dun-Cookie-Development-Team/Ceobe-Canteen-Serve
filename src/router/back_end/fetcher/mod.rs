@@ -1,7 +1,3 @@
-pub mod datasource;
-mod detail;
-mod global;
-mod platform;
 use axum::{routing::post, Router};
 
 use self::{
@@ -12,6 +8,12 @@ use crate::{
     middleware::authorize::AuthorizeLayer, router::ServerRoute,
     utils::user_authorize::auth_level::prefabs::Chef,
 };
+
+pub mod datasource;
+mod detail;
+mod global;
+mod platform;
+
 pub struct FetcherConfigControllers;
 
 pub fn fetcher_config() -> ServerRoute {

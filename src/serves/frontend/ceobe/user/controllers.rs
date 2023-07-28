@@ -1,23 +1,23 @@
 use axum::Json;
 use ceobe_qiniu_upload::QiniuManager;
-use ceobe_user::{ToCeobe, ToCeobeUser};
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 use mob_push_server::PushManager;
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user_property::models::UserDatasource,
+use persistence::{
+    ceobe_user::{models::models::UserDatasource, ToCeobe, ToCeobeUser},
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+    redis::RedisConnect,
 };
-use orm_migrate::sql_connection::SqlDatabaseOperate;
 use qq_channel_warning::QqChannelGrpcService;
-use redis_connection::RedisConnect;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
 use super::error::{CeobeUserError, CeobeUserRResult};
 use crate::{middleware::mob::MobIdInfo, router::CeobeUserFrontend};
+
 impl CeobeUserFrontend {
     /// 新建用户（注册mobid入库）
     #[instrument(ret, skip(db, mongo))]

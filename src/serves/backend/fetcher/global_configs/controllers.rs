@@ -1,6 +1,6 @@
 use axum::Json;
 use fetcher_logic::implements::FetcherConfigLogic;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
+use persistence::mysql::SqlDatabaseOperate;
 use resp_result::{rtry, MapReject, RespResult};
 use serde_json::{Map, Value};
 use tracing::instrument;

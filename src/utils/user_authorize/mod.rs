@@ -1,15 +1,18 @@
+use hmac::Hmac;
+use persistence::admin;
+pub use persistence::admin::models::AuthLevel;
+pub use set_token::GenerateToken;
+use sha2::Sha256;
+pub use valid_token::decrypt_token;
+
+use super::mob_verify;
+
 pub mod config;
 pub mod error;
 
 mod auth_level_check;
 mod set_token;
 mod valid_token;
-
-use hmac::Hmac;
-use orm_migrate::sql_models::admin_user;
-pub use set_token::GenerateToken;
-use sha2::Sha256;
-pub use valid_token::decrypt_token;
 
 crate::quick_struct! {
 
@@ -27,12 +30,8 @@ crate::quick_struct! {
     }
 }
 
-pub use orm_migrate::sql_models::admin_user::AuthLevel;
-
-use super::mob_verify;
-
 /// 用户权限信息
-pub type AuthInfo = admin_user::Model;
+pub type AuthInfo = admin::models::Model;
 
 pub fn set_auth_config<C>(cfg: &C)
 where
@@ -53,6 +52,7 @@ pub mod auth_level {
     pub use super::auth_level_check::{
         error::UnacceptableAuthorizationLevelError, AuthLevelVerify,
     };
+
     pub mod prefabs {
         pub use super::super::auth_level_check::prefabs::*;
     }
@@ -60,7 +60,6 @@ pub mod auth_level {
 
 #[cfg(test)]
 mod test {
-
     use super::{set_token::GenerateToken, valid_token::decrypt_token, User};
 
     #[test]

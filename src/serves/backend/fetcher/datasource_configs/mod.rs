@@ -1,7 +1,6 @@
-pub mod view;
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use orm_migrate::sql_models::fetcher::datasource_config::checkers::FetcherDatasourceConfigChecker;
 use page_size::request::PageSizeChecker;
+use persistence::fetcher::models::datasource_config::checkers::FetcherDatasourceConfigChecker;
 use qiniu_cdn_upload::{
     update_payload::UploadPayload, update_source::FieldSource,
 };
@@ -11,6 +10,7 @@ use self::error::DatasourceConfigError;
 
 mod controllers;
 mod error;
+pub mod view;
 
 type PageSizePretreatment =
     QueryCheckExtract<PageSizeChecker, DatasourceConfigError>;

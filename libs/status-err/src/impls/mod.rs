@@ -1,18 +1,23 @@
-mod mongodb;
-mod redis;
-mod sea_orm;
 use std::{convert::Infallible, num::ParseIntError};
 
 use ::mongodb::bson;
-use axum::extract::rejection::{
-    JsonRejection, PathRejection, QueryRejection,
+use axum::extract::{
+    multipart::{MultipartError, MultipartRejection},
+    rejection::{JsonRejection, PathRejection, QueryRejection},
 };
-use checker::prefabs::num_check::NonZeroUnsignedError;
+use checker::prefabs::{
+    json_obj_check::JsonObjError, no_remainder_checker::HasRemError,
+    num_check::NonZeroUnsignedError,
+};
 use http::StatusCode;
+use serde_json::Error as JsonError;
 use tonic::transport;
 
 use crate::{status_error, ErrPrefix, StatusErr};
 
+mod mongodb;
+mod redis;
+mod sea_orm;
 // io prefix
 status_error!(
     std::io::Error
@@ -86,8 +91,6 @@ status_error!(
     0x00_01
     ] ->"范围检查未通过"
 );
-use serde_json::Error as JsonError;
-
 status_error!(
 JsonError[
     ErrPrefix::CHECKER,
@@ -119,7 +122,6 @@ bincode::Error[
     0x00_0C
     ] -> "`Bincode` 序列化/反序列化异常 "
 );
-use axum::extract::multipart::{MultipartError, MultipartRejection};
 status_error!(
     MultipartRejection[
         ErrPrefix::CHECKER,
@@ -155,10 +157,6 @@ status_error!(
         0x00_0E
     ] -> "预期为0值取得非0值"
 );
-
-use checker::prefabs::{
-    json_obj_check::JsonObjError, no_remainder_checker::HasRemError,
-};
 
 impl<const RHS: u64> StatusErr for HasRemError<RHS> {
     fn prefix(&self) -> ErrPrefix { ErrPrefix::CHECKER }

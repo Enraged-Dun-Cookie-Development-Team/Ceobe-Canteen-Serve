@@ -1,10 +1,12 @@
-use bakery::{mansion::ToMansion, ToBakery};
 use bakery_logic::{
     impletements::BakeryLogic, view::MansionRecentPredictResp,
 };
 use checker::CheckExtract;
 use modify_cache::CacheMode;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
+use persistence::{
+    bakery::{mansion::ToMansion, ToBakery},
+    mongodb::MongoDatabaseOperate,
+};
 use resp_result::{resp_try, rtry, FlagWrap};
 use tracing::instrument;
 

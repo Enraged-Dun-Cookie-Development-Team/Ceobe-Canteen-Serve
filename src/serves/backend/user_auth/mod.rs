@@ -1,6 +1,6 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
-use orm_migrate::sql_models::admin_user::username::Checker;
 use page_size::request::PageSizeChecker;
+use persistence::admin::models::username::Checker;
 use resp_result::RespResult;
 
 use self::error::AdminUserError;

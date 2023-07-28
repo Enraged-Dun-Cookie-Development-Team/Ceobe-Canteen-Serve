@@ -1,6 +1,6 @@
 use axum::{body::BoxBody, response::IntoResponse};
 use axum_starter::{prepare, PrepareMiddlewareEffect};
-use database_traits::get_connect::FromRequestParts;
+use persistence::operate::FromRequestParts;
 use qq_channel_warning::{
     qq_channel_logger, GrpcConfigTrait, LogRequest, LogType,
     QqChannelGrpcService,

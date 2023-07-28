@@ -1,9 +1,5 @@
 use std::marker::PhantomData;
 
-use admin::{
-    user::{OperateError, ToUser},
-    ToAdmin,
-};
 use axum::{
     body::{Body, BoxBody},
     extract::FromRequestParts,
@@ -11,7 +7,13 @@ use axum::{
 };
 use futures::future::BoxFuture;
 use http::Request;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
+use persistence::{
+    admin::{
+        user::{OperateError, ToUser},
+        ToAdmin,
+    },
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::RespResult;
 use tap::Tap;
 use tower_http::auth::AsyncAuthorizeRequest;
@@ -24,6 +26,7 @@ use crate::utils::user_authorize::{
     config::get_authorize_information,
     decrypt_token, User,
 };
+
 pub struct AdminAuthorize<L>(PhantomData<L>);
 
 impl<L> Clone for AdminAuthorize<L> {

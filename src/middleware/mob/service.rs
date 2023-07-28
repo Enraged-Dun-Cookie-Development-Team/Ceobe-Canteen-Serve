@@ -4,13 +4,12 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use bool_or::TrueOrError;
-use ceobe_cookie::ToCeobe;
-use ceobe_user::ToCeobeUser;
 use futures::future::BoxFuture;
 use http::Request;
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::user_property::models::UserMobId,
+use persistence::{
+    ceobe_cookie::ToCeobe,
+    ceobe_user::{models::models::UserMobId, ToCeobeUser},
+    mongodb::MongoDatabaseOperate,
 };
 use resp_result::RespResult;
 use tap::Tap;

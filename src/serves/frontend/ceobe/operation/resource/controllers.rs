@@ -1,7 +1,9 @@
 use std::time::Duration;
 
-use ceobe_operate::{ToCeobe, ToCeobeOperation};
-use orm_migrate::sql_connection::SqlDatabaseOperate;
+use persistence::{
+    ceobe_operate::{ToCeobe, ToCeobeOperation},
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 

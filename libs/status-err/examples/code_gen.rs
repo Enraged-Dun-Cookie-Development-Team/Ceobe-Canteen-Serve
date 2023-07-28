@@ -1,3 +1,5 @@
+use status_err::{ErrPrefix, HttpCode, StatusErr};
+
 fn main() {
     let e = TestErr::Else {
         start: String::from("Abc"),
@@ -6,7 +8,7 @@ fn main() {
     println!("{}", e.information());
     println!("{}", e.respond_msg())
 }
-use status_err::{ErrPrefix, HttpCode, StatusErr};
+
 #[derive(Debug, status_err::ThisError, status_err::StatusErr)]
 #[status_err(resp_err)]
 pub enum TestErr {

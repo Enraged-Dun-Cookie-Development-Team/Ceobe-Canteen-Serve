@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 
 use crate::Encoder;
+
 #[derive(Default, Debug, Clone)]
 pub struct BcryptEncoder<const COST: u32>;
 

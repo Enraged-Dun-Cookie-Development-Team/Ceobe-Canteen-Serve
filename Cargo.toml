@@ -25,14 +25,11 @@ debug = 1
 [workspace]
 members = [
     "libs/*",
-    "./models/*",
-    "./migrate/*",
-    "./database/*",
+    "persistence/persistence",
     "./macros/*",
     "./middle-server/*",
     "./logic/*",
     "./global/*",
-    "./dao/*",
     "./service/*",
 ]
 
@@ -85,23 +82,18 @@ redis = { version = "0.22", features = [
 ] }
 general-request-client = { path = "./middle-server/general-request-client" }
 scheduler-notifier = { version = "0.1.0", path = "middle-server/scheduler-notifier" }
-db-ops-prelude = { version = "0.1.0", path = "database/db-ops-prelude" }
-bool_or = { version = "0.1.0", path = "./libs/bool_or" }
-abstract_database = { version = "0.1.0", path = "database/abstract_database" }
-ceobe-user = { version = "0.1.0", path = "dao/ceobe-user" }
-ceobe-operate = { version = "0.1.0", path = "dao/ceobe-operate" }
-fetcher = { version = "0.1.0", path = "dao/fetcher" }
-bakery = { version = "0.1.0", path = "dao/bakery" }
-admin = { version = "0.1.0", path = "dao/admin" }
-ceobe-cookie = { version = "0.1.0", path = "dao/ceobe-cookie" }
-page_size = { version = "0.1.0", path = "./libs/page_size" }
+db-ops-prelude = { version = "0.1.0", path = "persistence/database/db-ops-prelude" }
+bool_or = {version = "0.1.0", path = "./libs/bool_or"}
+abstract_database = { version = "0.1.0", path = "persistence/database/abstract_database" }
+page_size =  { version = "0.1.0", path = "./libs/page_size" }
 mysql_func = { version = "0.1.0", path = "./libs/mysql_func" }
 bitmap-convert = { version = "0.1.0", path = "./libs/bitmap-convert" }
 bitmaps = "3.2.0"
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 mob-push-server = { version = "0.1.0", path = "middle-server/mob-push-server" }
 qiniu_service = { version = "0.1.0", path = "service/qiniu_service" }
-
+persistence = { version = "0.1.0", path = "persistence/persistence" }
+time-utils = { version = "0.1.0", path = "libs/time-utils" }
 
 [dependencies]
 # Xss
@@ -154,19 +146,15 @@ uuid = { version = "1.2.2", features = ["v4"] }
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 general-request-client.workspace = true
 scheduler-notifier.workspace = true
-ceobe-operate.workspace = true
 bool_or.workspace = true
-ceobe-user.workspace = true
 page_size.workspace = true
-fetcher.workspace = true
-bakery.workspace = true
-admin.workspace = true
-ceobe-cookie.workspace = true
 qiniu-cdn-upload.workspace = true
 mob-push-server.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "middle-server/qq-channel-warning" }
 bitmap-convert.workspace = true
 bitmaps.workspace = true
+persistence = { workspace = true, features = ["prelude", "migrate"] }
+
 
 [dependencies.tokio]
 workspace = true
@@ -196,21 +184,11 @@ workspace = true
 [dependencies.checker]
 path = "./libs/checker"
 
-[dependencies.orm-migrate]
-package = "migration"
-path = "./migrate/sql-migration"
 
-[dependencies.mongo-migration]
-path = "./migrate/mongo-migration"
 
 [dependencies.modify-cache]
 path = "./libs/modify-cache"
 
-[dependencies.database_traits]
-path = "./database/database_traits"
-
-[dependencies.redis_connection]
-path = "./database/redis_connection"
 
 [dependencies.fetcher_logic]
 path = "./logic/fetcher_logic"

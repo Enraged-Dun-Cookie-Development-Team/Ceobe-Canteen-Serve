@@ -1,8 +1,8 @@
 use std::fmt::Debug;
 
-use admin::user::OperateError;
 use crypto_str::inner_encoders::bcrypt::BcryptError;
 use http::StatusCode;
+use persistence::admin::user::OperateError;
 use status_err::{ErrPrefix, StatusErr};
 
 use crate::utils::user_authorize::auth_level;

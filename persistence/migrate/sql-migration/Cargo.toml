@@ -1,0 +1,18 @@
+[package]
+name = "migration"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "migration"
+path = "src/lib.rs"
+
+[features]
+
+[dependencies]
+tokio = { workspace = true }
+chrono = { workspace = true }
+sea-orm-migration = { version = "0.11" }
+sql-models = { path = "../../models/sql-models" }
+time-utils = { workspace = true, features = ["with-sea-orm"] }

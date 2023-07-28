@@ -1,4 +1,3 @@
-pub mod control;
 use std::{borrow::Cow, ops::Add};
 
 use http::{
@@ -8,6 +7,9 @@ use http::{
 use resp_result::{ExtraFlag, ExtraFlags};
 
 use self::control::CacheControl;
+
+pub mod control;
+
 #[derive(Debug, Default)]
 pub struct CacheHeaders {
     pub(crate) content_local: Option<Uri>,

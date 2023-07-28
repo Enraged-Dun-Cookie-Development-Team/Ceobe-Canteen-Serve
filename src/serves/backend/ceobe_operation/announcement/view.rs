@@ -1,4 +1,4 @@
-use orm_migrate::sql_models::ceobe_operation::announcement;
+use persistence::ceobe_operate::models::announcement;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 

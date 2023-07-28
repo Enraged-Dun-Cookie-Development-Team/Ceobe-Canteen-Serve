@@ -1,6 +1,6 @@
 use std::convert::Infallible;
 
-use bakery::mansion::OperateError as MansionOperateError;
+use persistence::bakery::mansion::OperateError as MansionOperateError;
 use status_err::StatusErr;
 use thiserror::Error;
 

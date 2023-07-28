@@ -1,9 +1,11 @@
 use std::time::Duration;
 
-use ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::CheckExtract;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
+use persistence::{
+    ceobe_operate::{ToCeobe, ToCeobeOperation},
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 

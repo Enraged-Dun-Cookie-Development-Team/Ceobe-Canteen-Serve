@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
-use orm_migrate::sql_models::ceobe_operation::video;
+use persistence::ceobe_operate::models::video;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 

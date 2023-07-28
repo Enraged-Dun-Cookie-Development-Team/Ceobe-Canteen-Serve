@@ -3,14 +3,13 @@ use std::borrow::Cow;
 use axum::body::Body;
 use http::Request;
 use once_cell::sync::OnceCell;
+use tracing::warn;
 
 crate::quick_trait! {
     pub MobIdConfig{
         crate::trait_field!{*mob_header:String=String::from("mob-id")}
     }
 }
-use tracing::warn;
-
 static LOCAL_CONFIG: OnceCell<LocalMobIdConfig> = OnceCell::new();
 
 struct LocalMobIdConfig {

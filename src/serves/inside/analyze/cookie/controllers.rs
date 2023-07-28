@@ -6,10 +6,11 @@ use ceobe_cookie_logic::{
 };
 use ceobe_qiniu_upload::QiniuManager;
 use mob_push_server::PushManager;
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
+use persistence::{
+    mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate,
+    redis::RedisConnect,
+};
 use qq_channel_warning::QqChannelGrpcService;
-use redis_connection::RedisConnect;
 use resp_result::{resp_try, MapReject};
 use tokio::sync::Mutex;
 use tracing::instrument;

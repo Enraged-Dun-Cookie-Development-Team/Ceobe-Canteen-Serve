@@ -3,8 +3,7 @@ use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
     view::{CookieListResp, SearchListReq},
 };
-use mongo_migration::mongo_connection::MongoDatabaseOperate;
-use orm_migrate::sql_connection::SqlDatabaseOperate;
+use persistence::{mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate};
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 

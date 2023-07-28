@@ -3,9 +3,9 @@ use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
     view::{TerraCidReq, TerraComicListResp, TerraEntryResp},
 };
-use mongo_migration::{
-    mongo_connection::MongoDatabaseOperate,
-    mongo_models::ceobe::cookie::analyze::models::TerraComicEpisodeInfo,
+use persistence::{
+    ceobe_cookie::models::analyze::models::TerraComicEpisodeInfo,
+    mongodb::MongoDatabaseOperate,
 };
 use resp_result::{rtry, MapReject};
 use tracing::instrument;

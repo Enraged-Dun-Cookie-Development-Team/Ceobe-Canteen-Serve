@@ -1,6 +1,8 @@
-use ceobe_operate::plugin_version::{self, version};
 use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
-use orm_migrate::sql_models::ceobe_operation::app_version;
+use persistence::ceobe_operate::{
+    models::app_version,
+    plugin_version::{self, version},
+};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 

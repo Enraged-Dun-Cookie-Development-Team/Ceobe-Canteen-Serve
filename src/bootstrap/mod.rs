@@ -1,7 +1,3 @@
-pub mod default_user;
-pub mod init;
-pub mod middleware;
-
 use std::sync::Arc;
 
 use axum_macros::FromRef;
@@ -12,6 +8,10 @@ use mob_push_server::PartPushManagerState;
 use qq_channel_warning::QqChannelGrpcState;
 use request_clients::bili_client::QueryBiliVideo;
 use scheduler_notifier::SchedulerUrl;
+
+pub mod default_user;
+pub mod init;
+pub mod middleware;
 
 #[derive(Debug, Clone, FromRef, FromStateCollector)]
 pub struct State {

@@ -1,7 +1,7 @@
 use std::string::FromUtf8Error;
 
 use axum::extract::rejection::{JsonRejection, QueryRejection};
-use ceobe_operate::video;
+use persistence::ceobe_operate::video;
 use request_clients::error::ChannelClose;
 use resp_result::RespResult;
 

@@ -1,0 +1,19 @@
+[package]
+name = "mongo-migration"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+mongodb = { workspace = true }
+async-trait = { workspace = true }
+serde = { workspace = true }
+typed-builder = { workspace = true }
+tracing = { workspace = true }
+
+[dependencies.mongo-models]
+path = "../../models/mongo-models"
+
+[dependencies.mongo-migrate-util]
+path = "../../../libs/mongo-migrate-util"

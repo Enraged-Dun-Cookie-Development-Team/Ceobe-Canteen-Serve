@@ -1,7 +1,7 @@
-use ceobe_operate::{ToCeobe, ToCeobeOperation};
 use checker::{CheckExtract, JsonCheckExtract};
-use orm_migrate::{
-    sql_connection::SqlDatabaseOperate, sql_models::ceobe_operation::resource,
+use persistence::{
+    ceobe_operate::{models::resource, ToCeobe, ToCeobeOperation},
+    mysql::SqlDatabaseOperate,
 };
 use resp_result::{rtry, RespResult};
 use tracing::instrument;

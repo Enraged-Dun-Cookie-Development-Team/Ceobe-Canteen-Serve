@@ -1,12 +1,13 @@
-mod error;
-mod log_init;
-mod log_to;
 pub use error::Error;
 pub use log_init::{GetLogLevel, LogInit};
 pub use log_to::{
     file::{FileLoggerInfo, LogToFile},
     stdout::LogToStdout,
 };
+
+mod error;
+mod log_init;
+mod log_to;
 
 #[cfg(test)]
 mod test {

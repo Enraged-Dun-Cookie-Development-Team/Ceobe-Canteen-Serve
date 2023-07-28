@@ -4,12 +4,12 @@ use axum::extract::{
 };
 use ceobe_qiniu_upload::Error as QiniuError;
 use checker::prefabs::num_check::NonZeroUnsignedError;
-use fetcher::{
+use fetcher_logic::error::LogicError;
+use persistence::fetcher::{
     datasource_config::OperateError as DatasourceOperateError,
+    models::datasource_config::checkers::CheckError,
     platform_config::OperateError as PlatformOperateError,
 };
-use fetcher_logic::error::LogicError;
-use orm_migrate::sql_models::fetcher::datasource_config::checkers::CheckError;
 use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
 
