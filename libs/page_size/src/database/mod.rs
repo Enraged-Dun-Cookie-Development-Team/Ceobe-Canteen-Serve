@@ -12,6 +12,6 @@ impl<E: EntityTrait> WithPagination for Select<E> {
     /// 添加分页查询
     fn with_pagination(self, Paginator { page, size }: Paginator) -> Self {
         self.offset(((page.deref() - 1) * size.deref()) as u64)
-            .limit((page.deref() * size.deref()) as u64)
+            .limit(*size.deref() as u64)
     }
 }
