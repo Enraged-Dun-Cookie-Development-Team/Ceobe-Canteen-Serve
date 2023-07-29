@@ -1,13 +1,14 @@
+
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
-use sea_orm::{entity::prelude::*, ActiveValue, Set};
+use sea_orm::{entity::prelude::*, Set, ActiveValue};
 use serde::Serialize;
-
 use crate::{get_now_naive_date_time, NaiveDateTime, SoftDelete};
 
+
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize)]
-#[sea_orm(table_name = "ceobe_operation_app_version")]
+#[sea_orm(table_name = "ceobe_operation_window_version")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
@@ -15,14 +16,16 @@ pub struct Model {
     pub force: bool,
     pub last_force_version: String,
     pub description: String,
-    pub apk: String,
-    pub spare_apk: String,
+    pub exe: String,
+    pub spare_exe: String,
+    pub dmg: String,
+    pub spare_dmg: String,
     pub baidu: String,
     pub baidu_text: String,
     /// field for soft delete
-    pub(in crate::ceobe_operation::app_version) create_at: DateTime,
-    pub(in crate::ceobe_operation::app_version) modify_at: DateTime,
-    pub(in crate::ceobe_operation::app_version) delete_at: DateTime,
+    pub(in crate::ceobe_operation::window_version) create_at: DateTime,
+    pub(in crate::ceobe_operation::window_version) modify_at: DateTime,
+    pub(in crate::ceobe_operation::window_version) delete_at: DateTime,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]
@@ -31,6 +34,7 @@ pub enum Relation {}
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef { panic!("No Relate") }
 }
+
 
 impl ModifyState for Model {
     type Identify = Self;
