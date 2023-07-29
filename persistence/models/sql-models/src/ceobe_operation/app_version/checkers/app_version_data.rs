@@ -31,9 +31,9 @@ pub struct CeobeOperationAppVersion {
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct CeobeOperationAppVersionChecker {
-    pub version: VersionChecker,
+    pub version: VersionChecker<String>,
     pub force: NoCheck<bool>,
-    pub last_force_version: VersionChecker,
+    pub last_force_version: VersionChecker<String>,
     pub description: StrMaxCharLenChecker<String, 4096>,
     pub apk: UrlChecker,
     pub spare_apk: UrlChecker,

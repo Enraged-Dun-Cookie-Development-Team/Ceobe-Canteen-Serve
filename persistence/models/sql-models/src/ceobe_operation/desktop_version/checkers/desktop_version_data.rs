@@ -33,9 +33,9 @@ pub struct CeobeOperationDesktopVersion {
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct CeobeOperationDesktopVersionChecker {
-    pub version: VersionChecker,
+    pub version: VersionChecker<String>,
     pub force: NoCheck<bool>,
-    pub last_force_version: VersionChecker,
+    pub last_force_version: VersionChecker<String>,
     pub description: StrMaxCharLenChecker<String, 4096>,
     pub exe: UrlChecker,
     pub spare_exe: UrlChecker,
