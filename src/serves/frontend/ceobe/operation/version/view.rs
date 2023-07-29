@@ -1,7 +1,7 @@
 use persistence::ceobe_operate::{
+    desktop_version,
     models::app_version,
     plugin_version::{DownloadResource, PluginVersion, SpareLink},
-    desktop_version,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;

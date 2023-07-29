@@ -1,8 +1,14 @@
-use checker::{prefabs::{option_checker::OptionChecker, version_checker::{VersionChecker, Version}}, QueryCheckExtract};
+use checker::{
+    prefabs::{
+        option_checker::OptionChecker,
+        version_checker::{Version, VersionChecker},
+    },
+    QueryCheckExtract,
+};
 use persistence::ceobe_operate::{
+    desktop_version,
     models::app_version,
     plugin_version::{self, version},
-    desktop_version,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -60,5 +66,7 @@ pub struct OptionDesktopVersionChecker {
     pub version: OptionChecker<VersionChecker<String>>,
 }
 
-pub type OptionDesktopVersionCheckerPretreat =
-    QueryCheckExtract<OptionDesktopVersionChecker, CeobeOperationVersionError>;
+pub type OptionDesktopVersionCheckerPretreat = QueryCheckExtract<
+    OptionDesktopVersionChecker,
+    CeobeOperationVersionError,
+>;

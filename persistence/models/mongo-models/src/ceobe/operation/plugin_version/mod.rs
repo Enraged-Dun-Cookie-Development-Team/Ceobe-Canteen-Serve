@@ -1,7 +1,7 @@
-pub use checker::prefabs::version_checker::Version;
 pub use check::{
     plugin_version_checker::PluginVersionChecker as Checker, CheckError,
 };
+pub use checker::prefabs::version_checker::Version;
 pub use models::{
     DownloadResource, PluginVersion, PluginVersionChecked, SpareLink,
 };

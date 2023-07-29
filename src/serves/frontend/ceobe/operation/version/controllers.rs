@@ -12,11 +12,11 @@ use tracing::instrument;
 use super::{
     error::FlagVersionRespResult,
     models::{
-        AppVersion, OptionAppVersionCheckerPretreat,
+        AppVersion, DesktopVersion, OptionAppVersionCheckerPretreat,
+        OptionDesktopVersionCheckerPretreat,
         OptionPluginVersionCheckerPretreat,
-        OptionDesktopVersionCheckerPretreat, DesktopVersion, 
     },
-    view::{AppVersionView, PluginVersionView, DesktopVersionView},
+    view::{AppVersionView, DesktopVersionView, PluginVersionView},
 };
 use crate::router::CeobeOperationVersionFrontend;
 

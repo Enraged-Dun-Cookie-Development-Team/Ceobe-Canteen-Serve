@@ -16,7 +16,7 @@ pub enum CheckError {
 
     #[error(transparent)]
     #[status_err(err(err_code = 0x000A, prefix = "ErrPrefix::CHECKER"))]
-    VersionInvalidError(#[from] VersionInvalidError)
+    VersionInvalidError(#[from] VersionInvalidError),
 }
 
 impl From<Infallible> for CheckError {

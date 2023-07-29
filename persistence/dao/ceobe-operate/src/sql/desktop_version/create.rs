@@ -8,7 +8,7 @@ use db_ops_prelude::{
 };
 use tracing::{info, instrument};
 
-use super::{Checked, OperateError, OperateResult, DesktopVersionOperate};
+use super::{Checked, DesktopVersionOperate, OperateError, OperateResult};
 
 impl<'c, C> DesktopVersionOperate<'c, C>
 where

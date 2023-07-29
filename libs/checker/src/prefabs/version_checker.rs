@@ -1,9 +1,9 @@
-use futures::future::{ready, Ready};
-
-use crate::Checker;
 use std::{fmt::Display, marker::PhantomData};
 
+use futures::future::{ready, Ready};
 use serde::{Deserialize, Serialize};
+
+use crate::Checker;
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub struct Version {
@@ -27,17 +27,12 @@ pub trait FromVersion {
 }
 
 impl FromVersion for Version {
-    fn from_version(version: Version) -> Self {
-        version
-    }
+    fn from_version(version: Version) -> Self { version }
 }
 
 impl FromVersion for String {
-    fn from_version(version: Version) -> Self {
-        version.to_version_str()
-    }
+    fn from_version(version: Version) -> Self { version.to_version_str() }
 }
-
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
 #[error("版本号格式错误：{version} ")]
@@ -76,10 +71,7 @@ impl<T: FromVersion> Checker for VersionChecker<T> {
                         security: security_ver,
                     })
                 })
-                .ok_or(VersionInvalidError {
-                    version: uncheck
-                }),
+                .ok_or(VersionInvalidError { version: uncheck }),
         )
     }
 }
-

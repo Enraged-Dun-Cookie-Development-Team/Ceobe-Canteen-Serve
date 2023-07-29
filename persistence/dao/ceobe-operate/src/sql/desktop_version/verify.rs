@@ -6,7 +6,7 @@ use db_ops_prelude::{
 };
 use tracing::info;
 
-use super::{Column, Entity, OperateResult, DesktopVersionOperate};
+use super::{Column, DesktopVersionOperate, Entity, OperateResult};
 
 impl<'c, C> DesktopVersionOperate<'c, C>
 where

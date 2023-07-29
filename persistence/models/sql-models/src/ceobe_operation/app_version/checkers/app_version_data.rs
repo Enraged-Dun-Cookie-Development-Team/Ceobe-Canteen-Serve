@@ -6,7 +6,7 @@ use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use super::{CheckError};
+use super::CheckError;
 use crate::{
     ceobe_operation::app_version::models::model_app_version::ActiveModel,
     get_now_naive_date_time,

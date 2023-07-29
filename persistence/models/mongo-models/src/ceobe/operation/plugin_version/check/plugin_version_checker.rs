@@ -1,10 +1,10 @@
-use checker::prefabs::version_checker::{VersionChecker, Version};
+use checker::prefabs::version_checker::{Version, VersionChecker};
 use range_limit::limits::max_limit::MaxRangeLimit;
 use serde::Deserialize;
 
 use super::{
-    download_resource_checker::DownloadResourceChecker,
-    CheckError, PluginVersionChecked,
+    download_resource_checker::DownloadResourceChecker, CheckError,
+    PluginVersionChecked,
 };
 
 #[checker::check_gen(
