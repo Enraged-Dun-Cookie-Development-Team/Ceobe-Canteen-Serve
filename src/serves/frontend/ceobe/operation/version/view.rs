@@ -1,6 +1,6 @@
 use persistence::ceobe_operate::{
     models::app_version,
-    plugin_version::{DownloadResource, PluginVersion, SpareLink},
+    plugin_version::{DownloadResource, PluginVersion, SpareLink}, window_version,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -13,6 +13,11 @@ pub struct AppVersionView {
     pub force: bool,
     pub last_force_version: String,
     pub description: String,
+    pub apk: String,
+    pub spare_apk: String,
+    pub baidu: String,
+    pub baidu_text: String,
+    
 }
 
 /// app版本转换
@@ -23,6 +28,10 @@ impl From<app_version::Model> for AppVersionView {
             force,
             last_force_version,
             description,
+            apk,
+            spare_apk,
+            baidu,
+            baidu_text,
             ..
         }: app_version::Model,
     ) -> Self {
@@ -31,6 +40,58 @@ impl From<app_version::Model> for AppVersionView {
             force,
             last_force_version,
             description,
+            apk,
+            spare_apk,
+            baidu,
+            baidu_text
+        }
+    }
+}
+
+/// app版本
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct WindowVersionView {
+    pub version: String,
+    pub force: bool,
+    pub last_force_version: String,
+    pub description: String,
+    pub exe: String,
+    pub spare_exe: String,
+    pub dmg: String,
+    pub spare_dmg: String,
+    pub baidu: String,
+    pub baidu_text: String,
+    
+}
+
+/// 桌面端版本转换
+impl From<window_version::Model> for WindowVersionView {
+    fn from(
+        window_version::Model {
+            version,
+            force,
+            last_force_version,
+            description,
+            exe,
+            spare_exe,
+            dmg,
+            spare_dmg,
+            baidu,
+            baidu_text,
+            ..
+        }: window_version::Model,
+    ) -> Self {
+        Self {
+            version,
+            force,
+            last_force_version,
+            description,
+            exe,
+            spare_exe,
+            dmg,
+            spare_dmg,
+            baidu,
+            baidu_text
         }
     }
 }
@@ -41,7 +102,9 @@ pub struct SpareLinkView(pub Url, pub String);
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DownloadView {
     crx: Url,
+    spare_crx: Option<Url>,
     zip: Url,
+    spare_zip: Option<Url>,
     chrome: Url,
     edge: Url,
     firefox: Url,
@@ -63,7 +126,9 @@ impl From<DownloadResource> for DownloadView {
     fn from(
         DownloadResource {
             crx,
+            spare_crx,
             zip,
+            spare_zip,
             chrome,
             edge,
             firefox,
@@ -77,6 +142,8 @@ impl From<DownloadResource> for DownloadView {
             edge,
             firefox,
             spare: spare.into(),
+            spare_crx,
+            spare_zip
         }
     }
 }

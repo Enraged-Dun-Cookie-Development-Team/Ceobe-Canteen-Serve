@@ -13,15 +13,15 @@ use super::{
     error::FlagVersionRespResult,
     models::{
         AppVersion, OptionAppVersionCheckerPretreat,
-        OptionPluginVersionCheckerPretreat,
+        OptionPluginVersionCheckerPretreat, OptionWindowVersionCheckerPretreat, WindowVersion,
     },
-    view::{AppVersionView, PluginVersionView},
+    view::{AppVersionView, PluginVersionView, WindowVersionView},
 };
 use crate::router::CeobeOperationVersionFrontend;
 
 impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
-    // #[instrument(skip(db, modify))]
+    #[instrument(skip(database, modify))]
     pub async fn app_version(
         database: SqlDatabaseOperate,
         CheckExtract(AppVersion { version }): OptionAppVersionCheckerPretreat,
@@ -85,6 +85,42 @@ impl CeobeOperationVersionFrontend {
                         .await
                 }
             }?)?;
+            Ok(FlagWrap::new(data.map(Into::into), extra))
+        })
+        .await
+    }
+
+    // 获取桌面端对应版本信息
+    #[instrument(skip(database, modify))]
+    pub async fn window_version(
+        database: SqlDatabaseOperate,
+        CheckExtract(WindowVersion { version }): OptionWindowVersionCheckerPretreat,
+        mut modify: modify_cache::CheckModify,
+    ) -> FlagVersionRespResult<WindowVersionView> {
+        let ctrl = modify.cache_headers.get_control();
+        ctrl.set_max_age(Duration::from_secs(60 * 60));
+
+        resp_try(async {
+            let (data, extra) = modify.check_modify({
+                match version {
+                    Some(version) => {
+                        database
+                            .ceobe()
+                            .operation()
+                            .window_version()
+                            .get_info_by_version(&version)
+                            .await
+                    }
+                    None => {
+                        database
+                            .ceobe()
+                            .operation()
+                            .window_version()
+                            .get_newest_info()
+                            .await
+                    }
+                }?
+            })?;
             Ok(FlagWrap::new(data.map(Into::into), extra))
         })
         .await
