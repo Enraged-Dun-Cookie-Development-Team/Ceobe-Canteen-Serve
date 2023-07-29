@@ -304,9 +304,18 @@ where
                             }
                         },
                         {
-                            format!("keywords.{keyword}"): {
-                                "$exists": true
-                            }
+                            "$or": [
+                                {
+                                    format!("keywords.{keyword}"): {
+                                        "$exists": true
+                                    }
+                                },
+                                {
+                                    format!("tags.{keyword}"): {
+                                        "$exists": true
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
