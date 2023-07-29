@@ -1,5 +1,6 @@
 use checker::prefabs::{
-    no_check::NoCheck, str_len_checker::StrMaxCharLenChecker, url_checker::UrlChecker,
+    no_check::NoCheck, str_len_checker::StrMaxCharLenChecker,
+    url_checker::UrlChecker,
 };
 use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;

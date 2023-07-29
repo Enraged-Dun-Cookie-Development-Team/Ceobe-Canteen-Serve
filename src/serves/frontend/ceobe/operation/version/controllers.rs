@@ -13,7 +13,8 @@ use super::{
     error::FlagVersionRespResult,
     models::{
         AppVersion, OptionAppVersionCheckerPretreat,
-        OptionPluginVersionCheckerPretreat, OptionWindowVersionCheckerPretreat, WindowVersion,
+        OptionPluginVersionCheckerPretreat,
+        OptionWindowVersionCheckerPretreat, WindowVersion,
     },
     view::{AppVersionView, PluginVersionView, WindowVersionView},
 };

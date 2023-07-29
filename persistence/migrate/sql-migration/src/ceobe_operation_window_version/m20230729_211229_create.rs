@@ -1,7 +1,5 @@
 use sea_orm_migration::{prelude::*, sea_orm::Statement};
 
-use super::CeobeOperationWindowVersion;
-
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str {

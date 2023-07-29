@@ -14,7 +14,7 @@ pub enum CheckError {
     #[error("版本号错误: {0:?}")]
     #[status_err(err(err_code = 0x000A, prefix = "ErrPrefix::CHECKER"))]
     VersionFormat(String),
-    
+
     #[error("Url格式异常 {0}")]
     Url(#[from] url::ParseError),
 }

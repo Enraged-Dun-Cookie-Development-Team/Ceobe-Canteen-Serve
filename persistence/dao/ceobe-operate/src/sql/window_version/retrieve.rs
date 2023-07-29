@@ -11,7 +11,7 @@ use db_ops_prelude::{
 use tracing::{info, instrument};
 
 use super::{
-    WindowVersionOperate, Column, Entity, Model, OperateError, OperateResult,
+    Column, Entity, Model, OperateError, OperateResult, WindowVersionOperate,
 };
 
 impl<'c, C> WindowVersionOperate<'c, C>
@@ -29,7 +29,9 @@ where
             .one(self.deref())
             .await?
             .ok_or_else(|| {
-                OperateError::WindowVersionIdNoExist(version.as_ref().to_owned())
+                OperateError::WindowVersionIdNoExist(
+                    version.as_ref().to_owned(),
+                )
             })
     }
 

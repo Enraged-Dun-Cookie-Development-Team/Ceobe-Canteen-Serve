@@ -1,7 +1,8 @@
 use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
 use persistence::ceobe_operate::{
     models::app_version,
-    plugin_version::{self, version}, window_version,
+    plugin_version::{self, version},
+    window_version,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -43,7 +44,6 @@ pub struct OptionPluginVersionChecker {
 
 pub type OptionPluginVersionCheckerPretreat =
     QueryCheckExtract<OptionPluginVersionChecker, CeobeOperationVersionError>;
-
 
 /// 用于桌面端版本请求参数
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]

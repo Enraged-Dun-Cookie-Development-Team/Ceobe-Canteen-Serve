@@ -1,4 +1,6 @@
-use checker::prefabs::{url_checker::UrlChecker, option_checker::OptionChecker};
+use checker::prefabs::{
+    option_checker::OptionChecker, url_checker::UrlChecker,
+};
 use serde::Deserialize;
 
 use super::{

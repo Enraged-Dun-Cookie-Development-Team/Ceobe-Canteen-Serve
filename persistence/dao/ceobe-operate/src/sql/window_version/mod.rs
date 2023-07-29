@@ -13,7 +13,9 @@ mod create;
 mod retrieve;
 mod verify;
 
-pub struct WindowVersionOperate<'c, C: 'c + GetDatabaseConnect>(&'c C::Connect);
+pub struct WindowVersionOperate<'c, C: 'c + GetDatabaseConnect>(
+    &'c C::Connect,
+);
 
 impl<'c, C> Deref for WindowVersionOperate<'c, C>
 where
@@ -57,5 +59,7 @@ pub enum OperateError {
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn: GetDatabaseConnect> OperationDatabaseOperate<'db, Conn> {
-    pub fn window_version(&self) -> WindowVersionOperate<'_, Conn> { self.child() }
+    pub fn window_version(&self) -> WindowVersionOperate<'_, Conn> {
+        self.child()
+    }
 }

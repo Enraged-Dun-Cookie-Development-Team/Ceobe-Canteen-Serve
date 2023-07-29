@@ -44,8 +44,9 @@ mod test {
     fn test_good_version() {
         let uncheck = String::from("0.11");
 
-        let resp =
-        WindowVersionChecker::lite_check(uncheck).into_inner().unwrap();
+        let resp = WindowVersionChecker::lite_check(uncheck)
+            .into_inner()
+            .unwrap();
 
         println!("{:?}", resp)
     }
@@ -55,8 +56,9 @@ mod test {
     fn test_bad_version() {
         let uncheck = String::from("0.112.2rr.2");
 
-        let resp =
-        WindowVersionChecker::lite_check(uncheck).into_inner().unwrap();
+        let resp = WindowVersionChecker::lite_check(uncheck)
+            .into_inner()
+            .unwrap();
 
         println!("{:?}", resp)
     }

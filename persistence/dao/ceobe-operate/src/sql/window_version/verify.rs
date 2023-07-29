@@ -6,7 +6,7 @@ use db_ops_prelude::{
 };
 use tracing::info;
 
-use super::{WindowVersionOperate, Column, Entity, OperateResult};
+use super::{Column, Entity, OperateResult, WindowVersionOperate};
 
 impl<'c, C> WindowVersionOperate<'c, C>
 where

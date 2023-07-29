@@ -6,13 +6,14 @@ use db_ops_prelude::database_operates::sub_operate::{
     SubOperate, SuperOperate,
 };
 
-#[path = "sql/window_version/mod.rs"] pub mod window_version;
 #[path = "sql/announcement/mod.rs"] pub mod announcement;
 #[path = "sql/app_version/mod.rs"] pub mod app_version;
 #[path = "mongo/plugin_version/mod.rs"]
 pub mod plugin_version;
 #[path = "sql/resource/mod.rs"] pub mod resource;
 #[path = "sql/video/mod.rs"] pub mod video;
+#[path = "sql/window_version/mod.rs"]
+pub mod window_version;
 pub struct OperationDatabaseOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for OperationDatabaseOperate<'db, Conn> {

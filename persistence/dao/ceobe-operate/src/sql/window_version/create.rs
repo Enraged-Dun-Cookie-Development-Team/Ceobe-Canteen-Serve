@@ -8,7 +8,7 @@ use db_ops_prelude::{
 };
 use tracing::{info, instrument};
 
-use super::{WindowVersionOperate, Checked, OperateError, OperateResult};
+use super::{Checked, OperateError, OperateResult, WindowVersionOperate};
 
 impl<'c, C> WindowVersionOperate<'c, C>
 where
@@ -30,7 +30,9 @@ where
         Self::is_exist_window_version(&version_info.version, db)
             .await?
             .false_or_with(|| {
-                OperateError::WindowVersionIdExist(version_info.version.clone())
+                OperateError::WindowVersionIdExist(
+                    version_info.version.clone(),
+                )
             })?;
 
         version_info

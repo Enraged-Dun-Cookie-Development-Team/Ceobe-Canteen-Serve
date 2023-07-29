@@ -1,11 +1,10 @@
-
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
-use sea_orm::{entity::prelude::*, Set, ActiveValue};
+use sea_orm::{entity::prelude::*, ActiveValue, Set};
 use serde::Serialize;
-use crate::{get_now_naive_date_time, NaiveDateTime, SoftDelete};
 
+use crate::{get_now_naive_date_time, NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize)]
 #[sea_orm(table_name = "ceobe_operation_window_version")]
@@ -34,7 +33,6 @@ pub enum Relation {}
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef { panic!("No Relate") }
 }
-
 
 impl ModifyState for Model {
     type Identify = Self;

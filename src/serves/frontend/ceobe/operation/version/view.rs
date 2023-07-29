@@ -1,6 +1,7 @@
 use persistence::ceobe_operate::{
     models::app_version,
-    plugin_version::{DownloadResource, PluginVersion, SpareLink}, window_version,
+    plugin_version::{DownloadResource, PluginVersion, SpareLink},
+    window_version,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -17,7 +18,6 @@ pub struct AppVersionView {
     pub spare_apk: String,
     pub baidu: String,
     pub baidu_text: String,
-    
 }
 
 /// app版本转换
@@ -43,7 +43,7 @@ impl From<app_version::Model> for AppVersionView {
             apk,
             spare_apk,
             baidu,
-            baidu_text
+            baidu_text,
         }
     }
 }
@@ -61,7 +61,6 @@ pub struct WindowVersionView {
     pub spare_dmg: String,
     pub baidu: String,
     pub baidu_text: String,
-    
 }
 
 /// 桌面端版本转换
@@ -91,7 +90,7 @@ impl From<window_version::Model> for WindowVersionView {
             dmg,
             spare_dmg,
             baidu,
-            baidu_text
+            baidu_text,
         }
     }
 }
@@ -143,7 +142,7 @@ impl From<DownloadResource> for DownloadView {
             firefox,
             spare: spare.into(),
             spare_crx,
-            spare_zip
+            spare_zip,
         }
     }
 }
