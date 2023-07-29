@@ -12,8 +12,8 @@ use db_ops_prelude::database_operates::sub_operate::{
 pub mod plugin_version;
 #[path = "sql/resource/mod.rs"] pub mod resource;
 #[path = "sql/video/mod.rs"] pub mod video;
-#[path = "sql/window_version/mod.rs"]
-pub mod window_version;
+#[path = "sql/desktop_version/mod.rs"]
+pub mod desktop_version;
 pub struct OperationDatabaseOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for OperationDatabaseOperate<'db, Conn> {

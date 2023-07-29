@@ -22,9 +22,9 @@ pub struct Model {
     pub baidu: String,
     pub baidu_text: String,
     /// field for soft delete
-    pub(in crate::ceobe_operation::window_version) create_at: DateTime,
-    pub(in crate::ceobe_operation::window_version) modify_at: DateTime,
-    pub(in crate::ceobe_operation::window_version) delete_at: DateTime,
+    pub(in crate::ceobe_operation::desktop_version) create_at: DateTime,
+    pub(in crate::ceobe_operation::desktop_version) modify_at: DateTime,
+    pub(in crate::ceobe_operation::desktop_version) delete_at: DateTime,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

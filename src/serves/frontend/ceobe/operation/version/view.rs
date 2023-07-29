@@ -1,7 +1,7 @@
 use persistence::ceobe_operate::{
     models::app_version,
     plugin_version::{DownloadResource, PluginVersion, SpareLink},
-    window_version,
+    desktop_version,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -50,7 +50,7 @@ impl From<app_version::Model> for AppVersionView {
 
 /// app版本
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-pub struct WindowVersionView {
+pub struct DesktopVersionView {
     pub version: String,
     pub force: bool,
     pub last_force_version: String,
@@ -64,9 +64,9 @@ pub struct WindowVersionView {
 }
 
 /// 桌面端版本转换
-impl From<window_version::Model> for WindowVersionView {
+impl From<desktop_version::Model> for DesktopVersionView {
     fn from(
-        window_version::Model {
+        desktop_version::Model {
             version,
             force,
             last_force_version,
@@ -78,7 +78,7 @@ impl From<window_version::Model> for WindowVersionView {
             baidu,
             baidu_text,
             ..
-        }: window_version::Model,
+        }: desktop_version::Model,
     ) -> Self {
         Self {
             version,

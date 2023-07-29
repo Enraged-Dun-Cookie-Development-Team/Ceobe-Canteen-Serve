@@ -3,8 +3,8 @@ use std::convert::Infallible;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
-pub mod window_version_checker;
-pub mod window_version_data;
+pub mod desktop_version_checker;
+pub mod desktop_version_data;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

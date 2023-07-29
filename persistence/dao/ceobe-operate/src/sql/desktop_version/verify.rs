@@ -6,13 +6,13 @@ use db_ops_prelude::{
 };
 use tracing::info;
 
-use super::{Column, Entity, OperateResult, WindowVersionOperate};
+use super::{Column, Entity, OperateResult, DesktopVersionOperate};
 
-impl<'c, C> WindowVersionOperate<'c, C>
+impl<'c, C> DesktopVersionOperate<'c, C>
 where
     C: 'c + GetDatabaseConnect,
 {
-    pub async fn is_exist_window_version(
+    pub async fn is_exist_desktop_version(
         version: &impl AsRef<str>, db: &impl ConnectionTrait,
     ) -> OperateResult<bool> {
         Entity::find()

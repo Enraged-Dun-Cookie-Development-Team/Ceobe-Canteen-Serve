@@ -10,7 +10,7 @@ pub(super) fn version_router() -> crate::router::ServerRoute {
             get(CeobeOperationVersionFrontend::plugin_version),
         )
         .route(
-            "/window",
-            get(CeobeOperationVersionFrontend::window_version),
+            "/desktop",
+            get(CeobeOperationVersionFrontend::desktop_version),
         )
 }

@@ -8,9 +8,9 @@ use db_ops_prelude::{
 };
 use tracing::{info, instrument};
 
-use super::{Checked, OperateError, OperateResult, WindowVersionOperate};
+use super::{Checked, OperateError, OperateResult, DesktopVersionOperate};
 
-impl<'c, C> WindowVersionOperate<'c, C>
+impl<'c, C> DesktopVersionOperate<'c, C>
 where
     C: GetDatabaseConnect + 'c,
     C::Connect: ConnectionTrait,
@@ -27,10 +27,10 @@ where
         let db = self.deref();
 
         // 判断版本是否已存在
-        Self::is_exist_window_version(&version_info.version, db)
+        Self::is_exist_desktop_version(&version_info.version, db)
             .await?
             .false_or_with(|| {
-                OperateError::WindowVersionIdExist(
+                OperateError::DesktopVersionIdExist(
                     version_info.version.clone(),
                 )
             })?;

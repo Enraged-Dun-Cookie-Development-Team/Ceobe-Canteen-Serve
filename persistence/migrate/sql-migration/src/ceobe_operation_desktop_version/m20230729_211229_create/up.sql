@@ -1,4 +1,4 @@
-CREATE TABLE `ceobe_operation_window_version`(
+CREATE TABLE `ceobe_operation_desktop_version`(
     `id` INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
     `version` VARCHAR(11) NOT NULL UNIQUE,
     `force` BOOLEAN NOT NULL DEFAULT 0,

@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-pub use db_ops_prelude::sql_models::ceobe_operation::window_version::*;
+pub use db_ops_prelude::sql_models::ceobe_operation::desktop_version::*;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
     get_connect::GetDatabaseConnect,
@@ -13,11 +13,11 @@ mod create;
 mod retrieve;
 mod verify;
 
-pub struct WindowVersionOperate<'c, C: 'c + GetDatabaseConnect>(
+pub struct DesktopVersionOperate<'c, C: 'c + GetDatabaseConnect>(
     &'c C::Connect,
 );
 
-impl<'c, C> Deref for WindowVersionOperate<'c, C>
+impl<'c, C> Deref for DesktopVersionOperate<'c, C>
 where
     C: 'c + GetDatabaseConnect,
 {
@@ -26,7 +26,7 @@ where
     fn deref(&self) -> &Self::Target { self.0 }
 }
 
-impl<'c, C> SubOperate<'c> for WindowVersionOperate<'c, C>
+impl<'c, C> SubOperate<'c> for DesktopVersionOperate<'c, C>
 where
     C: GetDatabaseConnect,
 {
@@ -41,25 +41,25 @@ where
 pub enum OperateError {
     #[error("查询数据库异常: {0}")]
     Db(#[from] sea_orm::DbErr),
-    #[error("Window指定版本:[{0:?}]信息已经存在")]
+    #[error("Desktop指定版本:[{0:?}]信息已经存在")]
     #[status_err(err(
         err_code = 0x000B,
         prefix = "ErrPrefix::CHECKER",
         http_code = "HttpCode::CONFLICT"
     ))]
-    WindowVersionIdExist(String),
-    #[error("Window指定版本:[{0:?}]信息不存在")]
+    DesktopVersionIdExist(String),
+    #[error("Desktop指定版本:[{0:?}]信息不存在")]
     #[status_err(err(err_code = 0x0004, prefix = "ErrPrefix::NOT_FOUND",))]
-    WindowVersionIdNoExist(String),
-    #[error("还没有Window版本信息")]
+    DesktopVersionIdNoExist(String),
+    #[error("还没有Desktop版本信息")]
     #[status_err(err(err_code = 0x0005, prefix = "ErrPrefix::NOT_FOUND",))]
-    NotWindowVersion,
+    NotDesktopVersion,
 }
 
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn: GetDatabaseConnect> OperationDatabaseOperate<'db, Conn> {
-    pub fn window_version(&self) -> WindowVersionOperate<'_, Conn> {
+    pub fn desktop_version(&self) -> DesktopVersionOperate<'_, Conn> {
         self.child()
     }
 }

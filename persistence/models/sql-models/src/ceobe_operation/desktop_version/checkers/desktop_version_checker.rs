@@ -3,9 +3,9 @@ use futures::future::{ready, Ready};
 
 use super::CheckError;
 
-pub struct WindowVersionChecker;
+pub struct DesktopVersionChecker;
 
-impl Checker for WindowVersionChecker {
+impl Checker for DesktopVersionChecker {
     type Args = ();
     type Checked = String;
     type Err = CheckError;
@@ -38,13 +38,13 @@ impl Checker for WindowVersionChecker {
 mod test {
     use checker::LiteChecker;
 
-    use super::WindowVersionChecker;
+    use super::DesktopVersionChecker;
 
     #[test]
     fn test_good_version() {
         let uncheck = String::from("0.11");
 
-        let resp = WindowVersionChecker::lite_check(uncheck)
+        let resp = DesktopVersionChecker::lite_check(uncheck)
             .into_inner()
             .unwrap();
 
@@ -56,7 +56,7 @@ mod test {
     fn test_bad_version() {
         let uncheck = String::from("0.112.2rr.2");
 
-        let resp = WindowVersionChecker::lite_check(uncheck)
+        let resp = DesktopVersionChecker::lite_check(uncheck)
             .into_inner()
             .unwrap();
 

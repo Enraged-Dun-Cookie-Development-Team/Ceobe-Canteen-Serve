@@ -3,7 +3,7 @@ use sea_orm_migration::{prelude::*, sea_orm::Statement};
 pub struct Migration;
 impl MigrationName for Migration {
     fn name(&self) -> &str {
-        "m20230729_211229_ceobe_operation_window_version_create"
+        "m20230729_211229_ceobe_operation_desktop_version_create"
     }
 }
 #[async_trait::async_trait]

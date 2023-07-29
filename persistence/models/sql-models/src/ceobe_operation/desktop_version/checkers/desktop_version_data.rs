@@ -6,14 +6,14 @@ use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use super::{window_version_checker::WindowVersionChecker, CheckError};
+use super::{desktop_version_checker::DesktopVersionChecker, CheckError};
 use crate::{
-    ceobe_operation::window_version::models::model_window_version::ActiveModel,
+    ceobe_operation::desktop_version::models::model_desktop_version::ActiveModel,
     get_now_naive_date_time,
 };
 
 #[derive(Debug, TypedBuilder)]
-pub struct CeobeOperationWindowVersion {
+pub struct CeobeOperationDesktopVersion {
     pub version: String,
     pub force: bool,
     pub last_force_version: String,
@@ -27,15 +27,15 @@ pub struct CeobeOperationWindowVersion {
 }
 
 #[checker::check_gen(
-    uncheck = CeobeOperationWindowVersionUncheck,
-    checked = CeobeOperationWindowVersion,
+    uncheck = CeobeOperationDesktopVersionUncheck,
+    checked = CeobeOperationDesktopVersion,
     error = CheckError
 )]
 #[derive(Debug, serde::Deserialize)]
-pub struct CeobeOperationWindowVersionChecker {
-    pub version: WindowVersionChecker,
+pub struct CeobeOperationDesktopVersionChecker {
+    pub version: DesktopVersionChecker,
     pub force: NoCheck<bool>,
-    pub last_force_version: WindowVersionChecker,
+    pub last_force_version: DesktopVersionChecker,
     pub description: StrMaxCharLenChecker<String, 4096>,
     pub exe: UrlChecker,
     pub spare_exe: UrlChecker,
@@ -45,9 +45,9 @@ pub struct CeobeOperationWindowVersionChecker {
     pub baidu_text: StrMaxCharLenChecker<String, 32>,
 }
 
-impl IntoActiveModel<ActiveModel> for CeobeOperationWindowVersion {
+impl IntoActiveModel<ActiveModel> for CeobeOperationDesktopVersion {
     fn into_active_model(self) -> ActiveModel {
-        let CeobeOperationWindowVersion {
+        let CeobeOperationDesktopVersion {
             version,
             force,
             last_force_version,
@@ -80,9 +80,9 @@ impl IntoActiveModel<ActiveModel> for CeobeOperationWindowVersion {
 
 impl ActiveModel {
     #[allow(dead_code)]
-    pub fn update_app_version(
+    pub fn update_desktop_version(
         &mut self,
-        CeobeOperationWindowVersion {
+        CeobeOperationDesktopVersion {
             version,
             force,
             last_force_version,
@@ -93,7 +93,7 @@ impl ActiveModel {
             spare_dmg,
             baidu,
             baidu_text,
-        }: CeobeOperationWindowVersion,
+        }: CeobeOperationDesktopVersion,
     ) {
         self.version = Set(version);
         self.force = Set(force);

@@ -11,10 +11,10 @@ use db_ops_prelude::{
 use tracing::{info, instrument};
 
 use super::{
-    Column, Entity, Model, OperateError, OperateResult, WindowVersionOperate,
+    Column, Entity, Model, OperateError, OperateResult, DesktopVersionOperate,
 };
 
-impl<'c, C> WindowVersionOperate<'c, C>
+impl<'c, C> DesktopVersionOperate<'c, C>
 where
     C: GetDatabaseConnect + 'c,
     C::Connect: ConnectionTrait,
@@ -23,13 +23,13 @@ where
     pub async fn get_info_by_version(
         &self, version: &impl AsRef<str>,
     ) -> OperateResult<Model> {
-        info!(window.version = version.as_ref());
+        info!(desktop.version = version.as_ref());
         Entity::find()
             .filter(Column::Version.eq(version.as_ref()))
             .one(self.deref())
             .await?
             .ok_or_else(|| {
-                OperateError::WindowVersionIdNoExist(
+                OperateError::DesktopVersionIdNoExist(
                     version.as_ref().to_owned(),
                 )
             })
@@ -41,7 +41,7 @@ where
             .order_by(Column::CreateAt, Order::Desc)
             .one(self.deref())
             .await?
-            .ok_or(OperateError::NotWindowVersion)
+            .ok_or(OperateError::NotDesktopVersion)
             .tap_ok(|version| info!(newestVersion.version = version.version))
     }
 }

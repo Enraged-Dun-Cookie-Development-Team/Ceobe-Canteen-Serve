@@ -3,7 +3,7 @@ use persistence::{
     ceobe_operate,
     ceobe_operate::{
         models::{app_version, plugin_version},
-        window_version,
+        desktop_version,
     },
 };
 use resp_result::FlagRespResult;
@@ -15,10 +15,10 @@ error_generate! {
 
     AppCheck = app_version::CheckError
     PluginCheck = plugin_version::CheckError
-    WindowCheck = window_version::CheckError
+    WindowCheck = desktop_version::CheckError
     Query = QueryRejection
     AppOperate = ceobe_operate::app_version::OperateError
-    WindowOperate = ceobe_operate::window_version::OperateError
+    WindowOperate = ceobe_operate::desktop_version::OperateError
     MongoDbError = ceobe_operate::plugin_version::OperateError
     ModifyVerify = modify_cache::Error
 }

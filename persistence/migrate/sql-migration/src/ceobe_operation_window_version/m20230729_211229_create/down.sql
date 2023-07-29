@@ -1,1 +1,0 @@
-DROP TABLE `ceobe_operation_window_version`
