@@ -1,12 +1,12 @@
 use checker::prefabs::{
     no_check::NoCheck, str_len_checker::StrMaxCharLenChecker,
-    url_checker::UrlChecker,
+    url_checker::UrlChecker, version_checker::VersionChecker,
 };
 use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use super::{app_version_checker::AppVersionChecker, CheckError};
+use super::{CheckError};
 use crate::{
     ceobe_operation::app_version::models::model_app_version::ActiveModel,
     get_now_naive_date_time,
@@ -31,9 +31,9 @@ pub struct CeobeOperationAppVersion {
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct CeobeOperationAppVersionChecker {
-    pub version: AppVersionChecker,
+    pub version: VersionChecker,
     pub force: NoCheck<bool>,
-    pub last_force_version: AppVersionChecker,
+    pub last_force_version: VersionChecker,
     pub description: StrMaxCharLenChecker<String, 4096>,
     pub apk: UrlChecker,
     pub spare_apk: UrlChecker,

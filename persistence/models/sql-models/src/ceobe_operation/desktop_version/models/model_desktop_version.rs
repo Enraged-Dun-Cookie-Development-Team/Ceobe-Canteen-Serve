@@ -7,7 +7,7 @@ use serde::Serialize;
 use crate::{get_now_naive_date_time, NaiveDateTime, SoftDelete};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize)]
-#[sea_orm(table_name = "ceobe_operation_window_version")]
+#[sea_orm(table_name = "ceobe_operation_desktop_version")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,

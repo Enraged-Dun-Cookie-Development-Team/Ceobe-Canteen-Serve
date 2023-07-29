@@ -1,12 +1,12 @@
 use checker::prefabs::{
     no_check::NoCheck, str_len_checker::StrMaxCharLenChecker,
-    url_checker::UrlChecker,
+    url_checker::UrlChecker, version_checker::VersionChecker,
 };
 use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use super::{desktop_version_checker::DesktopVersionChecker, CheckError};
+use super::{ CheckError};
 use crate::{
     ceobe_operation::desktop_version::models::model_desktop_version::ActiveModel,
     get_now_naive_date_time,
@@ -33,9 +33,9 @@ pub struct CeobeOperationDesktopVersion {
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct CeobeOperationDesktopVersionChecker {
-    pub version: DesktopVersionChecker,
+    pub version: VersionChecker,
     pub force: NoCheck<bool>,
-    pub last_force_version: DesktopVersionChecker,
+    pub last_force_version: VersionChecker,
     pub description: StrMaxCharLenChecker<String, 4096>,
     pub exe: UrlChecker,
     pub spare_exe: UrlChecker,

@@ -1,14 +1,18 @@
-use checker::Checker;
 use futures::future::{ready, Ready};
 
-use super::CheckError;
+use crate::Checker;
 
-pub struct AppVersionChecker;
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
+#[error("版本号不存在：{version} ")]
+pub struct VersionInvalidError {
+    version: String,
+}
+pub struct VersionChecker;
 
-impl Checker for AppVersionChecker {
+impl Checker for VersionChecker {
     type Args = ();
     type Checked = String;
-    type Err = CheckError;
+    type Err = VersionInvalidError;
     type Fut = Ready<Result<String, Self::Err>>;
     type Unchecked = String;
 
@@ -29,35 +33,9 @@ impl Checker for AppVersionChecker {
                     ))
                 })
                 .map(|_| uncheck.clone())
-                .ok_or(CheckError::VersionFormat(uncheck)),
+                .ok_or(VersionInvalidError {
+                    version: uncheck
+                }),
         )
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use checker::LiteChecker;
-
-    use super::AppVersionChecker;
-
-    #[test]
-    fn test_good_version() {
-        let uncheck = String::from("0.11");
-
-        let resp =
-            AppVersionChecker::lite_check(uncheck).into_inner().unwrap();
-
-        println!("{:?}", resp)
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_bad_version() {
-        let uncheck = String::from("0.112.2rr.2");
-
-        let resp =
-            AppVersionChecker::lite_check(uncheck).into_inner().unwrap();
-
-        println!("{:?}", resp)
     }
 }

@@ -1,5 +1,4 @@
 pub use checkers::{
-    app_version_checker::AppVersionChecker,
     app_version_data::{
         CeobeOperationAppVersion as Checked,
         CeobeOperationAppVersionChecker as Checker,

@@ -1,5 +1,4 @@
 pub use checkers::{
-    desktop_version_checker::DesktopVersionChecker,
     desktop_version_data::{
         CeobeOperationDesktopVersion as Checked,
         CeobeOperationDesktopVersionChecker as Checker,
