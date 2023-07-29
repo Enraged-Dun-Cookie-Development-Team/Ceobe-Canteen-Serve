@@ -17,7 +17,9 @@ pub mod version;
 
 pub struct DownloadResource {
     pub crx: Url,
+    pub spare_crx: Option<Url>,
     pub zip: Url,
+    pub spare_zip: Option<Url>,
     pub chrome: Url,
     pub edge: Url,
     pub firefox: Url,

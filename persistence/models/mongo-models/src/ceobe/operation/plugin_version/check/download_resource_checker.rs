@@ -1,4 +1,4 @@
-use checker::prefabs::url_checker::UrlChecker;
+use checker::prefabs::{url_checker::UrlChecker, option_checker::OptionChecker};
 use serde::Deserialize;
 
 use super::{
@@ -13,7 +13,9 @@ use super::{
 #[derive(Debug, Deserialize)]
 pub struct DownloadResourceChecker {
     crx: UrlChecker,
+    spare_crx: OptionChecker<UrlChecker>,
     zip: UrlChecker,
+    spare_zip: OptionChecker<UrlChecker>,
     chrome: UrlChecker,
     edge: UrlChecker,
     firefox: UrlChecker,

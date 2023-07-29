@@ -12,6 +12,7 @@ mod fetcher_datasource_combination;
 mod fetcher_datasource_config;
 mod fetcher_global_config;
 mod fetcher_platform_config;
+mod ceobe_operation_window_version;
 
 macro_rules! migrate_group {
     [$($t:expr)*] => {
@@ -55,6 +56,8 @@ impl MigratorTrait for Migrator {
             ceobe_operation_resource::m20230422_150425_add_type::Migration
             fetcher_datasource_config::m20230528_110010_add_jump_url::Migration
             ceobe_cookie_search_content::m20230606_135941_create::Migration
+            ceobe_operation_window_version::m20230729_211229_create::Migration
+            ceobe_operation_app_version::m20230729_212539_add_download_link::Migration
         ]
     }
 }
