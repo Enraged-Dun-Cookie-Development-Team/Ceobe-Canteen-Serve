@@ -7,7 +7,7 @@ use axum::extract::{
 };
 use checker::prefabs::{
     json_obj_check::JsonObjError, no_remainder_checker::HasRemError,
-    num_check::NonZeroUnsignedError,
+    num_check::NonZeroUnsignedError, version_checker::VersionInvalidError,
 };
 use http::StatusCode;
 use serde_json::Error as JsonError;
@@ -190,4 +190,11 @@ status_error!(
         ErrPrefix::CHECKER,
         0x001C
     ]->"ObjectId反序列化失败"
+);
+
+status_error!(
+    VersionInvalidError[
+        ErrPrefix::CHECKER,
+        0x000A
+    ]->"Version格式检查错误"
 );

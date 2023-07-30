@@ -8,48 +8,54 @@ use url::Url;
 
 use super::CheckError;
 use crate::{
-    ceobe_operation::app_version::models::model_app_version::ActiveModel,
+    ceobe_operation::desktop_version::models::model_desktop_version::ActiveModel,
     get_now_naive_date_time,
 };
 
 #[derive(Debug, TypedBuilder)]
-pub struct CeobeOperationAppVersion {
+pub struct CeobeOperationDesktopVersion {
     pub version: String,
     pub force: bool,
     pub last_force_version: String,
     pub description: String,
-    pub apk: Url,
-    pub spare_apk: Url,
+    pub exe: Url,
+    pub spare_exe: Url,
+    pub dmg: Url,
+    pub spare_dmg: Url,
     pub baidu: Url,
     pub baidu_text: String,
 }
 
 #[checker::check_gen(
-    uncheck = CeobeOperationAppVersionUncheck,
-    checked = CeobeOperationAppVersion,
+    uncheck = CeobeOperationDesktopVersionUncheck,
+    checked = CeobeOperationDesktopVersion,
     error = CheckError
 )]
 #[derive(Debug, serde::Deserialize)]
-pub struct CeobeOperationAppVersionChecker {
+pub struct CeobeOperationDesktopVersionChecker {
     pub version: VersionChecker<String>,
     pub force: NoCheck<bool>,
     pub last_force_version: VersionChecker<String>,
     pub description: StrMaxCharLenChecker<String, 4096>,
-    pub apk: UrlChecker,
-    pub spare_apk: UrlChecker,
+    pub exe: UrlChecker,
+    pub spare_exe: UrlChecker,
+    pub dmg: UrlChecker,
+    pub spare_dmg: UrlChecker,
     pub baidu: UrlChecker,
     pub baidu_text: StrMaxCharLenChecker<String, 32>,
 }
 
-impl IntoActiveModel<ActiveModel> for CeobeOperationAppVersion {
+impl IntoActiveModel<ActiveModel> for CeobeOperationDesktopVersion {
     fn into_active_model(self) -> ActiveModel {
-        let CeobeOperationAppVersion {
+        let CeobeOperationDesktopVersion {
             version,
             force,
             last_force_version,
             description,
-            apk,
-            spare_apk,
+            exe,
+            spare_exe,
+            dmg,
+            spare_dmg,
             baidu,
             baidu_text,
         } = self;
@@ -59,8 +65,10 @@ impl IntoActiveModel<ActiveModel> for CeobeOperationAppVersion {
             force: Set(force),
             last_force_version: Set(last_force_version),
             description: Set(description),
-            apk: Set(apk.to_string()),
-            spare_apk: Set(spare_apk.to_string()),
+            exe: Set(exe.to_string()),
+            spare_exe: Set(spare_exe.to_string()),
+            dmg: Set(dmg.to_string()),
+            spare_dmg: Set(spare_dmg.to_string()),
             baidu: Set(baidu.to_string()),
             baidu_text: Set(baidu_text),
             create_at: Set(now),
@@ -72,25 +80,29 @@ impl IntoActiveModel<ActiveModel> for CeobeOperationAppVersion {
 
 impl ActiveModel {
     #[allow(dead_code)]
-    pub fn update_app_version(
+    pub fn update_desktop_version(
         &mut self,
-        CeobeOperationAppVersion {
+        CeobeOperationDesktopVersion {
             version,
             force,
             last_force_version,
             description,
-            apk,
-            spare_apk,
+            exe,
+            spare_exe,
+            dmg,
+            spare_dmg,
             baidu,
             baidu_text,
-        }: CeobeOperationAppVersion,
+        }: CeobeOperationDesktopVersion,
     ) {
         self.version = Set(version);
         self.force = Set(force);
         self.last_force_version = Set(last_force_version);
         self.description = Set(description);
-        self.apk = Set(apk.to_string());
-        self.spare_apk = Set(spare_apk.to_string());
+        self.exe = Set(exe.to_string());
+        self.spare_exe = Set(spare_exe.to_string());
+        self.dmg = Set(dmg.to_string());
+        self.spare_dmg = Set(spare_dmg.to_string());
         self.baidu = Set(baidu.to_string());
         self.baidu_text = Set(baidu_text);
         self.now_modify();

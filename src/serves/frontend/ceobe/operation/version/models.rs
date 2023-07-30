@@ -1,5 +1,12 @@
-use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
+use checker::{
+    prefabs::{
+        option_checker::OptionChecker,
+        version_checker::{Version, VersionChecker},
+    },
+    QueryCheckExtract,
+};
 use persistence::ceobe_operate::{
+    desktop_version,
     models::app_version,
     plugin_version::{self, version},
 };
@@ -20,7 +27,7 @@ pub struct AppVersion {
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct OptionAppVersionChecker {
-    pub version: OptionChecker<app_version::AppVersionChecker>,
+    pub version: OptionChecker<VersionChecker<String>>,
 }
 
 pub type OptionAppVersionCheckerPretreat =
@@ -38,8 +45,28 @@ pub struct PluginVersion {
 )]
 #[derive(Debug, serde::Deserialize)]
 pub struct OptionPluginVersionChecker {
-    pub version: OptionChecker<version::Checker>,
+    pub version: OptionChecker<version::Checker<Version>>,
 }
 
 pub type OptionPluginVersionCheckerPretreat =
     QueryCheckExtract<OptionPluginVersionChecker, CeobeOperationVersionError>;
+
+/// 用于桌面端版本请求参数
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct DesktopVersion {
+    pub version: Option<String>,
+}
+#[checker::check_gen(
+    uncheck = DesktopVersionUncheck,
+    checked = DesktopVersion,
+    error = desktop_version::CheckError
+)]
+#[derive(Debug, serde::Deserialize)]
+pub struct OptionDesktopVersionChecker {
+    pub version: OptionChecker<VersionChecker<String>>,
+}
+
+pub type OptionDesktopVersionCheckerPretreat = QueryCheckExtract<
+    OptionDesktopVersionChecker,
+    CeobeOperationVersionError,
+>;

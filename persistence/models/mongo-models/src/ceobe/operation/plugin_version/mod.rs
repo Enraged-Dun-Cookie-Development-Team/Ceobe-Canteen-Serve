@@ -1,8 +1,9 @@
 pub use check::{
     plugin_version_checker::PluginVersionChecker as Checker, CheckError,
 };
+pub use checker::prefabs::version_checker::Version;
 pub use models::{
-    DownloadResource, PluginVersion, PluginVersionChecked, SpareLink, Version,
+    DownloadResource, PluginVersion, PluginVersionChecked, SpareLink,
 };
 
 mod check;
@@ -12,8 +13,9 @@ pub type Uncheck = checker::Uncheck<Checker>;
 pub type Checked = checker::Checked<Checker>;
 
 pub mod version {
-    pub use super::check::version_checker::VersionChecker as Checker;
+    use checker::prefabs::version_checker::Version;
+    pub use checker::prefabs::version_checker::VersionChecker as Checker;
 
-    pub type Uncheck = checker::Uncheck<Checker>;
-    pub type Checked = checker::Checked<Checker>;
+    pub type Uncheck = checker::Uncheck<Checker<Version>>;
+    pub type Checked = checker::Checked<Checker<Version>>;
 }

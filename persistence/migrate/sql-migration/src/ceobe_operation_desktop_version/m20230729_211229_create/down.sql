@@ -1,0 +1,1 @@
+DROP TABLE `ceobe_operation_desktop_version`

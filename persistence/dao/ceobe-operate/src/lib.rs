@@ -8,6 +8,8 @@ use db_ops_prelude::database_operates::sub_operate::{
 
 #[path = "sql/announcement/mod.rs"] pub mod announcement;
 #[path = "sql/app_version/mod.rs"] pub mod app_version;
+#[path = "sql/desktop_version/mod.rs"]
+pub mod desktop_version;
 #[path = "mongo/plugin_version/mod.rs"]
 pub mod plugin_version;
 #[path = "sql/resource/mod.rs"] pub mod resource;

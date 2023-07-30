@@ -1,23 +1,24 @@
 use std::borrow::Cow;
 
+use checker::prefabs::version_checker::Version;
 use modify_cache::ModifyState;
 use serde::{Deserialize, Serialize};
 pub use spare_link::SpareLink;
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 use url::Url;
-pub use version::Version;
 
 use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
 
 pub mod spare_link;
-pub mod version;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 
 pub struct DownloadResource {
     pub crx: Url,
+    pub spare_crx: Option<Url>,
     pub zip: Url,
+    pub spare_zip: Option<Url>,
     pub chrome: Url,
     pub edge: Url,
     pub firefox: Url,

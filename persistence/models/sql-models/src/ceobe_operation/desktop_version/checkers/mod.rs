@@ -4,7 +4,7 @@ use checker::prefabs::version_checker::VersionInvalidError;
 use status_err::StatusErr;
 use thiserror::Error;
 
-pub mod app_version_data;
+pub mod desktop_version_data;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

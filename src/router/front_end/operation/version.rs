@@ -9,4 +9,8 @@ pub(super) fn version_router() -> crate::router::ServerRoute {
             "/plugin",
             get(CeobeOperationVersionFrontend::plugin_version),
         )
+        .route(
+            "/desktop",
+            get(CeobeOperationVersionFrontend::desktop_version),
+        )
 }

@@ -6,4 +6,5 @@ pub fn version_router() -> crate::router::ServerRoute {
     Router::new()
         .route("/plugin", post(CeobeOpVersion::update_plugin))
         .route("/phone", post(CeobeOpVersion::create_app_version))
+        .route("/desktop", post(CeobeOpVersion::create_desktop_version))
 }
