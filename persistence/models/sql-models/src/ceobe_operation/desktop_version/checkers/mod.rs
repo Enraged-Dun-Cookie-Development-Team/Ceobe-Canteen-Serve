@@ -1,7 +1,7 @@
 use std::convert::Infallible;
 
 use checker::prefabs::version_checker::VersionInvalidError;
-use status_err::{ErrPrefix, StatusErr};
+use status_err::StatusErr;
 use thiserror::Error;
 
 pub mod desktop_version_data;

@@ -19,9 +19,7 @@ impl Display for Version {
 }
 
 impl From<Version> for String {
-    fn from(value: Version) -> Self {
-        value.to_string()
-    }
+    fn from(value: Version) -> Self { value.to_string() }
 }
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
@@ -59,7 +57,8 @@ impl<T: From<Version>> Checker for VersionChecker<T> {
                         major: major_ver,
                         minor: minor_ver,
                         security: security_ver,
-                    }.into()
+                    }
+                    .into()
                 })
                 .ok_or(VersionInvalidError { version: uncheck }),
         )
