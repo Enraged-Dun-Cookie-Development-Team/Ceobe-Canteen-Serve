@@ -18,7 +18,7 @@ error_generate! {
     WindowCheck = desktop_version::CheckError
     Query = QueryRejection
     AppOperate = ceobe_operate::app_version::OperateError
-    WindowOperate = ceobe_operate::desktop_version::OperateError
+    DesktopOperate = ceobe_operate::desktop_version::OperateError
     MongoDbError = ceobe_operate::plugin_version::OperateError
     ModifyVerify = modify_cache::Error
 }

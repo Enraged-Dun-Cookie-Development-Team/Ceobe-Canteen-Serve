@@ -12,26 +12,16 @@ pub struct Version {
     pub security: u32,
 }
 
-impl Version {
-    pub fn to_version_str(self) -> String { self.to_string() }
-}
-
 impl Display for Version {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}.{}.{}", self.major, self.minor, self.security)
     }
 }
 
-pub trait FromVersion {
-    fn from_version(version: Version) -> Self;
-}
-
-impl FromVersion for Version {
-    fn from_version(version: Version) -> Self { version }
-}
-
-impl FromVersion for String {
-    fn from_version(version: Version) -> Self { version.to_version_str() }
+impl From<Version> for String {
+    fn from(value: Version) -> Self {
+        value.to_string()
+    }
 }
 
 #[derive(Debug, thiserror::Error, PartialEq, Eq)]
@@ -41,7 +31,7 @@ pub struct VersionInvalidError {
 }
 pub struct VersionChecker<T>(PhantomData<T>);
 
-impl<T: FromVersion> Checker for VersionChecker<T> {
+impl<T: From<Version>> Checker for VersionChecker<T> {
     type Args = ();
     type Checked = T;
     type Err = VersionInvalidError;
@@ -65,11 +55,11 @@ impl<T: FromVersion> Checker for VersionChecker<T> {
                     ))
                 })
                 .map(|(major_ver, minor_ver, security_ver)| {
-                    FromVersion::from_version(Version {
+                    Version {
                         major: major_ver,
                         minor: minor_ver,
                         security: security_ver,
-                    })
+                    }.into()
                 })
                 .ok_or(VersionInvalidError { version: uncheck }),
         )

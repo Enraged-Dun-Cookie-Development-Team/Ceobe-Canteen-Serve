@@ -15,7 +15,6 @@ pub enum CheckError {
     Url(#[from] url::ParseError),
 
     #[error(transparent)]
-    #[status_err(err(err_code = 0x000A, prefix = "ErrPrefix::CHECKER"))]
     VersionInvalidError(#[from] VersionInvalidError),
 
     #[error("长度超出限制: {0}")]
