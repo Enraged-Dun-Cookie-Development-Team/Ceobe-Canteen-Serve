@@ -371,9 +371,18 @@ where
                             }
                         },
                         {
-                            "keywords.".to_string() + keyword: {
-                                "$exists": true
-                            }
+                            "$or": [
+                                {
+                                    format!("keywords.{keyword}"): {
+                                        "$exists": true
+                                    }
+                                },
+                                {
+                                    format!("tags.{keyword}"): {
+                                        "$exists": true
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
@@ -387,9 +396,18 @@ where
                             }
                         },
                         {
-                            "keywords.".to_string() + keyword: {
-                                "$exists": true
-                            }
+                            "$or": [
+                                {
+                                    format!("keywords.{keyword}"): {
+                                        "$exists": true
+                                    }
+                                },
+                                {
+                                    format!("tags.{keyword}"): {
+                                        "$exists": true
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
