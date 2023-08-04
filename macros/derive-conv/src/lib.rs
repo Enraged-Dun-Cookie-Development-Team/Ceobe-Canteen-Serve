@@ -42,7 +42,8 @@
 //! ```
 //! - 请参考 [darling](https://github.com/TedDriggs/darling) 文档
 //! - 请参考 [syn](https://docs.rs/syn/latest/syn/) 文档
-//! - 请牢记：宏为替换抽象语法树节点，宏的参数为抽象语法树，宏的结果也为抽象语法树
+//! - 请牢记：宏为替换抽象语法树节点，宏的参数为抽象语法树，
+//!   宏的结果也为抽象语法树
 mod derive_input_conv;
 
 #[proc_macro_derive(ConvHelper, attributes(conv))]

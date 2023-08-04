@@ -2,6 +2,8 @@ use std::marker::PhantomData;
 
 use crate::derive_input_conv::common::list::List;
 
+/// 需要实现 [FromMeta](darling::FromMeta)
+///
 /// 对于每一个 require item 项，都需要以下内容
 ///
 /// - var_name: 需要的变量（来自preprocess）或者field(来自Self/Model)的名称

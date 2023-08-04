@@ -13,12 +13,12 @@ mod condition_set;
 /// 当模式为 `FromModel` 时无效, 类型为
 /// [ConditionSet](condition_set::ConditionSet)
 ///     - `rename`(optional): 将该值赋值/修改到 rename 的 field 中，或者 从
-///       rename 的 field 处取得值,
+///       Model 中名为 rename 的 field 处取得值,
 /// 类型为 [String]
 ///     - `project`（optional）:  对结果作用一个类型转换
 ///         - 当为 `IntoActiveModel` 或者 `UpdateActiveModel`
-///           模式时，为将当前field 映射到 ActiveModel 中对应的类型，
-///         - 当为 `FromModel` 时，为将model 中对应的Field 映射到当前field
+///           模式时，为将当前field 映射到 ActiveModel 中对应的 field 的类型
+///         - 当为 `FromModel` 时，为将 model 中对应的 Field 映射到当前 field
 ///           的类型
 ///         - 当该field 被某个 `preprocess` Owned require 时，不作用 任何
 ///           projection

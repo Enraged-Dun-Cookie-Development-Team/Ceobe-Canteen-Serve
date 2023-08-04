@@ -16,7 +16,7 @@ pub mod skip_mode;
 ///   Self` 或者 `Copy Self`,
 /// 否则默认为 `& Self` ，以下为可能的参数传递方式
 ///     - `require_self`: 获得 `&Self`
-///     - `require_self = "mut"` 获得 `&Self`
+///     - `require_self = "mut"` 获得 `&mut Self`
 ///     - `require_self = "copy"` 获得 `Self` (Self 本身所有权转移语义为 COPY)
 ///
 /// ## NOTE
