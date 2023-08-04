@@ -6,15 +6,17 @@ use checker::{
     },
 };
 use chrono::NaiveDateTime;
-use sea_orm::Set;
+use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 use url::Url;
+use sql_connection::ext_traits::ActiveModelUpdater;
 
 use super::{
     bv::{Bv, BvChecker},
     CheckError,
 };
-use crate::{ceobe_operation::video::models::model_video, SoftDelete};
+use crate::{ SoftDelete};
+use crate::ceobe_operation::video::ActiveModel;
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOpVideo {
@@ -43,22 +45,11 @@ pub struct CeobeOpVideoChecker {
     pub cover_image: UrlChecker,
 }
 
-impl model_video::ActiveModel {
-    pub fn from_video_data_with_order(
-        CeobeOpVideo {
-            bv,
-            start_time,
-            over_time,
-            title,
-            author,
-            video_link,
-            cover_image,
-        }: CeobeOpVideo,
-        order: i32,
-    ) -> Self {
-        Self {
+impl IntoActiveModel<ActiveModel>  for CeobeOpVideo{
+    fn into_active_model(self) -> ActiveModel {
+        let Self{ bv, start_time, over_time, title, author, video_link, cover_image } = self;
+        ActiveModel {
             bv: Set(bv.to_string()),
-            order: Set(order),
             start_time: Set(start_time),
             over_time: Set(over_time),
             title: Set(title),
@@ -68,27 +59,18 @@ impl model_video::ActiveModel {
             ..Default::default()
         }
     }
+}
 
-    pub fn update_with_video_and_order(
-        &mut self,
-        CeobeOpVideo {
-            bv: _,
-            start_time,
-            over_time,
-            title,
-            author,
-            video_link,
-            cover_image,
-        }: CeobeOpVideo,
-        order: i32,
-    ) {
-        self.order = Set(order);
-        self.start_time = Set(start_time);
-        self.over_time = Set(over_time);
-        self.title = Set(title);
-        self.author = Set(author);
-        self.video_link = Set(video_link.to_string());
-        self.cover_image = Set(cover_image.to_string());
-        self.soft_recover();
+impl ActiveModelUpdater<ActiveModel>  for CeobeOpVideo{
+    fn update_active(self, active_model: &mut ActiveModel) {
+        let Self{  start_time, over_time, title, author, video_link, cover_image ,..} = self;
+        active_model.start_time = Set(start_time);
+        active_model.over_time = Set(over_time);
+        active_model.title = Set(title);
+        active_model.author = Set(author);
+        active_model.video_link = Set(video_link.to_string());
+        active_model.cover_image = Set(cover_image.to_string());
+        active_model.soft_recover();
     }
 }
+

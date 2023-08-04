@@ -5,6 +5,7 @@ use checker::prefabs::{
 use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
 use url::Url;
+use sql_connection::ext_traits::ActiveModelUpdater;
 
 use super::CheckError;
 use crate::{
@@ -70,29 +71,18 @@ impl IntoActiveModel<ActiveModel> for CeobeOperationAppVersion {
     }
 }
 
-impl ActiveModel {
-    #[allow(dead_code)]
-    pub fn update_app_version(
-        &mut self,
-        CeobeOperationAppVersion {
-            version,
-            force,
-            last_force_version,
-            description,
-            apk,
-            spare_apk,
-            baidu,
-            baidu_text,
-        }: CeobeOperationAppVersion,
-    ) {
-        self.version = Set(version);
-        self.force = Set(force);
-        self.last_force_version = Set(last_force_version);
-        self.description = Set(description);
-        self.apk = Set(apk.to_string());
-        self.spare_apk = Set(spare_apk.to_string());
-        self.baidu = Set(baidu.to_string());
-        self.baidu_text = Set(baidu_text);
-        self.now_modify();
+impl ActiveModelUpdater<ActiveModel> for CeobeOperationAppVersion {
+
+    fn update_active(self, active_model: &mut ActiveModel) {
+        let Self{ version, force, last_force_version, description, apk, spare_apk, baidu, baidu_text } = self;
+        active_model.version = Set(version);
+        active_model.force = Set(force);
+        active_model.last_force_version = Set(last_force_version);
+        active_model.description = Set(description);
+        active_model.apk = Set(apk.to_string());
+        active_model.spare_apk = Set(spare_apk.to_string());
+        active_model.baidu = Set(baidu.to_string());
+        active_model.baidu_text = Set(baidu_text);
+        active_model.now_modify();
     }
 }
