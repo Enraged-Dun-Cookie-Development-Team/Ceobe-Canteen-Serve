@@ -1,7 +1,7 @@
 //! help drive macro for type conv
 //! see issue #155
 //!
-//! ```rust
+//! ```rust norun
 //! use model::Model;
 //!
 //! #[derive(ConvHelper)]
@@ -34,11 +34,16 @@
 //!     id:i32,
 //!     #[conv(ignore)]
 //!     foo:i32,
-//!     #[conv(project(from="Version",by="Version::from"))]
+//!     #[conv(project = "Version::from")]
 //!     bar:String,
 //!     #[conv(rename = "modify_at")]
 //!     time:String,
 //! }
 //! ```
-//!
+//! 请参考 [darling](https://github.com/TedDriggs/darling) 文档
 mod derive_input_conv;
+
+#[proc_macro_derive(ConvHelper,attributes(conv))]
+pub fn derive_conv_helper(_input:proc_macro::TokenStream)->proc_macro::TokenStream{
+    todo!()
+}
