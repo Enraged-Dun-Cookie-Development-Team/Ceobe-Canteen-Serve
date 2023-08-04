@@ -24,3 +24,10 @@ where
         self
     }
 }
+
+impl<T, A> UpdateActiveModel<A> for T
+where
+    T: ActiveModelTrait + Sized,
+    A: ActiveModelUpdater<T>,
+{
+}
