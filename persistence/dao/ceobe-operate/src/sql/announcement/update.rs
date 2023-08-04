@@ -3,6 +3,8 @@ use db_ops_prelude::{
     sea_orm::{ConnectionTrait, DbErr, EntityTrait},
 };
 use tracing::{info, instrument};
+use db_ops_prelude::ext_traits::with_field::{FieldOrder, With};
+use db_ops_prelude::sea_orm::IntoActiveModel;
 
 use super::{AnnouncementOperate, Checked, Entity, OperateResult};
 
@@ -28,10 +30,7 @@ where
         // 处理数据，添加order
         let announcement_list = announcements.into_iter().enumerate().map(
             |(order, announcement)| {
-                super::ActiveModel::from_announcement_data_with_order(
-                    announcement,
-                    order as i32,
-                )
+                  announcement.with(FieldOrder,order as _).into_active_model()
             },
         );
         // 新建数据

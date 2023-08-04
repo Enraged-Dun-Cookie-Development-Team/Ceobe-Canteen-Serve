@@ -6,11 +6,11 @@ use checker::{
     },
 };
 use chrono::NaiveDateTime;
-use sea_orm::Set;
+use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
+use crate::ceobe_operation::announcement::ActiveModel;
 
 use super::CheckError;
-use crate::ceobe_operation::announcement::models::model_announcement;
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOpAnnouncement {
@@ -34,28 +34,20 @@ pub struct CeobeOpAnnouncementChecker {
     pub notice: NoCheck<bool>,
 }
 
-impl model_announcement::ActiveModel {
-    pub fn from_announcement_data_with_order(
-        CeobeOpAnnouncement {
-            start_time,
-            over_time,
-            content,
-            img_url,
-            notice,
-        }: CeobeOpAnnouncement,
-        order: i32,
-    ) -> Self {
-        Self {
+impl IntoActiveModel<ActiveModel> for CeobeOpAnnouncement {
+    fn into_active_model(self) -> ActiveModel {
+        let Self{ start_time, over_time, content, img_url, notice } = self;
+        ActiveModel {
             start_time: Set(start_time),
             over_time: Set(over_time),
             content: Set(content),
             img_url: Set(img_url),
-            order: Set(order),
             notice: Set(notice),
             ..Default::default()
         }
     }
 }
+
 
 #[cfg(test)]
 mod tests {
