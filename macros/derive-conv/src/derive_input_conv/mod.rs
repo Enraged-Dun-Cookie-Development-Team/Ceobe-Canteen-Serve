@@ -1,6 +1,6 @@
-mod field;
-mod container;
 mod common;
+mod container;
+mod field;
 
 /// 过程宏参数解析
 ///
@@ -12,8 +12,10 @@ mod common;
 /// ## 需要参数
 ///
 /// - `ident`: 原始结构体本身的标识符， 类型为 [`syn::Ident`]
-/// - `container_attr` : 结构体上的输入参数，类型为 [`ContainerDeriveInput`](container::ContainerDeriveInput)
-/// - `fields`: 结构体的field 参数列表，类型为 [`Data<Ignored,field::FieldInput>`](darling::ast::Data)
+/// - `container_attr` : 结构体上的输入参数，类型为
+///   [`ContainerDeriveInput`](container::ContainerDeriveInput)
+/// - `fields`: 结构体的field 参数列表，类型为
+///   [`Data<Ignored,field::FieldInput>`](darling::ast::Data)
 ///
 /// ## Note
 ///
@@ -21,6 +23,4 @@ mod common;
 /// - 该宏只支持 named-struct
 /// - 该宏可能支持 泛型参数
 // TODO: 完成过程宏输入参数解析
-pub struct ConvHelperDeriveInput{
-
-}
+pub struct ConvHelperDeriveInput {}

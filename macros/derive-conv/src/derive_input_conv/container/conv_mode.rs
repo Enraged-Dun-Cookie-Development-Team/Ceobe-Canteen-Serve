@@ -11,8 +11,8 @@
 ///
 /// `FromModel` 与其他 2 者为互斥关系
 // todo 完成 ConvMode 参数解析
-pub enum ConvMode{
+pub enum ConvMode {
     IntoActiveModel,
     UpdateActiveModel,
-    FromModel
+    FromModel,
 }
