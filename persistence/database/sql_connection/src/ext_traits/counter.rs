@@ -1,6 +1,6 @@
 use sea_orm::{DbErr, FromQueryResult, QueryResult};
 
-const COUNT_NAME: &str = "count";
+use super::COUNT_NAME;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(transparent)]
