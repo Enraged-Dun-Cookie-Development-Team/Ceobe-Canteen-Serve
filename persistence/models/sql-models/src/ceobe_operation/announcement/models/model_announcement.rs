@@ -1,7 +1,7 @@
-use sea_orm::{entity::prelude::*, ActiveValue};
-use sea_orm::ActiveValue::Set;
-use sql_connection::database_traits::has_scheme::{Has};
-use sql_connection::ext_traits::with_field::FieldOrder;
+use sea_orm::{entity::prelude::*, ActiveValue, ActiveValue::Set};
+use sql_connection::{
+    database_traits::has_scheme::Has, ext_traits::with_field::FieldOrder,
+};
 
 use crate::{NaiveDateTime, SoftDelete};
 
@@ -37,8 +37,6 @@ impl SoftDelete for ActiveModel {
 
 impl Has<FieldOrder> for ActiveModel {
     type Ty = i32;
-    
-    fn set(&mut self, value: Self::Ty) {
-        self.order = Set(value);
-    }
+
+    fn set(&mut self, value: Self::Ty) { self.order = Set(value); }
 }

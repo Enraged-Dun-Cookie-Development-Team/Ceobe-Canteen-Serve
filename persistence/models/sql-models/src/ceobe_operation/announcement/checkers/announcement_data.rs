@@ -8,9 +8,9 @@ use checker::{
 use chrono::NaiveDateTime;
 use sea_orm::{IntoActiveModel, Set};
 use typed_builder::TypedBuilder;
-use crate::ceobe_operation::announcement::ActiveModel;
 
 use super::CheckError;
+use crate::ceobe_operation::announcement::ActiveModel;
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOpAnnouncement {
@@ -36,7 +36,13 @@ pub struct CeobeOpAnnouncementChecker {
 
 impl IntoActiveModel<ActiveModel> for CeobeOpAnnouncement {
     fn into_active_model(self) -> ActiveModel {
-        let Self{ start_time, over_time, content, img_url, notice } = self;
+        let Self {
+            start_time,
+            over_time,
+            content,
+            img_url,
+            notice,
+        } = self;
         ActiveModel {
             start_time: Set(start_time),
             over_time: Set(over_time),
@@ -47,7 +53,6 @@ impl IntoActiveModel<ActiveModel> for CeobeOpAnnouncement {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

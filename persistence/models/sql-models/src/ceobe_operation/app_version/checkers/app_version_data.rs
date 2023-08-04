@@ -3,9 +3,9 @@ use checker::prefabs::{
     url_checker::UrlChecker, version_checker::VersionChecker,
 };
 use sea_orm::{IntoActiveModel, Set};
+use sql_connection::ext_traits::ActiveModelUpdater;
 use typed_builder::TypedBuilder;
 use url::Url;
-use sql_connection::ext_traits::ActiveModelUpdater;
 
 use super::CheckError;
 use crate::{
@@ -72,9 +72,17 @@ impl IntoActiveModel<ActiveModel> for CeobeOperationAppVersion {
 }
 
 impl ActiveModelUpdater<ActiveModel> for CeobeOperationAppVersion {
-
     fn update_active(self, active_model: &mut ActiveModel) {
-        let Self{ version, force, last_force_version, description, apk, spare_apk, baidu, baidu_text } = self;
+        let Self {
+            version,
+            force,
+            last_force_version,
+            description,
+            apk,
+            spare_apk,
+            baidu,
+            baidu_text,
+        } = self;
         active_model.version = Set(version);
         active_model.force = Set(force);
         active_model.last_force_version = Set(last_force_version);

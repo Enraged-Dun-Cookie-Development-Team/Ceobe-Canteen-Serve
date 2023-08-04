@@ -7,16 +7,15 @@ use checker::{
 };
 use chrono::NaiveDateTime;
 use sea_orm::{IntoActiveModel, Set};
+use sql_connection::ext_traits::ActiveModelUpdater;
 use typed_builder::TypedBuilder;
 use url::Url;
-use sql_connection::ext_traits::ActiveModelUpdater;
 
 use super::{
     bv::{Bv, BvChecker},
     CheckError,
 };
-use crate::{ SoftDelete};
-use crate::ceobe_operation::video::ActiveModel;
+use crate::{ceobe_operation::video::ActiveModel, SoftDelete};
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOpVideo {
@@ -45,9 +44,17 @@ pub struct CeobeOpVideoChecker {
     pub cover_image: UrlChecker,
 }
 
-impl IntoActiveModel<ActiveModel>  for CeobeOpVideo{
+impl IntoActiveModel<ActiveModel> for CeobeOpVideo {
     fn into_active_model(self) -> ActiveModel {
-        let Self{ bv, start_time, over_time, title, author, video_link, cover_image } = self;
+        let Self {
+            bv,
+            start_time,
+            over_time,
+            title,
+            author,
+            video_link,
+            cover_image,
+        } = self;
         ActiveModel {
             bv: Set(bv.to_string()),
             start_time: Set(start_time),
@@ -61,9 +68,17 @@ impl IntoActiveModel<ActiveModel>  for CeobeOpVideo{
     }
 }
 
-impl ActiveModelUpdater<ActiveModel>  for CeobeOpVideo{
+impl ActiveModelUpdater<ActiveModel> for CeobeOpVideo {
     fn update_active(self, active_model: &mut ActiveModel) {
-        let Self{  start_time, over_time, title, author, video_link, cover_image ,..} = self;
+        let Self {
+            start_time,
+            over_time,
+            title,
+            author,
+            video_link,
+            cover_image,
+            ..
+        } = self;
         active_model.start_time = Set(start_time);
         active_model.over_time = Set(over_time);
         active_model.title = Set(title);
@@ -73,4 +88,3 @@ impl ActiveModelUpdater<ActiveModel>  for CeobeOpVideo{
         active_model.soft_recover();
     }
 }
-
