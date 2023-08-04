@@ -2,7 +2,7 @@
 pub trait Has<S: Field>{
     type Ty;
 
-    fn get(&self)->&Self::Ty;
+    fn get(&self)->Option<&Self::Ty>{None}
 
     fn set(&mut self,value:Self::Ty);
 
@@ -23,7 +23,7 @@ macro_rules! has_field {
         pub struct $name;
 
         impl $crate::has_scheme::Field for $name{
-            const NAME: & 'static str = stringify!($field)
+            const NAME: & 'static str = stringify!($field);
         }
     };
 }
