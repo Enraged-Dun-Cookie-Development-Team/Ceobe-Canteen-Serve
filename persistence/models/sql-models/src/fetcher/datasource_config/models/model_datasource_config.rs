@@ -58,6 +58,7 @@ pub struct Model {
     pub platform: String,
     /// 数据源type
     #[sub_model(
+        want("FrontendDatasource"),
         want("SingleDatasourceInfo"),
         want("DataSourceForFetcherConfig")
     )]
@@ -83,7 +84,7 @@ pub struct Model {
     )]
     pub unique_id: Uuid,
     /// 数据库使用的Unique Key
-    #[sub_model(ignore("BackendDatasource"))]
+    #[sub_model(want("FrontendDatasource"), ignore("BackendDatasource"))]
     pub db_unique_key: DatasourceUnique,
     /// field for soft delete
     #[sub_model(ignore("BackendDatasource"))]
