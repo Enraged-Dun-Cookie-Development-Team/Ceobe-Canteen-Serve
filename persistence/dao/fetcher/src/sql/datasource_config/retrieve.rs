@@ -218,6 +218,8 @@ where
             .column(Column::UniqueId)
             .column(Column::JumpUrl)
             .column(Column::Platform)
+            .column(Column::Datasource)
+            .column(Column::DbUniqueKey)
             .filter(Column::DeleteAt.eq(get_zero_data_time()))
             .into_model::<FrontendDatasource>()
             .all(db)
