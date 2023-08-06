@@ -86,7 +86,7 @@ impl<'p> Serialize for PushNotify<'p> {
         notify.serialize_field("title", &self.title)?;
         if self.offline_seconds.is_some() {
             notify
-                .serialize_field("offline_seconds", &self.offline_seconds)?;
+                .serialize_field("offlineSeconds", &self.offline_seconds)?;
         }
         if self.android_notify.need_serialize() {
             notify.serialize_field("androidNotify", &self.android_notify)?;
