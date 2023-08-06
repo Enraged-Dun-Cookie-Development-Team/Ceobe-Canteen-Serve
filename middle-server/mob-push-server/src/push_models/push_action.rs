@@ -23,16 +23,21 @@ impl Forward {
 
 impl Serialize for Forward {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: serde::Serializer, {
-        let mut s = serializer.serialize_struct("pushForward", self.0.serialize_field())?;
+    where
+        S: serde::Serializer,
+    {
+        let mut s = serializer
+            .serialize_struct("pushForward", self.0.serialize_field())?;
         NotifySerialize::serialize::<S>(&self.0, &mut s)?;
         s.end()
     }
 }
 
 pub struct PushNotify<'p, A = Notify<AndroidNotify>, I = Notify<IosNotify>>
-    where A: Serialize + 'static,
-          I: Serialize + 'static, {
+where
+    A: Serialize + 'static,
+    I: Serialize + 'static,
+{
     body: &'p str,
     title: Cow<'p, str>,
     offline_seconds: Option<u64>,
@@ -50,7 +55,9 @@ impl<'p> PushNotify<'p> {
         Self {
             body: data.get_send_content().as_ref(),
             title: data.get_title(),
-            offline_seconds: data.expired_time().map(|duration| duration.as_secs()),
+            offline_seconds: data
+                .expired_time()
+                .map(|duration| duration.as_secs()),
             android_notify,
             ios_notify,
         }
@@ -59,9 +66,10 @@ impl<'p> PushNotify<'p> {
 
 impl<'p> Serialize for PushNotify<'p> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: serde::Serializer, {
-        let mut len = 4 + self.offline_seconds.is_some()as usize;
-
+    where
+        S: serde::Serializer,
+    {
+        let mut len = 4 + self.offline_seconds.is_some() as usize;
 
         if self.android_notify.need_serialize() {
             len += 1;
@@ -77,7 +85,8 @@ impl<'p> Serialize for PushNotify<'p> {
         notify.serialize_field("type", &1)?;
         notify.serialize_field("title", &self.title)?;
         if self.offline_seconds.is_some() {
-            notify.serialize_field("offline_seconds", &self.offline_seconds)?;
+            notify
+                .serialize_field("offline_seconds", &self.offline_seconds)?;
         }
         if self.android_notify.need_serialize() {
             notify.serialize_field("androidNotify", &self.android_notify)?;
@@ -85,7 +94,6 @@ impl<'p> Serialize for PushNotify<'p> {
         if self.ios_notify.need_serialize() {
             notify.serialize_field("iosNotify", &self.ios_notify)?;
         }
-
 
         notify.end()
     }
