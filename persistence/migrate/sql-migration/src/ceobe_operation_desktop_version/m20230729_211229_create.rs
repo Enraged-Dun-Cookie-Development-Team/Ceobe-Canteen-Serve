@@ -1,5 +1,7 @@
-use sea_orm_migration::{prelude::*, sea_orm::Statement};
-use sea_orm_migration::sea_orm::ConnectionTrait;
+use sea_orm_migration::{
+    prelude::*,
+    sea_orm::{ConnectionTrait, Statement},
+};
 
 pub struct Migration;
 impl MigrationName for Migration {
