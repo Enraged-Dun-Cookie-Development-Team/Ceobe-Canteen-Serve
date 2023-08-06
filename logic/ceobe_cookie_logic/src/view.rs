@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
     PushEntity,
@@ -119,6 +121,10 @@ impl PushEntity for PushInfo {
             notify.set_notify_style(NotifyStyle::new_big_vision(image));
         }
         notify.set_image(Image::new_image(&self.icon_url));
+    }
+
+    fn expired_time(&self) -> Option<Duration> {
+        Some(Duration::from_secs(3600 * 2))
     }
 }
 

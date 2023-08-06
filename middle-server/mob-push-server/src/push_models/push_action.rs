@@ -40,6 +40,7 @@ where
 {
     body: &'p str,
     title: Cow<'p, str>,
+    offline_seconds: Option<u64>,
     android_notify: A,
     ios_notify: I,
 }
@@ -54,6 +55,9 @@ impl<'p> PushNotify<'p> {
         Self {
             body: data.get_send_content().as_ref(),
             title: data.get_title(),
+            offline_seconds: data
+                .expired_time()
+                .map(|duration| duration.as_secs()),
             android_notify,
             ios_notify,
         }
@@ -65,7 +69,8 @@ impl<'p> Serialize for PushNotify<'p> {
     where
         S: serde::Serializer,
     {
-        let mut len = 4;
+        let mut len = 4 + self.offline_seconds.is_some() as usize;
+
         if self.android_notify.need_serialize() {
             len += 1;
         }
@@ -79,7 +84,10 @@ impl<'p> Serialize for PushNotify<'p> {
         notify.serialize_field("content", &self.body)?;
         notify.serialize_field("type", &1)?;
         notify.serialize_field("title", &self.title)?;
-
+        if self.offline_seconds.is_some() {
+            notify
+                .serialize_field("offlineSeconds", &self.offline_seconds)?;
+        }
         if self.android_notify.need_serialize() {
             notify.serialize_field("androidNotify", &self.android_notify)?;
         }
