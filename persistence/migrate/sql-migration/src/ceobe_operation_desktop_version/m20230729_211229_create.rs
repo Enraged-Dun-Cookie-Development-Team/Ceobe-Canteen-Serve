@@ -1,4 +1,5 @@
 use sea_orm_migration::{prelude::*, sea_orm::Statement};
+use sea_orm_migration::sea_orm::ConnectionTrait;
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -6,7 +7,7 @@ impl MigrationName for Migration {
         "m20230729_211229_ceobe_operation_desktop_version_create"
     }
 }
-#[async_trait::async_trait]
+// #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let sql = include_str!("m20230729_211229_create/up.sql");
