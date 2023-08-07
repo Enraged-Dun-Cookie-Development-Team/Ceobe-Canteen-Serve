@@ -36,6 +36,7 @@ use tower_http::{
     compression::CompressionLayer,
 };
 use tracing_unwrap::ResultExt;
+use crate::bootstrap::decorator::{Decroator};
 
 
 mod bootstrap;
@@ -69,6 +70,8 @@ async fn main_task() {
     ServerPrepare::with_config(config)
         .init_logger()
         .expect("日志初始化失败")
+        .convert_state()
+        .prepare_decorator(Decroator)
         // components
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
