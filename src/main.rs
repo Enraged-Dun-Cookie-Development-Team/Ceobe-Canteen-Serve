@@ -32,12 +32,10 @@ use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
-use tower_http::{
-    compression::CompressionLayer,
-};
+use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
-use crate::bootstrap::decorator::{Decroator};
 
+use crate::bootstrap::decorator::Decroator;
 
 mod bootstrap;
 mod configs;

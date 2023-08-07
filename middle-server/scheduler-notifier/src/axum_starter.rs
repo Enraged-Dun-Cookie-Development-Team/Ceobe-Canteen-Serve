@@ -7,7 +7,7 @@ pub mod starter_state {
 }
 
 #[prepare(ScheduleNotifierPrepare)]
-pub fn prepare_fetcher<C>(config: & C) -> AddState<SchedulerUrl>
+pub fn prepare_fetcher<C>(config: &C) -> AddState<SchedulerUrl>
 where
     C: SchedulerNotifierConfig,
 {

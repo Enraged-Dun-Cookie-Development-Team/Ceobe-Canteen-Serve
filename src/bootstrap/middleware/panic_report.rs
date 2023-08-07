@@ -12,7 +12,7 @@ use tracing::{error, instrument};
 use crate::error::ServicePanic;
 
 #[prepare(PrepareCatchPanic?)]
-pub async fn prepare_catch_panic< C: GrpcConfigTrait>(
+pub async fn prepare_catch_panic<C: GrpcConfigTrait>(
     cfg: &C,
 ) -> Result<PanicReport, qq_channel_warning::Error> {
     let add = qq_channel_logger(cfg).0;
