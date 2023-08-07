@@ -14,10 +14,10 @@ use crate::{
 };
 
 /// 连接mysql数据库并且做一次migrate up
-#[prepare(box MysqlDbConnect? 'arg)]
 #[instrument(skip_all, name = "connect-and-migrate-mysql")]
-async fn connect_mysql_db_with_migrate<'arg>(
-    database: &'arg DbConfig, admin_user: &'arg FirstUserConfig,
+#[prepare(box MysqlDbConnect?)]
+async fn connect_mysql_db_with_migrate(
+    database: &DbConfig, admin_user: &FirstUserConfig,
 ) -> Result<(), DbErr> {
     connect_db_with_migrate::<SqlDatabase, _, _>(database, |db| {
         async move {
@@ -32,9 +32,9 @@ async fn connect_mysql_db_with_migrate<'arg>(
 }
 
 /// 连接mongodb数据库
-#[prepare(box MongoDbConnect? 'arg)]
-async fn connect_mongo_db<'arg>(
-    mongodb: &'arg MongoDbConfig,
+#[prepare(box MongoDbConnect?)]
+async fn connect_mongo_db(
+    mongodb: &MongoDbConfig,
 ) -> Result<(), MongoDbError> {
     connect_db_with_migrate::<mongodb::DatabaseManage, _, _>(
         mongodb,
@@ -45,9 +45,9 @@ async fn connect_mongo_db<'arg>(
 }
 
 /// 连接Redis数据库
-#[prepare(box RedisDbConnect? 'arg)]
-async fn connect_redis_db<'arg>(
-    database: &'arg RedisDbConfig,
+#[prepare(box RedisDbConnect?)]
+async fn connect_redis_db(
+    database: &RedisDbConfig,
 ) -> Result<(), RedisError> {
     connect_db::<RedisDatabase, _>(database).await?;
     Ok(())

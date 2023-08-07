@@ -8,9 +8,9 @@ pub struct QqChannelGrpcState {
     pub(crate) uri: Endpoint,
 }
 
-#[prepare(QqChannelPrepare 'arg)]
-pub fn qq_channel_logger<'arg, C: GrpcConfigTrait>(
-    cfg: &'arg C,
+#[prepare(origin QqChannelPrepare)]
+pub fn qq_channel_logger<C: GrpcConfigTrait>(
+    cfg: &C,
 ) -> AddState<QqChannelGrpcState> {
     AddState(QqChannelGrpcState {
         uri: Channel::builder(cfg.get_uri()),

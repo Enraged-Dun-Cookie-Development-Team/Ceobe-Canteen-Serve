@@ -13,10 +13,10 @@ use crate::{config::BaseUrl, GetBucket, Manager, SecretConfig};
 
 pub type QiniuUploadState = Arc<Manager>;
 
-#[prepare(box QiniuUpload? 'c)]
-#[instrument(skip(qiniu_config))]
-fn init_this<'c, C>(
-    qiniu_config: &'c C,
+#[instrument(skip_all)]
+#[prepare(box QiniuUpload?)]
+fn init_this<C>(
+    qiniu_config: &C,
 ) -> Result<(AddState<Arc<Manager>>, AddState<QiniuBaseUrl>), crate::Error>
 where
     C: SecretConfig + GetBucket + BaseUrl + 'static,
@@ -79,7 +79,7 @@ where
     ) -> core::pin::Pin<
         Box<
             dyn core::future::Future<Output = Result<Self, Self::Rejection>>
-                + core::marker::Send
+                + Send
                 + 'async_trait,
         >,
     >
