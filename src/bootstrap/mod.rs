@@ -9,6 +9,7 @@ use qq_channel_warning::QqChannelGrpcState;
 use request_clients::bili_client::QueryBiliVideo;
 use scheduler_notifier::SchedulerUrl;
 
+pub mod decorator;
 pub mod default_user;
 pub mod init;
 pub mod middleware;

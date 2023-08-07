@@ -7,9 +7,9 @@ use crate::utils::{
 };
 
 /// rresult配置
-#[prepare(RResultConfig? 'arg)]
+#[prepare(RResultConfig?)]
 fn resp_conf<C>(
-    resp_result: &'arg C,
+    resp_result: &C,
 ) -> Result<(), resp_result::SetRespResultConfigureError>
 where
     C: ConfigTrait,
@@ -18,8 +18,8 @@ where
 }
 
 /// 鉴权配置
-#[prepare(BackendAuthConfig 'arg)]
-fn backend_user_auth_conf<C>(user_auth: &'arg C)
+#[prepare(BackendAuthConfig)]
+fn backend_user_auth_conf<C>(user_auth: &C)
 where
     C: AuthConfig + mob_verify::MobIdConfig,
 {

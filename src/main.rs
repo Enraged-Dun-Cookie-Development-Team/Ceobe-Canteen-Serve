@@ -32,12 +32,10 @@ use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
-use tower_http::{
-    catch_panic::CatchPanicLayer, compression::CompressionLayer,
-};
+use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
 
-use crate::error::serve_panic;
+use crate::bootstrap::decorator::Decroator;
 
 mod bootstrap;
 mod configs;
@@ -70,6 +68,8 @@ async fn main_task() {
     ServerPrepare::with_config(config)
         .init_logger()
         .expect("日志初始化失败")
+        .convert_state()
+        .prepare_decorator(Decroator)
         // components
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
@@ -91,12 +91,10 @@ async fn main_task() {
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
-        .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
-        .convert_state()
-        .prepare_start()
+        .preparing()
         .await
         .expect("准备启动服务异常")
         .launch()

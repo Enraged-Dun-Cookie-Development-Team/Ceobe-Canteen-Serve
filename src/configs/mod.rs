@@ -35,7 +35,7 @@ pub const CONFIG_FILE_YAML: &str = "./Config.yaml";
     logger(func = "|this|this.logger.init_log()", error = "::logger::Error"),
     server
 )]
-#[provider(transparent, ref)]
+#[provider(transparent, r#ref)]
 pub struct GlobalConfig {
     /// 数据库连接相关配置
     #[serde(alias = "db")]
