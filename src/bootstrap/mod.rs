@@ -12,6 +12,7 @@ use scheduler_notifier::SchedulerUrl;
 pub mod default_user;
 pub mod init;
 pub mod middleware;
+pub mod decorator;
 
 #[derive(Debug, Clone, FromRef, FromStateCollector)]
 pub struct State {
