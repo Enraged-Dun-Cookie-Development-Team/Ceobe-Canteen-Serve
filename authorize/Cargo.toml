@@ -1,0 +1,17 @@
+[package]
+name = "authorize"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum-starter.workspace = true
+hmac = "0.12.1"
+http.workspace = true
+once_cell.workspace = true
+persistence = { workspace = true, features = ["model-admin"] }
+serde.workspace = true
+sha2 = "0.10.7"
+typed-builder.workspace = true
+
