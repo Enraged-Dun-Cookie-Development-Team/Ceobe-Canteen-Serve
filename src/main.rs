@@ -26,6 +26,7 @@ use configs::{
     schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
     CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
+use cors::CorsMiddleware;
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
 use mob_push_server::axum_starter::MobPushPrepare;
@@ -36,10 +37,8 @@ use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
 use tracing_unwrap::ResultExt;
-use cors::CorsMiddleware;
-use crate::configs::cors_config::CorsConfigImpl;
 
-use crate::error::serve_panic;
+use crate::{configs::cors_config::CorsConfigImpl, error::serve_panic};
 
 mod bootstrap;
 mod configs;
@@ -90,7 +89,7 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
-        .prepare_middleware(CorsMiddleware::<_,CorsConfigImpl>)
+        .prepare_middleware::<Route, _>(CorsMiddleware::<_, CorsConfigImpl>)
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
