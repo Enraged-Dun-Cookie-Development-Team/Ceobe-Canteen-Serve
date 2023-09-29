@@ -10,7 +10,7 @@ use regex::Regex;
 use super::CheckError;
 
 static BV_PATTEN: Lazy<Regex> = Lazy::new(|| {
-    Regex::new(r#"^BV1[A-Za-z0-9]{2}4(?:1|y)1[A-Za-z0-9]7[A-Za-z0-9]{2}$"#)
+    Regex::new(r#"^BV1[A-Za-z0-9]{2}4[1y]1[A-Za-z0-9]7[A-Za-z0-9]{2}$"#)
         .expect("正则表达式格式错误")
 });
 
