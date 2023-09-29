@@ -36,6 +36,8 @@ use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
 };
 use tracing_unwrap::ResultExt;
+use cors::CorsMiddleware;
+use crate::configs::cors_config::CorsConfigImpl;
 
 use crate::error::serve_panic;
 
@@ -88,6 +90,7 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
+        .prepare_middleware(CorsMiddleware::<_,CorsConfigImpl>)
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )

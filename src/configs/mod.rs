@@ -24,6 +24,7 @@ pub mod qiniu_secret;
 pub mod qq_channel;
 pub mod resp_result_config;
 pub mod schedule_notifier_config;
+pub mod cors_config;
 
 pub const CONFIG_FILE_TOML: &str = "./Config.toml";
 pub const CONFIG_FILE_JSON: &str = "./Config.json";
@@ -66,4 +67,6 @@ pub struct GlobalConfig {
     pub mob_push: mob_config::MobPushConfig,
     #[serde(alias = "qq")]
     pub qq_channel: qq_channel::QqChannelConfig,
+    #[serde(default)]
+    pub cors: cors_config::CorsConfigImpl
 }

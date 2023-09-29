@@ -148,6 +148,7 @@ qq-channel-warning = { version = "0.1.0", path = "middle-server/qq-channel-warni
 bitmap-convert.workspace = true
 bitmaps.workspace = true
 persistence = { workspace = true, features = ["prelude", "migrate"] }
+cors = { version = "0.1.0", path = "startup-perpares/cors" }
 
 
 [dependencies.tokio]
