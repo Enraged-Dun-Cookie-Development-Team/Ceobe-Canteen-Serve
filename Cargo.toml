@@ -127,14 +127,7 @@ sha2 = "0.10.2"
 tap = { workspace = true }
 thiserror = { workspace = true }
 tower = { version = "0.4", features = ["limit"] }
-tower-http = { version = "0.3", features = [
-    "trace",
-    "catch-panic",
-    "set-header",
-    "compression-full",
-    "auth",
-    "add-extension",
-] }
+tower-http = { version = "0.4.4", features = ["trace", "catch-panic", "set-header", "compression-full", "auth", "add-extension", "cors"] }
 typed-builder = { workspace = true }
 url = { workspace = true }
 urlencoding = { workspace = true }

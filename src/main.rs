@@ -90,15 +90,15 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
+        .layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
+            "https://www.ceobecanteen.top".parse().unwrap(),
+            "https://ceobecanteen.com".parse().unwrap(),
+        ]))
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
         .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
-        .layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
-            "https://www.ceobecanteen.top".parse().unwrap(),
-            "https://ceobecanteen.com".parse().unwrap()
-        ]))
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
         .convert_state()
