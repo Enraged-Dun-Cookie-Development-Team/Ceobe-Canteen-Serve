@@ -92,7 +92,7 @@ async fn main_task() {
         .prepare_route(RouterFallback)
         .layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
             "https://www.ceobecanteen.top".parse().unwrap(),
-            "https://ceobecanteen.com".parse().unwrap(),
+            "https://ceobecanteen.top".parse().unwrap(),
         ]))
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
