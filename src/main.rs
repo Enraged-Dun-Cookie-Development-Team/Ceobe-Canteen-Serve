@@ -49,6 +49,11 @@ mod middleware;
 mod router;
 mod serves;
 mod utils;
+#[cfg(not(target_env = "msvc"))] use jemallocator::Jemalloc;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");

@@ -134,7 +134,7 @@ where
             }
             else {
                 let buf = std::mem::take(this.result);
-                break Poll::Ready(Ok(O::from_iter(buf.into_iter())));
+                break Poll::Ready(Ok(O::from_iter(buf)));
             }
         }
     }
