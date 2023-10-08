@@ -1,9 +1,7 @@
 use checker::prefabs::version_checker::VersionInvalidError;
 use status_err::StatusErr;
 
-pub(self) use super::models::{
-    DownloadResource, PluginVersionChecked, SpareLink,
-};
+use super::models::{DownloadResource, PluginVersionChecked, SpareLink};
 
 pub mod download_resource_checker;
 pub mod plugin_version_checker;

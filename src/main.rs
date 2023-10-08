@@ -49,8 +49,7 @@ mod middleware;
 mod router;
 mod serves;
 mod utils;
-#[cfg(not(target_env = "msvc"))]
-use jemallocator::Jemalloc;
+#[cfg(not(target_env = "msvc"))] use jemallocator::Jemalloc;
 
 #[cfg(not(target_env = "msvc"))]
 #[global_allocator]
