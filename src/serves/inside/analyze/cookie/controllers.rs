@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
 use axum::{Extension, Json};
+use axum_macros::debug_handler;
+use axum_starter::state;
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::NewCookieReq,
 };
@@ -16,7 +18,7 @@ use tokio::sync::Mutex;
 use tracing::instrument;
 
 use super::error::{AnalyzeCookieError, AnalyzeCookieRResult};
-use crate::router::AnalyzeCookieInside;
+use crate::{router::AnalyzeCookieInside, bootstrap::State};
 
 impl AnalyzeCookieInside {
     #[instrument(ret, skip(mongo, sql, redis_client, mob, qiniu))]

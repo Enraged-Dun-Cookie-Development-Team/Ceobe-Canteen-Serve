@@ -220,19 +220,21 @@ impl QiniuService {
         update_cookie_id: Option<ObjectId>, qq_channel: QqChannelGrpcService,
         redis_client: RedisConnect, comb_ids: Vec<String>,
         datasource: Option<String>,
-    ) {
-        let mut handles = Vec::<JoinHandle<()>>::new();
-        for comb_id in comb_ids {
-            handles.push(tokio::spawn(Self::update_datasource_comb(
-                qiniu.clone(),
-                qq_channel.clone(),
-                redis_client.clone(),
-                cookie_id,
-                update_cookie_id,
-                comb_id,
-                datasource.clone(),
-            )));
+    ) { 
+        for comb_ids_array in comb_ids.chunks(200) {
+            let mut handles = Vec::<JoinHandle<()>>::new();
+            for comb_id in comb_ids_array {
+                handles.push(tokio::spawn(Self::update_datasource_comb(
+                    qiniu.clone(),
+                    qq_channel.clone(),
+                    redis_client.clone(),
+                    cookie_id,
+                    update_cookie_id,
+                    comb_id.to_owned(),
+                    datasource.clone(),
+                )));
+            }
+            futures::future::join_all(handles).await;
         }
-        futures::future::join_all(handles).await;
     }
 }
