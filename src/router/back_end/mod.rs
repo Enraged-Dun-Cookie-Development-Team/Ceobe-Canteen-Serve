@@ -1,17 +1,17 @@
 use axum::Router;
 pub use bakery_mansion::BakeryMansionBackend;
+pub use ceobe_cookie::CeobeCookieNewestBackend;
 pub use ceobe_operation::{
     CeobeOpResource, CeobeOpVersion, CeobeOperationAnnouncement,
     CeobeOperationVideo,
 };
-pub use ceobe_cookie::CeobeCookieNewestBackend;
 pub use user_auth::UserAuthBackend;
 
 pub use self::fetcher::FetcherConfigControllers;
 use self::{
-    bakery_mansion::bakery_mansion_router,
+    bakery_mansion::bakery_mansion_router, ceobe_cookie::ceobe_cookie_router,
     ceobe_operation::ceobe_operation_router, fetcher::fetcher_config,
-    user_auth::user_auth_router, ceobe_cookie::ceobe_cookie_router
+    user_auth::user_auth_router,
 };
 
 mod bakery_mansion;

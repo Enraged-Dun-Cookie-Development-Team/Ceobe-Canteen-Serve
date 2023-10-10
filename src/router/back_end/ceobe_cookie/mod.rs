@@ -1,10 +1,11 @@
 use axum::Router;
-
-use crate::{new_auth_level, middleware::authorize::AuthorizeLayer, utils::user_authorize::auth_level::prefabs::Chef};
+pub use newest::CeobeCookieNewestBackend;
 
 use self::newest::newest_router;
-
-pub use newest::CeobeCookieNewestBackend;
+use crate::{
+    middleware::authorize::AuthorizeLayer, new_auth_level,
+    utils::user_authorize::auth_level::prefabs::Chef,
+};
 
 mod newest;
 

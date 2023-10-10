@@ -16,7 +16,7 @@ use tokio::sync::Mutex;
 use tracing::instrument;
 
 use super::error::{AnalyzeCookieError, AnalyzeCookieRResult};
-use crate::{router::AnalyzeCookieInside};
+use crate::router::AnalyzeCookieInside;
 
 impl AnalyzeCookieInside {
     #[instrument(ret, skip(mongo, sql, redis_client, mob, qiniu))]
