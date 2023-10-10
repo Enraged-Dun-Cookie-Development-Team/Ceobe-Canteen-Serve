@@ -151,6 +151,7 @@ persistence = { workspace = true, features = ["prelude", "migrate"] }
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = "0.5.4"
 
+
 [dependencies.tokio]
 workspace = true
 

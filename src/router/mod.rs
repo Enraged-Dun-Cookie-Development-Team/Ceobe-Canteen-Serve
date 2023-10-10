@@ -1,7 +1,7 @@
 use axum::{routing::get, Router};
 pub use back_end::{
-    BakeryMansionBackend, CeobeOpResource, CeobeOpVersion,
-    CeobeOperationAnnouncement, CeobeOperationVideo,
+    BakeryMansionBackend, CeobeCookieNewestBackend, CeobeOpResource,
+    CeobeOpVersion, CeobeOperationAnnouncement, CeobeOperationVideo,
     FetcherConfigControllers, UserAuthBackend,
 };
 pub use cdn::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
