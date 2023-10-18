@@ -32,6 +32,11 @@ impl MigrationTrait for Migration {
                 ColumnDef::new(CeobeOperationToolLink::Avatar)
                     .string_len(256)
                     .not_null(),
+            )
+            .col(
+                ColumnDef::new(CeobeOperationToolLink::JumpUrl)
+                    .string_len(256)
+                    .not_null(),
             );
         table.character_set("utf8mb4").collate("utf8mb4_general_ci");
         manager.create_table(table).await?;
