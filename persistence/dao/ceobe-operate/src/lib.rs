@@ -14,6 +14,7 @@ pub mod desktop_version;
 pub mod plugin_version;
 #[path = "sql/resource/mod.rs"] pub mod resource;
 #[path = "sql/video/mod.rs"] pub mod video;
+#[path = "sql/tool_link/mod.rs"] pub mod tool_link;
 pub struct OperationDatabaseOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for OperationDatabaseOperate<'db, Conn> {
