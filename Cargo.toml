@@ -197,3 +197,6 @@ path = "./logic/ceobe_cookie_logic"
 
 [dependencies.bakery_logic]
 path = "./logic/bakery_logic"
+
+[dependencies.ceobe_operation]
+path = "./logic/ceobe_operation"
