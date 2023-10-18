@@ -1,10 +1,11 @@
-use db_ops_prelude::sea_orm::{IntoActiveModel, ActiveModelTrait};
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::ConnectionTrait, sql_models::ceobe_operation::tool_link::checkers::tool_link_data::CeobeOperationToolLink};
-use tracing::{instrument, info};
-use super::OperateResult;
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel},
+    sql_models::ceobe_operation::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
+};
+use tracing::{info, instrument};
 
-
-use super::ToolLinkOperate;
+use super::{OperateResult, ToolLinkOperate};
 
 impl<'c, C> ToolLinkOperate<'c, C>
 where
@@ -18,10 +19,7 @@ where
         info!(tool_link.create = ?tool_link);
 
         let db = self.get_connect();
-        tool_link
-            .into_active_model()
-            .insert(db)
-            .await?;
+        tool_link.into_active_model().insert(db).await?;
 
         Ok(())
     }

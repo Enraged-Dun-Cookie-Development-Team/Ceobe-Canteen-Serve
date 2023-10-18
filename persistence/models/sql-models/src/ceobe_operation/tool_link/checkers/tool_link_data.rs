@@ -1,11 +1,18 @@
-use checker::{check_obj, prefabs::{option_checker::OptionChecker, no_check::NoCheck, str_len_checker::StrMaxCharLenChecker, url_checker::UrlChecker}};
+use checker::{
+    check_obj,
+    prefabs::{
+        no_check::NoCheck, option_checker::OptionChecker,
+        str_len_checker::StrMaxCharLenChecker, url_checker::UrlChecker,
+    },
+};
 use sea_orm::{IntoActiveModel, Set};
 use sql_connection::ext_traits::active_or_set::ActiveOrSet;
 use typed_builder::TypedBuilder;
 use url::Url;
-use crate::ceobe_operation::tool_link::checkers::CheckError;
 
-use crate::ceobe_operation::tool_link::models::model_tool_link::ActiveModel;
+use crate::ceobe_operation::tool_link::{
+    checkers::CheckError, models::model_tool_link::ActiveModel,
+};
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOperationToolLink {
@@ -24,7 +31,7 @@ pub struct PreCheckCeobeOperationToolLinkChecker {
     pub id: OptionChecker<NoCheck<i32>>,
     pub nickname: StrMaxCharLenChecker<String, 32>,
     pub avatar: UrlChecker,
-    pub jump_url: UrlChecker
+    pub jump_url: UrlChecker,
 }
 
 impl IntoActiveModel<ActiveModel> for CeobeOperationToolLink {

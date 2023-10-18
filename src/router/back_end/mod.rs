@@ -2,8 +2,8 @@ use axum::Router;
 pub use bakery_mansion::BakeryMansionBackend;
 pub use ceobe_cookie::CeobeCookieNewestBackend;
 pub use ceobe_operation::{
-    CeobeOpResource, CeobeOpVersion, CeobeOperationAnnouncement,
-    CeobeOperationVideo, CeobeOpToolLink
+    CeobeOpResource, CeobeOpToolLink, CeobeOpVersion,
+    CeobeOperationAnnouncement, CeobeOperationVideo,
 };
 pub use user_auth::UserAuthBackend;
 

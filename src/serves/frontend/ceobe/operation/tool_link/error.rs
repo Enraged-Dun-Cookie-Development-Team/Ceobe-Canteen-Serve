@@ -5,7 +5,7 @@ use crate::error_generate;
 
 error_generate! {
     pub OperateToolLinkError
-    
+
     LogicError = LogicError
 }
 

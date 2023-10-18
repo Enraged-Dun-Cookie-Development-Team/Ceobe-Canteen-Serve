@@ -1,19 +1,26 @@
 use axum::Json;
-use axum_macros::debug_handler;
-use ceobe_cookie_logic::impletements::CeobeCookieLogic;
-use ceobe_operation_logic::{impletements::CeobeOperateLogic, view::DeleteOneToolLinkReq};
-use ceobe_qiniu_upload::QiniuManager;
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::DeleteOneToolLinkReq,
+};
 use checker::{CheckExtract, JsonCheckExtract};
-use persistence::{redis::RedisConnect, mysql::SqlDatabaseOperate, ceobe_operate::models::tool_link::{checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker, self}};
-use qq_channel_warning::QqChannelGrpcService;
+use persistence::{
+    ceobe_operate::models::tool_link::{
+        self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
+    },
+    mysql::SqlDatabaseOperate,
+};
 use resp_result::{resp_try, MapReject};
 use tracing::instrument;
 
-use super::error::{OperateToolLinkRResult, OperateToolLinkError, PageSizePretreatment};
+use super::error::{
+    OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment,
+};
 use crate::router::CeobeOpToolLink;
 
-type CeobeOperationToolLinCheck =
-    JsonCheckExtract<PreCheckCeobeOperationToolLinkChecker, OperateToolLinkError>;
+type CeobeOperationToolLinCheck = JsonCheckExtract<
+    PreCheckCeobeOperationToolLinkChecker,
+    OperateToolLinkError,
+>;
 
 impl CeobeOpToolLink {
     /// 新增一个工具
@@ -32,7 +39,8 @@ impl CeobeOpToolLink {
     /// 更新一个工具
     #[instrument(ret, skip(sql))]
     pub async fn update_one(
-        sql: SqlDatabaseOperate, CheckExtract(tool_link): CeobeOperationToolLinCheck,
+        sql: SqlDatabaseOperate,
+        CheckExtract(tool_link): CeobeOperationToolLinCheck,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::update_tool_link(sql, tool_link).await?;
@@ -44,7 +52,11 @@ impl CeobeOpToolLink {
     /// 删除一个工具
     #[instrument(ret, skip(sql))]
     pub async fn delete_one(
-        sql: SqlDatabaseOperate, MapReject(body): MapReject<Json<DeleteOneToolLinkReq>, OperateToolLinkError>,
+        sql: SqlDatabaseOperate,
+        MapReject(body): MapReject<
+            Json<DeleteOneToolLinkReq>,
+            OperateToolLinkError,
+        >,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::delete_tool_link(sql, body.id).await?;
@@ -52,15 +64,19 @@ impl CeobeOpToolLink {
         })
         .await
     }
+
     /// 通过分页获取工具列表
     #[instrument(ret, skip(sql))]
     pub async fn list(
-        sql: SqlDatabaseOperate, CheckExtract(page_size): PageSizePretreatment,
+        sql: SqlDatabaseOperate,
+        CheckExtract(page_size): PageSizePretreatment,
     ) -> OperateToolLinkRResult<Vec<tool_link::Model>> {
         resp_try(async move {
-            Ok(CeobeOperateLogic::find_tool_link_list_with_paginator(sql,page_size).await?)
+            Ok(CeobeOperateLogic::find_tool_link_list_with_paginator(
+                sql, page_size,
+            )
+            .await?)
         })
         .await
     }
 }
-

@@ -1,22 +1,22 @@
-
 pub use announcement::CeobeOperationAnnouncementFrontend;
 use axum::Router;
 pub use resource::CeobeOperationResourceFrontend;
+pub use tool_link::CeobeOperationToolLinkFrontend;
 pub use version::CeobeOperationVersionFrontend;
 pub use video::CeobeOperationVideoFrontend;
-pub use tool_link::CeobeOperationToolLinkFrontend;
 
 use self::{
     announcement::announcement_router, resource::resource_router,
-    version::version_router, video::video_router, tool_link::tool_link_router
+    tool_link::tool_link_router, version::version_router,
+    video::video_router,
 };
 use crate::router::ServerRoute;
 
 mod announcement;
 mod resource;
+mod tool_link;
 mod version;
 mod video;
-mod tool_link;
 
 pub(super) fn ceobe_operation_router() -> ServerRoute {
     Router::new()

@@ -1,11 +1,10 @@
 use std::convert::Infallible;
 
-use status_err::{StatusErr, ErrPrefix};
-pub use CheckError::*;
+use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
+pub use CheckError::*;
 
 pub mod tool_link_data;
-
 
 #[derive(Debug, Error, StatusErr)]
 pub enum CheckError {

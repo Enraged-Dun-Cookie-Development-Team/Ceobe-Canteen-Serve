@@ -1,17 +1,18 @@
 use std::ops::Deref;
 
-use db_ops_prelude::sea_orm::{IntoActiveModel, ActiveModelTrait, EntityTrait, PaginatorTrait};
-use db_ops_prelude::smallvec::SmallVec;
-use db_ops_prelude::sql_models::ceobe_operation::tool_link;
-use db_ops_prelude::sql_models::ceobe_operation::tool_link::models::model_tool_link::{self, Entity, FrontendToolLink};
-use db_ops_prelude::tap::TapFallible;
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::ConnectionTrait, sql_models::ceobe_operation::tool_link::checkers::tool_link_data::CeobeOperationToolLink};
-use tracing::{instrument, info, Span};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ConnectionTrait, EntityTrait, PaginatorTrait},
+    smallvec::SmallVec,
+    sql_models::ceobe_operation::tool_link::models::model_tool_link::{
+        self, Entity, FrontendToolLink,
+    },
+    tap::TapFallible,
+};
 use page_size::{database::WithPagination, request::Paginator};
-use super::OperateResult;
+use tracing::{info, instrument, Span};
 
-
-use super::ToolLinkOperate;
+use super::{OperateResult, ToolLinkOperate};
 
 impl<'c, C> ToolLinkOperate<'c, C>
 where
@@ -45,9 +46,7 @@ where
 
     #[instrument(skip(self))]
     /// 获取用户列表
-    pub async fn find_list(
-        &'c self
-    ) -> OperateResult<Vec<FrontendToolLink>> {
+    pub async fn find_list(&'c self) -> OperateResult<Vec<FrontendToolLink>> {
         let db = self.get_connect();
         Ok(Entity::find()
             .into_model::<FrontendToolLink>()
@@ -67,9 +66,6 @@ where
     /// 获取工具总数
     pub async fn get_user_total_number(&'c self) -> OperateResult<u64> {
         let db = self.get_connect();
-        Entity::find()
-            .count(db)
-            .await
-            .map_err(Into::into)
+        Entity::find().count(db).await.map_err(Into::into)
     }
 }

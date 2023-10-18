@@ -1,12 +1,12 @@
-
 use sea_orm_migration::prelude::*;
 
 use super::CeobeOperationToolLink;
 
-
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str { "m20231018_162927_ceobe_operation_friend_link_create" }
+    fn name(&self) -> &str {
+        "m20231018_162927_ceobe_operation_friend_link_create"
+    }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {

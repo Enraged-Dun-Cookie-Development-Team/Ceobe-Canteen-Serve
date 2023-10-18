@@ -1,12 +1,12 @@
-use db_ops_prelude::sea_orm::{IntoActiveModel, ActiveModelTrait};
-use db_ops_prelude::{get_connect::GetDatabaseConnect, sea_orm::ConnectionTrait, sql_models::ceobe_operation::tool_link::checkers::tool_link_data::CeobeOperationToolLink};
-use tracing::{instrument, info};
+use db_ops_prelude::{
+    get_connect::GetDatabaseConnect,
+    sea_orm::{ActiveModelTrait, ConnectionTrait, IntoActiveModel},
+    sql_models::ceobe_operation::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
+};
+use tracing::{info, instrument};
+
+use super::{OperateResult, ToolLinkOperate};
 use crate::tool_link::OperateError;
-
-use super::OperateResult;
-
-
-use super::ToolLinkOperate;
 
 impl<'c, C> ToolLinkOperate<'c, C>
 where
@@ -31,7 +31,9 @@ where
             tool_link.into_active_model().update(db).await?;
         }
         else {
-            return Err(OperateError::ToolLinkNotFound(tool_link.id.unwrap()));
+            return Err(OperateError::ToolLinkNotFound(
+                tool_link.id.unwrap(),
+            ));
         };
 
         Ok(())

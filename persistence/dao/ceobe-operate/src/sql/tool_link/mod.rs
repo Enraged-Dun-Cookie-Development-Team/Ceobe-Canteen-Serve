@@ -2,7 +2,7 @@ use std::ops::Deref;
 
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
-    sea_orm, StatusErr, ThisError, ErrPrefix
+    sea_orm, ErrPrefix, StatusErr, ThisError,
 };
 
 use crate::OperationDatabaseOperate;
@@ -42,7 +42,5 @@ pub enum OperateError {
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
-    pub fn tool_link(&self) -> ToolLinkOperate<'_, Conn> {
-        self.child()
-    }
+    pub fn tool_link(&self) -> ToolLinkOperate<'_, Conn> { self.child() }
 }

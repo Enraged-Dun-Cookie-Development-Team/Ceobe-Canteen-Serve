@@ -1,8 +1,6 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use ceobe_operation_logic::error::LogicError;
-use ceobe_operation_logic::impletements::CeobeOperateLogic;
-use checker::QueryCheckExtract;
-use checker::prefabs::num_check::NonZeroUnsignedError;
+use checker::{prefabs::num_check::NonZeroUnsignedError, QueryCheckExtract};
 use page_size::request::PageSizeChecker;
 use persistence::ceobe_operate::models::tool_link;
 use resp_result::RespResult;
@@ -11,7 +9,7 @@ use crate::error_generate;
 
 error_generate! {
     pub OperateToolLinkError
-    
+
     Json = JsonRejection
     Query = QueryRejection
     LogicError = LogicError

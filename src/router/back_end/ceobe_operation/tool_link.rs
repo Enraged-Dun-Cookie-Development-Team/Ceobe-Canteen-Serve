@@ -1,4 +1,7 @@
-use axum::{Router, routing::{post, get, delete}};
+use axum::{
+    routing::{delete, get, post},
+    Router,
+};
 
 pub struct CeobeOpToolLink;
 

@@ -5,7 +5,8 @@ pub use cookie::{
 };
 pub use operation::{
     CeobeOperationAnnouncementFrontend, CeobeOperationResourceFrontend,
-    CeobeOperationVersionFrontend, CeobeOperationVideoFrontend, CeobeOperationToolLinkFrontend
+    CeobeOperationToolLinkFrontend, CeobeOperationVersionFrontend,
+    CeobeOperationVideoFrontend,
 };
 pub use user::CeobeUserFrontend;
 

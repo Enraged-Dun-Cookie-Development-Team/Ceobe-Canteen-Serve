@@ -13,8 +13,8 @@ pub mod desktop_version;
 #[path = "mongo/plugin_version/mod.rs"]
 pub mod plugin_version;
 #[path = "sql/resource/mod.rs"] pub mod resource;
-#[path = "sql/video/mod.rs"] pub mod video;
 #[path = "sql/tool_link/mod.rs"] pub mod tool_link;
+#[path = "sql/video/mod.rs"] pub mod video;
 pub struct OperationDatabaseOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for OperationDatabaseOperate<'db, Conn> {
