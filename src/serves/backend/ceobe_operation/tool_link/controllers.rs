@@ -17,7 +17,7 @@ use super::error::{
 };
 use crate::router::CeobeOpToolLink;
 
-type CeobeOperationToolLinCheck = JsonCheckExtract<
+type CeobeOperationToolLinkCheck = JsonCheckExtract<
     PreCheckCeobeOperationToolLinkChecker,
     OperateToolLinkError,
 >;
@@ -27,7 +27,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(sql))]
     pub async fn create_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): CeobeOperationToolLinCheck,
+        CheckExtract(tool_link): CeobeOperationToolLinkCheck,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::create_tool_link(sql, tool_link).await?;
@@ -40,7 +40,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(sql))]
     pub async fn update_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): CeobeOperationToolLinCheck,
+        CheckExtract(tool_link): CeobeOperationToolLinkCheck,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::update_tool_link(sql, tool_link).await?;
