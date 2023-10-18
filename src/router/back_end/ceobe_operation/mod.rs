@@ -3,10 +3,11 @@ use axum::Router;
 pub use resource::CeobeOpResource;
 pub use version::CeobeOpVersion;
 pub use video::CeobeOperationVideo;
+pub use tool_link::CeobeOpToolLink;
 
 use self::{
     announcement::announcement_router, resource::resource_router,
-    version::version_router, video::video_router,
+    version::version_router, video::video_router, tool_link::tool_link_router
 };
 use crate::{
     middleware::authorize::AuthorizeLayer,
@@ -18,6 +19,7 @@ mod announcement;
 mod resource;
 mod version;
 mod video;
+mod tool_link;
 
 pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
     Router::new()
@@ -25,6 +27,7 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .nest("/video", video_router())
         .nest("/version", version_router())
         .nest("/resource", resource_router())
+        .nest("/toolLink", tool_link_router())
         .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
 }
 

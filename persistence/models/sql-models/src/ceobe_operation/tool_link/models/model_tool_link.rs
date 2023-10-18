@@ -3,7 +3,7 @@ use sub_model::SubModel;
 
 use crate::{NaiveDateTime, SoftDelete};
 
-#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
+#[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel, serde::Serialize)]
 #[sea_orm(table_name = "ceobe_operation_tool_link")]
 #[sub_model(
     all(

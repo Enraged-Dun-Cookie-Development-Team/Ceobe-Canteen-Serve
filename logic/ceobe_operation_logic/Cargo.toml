@@ -1,5 +1,5 @@
 [package]
-name = "ceobe_operation"
+name = "ceobe_operation_logic"
 version = "0.1.0"
 edition = "2021"
 

@@ -3,7 +3,7 @@ pub use bakery_mansion::BakeryMansionBackend;
 pub use ceobe_cookie::CeobeCookieNewestBackend;
 pub use ceobe_operation::{
     CeobeOpResource, CeobeOpVersion, CeobeOperationAnnouncement,
-    CeobeOperationVideo,
+    CeobeOperationVideo, CeobeOpToolLink
 };
 pub use user_auth::UserAuthBackend;
 
@@ -15,7 +15,7 @@ use self::{
 };
 
 mod bakery_mansion;
-pub mod ceobe_operation;
+mod ceobe_operation;
 pub mod fetcher;
 
 mod ceobe_cookie;

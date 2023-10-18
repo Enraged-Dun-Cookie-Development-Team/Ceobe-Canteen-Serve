@@ -2,7 +2,7 @@ use axum::{routing::get, Router};
 pub use back_end::{
     BakeryMansionBackend, CeobeCookieNewestBackend, CeobeOpResource,
     CeobeOpVersion, CeobeOperationAnnouncement, CeobeOperationVideo,
-    FetcherConfigControllers, UserAuthBackend,
+    FetcherConfigControllers, UserAuthBackend, CeobeOpToolLink
 };
 pub use cdn::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 pub use front_end::{
@@ -10,7 +10,7 @@ pub use front_end::{
     CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
     CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend,
     ConfigFetcherFrontend, CookieInfoFrontend, CookieSearchFrontend,
-    CookieTerraComicFrontend,
+    CookieTerraComicFrontend, CeobeOperationToolLinkFrontend
 };
 pub use inside::AnalyzeCookieInside;
 
