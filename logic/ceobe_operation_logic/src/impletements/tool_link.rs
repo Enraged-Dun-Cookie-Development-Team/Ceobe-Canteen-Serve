@@ -1,5 +1,8 @@
 use futures::future;
-use page_size::{request::Paginator, response::{GenerateListWithPageInfo, ListWithPageInfo}};
+use page_size::{
+    request::Paginator,
+    response::{GenerateListWithPageInfo, ListWithPageInfo},
+};
 use persistence::{
     ceobe_operate::{
         models::tool_link::{
@@ -52,8 +55,7 @@ impl CeobeOperateLogic {
         // 获取数据源数量
         // 异步获取
         let (tool_list, count) = future::join(
-            sql
-                .ceobe()
+            sql.ceobe()
                 .operation()
                 .tool_link()
                 .find_list_paginator(page_size),
