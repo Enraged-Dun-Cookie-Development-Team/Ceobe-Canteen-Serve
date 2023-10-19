@@ -1,4 +1,5 @@
-use page_size::request::Paginator;
+use futures::future;
+use page_size::{request::Paginator, response::{GenerateListWithPageInfo, ListWithPageInfo}};
 use persistence::{
     ceobe_operate::{
         models::tool_link::{
@@ -46,13 +47,26 @@ impl CeobeOperateLogic {
 
     pub async fn find_tool_link_list_with_paginator(
         sql: SqlDatabaseOperate, page_size: Paginator,
-    ) -> LogicResult<Vec<model_tool_link::Model>> {
-        Ok(sql
-            .ceobe()
-            .operation()
-            .tool_link()
-            .find_list_paginator(page_size)
-            .await?)
+    ) -> LogicResult<ListWithPageInfo<model_tool_link::Model>> {
+        // 获取数据源列表
+        // 获取数据源数量
+        // 异步获取
+        let (tool_list, count) = future::join(
+            sql
+                .ceobe()
+                .operation()
+                .tool_link()
+                .find_list_paginator(page_size),
+            sql.ceobe()
+                .operation()
+                .tool_link()
+                .get_tool_link_total_number(),
+        )
+        .await;
+
+        let resp = tool_list?.with_page_info(page_size, count?);
+
+        Ok(resp)
     }
 
     pub async fn find_tool_link_list(

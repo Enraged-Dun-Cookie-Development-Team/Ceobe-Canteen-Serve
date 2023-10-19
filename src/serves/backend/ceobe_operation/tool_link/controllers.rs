@@ -3,6 +3,7 @@ use ceobe_operation_logic::{
     impletements::CeobeOperateLogic, view::DeleteOneToolLinkReq,
 };
 use checker::{CheckExtract, JsonCheckExtract};
+use page_size::response::ListWithPageInfo;
 use persistence::{
     ceobe_operate::models::tool_link::{
         self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
@@ -70,7 +71,7 @@ impl CeobeOpToolLink {
     pub async fn list(
         sql: SqlDatabaseOperate,
         CheckExtract(page_size): PageSizePretreatment,
-    ) -> OperateToolLinkRResult<Vec<tool_link::Model>> {
+    ) -> OperateToolLinkRResult<ListWithPageInfo<tool_link::Model>> {
         resp_try(async move {
             Ok(CeobeOperateLogic::find_tool_link_list_with_paginator(
                 sql, page_size,

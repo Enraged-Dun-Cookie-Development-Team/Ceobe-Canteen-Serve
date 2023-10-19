@@ -64,7 +64,7 @@ where
 
     #[instrument(skip(self), ret)]
     /// 获取工具总数
-    pub async fn get_user_total_number(&'c self) -> OperateResult<u64> {
+    pub async fn get_tool_link_total_number(&'c self) -> OperateResult<u64> {
         let db = self.get_connect();
         Entity::find().count(db).await.map_err(Into::into)
     }
