@@ -23,4 +23,5 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
   apt update && apt-get --no-install-recommends install -y ca-certificates
 WORKDIR /var/canteen-server
 COPY --from=builder /app/target/release/server /usr/local/bin/canteen-server
+ENV JEMALLOC_SYS_WITH_MALLOC_CONF=background_thread:true,narenas:1,tcache:false,dirty_decay_ms:0,muzzy_decay_ms:0,abort_conf:true
 CMD ["sh", "-c", "canteen-server"]
