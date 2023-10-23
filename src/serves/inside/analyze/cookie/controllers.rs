@@ -31,7 +31,6 @@ impl AnalyzeCookieInside {
             QiniuManager,
             QqChannelGrpcService,
         ),
-        Extension(mutex): Extension<Arc<Mutex<()>>>,
         MapReject(cookie_req_info): MapReject<
             Json<Vec<NewCookieReq>>,
             AnalyzeCookieError,
@@ -39,6 +38,7 @@ impl AnalyzeCookieInside {
     ) -> AnalyzeCookieRResult<()> {
         resp_try(async move {
             // 添加公平锁，避免七牛云上传过程顺序错误
+            static mutex: Mutex<()> = Mutex::new(());
             let mutex_guard = mutex.lock().await;
             CeobeCookieLogic::new_cookie(
                 mongo,
