@@ -11,4 +11,5 @@ pub fn tool_link_router() -> crate::router::ServerRoute {
         .route("/update", post(CeobeOpToolLink::update_one))
         .route("/delete", delete(CeobeOpToolLink::delete_one))
         .route("/list", get(CeobeOpToolLink::list))
+        .route("/uploadAvatar", post(CeobeOpToolLink::upload_avatar))
 }

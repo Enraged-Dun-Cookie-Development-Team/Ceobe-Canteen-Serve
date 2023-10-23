@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use ceobe_qiniu_upload::{QiniuManager, ResponsePayload};
 use mob_push_server::{
     push_notify::android::{Image, NotifyStyle},
     PushEntity,
@@ -175,4 +176,19 @@ pub struct TerraEntryResp {
     pub cover_url: Option<String>,
     pub episode_short_title: String,
     pub updated_time: i64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct AvatarId {
+    url: String,
+}
+
+impl AvatarId {
+    pub fn from_resp(
+        ResponsePayload { key, .. }: ResponsePayload, qiniu: &QiniuManager,
+    ) -> Self {
+        Self {
+            url: qiniu.concat_url(key),
+        }
+    }
 }
