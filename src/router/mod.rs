@@ -1,16 +1,16 @@
 use axum::{routing::get, Router};
 pub use back_end::{
     BakeryMansionBackend, CeobeCookieNewestBackend, CeobeOpResource,
-    CeobeOpVersion, CeobeOperationAnnouncement, CeobeOperationVideo,
-    FetcherConfigControllers, UserAuthBackend,
+    CeobeOpToolLink, CeobeOpVersion, CeobeOperationAnnouncement,
+    CeobeOperationVideo, FetcherConfigControllers, UserAuthBackend,
 };
 pub use cdn::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
-    CeobeOperationResourceFrontend, CeobeOperationVersionFrontend,
-    CeobeOperationVideoFrontend, CeobeUserFrontend, ConfigDatasourceFrontend,
-    ConfigFetcherFrontend, CookieInfoFrontend, CookieSearchFrontend,
-    CookieTerraComicFrontend,
+    CeobeOperationResourceFrontend, CeobeOperationToolLinkFrontend,
+    CeobeOperationVersionFrontend, CeobeOperationVideoFrontend,
+    CeobeUserFrontend, ConfigDatasourceFrontend, ConfigFetcherFrontend,
+    CookieInfoFrontend, CookieSearchFrontend, CookieTerraComicFrontend,
 };
 pub use inside::AnalyzeCookieInside;
 

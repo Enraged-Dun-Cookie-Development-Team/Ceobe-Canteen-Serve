@@ -17,7 +17,7 @@ impl MigrationTrait for Migration {
     }
 }
 """
-migrate_dir = "./migrate/sql-migration"
+migrate_dir = "./persistence/migrate/sql-migration"
 
 # migrate dir
 
@@ -29,7 +29,7 @@ import sys
 from functools import reduce
 
 mod_patten = re.compile(r'(?:pub )?mod ([a-zA-Z_][a-zA-Z0-9_]*);')
-migrate_patten = re.compile(r'crate::migrate_group!\[([\n\sa-z_:A-Z0-9]+)(?=\n\s+])')
+migrate_patten = re.compile(r'migrate_group!\[([\n\sa-z_:A-Z0-9]+)(?=\n\s+])')
 
 
 class RustLib(object):

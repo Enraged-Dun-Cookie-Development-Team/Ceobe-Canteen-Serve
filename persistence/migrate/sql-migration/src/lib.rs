@@ -1,3 +1,4 @@
+mod ceobe_operation_tool_link;
 pub use sea_orm_migration::MigratorTrait;
 use sea_orm_migration::{async_trait, MigrationTrait};
 
@@ -58,6 +59,7 @@ impl MigratorTrait for Migrator {
             ceobe_cookie_search_content::m20230606_135941_create::Migration
             ceobe_operation_desktop_version::m20230729_211229_create::Migration
             ceobe_operation_app_version::m20230729_212539_add_download_link::Migration
+            ceobe_operation_tool_link::m20231018_162927_create::Migration
         ]
     }
 }
