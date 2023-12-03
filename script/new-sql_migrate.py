@@ -17,7 +17,7 @@ impl MigrationTrait for Migration {
     }
 }
 """
-migrate_dir = "./migrate/sql-migration"
+migrate_dir = "./persistence/migrate/sql-migration"
 
 # migrate dir
 

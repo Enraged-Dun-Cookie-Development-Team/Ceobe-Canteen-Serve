@@ -43,7 +43,7 @@ use crate::{
     none(
         name = "DatasourceId",
         extra(derive(sea_orm::FromQueryResult), doc = "取得数据源对应id")
-    )
+    ),
 )]
 pub struct Model {
     /// 平台type
@@ -92,6 +92,8 @@ pub struct Model {
     /// 数据源跳转链接
     #[sub_model(want("FrontendDatasource"))]
     pub jump_url: Option<String>,
+    /// 数据源可见性
+    pub visual: bool,
 }
 
 #[derive(Debug, Clone, Copy, EnumIter)]

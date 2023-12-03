@@ -1,8 +1,6 @@
 use std::convert::Infallible;
 
-pub use datasource_config_data::{
-    FetcherDatasourceConfigChecker, FetcherDatasourceConfigUncheck,
-};
+pub use datasource_config_data::FetcherqqDatasourceConfigUncheck;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 pub use unique_key::DatasourceUnique;
