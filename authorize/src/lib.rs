@@ -4,4 +4,5 @@
 mod models;
 mod validation;
 mod axum_starter;
+mod error;
 

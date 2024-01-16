@@ -14,4 +14,6 @@ persistence = { workspace = true, features = ["model-admin"] }
 serde.workspace = true
 sha2 = "0.10.7"
 typed-builder.workspace = true
+rand = "0.8.5"
+thiserror = "1.0.38"
 
