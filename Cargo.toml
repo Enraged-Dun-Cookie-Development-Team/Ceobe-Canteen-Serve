@@ -26,6 +26,7 @@ debug = 1
 members = [
     "libs/*",
     "persistence/persistence",
+    "authorize",
     "./macros/*",
     "./middle-server/*",
     "./logic/*",
