@@ -102,7 +102,7 @@ impl CeobeCookieLogic {
             let mut cover_url: Option<String> = None;
             if let Some(images) = episode.images {
                 cover_url =
-                    images.get(0).map(|image| image.origin_url.clone());
+                    images.first().map(|image| image.origin_url.clone());
             }
             let comic_info = mongo
                 .ceobe()

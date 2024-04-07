@@ -1,8 +1,8 @@
-use ceobe_qiniu_upload::Error as QiniuError;
-use mongodb::bson;
 use redis::RedisError;
-use status_err::StatusErr;
 use thiserror::Error;
+
+use ceobe_qiniu_upload::Error as QiniuError;
+use status_err::StatusErr;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum ServiceError {

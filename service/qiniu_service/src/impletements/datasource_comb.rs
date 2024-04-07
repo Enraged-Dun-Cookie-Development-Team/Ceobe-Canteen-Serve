@@ -1,11 +1,9 @@
-use ceobe_qiniu_upload::QiniuManager;
-use mongodb::bson::oid::ObjectId;
-use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
-use qiniu_cdn_upload::upload;
-use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis::AsyncCommands;
-use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
-use tokio::task::JoinHandle;
+
+use ceobe_qiniu_upload::QiniuManager;
+use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
+use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
+use redis_global::redis_key::cookie_list::CookieListKey;
 
 use crate::{
     error::ServiceResult,
@@ -83,6 +81,7 @@ impl QiniuService {
 
 
     #[deprecated]
+    #[allow(deprecated)]
     /// 用于脚本的删除与上传最新饼id到七牛云
     pub async fn upload_newest_cookie_id_use_script(
         qiniu: QiniuManager, cookie_id: String,
@@ -119,7 +118,7 @@ impl QiniuService {
         // 上传数据源组合到对象储存[重试3次]
         let mut result = Option::<ceobe_qiniu_upload::Error>::None;
         for _ in 0..3 {
-            result = upload(&qiniu, &source, payload).await.err();
+            result = qiniu_cdn_upload::upload(&qiniu, &source, payload).await.err();
             if result.is_none() {
                 break;
             }

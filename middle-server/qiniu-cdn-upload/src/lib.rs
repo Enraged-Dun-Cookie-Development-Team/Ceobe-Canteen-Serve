@@ -42,7 +42,7 @@ where
     uploader.upload(upload).await
 }
 
-struct UploadWrap<L>
+pub struct UploadWrap<L>
 where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
@@ -57,7 +57,7 @@ where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-    async fn new(
+    pub async fn new(
         payload: <L::Source as UploadSource>::Source<'_>, local: L,
     ) -> Result<Self, <L::Source as UploadSource>::Error> {
         Ok(Self {

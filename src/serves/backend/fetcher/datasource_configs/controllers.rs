@@ -21,11 +21,11 @@ use persistence::{
     mysql::SqlDatabaseOperate,
     redis::RedisConnect,
 };
-use qiniu_cdn_upload::upload;
 use qq_channel_warning::QqChannelGrpcService;
 use resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
+use qiniu_cdn_upload::UploadWrap;
 
 use super::{
     error::{DatasourceConfigError, DatasourceConfigRResult},
@@ -184,7 +184,7 @@ impl FetcherConfigControllers {
             let mut multipart = multipart?;
             let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
 
-            let resp = upload(&qiniu, field, DataSourceAvatarPayload::new())
+            let resp = qiniu.upload( UploadWrap::new( field, DataSourceAvatarPayload::new()).await?)
                 .await
                 .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
 

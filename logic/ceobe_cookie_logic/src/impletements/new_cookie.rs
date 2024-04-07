@@ -1,5 +1,6 @@
-use ceobe_qiniu_upload::QiniuManager;
 use futures::future;
+
+use ceobe_qiniu_upload::QiniuManager;
 use mob_push_server::PushManager;
 use persistence::{
     ceobe_cookie::ToCeobe,
@@ -14,7 +15,7 @@ use persistence::{
     operate::GetDatabaseConnect,
     redis::RedisConnect,
 };
-use qiniu_service::{model::DeleteObjectName, QiniuService};
+use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 
 use crate::{

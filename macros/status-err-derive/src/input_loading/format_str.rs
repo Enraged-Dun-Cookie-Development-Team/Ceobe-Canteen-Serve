@@ -28,14 +28,13 @@ impl FromMeta for FormatStr {
             .ok_or_else(|| darling::Error::missing_field("Format Str"))?;
         let fmt_str = String::from_nested_meta(fmt_str)?;
 
-        let v = iter.map(Args::from_nested_meta).fold(
-            darling::Result::Ok(Vec::new()),
-            |vec, args| {
+        let v = iter.map(Args::from_nested_meta).try_fold(
+            Vec::<Args>::new(),
+            |mut vec, args| {
                 let args = args?;
-                vec.map(|mut vec| {
                     vec.push(args);
-                    vec
-                })
+                darling::Result::Ok(vec)
+                
             },
         )?;
 

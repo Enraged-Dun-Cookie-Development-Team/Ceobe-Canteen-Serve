@@ -3,7 +3,6 @@ use std::collections::HashSet;
 use bitmap_convert::base70::BitmapBase70Conv;
 use bitmaps::Bitmap;
 use bnum::types::U256;
-use ceobe_qiniu_upload::QiniuManager;
 use checker::LiteChecker;
 use futures::future;
 use mob_push_server::PushManager;
@@ -31,8 +30,6 @@ use persistence::{
     mysql::SqlDatabaseOperate,
     redis::RedisConnect,
 };
-use qiniu_service::QiniuService;
-use qq_channel_warning::QqChannelGrpcService;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
@@ -85,7 +82,6 @@ impl CeobeUserLogic {
     /// 获取用户数据源配置
     pub async fn get_datasource_by_user(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
         redis_client: RedisConnect, mob_id: UserMobId,
     ) -> LogicResult<DatasourceConfig> {
         // 获取所有数据源的uuid列表
@@ -105,8 +101,6 @@ impl CeobeUserLogic {
         let resp = Self::remove_deleted_datasource_upload_cdn(
             mongo.clone(),
             db,
-            qiniu,
-            qq_channel,
             redis_client,
             datasource_list?,
             user_datasource_config.clone(),
@@ -129,7 +123,6 @@ impl CeobeUserLogic {
     /// 根据数据源列表获取对应数据源组合id
     pub async fn get_comb_by_datasources(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
         redis_client: RedisConnect, user_datasource_config: Vec<bson::Uuid>,
     ) -> LogicResult<DatasourceCombResp> {
         if user_datasource_config.is_empty() {
@@ -142,8 +135,6 @@ impl CeobeUserLogic {
         } = Self::remove_deleted_datasource_upload_cdn(
             mongo,
             db,
-            qiniu,
-            qq_channel,
             redis_client,
             datasource_list,
             user_datasource_config,
@@ -156,7 +147,6 @@ impl CeobeUserLogic {
     /// 排除已删除数据源并且上传七牛云
     async fn remove_deleted_datasource_upload_cdn(
         mongo: MongoDatabaseOperate, db: SqlDatabaseOperate,
-        qiniu: QiniuManager, qq_channel: QqChannelGrpcService,
         redis_client: RedisConnect, datasource_list: Vec<Uuid>,
         user_datasource_config: Vec<bson::Uuid>,
     ) -> LogicResult<DatasourceConfig> {
@@ -188,8 +178,6 @@ impl CeobeUserLogic {
         // 生成组合id，并且上传到对象储存
         let comb_ids = Self::get_datasources_comb_ids(
             db,
-            qiniu,
-            qq_channel,
             redis_client,
             datasource_ids,
             cookie_id,
@@ -237,8 +225,7 @@ impl CeobeUserLogic {
     }
 
     async fn get_datasources_comb_ids(
-        db: SqlDatabaseOperate, qiniu: QiniuManager,
-        mut qq_channel: QqChannelGrpcService, mut redis_client: RedisConnect,
+        db: SqlDatabaseOperate, redis_client: RedisConnect,
         datasource_ids: Vec<i32>, cookie_id: Option<ObjectId>,
     ) -> LogicResult<String> {
         // 根据数据库id生成bitmap
