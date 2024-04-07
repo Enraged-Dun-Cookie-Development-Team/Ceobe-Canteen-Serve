@@ -11,6 +11,7 @@ pub mod update_payload;
 /// 上传的数据来源相关trait
 pub mod update_source;
 
+#[deprecated]
 /// 通用七牛云上传接口
 ///
 /// - `uploader`: [`&Uploader`](Uploader) 七牛云上传器，可以通过

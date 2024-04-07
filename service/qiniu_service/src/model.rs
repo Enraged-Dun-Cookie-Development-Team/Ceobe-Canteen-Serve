@@ -11,6 +11,10 @@ pub struct DeleteObjectName {
     pub file_name: String,
 }
 
+impl DeleteObjectName {
+    pub fn new(name: String) -> Self { Self { file_name: name } }
+}
+
 impl<'s> ObjectName<'s> for DeleteObjectName {
     const DIR: Option<&'s str> = Some("datasource-comb");
 

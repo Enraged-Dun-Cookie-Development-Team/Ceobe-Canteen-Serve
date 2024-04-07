@@ -36,6 +36,12 @@ pub mod ceobe_user {
     pub use mongo_models::ceobe::user_property as models;
 }
 
+#[cfg(feature = "model-sync-cookie")]
+pub mod ceobe_sync_cookie{
+    pub use dao_sync_cookie::*;
+}
+
+
 /// prelude export
 #[cfg(feature = "help-crates")]
 pub mod help_crates {

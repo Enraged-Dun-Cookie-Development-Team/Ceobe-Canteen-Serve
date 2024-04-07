@@ -94,6 +94,12 @@ pub struct Model {
     pub jump_url: Option<String>,
 }
 
+impl Model {
+    pub fn to_combin_id(&self)->Option<String>{
+        Some(format!("{}:{}", &self.datasource, &self.db_unique_key))
+    }
+}
+
 #[derive(Debug, Clone, Copy, EnumIter)]
 pub enum Relation {
     PlatForm,
