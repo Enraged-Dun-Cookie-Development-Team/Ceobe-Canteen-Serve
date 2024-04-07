@@ -6,8 +6,34 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-help-crates = ["chrono", "futures", "status-err", "smallstr", "smallvec", "tap", "thiserror", "tracing", "bool_or", "mysql_func", "mongodb", "sea-orm", "time-utils"]
-prelude = ["help-crates", "model-admin", "model-bakery", "model-ceobe-cookie", "model-ceobe-operate", "model-ceobe-user", "model-fetcher", "mysql", "redis", "database-connect", "database-operate"]
+help-crates = [
+    "chrono",
+    "futures",
+    "status-err",
+    "smallstr",
+    "smallvec",
+    "tap",
+    "thiserror",
+    "tracing",
+    "bool_or",
+    "mysql_func",
+    "mongodb",
+    "sea-orm",
+    "time-utils",
+]
+prelude = [
+    "help-crates",
+    "model-admin",
+    "model-bakery",
+    "model-ceobe-cookie",
+    "model-ceobe-operate",
+    "model-ceobe-user",
+    "model-fetcher",
+    "mysql",
+    "redis",
+    "database-connect",
+    "database-operate",
+]
 
 mongo = ["mongo-connect", "time-utils/with-mongo"]
 redis = ["redis-connect"]
@@ -19,10 +45,30 @@ mysql-migrate = ["sql-migration", "mysql"]
 
 model-admin = ["dao-admin", "mysql", "database-operate", "sql-models"]
 model-bakery = ["dao-bakery", "database-operate", "mongo-models", "mongo"]
-model-ceobe-cookie = ["dao-ceobe-cookie", "mysql", "database-operate", "mongo", "sql-models", "mongo-models"]
-model-ceobe-operate = ["dao-ceobe-operate", "mysql", "database-operate", "mongo", "sql-models", "mongo-models"]
-model-ceobe-user = ["dao-ceobe-user", "database-operate", "mongo-models", "mongo"]
+model-ceobe-cookie = [
+    "dao-ceobe-cookie",
+    "mysql",
+    "database-operate",
+    "mongo",
+    "sql-models",
+    "mongo-models",
+]
+model-ceobe-operate = [
+    "dao-ceobe-operate",
+    "mysql",
+    "database-operate",
+    "mongo",
+    "sql-models",
+    "mongo-models",
+]
+model-ceobe-user = [
+    "dao-ceobe-user",
+    "database-operate",
+    "mongo-models",
+    "mongo",
+]
 model-fetcher = ["dao-fetcher", "mysql", "database-operate", "sql-models"]
+model-sync-cookie=["dao-sync-cookie","redis","redis-connect","database-operate"]
 
 database-connect = ["traits", "traits/initial"]
 database-operate = ["traits", "traits/get-connect", "abstract"]
@@ -35,6 +81,7 @@ dao-ceobe-cookie = { version = "0.1.0", path = "../dao/ceobe-cookie", optional =
 dao-ceobe-operate = { version = "0.1.0", path = "../dao/ceobe-operate", optional = true, package = "ceobe-operate" }
 dao-ceobe-user = { version = "0.1.0", path = "../dao/ceobe-user", optional = true, package = "ceobe-user" }
 dao-fetcher = { version = "0.1.0", path = "../dao/fetcher", optional = true, package = "fetcher" }
+dao-sync-cookie= { version = "0.1.0", path = "../dao/sync-cookie", optional = true, package = "sync-cookie"}
 mongo-connect = { version = "0.1.0", path = "../database/mongo_connection", package = "mongo_connection", optional = true }
 mongo-migration = { version = "0.1.0", path = "../migrate/mongo-migration", optional = true }
 mongo-models = { version = "0.1.0", path = "../models/mongo-models", optional = true }
@@ -57,4 +104,3 @@ status-err = { version = "0.1.0", path = "../../libs/status-err", optional = tru
 sea-orm = { workspace = true, optional = true }
 mongodb = { workspace = true, optional = true }
 time-utils = { workspace = true, optional = true }
-

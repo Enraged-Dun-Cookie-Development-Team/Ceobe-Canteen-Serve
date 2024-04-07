@@ -31,6 +31,7 @@ impl Manager {
 
         Ok(())
     }
+
     /// 批量删除对象存储文件
     pub async fn delete_many(
         &self, objects: Vec<impl ObjectName<'_>>,
@@ -41,7 +42,7 @@ impl Manager {
             .map(|obj| obj.object_name())
             .collect::<Vec<_>>();
         info!(qiniu.bucket.delete = ?objects,);
-        
+
         let mut v = objects
             .iter()
             .fold(bucket.batch_ops(), |mut ops, obj| {
@@ -54,6 +55,6 @@ impl Manager {
             k?;
         }
 
-       Ok(())
+        Ok(())
     }
 }

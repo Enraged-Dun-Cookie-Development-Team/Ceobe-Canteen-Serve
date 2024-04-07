@@ -16,8 +16,7 @@ pub enum ServiceError {
     #[error("Redis异常: {0}")]
     Redis(#[from] RedisError),
 
-    #[error(transparent)]
-    BsonOidErr(#[from] bson::oid::Error),
+
 }
 
 pub(crate) type ServiceResult<T> = Result<T, ServiceError>;

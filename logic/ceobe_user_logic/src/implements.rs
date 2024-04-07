@@ -36,6 +36,7 @@ use qq_channel_warning::QqChannelGrpcService;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
+use persistence::ceobe_sync_cookie::SyncCookieOperate;
 use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
@@ -266,16 +267,9 @@ impl CeobeUserLogic {
                 .create(comb_id.clone(), datasource_vec)
                 .await?;
 
-            QiniuService::create_datasource_comb(
-                &qiniu,
-                &mut qq_channel,
-                &mut redis_client,
-                cookie_id,
-                None,
-                comb_id.clone(),
-                None,
-            )
-            .await?;
+            SyncCookieOperate::new(redis_client)
+                .sync_cookie(cookie_id, None, comb_id.clone(), None)
+                .await?;
         }
 
         // 转成特定格式字符串
