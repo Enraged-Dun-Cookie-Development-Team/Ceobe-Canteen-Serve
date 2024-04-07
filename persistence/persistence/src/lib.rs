@@ -37,10 +37,9 @@ pub mod ceobe_user {
 }
 
 #[cfg(feature = "model-sync-cookie")]
-pub mod ceobe_sync_cookie{
+pub mod ceobe_sync_cookie {
     pub use dao_sync_cookie::*;
 }
-
 
 /// prelude export
 #[cfg(feature = "help-crates")]

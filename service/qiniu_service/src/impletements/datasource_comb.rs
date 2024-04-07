@@ -1,8 +1,7 @@
-use redis::AsyncCommands;
-
 use ceobe_qiniu_upload::QiniuManager;
 use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
+use redis::AsyncCommands;
 use redis_global::redis_key::cookie_list::CookieListKey;
 
 use crate::{
@@ -12,10 +11,6 @@ use crate::{
 };
 
 impl QiniuService {
-    
-
-   
-
     /// 删除数据源组合对应最新饼id文件
     pub async fn delete_datasource_comb(
         qiniu: &QiniuManager, qq_channel: &mut QqChannelGrpcService,
@@ -78,8 +73,6 @@ impl QiniuService {
         Ok(())
     }
 
-
-
     #[deprecated]
     #[allow(deprecated)]
     /// 用于脚本的删除与上传最新饼id到七牛云
@@ -118,7 +111,9 @@ impl QiniuService {
         // 上传数据源组合到对象储存[重试3次]
         let mut result = Option::<ceobe_qiniu_upload::Error>::None;
         for _ in 0..3 {
-            result = qiniu_cdn_upload::upload(&qiniu, &source, payload).await.err();
+            result = qiniu_cdn_upload::upload(&qiniu, &source, payload)
+                .await
+                .err();
             if result.is_none() {
                 break;
             }

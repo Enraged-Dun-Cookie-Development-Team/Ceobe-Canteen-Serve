@@ -95,7 +95,7 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn to_combin_id(&self)->Option<String>{
+    pub fn to_combin_id(&self) -> Option<String> {
         Some(format!("{}:{}", &self.datasource, &self.db_unique_key))
     }
 }

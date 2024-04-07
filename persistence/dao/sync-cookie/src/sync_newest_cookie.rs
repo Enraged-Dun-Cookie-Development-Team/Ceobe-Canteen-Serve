@@ -1,8 +1,9 @@
 use db_ops_prelude::{
     get_connect::GetMutDatabaseConnect, mongodb::bson::oid::ObjectId,
 };
-use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
 use redis::AsyncCommands;
+use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
+
 use super::Result;
 impl super::SyncCookieOperate {
     pub async fn sync_cookie(

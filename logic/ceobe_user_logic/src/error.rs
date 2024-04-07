@@ -81,7 +81,7 @@ pub enum LogicError {
     DatasourcesEmpty,
 
     #[error(transparent)]
-    SyncError(#[from]persistence::ceobe_sync_cookie::Error)
+    SyncError(#[from] persistence::ceobe_sync_cookie::Error),
 }
 
 #[allow(dead_code)]

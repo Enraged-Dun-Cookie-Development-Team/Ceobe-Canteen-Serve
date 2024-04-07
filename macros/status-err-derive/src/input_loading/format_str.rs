@@ -32,9 +32,8 @@ impl FromMeta for FormatStr {
             Vec::<Args>::new(),
             |mut vec, args| {
                 let args = args?;
-                    vec.push(args);
+                vec.push(args);
                 darling::Result::Ok(vec)
-                
             },
         )?;
 

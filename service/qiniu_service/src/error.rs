@@ -1,8 +1,7 @@
-use redis::RedisError;
-use thiserror::Error;
-
 use ceobe_qiniu_upload::Error as QiniuError;
+use redis::RedisError;
 use status_err::StatusErr;
+use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum ServiceError {
@@ -15,8 +14,6 @@ pub enum ServiceError {
 
     #[error("Redis异常: {0}")]
     Redis(#[from] RedisError),
-
-
 }
 
 pub(crate) type ServiceResult<T> = Result<T, ServiceError>;

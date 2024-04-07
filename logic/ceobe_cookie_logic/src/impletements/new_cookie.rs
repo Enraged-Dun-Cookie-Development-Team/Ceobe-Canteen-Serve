@@ -1,6 +1,5 @@
-use futures::future;
-
 use ceobe_qiniu_upload::QiniuManager;
+use futures::future;
 use mob_push_server::PushManager;
 use persistence::{
     ceobe_cookie::ToCeobe,
@@ -26,7 +25,8 @@ use crate::{
 
 impl CeobeCookieLogic {
     pub async fn new_cookie(
-        mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate, redis_client: RedisConnect, mut mob: PushManager,
+        mongo: MongoDatabaseOperate, sql: SqlDatabaseOperate,
+        redis_client: RedisConnect, mut mob: PushManager,
         qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
         new_cookies: Vec<NewCookieReq>,
     ) -> LogicResult<()> {

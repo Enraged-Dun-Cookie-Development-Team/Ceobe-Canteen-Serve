@@ -8,6 +8,7 @@ use futures::future;
 use mob_push_server::PushManager;
 use persistence::{
     ceobe_cookie::{ToCeobe, ToCookie},
+    ceobe_sync_cookie::SyncCookieOperate,
     ceobe_user::{
         models::{
             check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
@@ -33,7 +34,6 @@ use persistence::{
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
-use persistence::ceobe_sync_cookie::SyncCookieOperate;
 use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{

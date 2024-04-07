@@ -1,10 +1,7 @@
 use axum::{
-    extract::{Multipart, multipart::MultipartRejection},
+    extract::{multipart::MultipartRejection, Multipart},
     Json,
 };
-use resp_result::{MapReject, resp_try};
-use tracing::instrument;
-
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic, view::DeleteOneToolLinkReq,
@@ -19,16 +16,17 @@ use persistence::{
     mysql::SqlDatabaseOperate,
 };
 use qiniu_cdn_upload::UploadWrap;
+use resp_result::{resp_try, MapReject};
+use tracing::instrument;
 
+use super::error::{
+    OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment,
+};
 use crate::{
     router::CeobeOpToolLink,
     serves::backend::ceobe_operation::tool_link::{
         error::FieldNotExist, ToolAvatarPayload,
     },
-};
-
-use super::error::{
-    OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment,
 };
 
 type CeobeOperationToolLinkCheck = JsonCheckExtract<
@@ -103,7 +101,10 @@ impl CeobeOpToolLink {
             let mut multipart = multipart?;
             let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
 
-            let resp = qiniu.upload(UploadWrap::new( field, ToolAvatarPayload::new()).await?)
+            let resp = qiniu
+                .upload(
+                    UploadWrap::new(field, ToolAvatarPayload::new()).await?,
+                )
                 .await
                 .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
 
