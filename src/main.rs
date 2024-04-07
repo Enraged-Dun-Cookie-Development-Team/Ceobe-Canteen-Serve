@@ -1,4 +1,3 @@
-#![clippy::msrv ="1.77.0"]
 use std::{
     io::{stdout, Write},
     time::Duration,

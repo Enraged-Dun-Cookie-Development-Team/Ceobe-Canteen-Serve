@@ -16,9 +16,7 @@ use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_dataso
 use db_ops_prelude::sql_models::fetcher::datasource_config::models::model_datasource_config::DatasourcePlatform;
 use page_size::{database::WithPagination, request::Paginator};
 
-use super::{
-    DatasourceOperate, OperateError, OperateResult,
-};
+use super::{DatasourceOperate, OperateError, OperateResult};
 
 impl DatasourceOperate<'_, NoConnect> {
     pub async fn find_platform_by_id(
