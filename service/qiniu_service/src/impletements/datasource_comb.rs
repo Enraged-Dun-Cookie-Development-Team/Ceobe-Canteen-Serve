@@ -237,8 +237,8 @@ impl QiniuService {
             futures::future::join_all(handles).await;
         }
     }
-
-    // 用于脚本的删除与上传最新饼id到七牛云
+    #[deprecated]
+    /// 用于脚本的删除与上传最新饼id到七牛云
     pub async fn upload_newest_cookie_id_use_script(
         qiniu: QiniuManager, cookie_id: String,
         qq_channel: &mut QqChannelGrpcService, comb_id: String,
