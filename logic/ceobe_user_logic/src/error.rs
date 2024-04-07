@@ -79,6 +79,9 @@ pub enum LogicError {
         resp_msg = "数据源列表为空"
     ))]
     DatasourcesEmpty,
+
+    #[error(transparent)]
+    SyncError(#[from]persistence::ceobe_sync_cookie::Error)
 }
 
 #[allow(dead_code)]
