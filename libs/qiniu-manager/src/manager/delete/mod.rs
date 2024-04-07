@@ -1,3 +1,4 @@
+use futures::StreamExt;
 use qiniu_objects_manager::apis::http_client::ResponseError;
 use tracing::info;
 
@@ -29,5 +30,30 @@ impl Manager {
         }
 
         Ok(())
+    }
+    /// 批量删除对象存储文件
+    pub async fn delete_many(
+        &self, objects: Vec<impl ObjectName<'_>>,
+    ) -> Result<(), Error> {
+        let bucket = &self.bucket;
+        let objects = objects
+            .into_iter()
+            .map(|obj| obj.object_name())
+            .collect::<Vec<_>>();
+        info!(qiniu.bucket.delete = ?objects,);
+        
+        let mut v = objects
+            .iter()
+            .fold(bucket.batch_ops(), |mut ops, obj| {
+                ops.add_operation(bucket.delete_object(obj.as_str()));
+                ops
+            })
+            .async_call();
+
+        while let Some(k) = v.next().await {
+            k?;
+        }
+
+       Ok(())
     }
 }
