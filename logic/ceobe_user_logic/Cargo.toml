@@ -23,11 +23,15 @@ ceobe-qiniu-upload.workspace = true
 qiniu_service.workspace = true
 mob-push-server.workspace = true
 qq-channel-warning = { version = "0.1.0", path = "../../middle-server/qq-channel-warning" }
-persistence = { workspace = true, features = ["help-crates", "model-ceobe-user", "redis", "model-ceobe-cookie","model-sync-cookie"] }
+persistence = { workspace = true, features = ["help-crates", "model-ceobe-user", "redis", "model-ceobe-cookie"] }
+redis = { workspace = true }
 
 [dependencies.checker]
 path = "../../libs/checker"
 
 [dependencies.uuids-convert]
 path = "../../libs/uuids-convert"
+
+[dependencies.redis_global]
+path = "../../global/redis_global"
 

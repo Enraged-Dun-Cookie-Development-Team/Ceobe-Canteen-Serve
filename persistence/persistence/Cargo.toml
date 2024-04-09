@@ -68,7 +68,6 @@ model-ceobe-user = [
     "mongo",
 ]
 model-fetcher = ["dao-fetcher", "mysql", "database-operate", "sql-models"]
-model-sync-cookie=["dao-sync-cookie","redis","redis-connect","database-operate"]
 
 database-connect = ["traits", "traits/initial"]
 database-operate = ["traits", "traits/get-connect", "abstract"]
@@ -81,7 +80,6 @@ dao-ceobe-cookie = { version = "0.1.0", path = "../dao/ceobe-cookie", optional =
 dao-ceobe-operate = { version = "0.1.0", path = "../dao/ceobe-operate", optional = true, package = "ceobe-operate" }
 dao-ceobe-user = { version = "0.1.0", path = "../dao/ceobe-user", optional = true, package = "ceobe-user" }
 dao-fetcher = { version = "0.1.0", path = "../dao/fetcher", optional = true, package = "fetcher" }
-dao-sync-cookie= { version = "0.1.0", path = "../dao/sync-cookie", optional = true, package = "sync-cookie"}
 mongo-connect = { version = "0.1.0", path = "../database/mongo_connection", package = "mongo_connection", optional = true }
 mongo-migration = { version = "0.1.0", path = "../migrate/mongo-migration", optional = true }
 mongo-models = { version = "0.1.0", path = "../models/mongo-models", optional = true }
