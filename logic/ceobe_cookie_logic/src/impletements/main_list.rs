@@ -29,7 +29,10 @@ use tokio::task::{self, JoinHandle};
 use super::CeobeCookieLogic;
 use crate::{
     error::{LogicError, LogicResult},
-    view::{CookieListReq, CookieListResp, DefaultCookie, SingleCookie},
+    view::{
+        CombIdToCookieIdReq, CookieListReq, CookieListResp, DefaultCookie,
+        SingleCookie,
+    },
 };
 
 impl CeobeCookieLogic {
@@ -140,8 +143,7 @@ impl CeobeCookieLogic {
                         }) = datasource_info.get(&source_config_id)
                         {
                             (nickname.to_owned(), avatar.to_owned())
-                        }
-                        else {
+                        } else {
                             unreachable!("cannot find match datasource")
                         };
                     SingleCookie::builder()
@@ -166,5 +168,29 @@ impl CeobeCookieLogic {
             cookies,
             next_page_id: next_cookie_id.map(|id| id.to_string()),
         })
+    }
+
+    pub async fn newest_comb_info(
+        mut redis_client: RedisConnect, comb_id: String,
+    ) -> LogicResult<CombIdToCookieIdReq> {
+        let redis = redis_client.mut_connect();
+        let mut res = CombIdToCookieIdReq {
+            cookie_id: None,
+            update_cookie_id: None,
+        };
+        if redis
+            .hexists(CookieListKey::NEW_COMBID_INFO, &comb_id)
+            .await?
+        {
+            res = serde_json::from_str(
+                &redis
+                    .hget::<'_, _, _, String>(
+                        CookieListKey::NEW_COMBID_INFO,
+                        &comb_id,
+                    )
+                    .await?,
+            )?;
+        }
+        Ok(res)
     }
 }
