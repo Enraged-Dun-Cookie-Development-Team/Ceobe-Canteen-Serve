@@ -6,7 +6,6 @@ use bnum::types::U256;
 use checker::LiteChecker;
 use futures::future;
 use mob_push_server::PushManager;
-use redis::AsyncCommands;
 use persistence::{
     ceobe_cookie::{ToCeobe, ToCookie},
     ceobe_user::{
@@ -29,9 +28,10 @@ use persistence::{
     },
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
+    operate::GetMutDatabaseConnect,
     redis::RedisConnect,
 };
-use persistence::operate::GetMutDatabaseConnect;
+use redis::AsyncCommands;
 use redis_global::redis_key::cookie_list::CookieListKey;
 use tokio::task;
 use tracing::warn;
@@ -40,7 +40,9 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
     error::{self, LogicError, LogicResult},
-    view::{CombIdToCookieIdReq, DatasourceCombResp, DatasourceConfig, MobIdReq},
+    view::{
+        CombIdToCookieIdReq, DatasourceCombResp, DatasourceConfig, MobIdReq,
+    },
 };
 
 pub struct CeobeUserLogic;
@@ -254,7 +256,7 @@ impl CeobeUserLogic {
                 .datasource_combination()
                 .create(comb_id.clone(), datasource_vec)
                 .await?;
-            
+
             // 写入数据库
             let redis = redis_client.mut_connect();
 

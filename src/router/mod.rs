@@ -17,7 +17,7 @@ pub use qiniu_cdn::QiniuCdnDatasourceCombFrontend;
 
 use self::{
     back_end::back_end_router, cdn::cdn_router, front_end::front_end_router,
-    inside::inside_router, qiniu_cdn::qiniu_cdn_router
+    inside::inside_router, qiniu_cdn::qiniu_cdn_router,
 };
 use crate::bootstrap::State;
 

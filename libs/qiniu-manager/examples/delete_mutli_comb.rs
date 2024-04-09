@@ -3,17 +3,14 @@ use std::{
     sync::Arc,
 };
 
-use axum::{
-    body::HttpBody,
-    extract::FromRef,
-    routing::get,
-};
+use axum::{body::HttpBody, extract::FromRef, routing::get};
 use axum_starter::{
     prepare, router::Route, FromStateCollector, LoggerInitialization,
     PrepareRouteEffect, ServeAddress, ServerPrepare,
 };
 use ceobe_qiniu_upload::{
-    BaseUrl, GetBucket, Manager, ObjectName, QiniuBaseUrl, QiniuManager, QiniuUpload, SecretConfig
+    BaseUrl, GetBucket, Manager, ObjectName, QiniuBaseUrl, QiniuManager,
+    QiniuUpload, SecretConfig,
 };
 use log::SetLoggerError;
 use url::Url;
@@ -97,20 +94,15 @@ where
     Route::new("/api/v1/deleteMany", get(delete_combs))
 }
 
-async fn delete_combs(
-    qiniu: QiniuManager
-) -> Result<&'static str, String> {
+async fn delete_combs(qiniu: QiniuManager) -> Result<&'static str, String> {
     let mut comb_ids: Vec<String> = Vec::new();
-    
-    for i in  1..100 {
-        comb_ids.push(i.to_string()+".json");
+
+    for i in 1..100 {
+        comb_ids.push(i.to_string() + ".json");
     }
     qiniu
         .delete_many(
-            comb_ids
-                .into_iter()
-                .map(DeleteObjectName::new)
-                .collect(),
+            comb_ids.into_iter().map(DeleteObjectName::new).collect(),
         )
         .await
         .map_err(|e| e.to_string())?;

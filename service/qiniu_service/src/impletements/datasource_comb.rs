@@ -40,7 +40,7 @@ impl QiniuService {
             }
             None => {
                 let redis = redis_client.mut_connect();
-                redis.hdel(CookieListKey::NEWEST_COOKIES, &comb_id).await?;
+                redis.hdel(CookieListKey::NEW_COMBID_INFO, &comb_id).await?;
             }
         }
         Ok(())

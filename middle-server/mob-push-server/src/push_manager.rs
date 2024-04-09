@@ -165,10 +165,7 @@ impl<
 
     fn next(&mut self) -> Option<Self::Item> {
         self.buffer.clear();
-        let Some(users) = BatchUsers::new(&mut self.users)
-        else {
-            return None;
-        };
+        let users = BatchUsers::new(&mut self.users)?;
 
         let body = BatchPush::new(users, self.content, self.key);
 

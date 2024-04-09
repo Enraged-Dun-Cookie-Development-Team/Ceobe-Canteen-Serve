@@ -1,6 +1,5 @@
-use axum::extract::rejection::{PathRejection, QueryRejection};
+use axum::extract::rejection::PathRejection;
 use ceobe_cookie_logic::error::LogicError;
-use resp_result::RespResult;
 
 use crate::error_generate;
 
@@ -10,5 +9,3 @@ error_generate! {
     Logic = LogicError
     Path = PathRejection
 }
-
-pub type QiniuCdnDatasourceRResult<T> = RespResult<T, QiniuCdnDatasourceCombError>;
