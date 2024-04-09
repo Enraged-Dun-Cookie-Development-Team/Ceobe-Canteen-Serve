@@ -13,10 +13,11 @@ pub use front_end::{
     CookieInfoFrontend, CookieSearchFrontend, CookieTerraComicFrontend,
 };
 pub use inside::AnalyzeCookieInside;
+pub use qiniu_cdn::QiniuCdnDatasourceCombFrontend;
 
 use self::{
     back_end::back_end_router, cdn::cdn_router, front_end::front_end_router,
-    inside::inside_router,
+    inside::inside_router, qiniu_cdn::qiniu_cdn_router
 };
 use crate::bootstrap::State;
 
@@ -24,6 +25,7 @@ mod back_end;
 mod cdn;
 mod front_end;
 mod inside;
+mod qiniu_cdn;
 
 pub type ServerRoute = Router<State>;
 
@@ -33,6 +35,7 @@ pub fn root_route() -> ServerRoute {
         .nest("/admin", back_end_router())
         .nest("/cdn", cdn_router())
         .nest("/inside", inside_router())
+        .nest("/qiniuCdn", qiniu_cdn_router())
         .route(
             "/panic",
             get(|| async {
