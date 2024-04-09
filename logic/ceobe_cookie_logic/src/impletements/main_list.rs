@@ -174,6 +174,7 @@ impl CeobeCookieLogic {
         mut redis_client: RedisConnect, comb_id: String,
     ) -> LogicResult<CombIdToCookieIdReq> {
         let redis = redis_client.mut_connect();
+        // redis表中查不到，说明没有维护或者这个数据源组合没有饼，直接返回id是null
         let mut res = CombIdToCookieIdReq {
             cookie_id: None,
             update_cookie_id: None,

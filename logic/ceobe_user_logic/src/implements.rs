@@ -258,6 +258,7 @@ impl CeobeUserLogic {
             // 写入数据库
             let redis = redis_client.mut_connect();
 
+            // 准备好最新饼id接口等待七牛云回源
             if let Some(newest_cookie_id) = cookie_id {
                 let comb_info = CombIdToCookieIdReq {
                     cookie_id: Some(newest_cookie_id.to_string()),
