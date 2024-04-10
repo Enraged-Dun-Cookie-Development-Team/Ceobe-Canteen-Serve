@@ -1,23 +1,18 @@
+use std::ops::{Deref, DerefMut};
+
 use ceobe_qiniu_upload::QiniuManager;
 use futures::future;
 use mob_push_server::PushManager;
 use persistence::{
-    ceobe_cookie::ToCeobe,
-    ceobe_user::ToCeobeUser,
-    fetcher::{
+    ceobe_cookie::ToCeobe, ceobe_user::ToCeobeUser, fetcher::{
         datasource_combination::DatasourceCombinationOperate,
         datasource_config::DatasourceOperate,
-    },
-    mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate},
-    mysql::SqlDatabaseOperate,
-    operate::{GetDatabaseConnect, GetMutDatabaseConnect},
-    redis::RedisConnect,
+    }, help_crates::tap::Pipe, mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate}, mysql::SqlDatabaseOperate, operate::{GetDatabaseConnect, GetMutDatabaseConnect}, redis::RedisConnect
 };
 use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis::AsyncCommands;
 use redis_global::{redis_key::{concat_key, cookie_list::CookieListKey}, CookieId};
-use tokio::task::JoinHandle;
 
 use crate::{
     error::{LogicError, LogicResult},
@@ -142,8 +137,8 @@ impl CeobeCookieLogic {
             )
             .await;
 
+        // TODO: 七牛云删除错误暂时不处理，没想到什么好的处理方法（找不到数据也属于正常情况）看看有没有处理网络问题
         datasource_error?;
-        qiniu_err?;
 
         Ok(())
     }
@@ -176,6 +171,7 @@ impl CeobeCookieLogic {
         datasource: Option<String>,
     ) -> LogicResult<()> {
         let redis = redis_client.mut_connect();
+        let mut redis_set_comb = redis::pipe();
         for comb_id in comb_ids {
             // 如果传入cookie_id和redis都有信息
             let cookie_id = if let (Some(mut newest_cookie_id), true) = (
@@ -211,17 +207,11 @@ impl CeobeCookieLogic {
                         .map(|id| id.to_string()),
                 };
                 // 接口信息写入redis，等待七牛云回源
-                redis
-                    .hset(
-                        CookieListKey::NEW_COMBID_INFO,
-                        &comb_id,
-                        serde_json::to_string(&comb_info)?,
-                    )
-                    .await?;
+                redis_set_comb.cmd("HSET").arg(CookieListKey::NEW_COMBID_INFO).arg(&comb_id).arg(serde_json::to_string(&comb_info)?).ignore();
             }
         }
+        redis_set_comb.query_async(redis).await?;
 
-        let redis = redis_client.mut_connect();
         if let Some(update_id) = update_cookie_id {
             // 更新[更新最新饼id]到redis
             redis
