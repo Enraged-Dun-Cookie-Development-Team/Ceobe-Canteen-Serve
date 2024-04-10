@@ -16,13 +16,13 @@ use persistence::{
 use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis::AsyncCommands;
-use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
+use redis_global::{redis_key::{concat_key, cookie_list::CookieListKey}, CookieId};
 use tokio::task::JoinHandle;
 
 use crate::{
     error::{LogicError, LogicResult},
     impletements::CeobeCookieLogic,
-    view::{CombIdToCookieIdReq, NewCookieReq, PushInfo},
+    view::{CombIdToCookieIdRep, NewCookieReq, PushInfo},
 };
 
 impl CeobeCookieLogic {
@@ -175,58 +175,51 @@ impl CeobeCookieLogic {
         update_cookie_id: Option<ObjectId>, comb_ids: Vec<String>,
         datasource: Option<String>,
     ) -> LogicResult<()> {
-        let mut handles = Vec::<JoinHandle<Result<(), LogicError>>>::new();
+        let redis = redis_client.mut_connect();
         for comb_id in comb_ids {
-            let mut redis_client_temp = redis_client.clone();
-            handles.push(tokio::spawn(async move {
-                let redis = redis_client_temp.mut_connect();
-                // 如果传入cookie_id和redis都有信息
-                let cookie_id = if let (Some(mut newest_cookie_id), true) = (
-                    cookie_id,
-                    redis
-                        .hexists(CookieListKey::NEW_COMBID_INFO, &comb_id)
-                        .await?,
-                ) {
-                    let last_comb_info: CombIdToCookieIdReq =
-                        serde_json::from_str(
-                            &redis
-                                .hget::<'_, _, _, String>(
-                                    CookieListKey::NEW_COMBID_INFO,
-                                    &comb_id,
-                                )
-                                .await?,
-                        )?;
-                    // 这边一定保证redis这个hash field存在就有这个值。
-                    // 结构体中Option只是为了兼容接口返回结构
-                    let last_cookie_id =
-                        last_comb_info.cookie_id.unwrap().parse()?;
-                    // 判断数据库和传入的cookie_id哪个新，用新的那个id
-                    newest_cookie_id = newest_cookie_id.max(last_cookie_id);
-                    Some(newest_cookie_id.to_string())
-                }
-                else {
-                    cookie_id.map(|id| id.to_string())
-                };
+            // 如果传入cookie_id和redis都有信息
+            let cookie_id = if let (Some(mut newest_cookie_id), true) = (
+                cookie_id,
+                redis
+                    .hexists(CookieListKey::NEW_COMBID_INFO, &comb_id)
+                    .await?,
+            ) {
+                let last_comb_info: CombIdToCookieIdRep =
+                    serde_json::from_str(
+                        &redis
+                            .hget::<'_, _ , _, String>(
+                                CookieListKey::NEW_COMBID_INFO,
+                                &comb_id,
+                            )
+                            .await?,
+                    )?;
+                // 这边一定保证redis这个hash field存在就有这个值。
+                // 结构体中Option只是为了兼容接口返回结构
+                let last_cookie_id =
+                    last_comb_info.cookie_id.unwrap().parse()?;
+                // 判断数据库和传入的cookie_id哪个新，用新的那个id
+                newest_cookie_id = newest_cookie_id.max(last_cookie_id);
+                Some(newest_cookie_id.to_string())
+            } else {
+                cookie_id.map(|id| id.to_string())
+            };
 
-                if cookie_id.is_some() {
-                    let comb_info = CombIdToCookieIdReq {
-                        cookie_id,
-                        update_cookie_id: update_cookie_id
-                            .map(|id| id.to_string()),
-                    };
-                    // 接口信息写入redis，等待七牛云回源
-                    redis
-                        .hset(
-                            CookieListKey::NEW_COMBID_INFO,
-                            &comb_id,
-                            serde_json::to_string(&comb_info)?,
-                        )
-                        .await?;
-                }
-                Ok(())
-            }));
+            if cookie_id.is_some() {
+                let comb_info = CombIdToCookieIdRep {
+                    cookie_id,
+                    update_cookie_id: update_cookie_id
+                        .map(|id| id.to_string()),
+                };
+                // 接口信息写入redis，等待七牛云回源
+                redis
+                    .hset(
+                        CookieListKey::NEW_COMBID_INFO,
+                        &comb_id,
+                        serde_json::to_string(&comb_info)?,
+                    )
+                    .await?;
+            }
         }
-        futures::future::join_all(handles).await;
 
         let redis = redis_client.mut_connect();
         if let Some(update_id) = update_cookie_id {
@@ -235,7 +228,7 @@ impl CeobeCookieLogic {
                 .set_nx(
                     concat_key(
                         CookieListKey::NEW_UPDATE_COOKIE_ID,
-                        &update_id.to_string(),
+                        &update_id,
                     ),
                     true,
                 )
@@ -246,10 +239,10 @@ impl CeobeCookieLogic {
                 .await?
             {
                 // 从hash update_cookie表获取上一个的update_cookie_id
-                let update_cookie: String = redis
+                let update_cookie: CookieId = redis
                     .hget(CookieListKey::NEW_UPDATE_COOKIES, &datasource)
                     .await?;
-                if update_id.to_string() != update_cookie {
+                if update_id != update_cookie{
                     // 对已经被替换下的饼id设置ttl，2小时
                     redis
                         .set_ex(

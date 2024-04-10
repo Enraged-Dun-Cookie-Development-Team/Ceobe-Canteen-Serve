@@ -3,7 +3,6 @@ pub struct CookieListKey;
 impl CookieListKey {
     /// hashmap: 每个数据源组合对应最新的饼id
     #[deprecated]
-    #[allow(deprecated)]
     pub const NEWEST_COOKIES: &'static str = "cookie:list:newest:combId";
     /// hashmap: 每个数据源组合对应最新的饼id
     pub const NEW_COMBID_INFO: &'static str = "cookie:list:new:combId:info";

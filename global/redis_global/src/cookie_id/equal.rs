@@ -12,6 +12,10 @@ impl PartialEq<ObjectId> for CookieId {
     fn eq(&self, other: &ObjectId) -> bool { self.0.eq(other) }
 }
 
+impl PartialEq<CookieId> for ObjectId {
+    fn eq(&self, other: &CookieId) -> bool { self.eq(&other.0) }
+}
+
 impl PartialEq<str> for super::CookieId {
     fn eq(&self, other: &str) -> bool {
         let Ok(id) = other.parse::<ObjectId>()

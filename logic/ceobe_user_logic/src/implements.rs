@@ -41,7 +41,7 @@ use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 use crate::{
     error::{self, LogicError, LogicResult},
     view::{
-        CombIdToCookieIdReq, DatasourceCombResp, DatasourceConfig, MobIdReq,
+        CombIdToCookieIdRep, DatasourceCombResp, DatasourceConfig, MobIdReq,
     },
 };
 
@@ -262,7 +262,7 @@ impl CeobeUserLogic {
 
             // 准备好最新饼id接口等待七牛云回源
             if let Some(newest_cookie_id) = cookie_id {
-                let comb_info = CombIdToCookieIdReq {
+                let comb_info = CombIdToCookieIdRep {
                     cookie_id: Some(newest_cookie_id.to_string()),
                     update_cookie_id: None,
                 };

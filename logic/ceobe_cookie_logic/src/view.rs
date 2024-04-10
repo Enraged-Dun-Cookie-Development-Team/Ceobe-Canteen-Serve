@@ -195,7 +195,7 @@ impl AvatarId {
 
 /// 数据源组合id-最新饼id 上传对象储存
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CombIdToCookieIdReq {
+pub struct CombIdToCookieIdRep {
     /// 最新饼id
     pub cookie_id: Option<String>,
     /// 后更新的饼id

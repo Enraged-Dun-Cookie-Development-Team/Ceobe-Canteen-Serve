@@ -30,7 +30,7 @@ use super::CeobeCookieLogic;
 use crate::{
     error::{LogicError, LogicResult},
     view::{
-        CombIdToCookieIdReq, CookieListReq, CookieListResp, DefaultCookie,
+        CombIdToCookieIdRep, CookieListReq, CookieListResp, DefaultCookie,
         SingleCookie,
     },
 };
@@ -143,8 +143,7 @@ impl CeobeCookieLogic {
                         }) = datasource_info.get(&source_config_id)
                         {
                             (nickname.to_owned(), avatar.to_owned())
-                        }
-                        else {
+                        } else {
                             unreachable!("cannot find match datasource")
                         };
                     SingleCookie::builder()
@@ -173,11 +172,11 @@ impl CeobeCookieLogic {
 
     pub async fn newest_comb_info(
         mut redis_client: RedisConnect, comb_id: String,
-    ) -> LogicResult<CombIdToCookieIdReq> {
+    ) -> LogicResult<CombIdToCookieIdRep> {
         let redis = redis_client.mut_connect();
         // redis表中查不到，说明没有维护或者这个数据源组合没有饼，
         // 直接返回id是null
-        let mut res = CombIdToCookieIdReq {
+        let mut res = CombIdToCookieIdRep {
             cookie_id: None,
             update_cookie_id: None,
         };
