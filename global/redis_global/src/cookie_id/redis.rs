@@ -20,6 +20,6 @@ impl FromRedisValue for super::CookieId {
                 ))
             },
         )?;
-        Ok(Self { 0: inner })
+        Ok(Self(inner))
     }
 }

@@ -143,7 +143,8 @@ impl CeobeCookieLogic {
                         }) = datasource_info.get(&source_config_id)
                         {
                             (nickname.to_owned(), avatar.to_owned())
-                        } else {
+                        }
+                        else {
                             unreachable!("cannot find match datasource")
                         };
                     SingleCookie::builder()

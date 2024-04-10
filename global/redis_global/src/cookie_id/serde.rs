@@ -16,7 +16,7 @@ impl<'de> Deserialize<'de> for super::CookieId {
     {
         let str = String::deserialize(deserializer)?
             .parse()
-            .map_err(|err| serde::de::Error::custom(err))?;
+            .map_err(serde::de::Error::custom)?;
         Ok(Self(str))
     }
 }

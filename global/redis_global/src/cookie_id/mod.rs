@@ -5,5 +5,5 @@ mod serde;
 
 use bson::oid::ObjectId;
 
-#[derive(Clone, Copy, Ord, Eq, Debug)]
+#[derive(Clone, Copy, Eq, Debug)]
 pub struct CookieId(pub ObjectId);

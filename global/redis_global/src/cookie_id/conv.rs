@@ -39,4 +39,3 @@ impl Display for CookieId {
         <ObjectId as Display>::fmt(&self.0, f)
     }
 }
-

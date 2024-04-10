@@ -1,18 +1,25 @@
-use std::ops::{Deref, DerefMut};
-
 use ceobe_qiniu_upload::QiniuManager;
 use futures::future;
 use mob_push_server::PushManager;
 use persistence::{
-    ceobe_cookie::ToCeobe, ceobe_user::ToCeobeUser, fetcher::{
+    ceobe_cookie::ToCeobe,
+    ceobe_user::ToCeobeUser,
+    fetcher::{
         datasource_combination::DatasourceCombinationOperate,
         datasource_config::DatasourceOperate,
-    }, help_crates::tap::Pipe, mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate}, mysql::SqlDatabaseOperate, operate::{GetDatabaseConnect, GetMutDatabaseConnect}, redis::RedisConnect
+    },
+    mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate},
+    mysql::SqlDatabaseOperate,
+    operate::{GetDatabaseConnect, GetMutDatabaseConnect},
+    redis::RedisConnect,
 };
 use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis::AsyncCommands;
-use redis_global::{redis_key::{concat_key, cookie_list::CookieListKey}, CookieId};
+use redis_global::{
+    redis_key::{concat_key, cookie_list::CookieListKey},
+    CookieId,
+};
 
 use crate::{
     error::{LogicError, LogicResult},
@@ -68,7 +75,7 @@ impl CeobeCookieLogic {
         )
         .await?;
 
-        let (datasource_error, qiniu_err): (_, Result<(), LogicError>) =
+        let (datasource_error, _qiniu_err): (_, Result<(), LogicError>) =
             future::join(
                 async {
                     // 查询用户列表
@@ -137,7 +144,8 @@ impl CeobeCookieLogic {
             )
             .await;
 
-        // TODO: 七牛云删除错误暂时不处理，没想到什么好的处理方法（找不到数据也属于正常情况）看看有没有处理网络问题
+        // TODO: 七牛云删除错误暂时不处理，
+        // 没想到什么好的处理方法（找不到数据也属于正常情况）看看有没有处理网络问题
         datasource_error?;
 
         Ok(())
@@ -146,15 +154,16 @@ impl CeobeCookieLogic {
     /// 缓存饼id信息到redis
     ///     1. 并发更新NEW_COMBID_INFO redis表
     ///         - 判断NEW_COMBID_INFO的combid field是否存在。
-    ///         - 如果存在，取当前饼id和数据库里饼id较大的为cookie_id。【这边没办法批量操作的原因就是因为每个得单独判断，每个下面数据源是不一样的】
+    ///         - 如果存在，取当前饼id和数据库里饼id较大的为cookie_id。
+    ///           【这边没办法批量操作的原因就是因为每个得单独判断，
+    ///           每个下面数据源是不一样的】
     ///         - 写入NEW_COMBID_INFO的对应combid的值，cookie_id为最新，
     ///           update_cookie_id为当前传入
     ///     2. 更新update_cookie_id缓存，这个缓存是提供官方绕过cdn而设计，
     ///        因为列表cdn设计2小时缓存，所以被换下的id也是设置2小时ttl缓存
     ///         - 表介绍
     ///             - NEW_UPDATE_COOKIES: hash, 储存最新的更新饼id
-    ///             - NEW_UPDATE_COOKIE_ID:
-    ///               string，给更新饼id判断存不存在的，
+    ///             - NEW_UPDATE_COOKIE_ID: string，给更新饼id判断存不存在的，
     ///               可以让查询时候列表命中缓存
     ///         - 过程
     ///             - 在NEW_UPDATE_COOKIE_ID表中，设置传入的更新饼id，
@@ -183,7 +192,7 @@ impl CeobeCookieLogic {
                 let last_comb_info: CombIdToCookieIdRep =
                     serde_json::from_str(
                         &redis
-                            .hget::<'_, _ , _, String>(
+                            .hget::<'_, _, _, String>(
                                 CookieListKey::NEW_COMBID_INFO,
                                 &comb_id,
                             )
@@ -196,7 +205,8 @@ impl CeobeCookieLogic {
                 // 判断数据库和传入的cookie_id哪个新，用新的那个id
                 newest_cookie_id = newest_cookie_id.max(last_cookie_id);
                 Some(newest_cookie_id.to_string())
-            } else {
+            }
+            else {
                 cookie_id.map(|id| id.to_string())
             };
 
@@ -207,7 +217,12 @@ impl CeobeCookieLogic {
                         .map(|id| id.to_string()),
                 };
                 // 接口信息写入redis，等待七牛云回源
-                redis_set_comb.cmd("HSET").arg(CookieListKey::NEW_COMBID_INFO).arg(&comb_id).arg(serde_json::to_string(&comb_info)?).ignore();
+                redis_set_comb
+                    .cmd("HSET")
+                    .arg(CookieListKey::NEW_COMBID_INFO)
+                    .arg(&comb_id)
+                    .arg(serde_json::to_string(&comb_info)?)
+                    .ignore();
             }
         }
         redis_set_comb.query_async(redis).await?;
@@ -218,7 +233,7 @@ impl CeobeCookieLogic {
                 .set_nx(
                     concat_key(
                         CookieListKey::NEW_UPDATE_COOKIE_ID,
-                        &update_id,
+                        update_id,
                     ),
                     true,
                 )
@@ -232,13 +247,13 @@ impl CeobeCookieLogic {
                 let update_cookie: CookieId = redis
                     .hget(CookieListKey::NEW_UPDATE_COOKIES, &datasource)
                     .await?;
-                if update_id != update_cookie{
+                if update_id != update_cookie {
                     // 对已经被替换下的饼id设置ttl，2小时
                     redis
                         .set_ex(
                             concat_key(
                                 CookieListKey::NEW_UPDATE_COOKIE_ID,
-                                &update_cookie,
+                                update_cookie,
                             ),
                             true,
                             2 * 60 * 60,

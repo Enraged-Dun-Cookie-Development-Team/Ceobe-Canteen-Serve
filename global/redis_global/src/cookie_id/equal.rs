@@ -28,7 +28,7 @@ impl PartialEq<str> for super::CookieId {
 
 impl PartialOrd for super::CookieId {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.0.partial_cmp(&other.0)
+        Some(self.cmp(other))
     }
 }
 impl PartialOrd<ObjectId> for CookieId {
