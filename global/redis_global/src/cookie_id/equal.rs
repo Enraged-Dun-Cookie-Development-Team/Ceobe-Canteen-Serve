@@ -1,26 +1,40 @@
 use std::cmp::Ordering;
+
 use bson::oid::ObjectId;
 
-impl PartialEq for super::CookieId{
-    fn eq(&self, other: &Self) -> bool {
-        self.0.eq(&other.0)
-    }
+use crate::CookieId;
+
+impl PartialEq for super::CookieId {
+    fn eq(&self, other: &Self) -> bool { self.0.eq(&other.0) }
 }
 
-impl PartialEq<str> for super::CookieId{
+impl PartialEq<ObjectId> for CookieId {
+    fn eq(&self, other: &ObjectId) -> bool { self.0.eq(other) }
+}
+
+impl PartialEq<str> for super::CookieId {
     fn eq(&self, other: &str) -> bool {
-        let Ok(id) = other.parse::<ObjectId>()else{
-            return false
+        let Ok(id) = other.parse::<ObjectId>()
+        else {
+            return false;
         };
         self.0.eq(&id)
     }
 }
 
-impl PartialOrd for super::CookieId{
+impl PartialOrd for super::CookieId {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.0.partial_cmp(&other.0)
     }
 }
+impl PartialOrd<ObjectId> for CookieId {
+    fn partial_cmp(&self, other: &ObjectId) -> Option<Ordering> {
+        self.0.partial_cmp(other)
+    }
+}
 
-
-
+impl PartialOrd<str> for CookieId {
+    fn partial_cmp(&self, other: &str) -> Option<Ordering> {
+        self.to_string().as_str().partial_cmp(other)
+    }
+}
