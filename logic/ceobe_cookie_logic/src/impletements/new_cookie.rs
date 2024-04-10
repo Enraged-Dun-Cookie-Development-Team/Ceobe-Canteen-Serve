@@ -151,7 +151,7 @@ impl CeobeCookieLogic {
     /// 缓存饼id信息到redis
     ///     1. 并发更新NEW_COMBID_INFO redis表
     ///         - 判断NEW_COMBID_INFO的combid field是否存在。
-    ///         - 如果存在，需要判断当前饼id和数据库里饼id那个大。接口cookie_id要取大的那个（最新）【这边没办法批量操作的原因就是因为每个得单独判断，每个下面数据源是不一样的】
+    ///         - 如果存在，取当前饼id和数据库里饼id较大的为cookie_id。【这边没办法批量操作的原因就是因为每个得单独判断，每个下面数据源是不一样的】
     ///         - 写入NEW_COMBID_INFO的对应combid的值，cookie_id为最新，
     ///           update_cookie_id为当前传入
     ///     2. 更新update_cookie_id缓存，这个缓存是提供官方绕过cdn而设计，
