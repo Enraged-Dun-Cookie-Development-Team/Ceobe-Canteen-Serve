@@ -183,7 +183,7 @@ impl CeobeCookieLogic {
         let mut redis_set_comb = redis::pipe();
         for comb_id in comb_ids {
             // 如果传入cookie_id和redis都有信息
-            let cookie_id = if let (Some(mut newest_cookie_id), true) = (
+            let newest_cookie_id = if let (Some(mut newest_cookie_id), true) = (
                 cookie_id,
                 redis
                     .hexists(CookieListKey::NEW_COMBID_INFO, &comb_id)
@@ -212,7 +212,7 @@ impl CeobeCookieLogic {
 
             if cookie_id.is_some() {
                 let comb_info = CombIdToCookieIdRep {
-                    cookie_id,
+                    cookie_id: newest_cookie_id,
                     update_cookie_id: update_cookie_id
                         .map(|id| id.to_string()),
                 };

@@ -33,7 +33,7 @@ impl QiniuCdnDatasourceCombFrontend {
                     }
                 }
             }
-            Err(_) => (StatusCode::INTERNAL_SERVER_ERROR, None.into()),
+            Err(_) => (StatusCode::BAD_REQUEST, None.into()),
         }
     }
 }
