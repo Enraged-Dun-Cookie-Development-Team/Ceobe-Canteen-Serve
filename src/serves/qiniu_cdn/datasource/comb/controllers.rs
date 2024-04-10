@@ -23,7 +23,7 @@ impl QiniuCdnDatasourceCombFrontend {
         match CeobeCookieLogic::newest_comb_info(redis_client, comb_id).await
         {
             Ok(combid_res) => (StatusCode::OK, Some(combid_res).into()),
-            Err(_) => (StatusCode::from_u16(500).unwrap(), None.into()),
+            Err(_) => (StatusCode::INTERNAL_SERVER_ERROR, None.into()),
         }
     }
 }
