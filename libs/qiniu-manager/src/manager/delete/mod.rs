@@ -1,9 +1,14 @@
+mod file_name;
 use futures::StreamExt;
 use qiniu_objects_manager::apis::http_client::ResponseError;
+use serde_json::error;
 use tracing::info;
+mod delete_file;
 
 use super::ObjectName;
-use crate::{Error, Manager};
+use crate::{manager::delete::delete_file::DeleteIter, Error, Manager};
+
+const BATCH_SIZE: usize = 1000;
 
 impl Manager {
     /// 删除对象储存文件，包含三次重试
@@ -43,16 +48,24 @@ impl Manager {
             .collect::<Vec<_>>();
         info!(qiniu.bucket.delete = ?objects,);
 
-        let mut v = objects
-            .iter()
-            .fold(bucket.batch_ops(), |mut ops, obj| {
-                ops.add_operation(bucket.delete_object(obj.as_str()));
-                ops
-            })
-            .async_call();
+        let files_names: Vec<&str> = objects.iter().map(|s| s.as_str()).collect();
 
-        while let Some(k) = v.next().await {
-            k?;
+        let delete_iter = DeleteIter::<'_, '_, BATCH_SIZE> {
+            files_names: &files_names,
+            bucket,
+        };
+
+        let mut error: Option<_> = None;
+        for mut delete in delete_iter {
+            while let Some(k) = delete.next().await {
+                if k.is_err() {
+                    error = Some(k);
+                }
+            }
+        }
+
+        if let Some(result_error) = error {
+            result_error?;
         }
 
         Ok(())
