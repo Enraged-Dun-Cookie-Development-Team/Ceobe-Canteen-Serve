@@ -1,7 +1,6 @@
 mod file_name;
 use futures::StreamExt;
 use qiniu_objects_manager::apis::http_client::ResponseError;
-use serde_json::error;
 use tracing::info;
 mod delete_file;
 
@@ -48,7 +47,8 @@ impl Manager {
             .collect::<Vec<_>>();
         info!(qiniu.bucket.delete = ?objects,);
 
-        let files_names: Vec<&str> = objects.iter().map(|s| s.as_str()).collect();
+        let files_names: Vec<&str> =
+            objects.iter().map(|s| s.as_str()).collect();
 
         let delete_iter = DeleteIter::<'_, '_, BATCH_SIZE> {
             files_names: &files_names,

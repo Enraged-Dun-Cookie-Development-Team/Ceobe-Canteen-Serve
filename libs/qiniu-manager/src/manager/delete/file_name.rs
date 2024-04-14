@@ -1,6 +1,3 @@
-
-
-
 pub struct FileName<'u, 's, const BATCH_SIZE: usize> {
     pub names: &'u [&'s str],
 }
