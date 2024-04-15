@@ -98,7 +98,7 @@ async fn delete_combs(qiniu: QiniuManager) -> Result<&'static str, String> {
     let mut comb_ids: Vec<String> = Vec::new();
 
     for i in 1..2401 {
-        comb_ids.push(i.to_string() + ".json");
+        comb_ids.push(format!("{i}.json"));
     }
     qiniu
         .delete_many(
