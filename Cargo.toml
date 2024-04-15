@@ -94,7 +94,7 @@ mob-push-server = { version = "0.1.0", path = "middle-server/mob-push-server" }
 qiniu_service = { version = "0.1.0", path = "service/qiniu_service" }
 persistence = { version = "0.1.0", path = "persistence/persistence" }
 time-utils = { version = "0.1.0", path = "libs/time-utils" }
-
+bson = { version = "2.4.0", features = ["chrono-0_4", "uuid-1"] }
 [dependencies]
 # Xss
 ammonia = "3"
@@ -105,7 +105,7 @@ axum = { workspace = true, features = ["headers"] }
 http = { workspace = true }
 axum-starter = { workspace = true }
 # db
-bson = { version = "2.4.0", features = ["chrono-0_4", "uuid-1"] }
+bson.workspace=true
 ceobe-qiniu-upload = { workspace = true }
 # else
 chrono = { workspace = true, features = ["serde"] }

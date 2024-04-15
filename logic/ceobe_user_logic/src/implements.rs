@@ -8,7 +8,6 @@ use futures::future;
 use mob_push_server::PushManager;
 use persistence::{
     ceobe_cookie::{ToCeobe, ToCookie},
-    ceobe_sync_cookie::SyncCookieOperate,
     ceobe_user::{
         models::{
             check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
@@ -29,17 +28,21 @@ use persistence::{
     },
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
+    operate::GetMutDatabaseConnect,
     redis::RedisConnect,
 };
+use redis::AsyncCommands;
+use redis_global::redis_key::cookie_list::CookieListKey;
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
 use uuids_convert::{vec_bson_uuid_to_uuid, vec_uuid_to_bson_uuid};
 
 use crate::{
-    error,
-    error::{LogicError, LogicResult},
-    view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
+    error::{self, LogicError, LogicResult},
+    view::{
+        CombIdToCookieIdRep, DatasourceCombResp, DatasourceConfig, MobIdReq,
+    },
 };
 
 pub struct CeobeUserLogic;
@@ -225,7 +228,7 @@ impl CeobeUserLogic {
     }
 
     async fn get_datasources_comb_ids(
-        db: SqlDatabaseOperate, redis_client: RedisConnect,
+        db: SqlDatabaseOperate, mut redis_client: RedisConnect,
         datasource_ids: Vec<i32>, cookie_id: Option<ObjectId>,
     ) -> LogicResult<String> {
         // 根据数据库id生成bitmap
@@ -254,9 +257,24 @@ impl CeobeUserLogic {
                 .create(comb_id.clone(), datasource_vec)
                 .await?;
 
-            SyncCookieOperate::new(redis_client)
-                .sync_cookie(cookie_id, None, comb_id.clone(), None)
-                .await?;
+            // 写入数据库
+            let redis = redis_client.mut_connect();
+
+            // 准备好最新饼id接口等待七牛云回源
+            if let Some(newest_cookie_id) = cookie_id {
+                let comb_info = CombIdToCookieIdRep {
+                    cookie_id: Some(newest_cookie_id.to_string()),
+                    update_cookie_id: None,
+                };
+
+                redis
+                    .hset(
+                        CookieListKey::NEW_COMBID_INFO,
+                        &comb_id,
+                        serde_json::to_string(&comb_info)?,
+                    )
+                    .await?;
+            }
         }
 
         // 转成特定格式字符串
