@@ -131,7 +131,7 @@ where
         let collection = self.get_collection()?;
 
         let now = Local::now().naive_local() - time;
-        let now = DateTime::from_millis(now.timestamp_millis());
+        let now = DateTime::from_millis(now.and_utc().timestamp_millis());
         let filter = doc! {
             "create_time":{
                 "$gte":now
