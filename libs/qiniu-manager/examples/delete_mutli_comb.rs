@@ -95,10 +95,9 @@ where
 }
 
 async fn delete_combs(qiniu: QiniuManager) -> Result<&'static str, String> {
-    let comb_ids: Vec<String> = (1..2401)
-        .map(|i| format!("{}.json", i))
-        .collect();
-    
+    let comb_ids: Vec<String> =
+        (1..2401).map(|i| format!("{}.json", i)).collect();
+
     qiniu
         .delete_many(
             comb_ids.into_iter().map(DeleteObjectName::new).collect(),
