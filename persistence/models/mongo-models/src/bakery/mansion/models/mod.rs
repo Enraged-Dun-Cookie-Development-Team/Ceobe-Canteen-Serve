@@ -90,7 +90,7 @@ impl ModelMansion {
 impl Default for ModifyAt {
     fn default() -> Self {
         let now = bson::DateTime::from_millis(
-            Local::now().naive_local().timestamp_millis(),
+            Local::now().naive_local().and_utc().timestamp_millis(),
         );
         Self {
             create_time: now,
@@ -102,7 +102,7 @@ impl Default for ModifyAt {
 impl ModifyAt {
     pub fn now_modify(mut self) -> Self {
         self.modify_time = bson::DateTime::from_millis(
-            Local::now().naive_local().timestamp_millis(),
+            Local::now().naive_local().and_utc().timestamp_millis(),
         );
         self
     }

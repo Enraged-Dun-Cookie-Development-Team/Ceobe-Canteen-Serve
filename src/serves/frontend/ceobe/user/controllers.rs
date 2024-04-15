@@ -1,5 +1,4 @@
 use axum::Json;
-use ceobe_qiniu_upload::QiniuManager;
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
@@ -11,7 +10,6 @@ use persistence::{
     mysql::SqlDatabaseOperate,
     redis::RedisConnect,
 };
-use qq_channel_warning::QqChannelGrpcService;
 use resp_result::{rtry, MapReject};
 use tracing::instrument;
 
@@ -31,18 +29,15 @@ impl CeobeUserFrontend {
     }
 
     /// 获取用户数据源配置
-    #[instrument(ret, skip(db, mongo, qiniu, redis_client))]
+    #[instrument(ret, skip(db, mongo, redis_client))]
     pub async fn get_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
         redis_client: RedisConnect, MobIdInfo(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
             CeobeUserLogic::get_datasource_by_user(
                 mongo,
                 db,
-                qiniu,
-                qq_channel,
                 redis_client,
                 mob_id
             )
@@ -90,10 +85,9 @@ impl CeobeUserFrontend {
     }
 
     // 获取用户数据源配置
-    #[instrument(ret, skip(db, mongo, qiniu, redis_client))]
+    #[instrument(ret, skip(db, mongo, redis_client))]
     pub async fn get_comb_by_datasources(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        qq_channel: QqChannelGrpcService, qiniu: QiniuManager,
         redis_client: RedisConnect,
         MapReject(datasource_config): MapReject<
             Json<UserDatasource>,
@@ -104,8 +98,6 @@ impl CeobeUserFrontend {
             CeobeUserLogic::get_comb_by_datasources(
                 mongo,
                 db,
-                qiniu,
-                qq_channel,
                 redis_client,
                 datasource_config.datasource_push
             )

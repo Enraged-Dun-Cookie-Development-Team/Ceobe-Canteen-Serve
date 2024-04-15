@@ -1,5 +1,4 @@
 use ceobe_qiniu_upload::Error as QiniuError;
-use mongodb::bson;
 use redis::RedisError;
 use status_err::StatusErr;
 use thiserror::Error;
@@ -15,9 +14,6 @@ pub enum ServiceError {
 
     #[error("Redis异常: {0}")]
     Redis(#[from] RedisError),
-
-    #[error(transparent)]
-    BsonOidErr(#[from] bson::oid::Error),
 }
 
 pub(crate) type ServiceResult<T> = Result<T, ServiceError>;

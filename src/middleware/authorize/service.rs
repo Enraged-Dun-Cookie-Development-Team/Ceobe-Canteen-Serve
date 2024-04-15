@@ -78,11 +78,12 @@ impl<L: AuthLevelVerify> AsyncAuthorizeRequest<Body> for AdminAuthorize<L> {
                         )
                         .await
                         .map_err(|err| {
-                            let OperateError::UserNotExist = err
+                            if let OperateError::UserNotExist = err {
+                                AuthorizeError::TokenInfoNotFound
+                            }
                             else {
-                                return AuthorizeError::from(err);
-                            };
-                            AuthorizeError::TokenInfoNotFound
+                                AuthorizeError::from(err)
+                            }
                         })
                         .and_then(|v| v)
                     {

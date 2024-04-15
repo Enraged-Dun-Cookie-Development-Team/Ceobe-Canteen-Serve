@@ -11,6 +11,8 @@ use super::CeobeCookieLogic;
 use crate::error::LogicResult;
 
 impl CeobeCookieLogic {
+    #[deprecated]
+    #[allow(deprecated)]
     // 缓慢同步redis的combid数据到七牛云
     pub async fn synchronous_qiniu_from_redis(
         redis_client: &mut RedisConnect,

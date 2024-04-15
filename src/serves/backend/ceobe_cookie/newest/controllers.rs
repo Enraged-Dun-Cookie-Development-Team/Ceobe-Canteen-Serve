@@ -10,6 +10,8 @@ use crate::router::CeobeCookieNewestBackend;
 
 impl CeobeCookieNewestBackend {
     #[instrument(ret, skip(redis_client, qiniu))]
+    #[deprecated]
+    #[allow(deprecated)]
     pub async fn synchronous_qiniu_from_redis(
         mut redis_client: RedisConnect,
         (qiniu, qq_channel): (QiniuManager, QqChannelGrpcService),

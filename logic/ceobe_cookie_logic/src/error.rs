@@ -84,6 +84,8 @@ pub enum LogicError {
 
     #[error(transparent)]
     BsonOidErr(#[from] bson::oid::Error),
+    #[error(transparent)]
+    QiniuError(#[from] ceobe_qiniu_upload::Error),
 }
 
 impl From<Infallible> for LogicError {

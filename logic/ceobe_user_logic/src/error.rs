@@ -15,6 +15,7 @@ use persistence::{
     mongodb::MongoDbError,
 };
 use qiniu_service::error::ServiceError as QiniuServiceError;
+use redis::RedisError;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
 
@@ -79,6 +80,12 @@ pub enum LogicError {
         resp_msg = "数据源列表为空"
     ))]
     DatasourcesEmpty,
+
+    #[error("Redis异常: {0}")]
+    Redis(#[from] RedisError),
+
+    #[error("Json 反/序列化失败 {0}")]
+    Json(#[from] serde_json::Error),
 }
 
 #[allow(dead_code)]

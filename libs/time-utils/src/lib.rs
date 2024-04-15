@@ -1,5 +1,5 @@
 pub use chrono;
-use chrono::{Local, NaiveDateTime};
+use chrono::{DateTime, Local, NaiveDateTime};
 
 #[cfg(feature = "with-sea-orm")]
 pub fn get_now_naive_date_time_value() -> sea_orm::Value {
@@ -7,7 +7,7 @@ pub fn get_now_naive_date_time_value() -> sea_orm::Value {
 }
 
 pub fn get_zero_data_time() -> NaiveDateTime {
-    NaiveDateTime::from_timestamp_opt(0, 0).unwrap()
+    DateTime::from_timestamp(0, 0).unwrap().naive_local()
 }
 
 pub fn get_now_naive_date_time() -> NaiveDateTime {

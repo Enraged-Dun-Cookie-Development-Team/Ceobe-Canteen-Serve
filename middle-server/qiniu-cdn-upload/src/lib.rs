@@ -11,6 +11,7 @@ pub mod update_payload;
 /// 上传的数据来源相关trait
 pub mod update_source;
 
+#[deprecated]
 /// 通用七牛云上传接口
 ///
 /// - `uploader`: [`&Uploader`](Uploader) 七牛云上传器，可以通过
@@ -41,7 +42,7 @@ where
     uploader.upload(upload).await
 }
 
-struct UploadWrap<L>
+pub struct UploadWrap<L>
 where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
@@ -56,7 +57,7 @@ where
     L: UploadPayload,
     <L::Source as UploadSource>::Error: Into<Error>,
 {
-    async fn new(
+    pub async fn new(
         payload: <L::Source as UploadSource>::Source<'_>, local: L,
     ) -> Result<Self, <L::Source as UploadSource>::Error> {
         Ok(Self {

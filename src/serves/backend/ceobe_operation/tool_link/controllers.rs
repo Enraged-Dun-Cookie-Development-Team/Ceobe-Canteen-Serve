@@ -15,7 +15,7 @@ use persistence::{
     },
     mysql::SqlDatabaseOperate,
 };
-use qiniu_cdn_upload::upload;
+use qiniu_cdn_upload::UploadWrap;
 use resp_result::{resp_try, MapReject};
 use tracing::instrument;
 
@@ -101,7 +101,10 @@ impl CeobeOpToolLink {
             let mut multipart = multipart?;
             let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
 
-            let resp = upload(&qiniu, field, ToolAvatarPayload::new())
+            let resp = qiniu
+                .upload(
+                    UploadWrap::new(field, ToolAvatarPayload::new()).await?,
+                )
                 .await
                 .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
 

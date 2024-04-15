@@ -29,7 +29,10 @@ use tokio::task::{self, JoinHandle};
 use super::CeobeCookieLogic;
 use crate::{
     error::{LogicError, LogicResult},
-    view::{CookieListReq, CookieListResp, DefaultCookie, SingleCookie},
+    view::{
+        CombIdToCookieIdRep, CookieListReq, CookieListResp, DefaultCookie,
+        SingleCookie,
+    },
 };
 
 impl CeobeCookieLogic {
@@ -166,5 +169,31 @@ impl CeobeCookieLogic {
             cookies,
             next_page_id: next_cookie_id.map(|id| id.to_string()),
         })
+    }
+
+    pub async fn newest_comb_info(
+        mut redis_client: RedisConnect, comb_id: String,
+    ) -> LogicResult<CombIdToCookieIdRep> {
+        let redis = redis_client.mut_connect();
+        // redis表中查不到，说明没有维护或者这个数据源组合没有饼，
+        // 直接返回id是null
+        let mut res = CombIdToCookieIdRep {
+            cookie_id: None,
+            update_cookie_id: None,
+        };
+        if redis
+            .hexists(CookieListKey::NEW_COMBID_INFO, &comb_id)
+            .await?
+        {
+            res = serde_json::from_str(
+                &redis
+                    .hget::<'_, _, _, String>(
+                        CookieListKey::NEW_COMBID_INFO,
+                        &comb_id,
+                    )
+                    .await?,
+            )?;
+        }
+        Ok(res)
     }
 }

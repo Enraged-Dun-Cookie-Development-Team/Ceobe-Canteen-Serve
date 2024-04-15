@@ -1,5 +1,3 @@
-extern crate serde;
-
 use std::{
     io::{stdout, Write},
     time::Duration,
