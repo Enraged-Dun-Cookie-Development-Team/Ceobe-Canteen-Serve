@@ -212,7 +212,7 @@ impl CeobeCookieLogic {
                 // 接口信息写入redis，等待七牛云回源
                 redis_set_comb
                     .cmd("HSET")
-                    .arg(&*CookieListKey::NEW_COMBID_INFO.get_key(()))
+                    .arg(&*CookieListKey::NEW_COMBID_INFO.get_key())
                     .arg(&comb_id)
                     .arg(serde_json::to_string(&comb_info)?)
                     .ignore();

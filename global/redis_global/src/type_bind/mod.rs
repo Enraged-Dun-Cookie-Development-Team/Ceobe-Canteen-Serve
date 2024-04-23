@@ -24,7 +24,7 @@ pub trait RedisTypeBind: RedisKey {
     where
         R: 'redis,
     {
-        let key = RedisKey::get_key(self, args);
+        let key = RedisKey::get_key_with_args(self, args);
         RedisTypeTrait::from_redis_and_key(redis, key)
     }
 
@@ -47,7 +47,14 @@ pub trait RedisKey {
     type Args<'r>;
 
     #[allow(unused_variables)]
-    fn get_key(&self, arg: Self::Args<'_>) -> Cow<'static, str>;
+    fn get_key_with_args(&self, arg: Self::Args<'_>) -> Cow<'static, str>;
+
+    fn get_key(&self) -> Cow<'static, str>
+    where
+        for<'r> Self::Args<'r>: RedisKayAutoConstruct,
+    {
+        RedisKey::get_key_with_args(self, RedisKayAutoConstruct::construct())
+    }
 }
 
 pub trait RedisKayAutoConstruct {
@@ -65,7 +72,7 @@ macro_rules! redis_key {
         impl $crate::type_bind::RedisKey for $name {
             type Args<'r> = ($(&'r $ty,)*);
 
-            fn get_key(&self, args: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
+            fn get_key_with_args(&self, args: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
                 let ($($arg,)*) = args;
 
                 (format!($format_key, $($arg),*)).into()
@@ -84,7 +91,7 @@ macro_rules! redis_key {
         impl $crate::type_bind::RedisKey for $name {
             type Args<'r> = ();
 
-            fn get_key(&self, _: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
+            fn get_key_with_args(&self, _: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
                 ($key).into()
             }
         }
@@ -102,7 +109,7 @@ macro_rules! redis_key {
         impl $crate::type_bind::RedisKey for $name {
             type Args<'r> = ($(&'r $ty,)*);
 
-            fn get_key(&self, args: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
+            fn get_key_with_args(&self, args: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
                 let ($($arg,)*) = args;
 
                 (format!($format_key, $($arg),*)).into()
@@ -121,7 +128,7 @@ macro_rules! redis_key {
         impl $crate::type_bind::RedisKey for $name {
             type Args<'r> = ();
 
-            fn get_key(&self, _: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
+            fn get_key_with_args(&self, _: Self::Args<'_>) -> std::borrow::Cow<'static, str> {
                 ($key).into()
             }
         }
