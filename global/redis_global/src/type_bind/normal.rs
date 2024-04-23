@@ -1,5 +1,4 @@
-use std::{borrow::Cow, marker::PhantomData};
-use std::time::Duration;
+use std::{borrow::Cow, marker::PhantomData, time::Duration};
 
 use redis::{AsyncCommands, FromRedisValue, RedisResult, ToRedisArgs};
 
@@ -28,9 +27,8 @@ where
     R: redis::aio::ConnectionLike + Send + Sync,
     T: FromRedisValue + ToRedisArgs + Sync + Send + 'redis,
 {
-    
     /// 判定当前值是否存在
-    /// 
+    ///
     /// ## 参考
     /// - [`AsyncCommands::exists`]
     pub async fn exists<RV>(&mut self) -> RedisResult<RV>
@@ -39,6 +37,7 @@ where
     {
         self.redis.exists(&*self.key).await
     }
+
     /// 写入当前值
     ///
     /// ## 参考
@@ -51,7 +50,7 @@ where
     }
 
     /// 当值不存在时，写入值
-    /// 
+    ///
     /// ## 参考
     /// - [`AsyncCommands::set_nx`]
     pub async fn set_if_not_exist<RV>(&mut self, value: T) -> RedisResult<RV>
@@ -60,6 +59,7 @@ where
     {
         self.redis.set_nx(&*self.key, value).await
     }
+
     /// 写入值并添加超时时间
     ///
     /// ## 参考
@@ -70,8 +70,11 @@ where
     where
         RV: FromRedisValue,
     {
-        self.redis.set_ex(&*self.key, value, duration.as_secs() as _).await
+        self.redis
+            .set_ex(&*self.key, value, duration.as_secs() as _)
+            .await
     }
+
     /// 获取值
     ///
     /// ## 参考
@@ -79,7 +82,20 @@ where
     pub async fn get(&mut self) -> RedisResult<T> {
         self.redis.get(&*self.key).await
     }
-    
+    /// 尝试获取值，如果不存在，返回[`None`]
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::get`]
+    /// - [`AsyncCommands::exists`]
+    pub async fn try_get(&mut self) -> RedisResult<Option<T>> {
+        Ok(if self.exists().await? {
+            Some(self.get().await?)
+        }
+        else {
+            None
+        })
+    }
+
     /// 删除值
     ///
     /// ## 参考
