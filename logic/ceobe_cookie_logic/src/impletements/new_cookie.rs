@@ -15,10 +15,8 @@ use persistence::{
 };
 use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
-use redis::AsyncCommands;
 use redis_global::{
-    redis_key::{concat_key, cookie_list::CookieListKey},
-    CookieId,
+    redis_key::cookie_list::CookieListKey, RedisKey, RedisTypeBind,
 };
 
 use crate::{
@@ -182,21 +180,16 @@ impl CeobeCookieLogic {
         let redis = redis_client.mut_connect();
         let mut redis_set_comb = redis::pipe();
         for comb_id in comb_ids {
+            let mut new_combid_info =
+                CookieListKey::NEW_COMBID_INFO.redis_type(redis);
+
             // 如果传入cookie_id和redis都有信息
-            let newest_cookie_id = if let (Some(mut newest_cookie_id), true) = (
-                cookie_id,
-                redis
-                    .hexists(CookieListKey::NEW_COMBID_INFO, &comb_id)
-                    .await?,
-            ) {
+            let newest_cookie_id = if let (Some(mut newest_cookie_id), true) =
+                (cookie_id, new_combid_info.exists(&comb_id).await?)
+            {
                 let last_comb_info: CombIdToCookieIdRep =
                     serde_json::from_str(
-                        &redis
-                            .hget::<'_, _, _, String>(
-                                CookieListKey::NEW_COMBID_INFO,
-                                &comb_id,
-                            )
-                            .await?,
+                        &new_combid_info.get(&comb_id).await?,
                     )?;
                 // 这边一定保证redis这个hash field存在就有这个值。
                 // 结构体中Option只是为了兼容接口返回结构
@@ -219,7 +212,7 @@ impl CeobeCookieLogic {
                 // 接口信息写入redis，等待七牛云回源
                 redis_set_comb
                     .cmd("HSET")
-                    .arg(CookieListKey::NEW_COMBID_INFO)
+                    .arg(&*CookieListKey::NEW_COMBID_INFO.get_key(()))
                     .arg(&comb_id)
                     .arg(serde_json::to_string(&comb_info)?)
                     .ignore();
@@ -229,45 +222,29 @@ impl CeobeCookieLogic {
 
         if let Some(update_id) = update_cookie_id {
             // 更新[更新最新饼id]到redis
-            redis
-                .set_nx(
-                    concat_key(
-                        CookieListKey::NEW_UPDATE_COOKIE_ID,
-                        update_id,
-                    ),
-                    true,
-                )
+            CookieListKey::NEW_UPDATE_COOKIE_ID
+                .redis_type_with_args(redis, (&update_id,))
+                .set_nx(true)
                 .await?;
 
-            if redis
-                .hexists(CookieListKey::NEW_UPDATE_COOKIES, &datasource)
+            // 从hash update_cookie表获取上一个的update_cookie_id
+            if let Some(update_cookie) = CookieListKey::NEW_UPDATE_COOKIES
+                .redis_type(redis)
+                .try_get(&datasource)
                 .await?
             {
-                // 从hash update_cookie表获取上一个的update_cookie_id
-                let update_cookie: CookieId = redis
-                    .hget(CookieListKey::NEW_UPDATE_COOKIES, &datasource)
-                    .await?;
                 if update_id != update_cookie {
                     // 对已经被替换下的饼id设置ttl，2小时
-                    redis
-                        .set_ex(
-                            concat_key(
-                                CookieListKey::NEW_UPDATE_COOKIE_ID,
-                                update_cookie,
-                            ),
-                            true,
-                            2 * 60 * 60,
-                        )
+                    CookieListKey::NEW_UPDATE_COOKIE_ID
+                        .redis_type_with_args(redis, (&update_id,))
+                        .set_ex(true, 2 * 60 * 60)
                         .await?;
                 }
             }
             // 对hash update_cookie表写入最新的更新饼id
-            redis
-                .hset(
-                    CookieListKey::NEW_UPDATE_COOKIES,
-                    &datasource,
-                    &update_id.to_string(),
-                )
+            CookieListKey::NEW_UPDATE_COOKIES
+                .redis_type(redis)
+                .set(&datasource, update_id.into())
                 .await?;
         }
         Ok(())

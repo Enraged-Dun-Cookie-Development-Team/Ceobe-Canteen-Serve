@@ -1,8 +1,7 @@
 use ceobe_qiniu_upload::QiniuManager;
 use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
-use redis::AsyncCommands;
-use redis_global::redis_key::cookie_list::CookieListKey;
+use redis_global::{redis_key::cookie_list::CookieListKey, RedisTypeBind};
 
 use crate::{
     error::ServiceResult,
@@ -39,8 +38,10 @@ impl QiniuService {
                 Err(err)?;
             }
             None => {
-                let redis = redis_client.mut_connect();
-                redis.hdel(CookieListKey::NEW_COMBID_INFO, &comb_id).await?;
+                CookieListKey::NEW_COMBID_INFO
+                    .redis_type(redis_client.mut_connect())
+                    .remove(&comb_id)
+                    .await?;
             }
         }
         Ok(())

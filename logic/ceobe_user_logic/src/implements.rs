@@ -31,8 +31,7 @@ use persistence::{
     operate::GetMutDatabaseConnect,
     redis::RedisConnect,
 };
-use redis::AsyncCommands;
-use redis_global::redis_key::cookie_list::CookieListKey;
+use redis_global::{redis_key::cookie_list::CookieListKey, RedisTypeBind};
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
@@ -266,13 +265,9 @@ impl CeobeUserLogic {
                     cookie_id: Some(newest_cookie_id.to_string()),
                     update_cookie_id: None,
                 };
-
-                redis
-                    .hset(
-                        CookieListKey::NEW_COMBID_INFO,
-                        &comb_id,
-                        serde_json::to_string(&comb_info)?,
-                    )
+                CookieListKey::NEW_COMBID_INFO
+                    .redis_type(redis)
+                    .set(&comb_id, serde_json::to_string(&comb_info)?)
                     .await?;
             }
         }

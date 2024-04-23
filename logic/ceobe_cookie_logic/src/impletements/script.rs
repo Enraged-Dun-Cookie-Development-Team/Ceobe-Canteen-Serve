@@ -6,6 +6,7 @@ use qiniu_service::QiniuService;
 use qq_channel_warning::QqChannelGrpcService;
 use redis::AsyncCommands;
 use redis_global::redis_key::cookie_list::CookieListKey;
+use redis_global::RedisKey;
 
 use super::CeobeCookieLogic;
 use crate::error::LogicResult;
@@ -20,7 +21,7 @@ impl CeobeCookieLogic {
     ) -> LogicResult<()> {
         let redis = redis_client.mut_connect();
         let comb_ids: HashMap<String, String> =
-            redis.hgetall(CookieListKey::NEWEST_COOKIES).await?;
+            redis.hgetall(&*CookieListKey::NEWEST_COOKIES.get_key(())).await?;
         for (comb_id, cookie_id) in comb_ids.into_iter() {
             QiniuService::upload_newest_cookie_id_use_script(
                 qiniu.clone(),
