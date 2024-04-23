@@ -17,7 +17,7 @@ pub trait RedisTypeBind: RedisKey {
     type RedisType<'redis, R>: RedisTypeTrait<'redis, R>
     where
         R: 'redis;
-
+    /// 构造一个Redis 类型绑定， 当key构造需要2个及以上个参数
     fn bind_with_args<'redis, R>(
         &self, redis: &'redis mut R, args: <Self as RedisKey>::Args<'_>,
     ) -> Self::RedisType<'redis, R>
@@ -27,7 +27,7 @@ pub trait RedisTypeBind: RedisKey {
         let key = RedisKey::get_key_with_args(self, args);
         RedisTypeTrait::from_redis_and_key(redis, key)
     }
-
+    /// 构造一个Redis 类型绑定， 当key构造需要一个参数
     fn bind_with<'redis, R>(
         &self, redis: &'redis mut R,
         arg: <<Self as RedisKey>::Args<'_> as RedisKeyArg1>::Arg0,
@@ -41,6 +41,8 @@ pub trait RedisTypeBind: RedisKey {
             <<Self as RedisKey>::Args<'_> as RedisKeyArg1>::to_this(arg),
         )
     }
+
+    /// 构造一个Redis 类型绑定， 当key构造不需要任何参数
     fn bind<'redis, R>(
         &self, redis: &'redis mut R,
     ) -> Self::RedisType<'redis, R>
@@ -92,6 +94,7 @@ impl RedisKayAutoConstruct for () {
 
 macro_rules! redis_key {
     (hash $name:ident::<$t:ty> => $format_key:literal[$($arg:ident:$ty:ident),*])=>{
+        #[doc=concat!(concat!("Redis Hash类型绑定\n ## Key \n", $format_key), concat!("\n ## Value Type \n ", stringify!($t)))]
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -111,6 +114,7 @@ macro_rules! redis_key {
         }
     };
     (hash $name:ident::<$t:ty> => $key:literal) => {
+        #[doc=concat!(concat!("Redis Hash类型绑定\n ## Key \n", $key), concat!("\n ## Value Type \n ", stringify!($t)))]
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -129,6 +133,7 @@ macro_rules! redis_key {
     };
 
      ($name:ident::<$t:ty> => $format_key:literal[$($arg:ident:$ty:ident),*])=>{
+        #[doc=concat!(concat!("Redis 普通类型绑定\n ## Key \n", $format_key), concat!("\n ## Value Type \n ", stringify!($t)))]
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -148,6 +153,7 @@ macro_rules! redis_key {
         }
     };
     ($name:ident::<$t:ty> => $key:literal) => {
+        #[doc=concat!(concat!("Redis 普通类型绑定\n ## Key \n", $key), concat!("\n ## Value Type \n ", stringify!($t)))]
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -164,8 +170,4 @@ macro_rules! redis_key {
                     R: 'redis;
         }
     };
-}
-
-macro_rules! n_args {
-    () => {};
 }
