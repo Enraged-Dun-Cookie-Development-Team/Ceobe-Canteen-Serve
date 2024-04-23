@@ -4,6 +4,7 @@ use redis::{AsyncCommands, FromRedisValue, RedisResult, ToRedisArgs};
 
 use crate::type_bind::RedisTypeTrait;
 
+/// Redis的Hash数据结构类型绑定
 pub struct Hash<'redis, R: 'redis, T> {
     redis: &'redis mut R,
     key: Cow<'static, str>,

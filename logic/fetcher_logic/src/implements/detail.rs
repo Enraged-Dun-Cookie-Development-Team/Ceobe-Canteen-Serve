@@ -21,7 +21,7 @@ use persistence::{
     },
 };
 use redis::AsyncCommands;
-use redis_global::redis_key::fetcher::FetcherConfigKey;
+use redis_global::{redis_key::fetcher::FetcherConfigKey, RedisTypeBind};
 use scheduler_notifier::SchedulerNotifier;
 
 use super::FetcherConfigLogic;
@@ -39,19 +39,16 @@ impl FetcherConfigLogic {
     ) -> LogicResult<i8>
     where
         C: GetMutDatabaseConnect + 'client,
-        C::Connect: AsyncCommands,
+        C::Connect: AsyncCommands + Sync,
     {
         let con = client.mut_connect();
 
         // 判断redis key存在，如果不存在则默认没有蹲饼器
-        let live_number = if con.exists(FetcherConfigKey::LIVE_NUMBER).await?
-        {
-            // 获取key的值
-            con.get(FetcherConfigKey::LIVE_NUMBER).await?
-        }
-        else {
-            0
-        };
+        let live_number = FetcherConfigKey::LIVE_NUMBER
+            .bind(con)
+            .try_get()
+            .await?
+            .unwrap_or_default();
 
         Ok(live_number)
     }
