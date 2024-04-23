@@ -18,7 +18,7 @@ pub trait RedisTypeBind: RedisKey {
     where
         R: 'redis;
 
-    fn redis_type_with_args<'redis, R>(
+    fn bind_with_args<'redis, R>(
         &self, redis: &'redis mut R, args: <Self as RedisKey>::Args<'_>,
     ) -> Self::RedisType<'redis, R>
     where
@@ -28,14 +28,27 @@ pub trait RedisTypeBind: RedisKey {
         RedisTypeTrait::from_redis_and_key(redis, key)
     }
 
-    fn redis_type<'redis, R>(
+    fn bind_with<'redis, R>(
+        &self, redis: &'redis mut R,
+        arg: <<Self as RedisKey>::Args<'_> as RedisKeyArg1>::Arg0,
+    ) -> Self::RedisType<'redis, R>
+    where
+        for<'r> <Self as RedisKey>::Args<'r>: RedisKeyArg1,
+    {
+        RedisTypeBind::bind_with_args(
+            self,
+            redis,
+            <<Self as RedisKey>::Args<'_> as RedisKeyArg1>::to_this(arg),
+        )
+    }
+    fn bind<'redis, R>(
         &self, redis: &'redis mut R,
     ) -> Self::RedisType<'redis, R>
     where
         R: 'redis,
         for<'r> <Self as RedisKey>::Args<'r>: RedisKayAutoConstruct,
     {
-        RedisTypeBind::redis_type_with_args(
+        RedisTypeBind::bind_with_args(
             self,
             redis,
             RedisKayAutoConstruct::construct(),
@@ -55,6 +68,18 @@ pub trait RedisKey {
     {
         RedisKey::get_key_with_args(self, RedisKayAutoConstruct::construct())
     }
+}
+
+pub trait RedisKeyArg1 {
+    type Arg0;
+
+    fn to_this(arg0: Self::Arg0) -> Self;
+}
+
+impl<T> RedisKeyArg1 for (T,) {
+    type Arg0 = T;
+
+    fn to_this(arg0: Self::Arg0) -> Self { (arg0,) }
 }
 
 pub trait RedisKayAutoConstruct {
@@ -139,4 +164,8 @@ macro_rules! redis_key {
                     R: 'redis;
         }
     };
+}
+
+macro_rules! n_args {
+    () => {};
 }

@@ -1,5 +1,8 @@
-use ceobe_qiniu_upload::QiniuManager;
+use std::time::Duration;
+
 use futures::future;
+
+use ceobe_qiniu_upload::QiniuManager;
 use mob_push_server::PushManager;
 use persistence::{
     ceobe_cookie::ToCeobe,
@@ -8,7 +11,7 @@ use persistence::{
         datasource_combination::DatasourceCombinationOperate,
         datasource_config::DatasourceOperate,
     },
-    mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate},
+    mongodb::{MongoDatabaseOperate, mongodb::bson::oid::ObjectId},
     mysql::SqlDatabaseOperate,
     operate::{GetDatabaseConnect, GetMutDatabaseConnect},
     redis::RedisConnect,
@@ -16,7 +19,8 @@ use persistence::{
 use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis_global::{
-    redis_key::cookie_list::CookieListKey, RedisKey, RedisTypeBind,
+    redis_key::cookie_list::{CookieListKey, NewCombIdInfo}
+    , RedisTypeBind,
 };
 
 use crate::{
@@ -150,27 +154,26 @@ impl CeobeCookieLogic {
     }
 
     /// 缓存饼id信息到redis
-    ///     1. 并发更新NEW_COMBID_INFO redis表
-    ///         - 判断NEW_COMBID_INFO的combid field是否存在。
-    ///         - 如果存在，取当前饼id和数据库里饼id较大的为cookie_id。
-    ///           【这边没办法批量操作的原因就是因为每个得单独判断，
-    ///           每个下面数据源是不一样的】
-    ///         - 写入NEW_COMBID_INFO的对应combid的值，cookie_id为最新，
+    /// 1. 并发更新NEW_COMBID_INFO redis表
+    ///    - 判断NEW_COMBID_INFO的combid field是否存在。
+    ///    - 如果存在，取当前饼id和数据库里饼id较大的为cookie_id。
+    ///      > 这边没办法批量操作的原因就是因为每个得单独判断，每个下面数据源是不一样的
+    ///    - 写入NEW_COMBID_INFO的对应combid的值，cookie_id为最新，
     ///           update_cookie_id为当前传入
-    ///     2. 更新update_cookie_id缓存，这个缓存是提供官方绕过cdn而设计，
+    /// 2. 更新update_cookie_id缓存，这个缓存是提供官方绕过cdn而设计，
     ///        因为列表cdn设计2小时缓存，所以被换下的id也是设置2小时ttl缓存
-    ///         - 表介绍
-    ///             - NEW_UPDATE_COOKIES: hash, 储存最新的更新饼id
-    ///             - NEW_UPDATE_COOKIE_ID: string，给更新饼id判断存不存在的，
+    ///    - 表介绍
+    ///       - NEW_UPDATE_COOKIES: hash, 储存最新的更新饼id
+    ///       - NEW_UPDATE_COOKIE_ID: string，给更新饼id判断存不存在的，
     ///               可以让查询时候列表命中缓存
-    ///         - 过程
-    ///             - 在NEW_UPDATE_COOKIE_ID表中，设置传入的更新饼id，
+    ///    - 过程
+    ///       - 在NEW_UPDATE_COOKIE_ID表中，设置传入的更新饼id，
     ///               不设置ttl（过期时间）
-    ///             - 在NEW_UPDATE_COOKIES表的combid
+    ///       - 在NEW_UPDATE_COOKIES表的combid
     ///               field中取出更新饼id，如果有才会做接下来操作，
     ///               使用取出的更新饼id，
     ///               在NEW_UPDATE_COOKIE_ID表中设置2小时缓存。
-    ///             - 将当前传入更新饼id赋值到NEW_UPDATE_COOKIES表的combid
+    ///       - 将当前传入更新饼id赋值到NEW_UPDATE_COOKIES表的combid
     ///               field中，作为最新的更新饼id记录
     async fn cache_cookie_redis(
         redis_client: &mut RedisConnect, cookie_id: Option<ObjectId>,
@@ -178,30 +181,32 @@ impl CeobeCookieLogic {
         datasource: Option<String>,
     ) -> LogicResult<()> {
         let redis = redis_client.mut_connect();
-        let mut redis_set_comb = redis::pipe();
-        for comb_id in comb_ids {
-            let mut new_combid_info =
-                CookieListKey::NEW_COMBID_INFO.redis_type(redis);
+        let mut new_combid_info = NewCombIdInfo.bind(redis);
 
+        for comb_id in comb_ids {
             // 如果传入cookie_id和redis都有信息
-            let newest_cookie_id = if let (Some(mut newest_cookie_id), true) =
-                (cookie_id, new_combid_info.exists(&comb_id).await?)
-            {
-                let last_comb_info: CombIdToCookieIdRep =
-                    serde_json::from_str(
-                        &new_combid_info.get(&comb_id).await?,
-                    )?;
-                // 这边一定保证redis这个hash field存在就有这个值。
-                // 结构体中Option只是为了兼容接口返回结构
-                let last_cookie_id =
-                    last_comb_info.cookie_id.unwrap().parse()?;
-                // 判断数据库和传入的cookie_id哪个新，用新的那个id
-                newest_cookie_id = newest_cookie_id.max(last_cookie_id);
-                Some(newest_cookie_id.to_string())
-            }
-            else {
-                cookie_id.map(|id| id.to_string())
-            };
+            let newest_cookie_id =
+                if let (Some(mut newest_cookie_id), Some(last_comb_info)) = (
+                    cookie_id,
+                    new_combid_info
+                        .try_get(&comb_id)
+                        .await?
+                        .map(|str| {
+                            serde_json::from_str::<CombIdToCookieIdRep>(&str)
+                        })
+                        .transpose()?,
+                ) {
+                    // 这边一定保证redis这个hash field存在就有这个值。
+                    // 结构体中Option只是为了兼容接口返回结构
+                    let last_cookie_id =
+                        last_comb_info.cookie_id.unwrap().parse()?;
+                    // 判断数据库和传入的cookie_id哪个新，用新的那个id
+                    newest_cookie_id = newest_cookie_id.max(last_cookie_id);
+                    Some(newest_cookie_id.to_string())
+                }
+                else {
+                    cookie_id.map(|id| id.to_string())
+                };
 
             if cookie_id.is_some() {
                 let comb_info = CombIdToCookieIdRep {
@@ -210,40 +215,36 @@ impl CeobeCookieLogic {
                         .map(|id| id.to_string()),
                 };
                 // 接口信息写入redis，等待七牛云回源
-                redis_set_comb
-                    .cmd("HSET")
-                    .arg(&*CookieListKey::NEW_COMBID_INFO.get_key())
-                    .arg(&comb_id)
-                    .arg(serde_json::to_string(&comb_info)?)
-                    .ignore();
+                new_combid_info
+                    .set(&comb_id, serde_json::to_string(&comb_info)?)
+                    .await?;
             }
         }
-        redis_set_comb.query_async(redis).await?;
 
         if let Some(update_id) = update_cookie_id {
             // 更新[更新最新饼id]到redis
             CookieListKey::NEW_UPDATE_COOKIE_ID
-                .redis_type_with_args(redis, (&update_id,))
-                .set_nx(true)
+                .bind_with(redis, &update_id)
+                .set_if_not_exist(true)
                 .await?;
 
             // 从hash update_cookie表获取上一个的update_cookie_id
             if let Some(update_cookie) = CookieListKey::NEW_UPDATE_COOKIES
-                .redis_type(redis)
+                .bind(redis)
                 .try_get(&datasource)
                 .await?
             {
                 if update_id != update_cookie {
                     // 对已经被替换下的饼id设置ttl，2小时
                     CookieListKey::NEW_UPDATE_COOKIE_ID
-                        .redis_type_with_args(redis, (&update_id,))
-                        .set_ex(true, 2 * 60 * 60)
+                        .bind_with(redis, &update_id)
+                        .set_with_expire(true, Duration::from_secs(2 * 3600))
                         .await?;
                 }
             }
             // 对hash update_cookie表写入最新的更新饼id
             CookieListKey::NEW_UPDATE_COOKIES
-                .redis_type(redis)
+                .bind(redis)
                 .set(&datasource, update_id.into())
                 .await?;
         }

@@ -266,7 +266,7 @@ impl CeobeUserLogic {
                     update_cookie_id: None,
                 };
                 CookieListKey::NEW_COMBID_INFO
-                    .redis_type(redis)
+                    .bind(redis)
                     .set(&comb_id, serde_json::to_string(&comb_info)?)
                     .await?;
             }

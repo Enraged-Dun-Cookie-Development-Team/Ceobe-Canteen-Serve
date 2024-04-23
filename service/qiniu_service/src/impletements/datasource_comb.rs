@@ -39,7 +39,7 @@ impl QiniuService {
             }
             None => {
                 CookieListKey::NEW_COMBID_INFO
-                    .redis_type(redis_client.mut_connect())
+                    .bind(redis_client.mut_connect())
                     .remove(&comb_id)
                     .await?;
             }

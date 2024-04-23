@@ -23,7 +23,8 @@ use persistence::{
     redis::RedisConnect,
 };
 use redis_global::{
-    redis_key::cookie_list::CookieListKey, RedisTypeBind, RedisTypeTrait,
+    redis_key::cookie_list::{CookieListKey, NewUpdateCookieId},
+    RedisTypeBind, RedisTypeTrait,
 };
 use tokio::task::{self, JoinHandle};
 
@@ -42,11 +43,9 @@ impl CeobeCookieLogic {
         mut redis_client: RedisConnect, cookie_info: CookieListReq,
     ) -> LogicResult<CookieListResp> {
         if let Some(update_cookie_id) = cookie_info.update_cookie_id {
-            let mut new_update_cookie_id =
-                CookieListKey::NEW_UPDATE_COOKIE_ID.redis_type_with_args(
-                    redis_client.mut_connect(),
-                    (&update_cookie_id,),
-                );
+            let mut new_update_cookie_id = NewUpdateCookieId
+                .bind_with(redis_client.mut_connect(), &update_cookie_id);
+            
             if !new_update_cookie_id.exists().await? {
                 return Err(LogicError::UpdateCookieIdCacheFailure(
                     update_cookie_id,
@@ -181,8 +180,7 @@ impl CeobeCookieLogic {
             cookie_id: None,
             update_cookie_id: None,
         };
-        let mut new_combid_info =
-            CookieListKey::NEW_COMBID_INFO.redis_type(redis);
+        let mut new_combid_info = CookieListKey::NEW_COMBID_INFO.bind(redis);
         if new_combid_info.exists(&comb_id).await? {
             res =
                 serde_json::from_str(&new_combid_info.get(&comb_id).await?)?;

@@ -1,4 +1,5 @@
 use std::{borrow::Cow, marker::PhantomData};
+use std::time::Duration;
 
 use redis::{AsyncCommands, FromRedisValue, RedisResult, ToRedisArgs};
 
@@ -27,13 +28,21 @@ where
     R: redis::aio::ConnectionLike + Send + Sync,
     T: FromRedisValue + ToRedisArgs + Sync + Send + 'redis,
 {
+    
+    /// 判定当前值是否存在
+    /// 
+    /// ## 参考
+    /// - [`AsyncCommands::exists`]
     pub async fn exists<RV>(&mut self) -> RedisResult<RV>
     where
         RV: FromRedisValue,
     {
         self.redis.exists(&*self.key).await
     }
-
+    /// 写入当前值
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::set`]
     pub async fn set<RV>(&mut self, value: T) -> RedisResult<RV>
     where
         RV: FromRedisValue,
@@ -41,26 +50,40 @@ where
         self.redis.set(&*self.key, value).await
     }
 
-    pub async fn set_nx<RV>(&mut self, value: T) -> RedisResult<RV>
+    /// 当值不存在时，写入值
+    /// 
+    /// ## 参考
+    /// - [`AsyncCommands::set_nx`]
+    pub async fn set_if_not_exist<RV>(&mut self, value: T) -> RedisResult<RV>
     where
         RV: FromRedisValue,
     {
         self.redis.set_nx(&*self.key, value).await
     }
-
-    pub async fn set_ex<RV>(
-        &mut self, value: T, second: usize,
+    /// 写入值并添加超时时间
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::set_ex`]
+    pub async fn set_with_expire<RV>(
+        &mut self, value: T, duration: Duration,
     ) -> RedisResult<RV>
     where
         RV: FromRedisValue,
     {
-        self.redis.set_ex(&*self.key, value, second).await
+        self.redis.set_ex(&*self.key, value, duration.as_secs() as _).await
     }
-
+    /// 获取值
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::get`]
     pub async fn get(&mut self) -> RedisResult<T> {
         self.redis.get(&*self.key).await
     }
-
+    
+    /// 删除值
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::del`]
     pub async fn remove<RV>(&mut self) -> RedisResult<RV>
     where
         RV: FromRedisValue,

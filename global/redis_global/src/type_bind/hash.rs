@@ -1,4 +1,4 @@
-use std::{borrow::Cow, marker::PhantomData};
+use std::{borrow::Cow, collections::HashMap, marker::PhantomData};
 
 use redis::{AsyncCommands, FromRedisValue, RedisResult, ToRedisArgs};
 
@@ -27,32 +27,60 @@ where
     R: redis::aio::ConnectionLike + Send + Sync,
     T: FromRedisValue + ToRedisArgs + Send + Sync + 'redis,
 {
-    pub async fn exists<RV, F>(&mut self, field: F) -> RedisResult<RV>
+    /// 检查Hash类型中指定field是否存在
+    /// 
+    /// ## 参考
+    /// - [`AsyncCommands::hexists`]
+    pub async fn exists<'arg, RV, F>(&mut self, field: F) -> RedisResult<RV>
     where
-        F: ToRedisArgs + Send + Sync + 'redis,
+        F: ToRedisArgs + Send + Sync + 'arg,
         RV: FromRedisValue,
     {
         self.redis.hexists(&*self.key, field).await
     }
 
-    pub async fn set<RV, F>(&mut self, field: F, value: T) -> RedisResult<RV>
+    pub async fn set<'arg, RV, F>(
+        &mut self, field: F, value: T,
+    ) -> RedisResult<RV>
     where
-        F: ToRedisArgs + Send + Sync + 'redis,
+        F: ToRedisArgs + Send + Sync + 'arg,
         RV: FromRedisValue,
     {
         self.redis.hset(&*self.key, field, value).await
     }
 
-    pub async fn get<F>(&mut self, field: F) -> RedisResult<T>
+    /// 获取当前hash中对应field的对应值
+    /// 
+    /// ## 参考
+    /// - [`AsyncCommands::hget`]
+    pub async fn get<'arg, F>(&mut self, field: F) -> RedisResult<T>
     where
-        F: ToRedisArgs + Send + Sync + 'redis,
+        F: ToRedisArgs + Send + Sync + 'arg,
     {
         self.redis.hget(&*self.key, field).await
     }
-
-    pub async fn try_get<F>(&mut self, field: F) -> RedisResult<Option<T>>
+    /// 获取当前hash中对应field的对应值
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::hall`]
+    pub async fn all<K>(&mut self) -> RedisResult<HashMap<K, T>>
     where
-        F: ToRedisArgs + Send + Sync + 'redis + Copy,
+        K: FromRedisValue + Eq + std::hash::Hash,
+    {
+        self.redis.hgetall(&*self.key).await
+    }
+    /// 尝试获取当前hash中对应的field的对应值，如果不存在，将会返回[`None`]
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::hexists`]
+    /// - [`AsyncCommands::hget`]
+    /// - [`Hash::get`]
+    /// - [`Hash::exists`]
+    pub async fn try_get<'arg, F>(
+        &mut self, field: F,
+    ) -> RedisResult<Option<T>>
+    where
+        F: ToRedisArgs + Send + Sync + 'arg + Copy,
     {
         Ok(if self.exists(field).await? {
             Some(self.get(field).await?)
@@ -61,10 +89,13 @@ where
             None
         })
     }
-
-    pub async fn remove<RV, F>(&mut self, field: F) -> RedisResult<RV>
+    /// 尝试删除当前hash中对应的field的对应值
+    ///
+    /// ## 参考
+    /// - [`AsyncCommands::hdel`]
+    pub async fn remove<'arg, RV, F>(&mut self, field: F) -> RedisResult<RV>
     where
-        F: ToRedisArgs + Send + Sync + 'redis,
+        F: ToRedisArgs + Send + Sync + 'arg,
         RV: FromRedisValue,
     {
         self.redis.hdel(&*self.key, field).await
