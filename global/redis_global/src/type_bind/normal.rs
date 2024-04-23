@@ -10,8 +10,6 @@ pub struct Normal<'redis, R, T> {
     __phantom: PhantomData<T>,
 }
 
-
-
 impl<'redis, R, T> RedisTypeTrait<'redis, R> for Normal<'redis, R, T> {
     fn from_redis_and_key(
         redis: &'redis mut R, key: Cow<'static, str>,

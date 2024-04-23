@@ -12,6 +12,7 @@ impl CookieListKey {
     pub const NEW_UPDATE_COOKIE_ID: NewUpdateCookieId = NewUpdateCookieId;
 }
 use bson::oid::ObjectId;
+
 use crate::CookieId;
 redis_key!(hash NewestCookies::<String> => "cookie:list:newest:combId");
 redis_key!(hash NewCombIdInfo::<String> => "cookie:list:new:combId:info");

@@ -1,14 +1,12 @@
 use std::{collections::HashMap, sync::Arc};
 
-use bitmaps::Bitmap;
-use tokio::task::{self, JoinHandle};
-
 use bitmap_convert::{
     base70::BitmapBase70Conv, vec_usize::BitmapVecUsizeConv,
 };
+use bitmaps::Bitmap;
 use persistence::{
     ceobe_cookie::{
-        models::analyze::models::{CookieInfo, meta::Meta},
+        models::analyze::models::{meta::Meta, CookieInfo},
         ToCeobe, ToCookie,
     },
     fetcher::{
@@ -25,10 +23,11 @@ use persistence::{
     redis::RedisConnect,
 };
 use redis_global::{
-    redis_key::cookie_list::CookieListKey,
-    RedisTypeBind, RedisTypeTrait,
+    redis_key::cookie_list::CookieListKey, RedisTypeBind, RedisTypeTrait,
 };
+use tokio::task::{self, JoinHandle};
 
+use super::CeobeCookieLogic;
 use crate::{
     error::{LogicError, LogicResult},
     view::{
@@ -36,8 +35,6 @@ use crate::{
         SingleCookie,
     },
 };
-
-use super::CeobeCookieLogic;
 
 impl CeobeCookieLogic {
     pub async fn cookie_list(
@@ -187,9 +184,8 @@ impl CeobeCookieLogic {
         let mut new_combid_info =
             CookieListKey::NEW_COMBID_INFO.redis_type(redis);
         if new_combid_info.exists(&comb_id).await? {
-            res = serde_json::from_str(
-                &new_combid_info.get(&comb_id).await?.as_str(),
-            )?;
+            res =
+                serde_json::from_str(&new_combid_info.get(&comb_id).await?)?;
         }
         Ok(res)
     }
