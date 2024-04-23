@@ -1,18 +1,18 @@
 use std::borrow::Cow;
 
-use redis::aio::ConnectionLike;
+
 
 pub use crate::type_bind::hash::Hash;
-pub use crate::type_bind::nomal::Nomral;
+pub use crate::type_bind::normal::Normal;
 
 mod hash;
-mod nomal;
+mod normal;
 
 pub trait RedisTypeTrait<'redis, R>: Sized {
     fn from_redis_and_key(
         redis: &'redis mut R, key: Cow<'static, str>,
     ) -> Self;
-
+    
     fn clear(self) { drop(self) }
 }
 
@@ -63,7 +63,7 @@ impl RedisKayAutoConstruct for () {
 }
 
 macro_rules! redis_key {
-    (hash $name:ident => $format_key:literal[$($arg:ident:$ty:ident),*])=>{
+    (hash $name:ident::<$t:ty> => $format_key:literal[$($arg:ident:$ty:ident),*])=>{
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -77,12 +77,12 @@ macro_rules! redis_key {
         }
 
         impl $crate::type_bind::RedisTypeBind for $name {
-            type RedisType<'redis, R> = $crate::type_bind::Hash<'redis, R>
+            type RedisType<'redis, R> = $crate::type_bind::Hash<'redis, R, $t>
                 where
                     R: 'redis;
         }
     };
-    (hash $name:ident => $key:literal) => {
+    (hash $name:ident::<$t:ty> => $key:literal) => {
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -94,13 +94,13 @@ macro_rules! redis_key {
         }
 
         impl $crate::type_bind::RedisTypeBind for $name {
-            type RedisType<'redis, R> = $crate::type_bind::Hash<'redis, R>
+            type RedisType<'redis, R> = $crate::type_bind::Hash<'redis, R, $t>
                 where
                     R: 'redis;
         }
     };
     
-     ($name:ident => $format_key:literal[$($arg:ident:$ty:ident),*])=>{
+     ($name:ident::<$t:ty> => $format_key:literal[$($arg:ident:$ty:ident),*])=>{
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -114,12 +114,12 @@ macro_rules! redis_key {
         }
 
         impl $crate::type_bind::RedisTypeBind for $name {
-            type RedisType<'redis, R> = $crate::type_bind::Nomral<'redis, R>
+            type RedisType<'redis, R> = $crate::type_bind::Normal<'redis, R, $t>
                 where
                     R: 'redis;
         }
     };
-    ($name:ident => $key:literal) => {
+    ($name:ident::<$t:ty> => $key:literal) => {
         pub struct $name;
 
         impl $crate::type_bind::RedisKey for $name {
@@ -131,7 +131,7 @@ macro_rules! redis_key {
         }
 
         impl $crate::type_bind::RedisTypeBind for $name {
-            type RedisType<'redis, R> = $crate::type_bind::Nomral<'redis, R>
+            type RedisType<'redis, R> = $crate::type_bind::Normal<'redis, R, $t>
                 where
                     R: 'redis;
         }
