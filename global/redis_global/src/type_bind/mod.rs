@@ -38,7 +38,7 @@ pub trait RedisTypeBind: RedisKey {
         RedisTypeBind::bind_with_args(
             self,
             redis,
-            <<Self as RedisKey>::Args<'_> as RedisKeyArg1>::to_this(arg),
+            <<Self as RedisKey>::Args<'_> as RedisKeyArg1>::construct(arg),
         )
     }
 
@@ -75,13 +75,13 @@ pub trait RedisKey {
 pub trait RedisKeyArg1 {
     type Arg0;
 
-    fn to_this(arg0: Self::Arg0) -> Self;
+    fn construct(arg0: Self::Arg0) -> Self;
 }
 
 impl<T> RedisKeyArg1 for (T,) {
     type Arg0 = T;
 
-    fn to_this(arg0: Self::Arg0) -> Self { (arg0,) }
+    fn construct(arg0: Self::Arg0) -> Self { (arg0,) }
 }
 
 pub trait RedisKayAutoConstruct {

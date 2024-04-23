@@ -29,7 +29,7 @@ where
     T: FromRedisValue + ToRedisArgs + Send + Sync + 'redis,
 {
     /// 检查Hash类型中指定field是否存在
-    /// 
+    ///
     /// ## 参考
     /// - [`AsyncCommands::hexists`]
     pub async fn exists<'arg, RV, F>(&mut self, field: F) -> RedisResult<RV>
@@ -51,7 +51,7 @@ where
     }
 
     /// 获取当前hash中对应field的对应值
-    /// 
+    ///
     /// ## 参考
     /// - [`AsyncCommands::hget`]
     pub async fn get<'arg, F>(&mut self, field: F) -> RedisResult<T>
@@ -60,6 +60,7 @@ where
     {
         self.redis.hget(&*self.key, field).await
     }
+
     /// 获取当前hash中对应field的对应值
     ///
     /// ## 参考
@@ -70,6 +71,7 @@ where
     {
         self.redis.hgetall(&*self.key).await
     }
+
     /// 尝试获取当前hash中对应的field的对应值，如果不存在，将会返回[`None`]
     ///
     /// ## 参考
@@ -90,6 +92,7 @@ where
             None
         })
     }
+
     /// 尝试删除当前hash中对应的field的对应值
     ///
     /// ## 参考

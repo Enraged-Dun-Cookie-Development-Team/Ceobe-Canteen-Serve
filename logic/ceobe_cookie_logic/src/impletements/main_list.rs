@@ -45,7 +45,7 @@ impl CeobeCookieLogic {
         if let Some(update_cookie_id) = cookie_info.update_cookie_id {
             let mut new_update_cookie_id = NewUpdateCookieId
                 .bind_with(redis_client.mut_connect(), &update_cookie_id);
-            
+
             if !new_update_cookie_id.exists().await? {
                 return Err(LogicError::UpdateCookieIdCacheFailure(
                     update_cookie_id,

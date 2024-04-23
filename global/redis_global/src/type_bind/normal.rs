@@ -82,6 +82,7 @@ where
     pub async fn get(&mut self) -> RedisResult<T> {
         self.redis.get(&*self.key).await
     }
+
     /// 尝试获取值，如果不存在，返回[`None`]
     ///
     /// ## 参考

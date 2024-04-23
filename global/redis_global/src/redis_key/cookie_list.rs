@@ -18,4 +18,3 @@ redis_key!(hash NewestCookies::<String> => "cookie:list:newest:combId");
 redis_key!(hash NewCombIdInfo::<String> => "cookie:list:new:combId:info");
 redis_key!(hash NewUpdateCookies::<CookieId> => "cookie:list:new:update:map");
 redis_key!(NewUpdateCookieId::<bool> => "cookie:list:new:update:id:{}" [cookie_id:ObjectId]);
-

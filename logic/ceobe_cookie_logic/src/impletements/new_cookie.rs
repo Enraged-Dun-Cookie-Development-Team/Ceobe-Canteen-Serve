@@ -1,8 +1,7 @@
 use std::time::Duration;
 
-use futures::future;
-
 use ceobe_qiniu_upload::QiniuManager;
+use futures::future;
 use mob_push_server::PushManager;
 use persistence::{
     ceobe_cookie::ToCeobe,
@@ -11,7 +10,7 @@ use persistence::{
         datasource_combination::DatasourceCombinationOperate,
         datasource_config::DatasourceOperate,
     },
-    mongodb::{MongoDatabaseOperate, mongodb::bson::oid::ObjectId},
+    mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate},
     mysql::SqlDatabaseOperate,
     operate::{GetDatabaseConnect, GetMutDatabaseConnect},
     redis::RedisConnect,
@@ -19,8 +18,8 @@ use persistence::{
 use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis_global::{
-    redis_key::cookie_list::{CookieListKey, NewCombIdInfo}
-    , RedisTypeBind,
+    redis_key::cookie_list::{CookieListKey, NewCombIdInfo},
+    RedisTypeBind,
 };
 
 use crate::{
@@ -157,24 +156,24 @@ impl CeobeCookieLogic {
     /// 1. 并发更新NEW_COMBID_INFO redis表
     ///    - 判断NEW_COMBID_INFO的combid field是否存在。
     ///    - 如果存在，取当前饼id和数据库里饼id较大的为cookie_id。
-    ///      > 这边没办法批量操作的原因就是因为每个得单独判断，每个下面数据源是不一样的
+    ///      > 这边没办法批量操作的原因就是因为每个得单独判断，
+    ///      > 每个下面数据源是不一样的
     ///    - 写入NEW_COMBID_INFO的对应combid的值，cookie_id为最新，
-    ///           update_cookie_id为当前传入
+    ///      update_cookie_id为当前传入
     /// 2. 更新update_cookie_id缓存，这个缓存是提供官方绕过cdn而设计，
-    ///        因为列表cdn设计2小时缓存，所以被换下的id也是设置2小时ttl缓存
+    ///    因为列表cdn设计2小时缓存，所以被换下的id也是设置2小时ttl缓存
     ///    - 表介绍
     ///       - NEW_UPDATE_COOKIES: hash, 储存最新的更新饼id
     ///       - NEW_UPDATE_COOKIE_ID: string，给更新饼id判断存不存在的，
-    ///               可以让查询时候列表命中缓存
+    ///         可以让查询时候列表命中缓存
     ///    - 过程
     ///       - 在NEW_UPDATE_COOKIE_ID表中，设置传入的更新饼id，
-    ///               不设置ttl（过期时间）
+    ///         不设置ttl（过期时间）
     ///       - 在NEW_UPDATE_COOKIES表的combid
-    ///               field中取出更新饼id，如果有才会做接下来操作，
-    ///               使用取出的更新饼id，
-    ///               在NEW_UPDATE_COOKIE_ID表中设置2小时缓存。
+    ///         field中取出更新饼id，如果有才会做接下来操作，
+    ///         使用取出的更新饼id， 在NEW_UPDATE_COOKIE_ID表中设置2小时缓存。
     ///       - 将当前传入更新饼id赋值到NEW_UPDATE_COOKIES表的combid
-    ///               field中，作为最新的更新饼id记录
+    ///         field中，作为最新的更新饼id记录
     async fn cache_cookie_redis(
         redis_client: &mut RedisConnect, cookie_id: Option<ObjectId>,
         update_cookie_id: Option<ObjectId>, comb_ids: Vec<String>,
