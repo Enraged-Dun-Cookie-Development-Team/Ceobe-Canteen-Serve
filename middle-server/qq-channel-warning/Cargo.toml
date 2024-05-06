@@ -9,12 +9,13 @@ edition = "2021"
 axum.workspace = true
 axum-starter.workspace = true
 http.workspace = true
+http_02 = {package = "http",version = "0.2"}
 prost = "0.11.9"
 resp-result.workspace = true
 status-err = { version = "0.1.0", path = "../../libs/status-err" }
 thiserror.workspace = true
 tonic = "0.9.1"
-typed-builder = "0.14.0"
+typed-builder.workspace = true
 url.workspace = true
 
 [build-dependencies]

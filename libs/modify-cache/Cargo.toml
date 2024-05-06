@@ -13,7 +13,7 @@ sha3 = "0.10"
 # time
 chrono = { workspace = true }
 # web support
-http = "0.2"
+http = "1"
 axum = { workspace = true, features = ["original-uri"] }
 async-trait = { workspace = true }
 resp-result = { workspace = true }

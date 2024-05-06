@@ -7,7 +7,8 @@ version = "0.1.0"
 [dependencies]
 reqwest = { workspace = true }
 axum = { workspace = true }
-http = "0.2"
+http = "1"
+http_02 = {package = "http",version = "0.2"}
 jwt = "0.16.0"
 url = { workspace = true }
 bcrypt = "0.13"
@@ -35,6 +36,7 @@ path = "../range-limit"
 [dependencies.resp-result]
 workspace = true
 features = ["extra-error"]
+
 
 [dependencies.checker]
 path = "../checker"
