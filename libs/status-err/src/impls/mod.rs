@@ -65,12 +65,29 @@ status_error!(
         0x0006
     ] -> "http 请求头内容解析异常"
 );
+
+status_error!(
+    http_02::header::ToStrError[
+        ErrPrefix::PARSE,
+        0x0006
+    ] -> "http 请求头内容解析异常"
+);
+
 status_error!(
     http::header::InvalidHeaderValue[
         ErrPrefix::PARSE,
         0x0007: StatusCode::INTERNAL_SERVER_ERROR
     ] -> "非法 Http 请求头内容"
 );
+
+status_error!(
+    http_02::header::InvalidHeaderValue[
+        ErrPrefix::PARSE,
+        0x0007: StatusCode::INTERNAL_SERVER_ERROR
+    ] -> "非法 Http 请求头内容"
+);
+
+
 status_error!(
     bson::de::Error[
         ErrPrefix::PARSE,
