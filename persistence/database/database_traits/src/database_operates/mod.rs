@@ -8,6 +8,14 @@ pub struct DatabaseOperate<C> {
     connect: C,
 }
 
+impl<C> DatabaseOperate<C> {
+    pub fn new(conn:C)->Self{
+        Self{
+            connect:conn
+        }
+    }
+}
+
 impl<C> DerefMut for DatabaseOperate<C> {
     fn deref_mut(&mut self) -> &mut Self::Target { &mut self.connect }
 }
