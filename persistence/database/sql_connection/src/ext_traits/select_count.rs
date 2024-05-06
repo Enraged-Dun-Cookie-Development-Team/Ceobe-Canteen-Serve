@@ -3,6 +3,7 @@ use sea_orm::{
     ColumnTrait, EntityTrait, FromQueryResult, QuerySelect, Select,
     SelectModel, Selector,
 };
+use sea_orm::sea_query::Asterisk;
 
 use super::{Count, CountNonZero, CountZero, COUNT_NAME};
 
@@ -79,8 +80,8 @@ impl ColumnExpr {
     fn count(self) -> SimpleExpr { self.0.count() }
 
     /// count (*)
-    /// 可参考 [Expr::asterisk]
-    pub fn asterisk() -> Self { Self(Expr::asterisk()) }
+    /// 可参考 [Asterisk]
+    pub fn asterisk() -> Self { Self(Expr::col(Asterisk)) }
 }
 
 impl<C: ColumnTrait> From<C> for ColumnExpr {

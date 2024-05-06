@@ -5,6 +5,7 @@ use sea_orm::{
     ColumnTrait, DbBackend, EntityTrait, Select, SelectModel, SelectorRaw,
     Statement, StatementBuilder,
 };
+use sea_orm::sea_query::Asterisk;
 
 use super::{CountZero, COUNT_NAME};
 
@@ -74,7 +75,7 @@ fn gen_statement(
     // select count (B.id)
     // 对所有希望存在但是不存在的行进行计数，
     // 如果为 0 那就 全部都存在
-    query.expr_as(Expr::asterisk().count(), Alias::new(COUNT_NAME));
+    query.expr_as(Expr::col(Asterisk).count(), Alias::new(COUNT_NAME));
 
     // from ()
     query.from_subquery(
