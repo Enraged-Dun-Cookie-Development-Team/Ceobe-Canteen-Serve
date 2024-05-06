@@ -73,13 +73,13 @@ where
         }
 
         let result = Entity::find()
-            .filter(Expr::cust_with_exprs(
-                "current_date - $1 <= $2",
-                [
-                    Column::LastAccessTime.into_simple_expr(),
-                    Expr::val(expired_days).into_simple_expr(),
-                ],
-            ))
+            .filter(
+                Expr::expr(
+                    Expr::current_date()
+                        .sub(Column::LastAccessTime.into_simple_expr()),
+                )
+                .lte(Expr::val(expired_days)),
+            )
             .into_partial_model::<ExpiredId>()
             .all(self.get_connect())
             .await?
