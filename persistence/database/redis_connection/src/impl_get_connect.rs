@@ -1,5 +1,6 @@
 use core::{future::Future, marker::Send, pin::Pin};
 use std::convert::Infallible;
+use std::fmt::{Debug, Formatter};
 
 use database_traits::get_connect::{
     FromRequestParts, GetMutDatabaseConnect, Parts,
@@ -10,6 +11,12 @@ use crate::static_var::get_redis_client;
 
 #[derive(Clone)]
 pub struct RedisConnect(ConnectionManager);
+
+impl Debug for RedisConnect {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("RedisConnect").finish()
+    }
+}
 
 impl RedisConnect {
     pub fn from_static() -> Self {
