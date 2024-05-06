@@ -1,4 +1,3 @@
-
 use axum_starter::{
     prepare,
     router::{Fallback, Nest},
@@ -20,7 +19,6 @@ fn router_v1() -> impl PrepareRouteEffect<State> {
 fn router_fallback<S>() -> impl PrepareRouteEffect<S>
 where
     S: Send + Sync + 'static + Clone,
-  
 {
     Fallback::new(not_exist)
 }

@@ -1,9 +1,8 @@
 use sea_orm::{
-    sea_query::{Expr, SimpleExpr},
+    sea_query::{Asterisk, Expr, SimpleExpr},
     ColumnTrait, EntityTrait, FromQueryResult, QuerySelect, Select,
     SelectModel, Selector,
 };
-use sea_orm::sea_query::Asterisk;
 
 use super::{Count, CountNonZero, CountZero, COUNT_NAME};
 

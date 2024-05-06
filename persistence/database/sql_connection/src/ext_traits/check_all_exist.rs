@@ -1,11 +1,11 @@
 use sea_orm::{
     sea_query::{
-        self, Alias, Expr, Query, SelectStatement, SimpleExpr, UnionType,
+        self, Alias, Asterisk, Expr, Query, SelectStatement, SimpleExpr,
+        UnionType,
     },
     ColumnTrait, DbBackend, EntityTrait, Select, SelectModel, SelectorRaw,
     Statement, StatementBuilder,
 };
-use sea_orm::sea_query::Asterisk;
 
 use super::{CountZero, COUNT_NAME};
 

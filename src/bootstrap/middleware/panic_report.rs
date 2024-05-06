@@ -1,4 +1,4 @@
-use axum::{response::IntoResponse};
+use axum::response::IntoResponse;
 use axum_starter::{prepare, PrepareMiddlewareEffect};
 use persistence::operate::FromRequestParts;
 use qq_channel_warning::{

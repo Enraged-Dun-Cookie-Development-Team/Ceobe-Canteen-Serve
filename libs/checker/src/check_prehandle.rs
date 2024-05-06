@@ -88,7 +88,7 @@ where
     async fn from_request_parts(
         parts: &mut Parts, state: &S,
     ) -> Result<Self, Self::Rejection> {
-        let task = async {
+        async {
                     let previous =
                         <Previous::Payload as FromRequestParts<S>>::from_request_parts(parts, state).await?.to_inner();
                     let checked =
@@ -96,8 +96,7 @@ where
                     Ok(Self(checked))
                 }
                     .await
-                    .map_err(RespResult::Err);
-        task
+                    .map_err(RespResult::Err)
     }
 }
 pub trait CheckFetchFamily<P, E> {
