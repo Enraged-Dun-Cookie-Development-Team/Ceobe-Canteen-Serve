@@ -1,7 +1,8 @@
 use tracing::{info, instrument};
 
 use db_ops_prelude::{database_operates::NoConnect, get_connect::GetDatabaseConnect, sea_orm::{ConnectionTrait, EntityTrait, sea_query::{Expr, MysqlQueryBuilder, Query}, Statement}, sql_models::fetcher::datasource_combination::models::model_datasource_combination::{Column, CombinationId, Entity}};
-
+use db_ops_prelude::sea_orm::{DerivePartialModel, FromQueryResult, IntoSimpleExpr, QueryFilter};
+use db_ops_prelude::sea_orm;
 use super::{DatasourceCombinationOperate, OperateResult};
 
 impl DatasourceCombinationOperate<'_, NoConnect> {
@@ -59,6 +60,34 @@ where
             datasource_id,
         )
         .await
+    }
+
+    pub async fn find_expired(
+        &self, expired_days: i32,
+    ) -> Result<Vec<String>, super::OperateError> {
+        #[derive(Debug, FromQueryResult, DerivePartialModel)]
+        #[sea_orm(entity = "Entity")]
+        struct ExpiredId {
+            #[sea_orm(from_col = "combination_id")]
+            combine_id: String,
+        }
+
+        let result = Entity::find()
+            .filter(Expr::cust_with_exprs(
+                "current_date - $1 <= $2",
+                [
+                    Column::LastAccessTime.into_simple_expr(),
+                    Expr::val(expired_days).into_simple_expr(),
+                ],
+            ))
+            .into_partial_model::<ExpiredId>()
+            .all(self.get_connect())
+            .await?
+            .into_iter()
+            .map(|ExpiredId { combine_id }| combine_id)
+            .collect();
+
+        Ok(result)
     }
 }
 
