@@ -1,6 +1,6 @@
 use std::any::Any;
 
-use axum::{body::BoxBody, extract::OriginalUri, response::IntoResponse};
+use axum::{body::Body as BoxBody, extract::OriginalUri, response::IntoResponse};
 use http::Method;
 use resp_result::RespResult;
 use status_err::ErrPrefix;

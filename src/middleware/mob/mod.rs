@@ -10,7 +10,7 @@ use self::error::MobVerifyError;
 mod error;
 mod layer;
 mod service;
-
+#[derive(Clone)]
 pub struct MobIdInfo(pub UserMobId);
 
 impl std::fmt::Debug for MobIdInfo {

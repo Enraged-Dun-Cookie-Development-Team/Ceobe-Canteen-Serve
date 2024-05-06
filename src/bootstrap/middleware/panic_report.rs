@@ -1,4 +1,4 @@
-use axum::{body::BoxBody, response::IntoResponse};
+use axum::{response::IntoResponse};
 use axum_starter::{prepare, PrepareMiddlewareEffect};
 use persistence::operate::FromRequestParts;
 use qq_channel_warning::{
@@ -42,7 +42,7 @@ impl<S> PrepareMiddlewareEffect<S> for PanicReport {
 pub struct PanicReportHandle(QqChannelGrpcService);
 
 impl ResponseForPanic for PanicReportHandle {
-    type ResponseBody = BoxBody;
+    type ResponseBody = axum::body::Body;
 
     #[instrument(skip_all)]
     fn response_for_panic(
