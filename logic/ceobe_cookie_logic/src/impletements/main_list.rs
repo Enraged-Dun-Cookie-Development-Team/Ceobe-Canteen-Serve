@@ -22,8 +22,10 @@ use persistence::{
     operate::GetMutDatabaseConnect,
     redis::RedisConnect,
 };
-use redis::AsyncCommands;
-use redis_global::redis_key::{concat_key, cookie_list::CookieListKey};
+use redis_global::{
+    redis_key::cookie_list::{CookieListKey, NewUpdateCookieId},
+    RedisTypeBind, RedisTypeTrait,
+};
 use tokio::task::{self, JoinHandle};
 
 use super::CeobeCookieLogic;
@@ -40,19 +42,16 @@ impl CeobeCookieLogic {
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
         mut redis_client: RedisConnect, cookie_info: CookieListReq,
     ) -> LogicResult<CookieListResp> {
-        let redis = redis_client.mut_connect();
         if let Some(update_cookie_id) = cookie_info.update_cookie_id {
-            if !redis
-                .exists(concat_key(
-                    CookieListKey::NEW_UPDATE_COOKIE_ID,
-                    &update_cookie_id.to_string(),
-                ))
-                .await?
-            {
+            let mut new_update_cookie_id = NewUpdateCookieId
+                .bind_with(redis_client.mut_connect(), &update_cookie_id);
+
+            if !new_update_cookie_id.exists().await? {
                 return Err(LogicError::UpdateCookieIdCacheFailure(
                     update_cookie_id,
                 ));
             }
+            new_update_cookie_id.clear();
         }
         // 转换数据源组合id成数据源ids
         let datasource_bitmap: Bitmap<256> = BitmapBase70Conv::from_base_70(
@@ -181,18 +180,10 @@ impl CeobeCookieLogic {
             cookie_id: None,
             update_cookie_id: None,
         };
-        if redis
-            .hexists(CookieListKey::NEW_COMBID_INFO, &comb_id)
-            .await?
-        {
-            res = serde_json::from_str(
-                &redis
-                    .hget::<'_, _, _, String>(
-                        CookieListKey::NEW_COMBID_INFO,
-                        &comb_id,
-                    )
-                    .await?,
-            )?;
+        let mut new_combid_info = CookieListKey::NEW_COMBID_INFO.bind(redis);
+        if new_combid_info.exists(&comb_id).await? {
+            res =
+                serde_json::from_str(&new_combid_info.get(&comb_id).await?)?;
         }
         Ok(res)
     }
