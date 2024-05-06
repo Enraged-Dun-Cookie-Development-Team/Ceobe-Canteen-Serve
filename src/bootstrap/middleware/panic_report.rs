@@ -1,4 +1,4 @@
-use axum::{body::BoxBody, response::IntoResponse};
+use axum::response::IntoResponse;
 use axum_starter::{prepare, PrepareMiddlewareEffect};
 use persistence::operate::FromRequestParts;
 use qq_channel_warning::{
@@ -11,9 +11,9 @@ use tracing::{error, instrument};
 
 use crate::error::ServicePanic;
 
-#[prepare(PrepareCatchPanic? 'arg)]
-pub async fn prepare_catch_panic<'arg, C: GrpcConfigTrait>(
-    cfg: &'arg C,
+#[prepare(PrepareCatchPanic?)]
+pub async fn prepare_catch_panic<C: GrpcConfigTrait>(
+    cfg: &C,
 ) -> Result<PanicReport, qq_channel_warning::Error> {
     let add = qq_channel_logger(cfg).0;
 
@@ -42,7 +42,7 @@ impl<S> PrepareMiddlewareEffect<S> for PanicReport {
 pub struct PanicReportHandle(QqChannelGrpcService);
 
 impl ResponseForPanic for PanicReportHandle {
-    type ResponseBody = BoxBody;
+    type ResponseBody = axum::body::Body;
 
     #[instrument(skip_all)]
     fn response_for_panic(

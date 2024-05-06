@@ -1,4 +1,3 @@
-use axum::body::Body;
 use axum_starter::{
     prepare,
     router::{Fallback, Nest},
@@ -11,16 +10,15 @@ use crate::{bootstrap::State, error::not_exist, router};
 
 /// 配置router
 #[prepare(RouteV1)]
-fn router_v1() -> impl PrepareRouteEffect<State, Body> {
+fn router_v1() -> impl PrepareRouteEffect<State> {
     Nest::new("/api/v1", router::root_route())
 }
 
 /// 配置Fallback
 #[prepare(RouterFallback)]
-fn router_fallback<S, B>() -> impl PrepareRouteEffect<S, B>
+fn router_fallback<S>() -> impl PrepareRouteEffect<S>
 where
     S: Send + Sync + 'static + Clone,
-    B: Send + Sync + http_body::Body + 'static,
 {
     Fallback::new(not_exist)
 }

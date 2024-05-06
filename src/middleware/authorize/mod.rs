@@ -11,6 +11,7 @@ mod error;
 mod layer;
 mod service;
 
+#[derive(Clone)]
 pub struct AuthorizeInfo(pub admin::models::Model);
 
 impl std::fmt::Debug for AuthorizeInfo {

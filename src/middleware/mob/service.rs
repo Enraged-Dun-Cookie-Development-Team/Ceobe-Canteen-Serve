@@ -1,5 +1,5 @@
 use axum::{
-    body::{Body, BoxBody},
+    body::{Body, Body as BoxBody},
     extract::FromRequestParts,
     response::{IntoResponse, Response},
 };

@@ -6,8 +6,8 @@ pub mod starter_state {
     pub use crate::SchedulerUrl;
 }
 
-#[prepare(ScheduleNotifierPrepare 'cfg)]
-pub fn prepare_fetcher<'cfg, C>(config: &'cfg C) -> AddState<SchedulerUrl>
+#[prepare(ScheduleNotifierPrepare)]
+pub fn prepare_fetcher<C>(config: &C) -> AddState<SchedulerUrl>
 where
     C: SchedulerNotifierConfig,
 {
