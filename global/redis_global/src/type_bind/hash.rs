@@ -104,4 +104,19 @@ where
     {
         self.redis.hdel(&*self.key, field).await
     }
+
+    pub async fn remove_all<'arg, RV, F, I>(
+        &mut self, fields: I,
+    ) -> RedisResult<RV>
+    where
+        F: ToRedisArgs + Send + Sync + 'arg,
+        I: IntoIterator<Item = F>,
+        RV: FromRedisValue,
+    {
+        let mut pipe = redis::pipe();
+        for field in fields {
+            pipe.hdel(&*self.key, field).ignore();
+        }
+        pipe.query_async::<_, RV>(self.redis).await
+    }
 }
