@@ -34,6 +34,7 @@ use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
+use ceobe_cookie_logic::impletements::CeobeCookieLogic;
 
 use crate::bootstrap::decorator::Decroator;
 
@@ -94,6 +95,7 @@ async fn main_task() {
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
+        .post_prepare(CeobeCookieLogic::remove_expired_combine_id)
         .preparing()
         .await
         .expect("准备启动服务异常")
