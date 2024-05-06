@@ -1,3 +1,5 @@
+extern crate serde;
+
 use std::{
     io::{stdout, Write},
     time::Duration,
@@ -26,19 +28,14 @@ use configs::{
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
-use http::Method;
 use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
-use tower_http::{
-    catch_panic::CatchPanicLayer, compression::CompressionLayer,
-    cors::CorsLayer,
-};
+use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
-use crate::bootstrap::decorator::{Decroator};
 
-use crate::error::serve_panic;
+use crate::bootstrap::decorator::Decroator;
 
 mod bootstrap;
 mod configs;
@@ -48,11 +45,6 @@ mod middleware;
 mod router;
 mod serves;
 mod utils;
-#[cfg(not(target_env = "msvc"))] use jemallocator::Jemalloc;
-
-#[cfg(not(target_env = "msvc"))]
-#[global_allocator]
-static GLOBAL: Jemalloc = Jemalloc;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
@@ -96,19 +88,13 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
-        .layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
-            "https://www.ceobecanteen.top".parse().unwrap(),
-            "https://ceobecanteen.top".parse().unwrap(),
-        ]))
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
-        .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
-        .convert_state()
-        .prepare_start()
+        .preparing()
         .await
         .expect("准备启动服务异常")
         .launch()
