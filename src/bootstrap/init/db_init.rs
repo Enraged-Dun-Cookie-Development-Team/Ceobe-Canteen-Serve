@@ -1,17 +1,15 @@
-use axum_starter::prepare;
-use axum_starter::state::AddState;
+use axum_starter::{prepare, state::AddState};
 use persistence::{
     connect::{connect_db, connect_db_with_migrate},
     mongodb,
-    mongodb::{MongoDbConfig, MongoDbError},
-    mysql::{sea_orm::DbErr, DbConfig, Migrator, MigratorTrait, SqlDatabase},
-    redis::{RedisDatabase, RedisDbConfig, RedisError},
+    mongodb::{MongoConnect, MongoDbConfig, MongoDbError},
+    mysql::{
+        sea_orm::DbErr, DbConfig, Migrator, MigratorTrait, SqlConnect,
+        SqlDatabase,
+    },
+    redis::{RedisConnect, RedisDatabase, RedisDbConfig, RedisError},
 };
 use tracing::instrument;
-use mob_push_server::push_notify::android::Badge::Add;
-use persistence::mongodb::MongoConnect;
-use persistence::mysql::SqlConnect;
-use persistence::redis::RedisConnect;
 
 use crate::{
     bootstrap::default_user::create_default_user,

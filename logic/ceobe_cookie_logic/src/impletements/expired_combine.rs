@@ -8,7 +8,7 @@ use persistence::{
         ToFetcher,
     },
     help_crates::tracing::error,
-    mysql::{SqlConnect},
+    mysql::SqlConnect,
     operate::{DatabaseOperate, GetDatabaseConnect, GetMutDatabaseConnect},
     redis::RedisConnect,
 };
@@ -52,7 +52,7 @@ impl CeobeCookieLogic {
                     break;
                 };
 
-               let _= logic_error.insert(err);
+                let _ = logic_error.insert(err);
             }
 
             if let Some(error) = logic_error {
@@ -107,7 +107,7 @@ impl CeobeCookieLogic {
                 expired_ids
                     .iter()
                     .cloned()
-                    .map(|id| DeleteObjectName::new(id))
+                    .map(DeleteObjectName::new)
                     .collect(),
             )
             // ignore qiniu error

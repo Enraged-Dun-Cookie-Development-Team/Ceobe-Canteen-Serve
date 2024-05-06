@@ -1,6 +1,8 @@
 use core::{future::Future, marker::Send, pin::Pin};
-use std::convert::Infallible;
-use std::fmt::{Debug, Formatter};
+use std::{
+    convert::Infallible,
+    fmt::{Debug, Formatter},
+};
 
 use database_traits::get_connect::{
     FromRequestParts, GetMutDatabaseConnect, Parts,

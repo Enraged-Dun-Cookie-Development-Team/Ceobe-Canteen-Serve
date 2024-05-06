@@ -5,9 +5,9 @@ use axum_starter::FromStateCollector;
 use ceobe_qiniu_upload::QiniuBaseUrl;
 use general_request_client::client::RequestClient;
 use mob_push_server::PartPushManagerState;
-use persistence::mongodb::MongoConnect;
-use persistence::mysql::SqlConnect;
-use persistence::redis::RedisConnect;
+use persistence::{
+    mongodb::MongoConnect, mysql::SqlConnect, redis::RedisConnect,
+};
 use qq_channel_warning::QqChannelGrpcState;
 use request_clients::bili_client::QueryBiliVideo;
 use scheduler_notifier::SchedulerUrl;
@@ -21,16 +21,16 @@ pub mod middleware;
 pub struct State {
     request_client: RequestClient,
     bili: QueryBiliVideo,
-    
+
     qiniu: Arc<ceobe_qiniu_upload::Manager>,
     qiniu_base_url: QiniuBaseUrl,
     // fetcher request url
     scheduler_url: SchedulerUrl,
     mob_push: PartPushManagerState,
     qq_channel: QqChannelGrpcState,
-    
+
     // database connection
-    sql:SqlConnect,
-    mongo:MongoConnect,
-    redis:RedisConnect,
+    sql: SqlConnect,
+    mongo: MongoConnect,
+    redis: RedisConnect,
 }

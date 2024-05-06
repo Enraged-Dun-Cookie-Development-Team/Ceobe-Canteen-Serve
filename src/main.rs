@@ -18,6 +18,7 @@ use bootstrap::{
         tracing_request::PrepareRequestTracker,
     },
 };
+use ceobe_cookie_logic::impletements::CeobeCookieLogic;
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, mob_config::MobPushConfig,
@@ -34,7 +35,6 @@ use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
-use ceobe_cookie_logic::impletements::CeobeCookieLogic;
 
 use crate::bootstrap::decorator::Decroator;
 
