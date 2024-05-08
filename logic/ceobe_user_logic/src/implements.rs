@@ -269,7 +269,7 @@ impl CeobeUserLogic {
 
                 CookieListKey::NEW_COMBID_INFO
                     .bind(redis)
-                    .set(&comb_id, Json(comb_info.into()).serde()?)
+                    .set(&comb_id, Json(comb_info).serde()?)
                     .await?;
             }
         }

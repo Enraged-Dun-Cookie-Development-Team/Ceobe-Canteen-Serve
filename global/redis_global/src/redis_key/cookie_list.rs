@@ -14,11 +14,11 @@ impl CookieListKey {
 
 use bson::oid::ObjectId;
 
-use crate::CookieId;
-use crate::redis_payloads::cookie_list::CombIdToCookieIdRep;
-use crate::wrappers::Json;
+use crate::{
+    redis_payloads::cookie_list::CombIdToCookieIdRep, wrappers::Json,
+    CookieId,
+};
 redis_key!(hash NewestCookies::<String> => "cookie:list:newest:combId");
 redis_key!(hash NewCombIdInfo::<Json<CombIdToCookieIdRep>> => "cookie:list:new:combId:info");
 redis_key!(hash NewUpdateCookies::<CookieId> => "cookie:list:new:update:map");
 redis_key!(NewUpdateCookieId::<bool> => "cookie:list:new:update:id:{}" [cookie_id:ObjectId]);
-

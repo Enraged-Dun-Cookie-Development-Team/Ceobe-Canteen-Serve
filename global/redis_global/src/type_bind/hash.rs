@@ -1,9 +1,8 @@
 use std::{borrow::Cow, collections::HashMap, marker::PhantomData};
 
 use redis::{AsyncCommands, FromRedisValue, RedisResult, ToRedisArgs};
-use crate::redis_value::RedisValue;
 
-use crate::type_bind::RedisTypeTrait;
+use crate::{redis_value::RedisValue, type_bind::RedisTypeTrait};
 
 /// Redis的Hash数据结构类型绑定
 pub struct Hash<'redis, R: 'redis, T> {
@@ -27,7 +26,7 @@ impl<'redis, R, T> RedisTypeTrait<'redis, R> for Hash<'redis, R, T> {
 impl<'redis, R, T> Hash<'redis, R, T>
 where
     R: redis::aio::ConnectionLike + Send + Sync,
-    T:RedisValue<'redis>
+    T: RedisValue<'redis>,
 {
     /// 检查Hash类型中指定field是否存在
     ///

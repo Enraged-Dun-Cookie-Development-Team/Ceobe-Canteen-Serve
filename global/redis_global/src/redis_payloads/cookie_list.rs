@@ -4,7 +4,7 @@ use typed_builder::TypedBuilder;
 use crate::CookieId;
 
 /// 数据源组合id-最新饼id 上传对象储存
-#[derive(Serialize, Deserialize, Clone, Debug, TypedBuilder,Default)]
+#[derive(Serialize, Deserialize, Clone, Debug, TypedBuilder, Default)]
 pub struct CombIdToCookieIdRep {
     #[builder(default, setter(into, strip_option))]
     /// 最新饼id

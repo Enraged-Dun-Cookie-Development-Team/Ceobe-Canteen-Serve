@@ -1,4 +1,3 @@
 mod json;
 
-pub use json::Json;
-pub use json::SerdeJson;
+pub use json::{Json, SerdeJson};

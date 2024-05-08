@@ -2,8 +2,7 @@ use std::{borrow::Cow, marker::PhantomData, time::Duration};
 
 use redis::{AsyncCommands, FromRedisValue, RedisResult};
 
-use crate::redis_value::RedisValue;
-use crate::type_bind::RedisTypeTrait;
+use crate::{redis_value::RedisValue, type_bind::RedisTypeTrait};
 
 pub struct Normal<'redis, R, T> {
     redis: &'redis mut R,
@@ -26,7 +25,7 @@ impl<'redis, R, T> RedisTypeTrait<'redis, R> for Normal<'redis, R, T> {
 impl<'redis, R, T> Normal<'redis, R, T>
 where
     R: redis::aio::ConnectionLike + Send + Sync,
-T:RedisValue<'redis>
+    T: RedisValue<'redis>,
 {
     /// 判定当前值是否存在
     ///
@@ -54,7 +53,9 @@ T:RedisValue<'redis>
     ///
     /// ## 参考
     /// - [`AsyncCommands::set_nx`]
-    pub async fn set_if_not_exist<RV>(&mut self, value: T::Input) -> RedisResult<RV>
+    pub async fn set_if_not_exist<RV>(
+        &mut self, value: T::Input,
+    ) -> RedisResult<RV>
     where
         RV: FromRedisValue,
     {
