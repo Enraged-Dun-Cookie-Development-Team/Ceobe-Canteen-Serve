@@ -11,10 +11,14 @@ impl CookieListKey {
     /// string：带时间缓存的更新饼id
     pub const NEW_UPDATE_COOKIE_ID: NewUpdateCookieId = NewUpdateCookieId;
 }
+
 use bson::oid::ObjectId;
 
 use crate::CookieId;
+use crate::redis_payloads::cookie_list::CombIdToCookieIdRep;
+use crate::wrappers::Json;
 redis_key!(hash NewestCookies::<String> => "cookie:list:newest:combId");
-redis_key!(hash NewCombIdInfo::<String> => "cookie:list:new:combId:info");
+redis_key!(hash NewCombIdInfo::<Json<CombIdToCookieIdRep>> => "cookie:list:new:combId:info");
 redis_key!(hash NewUpdateCookies::<CookieId> => "cookie:list:new:update:map");
 redis_key!(NewUpdateCookieId::<bool> => "cookie:list:new:update:id:{}" [cookie_id:ObjectId]);
+

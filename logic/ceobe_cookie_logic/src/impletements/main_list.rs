@@ -179,8 +179,7 @@ impl CeobeCookieLogic {
         let mut res = CombIdToCookieIdRep::builder().build();
         let mut new_combid_info = CookieListKey::NEW_COMBID_INFO.bind(redis);
         if new_combid_info.exists(&comb_id).await? {
-            res =
-                serde_json::from_str(&new_combid_info.get(&comb_id).await?)?;
+            res = new_combid_info.get(&comb_id).await?.0.into();
         }
         Ok(res)
     }
