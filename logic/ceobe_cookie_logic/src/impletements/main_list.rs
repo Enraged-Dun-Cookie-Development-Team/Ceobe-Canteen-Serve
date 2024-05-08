@@ -24,6 +24,7 @@ use persistence::{
 };
 use redis_global::{
     redis_key::cookie_list::{CookieListKey, NewUpdateCookieId},
+    wrappers::Json,
     RedisTypeBind, RedisTypeTrait,
 };
 use tokio::task::{self, JoinHandle};
@@ -176,11 +177,11 @@ impl CeobeCookieLogic {
         let redis = redis_client.mut_connect();
         // redis表中查不到，说明没有维护或者这个数据源组合没有饼，
         // 直接返回id是null
-        let mut res = CombIdToCookieIdRep::builder().build();
         let mut new_combid_info = CookieListKey::NEW_COMBID_INFO.bind(redis);
-        if new_combid_info.exists(&comb_id).await? {
-            res = new_combid_info.get(&comb_id).await?.0.into();
-        }
-        Ok(res)
+        Ok(new_combid_info
+            .try_get(&comb_id)
+            .await?
+            .map(Json::inner)
+            .unwrap_or_default())
     }
 }

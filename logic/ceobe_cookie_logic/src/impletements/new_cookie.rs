@@ -191,7 +191,7 @@ impl CeobeCookieLogic {
                     new_combid_info
                         .try_get(&comb_id)
                         .await?
-                        .map(|Json(last_comb_info)| last_comb_info),
+                        .map(Json::inner),
                 ) {
                     // 这边一定保证redis这个hash field存在就有这个值。
                     // 结构体中Option只是为了兼容接口返回结构

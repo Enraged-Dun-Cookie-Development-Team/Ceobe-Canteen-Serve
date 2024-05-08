@@ -15,8 +15,10 @@ impl<T> Json<T> {
     where
         T: Serialize,
     {
-        Ok(SerdeJson(serde_json::to_vec(&self.0)?,PhantomData))
+        Ok(SerdeJson(serde_json::to_vec(&self.0)?, PhantomData))
     }
+
+    pub fn inner(self) -> T { self.0 }
 }
 
 impl<'redis, T> RedisValue<'redis> for Json<T>
