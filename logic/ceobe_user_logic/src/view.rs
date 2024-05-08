@@ -31,10 +31,5 @@ pub struct DatasourceCombResp {
 }
 
 /// 数据源组合id-最新饼id 上传对象储存
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CombIdToCookieIdRep {
-    /// 最新饼id
-    pub cookie_id: Option<String>,
-    /// 后更新的饼id
-    pub update_cookie_id: Option<String>,
-}
+pub use redis_global::redis_payloads::cookie_list::CombIdToCookieIdRep;
+

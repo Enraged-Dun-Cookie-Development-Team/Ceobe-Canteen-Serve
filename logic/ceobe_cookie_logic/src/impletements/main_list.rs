@@ -176,10 +176,7 @@ impl CeobeCookieLogic {
         let redis = redis_client.mut_connect();
         // redis表中查不到，说明没有维护或者这个数据源组合没有饼，
         // 直接返回id是null
-        let mut res = CombIdToCookieIdRep {
-            cookie_id: None,
-            update_cookie_id: None,
-        };
+        let mut res = CombIdToCookieIdRep::builder().build();
         let mut new_combid_info = CookieListKey::NEW_COMBID_INFO.bind(redis);
         if new_combid_info.exists(&comb_id).await? {
             res =

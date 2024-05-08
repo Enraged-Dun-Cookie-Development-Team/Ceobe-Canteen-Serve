@@ -208,11 +208,10 @@ impl CeobeCookieLogic {
                 };
 
             if cookie_id.is_some() {
-                let comb_info = CombIdToCookieIdRep {
-                    cookie_id: newest_cookie_id,
-                    update_cookie_id: update_cookie_id
-                        .map(|id| id.to_string()),
-                };
+                let comb_info = CombIdToCookieIdRep::new(
+                    newest_cookie_id,
+                    update_cookie_id,
+                );
                 // 接口信息写入redis，等待七牛云回源
                 new_combid_info
                     .set(&comb_id, serde_json::to_string(&comb_info)?)
