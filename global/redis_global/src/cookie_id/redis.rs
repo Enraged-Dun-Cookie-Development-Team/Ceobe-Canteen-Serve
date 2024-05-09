@@ -1,6 +1,3 @@
-use std::array::TryFromSliceError;
-
-use bson::oid::ObjectId;
 use redis::{FromRedisValue, RedisError, RedisResult, RedisWrite, Value};
 
 impl redis::ToRedisArgs for super::CookieId {
@@ -14,25 +11,15 @@ impl redis::ToRedisArgs for super::CookieId {
 
 impl FromRedisValue for super::CookieId {
     fn from_redis_value(v: &Value) -> RedisResult<Self> {
-        match v {
-            Value::Data(data) => {
-                let buffer: [u8; 12] = data.as_slice().try_into().map_err(
-                    |err: TryFromSliceError| {
-                        RedisError::from((
-                            redis::ErrorKind::TypeError,
-                            "Length Not Enough",
-                            err.to_string(),
-                        ))
-                    },
-                )?;
-                Ok(Self(ObjectId::from(buffer)))
-            }
-            _ => {
-                Err(RedisError::from((
+        let inner = String::from_redis_value(v)?.parse().map_err(
+            |err: bson::oid::Error| {
+                RedisError::from((
                     redis::ErrorKind::TypeError,
-                    "Unsupported CookieId Type",
-                )))
-            }
-        }
+                    "Bad ObjectId Format",
+                    err.to_string(),
+                ))
+            },
+        )?;
+        Ok(Self(inner))
     }
 }
