@@ -5,7 +5,7 @@ impl redis::ToRedisArgs for super::CookieId {
     where
         W: ?Sized + RedisWrite,
     {
-        out.write_arg(&self.0.bytes())
+        out.write_arg(self.to_string().as_bytes())
     }
 }
 
@@ -15,11 +15,11 @@ impl FromRedisValue for super::CookieId {
             |err: bson::oid::Error| {
                 RedisError::from((
                     redis::ErrorKind::TypeError,
-                    "Bad ObjectId Format",
+                    "Bad CookieId Format",
                     err.to_string(),
                 ))
             },
         )?;
-        Ok(Self(inner))
+        Ok(inner)
     }
 }
