@@ -1,8 +1,8 @@
 use std::{borrow::Cow, marker::PhantomData, time::Duration};
 
-use redis::{AsyncCommands, FromRedisValue, RedisResult, ToRedisArgs};
+use redis::{AsyncCommands, FromRedisValue, RedisResult};
 
-use crate::type_bind::RedisTypeTrait;
+use crate::{redis_value::RedisValue, type_bind::RedisTypeTrait};
 
 pub struct Normal<'redis, R, T> {
     redis: &'redis mut R,
@@ -25,7 +25,7 @@ impl<'redis, R, T> RedisTypeTrait<'redis, R> for Normal<'redis, R, T> {
 impl<'redis, R, T> Normal<'redis, R, T>
 where
     R: redis::aio::ConnectionLike + Send + Sync,
-    T: FromRedisValue + ToRedisArgs + Sync + Send + 'redis,
+    T: RedisValue<'redis>,
 {
     /// 判定当前值是否存在
     ///
@@ -42,7 +42,7 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::set`]
-    pub async fn set<RV>(&mut self, value: T) -> RedisResult<RV>
+    pub async fn set<RV>(&mut self, value: T::Input) -> RedisResult<RV>
     where
         RV: FromRedisValue,
     {
@@ -53,7 +53,9 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::set_nx`]
-    pub async fn set_if_not_exist<RV>(&mut self, value: T) -> RedisResult<RV>
+    pub async fn set_if_not_exist<RV>(
+        &mut self, value: T::Input,
+    ) -> RedisResult<RV>
     where
         RV: FromRedisValue,
     {
@@ -65,7 +67,7 @@ where
     /// ## 参考
     /// - [`AsyncCommands::set_ex`]
     pub async fn set_with_expire<RV>(
-        &mut self, value: T, duration: Duration,
+        &mut self, value: T::Input, duration: Duration,
     ) -> RedisResult<RV>
     where
         RV: FromRedisValue,
@@ -79,7 +81,7 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::get`]
-    pub async fn get(&mut self) -> RedisResult<T> {
+    pub async fn get(&mut self) -> RedisResult<T::Output> {
         self.redis.get(&*self.key).await
     }
 
@@ -88,7 +90,7 @@ where
     /// ## 参考
     /// - [`AsyncCommands::get`]
     /// - [`AsyncCommands::exists`]
-    pub async fn try_get(&mut self) -> RedisResult<Option<T>> {
+    pub async fn try_get(&mut self) -> RedisResult<Option<T::Output>> {
         Ok(if self.exists().await? {
             Some(self.get().await?)
         }

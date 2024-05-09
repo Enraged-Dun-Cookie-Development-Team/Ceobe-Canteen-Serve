@@ -31,7 +31,9 @@ use persistence::{
     operate::GetMutDatabaseConnect,
     redis::RedisConnect,
 };
-use redis_global::{redis_key::cookie_list::CookieListKey, RedisTypeBind};
+use redis_global::{
+    redis_key::cookie_list::CookieListKey, wrappers::Json, RedisTypeBind,
+};
 use tokio::task;
 use tracing::warn;
 use uuid::Uuid;
@@ -261,13 +263,13 @@ impl CeobeUserLogic {
 
             // 准备好最新饼id接口等待七牛云回源
             if let Some(newest_cookie_id) = cookie_id {
-                let comb_info = CombIdToCookieIdRep {
-                    cookie_id: Some(newest_cookie_id.to_string()),
-                    update_cookie_id: None,
-                };
+                let comb_info = CombIdToCookieIdRep::builder()
+                    .cookie_id(newest_cookie_id)
+                    .build();
+
                 CookieListKey::NEW_COMBID_INFO
                     .bind(redis)
-                    .set(&comb_id, serde_json::to_string(&comb_info)?)
+                    .set(&comb_id, Json(comb_info).serde()?)
                     .await?;
             }
         }

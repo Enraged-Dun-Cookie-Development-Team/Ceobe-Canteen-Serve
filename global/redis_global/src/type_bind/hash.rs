@@ -2,7 +2,7 @@ use std::{borrow::Cow, collections::HashMap, marker::PhantomData};
 
 use redis::{AsyncCommands, FromRedisValue, RedisResult, ToRedisArgs};
 
-use crate::type_bind::RedisTypeTrait;
+use crate::{redis_value::RedisValue, type_bind::RedisTypeTrait};
 
 /// Redis的Hash数据结构类型绑定
 pub struct Hash<'redis, R: 'redis, T> {
@@ -26,7 +26,7 @@ impl<'redis, R, T> RedisTypeTrait<'redis, R> for Hash<'redis, R, T> {
 impl<'redis, R, T> Hash<'redis, R, T>
 where
     R: redis::aio::ConnectionLike + Send + Sync,
-    T: FromRedisValue + ToRedisArgs + Send + Sync + 'redis,
+    T: RedisValue<'redis>,
 {
     /// 检查Hash类型中指定field是否存在
     ///
@@ -41,7 +41,7 @@ where
     }
 
     pub async fn set<'arg, RV, F>(
-        &mut self, field: F, value: T,
+        &mut self, field: F, value: T::Input,
     ) -> RedisResult<RV>
     where
         F: ToRedisArgs + Send + Sync + 'arg,
@@ -54,7 +54,7 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::hget`]
-    pub async fn get<'arg, F>(&mut self, field: F) -> RedisResult<T>
+    pub async fn get<'arg, F>(&mut self, field: F) -> RedisResult<T::Output>
     where
         F: ToRedisArgs + Send + Sync + 'arg,
     {
@@ -65,7 +65,7 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::hall`]
-    pub async fn all<K>(&mut self) -> RedisResult<HashMap<K, T>>
+    pub async fn all<K>(&mut self) -> RedisResult<HashMap<K, T::Output>>
     where
         K: FromRedisValue + Eq + std::hash::Hash,
     {
@@ -81,7 +81,7 @@ where
     /// - [`Hash::exists`]
     pub async fn try_get<'arg, F>(
         &mut self, field: F,
-    ) -> RedisResult<Option<T>>
+    ) -> RedisResult<Option<T::Output>>
     where
         F: ToRedisArgs + Send + Sync + 'arg + Copy,
     {

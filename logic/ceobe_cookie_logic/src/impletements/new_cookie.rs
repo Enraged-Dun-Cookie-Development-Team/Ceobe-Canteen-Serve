@@ -19,6 +19,7 @@ use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis_global::{
     redis_key::cookie_list::{CookieListKey, NewCombIdInfo},
+    wrappers::Json,
     RedisTypeBind,
 };
 
@@ -187,35 +188,27 @@ impl CeobeCookieLogic {
             let newest_cookie_id =
                 if let (Some(mut newest_cookie_id), Some(last_comb_info)) = (
                     cookie_id,
-                    new_combid_info
-                        .try_get(&comb_id)
-                        .await?
-                        .map(|str| {
-                            serde_json::from_str::<CombIdToCookieIdRep>(&str)
-                        })
-                        .transpose()?,
+                    new_combid_info.try_get(&comb_id).await?.map(Json::inner),
                 ) {
                     // 这边一定保证redis这个hash field存在就有这个值。
                     // 结构体中Option只是为了兼容接口返回结构
-                    let last_cookie_id =
-                        last_comb_info.cookie_id.unwrap().parse()?;
+                    let last_cookie_id = last_comb_info.cookie_id.unwrap();
                     // 判断数据库和传入的cookie_id哪个新，用新的那个id
-                    newest_cookie_id = newest_cookie_id.max(last_cookie_id);
-                    Some(newest_cookie_id.to_string())
+                    newest_cookie_id = newest_cookie_id.max(*last_cookie_id);
+                    Some(newest_cookie_id)
                 }
                 else {
-                    cookie_id.map(|id| id.to_string())
+                    cookie_id
                 };
 
             if cookie_id.is_some() {
-                let comb_info = CombIdToCookieIdRep {
-                    cookie_id: newest_cookie_id,
-                    update_cookie_id: update_cookie_id
-                        .map(|id| id.to_string()),
-                };
+                let comb_info = CombIdToCookieIdRep::new(
+                    newest_cookie_id,
+                    update_cookie_id,
+                );
                 // 接口信息写入redis，等待七牛云回源
                 new_combid_info
-                    .set(&comb_id, serde_json::to_string(&comb_info)?)
+                    .set(&comb_id, Json(comb_info).serde()?)
                     .await?;
             }
         }
