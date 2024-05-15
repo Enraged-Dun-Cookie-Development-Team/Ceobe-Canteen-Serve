@@ -229,7 +229,7 @@ impl CeobeCookieLogic {
                 if update_id != update_cookie {
                     // 对已经被替换下的饼id设置ttl，2小时
                     CookieListKey::NEW_UPDATE_COOKIE_ID
-                        .bind_with(redis, &update_id)
+                        .bind_with(redis, &update_cookie)
                         .set_with_expire(true, Duration::from_secs(2 * 3600))
                         .await?;
                 }
