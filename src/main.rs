@@ -14,28 +14,26 @@ use bootstrap::{
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
     middleware::{
-        panic_report::PrepareCatchPanic,
+        cors::PrepareCors, panic_report::PrepareCatchPanic,
         tracing_request::PrepareRequestTracker,
     },
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
-    auth_config::AuthConfig, mob_config::MobPushConfig,
-    qiniu_secret::QiniuUploadConfig, qq_channel::QqChannelConfig,
-    resp_result_config::RespResultConfig,
+    auth_config::AuthConfig, cors_config::CorsConfigImpl,
+    mob_config::MobPushConfig, qiniu_secret::QiniuUploadConfig,
+    qq_channel::QqChannelConfig, resp_result_config::RespResultConfig,
     schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
     CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
-use http::Method;
 use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tower_http::{
     catch_panic::CatchPanicLayer, compression::CompressionLayer,
-    cors::CorsLayer,
 };
 use tracing_unwrap::ResultExt;
 
@@ -98,13 +96,10 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
-        .layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
-            "https://www.ceobecanteen.top".parse().unwrap(),
-            "https://ceobecanteen.top".parse().unwrap(),
-        ]))
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
+        .prepare_middleware::<Route, _>(PrepareCors::<_, CorsConfigImpl>)
         .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)

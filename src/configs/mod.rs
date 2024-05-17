@@ -16,6 +16,7 @@ use self::{
 };
 
 pub mod auth_config;
+pub mod cors_config;
 pub mod first_user;
 pub mod http_listen_config;
 pub mod logger;
@@ -66,4 +67,6 @@ pub struct GlobalConfig {
     pub mob_push: mob_config::MobPushConfig,
     #[serde(alias = "qq")]
     pub qq_channel: qq_channel::QqChannelConfig,
+    #[serde(default)]
+    pub cors: cors_config::CorsConfigImpl,
 }
