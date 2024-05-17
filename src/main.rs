@@ -39,8 +39,7 @@ use tower_http::{
 };
 use tracing_unwrap::ResultExt;
 
-use crate::error::serve_panic;
-use crate::bootstrap::decorator::Decroator;
+use crate::{bootstrap::decorator::Decroator, error::serve_panic};
 
 mod bootstrap;
 mod configs;
