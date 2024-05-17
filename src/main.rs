@@ -32,12 +32,10 @@ use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
-use tower_http::{
-    catch_panic::CatchPanicLayer, compression::CompressionLayer,
-};
+use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
 
-use crate::{bootstrap::decorator::Decroator, error::serve_panic};
+use crate::bootstrap::decorator::Decroator;
 
 mod bootstrap;
 mod configs;
@@ -48,11 +46,9 @@ mod router;
 mod serves;
 mod utils;
 
-#[cfg(not(target_env = "msvc"))] use jemallocator::Jemalloc;
-
 #[cfg(not(target_env = "msvc"))]
 #[global_allocator]
-static GLOBAL: Jemalloc = Jemalloc;
+static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
@@ -100,7 +96,6 @@ async fn main_task() {
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
         .prepare_middleware::<Route, _>(PrepareCors::<_, CorsConfigImpl>)
-        .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())

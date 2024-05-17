@@ -12,13 +12,16 @@ use std::{
 pub(super) trait GetOrCreate<K, V> {
     #[allow(dead_code)]
     fn get_mut_or_create(&mut self, key: K, value: V) -> &mut V;
+
     fn get_mut_or_default(&mut self, key: K) -> &mut V
     where
         V: Default;
+
     #[allow(dead_code)]
     fn get_mut_or_create_with<F: FnOnce() -> V>(
         &mut self, key: K, default: F,
     ) -> &mut V;
+
     fn get_mut_or_try_create_with<F: FnOnce() -> Result<V, E>, E>(
         &mut self, key: K, default: F,
     ) -> Result<&mut V, E>;
