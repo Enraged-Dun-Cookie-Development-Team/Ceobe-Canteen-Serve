@@ -18,7 +18,7 @@ use super::{AnnouncementOperate, Column, Entity, Model, OperateResult};
 impl AnnouncementOperate<'_, NoConnect> {
     pub async fn find_by_filter_raw<'s, 'db: 's>(
         filter: impl IntoCondition,
-        db: &'db (impl ConnectionTrait + StreamTrait + Send + 's),
+        db: &'db (impl ConnectionTrait + StreamTrait + 's),
     ) -> OperateResult<impl Stream<Item = Result<Model, DbErr>> + Send + 's>
     {
         Ok(Entity::find()
@@ -30,7 +30,7 @@ impl AnnouncementOperate<'_, NoConnect> {
 
     pub async fn find_by_filter_not_delete_raw<'s, 'db: 's>(
         filter: impl IntoCondition,
-        db: &'db (impl ConnectionTrait + StreamTrait + Send + 's),
+        db: &'db (impl ConnectionTrait + StreamTrait + 's),
     ) -> OperateResult<impl Stream<Item = Result<Model, DbErr>> + Send + 's>
     {
         Self::find_by_filter_raw(

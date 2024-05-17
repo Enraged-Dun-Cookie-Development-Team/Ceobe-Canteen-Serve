@@ -14,15 +14,15 @@ use bootstrap::{
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
     middleware::{
-        panic_report::PrepareCatchPanic,
+        cors::PrepareCors, panic_report::PrepareCatchPanic,
         tracing_request::PrepareRequestTracker,
     },
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
-    auth_config::AuthConfig, mob_config::MobPushConfig,
-    qiniu_secret::QiniuUploadConfig, qq_channel::QqChannelConfig,
-    resp_result_config::RespResultConfig,
+    auth_config::AuthConfig, cors_config::CorsConfigImpl,
+    mob_config::MobPushConfig, qiniu_secret::QiniuUploadConfig,
+    qq_channel::QqChannelConfig, resp_result_config::RespResultConfig,
     schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
     CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
@@ -45,6 +45,10 @@ mod middleware;
 mod router;
 mod serves;
 mod utils;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
@@ -88,6 +92,7 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
+        .prepare_middleware::<Route, _>(PrepareCors::<_, CorsConfigImpl>)
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )

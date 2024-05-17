@@ -83,10 +83,7 @@ pub struct CookieContentReq {
 
 fn empty_change_to_none<'de, D: Deserializer<'de>>(
     d: D,
-) -> Result<Option<String>, D::Error>
-where
-    D: Deserializer<'de>,
-{
+) -> Result<Option<String>, D::Error> {
     let value = Option::<String>::deserialize(d)?;
     Ok(match value.as_deref() {
         Some("") | None => None,
