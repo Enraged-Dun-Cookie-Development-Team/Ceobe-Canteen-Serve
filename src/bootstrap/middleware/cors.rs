@@ -1,6 +1,6 @@
 use axum_starter::{prepare, PrepareMiddlewareEffect};
 use http::{HeaderValue, Method};
-use tower_http::cors::{AllowMethods, CorsLayer};
+use tower_http::cors::CorsLayer;
 
 pub trait CorsConfigTrait {
     fn allow_origins(&self) -> Vec<HeaderValue>;
@@ -16,7 +16,6 @@ pub fn prepare_cors<T: CorsConfigTrait>(cfg: &T) -> CorsMiddleware {
             .allow_methods(cfg.allow_methods()),
     )
 }
-
 
 pub struct CorsMiddleware(CorsLayer);
 

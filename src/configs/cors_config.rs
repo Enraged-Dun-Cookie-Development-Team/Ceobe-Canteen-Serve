@@ -12,9 +12,7 @@ pub struct CorsConfigImpl {
 }
 
 impl CorsConfigTrait for CorsConfigImpl {
-    fn allow_origins(&self) -> Vec<HeaderValue> {
-        self.allow_origins.clone()
-    }
+    fn allow_origins(&self) -> Vec<HeaderValue> { self.allow_origins.clone() }
 
     fn allow_methods(&self) -> Vec<Method> { self.allow_methods.clone() }
 }
@@ -23,13 +21,13 @@ fn de_origins<'de, D: Deserializer<'de>>(
     de: D,
 ) -> Result<Vec<HeaderValue>, D::Error> {
     let vec = Vec::<String>::deserialize(de)?;
-    vec
-        .iter()
-        .map(|path| path.parse())
-        .try_fold(Vec::with_capacity(vec.len()), |mut vec, value| {
+    vec.iter().map(|path| path.parse()).try_fold(
+        Vec::with_capacity(vec.len()),
+        |mut vec, value| {
             vec.push(value.map_err(serde::de::Error::custom)?);
             Ok(vec)
-        })
+        },
+    )
 }
 
 fn de_methods<'de, D: Deserializer<'de>>(
