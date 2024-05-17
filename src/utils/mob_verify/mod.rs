@@ -5,9 +5,9 @@ use http::Request;
 use once_cell::sync::OnceCell;
 use tracing::warn;
 
-    pub trait MobIdConfig{
-        fn mob_header(&self)->String{String::from("mob-id")}
-    }
+pub trait MobIdConfig {
+    fn mob_header(&self) -> String { String::from("mob-id") }
+}
 
 static LOCAL_CONFIG: OnceCell<LocalMobIdConfig> = OnceCell::new();
 

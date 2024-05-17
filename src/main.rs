@@ -33,13 +33,10 @@ use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
-use tower_http::{
-    catch_panic::CatchPanicLayer, compression::CompressionLayer,
-    cors::CorsLayer,
-};
+use tower_http::{compression::CompressionLayer, cors::CorsLayer};
 use tracing_unwrap::ResultExt;
 
-use crate::{bootstrap::decorator::Decroator, error::serve_panic};
+use crate::bootstrap::decorator::Decroator;
 
 mod bootstrap;
 mod configs;
@@ -49,7 +46,6 @@ mod middleware;
 mod router;
 mod serves;
 mod utils;
-
 
 #[cfg(not(target_env = "msvc"))]
 #[global_allocator]
@@ -97,13 +93,13 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
-        .prepare_middleware::<Route, _>(
-            PrepareCatchPanic::<_, QqChannelConfig>,
-        )
         .layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
             "https://www.ceobecanteen.top".parse().unwrap(),
             "https://ceobecanteen.top".parse().unwrap(),
         ]))
+        .prepare_middleware::<Route, _>(
+            PrepareCatchPanic::<_, QqChannelConfig>,
+        )
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())

@@ -7,10 +7,10 @@ use once_cell::sync::OnceCell;
 use sha2::Sha256;
 use tracing::warn;
 
-    pub trait AuthConfig{
-        fn jwt_key(&self)->&[u8];
-        fn token_header(&self)->String{String::from("Token")}
-    }
+pub trait AuthConfig {
+    fn jwt_key(&self) -> &[u8];
+    fn token_header(&self) -> String { String::from("Token") }
+}
 static LOCAL_CONFIG: OnceCell<LocalAuthConfig> = OnceCell::new();
 
 struct LocalAuthConfig {

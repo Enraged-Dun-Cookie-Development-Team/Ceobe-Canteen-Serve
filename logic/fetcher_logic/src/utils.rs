@@ -10,7 +10,6 @@ use std::{
 };
 
 pub(super) trait GetOrCreate<K, V> {
-    
     #[allow(dead_code)]
     fn get_mut_or_create(&mut self, key: K, value: V) -> &mut V;
 
