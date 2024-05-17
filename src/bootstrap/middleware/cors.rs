@@ -8,28 +8,21 @@ pub trait CorsConfigTrait {
     fn allow_methods(&self) -> Vec<Method>;
 }
 
-pub struct CorsConfig {
-    origins: Vec<HeaderValue>,
-    methods: Vec<Method>,
-}
-
 #[prepare(PrepareCors)]
 pub fn prepare_cors<T: CorsConfigTrait>(cfg: &T) -> CorsMiddleware {
-    let config = CorsConfig {
-        origins: cfg.allow_origins(),
-        methods: cfg.allow_methods(),
-    };
-    CorsMiddleware(config)
+    CorsMiddleware(
+        CorsLayer::new()
+            .allow_origin(cfg.allow_origins())
+            .allow_methods(cfg.allow_methods()),
+    )
 }
 
-pub struct CorsMiddleware(CorsConfig);
+pub struct CorsMiddleware(CorsLayer);
 
 impl<S> PrepareMiddlewareEffect<S> for CorsMiddleware {
     type Middleware = CorsLayer;
 
     fn take(self, _: &mut axum_starter::StateCollector) -> Self::Middleware {
-        CorsLayer::new()
-            .allow_origin(self.0.origins)
-            .allow_methods(self.0.methods)
+        self.0
     }
 }
