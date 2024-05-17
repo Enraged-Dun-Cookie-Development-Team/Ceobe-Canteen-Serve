@@ -50,11 +50,10 @@ mod router;
 mod serves;
 mod utils;
 
-#[cfg(not(target_env = "msvc"))] use jemallocator::Jemalloc;
 
 #[cfg(not(target_env = "msvc"))]
 #[global_allocator]
-static GLOBAL: Jemalloc = Jemalloc;
+static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
@@ -98,14 +97,13 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
+        .prepare_middleware::<Route, _>(
+            PrepareCatchPanic::<_, QqChannelConfig>,
+        )
         .layer(CorsLayer::new().allow_methods([Method::GET]).allow_origin([
             "https://www.ceobecanteen.top".parse().unwrap(),
             "https://ceobecanteen.top".parse().unwrap(),
         ]))
-        .prepare_middleware::<Route, _>(
-            PrepareCatchPanic::<_, QqChannelConfig>,
-        )
-        .layer(CatchPanicLayer::custom(serve_panic))
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
