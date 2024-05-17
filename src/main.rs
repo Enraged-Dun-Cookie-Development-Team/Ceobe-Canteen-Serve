@@ -92,10 +92,10 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
+        .prepare_middleware::<Route, _>(PrepareCors::<_, CorsConfigImpl>)
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
-        .prepare_middleware::<Route, _>(PrepareCors::<_, CorsConfigImpl>)
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
