@@ -4,11 +4,13 @@ use serde::{de, Serialize};
 
 use crate::{measurable::Measurable, RangeBound, RangeBoundLimit};
 
+#[allow(dead_code)]
 trait SerdeProc {
     type ToSerde: Measurable + serde::Serialize;
     fn to_serde(&self) -> &Self::ToSerde;
 }
 
+#[allow(dead_code)]
 struct Normal<T>(T);
 
 impl<T: Measurable + Serialize> SerdeProc for Normal<T> {
@@ -17,6 +19,7 @@ impl<T: Measurable + Serialize> SerdeProc for Normal<T> {
     fn to_serde(&self) -> &Self::ToSerde { &self.0 }
 }
 
+#[allow(dead_code)]
 struct SmartPtr<P, T>(P)
 where
     P: Deref<Target = T>;

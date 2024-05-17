@@ -18,7 +18,7 @@ pub trait StatusErr: std::error::Error {
     fn prefix(&self) -> ErrPrefix;
 
     fn code(&self) -> u16;
-    ///
+
     fn status(&self) -> status_code::StatusCode {
         status_code::StatusCode::new(self.prefix(), self.code())
     }

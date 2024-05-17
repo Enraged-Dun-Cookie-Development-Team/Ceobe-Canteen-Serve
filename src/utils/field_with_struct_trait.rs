@@ -76,13 +76,14 @@ macro_rules! trait_field {
 }
 
 quick_trait! {
+    #[allow(dead_code)]
     pub Mock{
         trait_field!{*max_size:u32}
         trait_field!{*port: u16 = 3360}
         trait_field!{host: & 'static str}
         trait_field!{host2: u32 = &11}
     }
-
+    #[allow(dead_code)]
     pub Next{
 
     }
