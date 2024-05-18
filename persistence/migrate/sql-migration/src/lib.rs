@@ -60,6 +60,7 @@ impl MigratorTrait for Migrator {
             ceobe_operation_desktop_version::m20230729_211229_create::Migration
             ceobe_operation_app_version::m20230729_212539_add_download_link::Migration
             ceobe_operation_tool_link::m20231018_162927_create::Migration
+            ceobe_operation_tool_link::m20240519_004238_add_infos::Migration
         ]
     }
 }
