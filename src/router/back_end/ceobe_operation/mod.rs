@@ -13,7 +13,7 @@ use self::{
 use crate::{
     middleware::authorize::AuthorizeLayer,
     new_auth_level,
-    utils::user_authorize::auth_level::prefabs::{Chef, Cooker},
+    utils::user_authorize::auth_level::prefabs::{Chef, Cooker, Outsourcing},
 };
 
 mod announcement;
@@ -28,8 +28,12 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .nest("/video", video_router())
         .nest("/version", version_router())
         .nest("/resource", resource_router())
-        .nest("/toolLink", tool_link_router())
         .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
+        .merge(
+            Router::new()
+                .nest("/toolLink", tool_link_router())
+                .route_layer(AuthorizeLayer::<CeobeTools>::new()),
+        )
 }
 
 new_auth_level! {
@@ -38,3 +42,11 @@ new_auth_level! {
         Cooker
     ]
 }
+new_auth_level! {
+    pub CeobeTools=>[
+        Chef
+        Cooker
+        Outsourcing
+    ]
+}
+

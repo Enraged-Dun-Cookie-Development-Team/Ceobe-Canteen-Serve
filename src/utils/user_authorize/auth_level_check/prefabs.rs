@@ -33,6 +33,18 @@ impl AuthLevelVerify for Architect {
         matches!(token_auth, &AuthLevel::Architect)
     }
 }
+
+#[derive(Clone)]
+pub struct Outsourcing;
+
+impl AuthLevelVerify for Outsourcing {
+    fn auth_name() -> &'static str { "Outsourcing" }
+
+    fn verify(token_auth: &AuthLevel) -> bool {
+        matches!(token_auth, &AuthLevel::Outsourcing)
+    }
+}
+
 #[derive(Clone)]
 pub struct Any;
 
