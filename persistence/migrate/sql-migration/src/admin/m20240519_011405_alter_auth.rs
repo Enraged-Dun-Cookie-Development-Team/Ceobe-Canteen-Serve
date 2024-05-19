@@ -1,9 +1,7 @@
-
 use sea_orm_migration::prelude::*;
-
-use super:: m20220722_082735_change_user_table_name::AdminUser;
 use sql_models::admin_user::{AuthLevel, Column::Auth};
 
+use super::m20220722_082735_change_user_table_name::AdminUser;
 
 pub struct Migration;
 impl MigrationName for Migration {
@@ -15,7 +13,7 @@ impl MigrationTrait for Migration {
         let mut al = sea_query::Table::alter();
         al.table(AdminUser::Table).modify_column(
             ColumnDef::new_with_type(Auth, AuthLevel::column_type())
-                    .not_null(),
+                .not_null(),
         );
         manager.alter_table(al).await?;
 
@@ -27,7 +25,7 @@ impl MigrationTrait for Migration {
         let mut al = sea_query::Table::alter();
         al.table(AdminUser::Table).modify_column(
             ColumnDef::new_with_type(Auth, AuthLevel::column_type())
-                    .not_null(),
+                .not_null(),
         );
         manager.alter_table(al).await?;
 

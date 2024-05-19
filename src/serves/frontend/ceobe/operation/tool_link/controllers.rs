@@ -1,8 +1,7 @@
-use ceobe_operation_logic::{impletements::CeobeOperateLogic, view::ToolLinkFront};
-use persistence::{
-    ceobe_operate::models::tool_link::models::model_tool_link::FrontendToolLink,
-    mysql::SqlDatabaseOperate,
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::ToolLinkFront,
 };
+use persistence::mysql::SqlDatabaseOperate;
 use resp_result::resp_try;
 use tracing::instrument;
 

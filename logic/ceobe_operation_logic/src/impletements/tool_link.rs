@@ -6,13 +6,9 @@ use page_size::{
 };
 use persistence::{
     ceobe_operate::{
-        models::tool_link::{
-            self,
-            checkers::tool_link_data::{
-                CeobeOperationToolLink, CeobeOperationToolLinkUncheck,
-                PreCheckCeobeOperationToolLinkChecker,
-            },
-            models::model_tool_link,
+        models::tool_link::checkers::tool_link_data::{
+            CeobeOperationToolLinkUncheck,
+            PreCheckCeobeOperationToolLinkChecker,
         },
         ToCeobeOperation,
     },
@@ -103,18 +99,18 @@ impl CeobeOperateLogic {
         let tool_list = tool_list?;
         let mut tool_links = Vec::<ToolLinkBackend>::new();
         for tool in tool_list {
-            tool_links.push(ToolLinkBackend::builder()
-                .id(Some(tool.id))
-                .avatar(tool.avatar)
-                .nickname(tool.nickname)
-                .jump_url(tool.jump_url)
-                .slogen(tool.slogen)
-                .description(tool.description)
-                .tags(serde_json::from_str::<Vec<String>>(&tool.tags)?)
-                .build())
+            tool_links.push(
+                ToolLinkBackend::builder()
+                    .id(Some(tool.id))
+                    .avatar(tool.avatar)
+                    .nickname(tool.nickname)
+                    .jump_url(tool.jump_url)
+                    .slogen(tool.slogen)
+                    .description(tool.description)
+                    .tags(serde_json::from_str::<Vec<String>>(&tool.tags)?)
+                    .build(),
+            )
         }
-                
-
 
         let resp = tool_links.with_page_info(page_size, count?);
 
@@ -124,18 +120,21 @@ impl CeobeOperateLogic {
     pub async fn find_tool_link_list(
         sql: SqlDatabaseOperate,
     ) -> LogicResult<Vec<ToolLinkFront>> {
-        let tool_list = sql.ceobe().operation().tool_link().find_list().await?;
+        let tool_list =
+            sql.ceobe().operation().tool_link().find_list().await?;
 
         let mut tool_links = Vec::<ToolLinkFront>::new();
         for tool in tool_list {
-            tool_links.push(ToolLinkFront::builder()
-                .avatar(tool.avatar)
-                .nickname(tool.nickname)
-                .jump_url(tool.jump_url)
-                .slogen(tool.slogen)
-                .description(tool.description)
-                .tags(serde_json::from_str::<Vec<String>>(&tool.tags)?)
-                .build())
+            tool_links.push(
+                ToolLinkFront::builder()
+                    .avatar(tool.avatar)
+                    .nickname(tool.nickname)
+                    .jump_url(tool.jump_url)
+                    .slogen(tool.slogen)
+                    .description(tool.description)
+                    .tags(serde_json::from_str::<Vec<String>>(&tool.tags)?)
+                    .build(),
+            )
         }
 
         Ok(tool_links)

@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use url::Url;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct DeleteOneToolLinkReq {

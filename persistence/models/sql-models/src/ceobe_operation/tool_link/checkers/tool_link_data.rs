@@ -3,7 +3,8 @@ use checker::{
     prefabs::{
         no_check::NoCheck, option_checker::OptionChecker,
         str_len_checker::StrMaxCharLenChecker, url_checker::UrlChecker,
-    }, ToCheckRequire,
+    },
+    ToCheckRequire,
 };
 use sea_orm::{IntoActiveModel, Set};
 use sql_connection::ext_traits::active_or_set::ActiveOrSet;

@@ -1,12 +1,12 @@
-
 use sea_orm_migration::prelude::*;
 
 use super::CeobeOperationToolLink;
 
-
 pub struct Migration;
 impl MigrationName for Migration {
-    fn name(&self) -> &str { "m20240519_004238_ceobe_operation_tool_link_add_infos" }
+    fn name(&self) -> &str {
+        "m20240519_004238_ceobe_operation_tool_link_add_infos"
+    }
 }
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -15,21 +15,21 @@ impl MigrationTrait for Migration {
         al.table(CeobeOperationToolLink::Table)
             .add_column(
                 ColumnDef::new(CeobeOperationToolLink::Slogen)
-                        .string_len(16)
-                        .not_null()
-                        .default(""),
+                    .string_len(16)
+                    .not_null()
+                    .default(""),
             )
             .add_column(
                 ColumnDef::new(CeobeOperationToolLink::Description)
-                        .string_len(64)
-                        .not_null()
-                        .default(""),
+                    .string_len(64)
+                    .not_null()
+                    .default(""),
             )
             .add_column(
                 ColumnDef::new(CeobeOperationToolLink::Tags)
-                        .string_len(64)
-                        .not_null()
-                        .default("[]"),
+                    .string_len(64)
+                    .not_null()
+                    .default("[]"),
             );
         manager.alter_table(al).await?;
 

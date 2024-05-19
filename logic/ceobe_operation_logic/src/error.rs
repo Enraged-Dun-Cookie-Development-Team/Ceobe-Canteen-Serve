@@ -1,9 +1,11 @@
 use std::convert::Infallible;
 
-use persistence::ceobe_operate::tool_link::OperateError as ToolLinkIOperateError;
+use persistence::ceobe_operate::{
+    models::tool_link::CheckError,
+    tool_link::OperateError as ToolLinkIOperateError,
+};
 use status_err::StatusErr;
 use thiserror::Error;
-use persistence::ceobe_operate::models::tool_link::CheckError;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {

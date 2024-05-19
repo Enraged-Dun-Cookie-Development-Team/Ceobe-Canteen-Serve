@@ -49,4 +49,3 @@ new_auth_level! {
         Outsourcing
     ]
 }
-
