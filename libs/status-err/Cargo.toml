@@ -6,7 +6,7 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 reqwest = { workspace = true }
-axum = { workspace = true }
+axum = { workspace = true, features = ["multipart"] }
 http = "1"
 http_02 = {package = "http",version = "0.2"}
 jwt = "0.16.0"

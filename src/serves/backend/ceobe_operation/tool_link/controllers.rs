@@ -4,7 +4,7 @@ use axum::{
 };
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
-    impletements::CeobeOperateLogic, view::DeleteOneToolLinkReq,
+    impletements::CeobeOperateLogic, view::{DeleteOneToolLinkReq, ToolLinkBackend},
 };
 use ceobe_qiniu_upload::QiniuManager;
 use checker::{CheckExtract, JsonCheckExtract};
@@ -39,7 +39,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(sql))]
     pub async fn create_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): CeobeOperationToolLinkCheck,
+        MapReject(tool_link): MapReject<Json<ToolLinkBackend>, OperateToolLinkError>,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::create_tool_link(sql, tool_link).await?;
@@ -52,7 +52,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(sql))]
     pub async fn update_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): CeobeOperationToolLinkCheck,
+        MapReject(tool_link): MapReject<Json<ToolLinkBackend>, OperateToolLinkError>,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::update_tool_link(sql, tool_link).await?;
@@ -82,7 +82,7 @@ impl CeobeOpToolLink {
     pub async fn list(
         sql: SqlDatabaseOperate,
         CheckExtract(page_size): PageSizePretreatment,
-    ) -> OperateToolLinkRResult<ListWithPageInfo<tool_link::Model>> {
+    ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLinkBackend>> {
         resp_try(async move {
             Ok(CeobeOperateLogic::find_tool_link_list_with_paginator(
                 sql, page_size,
