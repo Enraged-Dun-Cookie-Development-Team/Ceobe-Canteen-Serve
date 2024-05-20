@@ -1,4 +1,7 @@
-use sea_orm_migration::{prelude::*, sea_orm::{DeriveActiveEnum, EnumIter}};
+use sea_orm_migration::{
+    prelude::*,
+    sea_orm::{DeriveActiveEnum, EnumIter},
+};
 use sql_models::admin_user::{AuthLevel, Column::Auth};
 
 use super::m20220722_082735_change_user_table_name::AdminUser;
@@ -33,10 +36,7 @@ impl MigrationTrait for Migration {
     }
 }
 
-#[derive(
-    EnumIter,
-    DeriveActiveEnum,
-)]
+#[derive(EnumIter, DeriveActiveEnum)]
 #[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "auth")]
 pub enum OldAuthLevel {
     #[sea_orm(string_value = "chef")]

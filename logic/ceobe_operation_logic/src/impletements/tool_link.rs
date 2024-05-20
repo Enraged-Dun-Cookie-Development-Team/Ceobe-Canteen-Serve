@@ -1,4 +1,3 @@
-use checker::LiteChecker;
 use futures::future;
 use page_size::{
     request::Paginator,
@@ -6,9 +5,7 @@ use page_size::{
 };
 use persistence::{
     ceobe_operate::{
-        models::tool_link::checkers::tool_link_data::{
-            CeobeOperationToolLink, CeobeOperationToolLinkUncheck, PreCheckCeobeOperationToolLinkChecker
-        },
+        models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
         ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
@@ -70,11 +67,10 @@ impl CeobeOperateLogic {
         .await;
 
         let tool_list = tool_list?;
-        let mut tool_links = Vec::<ToolLinkBackendResp>::with_capacity(tool_list.len());
+        let mut tool_links =
+            Vec::<ToolLinkBackendResp>::with_capacity(tool_list.len());
         for tool in tool_list {
-            tool_links.push(
-                tool.try_into()?
-            )
+            tool_links.push(tool.try_into()?)
         }
 
         let resp = tool_links.with_page_info(page_size, count?);
@@ -88,11 +84,10 @@ impl CeobeOperateLogic {
         let tool_list =
             sql.ceobe().operation().tool_link().find_list().await?;
 
-        let mut tool_links = Vec::<ToolLinkFrontendResp>::with_capacity(tool_list.len());
+        let mut tool_links =
+            Vec::<ToolLinkFrontendResp>::with_capacity(tool_list.len());
         for tool in tool_list {
-            tool_links.push(
-                tool.try_into()?
-            )
+            tool_links.push(tool.try_into()?)
         }
 
         Ok(tool_links)

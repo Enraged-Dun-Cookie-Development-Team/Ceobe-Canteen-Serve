@@ -11,11 +11,10 @@ use sql_connection::ext_traits::active_or_set::ActiveOrSet;
 use typed_builder::TypedBuilder;
 use url::Url;
 
+use super::tags::TagsChecker;
 use crate::ceobe_operation::tool_link::{
     checkers::CheckError, models::model_tool_link::ActiveModel,
 };
-
-use super::tags::TagsChecker;
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOperationToolLink {

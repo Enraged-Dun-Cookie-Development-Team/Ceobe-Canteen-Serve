@@ -1,4 +1,6 @@
-use persistence::ceobe_operate::models::tool_link::{self, models::model_tool_link::FrontendToolLink};
+use persistence::ceobe_operate::models::tool_link::{
+    self, models::model_tool_link::FrontendToolLink,
+};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -24,13 +26,13 @@ impl TryInto<ToolLinkFrontendResp> for FrontendToolLink {
 
     fn try_into(self) -> Result<ToolLinkFrontendResp, Self::Error> {
         Ok(ToolLinkFrontendResp::builder()
-                .avatar(self.avatar)
-                .nickname(self.nickname)
-                .jump_url(self.jump_url)
-                .slogan(self.slogan)
-                .description(self.description)
-                .tags(serde_json::from_str::<Vec<String>>(&self.tags)?)
-                .build())
+            .avatar(self.avatar)
+            .nickname(self.nickname)
+            .jump_url(self.jump_url)
+            .slogan(self.slogan)
+            .description(self.description)
+            .tags(serde_json::from_str::<Vec<String>>(&self.tags)?)
+            .build())
     }
 }
 
@@ -50,13 +52,13 @@ impl TryInto<ToolLinkBackendResp> for tool_link::Model {
 
     fn try_into(self) -> Result<ToolLinkBackendResp, Self::Error> {
         Ok(ToolLinkBackendResp::builder()
-                .id(Some(self.id))
-                .avatar(self.avatar)
-                .nickname(self.nickname)
-                .jump_url(self.jump_url)
-                .slogan(self.slogan)
-                .description(self.description)
-                .tags(serde_json::from_str::<Vec<String>>(&self.tags)?)
-                .build())
+            .id(Some(self.id))
+            .avatar(self.avatar)
+            .nickname(self.nickname)
+            .jump_url(self.jump_url)
+            .slogan(self.slogan)
+            .description(self.description)
+            .tags(serde_json::from_str::<Vec<String>>(&self.tags)?)
+            .build())
     }
 }
