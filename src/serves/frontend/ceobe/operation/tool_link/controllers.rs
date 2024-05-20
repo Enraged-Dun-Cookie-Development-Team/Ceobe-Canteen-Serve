@@ -1,5 +1,5 @@
 use ceobe_operation_logic::{
-    impletements::CeobeOperateLogic, view::ToolLinkFrontendResp,
+    impletements::CeobeOperateLogic, view::ToolLinkResp,
 };
 use persistence::mysql::SqlDatabaseOperate;
 use resp_result::resp_try;
@@ -13,7 +13,7 @@ impl CeobeOperationToolLinkFrontend {
     #[instrument(ret, skip(sql))]
     pub async fn list(
         sql: SqlDatabaseOperate,
-    ) -> OperateToolLinkRResult<Vec<ToolLinkFrontendResp>> {
+    ) -> OperateToolLinkRResult<Vec<ToolLinkResp>> {
         resp_try(async move {
             Ok(CeobeOperateLogic::find_tool_link_list(sql).await?)
         })

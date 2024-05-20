@@ -5,7 +5,7 @@ use axum::{
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
-    view::{DeleteOneToolLinkReq, ToolLinkBackendResp},
+    view::{DeleteOneToolLinkReq, ToolLinkResp},
 };
 use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
@@ -74,7 +74,7 @@ impl CeobeOpToolLink {
     pub async fn list(
         sql: SqlDatabaseOperate,
         CheckExtract(page_size): PageSizePretreatment,
-    ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLinkBackendResp>> {
+    ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLinkResp>> {
         resp_try(async move {
             Ok(CeobeOperateLogic::find_tool_link_list_with_paginator(
                 sql, page_size,

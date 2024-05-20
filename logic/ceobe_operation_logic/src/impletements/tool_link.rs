@@ -13,10 +13,7 @@ use persistence::{
 };
 
 use super::CeobeOperateLogic;
-use crate::{
-    error::LogicResult,
-    view::{ToolLinkBackendResp, ToolLinkFrontendResp},
-};
+use crate::{error::LogicResult, view::ToolLinkResp};
 
 impl CeobeOperateLogic {
     pub async fn create_tool_link(
@@ -50,7 +47,7 @@ impl CeobeOperateLogic {
 
     pub async fn find_tool_link_list_with_paginator(
         sql: SqlDatabaseOperate, page_size: Paginator,
-    ) -> LogicResult<ListWithPageInfo<ToolLinkBackendResp>> {
+    ) -> LogicResult<ListWithPageInfo<ToolLinkResp>> {
         // 获取数据源列表
         // 获取数据源数量
         // 异步获取
@@ -68,7 +65,7 @@ impl CeobeOperateLogic {
 
         let tool_list = tool_list?;
         let mut tool_links =
-            Vec::<ToolLinkBackendResp>::with_capacity(tool_list.len());
+            Vec::<ToolLinkResp>::with_capacity(tool_list.len());
         for tool in tool_list {
             tool_links.push(tool.try_into()?)
         }
@@ -80,12 +77,12 @@ impl CeobeOperateLogic {
 
     pub async fn find_tool_link_list(
         sql: SqlDatabaseOperate,
-    ) -> LogicResult<Vec<ToolLinkFrontendResp>> {
+    ) -> LogicResult<Vec<ToolLinkResp>> {
         let tool_list =
             sql.ceobe().operation().tool_link().find_list().await?;
 
         let mut tool_links =
-            Vec::<ToolLinkFrontendResp>::with_capacity(tool_list.len());
+            Vec::<ToolLinkResp>::with_capacity(tool_list.len());
         for tool in tool_list {
             tool_links.push(tool.try_into()?)
         }
