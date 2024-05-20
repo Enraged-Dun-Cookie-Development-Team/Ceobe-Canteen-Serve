@@ -15,6 +15,8 @@ use crate::ceobe_operation::tool_link::{
     checkers::CheckError, models::model_tool_link::ActiveModel,
 };
 
+use super::tags::TagsChecker;
+
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOperationToolLink {
     pub id: Option<i32>,
@@ -57,9 +59,9 @@ pub struct PreCheckCeobeOperationToolLinkChecker {
     ))]
     pub description: StrMaxCharLenChecker<String, 64>,
     #[builder(setter(
-        transform = |tags:String| ToCheckRequire::require_check(tags)
+        transform = |tags:Vec<String>| ToCheckRequire::require_check(tags)
     ))]
-    pub tags: StrMaxCharLenChecker<String, 64>,
+    pub tags: TagsChecker,
 }
 
 impl IntoActiveModel<ActiveModel> for CeobeOperationToolLink {
