@@ -8,18 +8,16 @@ use ceobe_operation_logic::{
     view::{DeleteOneToolLinkReq, ToolLinkBackendResp},
 };
 use ceobe_qiniu_upload::QiniuManager;
-use checker::{CheckExtract, JsonCheckExtract};
+use checker::CheckExtract;
 use page_size::response::ListWithPageInfo;
-use persistence::{
-    ceobe_operate::models::tool_link::checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
-    mysql::SqlDatabaseOperate,
-};
+use persistence::mysql::SqlDatabaseOperate;
 use qiniu_cdn_upload::UploadWrap;
 use resp_result::{resp_try, MapReject};
 use tracing::instrument;
 
 use super::error::{
     OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment,
+    ToolLinkPretreatment,
 };
 use crate::{
     router::CeobeOpToolLink,
@@ -33,10 +31,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(sql))]
     pub async fn create_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): JsonCheckExtract<
-            PreCheckCeobeOperationToolLinkChecker,
-            OperateToolLinkError,
-        >,
+        CheckExtract(tool_link): ToolLinkPretreatment,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::create_tool_link(sql, tool_link).await?;
@@ -49,10 +44,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(sql))]
     pub async fn update_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): JsonCheckExtract<
-            PreCheckCeobeOperationToolLinkChecker,
-            OperateToolLinkError,
-        >,
+        CheckExtract(tool_link): ToolLinkPretreatment,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::update_tool_link(sql, tool_link).await?;

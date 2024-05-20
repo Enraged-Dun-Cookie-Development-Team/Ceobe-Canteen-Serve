@@ -2,7 +2,8 @@ use checker::{
     check_obj,
     prefabs::{
         no_check::NoCheck, option_checker::OptionChecker,
-        str_len_checker::StrMaxCharLenChecker, url_checker::UrlChecker,
+        post_checker::PostChecker, str_len_checker::StrMaxCharLenChecker,
+        url_checker::UrlChecker,
     },
     ToCheckRequire,
 };
@@ -11,7 +12,7 @@ use sql_connection::ext_traits::active_or_set::ActiveOrSet;
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use super::tags::TagsChecker;
+use super::tags::TagSerializeChecker;
 use crate::ceobe_operation::tool_link::{
     checkers::CheckError, models::model_tool_link::ActiveModel,
 };
@@ -84,3 +85,9 @@ impl IntoActiveModel<ActiveModel> for CeobeOperationToolLink {
         active
     }
 }
+
+type TagsChecker = PostChecker<
+    TagSerializeChecker,
+    StrMaxCharLenChecker<String, 128>,
+    CheckError,
+>;
