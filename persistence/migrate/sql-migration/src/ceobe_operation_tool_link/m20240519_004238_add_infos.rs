@@ -14,7 +14,7 @@ impl MigrationTrait for Migration {
         let mut al = sea_query::Table::alter();
         al.table(CeobeOperationToolLink::Table)
             .add_column(
-                ColumnDef::new(CeobeOperationToolLink::Slogen)
+                ColumnDef::new(CeobeOperationToolLink::Slogan)
                     .string_len(16)
                     .not_null()
                     .default(""),
@@ -39,7 +39,7 @@ impl MigrationTrait for Migration {
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         let mut al = sea_query::Table::alter();
         al.table(CeobeOperationToolLink::Table)
-            .drop_column(CeobeOperationToolLink::Slogen)
+            .drop_column(CeobeOperationToolLink::Slogan)
             .drop_column(CeobeOperationToolLink::Description)
             .drop_column(CeobeOperationToolLink::Tags);
         manager.alter_table(al).await?;

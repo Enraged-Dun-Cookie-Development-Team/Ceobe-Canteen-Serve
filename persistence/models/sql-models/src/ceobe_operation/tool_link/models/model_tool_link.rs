@@ -16,7 +16,7 @@ pub struct Model {
     pub nickname: String,
     pub avatar: String,
     pub jump_url: String,
-    pub slogen: String,
+    pub slogan: String,
     pub description: String,
     pub tags: String,
 }

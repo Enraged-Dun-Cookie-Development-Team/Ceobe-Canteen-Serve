@@ -9,7 +9,7 @@ enum CeobeOperationToolLink {
     Nickname,
     Avatar,
     JumpUrl,
-    Slogen,
+    Slogan,
     Tags,
     Description,
 }

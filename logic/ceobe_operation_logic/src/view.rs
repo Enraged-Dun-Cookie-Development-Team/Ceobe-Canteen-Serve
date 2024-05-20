@@ -14,7 +14,7 @@ pub struct ToolLinkFrontendResp {
     pub nickname: String,
     pub avatar: String,
     pub jump_url: String,
-    pub slogen: String,
+    pub slogan: String,
     pub description: String,
     pub tags: Vec<String>,
 }
@@ -27,7 +27,7 @@ impl TryInto<ToolLinkFrontendResp> for FrontendToolLink {
                 .avatar(self.avatar)
                 .nickname(self.nickname)
                 .jump_url(self.jump_url)
-                .slogen(self.slogen)
+                .slogan(self.slogan)
                 .description(self.description)
                 .tags(serde_json::from_str::<Vec<String>>(&self.tags)?)
                 .build())
@@ -40,7 +40,7 @@ pub struct ToolLinkBackendResp {
     pub nickname: String,
     pub avatar: String,
     pub jump_url: String,
-    pub slogen: String,
+    pub slogan: String,
     pub description: String,
     pub tags: Vec<String>,
 }
@@ -54,7 +54,7 @@ impl TryInto<ToolLinkBackendResp> for tool_link::Model {
                 .avatar(self.avatar)
                 .nickname(self.nickname)
                 .jump_url(self.jump_url)
-                .slogen(self.slogen)
+                .slogan(self.slogan)
                 .description(self.description)
                 .tags(serde_json::from_str::<Vec<String>>(&self.tags)?)
                 .build())

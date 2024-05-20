@@ -23,7 +23,7 @@ pub struct CeobeOperationToolLink {
     pub nickname: String,
     pub avatar: Url,
     pub jump_url: Url,
-    pub slogen: String,
+    pub slogan: String,
     pub description: String,
     pub tags: String,
 }
@@ -51,9 +51,9 @@ pub struct PreCheckCeobeOperationToolLinkChecker {
     ))]
     pub jump_url: UrlChecker,
     #[builder(setter(
-        transform = |slogen:String| ToCheckRequire::require_check(slogen)
+        transform = |slogan:String| ToCheckRequire::require_check(slogan)
     ))]
-    pub slogen: StrMaxCharLenChecker<String, 16>,
+    pub slogan: StrMaxCharLenChecker<String, 16>,
     #[builder(setter(
         transform = |description:String| ToCheckRequire::require_check(description)
     ))]
@@ -75,7 +75,7 @@ impl IntoActiveModel<ActiveModel> for CeobeOperationToolLink {
             nickname: Set(self.nickname),
             avatar: Set(self.avatar.to_string()),
             jump_url: Set(self.jump_url.to_string()),
-            slogen: Set(self.slogen),
+            slogan: Set(self.slogan),
             description: Set(self.description),
             tags: Set(self.tags),
             ..Default::default()
