@@ -21,13 +21,13 @@ impl MigrationTrait for Migration {
             )
             .add_column(
                 ColumnDef::new(CeobeOperationToolLink::Description)
-                    .string_len(64)
+                    .string_len(128)
                     .not_null()
                     .default(""),
             )
             .add_column(
                 ColumnDef::new(CeobeOperationToolLink::Tags)
-                    .string_len(64)
+                    .string_len(128)
                     .not_null()
                     .default("[]"),
             );

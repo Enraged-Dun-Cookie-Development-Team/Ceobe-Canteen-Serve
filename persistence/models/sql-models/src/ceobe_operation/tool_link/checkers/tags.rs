@@ -25,6 +25,6 @@ impl Checker for TagSerializeCheck {
 
 pub type TagsChecker = PostChecker<
     TagSerializeCheck,
-    StrMaxCharLenChecker<String, 64>,
+    StrMaxCharLenChecker<String, 128>,
     CheckError,
 >;

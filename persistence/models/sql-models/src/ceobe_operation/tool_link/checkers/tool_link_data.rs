@@ -57,7 +57,7 @@ pub struct PreCheckCeobeOperationToolLinkChecker {
     #[builder(setter(
         transform = |description:String| ToCheckRequire::require_check(description)
     ))]
-    pub description: StrMaxCharLenChecker<String, 64>,
+    pub description: StrMaxCharLenChecker<String, 128>,
     #[builder(setter(
         transform = |tags:Vec<String>| ToCheckRequire::require_check(tags)
     ))]
