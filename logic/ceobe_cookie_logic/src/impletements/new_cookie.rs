@@ -96,7 +96,7 @@ impl CeobeCookieLogic {
                             for new_cookie in new_cookies {
                                 // 如果饼时间超过2天，判断为补饼，不推送
                                 if let Some(time) = new_cookie.timestamp {
-                                    if now - time > 2 * 24 * 60 * 1000 {
+                                    if now - time > 2 * 24 * 60 * 60 * 1000 {
                                         continue;
                                     }
                                 }
