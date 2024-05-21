@@ -68,6 +68,8 @@ pub struct NewCookieReq {
     pub source: CookieDatasourceReq,
     pub content: CookieContentReq,
     pub cookie_id: ObjectId,
+    #[serde(default)]
+    pub timestamp: Option<i64>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CookieDatasourceReq {
