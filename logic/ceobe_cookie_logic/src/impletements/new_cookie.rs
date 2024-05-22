@@ -10,6 +10,7 @@ use persistence::{
         datasource_combination::DatasourceCombinationOperate,
         datasource_config::DatasourceOperate,
     },
+    help_crates::chrono::Local,
     mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate},
     mysql::SqlDatabaseOperate,
     operate::{GetDatabaseConnect, GetMutDatabaseConnect},
@@ -91,7 +92,14 @@ impl CeobeCookieLogic {
                         .await;
                     match result {
                         Ok(user_list) => {
+                            let now = Local::now().timestamp_millis();
                             for new_cookie in new_cookies {
+                                // 如果饼时间超过2天，判断为补饼，不推送
+                                if let Some(time) = new_cookie.timestamp {
+                                    if now - time > 2 * 24 * 60 * 60 * 1000 {
+                                        continue;
+                                    }
+                                }
                                 // mob推送新饼
                                 let content = PushInfo::builder()
                                     .content(new_cookie.content.text)
