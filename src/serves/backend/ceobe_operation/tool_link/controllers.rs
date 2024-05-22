@@ -4,23 +4,20 @@ use axum::{
 };
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
-    impletements::CeobeOperateLogic, view::DeleteOneToolLinkReq,
+    impletements::CeobeOperateLogic,
+    view::{DeleteOneToolLinkReq, ToolLinkResp},
 };
 use ceobe_qiniu_upload::QiniuManager;
-use checker::{CheckExtract, JsonCheckExtract};
+use checker::CheckExtract;
 use page_size::response::ListWithPageInfo;
-use persistence::{
-    ceobe_operate::models::tool_link::{
-        self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
-    },
-    mysql::SqlDatabaseOperate,
-};
+use persistence::mysql::SqlDatabaseOperate;
 use qiniu_cdn_upload::UploadWrap;
 use resp_result::{resp_try, MapReject};
 use tracing::instrument;
 
 use super::error::{
     OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment,
+    ToolLinkPretreatment,
 };
 use crate::{
     router::CeobeOpToolLink,
@@ -29,17 +26,12 @@ use crate::{
     },
 };
 
-type CeobeOperationToolLinkCheck = JsonCheckExtract<
-    PreCheckCeobeOperationToolLinkChecker,
-    OperateToolLinkError,
->;
-
 impl CeobeOpToolLink {
     /// 新增一个工具
     #[instrument(ret, skip(sql))]
     pub async fn create_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): CeobeOperationToolLinkCheck,
+        CheckExtract(tool_link): ToolLinkPretreatment,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::create_tool_link(sql, tool_link).await?;
@@ -52,7 +44,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(sql))]
     pub async fn update_one(
         sql: SqlDatabaseOperate,
-        CheckExtract(tool_link): CeobeOperationToolLinkCheck,
+        CheckExtract(tool_link): ToolLinkPretreatment,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async move {
             CeobeOperateLogic::update_tool_link(sql, tool_link).await?;
@@ -82,7 +74,7 @@ impl CeobeOpToolLink {
     pub async fn list(
         sql: SqlDatabaseOperate,
         CheckExtract(page_size): PageSizePretreatment,
-    ) -> OperateToolLinkRResult<ListWithPageInfo<tool_link::Model>> {
+    ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLinkResp>> {
         resp_try(async move {
             Ok(CeobeOperateLogic::find_tool_link_list_with_paginator(
                 sql, page_size,

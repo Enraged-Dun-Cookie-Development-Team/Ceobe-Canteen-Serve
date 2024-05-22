@@ -1,8 +1,7 @@
-use ceobe_operation_logic::impletements::CeobeOperateLogic;
-use persistence::{
-    ceobe_operate::models::tool_link::models::model_tool_link::FrontendToolLink,
-    mysql::SqlDatabaseOperate,
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::ToolLinkResp,
 };
+use persistence::mysql::SqlDatabaseOperate;
 use resp_result::resp_try;
 use tracing::instrument;
 
@@ -14,7 +13,7 @@ impl CeobeOperationToolLinkFrontend {
     #[instrument(ret, skip(sql))]
     pub async fn list(
         sql: SqlDatabaseOperate,
-    ) -> OperateToolLinkRResult<Vec<FrontendToolLink>> {
+    ) -> OperateToolLinkRResult<Vec<ToolLinkResp>> {
         resp_try(async move {
             Ok(CeobeOperateLogic::find_tool_link_list(sql).await?)
         })

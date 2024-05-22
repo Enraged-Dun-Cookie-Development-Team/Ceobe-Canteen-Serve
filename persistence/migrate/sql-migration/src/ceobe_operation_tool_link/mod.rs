@@ -9,4 +9,8 @@ enum CeobeOperationToolLink {
     Nickname,
     Avatar,
     JumpUrl,
+    Slogan,
+    Tags,
+    Description,
 }
+pub mod m20240519_004238_add_infos;

@@ -3,3 +3,4 @@ pub mod m20220429_142528_alter_user;
 pub mod m20220429_230336_alter_user;
 pub mod m20220722_082735_change_user_table_name;
 pub mod m20221218_001732_charset_and_collate;
+pub mod m20240519_011405_alter_auth;

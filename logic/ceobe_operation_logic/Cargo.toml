@@ -14,3 +14,7 @@ status-err = { path = "../../libs/status-err" }
 persistence = { workspace = true, features = ["model-ceobe-operate"] }
 page_size = {path = "../../libs/page_size"}
 futures.workspace = true
+url.workspace = true
+
+[dependencies.checker]
+path = "../../libs/checker"

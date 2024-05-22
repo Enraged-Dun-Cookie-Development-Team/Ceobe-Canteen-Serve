@@ -1,3 +1,4 @@
+pub mod tags;
 use std::convert::Infallible;
 
 use status_err::{ErrPrefix, StatusErr};
@@ -17,6 +18,10 @@ pub enum CheckError {
     #[error("Datasource Unique key[{0:?}] 未找到")]
     #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x0017u16))]
     UniqueKeyInvalid(String),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    Json(#[from] serde_json::Error),
 }
 
 impl From<Infallible> for CheckError {

@@ -5,10 +5,7 @@ use page_size::{
 };
 use persistence::{
     ceobe_operate::{
-        models::tool_link::{
-            checkers::tool_link_data::CeobeOperationToolLink,
-            models::model_tool_link::{self, FrontendToolLink},
-        },
+        models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
         ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
@@ -16,7 +13,7 @@ use persistence::{
 };
 
 use super::CeobeOperateLogic;
-use crate::error::LogicResult;
+use crate::{error::LogicResult, view::ToolLinkResp};
 
 impl CeobeOperateLogic {
     pub async fn create_tool_link(
@@ -50,7 +47,7 @@ impl CeobeOperateLogic {
 
     pub async fn find_tool_link_list_with_paginator(
         sql: SqlDatabaseOperate, page_size: Paginator,
-    ) -> LogicResult<ListWithPageInfo<model_tool_link::Model>> {
+    ) -> LogicResult<ListWithPageInfo<ToolLinkResp>> {
         // 获取数据源列表
         // 获取数据源数量
         // 异步获取
@@ -66,14 +63,30 @@ impl CeobeOperateLogic {
         )
         .await;
 
-        let resp = tool_list?.with_page_info(page_size, count?);
+        let tool_list = tool_list?;
+        let mut tool_links =
+            Vec::<ToolLinkResp>::with_capacity(tool_list.len());
+        for tool in tool_list {
+            tool_links.push(tool.try_into()?)
+        }
+
+        let resp = tool_links.with_page_info(page_size, count?);
 
         Ok(resp)
     }
 
     pub async fn find_tool_link_list(
         sql: SqlDatabaseOperate,
-    ) -> LogicResult<Vec<FrontendToolLink>> {
-        Ok(sql.ceobe().operation().tool_link().find_list().await?)
+    ) -> LogicResult<Vec<ToolLinkResp>> {
+        let tool_list =
+            sql.ceobe().operation().tool_link().find_list().await?;
+
+        let mut tool_links =
+            Vec::<ToolLinkResp>::with_capacity(tool_list.len());
+        for tool in tool_list {
+            tool_links.push(tool.try_into()?)
+        }
+
+        Ok(tool_links)
     }
 }
