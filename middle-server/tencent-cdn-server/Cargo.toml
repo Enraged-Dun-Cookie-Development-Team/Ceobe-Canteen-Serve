@@ -1,0 +1,14 @@
+[package]
+name = "tencent-cdn-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum-core.workspace = true
+axum-starter.workspace = true
+secrecy.workspace = true
+general-request-client.workspace = true
+typed-builder.workspace = true
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
