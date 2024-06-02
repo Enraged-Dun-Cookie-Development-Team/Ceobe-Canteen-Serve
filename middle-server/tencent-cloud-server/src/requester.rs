@@ -8,7 +8,7 @@ pub struct TencentCloudRequester<T: Serialize> {
     /// 请求方法
     pub(crate) method: Method,
     /// 请求参数
-    pub(crate) query: Option<T>,
+    pub(crate) query: T,
     /// 请求内容
     pub(crate) payload: Vec<u8>,
     /// 请求头
@@ -25,6 +25,10 @@ pub struct TencentCloudRequester<T: Serialize> {
 impl<T: Serialize> Requester for TencentCloudRequester<T> {
     const METHOD: Method = Method::POST;
     const VERSION: Version = Version::HTTP_11;
+
+    fn get_method(&self) -> Method {
+        self.method.clone()
+    }
 
     fn get_url(&self) -> Url {
         self.url.parse().unwrap()

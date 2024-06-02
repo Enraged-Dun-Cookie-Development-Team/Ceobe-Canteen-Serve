@@ -6,6 +6,10 @@ pub trait Requester: Sized {
     const METHOD: Method;
     const VERSION: Version = Version::HTTP_2;
 
+    fn get_method(&self) -> Method {
+        Self::METHOD
+    }
+
     fn get_url(&self) -> Url;
 
     fn prepare_request<B: RequestBuilder>(
