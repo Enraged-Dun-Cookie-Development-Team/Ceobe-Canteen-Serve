@@ -89,4 +89,8 @@ impl CeobeOperateLogic {
 
         Ok(tool_links)
     }
+
+    pub async fn create_tool_link_mongodb() -> () {
+
+    }
 }
