@@ -13,6 +13,17 @@ pub struct QqChannelGrpcService {
     client: LogClient<Channel>,
 }
 
+impl QqChannelGrpcService {
+    pub async fn new(
+        state: QqChannelGrpcState,
+    ) -> Result<Self, error::Error> {
+        LogClient::connect(state.uri)
+            .await
+            .map_err(error::Error::Transport)
+            .map(|client| Self { client })
+    }
+}
+
 impl<S> FromRequestParts<S> for QqChannelGrpcService
 where
     S: Send,
@@ -34,14 +45,10 @@ where
         'life1: 'async_trait,
         Self: 'async_trait,
     {
-        let uri = QqChannelGrpcState::from_ref(state).uri;
-        Box::pin(async move {
-            LogClient::connect(uri)
-                .await
-                .map_err(error::Error::Transport)
-                .map_err(RespResult::Err)
-                .map(|client| Self { client })
-        })
+        let state = QqChannelGrpcState::from_ref(state);
+        Box::pin(
+            async move { Self::new(state).await.map_err(RespResult::Err) },
+        )
     }
 }
 

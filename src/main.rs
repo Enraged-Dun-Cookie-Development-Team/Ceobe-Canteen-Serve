@@ -18,6 +18,7 @@ use bootstrap::{
         tracing_request::PrepareRequestTracker,
     },
 };
+use ceobe_cookie_logic::impletements::CeobeCookieLogic;
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
     auth_config::AuthConfig, cors_config::CorsConfigImpl,
@@ -99,6 +100,7 @@ async fn main_task() {
         .layer(CompressionLayer::new())
         .prepare_middleware::<Route, _>(PrepareRequestTracker)
         .graceful_shutdown(graceful_shutdown())
+        .post_prepare(CeobeCookieLogic::remove_expired_combine_id)
         .preparing()
         .await
         .expect("准备启动服务异常")
