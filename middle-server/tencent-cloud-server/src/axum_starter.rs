@@ -14,8 +14,8 @@ where
     C: TencentConfigTrait,
 {
     let manager = PartCloudManagerState::new(
-        Arc::new(SecretString::new(config.get_key().to_string())),
-        Arc::new(SecretString::new(config.get_secret().to_string())),
+        Arc::new(SecretString::new(config.get_secret_id().to_string())),
+        Arc::new(SecretString::new(config.get_secret_key().to_string())),
     );
 
     AddState(manager)

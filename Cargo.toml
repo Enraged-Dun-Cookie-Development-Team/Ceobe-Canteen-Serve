@@ -96,6 +96,10 @@ persistence = { version = "0.1.0", path = "persistence/persistence" }
 time-utils = { version = "0.1.0", path = "libs/time-utils" }
 bson = { version = "2.4.0", features = ["chrono-0_4", "uuid-1"] }
 secrecy = "0.8.0"
+sha2 = "0.10.2"
+hmac = "0.12.1"
+hex = "0.4"
+serde_qs = "0.13.0"
 
 [dependencies]
 
@@ -113,8 +117,8 @@ chrono = { workspace = true, features = ["serde"] }
 # config
 figment = { version = "0.10", features = ["yaml", "json", "toml", "env"] }
 futures = { workspace = true }
-hex = "0.4"
-hmac = "0.12.1"
+hex = { workspace = true }
+hmac = { workspace = true }
 http-body = "1"
 #encrypt
 jwt = "0.16.0"
@@ -124,7 +128,7 @@ pin-project = "1"
 rand = "0.8.5"
 # request
 reqwest = { workspace = true }
-sha2 = "0.10.2"
+sha2 = { workspace = true }
 tap = { workspace = true }
 thiserror = { workspace = true }
 tower = { version = "0.4", features = ["limit"] }

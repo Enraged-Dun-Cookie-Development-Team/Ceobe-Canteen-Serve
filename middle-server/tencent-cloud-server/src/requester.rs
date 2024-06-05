@@ -1,4 +1,4 @@
-use general_request_client::{traits::{RequestBuilder, Requester}, HeaderValue, Method, Url, Version};
+use general_request_client::{http::header::{AUTHORIZATION, CONTENT_TYPE, HOST}, traits::{RequestBuilder, Requester}, HeaderValue, Method, Url, Version};
 use serde::Serialize;
 
 #[derive(Debug, Clone)]
@@ -40,12 +40,12 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
         builder
             .query(&self.query)
             .header(|map| {
-                map.append("Host", HeaderValue::from_str(&self.host).unwrap());
+                map.append(HOST, HeaderValue::from_str(&self.host).unwrap());
                 map.append("X-TC-Action", HeaderValue::from_str(&self.action).unwrap());
                 map.append("X-TC-Version", HeaderValue::from_str(&self.version).unwrap());
                 map.append("X-TC-Timestamp", HeaderValue::from_str(&self.timestamp.to_string()).unwrap());
-                map.append("Content-Type", HeaderValue::from_str(&self.content_type).unwrap());
-                map.append("Authorization", HeaderValue::from_str(&self.authorization).unwrap());
+                map.append(CONTENT_TYPE, HeaderValue::from_str(&self.content_type).unwrap());
+                map.append(AUTHORIZATION, HeaderValue::from_str(&self.authorization).unwrap());
                 if self.region.is_some() {
                     map.append("X-TC-Region", HeaderValue::from_str(self.region.as_ref().unwrap()).unwrap());
                 }

@@ -1,4 +1,4 @@
 pub trait TencentConfigTrait {
-    fn get_key(&self) -> &str;
-    fn get_secret(&self) -> &str;
+    fn get_secret_id(&self) -> &str;
+    fn get_secret_key(&self) -> &str;
 }
