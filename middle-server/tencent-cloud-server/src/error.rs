@@ -1,5 +1,3 @@
-
-
 /// 腾讯云异常
 #[derive(Debug, thiserror::Error)]
 pub enum TcCloudError {
@@ -14,5 +12,5 @@ pub enum TcCloudError {
     Query(#[from] serde_qs::Error),
     /// HMAC加密长度错误
     #[error("HMAC加密长度错误: {0}")]
-    HMACLength(#[from] hmac::digest::InvalidLength)
+    HMACLength(#[from] hmac::digest::InvalidLength),
 }

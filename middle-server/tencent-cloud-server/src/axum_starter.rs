@@ -1,15 +1,16 @@
 use std::sync::Arc;
 
-use axum_starter::prepare;
-use axum_starter::state::AddState;
+use axum_starter::{prepare, state::AddState};
 use secrecy::SecretString;
 
-use crate::config::TencentConfigTrait;
-use crate::cloud_manager::PartCloudManagerState;
-
+use crate::{
+    cloud_manager::PartCloudManagerState, config::TencentConfigTrait,
+};
 
 #[prepare(TencentCdnPrepare)]
-pub async fn init_tencent_cdn<C>(config: &C) -> AddState<PartCloudManagerState>
+pub async fn init_tencent_cdn<C>(
+    config: &C,
+) -> AddState<PartCloudManagerState>
 where
     C: TencentConfigTrait,
 {

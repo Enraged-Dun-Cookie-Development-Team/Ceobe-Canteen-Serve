@@ -1,8 +1,6 @@
-pub mod error;
-pub mod requester;
+pub mod axum_starter;
+mod cloud_manager;
 pub mod common_parameters;
 pub mod config;
-mod cloud_manager;
-pub mod axum_starter;
-
-
+pub mod error;
+pub mod requester;

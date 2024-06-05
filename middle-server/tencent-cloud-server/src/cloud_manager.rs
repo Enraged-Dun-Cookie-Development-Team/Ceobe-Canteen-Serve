@@ -4,25 +4,18 @@ use axum_core::extract::{FromRef, FromRequestParts};
 use general_request_client::{client::RequestClient, http::request::Parts};
 use secrecy::SecretString;
 
-
 pub struct PartCloudManagerState {
     id: Arc<SecretString>,
     key: Arc<SecretString>,
 }
 
 impl PartCloudManagerState {
-    pub(crate) fn new(
-        id: Arc<SecretString>, key: Arc<SecretString>,
-    ) -> Self {
-        Self {
-            id,
-            key,
-        }
+    pub(crate) fn new(id: Arc<SecretString>, key: Arc<SecretString>) -> Self {
+        Self { id, key }
     }
 }
 
-
-pub struct CloudManager { 
+pub struct CloudManager {
     pub(crate) id: Arc<SecretString>,
     pub(crate) key: Arc<SecretString>,
     pub(crate) client: RequestClient,
@@ -30,17 +23,10 @@ pub struct CloudManager {
 
 impl CloudManager {
     pub fn new_from_state(
-        PartCloudManagerState {
-            id,
-            key,
-        }: PartCloudManagerState,
+        PartCloudManagerState { id, key }: PartCloudManagerState,
         client: RequestClient,
     ) -> Self {
-        Self {
-            id,
-            key,
-            client,
-        }
+        Self { id, key, client }
     }
 }
 
