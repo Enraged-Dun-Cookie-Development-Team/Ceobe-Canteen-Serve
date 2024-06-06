@@ -1,3 +1,4 @@
+pub mod tc_cloud_config;
 use std::net::SocketAddr;
 
 use axum_starter::{Configure, Provider};
@@ -5,6 +6,7 @@ use persistence::{
     mongodb::MongoDbConfig, mysql::DbConfig, redis::RedisDbConfig,
 };
 use serde::Deserialize;
+use tc_cloud_config::TcCloudConfig;
 
 use self::{
     auth_config::AuthConfig,
@@ -69,4 +71,6 @@ pub struct GlobalConfig {
     pub qq_channel: qq_channel::QqChannelConfig,
     #[serde(default)]
     pub cors: cors_config::CorsConfigImpl,
+    #[serde(alias = "tc_cloud")]
+    pub tencent_cloud: TcCloudConfig,
 }

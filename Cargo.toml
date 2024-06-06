@@ -91,6 +91,7 @@ bitmap-convert = { version = "0.1.0", path = "./libs/bitmap-convert" }
 bitmaps = "3.2.0"
 qiniu-cdn-upload = { version = "0.1.0", path = "middle-server/qiniu-cdn-upload" }
 mob-push-server = { version = "0.1.0", path = "middle-server/mob-push-server" }
+tencent-cloud-server = { version = "0.1.0", path = "middle-server/tencent-cloud-server" }
 qiniu_service = { version = "0.1.0", path = "service/qiniu_service" }
 persistence = { version = "0.1.0", path = "persistence/persistence" }
 time-utils = { version = "0.1.0", path = "libs/time-utils" }
@@ -152,6 +153,7 @@ qq-channel-warning = { version = "0.1.0", path = "middle-server/qq-channel-warni
 bitmap-convert.workspace = true
 bitmaps.workspace = true
 persistence = { workspace = true, features = ["prelude", "migrate"] }
+tencent-cloud-server.workspace = true
 
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = "0.5.4"

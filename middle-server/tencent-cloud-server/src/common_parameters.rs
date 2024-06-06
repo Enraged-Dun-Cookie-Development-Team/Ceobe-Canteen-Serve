@@ -126,7 +126,7 @@ impl CloudManager {
         );
 
         let secret_date =
-            hmacsha256(&date, &format!("TC3{}", self.id.expose_secret()))?;
+            hmacsha256(&date, &format!("TC3{}", self.key.expose_secret()))?;
         let secret_service =
             hmacsha256(&common_params.service, &secret_date)?;
         let secret_signing = hmacsha256("tc3_request", &secret_service)?;

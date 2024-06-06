@@ -4,6 +4,7 @@ use axum_core::extract::{FromRef, FromRequestParts};
 use general_request_client::{client::RequestClient, http::request::Parts};
 use secrecy::SecretString;
 
+#[derive(Debug, Clone)]
 pub struct PartCloudManagerState {
     id: Arc<SecretString>,
     key: Arc<SecretString>,
