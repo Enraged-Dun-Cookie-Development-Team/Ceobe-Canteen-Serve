@@ -7,26 +7,28 @@ use secrecy::SecretString;
 pub struct PartCloudManagerState {
     id: Arc<SecretString>,
     key: Arc<SecretString>,
+    cdn_base_url: Arc<String>,
 }
 
 impl PartCloudManagerState {
-    pub(crate) fn new(id: Arc<SecretString>, key: Arc<SecretString>) -> Self {
-        Self { id, key }
+    pub(crate) fn new(id: Arc<SecretString>, key: Arc<SecretString>, cdn_base_url: Arc<String>) -> Self {
+        Self { id, key, cdn_base_url }
     }
 }
 
 pub struct CloudManager {
     pub(crate) id: Arc<SecretString>,
     pub(crate) key: Arc<SecretString>,
+    pub(crate) cdn_base_url: Arc<String>,
     pub(crate) client: RequestClient,
 }
 
 impl CloudManager {
     pub fn new_from_state(
-        PartCloudManagerState { id, key }: PartCloudManagerState,
+        PartCloudManagerState { id, key , cdn_base_url}: PartCloudManagerState,
         client: RequestClient,
     ) -> Self {
-        Self { id, key, client }
+        Self { id, key, cdn_base_url, client }
     }
 }
 
