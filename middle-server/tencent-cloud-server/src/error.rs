@@ -13,4 +13,7 @@ pub enum TcCloudError {
     /// HMAC加密长度错误
     #[error("HMAC加密长度错误: {0}")]
     HMACLength(#[from] hmac::digest::InvalidLength),
+    /// 腾讯云响应异常
+    #[error("腾讯云响应异常: {code} => `{msg}`")]
+    TcCloud { code: String, msg: String },
 }

@@ -4,8 +4,9 @@ use general_request_client::{
     HeaderValue, Method, Url, Version,
 };
 use serde::Serialize;
+use typed_builder::TypedBuilder;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, TypedBuilder)]
 pub struct TencentCloudRequester<T: Serialize> {
     /// 请求链接
     pub(crate) url: String,

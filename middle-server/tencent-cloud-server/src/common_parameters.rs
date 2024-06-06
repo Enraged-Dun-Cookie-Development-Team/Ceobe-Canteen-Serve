@@ -4,13 +4,13 @@ use chrono::{DateTime, Utc};
 use general_request_client::Method;
 use hmac::{digest::InvalidLength, Hmac, Mac};
 use secrecy::ExposeSecret;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use typed_builder::TypedBuilder;
 
 use crate::{
     cloud_manager::CloudManager, config::TencentConfigTrait,
-    error::TcCloudError,
+    error::TcCloudError, requester::TencentCloudRequester,
 };
 
 #[derive(Debug, Clone, TypedBuilder)]
@@ -18,6 +18,7 @@ pub struct CommonParameter {
     pub service: String,
     pub version: String,
     pub action: String,
+    #[builder(default)]
     pub region: Option<String>,
     #[builder(default = String::from("TC3-HMAC-SHA256"))]
     pub algorithm: String,
@@ -25,15 +26,42 @@ pub struct CommonParameter {
     pub timestamp: i64,
     #[builder(default = String::from("content-type;host;x-tc-action"))]
     pub signed_headers: String,
+    #[builder(default)]
+    pub token: Option<String>,
 }
 
 #[derive(Debug, Clone, TypedBuilder)]
-pub struct RequestContent<T: Serialize, P: Serialize> {
+pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
     pub method: Method,
-    pub payload: T,
-    pub param: P,
+    pub payload: P,
+    pub query: Q,
     pub content_type: String,
 }
+
+#[derive(Debug, Clone, TypedBuilder, Deserialize)]
+pub struct TcCloudResponse {
+    #[serde(rename = "Response")]
+    pub response: ResponseInfo
+}
+
+#[derive(Debug, Clone, TypedBuilder, Deserialize)]
+pub struct ResponseInfo {
+    #[serde(rename = "Error", default)]
+    pub error: Option<ErrorInfo>,
+    #[serde(rename = "RequestId")]
+    pub request_id: String,
+    #[serde(rename = "RequestId")]
+    pub task_id: Option<String>,
+}
+
+#[derive(Debug, Clone, TypedBuilder, Deserialize)]
+pub struct ErrorInfo {
+    #[serde(rename = "Code")]
+    pub code: String,
+    #[serde(rename = "Message")]
+    pub message: String,
+}
+
 
 fn sha256hex(s: &str) -> String {
     let mut hasher = Sha256::new();
@@ -52,13 +80,13 @@ fn hmacsha256(s: &str, key: &str) -> Result<String, InvalidLength> {
 
 impl CloudManager {
     /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
-    fn sign<T: Serialize, P: Serialize>(
-        &self, common_params: CommonParameter, request: RequestContent<T, P>,
+    fn sign<P: Serialize, Q: Serialize + Clone>(
+        &self, common_params: &CommonParameter, request: &RequestContent<P, Q>,
     ) -> Result<String, TcCloudError> {
         let algorithm = String::from("TC3-HMAC-SHA256");
         // URI 参数，API 3.0 固定为正斜杠（/）。
         let canonical_uri = String::from("/");
-        let canonical_query = serde_qs::to_string(&request.param)?;
+        let canonical_query = serde_qs::to_string(&request.query)?;
         let host = format!("{}.tencentcloudapi.com", common_params.service);
         let canonical_headers = format!(
             "content-type:{}\nhost:{}\nx-tc-action:{}\n",
@@ -112,5 +140,44 @@ impl CloudManager {
             signed_headers,
             signature
         ))
+    }
+
+    /// 通用请求
+    pub(crate) async fn common_request<P: Serialize, Q: Serialize + Clone>(
+        &self, common_params: &CommonParameter, request: &RequestContent<P, Q>,
+    ) -> Result<TcCloudResponse, TcCloudError> {
+        let authorization = self.sign(&common_params, &request)?;
+        
+        let mut payload_buffer = Vec::<u8>::new();
+        serde_json::to_writer(&mut payload_buffer, &request.payload)?;
+
+        let requester = TencentCloudRequester::builder()
+            .url(format!("https://{}.tencentcloudapi.com", common_params.service))
+            .method(request.method.clone())
+            .query(request.query.clone())
+            .payload(payload_buffer)
+            .host(format!("{}.tencentcloudapi.com", common_params.service))
+            .action(common_params.action.clone())
+            .version(common_params.version.clone())
+            .timestamp(common_params.timestamp)
+            .content_type(request.content_type.clone())
+            .authorization(authorization)
+            .region(common_params.region.clone())
+            .token(common_params.token.clone())
+            .build();
+
+        let resp = self.client.send_request(requester).await?;
+
+        let payload = resp.bytes().await?;
+        println!("{}", String::from_utf8_lossy(&payload));
+
+        let resp =
+            serde_json::from_slice::<TcCloudResponse>(&payload)?;
+
+        if let Some(error_info) = resp.response.error {
+            return Err(TcCloudError::TcCloud{code: error_info.code, msg: error_info.message});
+        }
+
+        Ok(resp)
     }
 }
