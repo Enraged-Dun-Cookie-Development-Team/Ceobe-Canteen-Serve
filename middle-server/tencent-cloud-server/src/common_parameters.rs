@@ -1,5 +1,3 @@
-use std::fmt::format;
-
 use chrono::{DateTime, Utc};
 use general_request_client::Method;
 use hmac::{digest::InvalidLength, Hmac, Mac};
@@ -9,8 +7,8 @@ use sha2::{Digest, Sha256};
 use typed_builder::TypedBuilder;
 
 use crate::{
-    cloud_manager::CloudManager, config::TencentConfigTrait,
-    error::TcCloudError, requester::TencentCloudRequester,
+    cloud_manager::CloudManager, error::TcCloudError,
+    requester::TencentCloudRequester,
 };
 
 #[derive(Debug, Clone, TypedBuilder)]
@@ -42,7 +40,7 @@ pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
 #[derive(Debug, Clone, TypedBuilder, Deserialize)]
 pub struct TcCloudResponse {
     #[serde(rename = "Response")]
-    pub response: ResponseInfo
+    pub response: ResponseInfo,
 }
 
 #[derive(Debug, Clone, TypedBuilder, Deserialize)]
@@ -63,7 +61,6 @@ pub struct ErrorInfo {
     pub message: String,
 }
 
-
 fn sha256hex(s: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update(s.as_bytes());
@@ -82,7 +79,8 @@ fn hmacsha256(s: &str, key: &str) -> Result<String, InvalidLength> {
 impl CloudManager {
     /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
     fn sign<P: Serialize, Q: Serialize + Clone>(
-        &self, common_params: &CommonParameter, request: &RequestContent<P, Q>,
+        &self, common_params: &CommonParameter,
+        request: &RequestContent<P, Q>,
     ) -> Result<String, TcCloudError> {
         let algorithm = String::from("TC3-HMAC-SHA256");
         // URI 参数，API 3.0 固定为正斜杠（/）。
@@ -103,7 +101,7 @@ impl CloudManager {
 
         let canonical_request = format!(
             "{}\n{}\n{}\n{}\n{}\n{}",
-            request.method.to_string(),
+            request.method,
             canonical_uri,
             canonical_query,
             canonical_headers,
@@ -145,15 +143,19 @@ impl CloudManager {
 
     /// 通用请求
     pub(crate) async fn common_request<P: Serialize, Q: Serialize + Clone>(
-        &self, common_params: &CommonParameter, request: &RequestContent<P, Q>,
+        &self, common_params: &CommonParameter,
+        request: &RequestContent<P, Q>,
     ) -> Result<TcCloudResponse, TcCloudError> {
-        let authorization = self.sign(&common_params, &request)?;
-        
+        let authorization = self.sign(common_params, request)?;
+
         let mut payload_buffer = Vec::<u8>::new();
         serde_json::to_writer(&mut payload_buffer, &request.payload)?;
 
         let requester = TencentCloudRequester::builder()
-            .url(format!("https://{}.tencentcloudapi.com", common_params.service))
+            .url(format!(
+                "https://{}.tencentcloudapi.com",
+                common_params.service
+            ))
             .method(request.method.clone())
             .query(request.query.clone())
             .payload(payload_buffer)
@@ -172,11 +174,13 @@ impl CloudManager {
         let payload = resp.bytes().await?;
         println!("{}", String::from_utf8_lossy(&payload));
 
-        let resp =
-            serde_json::from_slice::<TcCloudResponse>(&payload)?;
+        let resp = serde_json::from_slice::<TcCloudResponse>(&payload)?;
 
         if let Some(error_info) = resp.response.error {
-            return Err(TcCloudError::TcCloud{code: error_info.code, msg: error_info.message});
+            return Err(TcCloudError::TcCloud {
+                code: error_info.code,
+                msg: error_info.message,
+            });
         }
 
         Ok(resp)

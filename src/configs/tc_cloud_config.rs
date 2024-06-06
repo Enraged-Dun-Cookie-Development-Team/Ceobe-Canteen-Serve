@@ -1,8 +1,5 @@
 use serde::Deserialize;
 use tencent_cloud_server::config::TencentConfigTrait;
-use url::Url;
-
-
 
 #[derive(Debug, Deserialize)]
 pub struct TcCloudConfig {
@@ -17,15 +14,9 @@ pub struct Cdn {
 }
 
 impl TencentConfigTrait for TcCloudConfig {
-    fn get_secret_id(&self) -> &str {
-        &self.secret_id
-    }
+    fn get_secret_id(&self) -> &str { &self.secret_id }
 
-    fn get_secret_key(&self) -> &str {
-        &self.secret_key
-    }
+    fn get_secret_key(&self) -> &str { &self.secret_key }
 
-    fn get_cdn_base_url(&self) -> &str {
-        &self.cdn.url
-    }
+    fn get_cdn_base_url(&self) -> &str { &self.cdn.url }
 }

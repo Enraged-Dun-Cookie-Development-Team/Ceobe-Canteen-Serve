@@ -12,8 +12,15 @@ pub struct PartCloudManagerState {
 }
 
 impl PartCloudManagerState {
-    pub(crate) fn new(id: Arc<SecretString>, key: Arc<SecretString>, cdn_base_url: Arc<String>) -> Self {
-        Self { id, key, cdn_base_url }
+    pub(crate) fn new(
+        id: Arc<SecretString>, key: Arc<SecretString>,
+        cdn_base_url: Arc<String>,
+    ) -> Self {
+        Self {
+            id,
+            key,
+            cdn_base_url,
+        }
     }
 }
 
@@ -26,10 +33,19 @@ pub struct CloudManager {
 
 impl CloudManager {
     pub fn new_from_state(
-        PartCloudManagerState { id, key , cdn_base_url}: PartCloudManagerState,
+        PartCloudManagerState {
+            id,
+            key,
+            cdn_base_url,
+        }: PartCloudManagerState,
         client: RequestClient,
     ) -> Self {
-        Self { id, key, cdn_base_url, client }
+        Self {
+            id,
+            key,
+            cdn_base_url,
+            client,
+        }
     }
 }
 

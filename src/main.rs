@@ -20,7 +20,12 @@ use bootstrap::{
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
-    auth_config::AuthConfig, cors_config::CorsConfigImpl, mob_config::MobPushConfig, qiniu_secret::QiniuUploadConfig, qq_channel::QqChannelConfig, resp_result_config::RespResultConfig, schedule_notifier_config::ScheduleNotifierConfig, tc_cloud_config::TcCloudConfig, GlobalConfig, CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML
+    auth_config::AuthConfig, cors_config::CorsConfigImpl,
+    mob_config::MobPushConfig, qiniu_secret::QiniuUploadConfig,
+    qq_channel::QqChannelConfig, resp_result_config::RespResultConfig,
+    schedule_notifier_config::ScheduleNotifierConfig,
+    tc_cloud_config::TcCloudConfig, GlobalConfig, CONFIG_FILE_JSON,
+    CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
