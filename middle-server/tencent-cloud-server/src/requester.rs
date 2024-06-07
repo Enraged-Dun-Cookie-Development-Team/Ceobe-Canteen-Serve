@@ -68,15 +68,13 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
                 if let Some(region) = &self.region {
                     map.append(
                         "X-TC-Region",
-                        HeaderValue::from_str(region)
-                            .unwrap(),
+                        HeaderValue::from_str(region).unwrap(),
                     );
                 }
                 if let Some(token) = &self.token {
                     map.append(
                         "X-TC-Token",
-                        HeaderValue::from_str(token)
-                            .unwrap(),
+                        HeaderValue::from_str(token).unwrap(),
                     );
                 }
             })
