@@ -14,7 +14,9 @@ pub struct TencentCloudRequester<T: Serialize> {
     pub(crate) method: Method,
     /// 请求参数
     pub(crate) query: T,
+
     /// 请求内容
+    /// FIXME: 使用基于泛型的接口绑定
     pub(crate) payload: Vec<u8>,
     /// 请求头
     pub(crate) host: String,
@@ -63,17 +65,17 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
                     AUTHORIZATION,
                     HeaderValue::from_str(&self.authorization).unwrap(),
                 );
-                if self.region.is_some() {
+                if let Some(region) = &self.region {
                     map.append(
                         "X-TC-Region",
-                        HeaderValue::from_str(self.region.as_ref().unwrap())
+                        HeaderValue::from_str(region)
                             .unwrap(),
                     );
                 }
-                if self.token.is_some() {
+                if let Some(token) = &self.token {
                     map.append(
                         "X-TC-Token",
-                        HeaderValue::from_str(self.token.as_ref().unwrap())
+                        HeaderValue::from_str(token)
                             .unwrap(),
                     );
                 }
