@@ -38,26 +38,25 @@ pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
 }
 
 #[derive(Debug, Clone, TypedBuilder, Deserialize)]
+#[serde(rename_all = "PascalCase")]
 pub struct TcCloudResponse {
-    #[serde(rename = "Response")]
     pub response: ResponseInfo,
 }
 
 #[derive(Debug, Clone, TypedBuilder, Deserialize)]
+#[serde(rename_all = "PascalCase")]
 pub struct ResponseInfo {
-    #[serde(rename = "Error", default)]
+    #[serde(default)]
     pub error: Option<ErrorInfo>,
-    #[serde(rename = "RequestId")]
     pub request_id: String,
-    #[serde(rename = "RequestId")]
+    #[serde(default)]
     pub task_id: Option<String>,
 }
 
 #[derive(Debug, Clone, TypedBuilder, Deserialize)]
+#[serde(rename_all = "PascalCase")]
 pub struct ErrorInfo {
-    #[serde(rename = "Code")]
     pub code: String,
-    #[serde(rename = "Message")]
     pub message: String,
 }
 
@@ -82,9 +81,9 @@ impl CloudManager {
         &self, common_params: &CommonParameter,
         request: &RequestContent<P, Q>,
     ) -> Result<String, TcCloudError> {
-        let algorithm = String::from("TC3-HMAC-SHA256");
+        const ALGORITHM: &str = "TC3-HMAC-SHA256";
         // URI 参数，API 3.0 固定为正斜杠（/）。
-        let canonical_uri = String::from("/");
+        const CANONICAL_URI: &str = "/";
         let canonical_query = serde_qs::to_string(&request.query)?;
         let host = format!("{}.tencentcloudapi.com", common_params.service);
         let canonical_headers = format!(
@@ -94,7 +93,7 @@ impl CloudManager {
             common_params.action.to_lowercase()
         );
         // 与canonical_headers对应，目前只看到用这三个字段
-        let signed_headers = String::from("content-type;host;x-tc-action");
+        const SIGNED_HEADERS: &str = "content-type;host;x-tc-action";
 
         let payload_text = serde_json::to_string(&request.payload)?;
         let hashed_request_payload = sha256hex(&payload_text);
@@ -102,10 +101,10 @@ impl CloudManager {
         let canonical_request = format!(
             "{}\n{}\n{}\n{}\n{}\n{}",
             request.method,
-            canonical_uri,
+            CANONICAL_URI,
             canonical_query,
             canonical_headers,
-            signed_headers,
+            SIGNED_HEADERS,
             hashed_request_payload
         );
 
@@ -117,7 +116,7 @@ impl CloudManager {
         let hashed_credential_request = sha256hex(&canonical_request);
         let string_to_sign = format!(
             "{}\n{}\n{}\n{}",
-            algorithm,
+            ALGORITHM,
             common_params.timestamp,
             credential_scope,
             hashed_credential_request
@@ -133,10 +132,10 @@ impl CloudManager {
 
         Ok(format!(
             "{} Credential={}/{}, SignedHeaders={}, Signature={}",
-            algorithm,
+            ALGORITHM,
             self.id.expose_secret(),
             credential_scope,
-            signed_headers,
+            SIGNED_HEADERS,
             signature
         ))
     }
