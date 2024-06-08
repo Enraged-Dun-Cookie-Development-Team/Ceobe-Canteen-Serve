@@ -18,12 +18,12 @@ pub struct CommonParameter {
     pub action: String,
     #[builder(default)]
     pub region: Option<String>,
-    #[builder(default = String::from("TC3-HMAC-SHA256"))]
-    pub algorithm: String,
+    #[builder(default = "TC3-HMAC-SHA256")]
+    pub algorithm: &'static str,
     #[builder(default = Utc::now().timestamp())]
     pub timestamp: i64,
-    #[builder(default = String::from("content-type;host;x-tc-action"))]
-    pub signed_headers: String,
+    #[builder(default = "content-type;host;x-tc-action")]
+    pub signed_headers: &'static str,
     #[builder(default)]
     pub token: Option<String>,
 }
