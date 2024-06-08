@@ -1,9 +1,10 @@
+use ceobe_operation_logic::{impletements::CeobeOperateLogic, view::AnnouncementResp};
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
 use persistence::{
-    ceobe_operate::{models::announcement, ToCeobe, ToCeobeOperation},
+    ceobe_operate::{models::announcement},
     mysql::SqlDatabaseOperate,
 };
 use resp_result::resp_try;
@@ -11,7 +12,6 @@ use tracing::instrument;
 
 use super::{
     error::{AnnouncementRespResult, CeobeOperationAnnouncementError},
-    view::AnnouncementItem,
 };
 use crate::router::CeobeOperationAnnouncement;
 
@@ -29,17 +29,9 @@ impl CeobeOperationAnnouncement {
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
         db: SqlDatabaseOperate,
-    ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
+    ) -> AnnouncementRespResult<Vec<AnnouncementResp>> {
         resp_try(async {
-            Ok(db
-                .ceobe()
-                .operation()
-                .announcement()
-                .find_all_not_delete()
-                .await?
-                .into_iter()
-                .map(Into::into)
-                .collect())
+            Ok(CeobeOperateLogic::get_announcement_list(db).await?)
         })
         .await
     }
@@ -51,11 +43,7 @@ impl CeobeOperationAnnouncement {
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
-            db.ceobe()
-                .operation()
-                .announcement()
-                .update_all(announcements)
-                .await?;
+            CeobeOperateLogic::update_announcement_list(db, announcements).await?;
             Ok(())
         })
         .await

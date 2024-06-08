@@ -3,6 +3,7 @@ use std::convert::Infallible;
 use persistence::ceobe_operate::{
     models::tool_link::CheckError,
     tool_link::OperateError as ToolLinkIOperateError,
+    announcement::OperateError as  AnnouncementOperateError
 };
 use status_err::StatusErr;
 use thiserror::Error;
@@ -19,6 +20,10 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     ToolLinkCheckError(#[from] CheckError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    AnnouncementOperateError(#[from] AnnouncementOperateError)
 }
 
 impl From<Infallible> for LogicError {

@@ -1,6 +1,6 @@
-use persistence::ceobe_operate::models::tool_link::{
+use persistence::{ceobe_operate::{announcement, models::tool_link::{
     self, models::model_tool_link::FrontendToolLink,
-};
+}}, help_crates::{naive_date_time_format}};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -52,5 +52,35 @@ impl TryInto<ToolLinkResp> for FrontendToolLink {
             .description(self.description)
             .tags(serde_json::from_str::<Vec<String>>(&self.tags)?)
             .build())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct AnnouncementResp {
+    pub start_time: String,
+    pub over_time: String,
+    pub content: String,
+    pub img_url: String,
+    pub notice: bool,
+}
+
+impl From<announcement::Model> for AnnouncementResp {
+    fn from(
+        announcement::Model {
+            start_time,
+            over_time,
+            content,
+            img_url,
+            notice,
+            ..
+        }: announcement::Model,
+    ) -> Self {
+        Self {
+            start_time: naive_date_time_format(start_time),
+            over_time: naive_date_time_format(over_time),
+            content,
+            img_url,
+            notice,
+        }
     }
 }
