@@ -1,8 +1,8 @@
 use persistence::{
-    bakery::models::mansion::preludes::{
+    bakery::models::mansion::{checked::Mansion, models::ModelMansion, preludes::{
         Daily, Info, Predict, RecentPredict,
-    },
-    help_crates::chrono::NaiveDate,
+    }},
+    help_crates::{bson_date_time_format, chrono::NaiveDate},
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -58,6 +58,91 @@ impl From<RecentPredict> for MansionRecentPredictResp {
             id: id.to_string(),
             description,
             daily: daily.into(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, TypedBuilder)]
+pub struct MansionResp{
+    pub id:String,
+    pub description:String,
+    #[serde(rename="cv_link")]
+    pub cvlink:String,
+    pub fraction:u8,
+    pub daily:Vec<ViewDaily>,
+}
+
+
+impl From<Mansion> for MansionResp {
+    fn from(
+        Mansion {
+            id,
+            link,
+            description,
+            fraction,
+            daily,
+        }: Mansion,
+    ) -> Self {
+        Self {
+            id: id.to_string(),
+            description,
+            cvlink: link,
+            fraction: fraction as u8,
+            daily: daily.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+impl From<ModelMansion> for MansionResp {
+    fn from(val: ModelMansion) -> Self {
+        let ModelMansion {
+            id,
+            description,
+            cvlink,
+            fraction,
+            daily,
+            ..
+        } = val;
+        MansionResp {
+            id: id.to_string(),
+            description,
+            cvlink,
+            fraction,
+            daily: daily.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, TypedBuilder)]
+pub struct MansionWithTimeResp {
+    pub id:String,
+    pub description:String,
+    #[serde(rename="cv_link")]
+    pub cvlink:String,
+    pub create_time: String,
+    pub modify_time: String,
+    pub fraction:u8,
+    pub daily:Vec<ViewDaily>,
+}
+
+impl From<ModelMansion> for MansionWithTimeResp {
+    fn from(val: ModelMansion) -> Self {
+        let ModelMansion {
+            id,
+            description,
+            cvlink,
+            fraction,
+            daily,
+            create_time,
+            modify_time,
+        } = val;
+        MansionWithTimeResp {
+            id: id.to_string(),
+            description,
+            cvlink,
+            fraction,
+            daily: daily.into_iter().map(Into::into).collect(),
+            create_time: bson_date_time_format(create_time),
+            modify_time: bson_date_time_format(modify_time),
         }
     }
 }

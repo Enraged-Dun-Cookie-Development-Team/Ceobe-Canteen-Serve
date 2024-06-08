@@ -1,3 +1,4 @@
+use bakery_logic::{impletements::BakeryLogic, view::MansionResp};
 use checker::CheckExtract;
 use chrono::Duration;
 use persistence::{
@@ -30,22 +31,7 @@ impl BakeryMansionBackend {
             let mid = mid.id;
             let data = json;
 
-            match mid {
-                Some(mid) => {
-                    debug!(
-                        mansion.id.provide = true,
-                        mansion.saveMode = "Update"
-                    );
-                    db.bakery().mansion().update(mid, data).await?;
-                }
-                None => {
-                    debug!(
-                        mansion.id.provide = false,
-                        mansion.saveMode = "Create"
-                    );
-                    db.bakery().mansion().create(data).await?;
-                }
-            }
+            BakeryLogic::save_mansion(db, mid, data).await?;
             Ok(())
         })
         .await
@@ -55,14 +41,9 @@ impl BakeryMansionBackend {
     pub async fn get_mansion(
         db: MongoDatabaseOperate,
         CheckExtract(mid, ..): MidCheckerPretreatment,
-    ) -> MansionRResult<ViewMansion> {
+    ) -> MansionRResult<MansionResp> {
         resp_try(async {
-            Ok(db
-                .bakery()
-                .mansion()
-                .get_mansion_by_id(&mid.id)
-                .await?
-                .into())
+            Ok(BakeryLogic::get_mansion(db, mid).await?.into())
         })
         .await
     }
@@ -72,11 +53,7 @@ impl BakeryMansionBackend {
         db: MongoDatabaseOperate,
     ) -> MansionRResult<Vec<String>> {
         resp_try(async {
-            Ok(db
-                .bakery()
-                .mansion()
-                .get_mansion_id_list_by_time(Duration::days(90))
-                .await?)
+            Ok(BakeryLogic::get_recent_id_by_90(db).await?)
         })
         .await
     }
@@ -87,7 +64,7 @@ impl BakeryMansionBackend {
         CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
         resp_try(async {
-            db.bakery().mansion().delete(&mid.id).await?;
+            BakeryLogic::remove_mansion(db, mid).await?;
             Ok(())
         })
         .await
