@@ -5,7 +5,10 @@ use persistence::{ceobe_operate::{
 }};
 use request_clients::error::ChannelClose;
 use status_err::StatusErr;
+use tencent_cloud_server::error::TcCloudError;
 use thiserror::Error;
+use status_err::ErrPrefix;
+
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
@@ -43,6 +46,10 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     VideoOperateError(#[from] VideoOperateError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    TcCloudError(#[from] TcCloudError),
 }
 
 impl From<Infallible> for LogicError {

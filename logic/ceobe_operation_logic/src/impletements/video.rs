@@ -1,5 +1,6 @@
 use persistence::{ceobe_operate::{video::{self, bv::Bv}, ToCeobeOperation}, ceobe_user::ToCeobe, help_crates::tracing::{event, Level}, mysql::SqlDatabaseOperate};
 use request_clients::bili_client::QueryBiliVideo;
+use tencent_cloud_server::cloud_manager::CloudManager;
 
 use crate::{error::LogicResult, view::VideoItem};
 
@@ -33,9 +34,13 @@ impl CeobeOperateLogic {
 
     /// 更新列表
     pub async fn update_list(
-        sql: SqlDatabaseOperate, videos: Vec<video::Checked>,
+        sql: SqlDatabaseOperate, tc_cloud: CloudManager, videos: Vec<video::Checked>,
     ) -> LogicResult<()> {
         sql.ceobe().operation().video().update_all(videos).await?;
+
+        let paths = vec!["/cdn/operate/video/list"];
+        tc_cloud.purge_urls_cache(paths).await?;
+
         Ok(())
     }
 }

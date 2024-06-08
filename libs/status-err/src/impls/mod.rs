@@ -214,3 +214,18 @@ status_error!(
         0x000A
     ]->"Version格式检查错误"
 );
+
+status_error!(
+    serde_qs::Error[
+        ErrPrefix::CHECKER,
+        0x001F
+    ]->"Query 序列化、反序列化异常"
+);
+
+status_error!(
+    hmac::digest::InvalidLength[
+        ErrPrefix::CHECKER,
+        0x0020
+    ]->"HMAC加密长度错误"
+);
+

@@ -1,4 +1,5 @@
 use persistence::{ceobe_operate::{announcement, ToCeobeOperation}, ceobe_user::ToCeobe, mysql::SqlDatabaseOperate};
+use tencent_cloud_server::cloud_manager::CloudManager;
 
 use crate::{error::LogicResult, view::AnnouncementResp};
 
@@ -24,13 +25,17 @@ impl CeobeOperateLogic {
 
      /// 更新公告
     pub async fn update_announcement_list(
-        sql: SqlDatabaseOperate, announcements: Vec<announcement::Checked>
+        sql: SqlDatabaseOperate, tc_cloud: CloudManager, announcements: Vec<announcement::Checked>
     ) -> LogicResult<()> {
         sql.ceobe()
             .operation()
             .announcement()
             .update_all(announcements)
             .await?;
+
+        let paths = vec!["/cdn/operate/announcement/list"];
+        tc_cloud.purge_urls_cache(paths).await?;
+
         Ok(())
     }
 }

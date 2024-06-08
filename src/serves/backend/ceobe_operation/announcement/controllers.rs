@@ -8,6 +8,7 @@ use persistence::{
     mysql::SqlDatabaseOperate,
 };
 use resp_result::resp_try;
+use tencent_cloud_server::cloud_manager::CloudManager;
 use tracing::instrument;
 
 use super::{
@@ -28,7 +29,7 @@ impl CeobeOperationAnnouncement {
     // 获取公告列表
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
-        db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate, 
     ) -> AnnouncementRespResult<Vec<AnnouncementResp>> {
         resp_try(async {
             Ok(CeobeOperateLogic::get_announcement_list(db).await?)
@@ -36,14 +37,14 @@ impl CeobeOperationAnnouncement {
         .await
     }
 
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, tc_cloud))]
     // 更新公告列表
     pub async fn update_announcement_list(
-        db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate, tc_cloud: CloudManager,
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
-            CeobeOperateLogic::update_announcement_list(db, announcements).await?;
+            CeobeOperateLogic::update_announcement_list(db, tc_cloud, announcements).await?;
             Ok(())
         })
         .await

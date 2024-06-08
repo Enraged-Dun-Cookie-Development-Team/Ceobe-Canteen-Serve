@@ -65,6 +65,8 @@ impl ErrPrefix {
     pub const SERVE: Self = Self('F', HttpCode::INTERNAL_SERVER_ERROR);
     /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', HttpCode::UNAUTHORIZED);
+    /// 腾讯云服务异常
+    pub const TC_CLOUD: Self = Self('T', HttpCode::INTERNAL_SERVER_ERROR);
 
     #[inline]
     pub const fn new(sign: char, status: HttpCode) -> Self {

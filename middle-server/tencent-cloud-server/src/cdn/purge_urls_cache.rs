@@ -14,7 +14,7 @@ struct PurgeUrlsCache {
 
 impl CloudManager {
     pub async fn purge_urls_cache(
-        &self, paths: Vec<String>,
+        &self, paths: Vec<&str>,
     ) -> Result<TcCloudResponse, TcCloudError> {
         let urls = paths
             .into_iter()
