@@ -1,6 +1,6 @@
 use persistence::{ceobe_operate::{announcement, models::tool_link::{
     self, models::model_tool_link::FrontendToolLink,
-}}, help_crates::{naive_date_time_format}};
+}, resource::{self, all_available, countdown::{self, CountdownType}}}, help_crates::naive_date_time_format};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -84,3 +84,87 @@ impl From<announcement::Model> for AnnouncementResp {
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Resource {
+    #[serde(rename = "resources")]
+    resource_all_available: AllAvailable,
+    countdown: Vec<Countdown>,
+}
+
+impl
+    From<(
+        resource::all_available::Model,
+        Vec<resource::countdown::Model>,
+    )> for Resource
+{
+    fn from(
+        (raa, cd): (
+            resource::all_available::Model,
+            Vec<resource::countdown::Model>,
+        ),
+    ) -> Self {
+        Self {
+            resource_all_available: raa.into(),
+            countdown: cd.into_iter().map(Into::into).collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct AllAvailable {
+    start_time: String,
+    over_time: String,
+}
+impl From<all_available::Model> for AllAvailable {
+    fn from(
+        all_available::Model {
+            over_time,
+            start_time,
+            ..
+        }: all_available::Model,
+    ) -> Self {
+        Self {
+            start_time: naive_date_time_format(start_time),
+            over_time: naive_date_time_format(over_time),
+        }
+    }
+}
+
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Countdown {
+    #[serde(rename = "text")]
+    message: String,
+    #[serde(rename = "remark")]
+    banner_info: String,
+    countdown_type: Option<CountdownType>,
+    #[serde(rename = "time")]
+    countdown_end: String,
+    start_time: String,
+    over_time: String,
+}
+impl From<countdown::Model> for Countdown {
+    fn from(
+        countdown::Model {
+            start_time,
+            message,
+            countdown_end,
+            banner_info,
+            over_time,
+            countdown_type,
+            ..
+        }: countdown::Model,
+    ) -> Self {
+        Self {
+            message,
+            banner_info,
+            countdown_type,
+            countdown_end: naive_date_time_format(countdown_end),
+            start_time: naive_date_time_format(start_time),
+            over_time: naive_date_time_format(over_time),
+        }
+    }
+}
+
+
