@@ -9,7 +9,7 @@ use typed_builder::TypedBuilder;
 
 use super::checked::{Daily, Mansion};
 
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, Eq, PartialEq)]
 pub struct MansionId {
     pub main_id: u32,
     pub minor_id: u8,

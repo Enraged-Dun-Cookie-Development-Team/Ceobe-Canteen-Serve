@@ -2,9 +2,10 @@ use chrono::Duration;
 use persistence::{
     bakery::{mansion::ToMansion, models::mansion::{checked::{Mansion, Mid}, models::{MansionId, ModelMansion}}, ToBakery}, help_crates::tracing::debug, mongodb::MongoDatabaseOperate
 };
+use tencent_cloud_server::{cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TcCloudManager};
 
 use super::BakeryLogic;
-use crate::{error::LogicResult, view::MansionRecentPredictResp};
+use crate::{error::LogicResult, view::{BakeryTcCdnPath, MansionRecentPredictResp}};
 
 impl BakeryLogic {
     /// 获取最近日期的预测，没有就获取结果
@@ -22,24 +23,30 @@ impl BakeryLogic {
 
     /// 保存大厦
     pub async fn save_mansion(
-        mongo: MongoDatabaseOperate, mid: Option<MansionId>, mansion: Mansion
+        mongo: MongoDatabaseOperate, tc_cloud: TcCloudManager, mid: Option<MansionId>, mansion: Mansion
     ) -> LogicResult<()> {
+        let mut paths = vec![BakeryTcCdnPath::MANSION_ID_PATH, BakeryTcCdnPath::RECENT_PREDICT_PATH, BakeryTcCdnPath::MANSION_INFO_PATH(&mansion.id.to_string())?];
         match mid {
             Some(mid) => {
                 debug!(
                     mansion.id.provide = true,
                     mansion.saveMode = "Update"
                 );
-                mongo.bakery().mansion().update(mid, mansion).await?;
+                mongo.bakery().mansion().update(mid.clone(), mansion.clone()).await?;
+                if mansion.id != mid {
+                    paths.push(BakeryTcCdnPath::MANSION_INFO_PATH(&mid.to_string())?);
+                }
+                
             }
             None => {
                 debug!(
                     mansion.id.provide = false,
                     mansion.saveMode = "Create"
                 );
-                mongo.bakery().mansion().create(mansion).await?;
+                mongo.bakery().mansion().create(mansion.clone()).await?;
             }
         }
+        tc_cloud.purge_urls_cache(&paths).await?;
         Ok(())
     }
 
@@ -80,9 +87,13 @@ impl BakeryLogic {
     /// 根据id删除大厦
     pub async fn remove_mansion(
         db: MongoDatabaseOperate,
-        mid: Mid
+        tc_cloud: TcCloudManager,
+        mid: Mid,
     ) -> LogicResult<()> {
         db.bakery().mansion().delete(&mid.id).await?;
+        
+        let paths = [BakeryTcCdnPath::MANSION_ID_PATH, BakeryTcCdnPath::RECENT_PREDICT_PATH, BakeryTcCdnPath::MANSION_INFO_PATH(&mid.id.to_string())?];
+        tc_cloud.purge_urls_cache(&paths).await?;
         Ok(())
     }
 

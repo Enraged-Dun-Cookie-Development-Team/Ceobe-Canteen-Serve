@@ -5,6 +5,7 @@ use persistence::{
     help_crates::{bson_date_time_format, chrono::NaiveDate},
 };
 use serde::{Deserialize, Serialize};
+use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -144,5 +145,26 @@ impl From<ModelMansion> for MansionWithTimeResp {
             create_time: bson_date_time_format(create_time),
             modify_time: bson_date_time_format(modify_time),
         }
+    }
+}
+
+pub(crate) struct BakeryTcCdnPath;
+
+impl BakeryTcCdnPath {
+    /// 饼学大厦id
+    pub const MANSION_ID_PATH: PurgeCachePath = PurgeCachePath::new("/cdn/bakery/mansionId");
+    /// 最新饼学大厦信息
+    pub const RECENT_PREDICT_PATH: PurgeCachePath = PurgeCachePath::new("/cdn/bakery/mansion/recentPredict");
+    /// 饼学大厦信息
+    #[allow(non_snake_case)]
+    pub fn MANSION_INFO_PATH(mid: &str) ->  Result<PurgeCachePath, serde_qs::Error> {
+        #[derive(Serialize)]
+        struct MansionId<'a> {
+            mansion_id: &'a str
+        }
+
+        PurgeCachePath::new_with_query("/canteen/bakery/mansionInfo", &MansionId {
+            mansion_id: mid
+        })
     }
 }

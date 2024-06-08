@@ -3,10 +3,10 @@ use persistence::{
     ceobe_user::ToCeobe,
     mysql::SqlDatabaseOperate,
 };
-use tencent_cloud_server::cloud_manager::CloudManager;
+use tencent_cloud_server::{cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TcCloudManager};
 
 use super::CeobeOperateLogic;
-use crate::{error::LogicResult, view::AnnouncementResp};
+use crate::{error::LogicResult, view::{AnnouncementResp, OperationTcCdnPath}};
 
 impl CeobeOperateLogic {
     /// 获取公告列表
@@ -26,7 +26,7 @@ impl CeobeOperateLogic {
 
     /// 更新公告
     pub async fn update_announcement_list(
-        sql: SqlDatabaseOperate, tc_cloud: CloudManager,
+        sql: SqlDatabaseOperate, tc_cloud: TcCloudManager,
         announcements: Vec<announcement::Checked>,
     ) -> LogicResult<()> {
         sql.ceobe()
@@ -35,8 +35,8 @@ impl CeobeOperateLogic {
             .update_all(announcements)
             .await?;
 
-        const PATHS: [&str; 1] = ["/cdn/operate/announcement/list"];
-        tc_cloud.purge_urls_cache(PATHS).await?;
+        const PATHS: [PurgeCachePath; 1]= [OperationTcCdnPath::ANNOUNCEMENT_LIST_PATH];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
 
         Ok(())
     }

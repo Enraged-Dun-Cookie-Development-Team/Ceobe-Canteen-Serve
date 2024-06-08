@@ -8,10 +8,10 @@ use persistence::{
     mysql::SqlDatabaseOperate,
 };
 use request_clients::bili_client::QueryBiliVideo;
-use tencent_cloud_server::cloud_manager::CloudManager;
+use tencent_cloud_server::{cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TcCloudManager};
 
 use super::CeobeOperateLogic;
-use crate::{error::LogicResult, view::VideoItem};
+use crate::{error::LogicResult, view::{OperationTcCdnPath, VideoItem}};
 
 impl CeobeOperateLogic {
     /// 获取视频详细
@@ -40,13 +40,13 @@ impl CeobeOperateLogic {
 
     /// 更新列表
     pub async fn update_list(
-        sql: SqlDatabaseOperate, tc_cloud: CloudManager,
+        sql: SqlDatabaseOperate, tc_cloud: TcCloudManager,
         videos: Vec<video::Checked>,
     ) -> LogicResult<()> {
         sql.ceobe().operation().video().update_all(videos).await?;
 
-        const PATHS: [&str; 1] = ["/cdn/operate/video/list"];
-        tc_cloud.purge_urls_cache(PATHS).await?;
+        const PATHS: [PurgeCachePath; 1]= [OperationTcCdnPath::VIDEO_LIST_PATH];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
 
         Ok(())
     }

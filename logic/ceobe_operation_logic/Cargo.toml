@@ -18,6 +18,7 @@ url.workspace = true
 request-clients.workspace = true
 reqwest.workspace = true
 tencent-cloud-server.workspace = true
+serde_qs.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"

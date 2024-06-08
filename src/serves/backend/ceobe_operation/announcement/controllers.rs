@@ -9,7 +9,7 @@ use persistence::{
     ceobe_operate::models::announcement, mysql::SqlDatabaseOperate,
 };
 use resp_result::resp_try;
-use tencent_cloud_server::cloud_manager::CloudManager;
+use tencent_cloud_server::cloud_manager::TcCloudManager;
 use tracing::instrument;
 
 use super::error::{AnnouncementRespResult, CeobeOperationAnnouncementError};
@@ -39,7 +39,7 @@ impl CeobeOperationAnnouncement {
     #[instrument(ret, skip(db, tc_cloud))]
     // 更新公告列表
     pub async fn update_announcement_list(
-        db: SqlDatabaseOperate, tc_cloud: CloudManager,
+        db: SqlDatabaseOperate, tc_cloud: TcCloudManager,
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {

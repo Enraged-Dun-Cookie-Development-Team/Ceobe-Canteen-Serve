@@ -1,3 +1,4 @@
+use general_request_client::http::header::InvalidHeaderValue;
 use status_err::{ErrPrefix, StatusErr};
 
 /// 腾讯云异常
@@ -27,4 +28,8 @@ pub enum TcCloudError {
         resp_msg = "腾讯云响应异常"
     ))]
     TcCloud { code: String, msg: String },
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    InvalidHeaderValue(#[from] InvalidHeaderValue),
 }

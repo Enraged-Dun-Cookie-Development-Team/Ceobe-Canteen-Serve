@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use general_request_client::Method;
+use general_request_client::{HeaderValue, Method};
 use hmac::{digest::InvalidLength, Hmac, Mac};
 use secrecy::ExposeSecret;
 use serde::{Deserialize, Serialize};
@@ -7,23 +7,23 @@ use sha2::{Digest, Sha256};
 use typed_builder::TypedBuilder;
 
 use crate::{
-    cloud_manager::CloudManager, error::TcCloudError,
+    cloud_manager::TcCloudManager, error::TcCloudError,
     requester::TencentCloudRequester,
 };
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CommonParameter {
-    pub service: String,
-    pub version: String,
-    pub action: String,
+    pub service: &'static str,
+    pub version: &'static str,
+    pub action: &'static str,
     #[builder(default)]
     pub region: Option<String>,
-    #[builder(default = String::from("TC3-HMAC-SHA256"))]
-    pub algorithm: String,
+    #[builder(default = "TC3-HMAC-SHA256")]
+    pub algorithm: &'static str,
     #[builder(default = Utc::now().timestamp())]
     pub timestamp: i64,
-    #[builder(default = String::from("content-type;host;x-tc-action"))]
-    pub signed_headers: String,
+    #[builder(default = "content-type;host;x-tc-action")]
+    pub signed_headers: &'static str,
     #[builder(default)]
     pub token: Option<String>,
 }
@@ -75,7 +75,7 @@ fn hmacsha256(s: &str, key: &str) -> Result<String, InvalidLength> {
     Ok(hex::encode(result))
 }
 
-impl CloudManager {
+impl TcCloudManager {
     /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
     fn sign<P: Serialize, Q: Serialize + Clone>(
         &self, common_params: &CommonParameter,
@@ -158,14 +158,14 @@ impl CloudManager {
             .method(request.method.clone())
             .query(request.query.clone())
             .payload(payload_buffer)
-            .host(format!("{}.tencentcloudapi.com", common_params.service))
-            .action(common_params.action.clone())
-            .version(common_params.version.clone())
-            .timestamp(common_params.timestamp)
-            .content_type(request.content_type.clone())
-            .authorization(authorization)
-            .region(common_params.region.clone())
-            .token(common_params.token.clone())
+            .host(HeaderValue::from_str(&format!("{}.tencentcloudapi.com", common_params.service))?)
+            .action(HeaderValue::from_str(&common_params.action)?)
+            .version(HeaderValue::from_str(&common_params.version)?)
+            .timestamp(HeaderValue::from_str(&common_params.timestamp.to_string())?)
+            .content_type(HeaderValue::from_str(&request.content_type)?)
+            .authorization(HeaderValue::from_str(&authorization)?)
+            .region(common_params.region.clone().map(|region| {HeaderValue::from_str(&region).map_err(|err| TcCloudError::from(err)).ok()}).flatten())
+            .token(common_params.token.clone().map(|token| {HeaderValue::from_str(&token).map_err(|err| TcCloudError::from(err)).ok()}).flatten())
             .build();
 
         let resp = self.client.send_request(requester).await?;

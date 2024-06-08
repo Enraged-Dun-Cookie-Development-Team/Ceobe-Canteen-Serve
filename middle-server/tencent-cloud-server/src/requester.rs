@@ -19,14 +19,14 @@ pub struct TencentCloudRequester<T: Serialize> {
     /// FIXME: 使用基于泛型的接口绑定
     pub(crate) payload: Vec<u8>,
     /// 请求头
-    pub(crate) host: String,
-    pub(crate) action: String,
-    pub(crate) version: String,
-    pub(crate) timestamp: i64,
-    pub(crate) content_type: String,
-    pub(crate) authorization: String,
-    pub(crate) region: Option<String>,
-    pub(crate) token: Option<String>,
+    pub(crate) host: HeaderValue,
+    pub(crate) action: HeaderValue,
+    pub(crate) version: HeaderValue,
+    pub(crate) timestamp: HeaderValue,
+    pub(crate) content_type: HeaderValue,
+    pub(crate) authorization: HeaderValue,
+    pub(crate) region: Option<HeaderValue>,
+    pub(crate) token: Option<HeaderValue>,
 }
 
 impl<T: Serialize> Requester for TencentCloudRequester<T> {
@@ -43,38 +43,37 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
         builder
             .query(&self.query)
             .header(|map| {
-                map.append(HOST, HeaderValue::from_str(&self.host).unwrap());
+                map.append(HOST, self.host.clone());
                 map.append(
                     "X-TC-Action",
-                    HeaderValue::from_str(&self.action).unwrap(),
+                    self.action.clone(),
                 );
                 map.append(
                     "X-TC-Version",
-                    HeaderValue::from_str(&self.version).unwrap(),
+                    self.version.clone(),
                 );
                 map.append(
                     "X-TC-Timestamp",
-                    HeaderValue::from_str(&self.timestamp.to_string())
-                        .unwrap(),
+                    self.timestamp.clone()
                 );
                 map.append(
                     CONTENT_TYPE,
-                    HeaderValue::from_str(&self.content_type).unwrap(),
+                    self.content_type.clone()
                 );
                 map.append(
                     AUTHORIZATION,
-                    HeaderValue::from_str(&self.authorization).unwrap(),
+                    self.authorization.clone()
                 );
                 if let Some(region) = &self.region {
                     map.append(
                         "X-TC-Region",
-                        HeaderValue::from_str(region).unwrap(),
+                        region.clone()
                     );
                 }
                 if let Some(token) = &self.token {
                     map.append(
                         "X-TC-Token",
-                        HeaderValue::from_str(token).unwrap(),
+                        token.clone()
                     );
                 }
             })

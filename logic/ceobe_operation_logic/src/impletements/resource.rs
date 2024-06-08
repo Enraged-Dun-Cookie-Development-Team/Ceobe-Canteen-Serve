@@ -3,15 +3,15 @@ use persistence::{
     ceobe_user::ToCeobe,
     mysql::SqlDatabaseOperate,
 };
-use tencent_cloud_server::cloud_manager::CloudManager;
+use tencent_cloud_server::{cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TcCloudManager};
 
 use super::CeobeOperateLogic;
-use crate::{error::LogicResult, view::Resource};
+use crate::{error::LogicResult, view::{OperationTcCdnPath, Resource}};
 
 impl CeobeOperateLogic {
     /// 更新资源
     pub async fn upload_resource(
-        sql: SqlDatabaseOperate, tc_cloud: CloudManager,
+        sql: SqlDatabaseOperate, tc_cloud: TcCloudManager,
         resource: resource::Checked,
     ) -> LogicResult<()> {
         sql.ceobe()
@@ -20,8 +20,8 @@ impl CeobeOperateLogic {
             .update_resource(resource)
             .await?;
 
-        const PATHS: [&str; 1] = ["/cdn/operate/resource/get"];
-        tc_cloud.purge_urls_cache(PATHS).await?;
+            const PATHS: [PurgeCachePath; 1]= [OperationTcCdnPath::RESOURCE_LIST_PATH];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
 
         Ok(())
     }

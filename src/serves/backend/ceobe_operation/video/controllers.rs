@@ -11,7 +11,7 @@ use persistence::{
 };
 use request_clients::bili_client::QueryBiliVideo;
 use resp_result::{resp_try, rtry, RespResult};
-use tencent_cloud_server::cloud_manager::CloudManager;
+use tencent_cloud_server::cloud_manager::TcCloudManager;
 use tracing::instrument;
 
 use super::error::{CeobeOperationVideoError, VideoRespResult};
@@ -48,7 +48,7 @@ impl CeobeOperationVideo {
 
     #[instrument(ret, skip(db, tc_cloud))]
     pub async fn update_list(
-        db: SqlDatabaseOperate, tc_cloud: CloudManager,
+        db: SqlDatabaseOperate, tc_cloud: TcCloudManager,
         CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
         rtry!(CeobeOperateLogic::update_list(db, tc_cloud, videos).await);
