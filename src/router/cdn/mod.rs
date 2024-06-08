@@ -1,19 +1,19 @@
 use axum::Router;
 use bakery::bakery_router;
+pub use bakery::CdnBakeryMansionFrontend;
 pub use cookie::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 use operation::operation_router;
 pub use operation::{
     CdnOperationAnnouncementFrontend, CdnOperationResourceFrontend,
     CdnOperationVideoFrontend,
 };
-pub use bakery::CdnBakeryMansionFrontend;
 
 use self::cookie::cookie_router;
 use super::ServerRoute;
 
+mod bakery;
 mod cookie;
 mod operation;
-mod bakery;
 
 pub(super) fn cdn_router() -> ServerRoute {
     Router::new()

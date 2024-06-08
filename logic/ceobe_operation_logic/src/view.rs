@@ -218,10 +218,13 @@ impl From<video::Model> for VideoItem {
 pub(super) struct OperationTcCdnPath;
 
 impl OperationTcCdnPath {
-    /// 视频列表
-    pub const VIDEO_LIST_PATH: PurgeCachePath = PurgeCachePath::new("/cdn/operate/video/list");
-    /// 资源列表
-    pub const RESOURCE_LIST_PATH: PurgeCachePath = PurgeCachePath::new("/cdn/operate/resource/get");
     /// 公告列表
-    pub const ANNOUNCEMENT_LIST_PATH: PurgeCachePath = PurgeCachePath::new("/cdn/operate/announcement/list");
+    pub const ANNOUNCEMENT_LIST_PATH: PurgeCachePath =
+        PurgeCachePath::new("/cdn/operate/announcement/list");
+    /// 资源列表
+    pub const RESOURCE_LIST_PATH: PurgeCachePath =
+        PurgeCachePath::new("/cdn/operate/resource/get");
+    /// 视频列表
+    pub const VIDEO_LIST_PATH: PurgeCachePath =
+        PurgeCachePath::new("/cdn/operate/video/list");
 }

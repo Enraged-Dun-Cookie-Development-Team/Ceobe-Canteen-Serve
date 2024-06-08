@@ -1,14 +1,9 @@
-use axum::debug_handler;
 use bakery_logic::{impletements::BakeryLogic, view::MansionResp};
 use checker::CheckExtract;
-use chrono::Duration;
-use persistence::{
-    bakery::{mansion::ToMansion, ToBakery},
-    mongodb::MongoDatabaseOperate,
-};
+use persistence::mongodb::MongoDatabaseOperate;
 use resp_result::resp_try;
 use tencent_cloud_server::cloud_manager::TcCloudManager;
-use tracing::{debug, instrument};
+use tracing::instrument;
 
 use super::{
     models::{
@@ -17,15 +12,12 @@ use super::{
     },
     MansionRResult,
 };
-use crate::{
-    router::BakeryMansionBackend,
-};
+use crate::router::BakeryMansionBackend;
 
 impl BakeryMansionBackend {
     #[instrument(skip(db, tc_cloud), ret)]
     pub async fn save_mansion(
-        db: MongoDatabaseOperate,
-        tc_cloud: TcCloudManager,
+        db: MongoDatabaseOperate, tc_cloud: TcCloudManager,
         CheckExtract(mid, ..): OptionMidCheckerPretreatment,
         CheckExtract(json, ..): MansionBodyCheckerPretreatment,
     ) -> MansionRResult<()> {
@@ -54,16 +46,13 @@ impl BakeryMansionBackend {
     pub async fn get_recent_id(
         db: MongoDatabaseOperate,
     ) -> MansionRResult<Vec<String>> {
-        resp_try(async {
-            Ok(BakeryLogic::get_recent_id_by_90(db).await?)
-        })
-        .await
+        resp_try(async { Ok(BakeryLogic::get_recent_id_by_90(db).await?) })
+            .await
     }
 
     #[instrument(ret, skip(db, tc_cloud))]
     pub async fn remove_mansion(
-        db: MongoDatabaseOperate,
-        tc_cloud: TcCloudManager,
+        db: MongoDatabaseOperate, tc_cloud: TcCloudManager,
         CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
         resp_try(async {

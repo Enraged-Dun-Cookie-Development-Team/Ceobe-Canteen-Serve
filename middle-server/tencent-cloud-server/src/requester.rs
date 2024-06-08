@@ -44,37 +44,16 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
             .query(&self.query)
             .header(|map| {
                 map.append(HOST, self.host.clone());
-                map.append(
-                    "X-TC-Action",
-                    self.action.clone(),
-                );
-                map.append(
-                    "X-TC-Version",
-                    self.version.clone(),
-                );
-                map.append(
-                    "X-TC-Timestamp",
-                    self.timestamp.clone()
-                );
-                map.append(
-                    CONTENT_TYPE,
-                    self.content_type.clone()
-                );
-                map.append(
-                    AUTHORIZATION,
-                    self.authorization.clone()
-                );
+                map.append("X-TC-Action", self.action.clone());
+                map.append("X-TC-Version", self.version.clone());
+                map.append("X-TC-Timestamp", self.timestamp.clone());
+                map.append(CONTENT_TYPE, self.content_type.clone());
+                map.append(AUTHORIZATION, self.authorization.clone());
                 if let Some(region) = &self.region {
-                    map.append(
-                        "X-TC-Region",
-                        region.clone()
-                    );
+                    map.append("X-TC-Region", region.clone());
                 }
                 if let Some(token) = &self.token {
-                    map.append(
-                        "X-TC-Token",
-                        token.clone()
-                    );
+                    map.append("X-TC-Token", token.clone());
                 }
             })
             .body(self.payload)

@@ -1,22 +1,14 @@
 use bakery_logic::{
-    impletements::BakeryLogic, view::{MansionRecentPredictResp, MansionWithTimeResp},
+    impletements::BakeryLogic,
+    view::{MansionRecentPredictResp, MansionWithTimeResp},
 };
 use checker::CheckExtract;
-use modify_cache::CacheMode;
-use persistence::{
-    bakery::{mansion::ToMansion, ToBakery},
-    mongodb::MongoDatabaseOperate,
-};
-use resp_result::{resp_try, rtry, FlagWrap};
+use persistence::mongodb::MongoDatabaseOperate;
+use resp_result::{resp_try, rtry};
 use tracing::instrument;
 
-use super::{
-    error::MidCheckerPretreatment
-};
-use crate::{
-    router::CdnBakeryMansionFrontend,
-};
-use super::error::MansionRResult;
+use super::error::{MansionRResult, MidCheckerPretreatment};
+use crate::router::CdnBakeryMansionFrontend;
 
 impl CdnBakeryMansionFrontend {
     #[instrument(skip(db))]
@@ -31,12 +23,10 @@ impl CdnBakeryMansionFrontend {
 
     #[instrument(skip(db))]
     pub async fn get_all_id(
-        db: MongoDatabaseOperate
+        db: MongoDatabaseOperate,
     ) -> MansionRResult<Vec<String>> {
-        resp_try(async {
-            Ok(BakeryLogic::get_all_mansion_id(db).await?)
-        })
-        .await
+        resp_try(async { Ok(BakeryLogic::get_all_mansion_id(db).await?) })
+            .await
     }
 
     #[instrument(skip(mongo))]

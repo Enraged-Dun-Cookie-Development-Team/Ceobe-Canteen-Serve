@@ -1,15 +1,14 @@
-use general_request_client::{HeaderValue, Url};
+use general_request_client::Url;
 use serde::Serialize;
 
+use super::{SERVICE, VERSION};
 use crate::{
     cloud_manager::TcCloudManager,
     common_parameters::{CommonParameter, RequestContent, TcCloudResponse},
     error::TcCloudError,
 };
 
-use super::{SERVICE, VERSION};
-
-const ACTION: &'static str = "PurgeUrlsCache";
+const ACTION: &str = "PurgeUrlsCache";
 
 #[derive(Debug, Clone, Serialize)]
 struct PurgeUrlsCache {
@@ -17,21 +16,19 @@ struct PurgeUrlsCache {
     urls: Vec<Url>,
 }
 
-
 pub struct PurgeCachePath {
     path: &'static str,
-    query: Option<String>
+    query: Option<String>,
 }
 
 impl PurgeCachePath {
     pub const fn new(path: &'static str) -> Self {
-        PurgeCachePath {
-            path,
-            query: None,
-        }
+        PurgeCachePath { path, query: None }
     }
 
-    pub fn new_with_query(path: &'static str, query: &impl Serialize) -> Result<Self, serde_qs::Error> {
+    pub fn new_with_query(
+        path: &'static str, query: &impl Serialize,
+    ) -> Result<Self, serde_qs::Error> {
         let query_str = serde_qs::to_string(query)?;
         Ok(PurgeCachePath {
             path,
@@ -40,14 +37,13 @@ impl PurgeCachePath {
     }
 }
 
-
 impl TcCloudManager {
     pub async fn purge_urls_cache(
         &self, paths: impl IntoIterator<Item = &PurgeCachePath>,
     ) -> Result<TcCloudResponse, TcCloudError> {
         let urls = paths
             .into_iter()
-            .map(|PurgeCachePath{path, query}| {
+            .map(|PurgeCachePath { path, query }| {
                 let mut url = Url::clone(&*self.cdn_base_url);
                 url.set_path(path);
                 url.set_query(query.as_deref());

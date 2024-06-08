@@ -124,8 +124,7 @@ impl TcCloudManager {
 
         let secret_date =
             hmacsha256(&date, &format!("TC3{}", self.key.expose_secret()))?;
-        let secret_service =
-            hmacsha256(&common_params.service, &secret_date)?;
+        let secret_service = hmacsha256(common_params.service, &secret_date)?;
         let secret_signing = hmacsha256("tc3_request", &secret_service)?;
         let signature =
             hex::encode(hmacsha256(&string_to_sign, &secret_signing)?);
@@ -158,14 +157,27 @@ impl TcCloudManager {
             .method(request.method.clone())
             .query(request.query.clone())
             .payload(payload_buffer)
-            .host(HeaderValue::from_str(&format!("{}.tencentcloudapi.com", common_params.service))?)
-            .action(HeaderValue::from_str(&common_params.action)?)
-            .version(HeaderValue::from_str(&common_params.version)?)
-            .timestamp(HeaderValue::from_str(&common_params.timestamp.to_string())?)
+            .host(HeaderValue::from_str(&format!(
+                "{}.tencentcloudapi.com",
+                common_params.service
+            ))?)
+            .action(HeaderValue::from_str(common_params.action)?)
+            .version(HeaderValue::from_str(common_params.version)?)
+            .timestamp(HeaderValue::from_str(
+                &common_params.timestamp.to_string(),
+            )?)
             .content_type(HeaderValue::from_str(&request.content_type)?)
             .authorization(HeaderValue::from_str(&authorization)?)
-            .region(common_params.region.clone().map(|region| {HeaderValue::from_str(&region).map_err(|err| TcCloudError::from(err)).ok()}).flatten())
-            .token(common_params.token.clone().map(|token| {HeaderValue::from_str(&token).map_err(|err| TcCloudError::from(err)).ok()}).flatten())
+            .region(common_params.region.clone().and_then(|region| {
+                HeaderValue::from_str(&region)
+                    .map_err(TcCloudError::from)
+                    .ok()
+            }))
+            .token(common_params.token.clone().and_then(|token| {
+                HeaderValue::from_str(&token)
+                    .map_err(TcCloudError::from)
+                    .ok()
+            }))
             .build();
 
         let resp = self.client.send_request(requester).await?;

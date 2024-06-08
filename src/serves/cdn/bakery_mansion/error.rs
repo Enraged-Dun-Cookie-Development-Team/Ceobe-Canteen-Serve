@@ -2,7 +2,10 @@ use axum::extract::rejection::QueryRejection;
 use bakery_logic::error::LogicError;
 use checker::QueryCheckExtract;
 use persistence::bakery::{
-    mansion::OperateError, models::mansion::{checkers::CheckError, preludes::id_checker::MidChecker},
+    mansion::OperateError,
+    models::mansion::{
+        checkers::CheckError, preludes::id_checker::MidChecker,
+    },
 };
 use resp_result::RespResult;
 

@@ -5,9 +5,9 @@ pub use back_end::{
     CeobeOperationVideo, FetcherConfigControllers, UserAuthBackend,
 };
 pub use cdn::{
-    CdnCookieMainListFrontend, CdnCookieTempFrontend,
-    CdnOperationAnnouncementFrontend, CdnOperationResourceFrontend,
-    CdnOperationVideoFrontend, CdnBakeryMansionFrontend
+    CdnBakeryMansionFrontend, CdnCookieMainListFrontend,
+    CdnCookieTempFrontend, CdnOperationAnnouncementFrontend,
+    CdnOperationResourceFrontend, CdnOperationVideoFrontend,
 };
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,

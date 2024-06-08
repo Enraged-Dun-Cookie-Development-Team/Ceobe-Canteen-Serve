@@ -1,7 +1,9 @@
 use std::{convert::Infallible, future::Future, pin::Pin, sync::Arc};
 
 use axum_core::extract::{FromRef, FromRequestParts};
-use general_request_client::{client::RequestClient, http::request::Parts, Url};
+use general_request_client::{
+    client::RequestClient, http::request::Parts, Url,
+};
 use secrecy::SecretString;
 
 #[derive(Debug, Clone)]
@@ -13,8 +15,7 @@ pub struct PartCloudManagerState {
 
 impl PartCloudManagerState {
     pub(crate) fn new(
-        id: Arc<SecretString>, key: Arc<SecretString>,
-        cdn_base_url: Arc<Url>,
+        id: Arc<SecretString>, key: Arc<SecretString>, cdn_base_url: Arc<Url>,
     ) -> Self {
         Self {
             id,
