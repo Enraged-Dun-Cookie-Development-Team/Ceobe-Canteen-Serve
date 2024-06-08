@@ -20,8 +20,8 @@ impl CeobeOperateLogic {
             .update_resource(resource)
             .await?;
 
-        let paths = vec!["/cdn/operate/resource/get"];
-        tc_cloud.purge_urls_cache(paths).await?;
+        const PATHS: [&str; 1] = ["/cdn/operate/resource/get"];
+        tc_cloud.purge_urls_cache(PATHS).await?;
 
         Ok(())
     }

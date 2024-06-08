@@ -45,8 +45,8 @@ impl CeobeOperateLogic {
     ) -> LogicResult<()> {
         sql.ceobe().operation().video().update_all(videos).await?;
 
-        let paths = vec!["/cdn/operate/video/list"];
-        tc_cloud.purge_urls_cache(paths).await?;
+        const PATHS: [&str; 1] = ["/cdn/operate/video/list"];
+        tc_cloud.purge_urls_cache(PATHS).await?;
 
         Ok(())
     }

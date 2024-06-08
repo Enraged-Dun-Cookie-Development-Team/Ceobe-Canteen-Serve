@@ -35,8 +35,8 @@ impl CeobeOperateLogic {
             .update_all(announcements)
             .await?;
 
-        let paths = vec!["/cdn/operate/announcement/list"];
-        tc_cloud.purge_urls_cache(paths).await?;
+        const PATHS: [&str; 1] = ["/cdn/operate/announcement/list"];
+        tc_cloud.purge_urls_cache(PATHS).await?;
 
         Ok(())
     }
