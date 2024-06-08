@@ -1,11 +1,9 @@
-use std::convert::Infallible;
+use std::{convert::Infallible, string::FromUtf8Error};
 
-use persistence::ceobe_operate::{
-    models::tool_link::CheckError,
-    tool_link::OperateError as ToolLinkIOperateError,
-    announcement::OperateError as  AnnouncementOperateError,
-    resource::OperateError as  ResourceOperateError
-};
+use persistence::{ceobe_operate::{
+    announcement::OperateError as  AnnouncementOperateError, models::tool_link::CheckError, resource::OperateError as  ResourceOperateError, tool_link::OperateError as ToolLinkIOperateError, video::OperateError as VideoOperateError
+}};
+use request_clients::error::ChannelClose;
 use status_err::StatusErr;
 use thiserror::Error;
 
@@ -28,7 +26,23 @@ pub enum LogicError {
 
     #[error(transparent)]
     #[status_err(err = "transparent")]
-    ResourceOperateError(#[from] ResourceOperateError)
+    ResourceOperateError(#[from] ResourceOperateError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    Utf8(#[from] FromUtf8Error),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    ChannelClose(#[from] ChannelClose),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    Request(#[from] reqwest::Error),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    VideoOperateError(#[from] VideoOperateError),
 }
 
 impl From<Infallible> for LogicError {

@@ -1,6 +1,6 @@
 use persistence::{ceobe_operate::{announcement, models::tool_link::{
     self, models::model_tool_link::FrontendToolLink,
-}, resource::{self, all_available, countdown::{self, CountdownType}}}, help_crates::naive_date_time_format};
+}, resource::{self, all_available, countdown::{self, CountdownType}}, video}, help_crates::naive_date_time_format};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -166,5 +166,43 @@ impl From<countdown::Model> for Countdown {
         }
     }
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct VideoItem {
+    pub bv: String,
+    pub start_time: String,
+    pub over_time: String,
+    pub title: String,
+    pub author: String,
+    pub video_link: String,
+    #[serde(rename = "cover_img")]
+    pub cover_image: String,
+}
+
+impl From<video::Model> for VideoItem {
+    fn from(
+        video::Model {
+            bv,
+            start_time,
+            over_time,
+            title,
+            author,
+            video_link,
+            cover_image,
+            ..
+        }: video::Model,
+    ) -> Self {
+        Self {
+            bv,
+            start_time: naive_date_time_format(start_time),
+            over_time: naive_date_time_format(over_time),
+            title,
+            author,
+            video_link,
+            cover_image,
+        }
+    }
+}
+
 
 

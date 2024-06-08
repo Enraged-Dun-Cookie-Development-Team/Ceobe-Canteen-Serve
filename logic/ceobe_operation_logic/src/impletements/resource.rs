@@ -7,7 +7,7 @@ use super::CeobeOperateLogic;
 
 
 impl CeobeOperateLogic {
-    /// 获取公告列表
+    /// 更新资源
     pub async fn upload_resource(
         sql: SqlDatabaseOperate, resource: resource::Checked
     ) -> LogicResult<()> {
@@ -18,10 +18,9 @@ impl CeobeOperateLogic {
             .update_resource(resource)
             .await
             .map_err(Into::into)
-            .into()
     }
 
-     /// 更新公告
+    /// 获取资源列表
     pub async fn get_resource(
         sql: SqlDatabaseOperate
     ) -> LogicResult<Resource> {

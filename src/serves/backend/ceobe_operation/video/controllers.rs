@@ -1,3 +1,4 @@
+use ceobe_operation_logic::{impletements::CeobeOperateLogic, view::VideoItem};
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
@@ -15,7 +16,6 @@ use tracing::{event, instrument, Level};
 
 use super::{
     error::{CeobeOperationVideoError, VideoRespResult},
-    view::VideoItem,
 };
 use crate::router::CeobeOperationVideo;
 
@@ -33,9 +33,7 @@ impl CeobeOperationVideo {
         CheckExtract(BvQuery { bv }): BvQueryCheck, query: QueryBiliVideo,
     ) -> VideoRespResult<String> {
         resp_try(async {
-            let body = query.fetch(bv).await??;
-            event!(Level::INFO, response.len = body.len());
-            Ok(String::from_utf8(body.to_vec())?)
+            Ok(CeobeOperateLogic::get_video_detail(bv, query).await?)
         })
         .await
     }
@@ -45,15 +43,7 @@ impl CeobeOperationVideo {
         database: SqlDatabaseOperate,
     ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
-            Ok(database
-                .ceobe()
-                .operation()
-                .video()
-                .find_all_not_delete()
-                .await?
-                .into_iter()
-                .map(Into::into)
-                .collect())
+            Ok(CeobeOperateLogic::list_all_video(database).await?)
         })
         .await
     }
@@ -62,7 +52,7 @@ impl CeobeOperationVideo {
     pub async fn update_list(
         db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
-        rtry!(db.ceobe().operation().video().update_all(videos).await);
+        rtry!(CeobeOperateLogic::update_list(db, videos).await);
         RespResult::ok(())
     }
 }

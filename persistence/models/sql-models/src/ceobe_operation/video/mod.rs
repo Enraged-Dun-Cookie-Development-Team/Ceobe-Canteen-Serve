@@ -15,6 +15,7 @@ pub mod bv {
 
     pub use super::checkers::bv::{Bv as Checked, BvChecker as Checker};
     use super::checkers::bv_arg_checker;
+    pub use super::checkers::bv::Bv;
 
     pub mod query {
         pub use super::bv_arg_checker::{
