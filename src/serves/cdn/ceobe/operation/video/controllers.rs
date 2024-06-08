@@ -1,17 +1,12 @@
-use std::time::Duration;
-
-use ceobe_operation_logic::{impletements::CeobeOperateLogic, view::VideoItem};
-use persistence::{
-    ceobe_operate::{ToCeobe, ToCeobeOperation},
-    mysql::SqlDatabaseOperate,
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::VideoItem,
 };
-use resp_result::{resp_try, FlagWrap};
+use persistence::mysql::SqlDatabaseOperate;
+use resp_result::resp_try;
 use tracing::instrument;
 
-use super::{
-    error::VideoRespResult,
-};
-use crate::router::{CdnOperationVideoFrontend, CeobeOperationVideoFrontend};
+use super::error::VideoRespResult;
+use crate::router::CdnOperationVideoFrontend;
 
 impl CdnOperationVideoFrontend {
     #[instrument(ret, skip(database), name = "list all video")]

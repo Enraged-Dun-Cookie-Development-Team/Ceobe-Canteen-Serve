@@ -1,19 +1,18 @@
-use ceobe_operation_logic::{impletements::CeobeOperateLogic, view::AnnouncementResp};
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::AnnouncementResp,
+};
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
 use persistence::{
-    ceobe_operate::{models::announcement},
-    mysql::SqlDatabaseOperate,
+    ceobe_operate::models::announcement, mysql::SqlDatabaseOperate,
 };
 use resp_result::resp_try;
 use tencent_cloud_server::cloud_manager::CloudManager;
 use tracing::instrument;
 
-use super::{
-    error::{AnnouncementRespResult, CeobeOperationAnnouncementError},
-};
+use super::error::{AnnouncementRespResult, CeobeOperationAnnouncementError};
 use crate::router::CeobeOperationAnnouncement;
 
 type UpdateAnnouncementCheck = JsonCheckExtract<
@@ -29,7 +28,7 @@ impl CeobeOperationAnnouncement {
     // 获取公告列表
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
-        db: SqlDatabaseOperate, 
+        db: SqlDatabaseOperate,
     ) -> AnnouncementRespResult<Vec<AnnouncementResp>> {
         resp_try(async {
             Ok(CeobeOperateLogic::get_announcement_list(db).await?)
@@ -44,7 +43,12 @@ impl CeobeOperationAnnouncement {
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
-            CeobeOperateLogic::update_announcement_list(db, tc_cloud, announcements).await?;
+            CeobeOperateLogic::update_announcement_list(
+                db,
+                tc_cloud,
+                announcements,
+            )
+            .await?;
             Ok(())
         })
         .await

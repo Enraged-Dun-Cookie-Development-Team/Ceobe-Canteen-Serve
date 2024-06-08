@@ -1,6 +1,17 @@
-use persistence::{ceobe_operate::{announcement, models::tool_link::{
-    self, models::model_tool_link::FrontendToolLink,
-}, resource::{self, all_available, countdown::{self, CountdownType}}, video}, help_crates::naive_date_time_format};
+use persistence::{
+    ceobe_operate::{
+        announcement,
+        models::tool_link::{
+            self, models::model_tool_link::FrontendToolLink,
+        },
+        resource::{
+            self, all_available,
+            countdown::{self, CountdownType},
+        },
+        video,
+    },
+    help_crates::naive_date_time_format,
+};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -131,7 +142,6 @@ impl From<all_available::Model> for AllAvailable {
     }
 }
 
-
 #[derive(Debug, Clone, Serialize)]
 pub struct Countdown {
     #[serde(rename = "text")]
@@ -203,6 +213,3 @@ impl From<video::Model> for VideoItem {
         }
     }
 }
-
-
-

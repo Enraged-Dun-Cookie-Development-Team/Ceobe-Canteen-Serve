@@ -1,6 +1,6 @@
 use axum::extract::rejection::JsonRejection;
 use ceobe_operation_logic::error::LogicError;
-use persistence::ceobe_operate::resource::{CheckError, OperateError};
+use persistence::ceobe_operate::resource::CheckError;
 use resp_result::RespResult;
 
 use crate::error_generate;

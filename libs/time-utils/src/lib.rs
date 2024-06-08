@@ -1,5 +1,5 @@
 pub use chrono;
-use chrono::{DateTime, Local, NaiveDateTime, NaiveDate};
+use chrono::{DateTime, Local, NaiveDate, NaiveDateTime};
 use mongodb::bson;
 
 const TIME_FORMAT: &str = "%Y-%m-%d %T";

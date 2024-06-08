@@ -1,16 +1,17 @@
-use persistence::{ceobe_operate::{announcement, ToCeobeOperation}, ceobe_user::ToCeobe, mysql::SqlDatabaseOperate};
+use persistence::{
+    ceobe_operate::{announcement, ToCeobeOperation},
+    ceobe_user::ToCeobe,
+    mysql::SqlDatabaseOperate,
+};
 use tencent_cloud_server::cloud_manager::CloudManager;
 
-use crate::{error::LogicResult, view::AnnouncementResp};
-
 use super::CeobeOperateLogic;
-
-
+use crate::{error::LogicResult, view::AnnouncementResp};
 
 impl CeobeOperateLogic {
     /// 获取公告列表
     pub async fn get_announcement_list(
-        sql: SqlDatabaseOperate
+        sql: SqlDatabaseOperate,
     ) -> LogicResult<Vec<AnnouncementResp>> {
         Ok(sql
             .ceobe()
@@ -23,9 +24,10 @@ impl CeobeOperateLogic {
             .collect())
     }
 
-     /// 更新公告
+    /// 更新公告
     pub async fn update_announcement_list(
-        sql: SqlDatabaseOperate, tc_cloud: CloudManager, announcements: Vec<announcement::Checked>
+        sql: SqlDatabaseOperate, tc_cloud: CloudManager,
+        announcements: Vec<announcement::Checked>,
     ) -> LogicResult<()> {
         sql.ceobe()
             .operation()
@@ -39,5 +41,3 @@ impl CeobeOperateLogic {
         Ok(())
     }
 }
-
-

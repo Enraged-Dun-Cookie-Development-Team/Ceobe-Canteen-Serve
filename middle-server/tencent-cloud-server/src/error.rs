@@ -1,5 +1,4 @@
-use status_err::StatusErr;
-use status_err::ErrPrefix;
+use status_err::{ErrPrefix, StatusErr};
 
 /// 腾讯云异常
 #[derive(Debug, thiserror::Error, StatusErr)]

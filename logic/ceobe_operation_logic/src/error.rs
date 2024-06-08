@@ -1,14 +1,16 @@
 use std::{convert::Infallible, string::FromUtf8Error};
 
-use persistence::{ceobe_operate::{
-    announcement::OperateError as  AnnouncementOperateError, models::tool_link::CheckError, resource::OperateError as  ResourceOperateError, tool_link::OperateError as ToolLinkIOperateError, video::OperateError as VideoOperateError
-}};
+use persistence::ceobe_operate::{
+    announcement::OperateError as AnnouncementOperateError,
+    models::tool_link::CheckError,
+    resource::OperateError as ResourceOperateError,
+    tool_link::OperateError as ToolLinkIOperateError,
+    video::OperateError as VideoOperateError,
+};
 use request_clients::error::ChannelClose;
 use status_err::StatusErr;
 use tencent_cloud_server::error::TcCloudError;
 use thiserror::Error;
-use status_err::ErrPrefix;
-
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {

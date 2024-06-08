@@ -13,9 +13,8 @@ mod models;
 pub mod bv {
     pub use std::string::String as Uncheck;
 
-    pub use super::checkers::bv::{Bv as Checked, BvChecker as Checker};
+    pub use super::checkers::bv::{Bv as Checked, Bv, BvChecker as Checker};
     use super::checkers::bv_arg_checker;
-    pub use super::checkers::bv::Bv;
 
     pub mod query {
         pub use super::bv_arg_checker::{
