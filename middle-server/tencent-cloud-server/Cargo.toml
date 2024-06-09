@@ -17,3 +17,4 @@ hmac.workspace = true
 hex.workspace = true
 serde_qs.workspace = true
 thiserror.workspace = true
+url.workspace = true
