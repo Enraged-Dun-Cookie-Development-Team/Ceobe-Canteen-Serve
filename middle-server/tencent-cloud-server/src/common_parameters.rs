@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use general_request_client::{HeaderValue, Method};
+use general_request_client::{HeaderValue, Method,Method, Url};
 use hmac::{digest::InvalidLength, Hmac, Mac};
 use secrecy::ExposeSecret;
 use serde::{Deserialize, Serialize};
@@ -79,17 +79,16 @@ impl TcCloudManager {
     /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
     fn sign<P: Serialize, Q: Serialize + Clone>(
         &self, common_params: &CommonParameter,
-        request: &RequestContent<P, Q>,
+        request: &RequestContent<P, Q>, url: &Url,
     ) -> Result<String, TcCloudError> {
         const ALGORITHM: &str = "TC3-HMAC-SHA256";
         // URI 参数，API 3.0 固定为正斜杠（/）。
         const CANONICAL_URI: &str = "/";
         let canonical_query = serde_qs::to_string(&request.query)?;
-        let host = format!("{}.tencentcloudapi.com", common_params.service);
         let canonical_headers = format!(
             "content-type:{}\nhost:{}\nx-tc-action:{}\n",
             request.content_type,
-            host,
+            url.host_str().unwrap_or_default(),
             common_params.action.to_lowercase()
         );
         // 与canonical_headers对应，目前只看到用这三个字段
@@ -144,16 +143,16 @@ impl TcCloudManager {
         &self, common_params: &CommonParameter,
         request: &RequestContent<P, Q>,
     ) -> Result<TcCloudResponse, TcCloudError> {
-        let authorization = self.sign(common_params, request)?;
+        let url =
+            format!("https://{}.tencentcloudapi.com", common_params.service)
+                .parse()?;
+        let authorization = self.sign(common_params, request, &url)?;
 
         let mut payload_buffer = Vec::<u8>::new();
         serde_json::to_writer(&mut payload_buffer, &request.payload)?;
 
         let requester = TencentCloudRequester::builder()
-            .url(format!(
-                "https://{}.tencentcloudapi.com",
-                common_params.service
-            ))
+            .url(url)
             .method(request.method.clone())
             .query(request.query.clone())
             .payload(payload_buffer)

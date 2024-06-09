@@ -32,4 +32,7 @@ pub enum TcCloudError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     InvalidHeaderValue(#[from] InvalidHeaderValue),
+
+    #[error(transparent)]
+    Url(#[from] url::ParseError),
 }

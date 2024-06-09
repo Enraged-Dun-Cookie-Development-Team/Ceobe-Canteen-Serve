@@ -9,7 +9,7 @@ use typed_builder::TypedBuilder;
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct TencentCloudRequester<T: Serialize> {
     /// 请求链接
-    pub(crate) url: String,
+    pub(crate) url: Url,
     /// 请求方法
     pub(crate) method: Method,
     /// 请求参数
@@ -18,7 +18,6 @@ pub struct TencentCloudRequester<T: Serialize> {
     /// 请求内容
     /// FIXME: 使用基于泛型的接口绑定
     pub(crate) payload: Vec<u8>,
-    /// 请求头
     pub(crate) host: HeaderValue,
     pub(crate) action: HeaderValue,
     pub(crate) version: HeaderValue,
@@ -35,7 +34,7 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
 
     fn get_method(&self) -> Method { self.method.clone() }
 
-    fn get_url(&self) -> Url { self.url.parse().unwrap() }
+    fn get_url(&self) -> Url { self.url.clone() }
 
     fn prepare_request<B: RequestBuilder>(
         self, builder: B,

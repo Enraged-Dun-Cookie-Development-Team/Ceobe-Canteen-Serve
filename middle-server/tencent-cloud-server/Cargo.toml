@@ -18,3 +18,4 @@ hex.workspace = true
 serde_qs.workspace = true
 thiserror.workspace = true
 status-err = { path = "../../libs/status-err" }
+url.workspace = true
