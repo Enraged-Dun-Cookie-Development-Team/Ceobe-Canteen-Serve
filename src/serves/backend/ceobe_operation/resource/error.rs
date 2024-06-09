@@ -1,5 +1,6 @@
 use axum::extract::rejection::JsonRejection;
-use persistence::ceobe_operate::resource::{CheckError, OperateError};
+use ceobe_operation_logic::error::LogicError;
+use persistence::ceobe_operate::resource::CheckError;
 use resp_result::RespResult;
 
 use crate::error_generate;
@@ -9,7 +10,7 @@ error_generate! {
 
     Json = JsonRejection
     Check = CheckError
-    DbOperate = OperateError
+    Logic = LogicError
 }
 
 pub type ResourceRResult<T> = RespResult<T, ResourceError>;

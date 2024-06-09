@@ -1,22 +1,20 @@
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::VideoItem,
+};
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract, QueryCheckExtract,
 };
 use persistence::{
-    ceobe_operate::{
-        models::video::{self, bv::query::Checked as BvQuery},
-        ToCeobe, ToCeobeOperation,
-    },
+    ceobe_operate::models::video::{self, bv::query::Checked as BvQuery},
     mysql::SqlDatabaseOperate,
 };
 use request_clients::bili_client::QueryBiliVideo;
 use resp_result::{resp_try, rtry, RespResult};
-use tracing::{event, instrument, Level};
+use tencent_cloud_server::cloud_manager::TcCloudManager;
+use tracing::instrument;
 
-use super::{
-    error::{CeobeOperationVideoError, VideoRespResult},
-    view::VideoItem,
-};
+use super::error::{CeobeOperationVideoError, VideoRespResult};
 use crate::router::CeobeOperationVideo;
 
 type BvQueryCheck =
@@ -33,9 +31,7 @@ impl CeobeOperationVideo {
         CheckExtract(BvQuery { bv }): BvQueryCheck, query: QueryBiliVideo,
     ) -> VideoRespResult<String> {
         resp_try(async {
-            let body = query.fetch(bv).await??;
-            event!(Level::INFO, response.len = body.len());
-            Ok(String::from_utf8(body.to_vec())?)
+            Ok(CeobeOperateLogic::get_video_detail(bv, query).await?)
         })
         .await
     }
@@ -45,24 +41,17 @@ impl CeobeOperationVideo {
         database: SqlDatabaseOperate,
     ) -> VideoRespResult<Vec<VideoItem>> {
         resp_try(async {
-            Ok(database
-                .ceobe()
-                .operation()
-                .video()
-                .find_all_not_delete()
-                .await?
-                .into_iter()
-                .map(Into::into)
-                .collect())
+            Ok(CeobeOperateLogic::list_all_video(database).await?)
         })
         .await
     }
 
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, tc_cloud))]
     pub async fn update_list(
-        db: SqlDatabaseOperate, CheckExtract(videos): UpdateVideoCheck,
+        db: SqlDatabaseOperate, tc_cloud: TcCloudManager,
+        CheckExtract(videos): UpdateVideoCheck,
     ) -> VideoRespResult<()> {
-        rtry!(db.ceobe().operation().video().update_all(videos).await);
+        rtry!(CeobeOperateLogic::update_list(db, tc_cloud, videos).await);
         RespResult::ok(())
     }
 }

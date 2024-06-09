@@ -12,3 +12,6 @@ serde.workspace = true
 serde_json.workspace = true
 typed-builder.workspace = true
 persistence = { workspace = true, features = ["model-bakery", "help-crates"] }
+chrono.workspace = true
+tencent-cloud-server.workspace = true
+serde_qs.workspace = true

@@ -23,8 +23,9 @@ use configs::{
     auth_config::AuthConfig, cors_config::CorsConfigImpl,
     mob_config::MobPushConfig, qiniu_secret::QiniuUploadConfig,
     qq_channel::QqChannelConfig, resp_result_config::RespResultConfig,
-    schedule_notifier_config::ScheduleNotifierConfig, GlobalConfig,
-    CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML,
+    schedule_notifier_config::ScheduleNotifierConfig,
+    tc_cloud_config::TcCloudConfig, GlobalConfig, CONFIG_FILE_JSON,
+    CONFIG_FILE_TOML, CONFIG_FILE_YAML,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
@@ -32,6 +33,7 @@ use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
+use tencent_cloud_server::axum_starter::TencentCdnPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
 
@@ -83,6 +85,7 @@ async fn main_task() {
         .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
         .prepare_state(MobPushPrepare::<_, MobPushConfig>)
         .prepare_state(QqChannelPrepare::<_, QqChannelConfig>)
+        .prepare_state(TencentCdnPrepare::<_, TcCloudConfig>)
         // database
         .prepare_concurrent(|set| {
             set.join_state(MysqlDbConnect)

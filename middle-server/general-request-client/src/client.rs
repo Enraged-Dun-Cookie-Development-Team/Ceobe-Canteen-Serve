@@ -42,7 +42,8 @@ impl RequestClient {
         &self, requester: Q,
     ) -> Result<reqwest::Response, reqwest::Error> {
         let url = requester.get_url();
-        let builder = self.0.request(Q::METHOD, url).version(Q::VERSION);
+        let method = requester.get_method();
+        let builder = self.0.request(method, url).version(Q::VERSION);
 
         let request = requester.prepare_request(builder)?;
 
