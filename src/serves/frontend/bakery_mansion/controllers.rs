@@ -58,6 +58,6 @@ impl BakeryMansionFrontend {
     pub async fn recent_mansion_predict(
         mongo: MongoDatabaseOperate,
     ) -> MansionRResult<Option<MansionRecentPredictResp>> {
-        Ok(rtry!(BakeryLogic::recent_mansion_predict(mongo).await)).into()
+        resp_try(async { Ok(BakeryLogic::recent_mansion_predict(mongo).await?) }).await
     }
 }
