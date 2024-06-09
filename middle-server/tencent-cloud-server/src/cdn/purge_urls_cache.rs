@@ -1,4 +1,5 @@
 use general_request_client::Url;
+use mime::Mime;
 use serde::Serialize;
 
 use super::{SERVICE, VERSION};
@@ -59,7 +60,7 @@ impl TcCloudManager {
             .build();
         let request = RequestContent::builder()
             .payload(payload)
-            .content_type("application/json; charset=utf-8".to_string())
+            .content_type("application/json; charset=utf-8".parse().unwrap())
             .query("")
             .build();
 

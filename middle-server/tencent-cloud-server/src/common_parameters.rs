@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
-use general_request_client::{HeaderValue, Method,Method, Url};
+use general_request_client::{HeaderValue, Method, Url};
 use hmac::{digest::InvalidLength, Hmac, Mac};
+use mime::Mime;
 use secrecy::ExposeSecret;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -34,7 +35,7 @@ pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
     pub method: Method,
     pub payload: P,
     pub query: Q,
-    pub content_type: String,
+    pub content_type: Mime,
 }
 
 #[derive(Debug, Clone, TypedBuilder, Deserialize)]
@@ -152,20 +153,17 @@ impl TcCloudManager {
         serde_json::to_writer(&mut payload_buffer, &request.payload)?;
 
         let requester = TencentCloudRequester::builder()
-            .url(url)
+            .url(url.clone())
             .method(request.method.clone())
             .query(request.query.clone())
             .payload(payload_buffer)
-            .host(HeaderValue::from_str(&format!(
-                "{}.tencentcloudapi.com",
-                common_params.service
-            ))?)
+            .host(HeaderValue::from_str(url.host_str().unwrap())?)
             .action(HeaderValue::from_str(common_params.action)?)
             .version(HeaderValue::from_str(common_params.version)?)
             .timestamp(HeaderValue::from_str(
                 &common_params.timestamp.to_string(),
             )?)
-            .content_type(HeaderValue::from_str(&request.content_type)?)
+            .content_type(HeaderValue::from_str(&request.content_type.to_string())?)
             .authorization(HeaderValue::from_str(&authorization)?)
             .region(common_params.region.clone().and_then(|region| {
                 HeaderValue::from_str(&region)
