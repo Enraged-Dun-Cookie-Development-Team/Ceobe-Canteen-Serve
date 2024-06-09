@@ -7,7 +7,7 @@ use persistence::{
     bakery::{mansion::ToMansion, ToBakery},
     mongodb::MongoDatabaseOperate,
 };
-use resp_result::{resp_try, rtry, FlagWrap};
+use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
 use super::{
@@ -58,6 +58,9 @@ impl BakeryMansionFrontend {
     pub async fn recent_mansion_predict(
         mongo: MongoDatabaseOperate,
     ) -> MansionRResult<Option<MansionRecentPredictResp>> {
-        resp_try(async { Ok(BakeryLogic::recent_mansion_predict(mongo).await?) }).await
+        resp_try(async {
+            Ok(BakeryLogic::recent_mansion_predict(mongo).await?)
+        })
+        .await
     }
 }

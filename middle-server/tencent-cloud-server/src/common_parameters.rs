@@ -163,7 +163,9 @@ impl TcCloudManager {
             .timestamp(HeaderValue::from_str(
                 &common_params.timestamp.to_string(),
             )?)
-            .content_type(HeaderValue::from_str(&request.content_type.to_string())?)
+            .content_type(HeaderValue::from_str(
+                request.content_type.as_ref(),
+            )?)
             .authorization(HeaderValue::from_str(&authorization)?)
             .region(common_params.region.clone().and_then(|region| {
                 HeaderValue::from_str(&region)

@@ -4,7 +4,7 @@ use bakery_logic::{
 };
 use checker::CheckExtract;
 use persistence::mongodb::MongoDatabaseOperate;
-use resp_result::{resp_try, rtry};
+use resp_result::resp_try;
 use tracing::instrument;
 
 use super::error::{MansionRResult, MidCheckerPretreatment};
@@ -33,6 +33,9 @@ impl CdnBakeryMansionFrontend {
     pub async fn recent_mansion_predict(
         mongo: MongoDatabaseOperate,
     ) -> MansionRResult<Option<MansionRecentPredictResp>> {
-        resp_try(async { Ok(BakeryLogic::recent_mansion_predict(mongo).await?) }).await
+        resp_try(async {
+            Ok(BakeryLogic::recent_mansion_predict(mongo).await?)
+        })
+        .await
     }
 }

@@ -1,5 +1,4 @@
 use general_request_client::Url;
-use mime::Mime;
 use serde::Serialize;
 
 use super::{SERVICE, VERSION};
