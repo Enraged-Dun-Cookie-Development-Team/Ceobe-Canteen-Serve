@@ -17,5 +17,5 @@ pub enum TcCloudError {
     #[error("腾讯云响应异常: {code} => `{msg}`")]
     TcCloud { code: String, msg: String },
     #[error(transparent)]
-    Url(#[from]url::ParseError)
+    Url(#[from] url::ParseError),
 }

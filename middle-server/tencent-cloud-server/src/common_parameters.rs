@@ -79,7 +79,7 @@ impl CloudManager {
     /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
     fn sign<P: Serialize, Q: Serialize + Clone>(
         &self, common_params: &CommonParameter,
-        request: &RequestContent<P, Q>,url:&Url
+        request: &RequestContent<P, Q>, url: &Url,
     ) -> Result<String, TcCloudError> {
         const ALGORITHM: &str = "TC3-HMAC-SHA256";
         // URI 参数，API 3.0 固定为正斜杠（/）。
@@ -144,11 +144,10 @@ impl CloudManager {
         &self, common_params: &CommonParameter,
         request: &RequestContent<P, Q>,
     ) -> Result<TcCloudResponse, TcCloudError> {
-        let url = format!(
-            "https://{}.tencentcloudapi.com",
-            common_params.service
-        ).parse()?;
-        let authorization = self.sign(common_params, request,&url)?;
+        let url =
+            format!("https://{}.tencentcloudapi.com", common_params.service)
+                .parse()?;
+        let authorization = self.sign(common_params, request, &url)?;
 
         let mut payload_buffer = Vec::<u8>::new();
         serde_json::to_writer(&mut payload_buffer, &request.payload)?;

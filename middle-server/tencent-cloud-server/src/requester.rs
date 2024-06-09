@@ -42,7 +42,13 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
         builder
             .query(&self.query)
             .header(|map| {
-                map.append(HOST, HeaderValue::from_str(self.url.host_str().unwrap_or_default()).unwrap());
+                map.append(
+                    HOST,
+                    HeaderValue::from_str(
+                        self.url.host_str().unwrap_or_default(),
+                    )
+                    .unwrap(),
+                );
                 map.append(
                     "X-TC-Action",
                     HeaderValue::from_str(&self.action).unwrap(),
