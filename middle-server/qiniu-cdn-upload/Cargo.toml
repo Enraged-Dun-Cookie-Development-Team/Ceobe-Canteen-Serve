@@ -8,7 +8,7 @@ edition = "2021"
 axum = { workspace = true }
 ceobe-qiniu-upload = { workspace = true }
 futures = { workspace = true }
-mime = "0.3.16"
+mime.workspace = true
 
 [dev-dependencies]
 url.workspace = true

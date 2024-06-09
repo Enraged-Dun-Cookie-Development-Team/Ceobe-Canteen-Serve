@@ -1,21 +1,22 @@
 use chrono::{DateTime, Utc};
-use general_request_client::{Method, Url};
+use general_request_client::{HeaderValue, Method, Url};
 use hmac::{digest::InvalidLength, Hmac, Mac};
+use mime::Mime;
 use secrecy::ExposeSecret;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use typed_builder::TypedBuilder;
 
 use crate::{
-    cloud_manager::CloudManager, error::TcCloudError,
+    cloud_manager::TcCloudManager, error::TcCloudError,
     requester::TencentCloudRequester,
 };
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CommonParameter {
-    pub service: String,
-    pub version: String,
-    pub action: String,
+    pub service: &'static str,
+    pub version: &'static str,
+    pub action: &'static str,
     #[builder(default)]
     pub region: Option<String>,
     #[builder(default = "TC3-HMAC-SHA256")]
@@ -34,7 +35,7 @@ pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
     pub method: Method,
     pub payload: P,
     pub query: Q,
-    pub content_type: String,
+    pub content_type: Mime,
 }
 
 #[derive(Debug, Clone, TypedBuilder, Deserialize)]
@@ -75,7 +76,7 @@ fn hmacsha256(s: &str, key: &str) -> Result<String, InvalidLength> {
     Ok(hex::encode(result))
 }
 
-impl CloudManager {
+impl TcCloudManager {
     /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
     fn sign<P: Serialize, Q: Serialize + Clone>(
         &self, common_params: &CommonParameter,
@@ -123,8 +124,7 @@ impl CloudManager {
 
         let secret_date =
             hmacsha256(&date, &format!("TC3{}", self.key.expose_secret()))?;
-        let secret_service =
-            hmacsha256(&common_params.service, &secret_date)?;
+        let secret_service = hmacsha256(common_params.service, &secret_date)?;
         let secret_signing = hmacsha256("tc3_request", &secret_service)?;
         let signature =
             hex::encode(hmacsha256(&string_to_sign, &secret_signing)?);
@@ -153,17 +153,30 @@ impl CloudManager {
         serde_json::to_writer(&mut payload_buffer, &request.payload)?;
 
         let requester = TencentCloudRequester::builder()
-            .url(url)
+            .url(url.clone())
             .method(request.method.clone())
             .query(request.query.clone())
             .payload(payload_buffer)
-            .action(common_params.action.clone())
-            .version(common_params.version.clone())
-            .timestamp(common_params.timestamp)
-            .content_type(request.content_type.clone())
-            .authorization(authorization)
-            .region(common_params.region.clone())
-            .token(common_params.token.clone())
+            .host(HeaderValue::from_str(url.host_str().unwrap())?)
+            .action(HeaderValue::from_str(common_params.action)?)
+            .version(HeaderValue::from_str(common_params.version)?)
+            .timestamp(HeaderValue::from_str(
+                &common_params.timestamp.to_string(),
+            )?)
+            .content_type(HeaderValue::from_str(
+                request.content_type.as_ref(),
+            )?)
+            .authorization(HeaderValue::from_str(&authorization)?)
+            .region(common_params.region.clone().and_then(|region| {
+                HeaderValue::from_str(&region)
+                    .map_err(TcCloudError::from)
+                    .ok()
+            }))
+            .token(common_params.token.clone().and_then(|token| {
+                HeaderValue::from_str(&token)
+                    .map_err(TcCloudError::from)
+                    .ok()
+            }))
             .build();
 
         let resp = self.client.send_request(requester).await?;

@@ -1,4 +1,5 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
+use ceobe_operation_logic::error::LogicError;
 use persistence::ceobe_operate::announcement;
 use resp_result::RespResult;
 
@@ -11,7 +12,7 @@ error_generate! {
     Json = JsonRejection
     Query = QueryRejection
     Check = announcement::CheckError
-    DbOperate = announcement::OperateError
+    Logic = LogicError
 }
 
 pub(crate) type AnnouncementRespResult<T> =

@@ -1,11 +1,9 @@
+use bakery_logic::{impletements::BakeryLogic, view::MansionResp};
 use checker::CheckExtract;
-use chrono::Duration;
-use persistence::{
-    bakery::{mansion::ToMansion, ToBakery},
-    mongodb::MongoDatabaseOperate,
-};
+use persistence::mongodb::MongoDatabaseOperate;
 use resp_result::resp_try;
-use tracing::{debug, instrument};
+use tencent_cloud_server::cloud_manager::TcCloudManager;
+use tracing::instrument;
 
 use super::{
     models::{
@@ -14,15 +12,12 @@ use super::{
     },
     MansionRResult,
 };
-use crate::{
-    router::BakeryMansionBackend,
-    serves::backend::bakery_mansion::view::ViewMansion,
-};
+use crate::router::BakeryMansionBackend;
 
 impl BakeryMansionBackend {
-    #[instrument(skip(db), ret)]
+    #[instrument(skip(db, tc_cloud), ret)]
     pub async fn save_mansion(
-        db: MongoDatabaseOperate,
+        db: MongoDatabaseOperate, tc_cloud: TcCloudManager,
         CheckExtract(mid, ..): OptionMidCheckerPretreatment,
         CheckExtract(json, ..): MansionBodyCheckerPretreatment,
     ) -> MansionRResult<()> {
@@ -30,22 +25,7 @@ impl BakeryMansionBackend {
             let mid = mid.id;
             let data = json;
 
-            match mid {
-                Some(mid) => {
-                    debug!(
-                        mansion.id.provide = true,
-                        mansion.saveMode = "Update"
-                    );
-                    db.bakery().mansion().update(mid, data).await?;
-                }
-                None => {
-                    debug!(
-                        mansion.id.provide = false,
-                        mansion.saveMode = "Create"
-                    );
-                    db.bakery().mansion().create(data).await?;
-                }
-            }
+            BakeryLogic::save_mansion(db, tc_cloud, mid, data).await?;
             Ok(())
         })
         .await
@@ -55,14 +35,9 @@ impl BakeryMansionBackend {
     pub async fn get_mansion(
         db: MongoDatabaseOperate,
         CheckExtract(mid, ..): MidCheckerPretreatment,
-    ) -> MansionRResult<ViewMansion> {
+    ) -> MansionRResult<MansionResp> {
         resp_try(async {
-            Ok(db
-                .bakery()
-                .mansion()
-                .get_mansion_by_id(&mid.id)
-                .await?
-                .into())
+            Ok(BakeryLogic::get_mansion(db, mid).await?.into())
         })
         .await
     }
@@ -71,23 +46,17 @@ impl BakeryMansionBackend {
     pub async fn get_recent_id(
         db: MongoDatabaseOperate,
     ) -> MansionRResult<Vec<String>> {
-        resp_try(async {
-            Ok(db
-                .bakery()
-                .mansion()
-                .get_mansion_id_list_by_time(Duration::days(90))
-                .await?)
-        })
-        .await
+        resp_try(async { Ok(BakeryLogic::get_recent_id_by_90(db).await?) })
+            .await
     }
 
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, tc_cloud))]
     pub async fn remove_mansion(
-        db: MongoDatabaseOperate,
+        db: MongoDatabaseOperate, tc_cloud: TcCloudManager,
         CheckExtract(mid, ..): MidCheckerPretreatment,
     ) -> MansionRResult<()> {
         resp_try(async {
-            db.bakery().mansion().delete(&mid.id).await?;
+            BakeryLogic::remove_mansion(db, tc_cloud, mid).await?;
             Ok(())
         })
         .await
