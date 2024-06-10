@@ -30,11 +30,16 @@ pub struct CommonParameter {
 }
 
 #[derive(Debug, Clone, TypedBuilder)]
-pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
+pub struct RequestContent<P, Q>
+where
+    P: Serialize,
+    Q: Serialize + Clone,
+{
     #[builder(default = Method::POST)]
     pub method: Method,
     pub payload: P,
-    pub query: Q,
+    #[builder(default = Option::<Q>::None, setter(strip_option))]
+    pub query: Option<Q>,
     pub content_type: Mime,
 }
 

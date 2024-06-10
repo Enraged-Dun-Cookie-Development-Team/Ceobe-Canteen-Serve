@@ -32,9 +32,13 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
     const METHOD: Method = Method::POST;
     const VERSION: Version = Version::HTTP_11;
 
-    fn get_method(&self) -> Method { self.method.clone() }
+    fn get_method(&self) -> Method {
+        self.method.clone()
+    }
 
-    fn get_url(&self) -> Url { self.url.clone() }
+    fn get_url(&self) -> Url {
+        self.url.clone()
+    }
 
     fn prepare_request<B: RequestBuilder>(
         self, builder: B,
@@ -57,5 +61,37 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
             })
             .body(self.payload)
             .build()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use general_request_client::Method;
+    use mime::Mime;
+    use reqwest::Client;
+    use serde::Serialize;
+    use typed_builder::TypedBuilder;
+
+    #[derive(Debug, Clone, TypedBuilder)]
+    pub struct RequestContent<P, Q>
+    where
+        P: Serialize,
+        Q: Serialize + Clone,
+    {
+        #[builder(default = Method::POST)]
+        pub method: Method,
+        pub payload: P,
+        #[builder(default = Option::<Q>::None, setter(strip_option))]
+        pub query: Option<Q>,
+        pub content_type: Mime,
+    }
+
+    #[test]
+    fn test_serde() {
+        let _ = Client::new()
+            .request(Method::POST, "https://www.baidu.com")
+            .query(&Option::<String>::None)
+            .build()
+            .expect("client构建失败");
     }
 }

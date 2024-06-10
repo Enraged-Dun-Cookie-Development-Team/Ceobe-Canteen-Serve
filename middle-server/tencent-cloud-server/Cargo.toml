@@ -20,3 +20,6 @@ thiserror.workspace = true
 status-err = { path = "../../libs/status-err" }
 url.workspace = true
 mime.workspace = true
+
+[dev-dependencies]
+reqwest.workspace = true
