@@ -73,18 +73,18 @@ fn sha256hex(s: &str) -> String {
     hex::encode(result)
 }
 
-fn hmacsha256(s: &str, key: &str) -> Result<String, InvalidLength> {
+fn hmacsha256(s: &[u8], key: &[u8]) -> Result<Vec<u8>, InvalidLength> {
     type HmacSha256 = Hmac<Sha256>;
-    let mut mac = HmacSha256::new_from_slice(key.as_bytes())?;
-    mac.update(s.as_bytes());
+    let mut mac = HmacSha256::new_from_slice(key)?;
+    mac.update(s);
     let result = mac.finalize().into_bytes();
-    Ok(hex::encode(result))
+    Ok(result.to_vec())
 }
 
 impl TcCloudManager {
     /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
     fn sign<P: Serialize, Q: Serialize + Clone>(
-        &self, common_params: &CommonParameter,
+        secret_id: &str, secret_key: &str, common_params: &CommonParameter,
         request: &RequestContent<P, Q>, url: &Url,
     ) -> Result<String, TcCloudError> {
         const ALGORITHM: &str = "TC3-HMAC-SHA256";
@@ -102,7 +102,6 @@ impl TcCloudManager {
 
         let payload_text = serde_json::to_string(&request.payload)?;
         let hashed_request_payload = sha256hex(&payload_text);
-
         let canonical_request = format!(
             "{}\n{}\n{}\n{}\n{}\n{}",
             request.method,
@@ -127,20 +126,21 @@ impl TcCloudManager {
             hashed_credential_request
         );
 
-        let secret_date =
-            hmacsha256(&date, &format!("TC3{}", self.key.expose_secret()))?;
-        let secret_service = hmacsha256(common_params.service, &secret_date)?;
-        let secret_signing = hmacsha256("tc3_request", &secret_service)?;
-        let signature =
-            hex::encode(hmacsha256(&string_to_sign, &secret_signing)?);
+        let secret_date = &hmacsha256(
+            date.as_bytes(),
+            format!("TC3{}", secret_key).as_bytes(),
+        )?;
+        let secret_service =
+            &hmacsha256(common_params.service.as_bytes(), secret_date)?;
+        let secret_signing = &hmacsha256(b"tc3_request", secret_service)?;
+        let signature = hex::encode(hmacsha256(
+            string_to_sign.as_bytes(),
+            secret_signing,
+        )?);
 
         Ok(format!(
             "{} Credential={}/{}, SignedHeaders={}, Signature={}",
-            ALGORITHM,
-            self.id.expose_secret(),
-            credential_scope,
-            SIGNED_HEADERS,
-            signature
+            ALGORITHM, secret_id, credential_scope, SIGNED_HEADERS, signature
         ))
     }
 
@@ -152,7 +152,13 @@ impl TcCloudManager {
         let url =
             format!("https://{}.tencentcloudapi.com", common_params.service)
                 .parse()?;
-        let authorization = self.sign(common_params, request, &url)?;
+        let authorization = Self::sign(
+            self.id.expose_secret(),
+            self.key.expose_secret(),
+            common_params,
+            request,
+            &url,
+        )?;
 
         let mut payload_buffer = Vec::<u8>::new();
         serde_json::to_writer(&mut payload_buffer, &request.payload)?;
@@ -187,7 +193,6 @@ impl TcCloudManager {
         let resp = self.client.send_request(requester).await?;
 
         let payload = resp.bytes().await?;
-        println!("{}", String::from_utf8_lossy(&payload));
 
         let resp = serde_json::from_slice::<TcCloudResponse>(&payload)?;
 

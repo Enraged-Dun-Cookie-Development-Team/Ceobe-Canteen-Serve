@@ -11,9 +11,9 @@ use crate::{
 const ACTION: &str = "PurgeUrlsCache";
 
 #[derive(Debug, Clone, Serialize)]
-struct PurgeUrlsCache {
+pub(crate) struct PurgeUrlsCache {
     #[serde(rename = "Urls")]
-    urls: Vec<Url>,
+    pub(crate) urls: Vec<Url>,
 }
 
 pub struct PurgeCachePath {
