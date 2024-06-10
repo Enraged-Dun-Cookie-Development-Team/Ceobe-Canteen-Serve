@@ -57,12 +57,41 @@ impl TcCloudManager {
             .version(VERSION)
             .action(ACTION)
             .build();
-        let request = RequestContent::builder()
+        let request = RequestContent::<_, ()>::builder()
             .payload(payload)
             .content_type("application/json; charset=utf-8".parse().unwrap())
-            .query("")
             .build();
 
         Self::common_request(self, &common_params, &request).await
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use general_request_client::Method;
+    use mime::Mime;
+    use serde::Serialize;
+    use typed_builder::TypedBuilder;
+
+    #[derive(Debug, Clone, TypedBuilder)]
+    pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
+        #[builder(default = Method::POST)]
+        pub method: Method,
+        pub payload: P,
+        pub query: Q,
+        pub content_type: Mime,
+    }
+
+    #[test]
+    fn test_serde_qs() {
+        let request = RequestContent::builder()
+            .payload("")
+            .content_type("application/json; charset=utf-8".parse().unwrap())
+            .query(Option::<String>::None)
+            .build();
+        let canonical_query =
+            serde_qs::to_string(&request.query).expect("序列化发生错误");
+
+        println!("{}", canonical_query);
     }
 }
