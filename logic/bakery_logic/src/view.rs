@@ -170,7 +170,7 @@ impl BakeryTcCdnPath {
         }
 
         PurgeCachePath::new_with_query(
-            "/canteen/bakery/mansionInfo",
+            "/cdn/bakery/mansionInfo",
             &MansionId { mansion_id: mid },
         )
     }
