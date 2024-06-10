@@ -32,13 +32,9 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
     const METHOD: Method = Method::POST;
     const VERSION: Version = Version::HTTP_11;
 
-    fn get_method(&self) -> Method {
-        self.method.clone()
-    }
+    fn get_method(&self) -> Method { self.method.clone() }
 
-    fn get_url(&self) -> Url {
-        self.url.clone()
-    }
+    fn get_url(&self) -> Url { self.url.clone() }
 
     fn prepare_request<B: RequestBuilder>(
         self, builder: B,
