@@ -100,7 +100,9 @@ mod test {
 
     #[test]
     fn test_url() {
-        let mut url = Url::parse("http://server-cdn-dev.ceobecanteen.top/api/v1").unwrap();
+        let mut url =
+            Url::parse("http://server-cdn-dev.ceobecanteen.top/api/v1")
+                .unwrap();
 
         let prefix = &url[Position::BeforePath..];
         url.set_path(&(prefix.to_string() + "/test/test"));
