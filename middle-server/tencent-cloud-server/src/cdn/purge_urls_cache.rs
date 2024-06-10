@@ -1,6 +1,5 @@
 use general_request_client::Url;
 use serde::Serialize;
-use url::Position;
 
 use super::{SERVICE, VERSION};
 use crate::{
@@ -46,8 +45,7 @@ impl TcCloudManager {
             .into_iter()
             .map(|PurgeCachePath { path, query }| {
                 let mut url = Url::clone(&*self.cdn_base_url);
-                let prefix = &url[Position::BeforePath..];
-                url.set_path(&(prefix.to_string() + path));
+                url.set_path(path);
                 url.set_query(query.as_deref());
                 url
             })
@@ -74,7 +72,6 @@ mod test {
     use mime::Mime;
     use serde::Serialize;
     use typed_builder::TypedBuilder;
-    use url::{Position, Url};
 
     #[derive(Debug, Clone, TypedBuilder)]
     pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
@@ -96,14 +93,5 @@ mod test {
             serde_qs::to_string(&request.query).expect("序列化发生错误");
 
         println!("{}", canonical_query);
-    }
-
-    #[test]
-    fn test_url() {
-        let mut url = Url::parse("http://server-cdn-dev.ceobecanteen.top/api/v1").unwrap();
-
-        let prefix = &url[Position::BeforePath..];
-        url.set_path(&(prefix.to_string() + "/test/test"));
-        println!("{}", url)
     }
 }
