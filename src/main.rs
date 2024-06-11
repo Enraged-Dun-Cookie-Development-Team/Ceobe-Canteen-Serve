@@ -33,7 +33,7 @@ use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
 use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
-use tencent_cloud_server::axum_starter::TencentCdnPrepare;
+use tencent_cloud_server::axum_starter::TencentCloudPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
 
@@ -85,7 +85,7 @@ async fn main_task() {
         .prepare_state(ScheduleNotifierPrepare::<_, ScheduleNotifierConfig>)
         .prepare_state(MobPushPrepare::<_, MobPushConfig>)
         .prepare_state(QqChannelPrepare::<_, QqChannelConfig>)
-        .prepare_state(TencentCdnPrepare::<_, TcCloudConfig>)
+        .prepare_state(TencentCloudPrepare::<_, TcCloudConfig>)
         // database
         .prepare_concurrent(|set| {
             set.join_state(MysqlDbConnect)

@@ -6,9 +6,9 @@ use secrecy::SecretString;
 use crate::{
    config::TencentConfigTrait,
 };
-use crate::cloud_manager::cloud_manager::PartTencentCloudManagerState;
+pub use crate::cloud_manager::PartTencentCloudManagerState;
 
-#[prepare(TencentCdnPrepare)]
+#[prepare(TencentCloudPrepare)]
 pub async fn init_tencent_cdn<C>(
     config: &C,
 ) -> AddState<PartTencentCloudManagerState>

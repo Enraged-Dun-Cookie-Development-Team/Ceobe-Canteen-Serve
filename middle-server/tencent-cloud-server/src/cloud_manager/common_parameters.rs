@@ -1,28 +1,21 @@
-use chrono::Utc;
-use hmac::Mac;
-use mime::Mime;
+use general_request_client::HeaderValue;
 use secrecy::ExposeSecret;
-use serde::{Deserialize, Serialize};
-use sha2::Digest;
-use typed_builder::TypedBuilder;
-
-use general_request_client::{HeaderValue, Method};
-
-use crate::{error::TcCloudError,
-            requester::TencentCloudRequester,
-};
-use crate::cloud_manager::entities::{CommonParameter, RequestContent, TencentCloudResponse};
-use crate::cloud_manager::signature::sign;
+use serde::Serialize;
+use url::Url;
 
 use super::cloud_manager::TencentCloudManager;
-
-
+use crate::{
+    cloud_manager::{
+        entities::{CommonParameter, RequestContent, TencentCloudResponse},
+        signature::sign,
+    },
+    error::TcCloudError,
+    requester::TencentCloudRequester,
+};
 
 
 
 impl TencentCloudManager {
-    
-
     /// 通用请求
     pub(crate) async fn common_request<P: Serialize, Q: Serialize + Clone>(
         &self, common_params: &CommonParameter,
