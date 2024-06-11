@@ -1,4 +1,5 @@
 use chrono::DateTime;
+use hex::ToHex;
 use hmac::{digest::InvalidLength, Hmac, Mac};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -7,7 +8,7 @@ use url::Url;
 use crate::{
     error::TcCloudError,
 };
-use crate::cloud_manager::entities::{CommonParameter, RequestContent};
+use crate::cloud_manager::entities::{CommonParameter, HmacSha256Slice, RequestContent, Sha256HexString};
 
 /// 签名使用的算法
 const ALGORITHM: &str = "TC3-HMAC-SHA256";
@@ -18,21 +19,21 @@ const CANONICAL_URI: &str = "/";
 const SIGNED_HEADERS: &str = "content-type;host;x-tc-action";
 
 /// 计算 [u8] slice 的 [sha256](Sha256) 值，并转换为16进制的 [String] 
-fn sha256hex(s: &impl AsRef<[u8]>) -> String {
+fn sha256hex(s: &impl AsRef<[u8]>) -> Sha256HexString {
     let mut hasher = Sha256::new();
     hasher.update(s.as_ref());
     let result = hasher.finalize();
-    hex::encode(result)
+    result.encode_hex()
 }
 
 fn hmac_sha256(
     s: &impl AsRef<[u8]>, key: &impl AsRef<[u8]>,
-) -> Result<Vec<u8>, InvalidLength> {
+) -> Result<HmacSha256Slice, InvalidLength> {
     type HmacSha256 = Hmac<Sha256>;
     let mut mac = HmacSha256::new_from_slice(key.as_ref())?;
     mac.update(s.as_ref());
-    let result = mac.finalize().into_bytes().to_vec();
-    Ok(result)
+    let result = mac.finalize().into_bytes();
+    Ok(HmacSha256Slice::from_slice(&result))
 }
 
 /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978

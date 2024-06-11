@@ -1,8 +1,16 @@
+use std::fmt::{Display, Formatter};
+use chrono::Utc;
+use general_request_client::Method;
 use mime::Mime;
 use serde::{Deserialize, Serialize};
+use smallstr::SmallString;
+use smallvec::SmallVec;
 use typed_builder::TypedBuilder;
-use general_request_client::Method;
-use chrono::Utc;
+use url::Url;
+
+pub type Sha256HexString = SmallString<[u8;64]>;
+pub type HmacSha256Slice = SmallVec<[u8;32]>;
+
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CommonParameter {
     pub service: &'static str,
