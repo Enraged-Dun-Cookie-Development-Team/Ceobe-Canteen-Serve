@@ -13,7 +13,7 @@ pub type HmacSha256Slice = SmallVec<[u8;32]>;
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CommonParameter {
-    pub service: &'static str,
+    pub service: Service,
     pub version: &'static str,
     pub action: &'static str,
     #[builder(default)]
@@ -30,9 +30,9 @@ pub struct CommonParameter {
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct RequestContent<P, Q>
-    where
-        P: Serialize,
-        Q: Serialize + Clone,
+where
+    P: Serialize,
+    Q: Serialize + Clone,
 {
     #[builder(default = Method::POST)]
     pub method: Method,
@@ -63,4 +63,33 @@ pub struct ResponsePayload {
 pub struct TencentCloudError {
     pub code: String,
     pub message: String,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Service {
+    Cdn,
+}
+
+impl AsRef<[u8]> for Service {
+    fn as_ref(&self) -> &[u8] {
+        self.name().as_ref()
+    }
+}
+
+impl Display for Service {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f,"{}",self.name())
+    }
+}
+
+impl Service {
+    fn name(&self) -> &'static str {
+        match self {
+            Service::Cdn => "cdn",
+        }
+    }
+
+    fn to_url(&self) -> Result<Url, url::ParseError> {
+        format!("https://{}.tencentcloudapi.com", self.name()).parse()
+    }
 }

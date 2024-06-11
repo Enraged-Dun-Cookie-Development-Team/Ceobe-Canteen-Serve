@@ -20,6 +20,8 @@ thiserror.workspace = true
 status-err = { path = "../../libs/status-err" }
 url.workspace = true
 mime.workspace = true
+smallstr = { workspace = true, features = ["std", "serde"] }
+smallvec = { workspace = true, features = ["write"] }
 
 [dev-dependencies]
 reqwest.workspace = true
