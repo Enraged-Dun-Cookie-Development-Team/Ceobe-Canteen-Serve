@@ -4,7 +4,7 @@ use persistence::{
     mysql::SqlDatabaseOperate,
 };
 use tencent_cloud_server::{
-    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TcCloudManager,
+    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
 
 use super::CeobeOperateLogic;
@@ -31,7 +31,7 @@ impl CeobeOperateLogic {
 
     /// 更新公告
     pub async fn update_announcement_list(
-        sql: SqlDatabaseOperate, tc_cloud: TcCloudManager,
+        sql: SqlDatabaseOperate, tc_cloud: TencentCloudManager,
         announcements: Vec<announcement::Checked>,
     ) -> LogicResult<()> {
         sql.ceobe()

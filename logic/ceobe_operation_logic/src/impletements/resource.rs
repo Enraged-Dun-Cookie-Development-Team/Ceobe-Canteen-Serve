@@ -4,7 +4,7 @@ use persistence::{
     mysql::SqlDatabaseOperate,
 };
 use tencent_cloud_server::{
-    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TcCloudManager,
+    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
 
 use super::CeobeOperateLogic;
@@ -16,7 +16,7 @@ use crate::{
 impl CeobeOperateLogic {
     /// 更新资源
     pub async fn upload_resource(
-        sql: SqlDatabaseOperate, tc_cloud: TcCloudManager,
+        sql: SqlDatabaseOperate, tc_cloud: TencentCloudManager,
         resource: resource::Checked,
     ) -> LogicResult<()> {
         sql.ceobe()

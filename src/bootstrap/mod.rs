@@ -8,7 +8,7 @@ use mob_push_server::PartPushManagerState;
 use qq_channel_warning::QqChannelGrpcState;
 use request_clients::bili_client::QueryBiliVideo;
 use scheduler_notifier::SchedulerUrl;
-use tencent_cloud_server::cloud_manager::PartCloudManagerState;
+use tencent_cloud_server::cloud_manager::PartTencentCloudManagerState;
 
 pub mod decorator;
 pub mod default_user;
@@ -26,5 +26,5 @@ pub struct State {
     scheduler_url: SchedulerUrl,
     mob_push: PartPushManagerState,
     qq_channel: QqChannelGrpcState,
-    tc_cloud: PartCloudManagerState,
+    tc_cloud: PartTencentCloudManagerState,
 }

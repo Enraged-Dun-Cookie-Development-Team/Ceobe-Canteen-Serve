@@ -4,10 +4,10 @@ use url::Position;
 
 use super::{SERVICE, VERSION};
 use crate::{
-    cloud_manager::TcCloudManager,
-    common_parameters::{CommonParameter, RequestContent, TcCloudResponse},
+    cloud_manager::TencentCloudManager,
     error::TcCloudError,
 };
+use crate::cloud_manager::entities::{CommonParameter, RequestContent, TencentCloudResponse};
 
 const ACTION: &str = "PurgeUrlsCache";
 
@@ -38,10 +38,10 @@ impl PurgeCachePath {
     }
 }
 
-impl TcCloudManager {
+impl TencentCloudManager {
     pub async fn purge_urls_cache(
         &self, paths: impl IntoIterator<Item = &PurgeCachePath>,
-    ) -> Result<TcCloudResponse, TcCloudError> {
+    ) -> Result<TencentCloudResponse, TcCloudError> {
         let urls = paths
             .into_iter()
             .map(|PurgeCachePath { path, query }| {

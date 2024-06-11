@@ -11,7 +11,7 @@ use persistence::{
     help_crates::tracing::debug,
     mongodb::MongoDatabaseOperate,
 };
-use tencent_cloud_server::cloud_manager::TcCloudManager;
+use tencent_cloud_server::cloud_manager::TencentCloudManager;
 
 use super::BakeryLogic;
 use crate::{
@@ -35,7 +35,7 @@ impl BakeryLogic {
 
     /// 保存大厦
     pub async fn save_mansion(
-        mongo: MongoDatabaseOperate, tc_cloud: TcCloudManager,
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         mid: Option<MansionId>, mansion: Mansion,
     ) -> LogicResult<()> {
         let mut paths = vec![
@@ -99,7 +99,7 @@ impl BakeryLogic {
 
     /// 根据id删除大厦
     pub async fn remove_mansion(
-        db: MongoDatabaseOperate, tc_cloud: TcCloudManager, mid: Mid,
+        db: MongoDatabaseOperate, tc_cloud: TencentCloudManager, mid: Mid,
     ) -> LogicResult<()> {
         db.bakery().mansion().delete(&mid.id).await?;
 

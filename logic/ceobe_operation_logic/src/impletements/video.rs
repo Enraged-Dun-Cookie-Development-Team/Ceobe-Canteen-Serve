@@ -9,7 +9,7 @@ use persistence::{
 };
 use request_clients::bili_client::QueryBiliVideo;
 use tencent_cloud_server::{
-    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TcCloudManager,
+    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
 
 use super::CeobeOperateLogic;
@@ -45,7 +45,7 @@ impl CeobeOperateLogic {
 
     /// 更新列表
     pub async fn update_list(
-        sql: SqlDatabaseOperate, tc_cloud: TcCloudManager,
+        sql: SqlDatabaseOperate, tc_cloud: TencentCloudManager,
         videos: Vec<video::Checked>,
     ) -> LogicResult<()> {
         sql.ceobe().operation().video().update_all(videos).await?;
