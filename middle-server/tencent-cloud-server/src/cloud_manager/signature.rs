@@ -93,7 +93,19 @@ where
 
 #[cfg(test)]
 mod test {
+    use chrono::DateTime;
     use url::{Position, Url};
+
+    use crate::{
+        cloud_manager::{
+            entities::{PayloadBuffer, Service},
+            signature::gen_signature,
+        },
+        task_trait::{
+            serde_content::Json, task_content::TaskContent,
+            task_request::TaskRequestTrait,
+        },
+    };
 
     #[test]
     fn test_url_get_host() {
@@ -104,5 +116,38 @@ mod test {
             &url[Position::BeforeHost..Position::AfterHost],
             "www.example.com"
         )
+    }
+    struct Test;
+    impl TaskContent for Test {
+        type Payload<'r> = Json<'r, str>;
+
+        fn payload(&self) -> Self::Payload<'_> { Json("Acv") }
+    }
+    impl TaskRequestTrait for Test {
+        const ACTION: &'static str = "Action";
+        const SERVICE: Service = Service::Cdn;
+    }
+
+    #[test]
+    fn test_signature() {
+        let secret_key = "secret_key";
+        let secret_id = "secret_id";
+        let datetime = DateTime::from_timestamp(0, 0).unwrap();
+        let url = Url::parse("http://www.example.com/abc").unwrap();
+        let task = Test;
+
+        let signature = gen_signature(
+            secret_id,
+            secret_key,
+            &task,
+            &url,
+            &PayloadBuffer::new(),
+            &datetime,
+        )
+        .expect("Error");
+        // TODO: 使用腾讯云在线签名验证检查实现
+        assert_eq!(signature,"TC3-HMAC-SHA256 Credential=secret_id/1970-01-01/cdn/tc3_request, \
+        SignedHeaders=content-type;host;x-tc-action, \
+        Signature=be22ca9278c0e59fe3f9abc8bc50c47d84a1f8ded7458d1e5c8b3f25c2f19774")
     }
 }

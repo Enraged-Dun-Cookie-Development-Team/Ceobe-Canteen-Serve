@@ -42,9 +42,9 @@ impl SerializeContentTrait for Empty {
 }
 
 /// json荷载，会将T序列化为Json并写入W
-pub struct Json<'t, T>(pub &'t T);
+pub struct Json<'t, T:?Sized>(pub &'t T);
 
-impl<'t, T: Serialize> SerializeContentTrait for Json<'t, T> {
+impl<'t, T: Serialize+?Sized> SerializeContentTrait for Json<'t, T> {
     type Error = serde_json::Error;
 
     fn serialize<W: Write>(&self, writer: &mut W) -> Result<(), Self::Error> {

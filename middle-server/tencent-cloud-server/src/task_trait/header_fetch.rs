@@ -40,7 +40,7 @@ where
         let ty = SerializeContentTrait::content_type(
             &<T as TaskContent>::payload(task),
         );
-        HeaderValue::from_str(ty.as_ref())
+        HeaderValue::from_str(&ty.as_ref().to_lowercase())
     }
 }
 
@@ -52,7 +52,9 @@ impl<T: TaskRequestTrait> HeaderFetch<T> for Host {
     fn fetch_header(
         &self, _: &T, url: &Url,
     ) -> Result<HeaderValue, InvalidHeaderValue> {
-        HeaderValue::from_str(&url[Position::BeforeHost..Position::AfterHost])
+        HeaderValue::from_str(
+            &url[Position::BeforeHost..Position::AfterHost].to_lowercase(),
+        )
     }
 }
 
@@ -64,7 +66,7 @@ impl<T: TaskRequestTrait> HeaderFetch<T> for TcAction {
     fn fetch_header(
         &self, _: &T, _: &Url,
     ) -> Result<HeaderValue, InvalidHeaderValue> {
-        HeaderValue::from_str(T::ACTION)
+        HeaderValue::from_str(&T::ACTION.to_lowercase())
     }
 }
 
@@ -88,17 +90,64 @@ pub fn get_required_headers<T: TaskRequestTrait>(
             .unwrap()
             .to_owned();
         // last item
-        if headers_iter.peek().is_none() {
-            write!(&mut headers, "{name}")?;
-            write!(&mut formatted_headers, "{name}:{value}")?;
+        let sep = if headers_iter.peek().is_none() {
+            ""
         }
         else {
-            writeln!(&mut headers, "{name}")?;
-            writeln!(&mut formatted_headers, "{name}:{value}")?;
-        }
+            ";"
+        };
+        write!(&mut headers, "{name}{sep}")?;
+        writeln!(&mut formatted_headers, "{name}:{value}")?;
     }
     Ok(FormattedRequiredHeaders {
         headers,
         formatted_headers,
     })
+}
+
+#[cfg(test)]
+mod test {
+    use url::Url;
+
+    use crate::{
+        cloud_manager::entities::Service,
+        task_trait::{
+            header_fetch::{
+                get_required_headers, ContentType, Host, TcAction,
+            },
+            serde_content::Json,
+            task_content::TaskContent,
+            task_request::TaskRequestTrait,
+        },
+    };
+    
+    #[test]
+    fn test_head_gen() {
+        struct Test;
+        impl TaskContent for Test {
+            type Payload<'r> = Json<'r, str>;
+
+            fn payload(&self) -> Self::Payload<'_> { Json("Acv") }
+        }
+        impl TaskRequestTrait for Test {
+            const ACTION: &'static str = "Action";
+            const SERVICE: Service = Service::Cdn;
+        }
+
+        let url = Url::parse("http://www.example.com/abc").unwrap();
+
+        let ret = get_required_headers(
+            &[&ContentType, &Host, &TcAction],
+            &Test,
+            &url,
+        )
+        .expect("error");
+
+        assert_eq!(ret.headers, "content-type;host;x-tc-action");
+        assert_eq!(
+            ret.formatted_headers,
+            "content-type:application/json; \
+             charset=utf-8\nhost:www.example.com\nx-tc-action:action\n"
+        )
+    }
 }
