@@ -14,7 +14,7 @@ pub trait TaskRequestTrait: TaskContent + Sized {
     /// 请求行为
     const ACTION: &'static str;
     /// 请求服务的版本
-    const VERSION: ServerVersion = ServerVersion::Ver20180606;
+    const VERSION: ServerVersion;
     /// 请求服务
     const SERVICE: Service;
     /// 请求地区

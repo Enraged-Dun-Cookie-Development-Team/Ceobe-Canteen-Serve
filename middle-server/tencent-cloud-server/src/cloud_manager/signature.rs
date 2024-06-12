@@ -106,6 +106,7 @@ mod test {
             task_request::TaskRequestTrait,
         },
     };
+    use crate::cloud_manager::entities::ServerVersion;
 
     #[test]
     fn test_url_get_host() {
@@ -125,6 +126,7 @@ mod test {
     }
     impl TaskRequestTrait for Test {
         const ACTION: &'static str = "Action";
+        const VERSION: ServerVersion = ServerVersion::Ver20180606;
         const SERVICE: Service = Service::Cdn;
     }
 
