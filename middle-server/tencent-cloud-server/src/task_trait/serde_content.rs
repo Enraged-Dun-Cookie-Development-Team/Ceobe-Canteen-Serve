@@ -44,12 +44,16 @@ impl SerializeContentTrait for Empty {
 }
 
 /// json荷载，会将T序列化为Json并写入W
-pub struct Json<T>(T);
+pub struct Json<'t,T>(pub &'t T);
 
-impl<T: Serialize> SerializeContentTrait for Json<T> {
+impl<'t,T: Serialize> SerializeContentTrait for Json<'t,T> {
     type Error = serde_json::Error;
 
     fn serialize<W: Write>(&self, writer: &mut W) -> Result<(), Self::Error> {
         serde_json::to_writer(writer, &self.0)
+    }
+
+    fn content_type(&self) -> Mime {
+        "application/json; charset=utf-8".parse().unwrap()
     }
 }

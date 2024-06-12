@@ -39,7 +39,7 @@ where
         &self, task: &T, _: &Url,
     ) -> Result<HeaderValue, InvalidHeaderValue> {
         let ty = SerializeContentTrait::content_type(
-            <T as TaskContent>::payload(task),
+            &<T as TaskContent>::payload(task),
         );
         HeaderValue::from_str(ty.as_ref())
     }

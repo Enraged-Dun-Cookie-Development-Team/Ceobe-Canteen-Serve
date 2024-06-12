@@ -9,9 +9,11 @@ pub trait TaskContent {
     fn query(&self) -> &impl Serialize { &Empty }
 
     /// Payload 的 序列化荷载类型
-    type Payload: SerializeContentTrait;
+    type Payload<'r>: SerializeContentTrait + 'r
+    where Self:'r
+    ;
     /// 获得荷载的引用
-    fn payload(&self) -> &Self::Payload;
+    fn payload(&self) -> Self::Payload<'_>;
 }
 
 #[cfg(test)]
