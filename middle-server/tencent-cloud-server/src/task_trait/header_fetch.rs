@@ -1,7 +1,4 @@
-use http::{
-    header::{InvalidHeaderValue, CONTENT_TYPE, HOST},
-    HeaderName, HeaderValue,
-};
+use http::{header::{CONTENT_TYPE, HOST, InvalidHeaderValue}, HeaderName, HeaderValue};
 use smallstr::SmallString;
 use url::{Position, Url};
 
@@ -82,13 +79,14 @@ pub fn get_required_headers<T: TaskRequestTrait>(
     let mut headers = SmallString::new();
     let mut formatted_headers = SmallString::new();
     use core::fmt::Write;
+    
     while let Some(fetcher) = headers_iter.next() {
         let name = fetcher.name();
         let value = fetcher
             .fetch_header(task, url)?
             .to_str()
-            .unwrap()
-            .to_owned();
+            .unwrap().to_lowercase()
+            ;
         // last item
         let sep = if headers_iter.peek().is_none() {
             ""
@@ -99,6 +97,7 @@ pub fn get_required_headers<T: TaskRequestTrait>(
         write!(&mut headers, "{name}{sep}")?;
         writeln!(&mut formatted_headers, "{name}:{value}")?;
     }
+    
     Ok(FormattedRequiredHeaders {
         headers,
         formatted_headers,
@@ -113,7 +112,7 @@ mod test {
         cloud_manager::entities::Service,
         task_trait::{
             header_fetch::{
-                get_required_headers, ContentType, Host, TcAction,
+                ContentType, get_required_headers, Host, TcAction,
             },
             serde_content::Json,
             task_content::TaskContent,

@@ -39,21 +39,13 @@ impl TencentCloudManager {
             &current_time,
         )?;
 
-        let requester = TencentCloudRequester::<Task>::builder()
-            .payload(payload)
-            .task(task)
-            .host(Host.fetch_header(task, &url)?)
-            .action(HeaderValue::from_str(Task::ACTION)?)
-            .version(Task::VERSION.header_value())
-            .timestamp(HeaderValue::from_str(
-                &current_time.timestamp().to_string(),
-            )?)
-            .content_type(ContentType.fetch_header(task, &url)?)
-            .authorization(HeaderValue::from_str(&authorization)?)
-            .region(Task::REGION.map(HeaderValue::from_str).transpose()?)
-            .token(Task::TOKEN.map(HeaderValue::from_str).transpose()?)
-            .url(url)
-            .build();
+        let requester = TencentCloudRequester::new(
+            task,
+            url,
+            &authorization,
+            current_time,
+            payload,
+        )?;
 
         let resp = self.client.send_request(requester).await?;
 
