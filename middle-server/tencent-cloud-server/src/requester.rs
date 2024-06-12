@@ -55,7 +55,7 @@ impl<T> TencentCloudRequester<'_, T, ()> {
                 &date_time.timestamp().to_string(),
             )?)
             .content_type(ContentType.fetch_header(task, &url)?)
-            .authorization(HeaderValue::from_str(&authorization)?)
+            .authorization(HeaderValue::from_str(authorization)?)
             .region(T::REGION.map(HeaderValue::from_str).transpose()?)
             .token(T::TOKEN.map(HeaderValue::from_str).transpose()?)
             .url(url)

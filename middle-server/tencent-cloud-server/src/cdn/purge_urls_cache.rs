@@ -4,7 +4,7 @@ use url::Position;
 
 use crate::{
     cloud_manager::{
-        entities::{Service, TencentCloudResponse},
+        entities::{ServerVersion, Service, TencentCloudResponse},
         TencentCloudManager,
     },
     error::TcCloudError,
@@ -13,7 +13,6 @@ use crate::{
         task_request::TaskRequestTrait,
     },
 };
-use crate::cloud_manager::entities::ServerVersion;
 
 const ACTION: &str = "PurgeUrlsCache";
 
@@ -52,8 +51,8 @@ impl TaskContent for PurgeUrlsCache {
 
 impl TaskRequestTrait for PurgeUrlsCache {
     const ACTION: &'static str = ACTION;
-    const VERSION: ServerVersion = ServerVersion::Ver20180606;
     const SERVICE: Service = Service::Cdn;
+    const VERSION: ServerVersion = ServerVersion::Ver20180606;
 }
 
 impl PurgeUrlsCache {

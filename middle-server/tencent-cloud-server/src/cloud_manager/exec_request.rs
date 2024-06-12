@@ -1,5 +1,4 @@
 use chrono::Utc;
-use general_request_client::HeaderValue;
 use secrecy::ExposeSecret;
 
 use super::manager::TencentCloudManager;
@@ -10,9 +9,7 @@ use crate::{
     error::TcCloudError,
     requester::TencentCloudRequester,
     task_trait::{
-        header_fetch::{ContentType, HeaderFetch, Host},
-        serde_content::SerializeContentTrait,
-        task_request::TaskRequestTrait,
+        serde_content::SerializeContentTrait, task_request::TaskRequestTrait,
     },
 };
 
