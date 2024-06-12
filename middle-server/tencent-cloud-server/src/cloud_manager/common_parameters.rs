@@ -1,13 +1,12 @@
 use general_request_client::HeaderValue;
 use secrecy::ExposeSecret;
 use serde::Serialize;
-use url::Url;
 
 use super::cloud_manager::TencentCloudManager;
 use crate::{
     cloud_manager::{
         entities::{CommonParameter, RequestContent, TencentCloudResponse},
-        signature::sign,
+        signature::gen_signature,
     },
     error::TcCloudError,
     requester::TencentCloudRequester,
@@ -24,7 +23,7 @@ impl TencentCloudManager {
         let url =
             format!("https://{}.tencentcloudapi.com", common_params.service)
                 .parse()?;
-        let authorization = sign(
+        let authorization = gen_signature(
             self.id.expose_secret(),
             self.key.expose_secret(),
             common_params,

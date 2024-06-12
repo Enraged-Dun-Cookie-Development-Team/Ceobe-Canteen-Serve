@@ -1,13 +1,15 @@
-use general_request_client::Url;
 use serde::Serialize;
 use url::Position;
 
-use super::{SERVICE, VERSION};
+use general_request_client::Url;
+
 use crate::{
     cloud_manager::TencentCloudManager,
     error::TcCloudError,
 };
-use crate::cloud_manager::entities::{CommonParameter, RequestContent, TencentCloudResponse};
+use crate::cloud_manager::entities::{CommonParameter, RequestContent, Service, TencentCloudResponse};
+
+use super::VERSION;
 
 const ACTION: &str = "PurgeUrlsCache";
 
@@ -55,7 +57,7 @@ impl TencentCloudManager {
         let payload = PurgeUrlsCache { urls };
 
         let common_params = CommonParameter::builder()
-            .service(SERVICE)
+            .service(Service::Cdn)
             .version(VERSION)
             .action(ACTION)
             .build();
