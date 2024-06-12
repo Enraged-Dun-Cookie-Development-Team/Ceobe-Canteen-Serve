@@ -120,7 +120,7 @@ mod test {
             task_request::TaskRequestTrait,
         },
     };
-    
+
     #[test]
     fn test_head_gen() {
         struct Test;
