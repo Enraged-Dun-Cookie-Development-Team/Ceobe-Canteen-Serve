@@ -228,3 +228,10 @@ status_error!(
         0x000B
     ]->"HMAC加密长度错误"
 );
+
+status_error!(
+    core::fmt::Error[
+        ErrPrefix::IO,
+        0x0002
+    ]->"格式化文本异常"
+);

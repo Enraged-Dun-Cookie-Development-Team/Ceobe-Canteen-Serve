@@ -3,6 +3,8 @@ use hex::ToHex;
 use hmac::{digest::InvalidLength, Hmac, Mac};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
+use smallstr::SmallString;
+use smallvec::SmallVec;
 use url::{Position, Url};
 
 use crate::{
@@ -10,7 +12,12 @@ use crate::{
         CommonParameter, HmacSha256Slice, RequestContent, Sha256HexString,
     },
     error::TcCloudError,
+    task_trait::{
+        header_fetch::get_required_headers,
+        serde_content::SerializeContentTrait, task_request::TaskRequestTrait,
+    },
 };
+use crate::cloud_manager::entities::PayloadBuffer;
 
 /// 签名使用的算法
 const ALGORITHM: &str = "TC3-HMAC-SHA256";
@@ -39,51 +46,47 @@ fn hmac_sha256(
 }
 
 /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
-pub(super) fn gen_signature<P: Serialize, Q: Serialize + Clone>(
-    secret_id: &str, secret_key: &str, common_params: &CommonParameter,
-    request: &RequestContent<P, Q>, url: &Url,
-) -> Result<String, TcCloudError> {
-    let canonical_headers = format!(
-        "content-type:{}\nhost:{}\nx-tc-action:{}\n",
-        request.content_type,
-        &url[Position::BeforeHost..Position::AfterHost],
-        common_params.action.to_lowercase()
-    );
+pub(super) fn gen_signature<Task>(
+    secret_id: &str, secret_key: &str, task: &Task, url: &Url,payload:&PayloadBuffer
+) -> Result<String, TcCloudError>
+where
+    Task: TaskRequestTrait,
+{
+    let canonical_headers =
+        get_required_headers(task.required_sign_header(), task, url)?;
 
-    let canonical_query = serde_qs::to_string(&request.query)?;
-    let serialized_payload = serde_json::to_string(&request.payload)?;
-    let hashed_payload = sha256hex(&serialized_payload);
-    
+    let canonical_query = serde_qs::to_string(task.query())?;
+
+
+    let hashed_payload = sha256hex(&payload);
+
     // hashing payload
     let canonical_request = format!(
         "{}\n{}\n{}\n{}\n{}\n{}",
-        request.method,
+        Task::METHOD,
         CANONICAL_URI,
         canonical_query,
-        canonical_headers,
-        SIGNED_HEADERS,
+        canonical_headers.formatted_headers,
+        canonical_headers.headers,
         hashed_payload
     );
     let hashed_canonical_request = sha256hex(&canonical_request);
 
-    let datetime =
-        DateTime::from_timestamp(common_params.timestamp, 0).unwrap();
-    let formatted_date = datetime.format("%Y-%m-%d").to_string();
+    let formatted_date = task.date().format("%Y-%m-%d").to_string();
 
     let credential_scope =
-        format!("{}/{}/tc3_request", formatted_date, common_params.service);
+        format!("{}/{}/tc3_request", formatted_date, Task::SERVICE);
     let signature_content = format!(
         "{}\n{}\n{}\n{}",
         ALGORITHM,
-        common_params.timestamp,
+        task.timestamp(),
         credential_scope,
         hashed_canonical_request
     );
 
     let secreted_date =
         hmac_sha256(&formatted_date, &format!("TC3{}", secret_key))?;
-    let secreted_service =
-        hmac_sha256(&common_params.service, &secreted_date)?;
+    let secreted_service = hmac_sha256(&Task::SERVICE, &secreted_date)?;
     let signature_key = hmac_sha256(b"tc3_request", &secreted_service)?;
     let signature =
         hex::encode(hmac_sha256(&signature_content, &signature_key)?);

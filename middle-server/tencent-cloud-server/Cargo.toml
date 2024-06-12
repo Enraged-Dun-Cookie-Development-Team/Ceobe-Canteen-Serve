@@ -22,6 +22,7 @@ url.workspace = true
 mime.workspace = true
 smallstr = { workspace = true, features = ["std", "serde"] }
 smallvec = { workspace = true, features = ["write"] }
+http.workspace = true
 
 [dev-dependencies]
 reqwest.workspace = true

@@ -35,4 +35,6 @@ pub enum TcCloudError {
 
     #[error(transparent)]
     Url(#[from] url::ParseError),
+    #[error(transparent)]
+    Fmt(#[from]core::fmt::Error)
 }

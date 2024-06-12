@@ -10,55 +10,53 @@ use crate::{
     },
     error::TcCloudError,
     requester::TencentCloudRequester,
+    task_trait::{
+        header_fetch::{ContentType, HeaderFetch, Host},
+        serde_content::SerializeContentTrait,
+        task_request::TaskRequestTrait,
+    },
 };
-
-
 
 impl TencentCloudManager {
     /// 通用请求
-    pub(crate) async fn common_request<P: Serialize, Q: Serialize + Clone>(
-        &self, common_params: &CommonParameter,
-        request: &RequestContent<P, Q>,
-    ) -> Result<TencentCloudResponse, TcCloudError> {
-        let url =
-            format!("https://{}.tencentcloudapi.com", common_params.service)
-                .parse()?;
+    pub(crate) async fn common_request<Task>(
+        &self, task: &Task,
+    ) -> Result<TencentCloudResponse, TcCloudError>
+    where
+        TcCloudError: From<<Task::Payload as SerializeContentTrait>::Error>,
+        Task: TaskRequestTrait,
+    {
+        let url = Task::SERVICE.to_url()?;
+        let payload = task.payload().serialize_to()?;
+
         let authorization = gen_signature(
             self.id.expose_secret(),
             self.key.expose_secret(),
-            common_params,
-            request,
+            task,
             &url,
+            &payload,
         )?;
 
-        let mut payload_buffer = Vec::<u8>::new();
-        serde_json::to_writer(&mut payload_buffer, &request.payload)?;
-
-        let requester = TencentCloudRequester::builder()
+        let requester = TencentCloudRequester::<Task>::builder()
             .url(url.clone())
-            .method(request.method.clone())
-            .query(request.query.clone())
-            .payload(payload_buffer)
-            .host(HeaderValue::from_str(url.host_str().unwrap())?)
-            .action(HeaderValue::from_str(common_params.action)?)
-            .version(HeaderValue::from_str(common_params.version)?)
-            .timestamp(HeaderValue::from_str(
-                &common_params.timestamp.to_string(),
-            )?)
-            .content_type(HeaderValue::from_str(
-                request.content_type.as_ref(),
-            )?)
+            .payload(payload)
+            .task(task)
+            .host(Host.fetch_header(task, &url)?)
+            .action(HeaderValue::from_str(Task::ACTION)?)
+            .version(Task::VERSION.header_value())
+            .timestamp(HeaderValue::from_str(&task.timestamp().to_string())?)
+            .content_type(ContentType.fetch_header(task, &url)?)
             .authorization(HeaderValue::from_str(&authorization)?)
-            .region(common_params.region.clone().and_then(|region| {
-                HeaderValue::from_str(&region)
-                    .map_err(TcCloudError::from)
-                    .ok()
-            }))
-            .token(common_params.token.clone().and_then(|token| {
-                HeaderValue::from_str(&token)
-                    .map_err(TcCloudError::from)
-                    .ok()
-            }))
+            .region(
+                Task::REGION
+                    .map(|region| HeaderValue::from_str(&region))
+                    .transpose()?,
+            )
+            .token(
+                Task::TOKEN
+                    .map(|token| HeaderValue::from_str(&token))
+                    .transpose()?,
+            )
             .build();
 
         let resp = self.client.send_request(requester).await?;

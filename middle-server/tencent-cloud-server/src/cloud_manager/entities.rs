@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter};
 use chrono::Utc;
+use http::HeaderValue;
 use general_request_client::Method;
 use mime::Mime;
 use serde::{Deserialize, Serialize};
@@ -10,6 +11,8 @@ use url::Url;
 
 pub type Sha256HexString = SmallString<[u8;64]>;
 pub type HmacSha256Slice = SmallVec<[u8;32]>;
+
+pub type PayloadBuffer = SmallVec<[u8;32]>;
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CommonParameter {
@@ -89,7 +92,22 @@ impl Service {
         }
     }
 
-    fn to_url(&self) -> Result<Url, url::ParseError> {
+    pub(crate) fn to_url(&self) -> Result<Url, url::ParseError> {
         format!("https://{}.tencentcloudapi.com", self.name()).parse()
+    }
+}
+
+
+pub enum ServerVersion{
+    // 2018-06-06
+    Ver20180606
+}
+
+impl ServerVersion {
+    fn version(&self)->&'static str{
+        match self { ServerVersion::Ver20180606 => {"2018-06-06"} }
+    }
+    pub fn header_value(&self)->HeaderValue{
+        HeaderValue::from_static(self.version())
     }
 }
