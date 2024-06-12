@@ -33,7 +33,7 @@ pub struct TencentCloudRequester<'t, T, Q> {
     pub(crate) authorization: HeaderValue,
     pub(crate) region: Option<HeaderValue>,
     pub(crate) token: Option<HeaderValue>,
-    #[builder(default=PhantomData,setter(skip))]
+    #[builder(default = PhantomData, setter(skip))]
     __phantom: PhantomData<&'t T>,
 }
 
