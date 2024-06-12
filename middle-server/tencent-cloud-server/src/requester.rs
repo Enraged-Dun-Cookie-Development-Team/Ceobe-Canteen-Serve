@@ -4,14 +4,11 @@ use general_request_client::{
     HeaderValue, Method, Url, Version,
 };
 use http::HeaderMap;
-use serde::Serialize;
 use typed_builder::TypedBuilder;
 
 use crate::{
     cloud_manager::entities::PayloadBuffer,
-    task_trait::{
-        serde_content::SerializeContentTrait, task_request::TaskRequestTrait,
-    },
+    task_trait::task_request::TaskRequestTrait,
 };
 
 #[derive(Debug, Clone, TypedBuilder)]

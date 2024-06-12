@@ -2,7 +2,6 @@ use http::{
     header::{InvalidHeaderValue, CONTENT_TYPE, HOST},
     HeaderName, HeaderValue,
 };
-use serde_json::Value::String;
 use smallstr::SmallString;
 use url::{Position, Url};
 
@@ -75,7 +74,7 @@ pub struct FormattedRequiredHeaders {
 }
 
 pub fn get_required_headers<T: TaskRequestTrait>(
-    headers: &[DynFetch< T>], task: &T, url: &Url,
+    headers: &[DynFetch<T>], task: &T, url: &Url,
 ) -> Result<FormattedRequiredHeaders, crate::error::TcCloudError> {
     let mut headers_iter = headers.iter().peekable();
     let mut headers = SmallString::new();

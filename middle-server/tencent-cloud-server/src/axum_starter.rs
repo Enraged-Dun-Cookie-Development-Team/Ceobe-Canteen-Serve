@@ -3,10 +3,8 @@ use std::sync::Arc;
 use axum_starter::{prepare, state::AddState};
 use secrecy::SecretString;
 
-use crate::{
-   config::TencentConfigTrait,
-};
 pub use crate::cloud_manager::PartTencentCloudManagerState;
+use crate::config::TencentConfigTrait;
 
 #[prepare(TencentCloudPrepare)]
 pub async fn init_tencent_cdn<C>(

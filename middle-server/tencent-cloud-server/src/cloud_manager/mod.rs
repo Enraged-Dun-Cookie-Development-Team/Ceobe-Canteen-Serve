@@ -1,8 +1,6 @@
-pub(crate) mod common_parameters;
-mod cloud_manager;
-mod signature;
+pub(crate) mod exec_request;
 pub(crate) mod entities;
+mod manager;
+mod signature;
 
-
-pub use cloud_manager::TencentCloudManager;
-pub use cloud_manager::PartTencentCloudManagerState;
+pub use manager::{PartTencentCloudManagerState, TencentCloudManager};

@@ -1,13 +1,11 @@
 use chrono::Utc;
 use general_request_client::HeaderValue;
 use secrecy::ExposeSecret;
-use serde::Serialize;
 
-use super::cloud_manager::TencentCloudManager;
+use super::manager::TencentCloudManager;
 use crate::{
     cloud_manager::{
-        entities::{CommonParameter, RequestContent, TencentCloudResponse},
-        signature::gen_signature,
+        entities::TencentCloudResponse, signature::gen_signature,
     },
     error::TcCloudError,
     requester::TencentCloudRequester,
@@ -17,17 +15,15 @@ use crate::{
         task_request::TaskRequestTrait,
     },
 };
-use crate::task_trait::task_content::TaskContent;
 
 impl TencentCloudManager {
-    
-
     /// 通用请求
-    pub async fn exec_request<'r,Task>(
+    pub async fn exec_request<'r, Task>(
         &self, task: &'r Task,
     ) -> Result<TencentCloudResponse, TcCloudError>
-    where 
-            TcCloudError: From<<Task::Payload<'r> as SerializeContentTrait>::Error>,
+    where
+        TcCloudError:
+            From<<Task::Payload<'r> as SerializeContentTrait>::Error>,
         Task: TaskRequestTrait + 'r,
     {
         let url = Task::SERVICE.to_url()?;
@@ -40,7 +36,7 @@ impl TencentCloudManager {
             task,
             &url,
             &payload,
-            &current_time
+            &current_time,
         )?;
 
         let requester = TencentCloudRequester::<Task>::builder()
@@ -49,19 +45,13 @@ impl TencentCloudManager {
             .host(Host.fetch_header(task, &url)?)
             .action(HeaderValue::from_str(Task::ACTION)?)
             .version(Task::VERSION.header_value())
-            .timestamp(HeaderValue::from_str(&current_time.timestamp().to_string())?)
+            .timestamp(HeaderValue::from_str(
+                &current_time.timestamp().to_string(),
+            )?)
             .content_type(ContentType.fetch_header(task, &url)?)
             .authorization(HeaderValue::from_str(&authorization)?)
-            .region(
-                Task::REGION
-                    .map(|region| HeaderValue::from_str(&region))
-                    .transpose()?,
-            )
-            .token(
-                Task::TOKEN
-                    .map(|token| HeaderValue::from_str(&token))
-                    .transpose()?,
-            )
+            .region(Task::REGION.map(HeaderValue::from_str).transpose()?)
+            .token(Task::TOKEN.map(HeaderValue::from_str).transpose()?)
             .url(url)
             .build();
 

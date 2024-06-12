@@ -6,8 +6,6 @@ use general_request_client::{
 };
 use secrecy::SecretString;
 
-
-
 #[derive(Debug, Clone)]
 pub struct PartTencentCloudManagerState {
     id: Arc<SecretString>,

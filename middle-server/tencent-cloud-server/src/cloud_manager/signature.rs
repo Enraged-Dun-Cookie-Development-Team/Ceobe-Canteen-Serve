@@ -1,23 +1,18 @@
-use chrono::{DateTime, NaiveDate, Utc};
+use chrono::{DateTime, Utc};
 use hex::ToHex;
 use hmac::{digest::InvalidLength, Hmac, Mac};
-use serde::Serialize;
 use sha2::{Digest, Sha256};
-use smallstr::SmallString;
-use smallvec::SmallVec;
-use url::{Position, Url};
+use url::Url;
 
 use crate::{
     cloud_manager::entities::{
-        CommonParameter, HmacSha256Slice, RequestContent, Sha256HexString,
+        HmacSha256Slice, PayloadBuffer, Sha256HexString,
     },
     error::TcCloudError,
     task_trait::{
-        header_fetch::get_required_headers,
-        serde_content::SerializeContentTrait, task_request::TaskRequestTrait,
+        header_fetch::get_required_headers, task_request::TaskRequestTrait,
     },
 };
-use crate::cloud_manager::entities::PayloadBuffer;
 
 /// URI 参数，API 3.0 固定为正斜杠（/）。
 const CANONICAL_URI: &str = "/";
@@ -42,7 +37,8 @@ fn hmac_sha256(
 
 /// 腾讯云签名函数，签名参考：https://cloud.tencent.com/document/api/228/30978
 pub(super) fn gen_signature<Task>(
-    secret_id: &str, secret_key: &str, task: &Task, url: &Url,payload:&PayloadBuffer,date:&DateTime<Utc>
+    secret_id: &str, secret_key: &str, task: &Task, url: &Url,
+    payload: &PayloadBuffer, date: &DateTime<Utc>,
 ) -> Result<String, TcCloudError>
 where
     Task: TaskRequestTrait,
@@ -51,7 +47,6 @@ where
         get_required_headers(task.required_sign_header(), task, url)?;
 
     let canonical_query = serde_qs::to_string(task.query())?;
-
 
     let hashed_payload = sha256hex(&payload);
 
@@ -88,7 +83,11 @@ where
 
     Ok(format!(
         "{} Credential={}/{}, SignedHeaders={}, Signature={}",
-        Task::ALGORITHM, secret_id, credential_scope, canonical_headers.headers, signature
+        Task::ALGORITHM,
+        secret_id,
+        credential_scope,
+        canonical_headers.headers,
+        signature
     ))
 }
 

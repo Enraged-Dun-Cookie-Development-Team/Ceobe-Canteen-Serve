@@ -1,8 +1,4 @@
-use chrono::{DateTime, NaiveDate, Utc};
 use http::Method;
-use serde::Serialize;
-use url::Url;
-use general_request_client::traits::Requester;
 
 use crate::{
     cloud_manager::entities::{ServerVersion, Service},
@@ -26,7 +22,7 @@ pub trait TaskRequestTrait: TaskContent + Sized {
     /// 请求 Token
     const TOKEN: Option<&'static str> = None;
     /// 签名使用的算法
-    const ALGORITHM:&'static str = "TC3-HMAC-SHA256";
+    const ALGORITHM: &'static str = "TC3-HMAC-SHA256";
     /// 请求时的签名头
     fn required_sign_header(&self) -> &[DynFetch<'_, Self>] {
         &[&ContentType, &Host, &TcAction]

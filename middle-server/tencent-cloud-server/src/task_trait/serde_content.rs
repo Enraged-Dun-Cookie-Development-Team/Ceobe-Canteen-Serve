@@ -3,8 +3,6 @@ use std::{convert::Infallible, io::Write};
 use mime::Mime;
 use serde::{Serialize, Serializer};
 
-use crate::error::TcCloudError;
-
 /// 按照特定方法进行请求荷载序列化
 pub trait SerializeContentTrait {
     /// 序列化异常
@@ -44,9 +42,9 @@ impl SerializeContentTrait for Empty {
 }
 
 /// json荷载，会将T序列化为Json并写入W
-pub struct Json<'t,T>(pub &'t T);
+pub struct Json<'t, T>(pub &'t T);
 
-impl<'t,T: Serialize> SerializeContentTrait for Json<'t,T> {
+impl<'t, T: Serialize> SerializeContentTrait for Json<'t, T> {
     type Error = serde_json::Error;
 
     fn serialize<W: Write>(&self, writer: &mut W) -> Result<(), Self::Error> {

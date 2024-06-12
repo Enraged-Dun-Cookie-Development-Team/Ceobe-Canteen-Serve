@@ -1,7 +1,8 @@
 use std::fmt::{Display, Formatter};
+
 use chrono::Utc;
-use http::HeaderValue;
 use general_request_client::Method;
+use http::HeaderValue;
 use mime::Mime;
 use serde::{Deserialize, Serialize};
 use smallstr::SmallString;
@@ -9,10 +10,10 @@ use smallvec::SmallVec;
 use typed_builder::TypedBuilder;
 use url::Url;
 
-pub type Sha256HexString = SmallString<[u8;64]>;
-pub type HmacSha256Slice = SmallVec<[u8;32]>;
+pub type Sha256HexString = SmallString<[u8; 64]>;
+pub type HmacSha256Slice = SmallVec<[u8; 32]>;
 
-pub type PayloadBuffer = SmallVec<[u8;32]>;
+pub type PayloadBuffer = SmallVec<[u8; 32]>;
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct CommonParameter {
@@ -74,14 +75,12 @@ pub enum Service {
 }
 
 impl AsRef<[u8]> for Service {
-    fn as_ref(&self) -> &[u8] {
-        self.name().as_ref()
-    }
+    fn as_ref(&self) -> &[u8] { self.name().as_ref() }
 }
 
 impl Display for Service {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f,"{}",self.name())
+        write!(f, "{}", self.name())
     }
 }
 
@@ -92,22 +91,24 @@ impl Service {
         }
     }
 
-    pub(crate) fn to_url(&self) -> Result<Url, url::ParseError> {
+    pub(crate) fn to_url(self) -> Result<Url, url::ParseError> {
         format!("https://{}.tencentcloudapi.com", self.name()).parse()
     }
 }
 
-
-pub enum ServerVersion{
+pub enum ServerVersion {
     // 2018-06-06
-    Ver20180606
+    Ver20180606,
 }
 
 impl ServerVersion {
-    fn version(&self)->&'static str{
-        match self { ServerVersion::Ver20180606 => {"2018-06-06"} }
+    fn version(&self) -> &'static str {
+        match self {
+            ServerVersion::Ver20180606 => "2018-06-06",
+        }
     }
-    pub fn header_value(&self)->HeaderValue{
+
+    pub fn header_value(&self) -> HeaderValue {
         HeaderValue::from_static(self.version())
     }
 }

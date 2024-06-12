@@ -1,15 +1,10 @@
-use std::convert::Infallible;
-use chrono::format::Item;
+use general_request_client::Url;
 use serde::Serialize;
 use url::Position;
 
-use general_request_client::Url;
-
 use crate::{
     cloud_manager::{
-        entities::{
-            Service, TencentCloudResponse,
-        },
+        entities::{Service, TencentCloudResponse},
         TencentCloudManager,
     },
     error::TcCloudError,
@@ -18,7 +13,6 @@ use crate::{
         task_request::TaskRequestTrait,
     },
 };
-use crate::task_trait::make_with_manager::MakeWithManager;
 
 const ACTION: &str = "PurgeUrlsCache";
 
@@ -43,7 +37,6 @@ impl PurgeCachePath {
     }
 }
 
-
 #[derive(Debug, Clone, Serialize)]
 pub struct PurgeUrlsCache {
     #[serde(rename = "Urls")]
@@ -63,7 +56,8 @@ impl TaskRequestTrait for PurgeUrlsCache {
 
 impl PurgeUrlsCache {
     pub fn new<'i>(
-        manager: &TencentCloudManager, paths: impl IntoIterator<Item = &'i PurgeCachePath>,
+        manager: &TencentCloudManager,
+        paths: impl IntoIterator<Item = &'i PurgeCachePath>,
     ) -> Self {
         let urls = paths
             .into_iter()
@@ -82,19 +76,18 @@ impl PurgeUrlsCache {
 impl TencentCloudManager {
     pub async fn purge_urls_cache(
         &self, paths: impl IntoIterator<Item = &PurgeCachePath>,
-    ) -> Result<TencentCloudResponse, TcCloudError>{
-        self.exec_request(&PurgeUrlsCache::new(self,paths)).await
+    ) -> Result<TencentCloudResponse, TcCloudError> {
+        self.exec_request(&PurgeUrlsCache::new(self, paths)).await
     }
 }
 
 #[cfg(test)]
 mod test {
+    use general_request_client::Method;
     use mime::Mime;
     use serde::Serialize;
     use typed_builder::TypedBuilder;
     use url::{Position, Url};
-
-    use general_request_client::Method;
 
     #[derive(Debug, Clone, TypedBuilder)]
     pub struct RequestContent<P: Serialize, Q: Serialize + Clone> {
