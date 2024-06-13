@@ -2,9 +2,8 @@ use std::marker::PhantomData;
 
 use chrono::{DateTime, Utc};
 use general_request_client::{
-    http::header::{AUTHORIZATION, CONTENT_TYPE, HOST},
     traits::{RequestBuilder, Requester},
-    HeaderValue, Method, Url, Version,
+    Method, Url, Version,
 };
 use http::HeaderMap;
 use serde::Serialize;
@@ -76,8 +75,6 @@ impl<'t, T: TaskRequestTrait, Q: Serialize> Requester
     fn prepare_request<B: RequestBuilder>(
         mut self, builder: B,
     ) -> Result<B::Request, B::Error> {
-
-
         builder
             .query(self.query)
             .header(|map| {

@@ -190,14 +190,13 @@ mod test {
             header_fetch::{
                 get_required_headers, to_header_map, Authorization,
                 ContentType, HeaderFetch, Host, TcAction, TcRegion,
-                TcTimestamp, TcVersion,
+                TcTimestamp, TcToken, TcVersion,
             },
             serde_content::Json,
             task_content::TaskContent,
             task_request::TaskRequestTrait,
         },
     };
-    use crate::task_trait::header_fetch::TcToken;
 
     struct Test;
     impl TaskContent for Test {
@@ -207,12 +206,10 @@ mod test {
     }
     impl TaskRequestTrait for Test {
         const ACTION: &'static str = "Action";
-        const SERVICE: Service = Service::Cdn;
-        const VERSION: ServerVersion = ServerVersion::Ver20180606;
-
-        const TOKEN: Option<&'static str> = Some("Test_token");
-
         const REGION: Option<&'static str> = Some("Test-Regin");
+        const SERVICE: Service = Service::Cdn;
+        const TOKEN: Option<&'static str> = Some("Test_token");
+        const VERSION: ServerVersion = ServerVersion::Ver20180606;
     }
     #[test]
     fn test_head_gen() {
@@ -252,7 +249,7 @@ mod test {
             &url,
         )
         .expect("Error");
-        
+
         println!("{ret:?}")
     }
 }
