@@ -77,9 +77,7 @@ impl<'t, T: TaskRequestTrait, Q: Serialize> Requester
     ) -> Result<B::Request, B::Error> {
         builder
             .query(self.query)
-            .header(move |map| {
-                map.extend(self.header_map)
-            })
+            .header(move |map| map.extend(self.header_map))
             .body(self.payload.to_vec())
             .build()
     }
