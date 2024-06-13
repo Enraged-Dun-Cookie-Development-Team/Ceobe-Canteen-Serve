@@ -73,13 +73,12 @@ impl<'t, T: TaskRequestTrait, Q: Serialize> Requester
     fn get_url(&self) -> Url { self.url.clone() }
 
     fn prepare_request<B: RequestBuilder>(
-        mut self, builder: B,
+        self, builder: B,
     ) -> Result<B::Request, B::Error> {
         builder
             .query(self.query)
-            .header(|map| {
-                let update_map = std::mem::take(&mut self.header_map);
-                map.extend(update_map)
+            .header(move |map| {
+                map.extend(self.header_map)
             })
             .body(self.payload.to_vec())
             .build()
