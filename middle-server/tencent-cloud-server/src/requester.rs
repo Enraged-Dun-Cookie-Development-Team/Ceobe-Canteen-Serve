@@ -14,7 +14,10 @@ use crate::{
     cloud_manager::entities::PayloadBuffer,
     error::TcCloudError,
     task_trait::{
-        header_fetch::{ContentType, HeaderFetch, Host},
+        header_fetch::{
+            to_header_map, Authorization, ContentType, HeaderFetch, Host,
+            TcAction, TcRegion, TcTimestamp, TcToken, TcVersion,
+        },
         task_request::TaskRequestTrait,
     },
 };
@@ -25,14 +28,7 @@ pub struct TencentCloudRequester<'t, T, Q> {
     pub(crate) url: Url,
     pub(crate) query: &'t Q,
     pub(crate) payload: PayloadBuffer,
-    pub(crate) host: HeaderValue,
-    pub(crate) action: HeaderValue,
-    pub(crate) version: HeaderValue,
-    pub(crate) timestamp: HeaderValue,
-    pub(crate) content_type: HeaderValue,
-    pub(crate) authorization: HeaderValue,
-    pub(crate) region: Option<HeaderValue>,
-    pub(crate) token: Option<HeaderValue>,
+    pub(crate) header_map: HeaderMap,
     #[builder(default = PhantomData, setter(skip))]
     __phantom: PhantomData<&'t T>,
 }
@@ -45,20 +41,26 @@ impl<T> TencentCloudRequester<'_, T, ()> {
     where
         T: TaskRequestTrait,
     {
+        let header_map = to_header_map(
+            [
+                &Host as &dyn HeaderFetch<T>,
+                &TcAction,
+                &TcVersion,
+                &TcTimestamp(&date_time),
+                &ContentType,
+                &Authorization(authorization),
+            ]
+            .into_iter()
+            .chain(T::REGION.map(|_| &TcRegion as _))
+            .chain(T::TOKEN.map(|_| &TcToken as _)),
+            task,
+            &url,
+        )?;
         Ok(TencentCloudRequester::<T, _>::builder()
             .payload(serialized_payload)
             .query(task.query())
-            .host(Host.fetch_header(task, &url)?)
-            .action(HeaderValue::from_str(T::ACTION)?)
-            .version(T::VERSION.header_value())
-            .timestamp(HeaderValue::from_str(
-                &date_time.timestamp().to_string(),
-            )?)
-            .content_type(ContentType.fetch_header(task, &url)?)
-            .authorization(HeaderValue::from_str(authorization)?)
-            .region(T::REGION.map(HeaderValue::from_str).transpose()?)
-            .token(T::TOKEN.map(HeaderValue::from_str).transpose()?)
             .url(url)
+            .header_map(header_map)
             .build())
     }
 }
@@ -72,26 +74,14 @@ impl<'t, T: TaskRequestTrait, Q: Serialize> Requester
     fn get_url(&self) -> Url { self.url.clone() }
 
     fn prepare_request<B: RequestBuilder>(
-        self, builder: B,
+        mut self, builder: B,
     ) -> Result<B::Request, B::Error> {
-        let mut header_map = HeaderMap::new();
-        header_map.append(HOST, self.host);
-        header_map.append("X-TC-Action", self.action);
-        header_map.append("X-TC-Version", self.version);
-        header_map.append("X-TC-Timestamp", self.timestamp);
-        header_map.append(CONTENT_TYPE, self.content_type);
-        header_map.append(AUTHORIZATION, self.authorization);
-        if let Some(region) = self.region {
-            header_map.append("X-TC-Region", region);
-        }
-        if let Some(token) = self.token {
-            header_map.append("X-TC-Token", token);
-        }
+
 
         builder
             .query(self.query)
             .header(|map| {
-                let update_map = std::mem::take(&mut header_map);
+                let update_map = std::mem::take(&mut self.header_map);
                 map.extend(update_map)
             })
             .body(self.payload.to_vec())
