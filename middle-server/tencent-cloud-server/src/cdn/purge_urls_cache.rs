@@ -2,20 +2,19 @@ use general_request_client::Url;
 use serde::Serialize;
 use url::Position;
 
-use super::{SERVICE, VERSION};
 use crate::{
-    cloud_manager::TcCloudManager,
-    common_parameters::{CommonParameter, RequestContent, TcCloudResponse},
+    cloud_manager::{
+        entities::{ServerVersion, Service, TencentCloudResponse},
+        TencentCloudManager,
+    },
     error::TcCloudError,
+    task_trait::{
+        serde_content::Json, task_content::TaskContent,
+        task_request::TaskRequestTrait,
+    },
 };
 
 const ACTION: &str = "PurgeUrlsCache";
-
-#[derive(Debug, Clone, Serialize)]
-pub(crate) struct PurgeUrlsCache {
-    #[serde(rename = "Urls")]
-    pub(crate) urls: Vec<Url>,
-}
 
 pub struct PurgeCachePath {
     path: &'static str,
@@ -38,33 +37,48 @@ impl PurgeCachePath {
     }
 }
 
-impl TcCloudManager {
-    pub async fn purge_urls_cache(
-        &self, paths: impl IntoIterator<Item = &PurgeCachePath>,
-    ) -> Result<TcCloudResponse, TcCloudError> {
+#[derive(Debug, Clone, Serialize)]
+pub struct PurgeUrlsCache {
+    #[serde(rename = "Urls")]
+    pub(crate) urls: Vec<Url>,
+}
+
+impl TaskContent for PurgeUrlsCache {
+    type Payload<'r> = Json<'r, Self>;
+
+    fn payload(&self) -> Self::Payload<'_> { Json(self) }
+}
+
+impl TaskRequestTrait for PurgeUrlsCache {
+    const ACTION: &'static str = ACTION;
+    const SERVICE: Service = Service::Cdn;
+    const VERSION: ServerVersion = ServerVersion::Ver20180606;
+}
+
+impl PurgeUrlsCache {
+    pub fn new<'i>(
+        manager: &TencentCloudManager,
+        paths: impl IntoIterator<Item = &'i PurgeCachePath>,
+    ) -> Self {
         let urls = paths
             .into_iter()
             .map(|PurgeCachePath { path, query }| {
-                let mut url = Url::clone(&*self.cdn_base_url);
+                let mut url = Url::clone(&*manager.cdn_base_url);
                 let prefix = &url[Position::BeforePath..];
                 url.set_path(&(prefix.to_string() + path));
                 url.set_query(query.as_deref());
                 url
             })
             .collect();
-        let payload = PurgeUrlsCache { urls };
+        Self { urls }
+    }
+}
 
-        let common_params = CommonParameter::builder()
-            .service(SERVICE)
-            .version(VERSION)
-            .action(ACTION)
-            .build();
-        let request = RequestContent::<_, ()>::builder()
-            .payload(payload)
-            .content_type("application/json; charset=utf-8".parse().unwrap())
-            .build();
-
-        Self::common_request(self, &common_params, &request).await
+impl TencentCloudManager {
+    pub async fn purge_urls_cache(
+        &self, paths: impl IntoIterator<Item = &PurgeCachePath>,
+    ) -> Result<TencentCloudResponse, TcCloudError> {
+        self.exec_request(&PurgeUrlsCache::new(self, paths)).await
     }
 }
 

@@ -7,13 +7,13 @@ use general_request_client::{
 use secrecy::SecretString;
 
 #[derive(Debug, Clone)]
-pub struct PartCloudManagerState {
+pub struct PartTencentCloudManagerState {
     id: Arc<SecretString>,
     key: Arc<SecretString>,
     cdn_base_url: Arc<Url>,
 }
 
-impl PartCloudManagerState {
+impl PartTencentCloudManagerState {
     pub(crate) fn new(
         id: Arc<SecretString>, key: Arc<SecretString>, cdn_base_url: Arc<Url>,
     ) -> Self {
@@ -25,20 +25,20 @@ impl PartCloudManagerState {
     }
 }
 
-pub struct TcCloudManager {
+pub struct TencentCloudManager {
     pub(crate) id: Arc<SecretString>,
     pub(crate) key: Arc<SecretString>,
     pub(crate) cdn_base_url: Arc<Url>,
     pub(crate) client: RequestClient,
 }
 
-impl TcCloudManager {
+impl TencentCloudManager {
     pub fn new_from_state(
-        PartCloudManagerState {
+        PartTencentCloudManagerState {
             id,
             key,
             cdn_base_url,
-        }: PartCloudManagerState,
+        }: PartTencentCloudManagerState,
         client: RequestClient,
     ) -> Self {
         Self {
@@ -50,9 +50,9 @@ impl TcCloudManager {
     }
 }
 
-impl<S> FromRequestParts<S> for TcCloudManager
+impl<S> FromRequestParts<S> for TencentCloudManager
 where
-    PartCloudManagerState: FromRef<S>,
+    PartTencentCloudManagerState: FromRef<S>,
     RequestClient: FromRef<S>,
     S: Sync,
 {
@@ -73,8 +73,8 @@ where
         Self: 'async_trait,
     {
         Box::pin(async {
-            Ok(TcCloudManager::new_from_state(
-                PartCloudManagerState::from_ref(state),
+            Ok(TencentCloudManager::new_from_state(
+                PartTencentCloudManagerState::from_ref(state),
                 RequestClient::from_ref(state),
             ))
         })

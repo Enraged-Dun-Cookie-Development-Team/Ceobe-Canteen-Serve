@@ -3,18 +3,17 @@ use std::sync::Arc;
 use axum_starter::{prepare, state::AddState};
 use secrecy::SecretString;
 
-use crate::{
-    cloud_manager::PartCloudManagerState, config::TencentConfigTrait,
-};
+pub use crate::cloud_manager::PartTencentCloudManagerState;
+use crate::config::TencentConfigTrait;
 
-#[prepare(TencentCdnPrepare)]
+#[prepare(TencentCloudPrepare)]
 pub async fn init_tencent_cdn<C>(
     config: &C,
-) -> AddState<PartCloudManagerState>
+) -> AddState<PartTencentCloudManagerState>
 where
     C: TencentConfigTrait,
 {
-    let manager = PartCloudManagerState::new(
+    let manager = PartTencentCloudManagerState::new(
         Arc::new(SecretString::new(config.get_secret_id().to_string())),
         Arc::new(SecretString::new(config.get_secret_key().to_string())),
         Arc::new(config.get_cdn_base_url()),

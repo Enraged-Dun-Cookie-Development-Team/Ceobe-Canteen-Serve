@@ -1,38 +1,74 @@
+use std::marker::PhantomData;
+
+use chrono::{DateTime, Utc};
 use general_request_client::{
-    http::header::{AUTHORIZATION, CONTENT_TYPE, HOST},
     traits::{RequestBuilder, Requester},
-    HeaderValue, Method, Url, Version,
+    Method, Url, Version,
 };
+use http::HeaderMap;
 use serde::Serialize;
 use typed_builder::TypedBuilder;
 
-#[derive(Debug, Clone, TypedBuilder)]
-pub struct TencentCloudRequester<T: Serialize> {
+use crate::{
+    cloud_manager::entities::PayloadBuffer,
+    error::TcCloudError,
+    task_trait::{
+        header_fetch::{
+            to_header_map, Authorization, ContentType, HeaderFetch, Host,
+            TcAction, TcRegion, TcTimestamp, TcToken, TcVersion,
+        },
+        task_request::TaskRequestTrait,
+    },
+};
+
+#[derive(Debug, TypedBuilder)]
+pub struct TencentCloudRequester<'t, T, Q> {
     /// 请求链接
     pub(crate) url: Url,
-    /// 请求方法
-    pub(crate) method: Method,
-    /// 请求参数
-    pub(crate) query: T,
-
-    /// 请求内容
-    /// FIXME: 使用基于泛型的接口绑定
-    pub(crate) payload: Vec<u8>,
-    pub(crate) host: HeaderValue,
-    pub(crate) action: HeaderValue,
-    pub(crate) version: HeaderValue,
-    pub(crate) timestamp: HeaderValue,
-    pub(crate) content_type: HeaderValue,
-    pub(crate) authorization: HeaderValue,
-    pub(crate) region: Option<HeaderValue>,
-    pub(crate) token: Option<HeaderValue>,
+    pub(crate) query: &'t Q,
+    pub(crate) payload: PayloadBuffer,
+    pub(crate) header_map: HeaderMap,
+    #[builder(default = PhantomData, setter(skip))]
+    __phantom: PhantomData<&'t T>,
 }
 
-impl<T: Serialize> Requester for TencentCloudRequester<T> {
-    const METHOD: Method = Method::POST;
-    const VERSION: Version = Version::HTTP_11;
+impl<T> TencentCloudRequester<'_, T, ()> {
+    pub fn new<'t>(
+        task: &'t T, url: Url, authorization: &str, date_time: DateTime<Utc>,
+        serialized_payload: PayloadBuffer,
+    ) -> Result<TencentCloudRequester<'t, T, impl Serialize + 't>, TcCloudError>
+    where
+        T: TaskRequestTrait,
+    {
+        let header_map = to_header_map(
+            [
+                &Host as &dyn HeaderFetch<T>,
+                &TcAction,
+                &TcVersion,
+                &TcTimestamp(&date_time),
+                &ContentType,
+                &Authorization(authorization),
+            ]
+            .into_iter()
+            .chain(T::REGION.map(|_| &TcRegion as _))
+            .chain(T::TOKEN.map(|_| &TcToken as _)),
+            task,
+            &url,
+        )?;
+        Ok(TencentCloudRequester::<T, _>::builder()
+            .payload(serialized_payload)
+            .query(task.query())
+            .url(url)
+            .header_map(header_map)
+            .build())
+    }
+}
 
-    fn get_method(&self) -> Method { self.method.clone() }
+impl<'t, T: TaskRequestTrait, Q: Serialize> Requester
+    for TencentCloudRequester<'t, T, Q>
+{
+    const METHOD: Method = T::METHOD;
+    const VERSION: Version = Version::HTTP_11;
 
     fn get_url(&self) -> Url { self.url.clone() }
 
@@ -40,22 +76,9 @@ impl<T: Serialize> Requester for TencentCloudRequester<T> {
         self, builder: B,
     ) -> Result<B::Request, B::Error> {
         builder
-            .query(&self.query)
-            .header(|map| {
-                map.append(HOST, self.host.clone());
-                map.append("X-TC-Action", self.action.clone());
-                map.append("X-TC-Version", self.version.clone());
-                map.append("X-TC-Timestamp", self.timestamp.clone());
-                map.append(CONTENT_TYPE, self.content_type.clone());
-                map.append(AUTHORIZATION, self.authorization.clone());
-                if let Some(region) = &self.region {
-                    map.append("X-TC-Region", region.clone());
-                }
-                if let Some(token) = &self.token {
-                    map.append("X-TC-Token", token.clone());
-                }
-            })
-            .body(self.payload)
+            .query(self.query)
+            .header(move |map| map.extend(self.header_map))
+            .body(self.payload.to_vec())
             .build()
     }
 }

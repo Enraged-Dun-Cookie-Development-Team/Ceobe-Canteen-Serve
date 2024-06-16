@@ -22,7 +22,7 @@ impl RequestBuilder for reqwest::RequestBuilder {
         self.query(query)
     }
 
-    fn header<F: FnMut(&mut http::HeaderMap)>(self, mut editor: F) -> Self {
+    fn header<F: FnOnce(&mut http::HeaderMap)>(self, editor: F) -> Self {
         let mut map = HeaderMap::new();
         editor(&mut map);
         self.headers(map)
@@ -42,8 +42,7 @@ impl RequestClient {
         &self, requester: Q,
     ) -> Result<reqwest::Response, reqwest::Error> {
         let url = requester.get_url();
-        let method = requester.get_method();
-        let builder = self.0.request(method, url).version(Q::VERSION);
+        let builder = self.0.request(Q::METHOD, url).version(Q::VERSION);
 
         let request = requester.prepare_request(builder)?;
 
