@@ -2,6 +2,10 @@ use std::collections::HashMap;
 
 use db_ops_prelude::{
     database_operates::NoConnect,
+    ext_traits::{
+        with_field::{FieldOrder, With},
+        UpdateActiveModel,
+    },
     futures::{future::ok, stream::iter, StreamExt, TryStreamExt},
     get_connect::{GetDatabaseTransaction, TransactionOps},
     get_now_naive_date_time_value, get_zero_data_time,
@@ -9,13 +13,11 @@ use db_ops_prelude::{
         sea_query::Expr, ActiveModelTrait, ColumnTrait, ConnectionTrait,
         DbErr, EntityTrait, IntoActiveModel, QueryFilter, StreamTrait,
     },
-    tap::{Pipe, Tap},
+    tap::Pipe,
 };
 use tracing::{info, instrument};
 
-use super::{
-    ActiveModel, Checked, Column, Entity, OperateResult, VideoOperate,
-};
+use super::{Checked, Column, Entity, OperateResult, VideoOperate};
 
 impl VideoOperate<'_, NoConnect> {
     pub async fn all_soft_remove(
@@ -66,18 +68,12 @@ where
             .map(|(order, video)| {
                 match exist_data.remove(video.bv.as_str()) {
                     Some(model) => {
-                        model.into_active_model().tap_mut(|active| {
-                            active.update_with_video_and_order(
-                                video,
-                                order as i32,
-                            )
-                        })
+                        model
+                            .into_active_model()
+                            .chain_update(video.with(FieldOrder, order as _))
                     }
                     None => {
-                        ActiveModel::from_video_data_with_order(
-                            video,
-                            order as i32,
-                        )
+                        video.with(FieldOrder, order as _).into_active_model()
                     }
                 }
             })
