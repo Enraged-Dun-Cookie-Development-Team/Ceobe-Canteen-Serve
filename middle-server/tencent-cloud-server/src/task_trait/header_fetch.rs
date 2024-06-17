@@ -67,7 +67,7 @@ impl<T: TaskRequestTrait> HeaderFetch<T> for TcAction {
     fn fetch_header(
         &self, _: &T, _: &Url,
     ) -> Result<HeaderValue, InvalidHeaderValue> {
-        HeaderValue::from_str(&T::ACTION.to_lowercase())
+        HeaderValue::from_str(&T::ACTION)
     }
 }
 
