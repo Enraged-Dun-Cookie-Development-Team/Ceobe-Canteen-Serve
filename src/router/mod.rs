@@ -4,7 +4,12 @@ pub use back_end::{
     CeobeOpToolLink, CeobeOpVersion, CeobeOperationAnnouncement,
     CeobeOperationVideo, FetcherConfigControllers, UserAuthBackend,
 };
-pub use cdn::{CdnCookieMainListFrontend, CdnCookieTempFrontend, CdnOperateToolLinkFrontend};
+pub use cdn::{
+    CdnBakeryMansionFrontend, CdnCookieMainListFrontend,
+    CdnCookieTempFrontend, CdnOperationAnnouncementFrontend,
+    CdnOperationResourceFrontend, CdnOperationVideoFrontend,
+    CdnOperateToolLinkFrontend
+};
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
     CeobeOperationResourceFrontend, CeobeOperationToolLinkFrontend,

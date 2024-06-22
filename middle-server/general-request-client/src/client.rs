@@ -22,7 +22,7 @@ impl RequestBuilder for reqwest::RequestBuilder {
         self.query(query)
     }
 
-    fn header<F: FnMut(&mut http::HeaderMap)>(self, mut editor: F) -> Self {
+    fn header<F: FnOnce(&mut http::HeaderMap)>(self, editor: F) -> Self {
         let mut map = HeaderMap::new();
         editor(&mut map);
         self.headers(map)

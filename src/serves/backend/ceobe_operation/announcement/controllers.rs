@@ -1,18 +1,18 @@
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::AnnouncementResp,
+};
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
     JsonCheckExtract,
 };
 use persistence::{
-    ceobe_operate::{models::announcement, ToCeobe, ToCeobeOperation},
-    mysql::SqlDatabaseOperate,
+    ceobe_operate::models::announcement, mysql::SqlDatabaseOperate,
 };
 use resp_result::resp_try;
+use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
-use super::{
-    error::{AnnouncementRespResult, CeobeOperationAnnouncementError},
-    view::AnnouncementItem,
-};
+use super::error::{AnnouncementRespResult, CeobeOperationAnnouncementError};
 use crate::router::CeobeOperationAnnouncement;
 
 type UpdateAnnouncementCheck = JsonCheckExtract<
@@ -29,33 +29,26 @@ impl CeobeOperationAnnouncement {
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
         db: SqlDatabaseOperate,
-    ) -> AnnouncementRespResult<Vec<AnnouncementItem>> {
+    ) -> AnnouncementRespResult<Vec<AnnouncementResp>> {
         resp_try(async {
-            Ok(db
-                .ceobe()
-                .operation()
-                .announcement()
-                .find_all_not_delete()
-                .await?
-                .into_iter()
-                .map(Into::into)
-                .collect())
+            Ok(CeobeOperateLogic::get_announcement_list(db).await?)
         })
         .await
     }
 
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, tc_cloud))]
     // 更新公告列表
     pub async fn update_announcement_list(
-        db: SqlDatabaseOperate,
+        db: SqlDatabaseOperate, tc_cloud: TencentCloudManager,
         CheckExtract(announcements): UpdateAnnouncementCheck,
     ) -> AnnouncementRespResult<()> {
         resp_try(async {
-            db.ceobe()
-                .operation()
-                .announcement()
-                .update_all(announcements)
-                .await?;
+            CeobeOperateLogic::update_announcement_list(
+                db,
+                tc_cloud,
+                announcements,
+            )
+            .await?;
             Ok(())
         })
         .await

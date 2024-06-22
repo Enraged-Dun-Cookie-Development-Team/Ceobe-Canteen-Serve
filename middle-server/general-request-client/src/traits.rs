@@ -31,7 +31,7 @@ pub trait RequestBuilder: Sized {
 
     fn query<T: Serialize>(self, query: &T) -> Self;
 
-    fn header<F: FnMut(&mut HeaderMap)>(self, editor: F) -> Self;
+    fn header<F: FnOnce(&mut HeaderMap)>(self, editor: F) -> Self;
 
     fn body<T: Into<Self::Body>>(self, body: T) -> Self;
 

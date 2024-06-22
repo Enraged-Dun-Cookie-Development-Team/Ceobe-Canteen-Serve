@@ -15,6 +15,10 @@ persistence = { workspace = true, features = ["model-ceobe-operate"] }
 page_size = {path = "../../libs/page_size"}
 futures.workspace = true
 url.workspace = true
+request-clients.workspace = true
+reqwest.workspace = true
+tencent-cloud-server.workspace = true
+serde_qs.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"

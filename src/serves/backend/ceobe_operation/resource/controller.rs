@@ -1,43 +1,38 @@
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::Resource,
+};
 use checker::{CheckExtract, JsonCheckExtract};
 use persistence::{
-    ceobe_operate::{models::resource, ToCeobe, ToCeobeOperation},
-    mysql::SqlDatabaseOperate,
+    ceobe_operate::models::resource, mysql::SqlDatabaseOperate,
 };
-use resp_result::{rtry, RespResult};
+use resp_result::{resp_try, rtry, RespResult};
+use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
-use super::{
-    error::{ResourceError, ResourceRResult},
-    view::Resource,
-};
+use super::error::{ResourceError, ResourceRResult};
 use crate::router::CeobeOpResource;
 
 type ResourceUploadCheck = JsonCheckExtract<resource::Checker, ResourceError>;
 
 impl CeobeOpResource {
-    #[instrument(ret, skip(db))]
+    #[instrument(ret, skip(db, tc_cloud))]
     pub async fn upload_resource(
-        db: SqlDatabaseOperate, CheckExtract(resource): ResourceUploadCheck,
+        db: SqlDatabaseOperate, tc_cloud: TencentCloudManager,
+        CheckExtract(resource): ResourceUploadCheck,
     ) -> ResourceRResult<()> {
-        db.ceobe()
-            .operation()
-            .resource()
-            .update_resource(resource)
-            .await
-            .map_err(Into::into)
-            .into()
+        resp_try(async {
+            CeobeOperateLogic::upload_resource(db, tc_cloud, resource)
+                .await?;
+            Ok(())
+        })
+        .await
     }
 
     #[instrument(ret, skip(db))]
     pub async fn get_resource(
         db: SqlDatabaseOperate,
     ) -> ResourceRResult<Resource> {
-        let resp = db
-            .ceobe()
-            .operation()
-            .resource()
-            .get(|raa, cd| Resource::from((raa, cd)))
-            .await;
+        let resp = CeobeOperateLogic::get_resource(db).await;
 
         RespResult::ok(rtry!(resp))
     }
