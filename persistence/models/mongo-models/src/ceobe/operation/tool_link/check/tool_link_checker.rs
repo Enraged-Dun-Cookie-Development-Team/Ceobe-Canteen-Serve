@@ -18,7 +18,7 @@ use super::CheckError;
 )]
 #[derive(Debug, Deserialize)]
 pub struct ToolLinkChecker {
-    id: IdChecker,
+    id: NoCheck<bson::Uuid>,
     localized_name: NoCheck<LocalizedLanguage>,
     localized_description: NoCheck<LocalizedLanguage>,
     localized_slogen: NoCheck<LocalizedLanguage>,
@@ -34,11 +34,11 @@ pub struct ToolLinkChecker {
 )]
 #[derive(Debug, Deserialize)]
 pub struct LinkChecker {
-    pub primary: bool,
-    pub regionality: NoCheck<String>,
-    pub service: NoCheck<String>,
-    pub localized_name: NoCheck<LocalizedLanguage>,
-    pub url: StringToUrlChecker,
+    primary: NoCheck<bool>,
+    regionality: NoCheck<String>,
+    service: NoCheck<String>,
+    localized_name: NoCheck<LocalizedLanguage>,
+    url: StringToUrlChecker,
 }
 
 pub struct IdChecker;
@@ -54,7 +54,7 @@ impl Checker for IdChecker {
         ready(
             match uncheck {
                 None => Ok(bson::Uuid::new()),
-                Some(id) => Ok(bson::Uuid::parse_str(id)?)
+                Some(id) => bson::Uuid::parse_str(id).map_err(Into::into)
             }
         )
     }

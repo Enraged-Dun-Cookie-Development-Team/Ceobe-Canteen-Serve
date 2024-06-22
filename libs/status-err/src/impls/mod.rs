@@ -235,3 +235,10 @@ status_error!(
         0x0002
     ]->"格式化文本异常"
 );
+
+status_error!(
+    bson::uuid::Error[
+        ErrPrefix::CHECKER,
+        0x001F
+    ]->"bson UUID解析异常"
+);

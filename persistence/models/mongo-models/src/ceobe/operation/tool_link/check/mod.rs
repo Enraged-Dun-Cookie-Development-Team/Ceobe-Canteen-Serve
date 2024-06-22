@@ -1,6 +1,7 @@
 mod tool_link_checker;
 
-use checker::prefabs::version_checker::VersionInvalidError;
+use std::{convert::Infallible};
+use mongodb::bson;
 use status_err::{StatusErr};
 
 #[derive(Debug, thiserror::Error, StatusErr)]
@@ -10,4 +11,11 @@ pub enum CheckError {
 
     #[error("长度超出限制: {0}")]
     LengthExceed(#[from] range_limit::Error),
+
+    #[error(transparent)]
+    BsonUuid(#[from] bson::uuid::Error),
+}
+
+impl From<Infallible> for CheckError {
+    fn from(_: Infallible) -> Self { unreachable!("enter Infallible error") }
 }
