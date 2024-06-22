@@ -1,2 +1,2 @@
 pub mod plugin_version;
-mod tool_link;
+pub mod tool_link;

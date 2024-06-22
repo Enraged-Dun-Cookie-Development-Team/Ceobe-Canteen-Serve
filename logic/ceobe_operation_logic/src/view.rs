@@ -1,7 +1,7 @@
 use persistence::{
     ceobe_operate::{
         announcement,
-        models::tool_link::{
+        sql_models::tool_link::{
             self, models::model_tool_link::FrontendToolLink,
         },
         resource::{

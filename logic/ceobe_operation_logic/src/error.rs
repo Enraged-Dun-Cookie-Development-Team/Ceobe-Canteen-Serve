@@ -2,7 +2,7 @@ use std::{convert::Infallible, string::FromUtf8Error};
 
 use persistence::ceobe_operate::{
     announcement::OperateError as AnnouncementOperateError,
-    models::tool_link::CheckError,
+    sql_models::tool_link::CheckError,
     resource::OperateError as ResourceOperateError,
     tool_link::OperateError as ToolLinkIOperateError,
     video::OperateError as VideoOperateError,

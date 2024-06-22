@@ -5,7 +5,7 @@ use page_size::{
 };
 use persistence::{
     ceobe_operate::{
-        models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
+        sql_models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
         ToCeobeOperation,
     },
     ceobe_user::ToCeobe,

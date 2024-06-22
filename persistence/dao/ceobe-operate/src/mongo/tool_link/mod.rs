@@ -4,6 +4,8 @@ use db_ops_prelude::{StatusErr, ThisError};
 use db_ops_prelude::mongo_connection::MongoDbError;
 use crate::OperationDatabaseOperate;
 use crate::plugin_version::Version;
+use db_ops_prelude::ErrPrefix;
+use db_ops_prelude::HttpCode;
 
 mod create;
 
@@ -44,7 +46,7 @@ pub enum OperateError {
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
-    pub fn plugin_version(&self) -> ToolLinkOperate<'_, Conn> {
-        self.child()
-    }
+    // pub fn plugin_version(&self) -> ToolLinkOperate<'_, Conn> {
+    //     self.child()
+    // }
 }
