@@ -26,6 +26,10 @@ debug = 1
 members = [
     "libs/*",
     "persistence/persistence",
+    "persistence/dao/*",
+    "persistence/database/*",
+    "persistence/migrate/*",
+    "persistence/models/*",
     "./macros/*",
     "./middle-server/*",
     "./logic/*",
