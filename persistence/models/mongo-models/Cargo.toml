@@ -16,6 +16,7 @@ tracing = { workspace = true }
 modify-cache = { path = "../../../libs/modify-cache" }
 bool_or.workspace = true
 serde_json.workspace = true
+semver = { version = "1.0.23", features = ["serde"] }
 
 [dependencies.sub-model]
 workspace = true

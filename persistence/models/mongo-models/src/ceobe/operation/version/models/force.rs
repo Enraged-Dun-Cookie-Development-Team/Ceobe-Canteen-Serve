@@ -1,0 +1,20 @@
+use semver::Version;
+use serde::{Deserialize, Serialize};
+use typed_builder::TypedBuilder;
+
+#[derive(Debug,Serialize,Deserialize,Clone,TypedBuilder)]
+pub struct ForceCtrl {
+    #[builder(setter(strip_bool))]
+    force:bool,
+    previous_force_version:Version
+}
+
+mod test{
+    use semver::Version;
+    #[test]
+    fn test_version_serde(){
+        let ver = Version::new(1,1,1);
+        let s = serde_json::to_string(&ver).unwrap();
+        assert_eq!(s,"1.1.1")
+    }
+}
