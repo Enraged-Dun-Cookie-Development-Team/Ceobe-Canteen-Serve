@@ -6,7 +6,7 @@ use crate::ceobe::operation::version::models::{
     download_source::DownloadSourceItem, force::ForceCtrl, platform::Platform,
 };
 
-#[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder)]
+#[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder,PartialEq)]
 #[builder(mutators(
     /// 一次添加一个下载源
     pub fn add_download_source(&mut self, source: DownloadSourceItem){
@@ -40,8 +40,10 @@ mod test {
     use serde_json::json;
 
     use crate::ceobe::operation::version::models::{
-        DownloadSourceItem, ForceCtrl, Platform, ReleaseVersion, SpareUrl,
+         DownloadSourceItem, ForceCtrl, Platform,
+        ReleaseVersion, ResourceUrl,
     };
+    use crate::ceobe::operation::version::models::primary::Primary;
 
     #[test]
     fn test_version_serde() {
@@ -59,24 +61,32 @@ mod test {
                     .name("百度云盘")
                     .description("PanBaidu")
                     .primary_url(
-                        "https://pan.baidu.com/s/114514".parse().unwrap(),
+                        ResourceUrl::builder()
+                            .url(
+                                "https://pan.baidu.com/s/114514"
+                                    .parse()
+                                    .unwrap(),
+                            )
+                            .name(Primary)
+                            .manual()
+                            .build(),
                     )
                     .add_spare_url(
-                        SpareUrl::builder()
+                        ResourceUrl::builder()
                             .url(
                                 "https://pan.baidu.com/s/1919810"
                                     .parse()
                                     .unwrap(),
                             )
-                            .description("百度英语语言")
                             .name("百度云备用")
+                 
                             .build(),
                     )
                     .build(),
             )
             .build();
 
-        let serde = serde_json::to_value(ver).expect("serde json error");
+        let serde = serde_json::to_value(ver.clone()).expect("serde json error");
         assert_eq!(
             serde,
             json!({
@@ -91,18 +101,24 @@ mod test {
                     {
                         "name": "百度云盘",
                         "description": "PanBaidu",
-                        "primary_url": "https://pan.baidu.com/s/114514",
+                        "primary_url": {
+                            "url":"https://pan.baidu.com/s/114514",
+                            "manual":true
+                        },
                         "spare_urls": [
                             {
                                 "name": "百度云备用",
-                                "description": "百度英语语言",
-                                "url": "https://pan.baidu.com/s/1919810"
+                                "url": "https://pan.baidu.com/s/1919810",
+                                "manual":false
                             }
                     ]
                     }
                 ]
 
             })
-        )
+        );
+        
+        let ver_de = serde_json::from_value(serde).expect("Deserailze_err");
+        assert_eq!(ver,ver_de)
     }
 }

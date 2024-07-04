@@ -2,7 +2,7 @@ use semver::Version;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
-#[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder)]
+#[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder,PartialEq)]
 pub struct ForceCtrl {
     #[builder(setter(strip_bool))]
     force_update: bool,
