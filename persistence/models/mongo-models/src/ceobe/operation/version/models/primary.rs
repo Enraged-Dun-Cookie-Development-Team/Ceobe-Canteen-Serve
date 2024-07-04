@@ -2,7 +2,7 @@ use serde::{
     de::Unexpected, Deserialize, Deserializer, Serialize, Serializer,
 };
 
-#[derive(Debug, Copy, Clone, Default,PartialEq)]
+#[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub struct Primary;
 
 impl<'de> Deserialize<'de> for Primary {
