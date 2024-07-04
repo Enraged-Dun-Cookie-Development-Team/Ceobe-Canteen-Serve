@@ -1,33 +1,106 @@
 use semver::{Op, Version};
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use crate::ceobe::operation::version::models::download_sourece::DownloadSourceItem;
-use crate::ceobe::operation::version::models::force::ForceCtrl;
-use crate::ceobe::operation::version::models::platform::Platform;
 
-#[derive(Debug,Serialize,Deserialize,Clone,TypedBuilder)]
+use crate::ceobe::operation::version::models::{
+    download_source::DownloadSourceItem, force::ForceCtrl, platform::Platform,
+};
+
+#[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder)]
 #[builder(mutators(
     /// 一次添加一个下载源
-    fn add_spare_url(&mut self, source: DownloadSourceItem){
+    pub fn add_download_source(&mut self, source: DownloadSourceItem){
         self.download_source.push(source)
     }
     /// 一次添加多个下载源
-    fn extend_spare_url(&mut self, sources: impl IntoIterator<Item=DownloadSourceItem>){
+    pub fn extend_download_source(&mut self, sources: impl IntoIterator<Item=DownloadSourceItem>){
         self.download_source.extend(sources)
     }
     )
 )]
-pub struct ReleaseVersion{
+pub struct ReleaseVersion {
     /// 当前要发布的版本号
-    version:Version,
+    version: Version,
     /// 发布的版本更新控制
-    force:ForceCtrl,
-    ///发布的版本的说明
-    #[builder(default)]
-    description:Option<String>,
-    ///该版本发布的平台
+    force: ForceCtrl,
+    /// 发布的版本的说明
+    #[builder(default, setter(into, strip_option))]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    description: Option<String>,
+    /// 该版本发布的平台
     platform: Platform,
     /// 该版本的可用下载源
     #[builder(via_mutators)]
-    download_source:Vec<DownloadSourceItem>
+    download_source: Vec<DownloadSourceItem>,
+}
+
+mod test {
+    use semver::Version;
+    use serde_json::json;
+
+    use crate::ceobe::operation::version::models::{
+        DownloadSourceItem, ForceCtrl, Platform, ReleaseVersion, SpareUrl,
+    };
+    #[test]
+    fn test_version_serde() {
+        let ver = ReleaseVersion::builder()
+            .version(Version::new(1, 13, 2))
+            .force(
+                ForceCtrl::builder()
+                    .previous_force_version(Version::new(1, 0, 0))
+                    .build(),
+            )
+            .description("Abc")
+            .platform(Platform::Desktop)
+            .add_download_source(
+                DownloadSourceItem::builder()
+                    .name("百度云盘")
+                    .description("PanBaidu")
+                    .primary_url(
+                        "https://pan.baidu.com/s/114514".parse().unwrap(),
+                    )
+                    .add_spare_url(
+                        SpareUrl::builder()
+                            .url(
+                                "https://pan.baidu.com/s/1919810"
+                                    .parse()
+                                    .unwrap(),
+                            )
+                            .description("百度英语语言")
+                            .name("百度云备用")
+                            .build(),
+                    )
+                    .build(),
+            )
+            .build();
+
+        let serde = serde_json::to_value(ver).expect("serde json error");
+        assert_eq!(
+            serde,
+            json!({
+                "version": "1.13.2",
+                "force": {
+                    "force_update": false,
+                    "previous_force_version": "1.0.0"
+                },
+                "description": "Abc",
+                "platform": "desktop",
+                "download_source": [
+                    {
+                        "name": "百度云盘",
+                        "description": "PanBaidu",
+                        "primary_url": "https://pan.baidu.com/s/114514",
+                        "spare_urls": [
+                            {
+                                "name": "百度云备用",
+                                "description": "百度英语语言",
+                                "url": "https://pan.baidu.com/s/1919810"
+                            }
+                    ]
+                    }
+                ]
+
+            })
+        )
+    }
 }
