@@ -1,2 +1,2 @@
 pub mod plugin_version;
-mod version;
+pub mod version;

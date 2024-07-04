@@ -56,6 +56,7 @@ pub struct SpareUrl {
     url: Url,
 }
 
+#[cfg(test)]
 mod test {
     use crate::ceobe::operation::version::models::download_source::{
         DownloadSourceItem, SpareUrl,

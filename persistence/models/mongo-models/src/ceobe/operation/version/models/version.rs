@@ -1,4 +1,4 @@
-use semver::{Op, Version};
+use semver::Version;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
@@ -34,6 +34,7 @@ pub struct ReleaseVersion {
     download_source: Vec<DownloadSourceItem>,
 }
 
+#[cfg(test)]
 mod test {
     use semver::Version;
     use serde_json::json;
@@ -41,6 +42,7 @@ mod test {
     use crate::ceobe::operation::version::models::{
         DownloadSourceItem, ForceCtrl, Platform, ReleaseVersion, SpareUrl,
     };
+
     #[test]
     fn test_version_serde() {
         let ver = ReleaseVersion::builder()

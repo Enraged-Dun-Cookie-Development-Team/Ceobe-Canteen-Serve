@@ -9,6 +9,7 @@ pub struct ForceCtrl {
     previous_force_version: Version,
 }
 
+#[cfg(test)]
 mod test {
     use semver::Version;
     #[test]
