@@ -20,7 +20,7 @@ use crate::ceobe::operation::version::models::{
 )]
 pub struct ReleaseVersion {
     /// 当前要发布的版本号
-    version: Version,
+    pub version: Version,
     /// 发布的版本更新控制
     force: ForceCtrl,
     /// 发布的版本的说明
@@ -28,7 +28,7 @@ pub struct ReleaseVersion {
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
     /// 该版本发布的平台
-    platform: ReleasePlatform,
+    pub platform: ReleasePlatform,
     /// 该版本的可用下载源
     #[builder(via_mutators)]
     download_source: Vec<DownloadSourceItem>,

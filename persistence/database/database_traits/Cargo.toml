@@ -14,3 +14,4 @@ get-connect = []
 axum-core = { workspace = true }
 futures.workspace = true
 http = { workspace = true }
+paste = "1.0.15"

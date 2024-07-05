@@ -68,7 +68,7 @@ mod test{
             }
         }
         
-       let ret =  connect_db_with_migrate::<DatabaseManage,_,_>(
+       let _ =  connect_db_with_migrate::<DatabaseManage,_,_>(
             &MongoDbConfig,
             Migrator
         ).await.expect("Migrate error");

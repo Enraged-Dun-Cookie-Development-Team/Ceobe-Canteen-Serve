@@ -1,11 +1,11 @@
 use std::ops::Deref;
 
-pub use db_ops_prelude::mongo_models::ceobe::operation::plugin_version::*;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
-    mongo_connection::MongoDbError,
-    ErrPrefix, HttpCode, StatusErr, ThisError,
+    ErrPrefix,
+    HttpCode, mongo_connection::MongoDbError, StatusErr, ThisError,
 };
+pub use db_ops_prelude::mongo_models::ceobe::operation::plugin_version::*;
 
 use crate::OperationDatabaseOperate;
 
@@ -51,6 +51,6 @@ type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
     pub fn plugin_version(&self) -> PluginVersionOperate<'_, Conn> {
-        self.child()
+        SuperOperate::child(self)
     }
 }

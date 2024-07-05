@@ -8,3 +8,7 @@ pub type BoxedResultFuture<'r, T, E> =
     Pin<Box<dyn Future<Output = Result<T, E>> + 'r>>;
 pub type BoxedResultSendFuture<'r, T, E> =
     Pin<Box<dyn Future<Output = Result<T, E>> + 'r + Send>>;
+
+pub use database_operates::sub_operate::{SubOperate, SuperOperate};
+pub  use database_operates::operate_trait::OperateTrait;
+pub use paste::paste;
