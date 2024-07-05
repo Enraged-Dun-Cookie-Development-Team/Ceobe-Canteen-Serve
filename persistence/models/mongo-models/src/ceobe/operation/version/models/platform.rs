@@ -24,6 +24,7 @@ pub enum SupportPlatform {
     // plugin
     Chrome,
     Firefox,
+    Edge,
     /// Webkit, Linux平台上基于webkit4gtk-dev等开发的轻量化浏览器
     Webkit,
     /// MacOS\IPadOS\IOS的内置浏览器
