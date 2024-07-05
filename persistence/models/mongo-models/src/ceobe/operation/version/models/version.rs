@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 use crate::ceobe::operation::version::models::{
-    download_source::DownloadSourceItem, force::ForceCtrl, platform::Platform,
+    download_source::DownloadSourceItem, force::ForceCtrl, platform::ReleasePlatform,
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder, PartialEq)]
@@ -28,7 +28,7 @@ pub struct ReleaseVersion {
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
     /// 该版本发布的平台
-    platform: Platform,
+    platform: ReleasePlatform,
     /// 该版本的可用下载源
     #[builder(via_mutators)]
     download_source: Vec<DownloadSourceItem>,
@@ -40,9 +40,10 @@ mod test {
     use serde_json::json;
 
     use crate::ceobe::operation::version::models::{
-        primary::Primary, DownloadSourceItem, ForceCtrl, Platform,
+        primary::Primary, DownloadSourceItem, ForceCtrl, ReleasePlatform,
         ReleaseVersion, ResourceUrl,
     };
+    use crate::ceobe::operation::version::models::platform::SupportPlatform;
 
     #[test]
     fn test_version_serde() {
@@ -54,7 +55,7 @@ mod test {
                     .build(),
             )
             .description("Abc")
-            .platform(Platform::Desktop)
+            .platform(ReleasePlatform::Desktop)
             .add_download_source(
                 DownloadSourceItem::builder()
                     .name("百度云盘")
@@ -68,6 +69,8 @@ mod test {
                             )
                             .name(Primary)
                             .manual()
+                            .add_support_platform(SupportPlatform::Firefox)
+                            .add_support_platform(SupportPlatform::Safari)
                             .build(),
                     )
                     .add_spare_url(
@@ -102,7 +105,8 @@ mod test {
                         "description": "PanBaidu",
                         "primary_url": {
                             "url":"https://pan.baidu.com/s/114514",
-                            "manual":true
+                            "manual":true,
+                            "support_platforms":["Firefox","Safari"]
                         },
                         "spare_urls": [
                             {
