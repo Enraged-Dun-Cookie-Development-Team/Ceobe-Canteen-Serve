@@ -3,11 +3,10 @@ mod retrieve;
 
 use db_ops_prelude::{
     mongo_connection::{database_traits::dao_operator, MongoDbError},
-    StatusErr, ThisError,
+    ErrPrefix, HttpCode, StatusErr, ThisError,
 };
 
 use crate::OperationDatabaseOperate;
-use db_ops_prelude::{ErrPrefix,HttpCode};
 dao_operator!(OperationDatabaseOperate=>ReleaseVersion(release_version,err=Error));
 
 #[derive(Debug, ThisError, StatusErr)]
@@ -21,10 +20,10 @@ pub enum Error {
         err_code = 0x000B,
         http_code = "HttpCode::CONFLICT"
     ))]
-    ConflictVersion(models::Version,models::ReleasePlatform),
+    ConflictVersion(models::Version, models::ReleasePlatform),
     #[error("版本信息不存在 {1:?}:{0}")]
     #[status_err(err(err_code = 0x0004, prefix = "ErrPrefix::NOT_FOUND",))]
-    VersionNotFind(models::Version,models::ReleasePlatform),
+    VersionNotFind(models::Version, models::ReleasePlatform),
     #[error("暂没有版本信息")]
     #[status_err(err(err_code = 0x0005, prefix = "ErrPrefix::NOT_FOUND",))]
     VersionInfoNoExist,
@@ -34,13 +33,10 @@ pub enum Error {
         prefix = "ErrPrefix::CHECKER",
         http_code = "HttpCode::CONFLICT"
     ))]
-    VersionTooOld(models::Version,models::ReleasePlatform),
+    VersionTooOld(models::Version, models::ReleasePlatform),
     #[error("Bson序列化失败")]
-    #[status_err(err(
-        err_code = 0x0004,
-        prefix = "ErrPrefix::MONGO_DB",
-    ))]
-    Bson(#[from]db_ops_prelude::mongodb::bson::ser::Error)
+    #[status_err(err(err_code = 0x0004, prefix = "ErrPrefix::MONGO_DB",))]
+    Bson(#[from] db_ops_prelude::mongodb::bson::ser::Error),
 }
 
 use db_ops_prelude::mongo_models::ceobe::operation::version::*;

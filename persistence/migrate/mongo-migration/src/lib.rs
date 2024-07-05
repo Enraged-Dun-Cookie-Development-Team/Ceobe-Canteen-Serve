@@ -32,45 +32,36 @@ impl MigratorTrait for Migrator {
 }
 
 #[cfg(test)]
-mod test{
-    use serde::Deserialize;
+mod test {
     use database_traits::initial::connect_db_with_migrate;
     use mongo_connection::{DatabaseManage, DbConnectConfig};
+    use serde::Deserialize;
+
     use crate::Migrator;
-    
+
     #[tokio::test]
-    async fn test_migrate(){
+    async fn test_migrate() {
         #[derive(Deserialize)]
-        pub struct MongoDbConfig; 
-        impl DbConnectConfig for MongoDbConfig{
-            fn scheme(&self) -> &str {
-                "mongodb"
-            }
+        pub struct MongoDbConfig;
+        impl DbConnectConfig for MongoDbConfig {
+            fn scheme(&self) -> &str { "mongodb" }
 
-            fn username(&self) -> &str {
-                "ceobe"
-            }
+            fn username(&self) -> &str { "ceobe" }
 
-            fn password(&self) -> &str {
-                "114514"
-            }
+            fn password(&self) -> &str { "114514" }
 
-            fn host(&self) -> &str {
-                "localhost"
-            }
+            fn host(&self) -> &str { "localhost" }
 
-            fn port(&self) -> u16 {
-                27017
-            }
+            fn port(&self) -> u16 { 27017 }
 
-            fn name(&self) -> &str {
-                "ceobe_canteen"
-            }
+            fn name(&self) -> &str { "ceobe_canteen" }
         }
-        
-       let _ =  connect_db_with_migrate::<DatabaseManage,_,_>(
+
+        let _ = connect_db_with_migrate::<DatabaseManage, _, _>(
             &MongoDbConfig,
-            Migrator
-        ).await.expect("Migrate error");
+            Migrator,
+        )
+        .await
+        .expect("Migrate error");
     }
 }

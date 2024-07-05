@@ -29,7 +29,7 @@ impl MigrationTrait for Migration {
                             .build(),
                     )
                     .build(),
-                None
+                None,
             )
             .await?;
         Ok(())

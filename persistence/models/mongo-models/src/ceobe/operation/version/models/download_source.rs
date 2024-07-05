@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 use url::Url;
-use crate::ceobe::operation::version::models::platform::SupportPlatform;
 
 use super::primary::SkipPrimarySerialize;
-use crate::ceobe::operation::version::models::primary::Primary;
+use crate::ceobe::operation::version::models::{
+    platform::SupportPlatform, primary::Primary,
+};
 /// 可供使用的下载源
 #[derive(Debug, Serialize, Clone, Deserialize, TypedBuilder, PartialEq)]
 #[builder(mutators(
@@ -30,14 +31,14 @@ pub struct DownloadSourceItem {
     /// 下载源的描述，可选内容
     #[builder(default)]
     #[builder(setter(doc = "下载源的描述，可选内容", into, strip_option))]
-    #[serde(skip_serializing_if = "Option::is_none",default)]
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     description: Option<String>,
     /// 下载源的主要URL
     #[builder(setter(doc = "下载源的主要URL"))]
     primary_url: ResourceUrl<Primary>,
     /// 下载源的备用URL,可空
     #[builder(via_mutators)]
-    #[serde(skip_serializing_if = "Vec::is_empty",default)]
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
     spare_urls: Vec<ResourceUrl>,
 }
 
@@ -54,7 +55,8 @@ pub struct ResourceUrl<Name = String> {
     #[serde(
         skip_serializing_if = "SkipPrimarySerialize::should_skip",
         bound = "for<'d>Name: SkipPrimarySerialize + \
-                 Serialize+Deserialize<'d>",default
+                 Serialize+Deserialize<'d>",
+        default
     )]
     name: Name,
     /// 下载源备用URL的URL
@@ -63,8 +65,8 @@ pub struct ResourceUrl<Name = String> {
     #[builder(setter(strip_bool))]
     manual: bool,
     #[builder(via_mutators)]
-    #[serde(skip_serializing_if = "Vec::is_empty",default)]
-    support_platforms:Vec<SupportPlatform>
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
+    support_platforms: Vec<SupportPlatform>,
 }
 
 #[cfg(test)]

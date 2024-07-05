@@ -1,5 +1,3 @@
-use tracing::info;
-
 use db_ops_prelude::{
     mongo_connection::MongoDbCollectionTrait,
     mongo_models::ceobe::operation::version::models::ReleasePlatform,
@@ -8,10 +6,11 @@ use db_ops_prelude::{
         options::FindOneOptions,
     },
 };
+use tracing::info;
 
 use super::{
-    Error,
-    models::{ReleaseVersion, Version}, ReleaseVersionRetrieve, Result,
+    models::{ReleaseVersion, Version},
+    Error, ReleaseVersionRetrieve, Result,
 };
 
 impl<'db, Conn> ReleaseVersionRetrieve<'db, Conn>
@@ -71,10 +70,10 @@ where
 mod test {
     use abstract_database::ceobe::ToCeobe;
     use db_ops_prelude::{
-        database_operates::{DatabaseOperate, operate_trait::OperateTrait},
+        database_operates::{operate_trait::OperateTrait, DatabaseOperate},
         mongo_connection::{
             database_traits::initial::connect_db_with_migrate,
-            DatabaseManage, get_mongo_collection, MongoConnect,
+            get_mongo_collection, DatabaseManage, MongoConnect,
             MongoDbConfig,
         },
         mongo_models::ceobe::operation::version::models::{
@@ -90,7 +89,6 @@ mod test {
 
     #[tokio::test]
     async fn test_retrieve_version() {
-
         connect_db_with_migrate::<DatabaseManage, _, _>(
             &MongoDbConfig::default(),
             Migrator,

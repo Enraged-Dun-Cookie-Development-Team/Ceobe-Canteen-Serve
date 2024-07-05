@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 /// 下载源对应的平台
-#[derive(Serialize, Deserialize, Debug, Clone,Copy, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, Eq, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum ReleasePlatform {
     /// 插件端

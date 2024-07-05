@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 use crate::ceobe::operation::version::models::{
-    download_source::DownloadSourceItem, force::ForceCtrl, platform::ReleasePlatform,
+    download_source::DownloadSourceItem, force::ForceCtrl,
+    platform::ReleasePlatform,
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder, PartialEq)]
@@ -40,10 +41,9 @@ mod test {
     use serde_json::json;
 
     use crate::ceobe::operation::version::models::{
-        primary::Primary, DownloadSourceItem, ForceCtrl, ReleasePlatform,
-        ReleaseVersion, ResourceUrl,
+        platform::SupportPlatform, primary::Primary, DownloadSourceItem,
+        ForceCtrl, ReleasePlatform, ReleaseVersion, ResourceUrl,
     };
-    use crate::ceobe::operation::version::models::platform::SupportPlatform;
 
     #[test]
     fn test_version_serde() {
