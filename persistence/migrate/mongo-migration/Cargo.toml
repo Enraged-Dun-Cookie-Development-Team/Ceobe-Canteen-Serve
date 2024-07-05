@@ -17,3 +17,9 @@ path = "../../models/mongo-models"
 
 [dependencies.mongo-migrate-util]
 path = "../../../libs/mongo-migrate-util"
+
+[dev-dependencies]
+database_traits = { path = "../../database/database_traits", features = ["all", "get-connect", "initial"] }
+mongo_connection = { path = "../../database/mongo_connection" }
+
+tokio = { workspace = true, features = ["test-util"] }
