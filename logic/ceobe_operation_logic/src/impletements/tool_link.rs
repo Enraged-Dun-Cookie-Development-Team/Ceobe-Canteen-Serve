@@ -1,4 +1,5 @@
 use futures::future;
+
 use page_size::{
     request::Paginator,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
@@ -11,9 +12,14 @@ use persistence::{
     ceobe_user::ToCeobe,
     mysql::SqlDatabaseOperate,
 };
+use persistence::bakery::mansion::ToMansion;
+use persistence::bakery::ToBakery;
+use persistence::mongodb::MongoDatabaseOperate;
+
+use crate::{error::LogicResult, view::ToolLinkResp};
+use crate::view::{ToolLinkCreateMongoReq, ToolLinkCreateMongoResp};
 
 use super::CeobeOperateLogic;
-use crate::{error::LogicResult, view::ToolLinkResp};
 
 impl CeobeOperateLogic {
     pub async fn create_tool_link(
@@ -61,7 +67,7 @@ impl CeobeOperateLogic {
                 .tool_link()
                 .get_tool_link_total_number(),
         )
-        .await;
+            .await;
 
         let tool_list = tool_list?;
         let mut tool_links =
@@ -90,7 +96,30 @@ impl CeobeOperateLogic {
         Ok(tool_links)
     }
 
-    pub async fn create_tool_link_mongodb() -> () {
+    pub async fn create_tool_link_mongo(
+        mongo: MongoDatabaseOperate,
+        tool_link: ToolLinkCreateMongoReq,
+    ) -> LogicResult<()> {
+        mongo.ceobe()
+            .operation()
+            .tool_link_mongo()
+            .create(tool_link.try_into().unwrap())
+            .await
+            .unwrap();
+        Ok(())
+    }
 
+    pub async fn list_tool_link_mongo(
+        mongo: MongoDatabaseOperate,
+    ) -> LogicResult<Vec<ToolLinkCreateMongoResp>> {
+        let tool_link_list = mongo
+            .ceobe()
+            .operation()
+            .tool_link_mongo()
+            .list()
+            .await
+            .unwrap();
+
+        Ok(tool_link_list.into_iter().map(|v| v.try_into().unwrap()).collect())
     }
 }

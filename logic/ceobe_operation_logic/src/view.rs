@@ -1,20 +1,24 @@
+use serde::{Deserialize, Serialize};
+use typed_builder::TypedBuilder;
+
 use persistence::{
     ceobe_operate::{
         announcement,
-        sql_models::tool_link::{
-            self, models::model_tool_link::FrontendToolLink,
-        },
         resource::{
             self, all_available,
             countdown::{self, CountdownType},
+        },
+        sql_models::tool_link::{
+            self, models::model_tool_link::FrontendToolLink,
         },
         video,
     },
     help_crates::naive_date_time_format,
 };
-use serde::{Deserialize, Serialize};
+use persistence::ceobe_operate::mongo_models::tool_link::models::{LocalizedLanguage, LocalizedTags};
+use persistence::ceobe_operate::tool_link_mongodb::models::{Link, ToolLink};
+use persistence::mongodb::mongodb::bson;
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
-use typed_builder::TypedBuilder;
 
 use crate::error::LogicError;
 
@@ -105,10 +109,10 @@ pub struct Resource {
 }
 
 impl
-    From<(
-        resource::all_available::Model,
-        Vec<resource::countdown::Model>,
-    )> for Resource
+From<(
+    resource::all_available::Model,
+    Vec<resource::countdown::Model>,
+)> for Resource
 {
     fn from(
         (raa, cd): (
@@ -227,4 +231,81 @@ impl OperationTcCdnPath {
     /// 视频列表
     pub const VIDEO_LIST_PATH: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/video/list");
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkCreateMongoReq {
+    pub localized_name: LocalizedLanguage,
+    pub localized_description: LocalizedLanguage,
+    pub localized_slogen: LocalizedLanguage,
+    pub localized_tags: LocalizedTags,
+    pub icon_url: String,
+    pub links: Vec<LinkMongoReq>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkCreateMongoResp {
+    pub id: String,
+    pub localized_name: LocalizedLanguage,
+    pub localized_description: LocalizedLanguage,
+    pub localized_slogen: LocalizedLanguage,
+    pub localized_tags: LocalizedTags,
+    pub icon_url: String,
+    pub links: Vec<Link>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct LinkMongoReq {
+    pub primary: Option<bool>,
+    pub regionality: String,
+    pub service: String,
+    pub localized_name: LocalizedLanguage,
+    pub url: String,
+}
+
+impl TryFrom<ToolLinkCreateMongoReq> for ToolLink {
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+
+    fn try_from(value: ToolLinkCreateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateError> {
+        Ok(ToolLink {
+            id: bson::Uuid::new(),
+            localized_name: value.localized_name,
+            localized_description: value.localized_description,
+            localized_slogen: value.localized_slogen,
+            localized_tags: value.localized_tags,
+            icon_url: value.icon_url,
+            links: value.links.into_iter().map(|v| v.try_into().unwrap()).collect(),
+        })
+    }
+}
+
+impl TryFrom<LinkMongoReq> for Link {
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+
+    fn try_from(value: LinkMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateError> {
+        Ok(Link {
+            primary: value.primary.unwrap_or(false),
+            regionality: value.regionality,
+            service: value.service,
+            localized_name: value.localized_name,
+            url: value.url,
+        })
+    }
+}
+
+impl TryInto<ToolLinkCreateMongoResp>  for ToolLink {
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+
+    fn try_into(self) -> Result<ToolLinkCreateMongoResp, Self::Error> {
+        Ok(ToolLinkCreateMongoResp{
+            id: self.id.to_string(),
+            localized_name: self.localized_name,
+            localized_description: self.localized_description,
+            localized_slogen: self.localized_slogen,
+            localized_tags: self.localized_tags,
+            icon_url: self.icon_url,
+            links: self.links,
+        })
+    }
+    
 }

@@ -5,7 +5,7 @@ use typed_builder::TypedBuilder;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct LocalizedLanguage {
-    #[serde(rename = "en_US")]
+    #[serde(rename = "zh_CN")]
     pub zh_cn: String,
     #[serde(rename = "en_US")]
     pub en_us: String,

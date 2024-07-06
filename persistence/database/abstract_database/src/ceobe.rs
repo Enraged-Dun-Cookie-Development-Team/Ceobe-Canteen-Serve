@@ -1,11 +1,12 @@
 use std::ops::Deref;
 
 use db_ops_prelude::database_operates::{
-    sub_operate::{SubOperate, SuperOperate},
     DatabaseOperate,
+    sub_operate::{SubOperate, SuperOperate},
 };
 
 pub struct CeobeDatabaseOperate<'db, Conn>(&'db Conn);
+pub struct CeobeMongoOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for CeobeDatabaseOperate<'db, Conn> {
     type Target = Conn;

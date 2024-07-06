@@ -1,11 +1,11 @@
 use std::ops::Deref;
-use db_ops_prelude::database_operates::sub_operate::{SubOperate, SuperOperate};
+
 use db_ops_prelude::{StatusErr, ThisError};
+use db_ops_prelude::database_operates::sub_operate::{SubOperate, SuperOperate};
 use db_ops_prelude::mongo_connection::MongoDbError;
+pub use db_ops_prelude::mongo_models::ceobe::operation::tool_link::*;
+
 use crate::OperationDatabaseOperate;
-use crate::plugin_version::Version;
-use db_ops_prelude::ErrPrefix;
-use db_ops_prelude::HttpCode;
 
 mod create;
 
@@ -27,26 +27,14 @@ impl<'db, Conn> Deref for ToolLinkOperate<'db, Conn> {
 pub enum OperateError {
     #[error("数据库查询异常{0}")]
     Db(#[from] MongoDbError),
-
-    #[error("版本号已经存在 {0:?}")]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x000B,
-        http_code = "HttpCode::CONFLICT"
-    ))]
-    ConflictVersion(Version),
-    #[error("版本信息不存在 {0:?}")]
-    #[status_err(err(err_code = 0x0004, prefix = "ErrPrefix::NOT_FOUND",))]
-    VersionNotFind(Version),
-    #[error("暂没有版本信息")]
-    #[status_err(err(err_code = 0x0005, prefix = "ErrPrefix::NOT_FOUND",))]
-    VersionInfoNoExist,
+    #[error("数据库查询异常{0}")]
+    Find(#[from] db_ops_prelude::mongodb::error::Error)
 }
 
 type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
-    // pub fn plugin_version(&self) -> ToolLinkOperate<'_, Conn> {
-    //     self.child()
-    // }
+    pub fn tool_link_mongo(&self) -> ToolLinkOperate<'_, Conn> {
+        self.child()
+    }
 }

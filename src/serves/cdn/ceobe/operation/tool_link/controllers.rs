@@ -1,26 +1,32 @@
-use resp_result::{resp_try, rtry};
-use ceobe_operation_logic::impletements::CeobeOperateLogic;
-use crate::router::CdnOperateToolLinkFrontend;
-use crate::serves::cdn::ceobe::operation::tool_link::error::CeobeToolLinkRResult;
-/*use ceobe_operation_logic::view::ToolLinkResp;
+use axum::Json;
+use resp_result::resp_try;
+use tracing::{instrument};
 
-use super::error::{CeobeOperateToolLinkError, CeobeToolLinkRResult};*/
+use ceobe_operation_logic::impletements::CeobeOperateLogic;
+use ceobe_operation_logic::view::{ToolLinkCreateMongoReq, ToolLinkCreateMongoResp};
+use persistence::mongodb::MongoDatabaseOperate;
+
+use crate::router::CdnOperateToolLinkFrontend;
+
+use super::error::CeobeToolLinkRResult;
 
 impl CdnOperateToolLinkFrontend {
-
-/*    pub async fn tool_link() -> CeobeToolLinkRResult<ToolLinkResp> {
-
-    }*/
-
-    pub async fn create_one() -> CeobeToolLinkRResult<()> {
+    #[instrument(ret, skip(mongo))]
+    pub async fn create_one(
+        mongo: MongoDatabaseOperate,
+        Json(tool_link): Json<ToolLinkCreateMongoReq>,
+    ) -> CeobeToolLinkRResult<()> {
         resp_try(async {
-            Ok(())
-        })
-            .await
+            Ok(CeobeOperateLogic::create_tool_link_mongo(mongo, tool_link).await.unwrap())
+        }).await
     }
 
-    pub async fn list() -> () {
-        print!("xxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    #[instrument(ret, skip(mongo))]
+    pub async fn list( 
+        mongo: MongoDatabaseOperate,
+    ) -> CeobeToolLinkRResult<Vec<ToolLinkCreateMongoResp>> {
+        resp_try(async {
+            Ok(CeobeOperateLogic::list_tool_link_mongo(mongo).await.unwrap())
+        }).await
     }
-
 }

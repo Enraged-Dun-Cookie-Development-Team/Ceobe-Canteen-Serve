@@ -1,4 +1,4 @@
-mod tool_link_checker;
+pub mod tool_link_checker;
 
 use std::{convert::Infallible};
 use mongodb::bson;
