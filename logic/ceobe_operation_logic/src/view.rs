@@ -231,6 +231,9 @@ impl OperationTcCdnPath {
     /// 视频列表
     pub const VIDEO_LIST_PATH: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/video/list");
+    /// 友联列表
+    pub const TOOL_LINK_LIST: PurgeCachePath =
+        PurgeCachePath::new("/cdn/operate/toolLink/list");
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
