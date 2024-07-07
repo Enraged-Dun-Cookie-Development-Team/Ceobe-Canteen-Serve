@@ -1,6 +1,6 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use ceobe_operation_logic::error::LogicError;
-use persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
+use persistence::ceobe_operate::tool_link_mongodb::{OperateMongoError,CheckError};
 use resp_result::RespResult;
 
 use crate::error_generate;
@@ -12,6 +12,7 @@ error_generate! {
     Query = QueryRejection
     Logic = LogicError
     DbOperate = OperateMongoError
+    Check = CheckError
 }
 pub(super) type CeobeToolLinkRResult<T> =
     RespResult<T, CeobeOperateToolLinkError>;
