@@ -270,7 +270,7 @@ pub struct ToolLinkCreateMongoResp {
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct ToolLinkDeleteMongoReq {
-    pub id: String
+    pub id: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -282,11 +282,9 @@ pub struct LinkMongoReq {
     pub url: String,
 }
 
-impl TryFrom<ToolLinkCreateMongoReq> for ToolLink {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
-
-    fn try_from(value: ToolLinkCreateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateMongoError> {
-        Ok(ToolLink {
+impl From<ToolLinkCreateMongoReq> for ToolLink {
+    fn from(value: ToolLinkCreateMongoReq) -> Self {
+        ToolLink {
             id: bson::Uuid::new(),
             localized_name: value.localized_name,
             localized_description: value.localized_description,
@@ -294,29 +292,25 @@ impl TryFrom<ToolLinkCreateMongoReq> for ToolLink {
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
             links: value.links.into_iter().map(|v| v.try_into().unwrap()).collect(),
-        })
+        }
     }
 }
 
-impl TryFrom<LinkMongoReq> for Link {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
-
-    fn try_from(value: LinkMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateMongoError> {
-        Ok(Link {
+impl From<LinkMongoReq> for Link {
+    fn from(value: LinkMongoReq) -> Self {
+        Link {
             primary: value.primary.unwrap_or(false),
             regionality: value.regionality,
             service: value.service,
             localized_name: value.localized_name,
             url: value.url,
-        })
+        }
     }
 }
 
-impl TryInto<ToolLinkCreateMongoResp>  for ToolLink {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
-
-    fn try_into(self) -> Result<ToolLinkCreateMongoResp, Self::Error> {
-        Ok(ToolLinkCreateMongoResp{
+impl Into<ToolLinkCreateMongoResp> for ToolLink {
+    fn into(self) -> ToolLinkCreateMongoResp {
+        ToolLinkCreateMongoResp {
             id: self.id.to_string(),
             localized_name: self.localized_name,
             localized_description: self.localized_description,
@@ -324,16 +318,13 @@ impl TryInto<ToolLinkCreateMongoResp>  for ToolLink {
             localized_tags: self.localized_tags,
             icon_url: self.icon_url,
             links: self.links,
-        })
+        }
     }
-    
 }
 
-impl TryFrom<ToolLinkUpdateMongoReq> for ToolLink {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
-
-    fn try_from(value: ToolLinkUpdateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateMongoError> {
-        Ok(ToolLink {
+impl From<ToolLinkUpdateMongoReq> for ToolLink {
+    fn from(value: ToolLinkUpdateMongoReq) -> Self {
+        ToolLink {
             id: bson::Uuid::parse_str(value.id).unwrap(),
             localized_name: value.localized_name,
             localized_description: value.localized_description,
@@ -341,6 +332,6 @@ impl TryFrom<ToolLinkUpdateMongoReq> for ToolLink {
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
             links: value.links.into_iter().map(|v| v.try_into().unwrap()).collect(),
-        })
+        }
     }
 }

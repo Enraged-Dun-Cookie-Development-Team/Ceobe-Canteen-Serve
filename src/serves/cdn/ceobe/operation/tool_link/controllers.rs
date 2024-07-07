@@ -24,7 +24,7 @@ impl CdnOperateToolLinkFrontend {
         mongo: MongoDatabaseOperate,
     ) -> CeobeToolLinkRResult<Vec<ToolLinkCreateMongoResp>> {
         resp_try(async {
-            Ok(CeobeOperateLogic::list_tool_link_mongo(mongo).await.unwrap())
+            Ok(CeobeOperateLogic::list_tool_link_mongo(mongo).await?)
         }).await
     }
 
@@ -39,7 +39,7 @@ impl CdnOperateToolLinkFrontend {
         >,
     ) -> CeobeToolLinkRResult<()> {
         resp_try(async {
-            Ok(CeobeOperateLogic::create_tool_link_mongo(mongo, tc_cloud, tool_link).await.unwrap())
+            Ok(CeobeOperateLogic::create_tool_link_mongo(mongo, tc_cloud, tool_link).await?)
         }).await
     }
 
@@ -50,7 +50,7 @@ impl CdnOperateToolLinkFrontend {
         Json(tool_link): Json<ToolLinkUpdateMongoReq>,
     ) -> CeobeToolLinkRResult<()> {
         resp_try(async {
-            Ok(CeobeOperateLogic::update_tool_link_mongo(mongo, tc_cloud, tool_link).await.unwrap())
+            Ok(CeobeOperateLogic::update_tool_link_mongo(mongo, tc_cloud, tool_link).await?)
         }).await
     }
 
@@ -64,7 +64,7 @@ impl CdnOperateToolLinkFrontend {
         >,
     ) -> CeobeToolLinkRResult<()> {
         resp_try(async {
-            Ok(CeobeOperateLogic::delete_tool_link_mongo(mongo, tc_cloud, id).await.unwrap())
+            Ok(CeobeOperateLogic::delete_tool_link_mongo(mongo, tc_cloud, id).await?)
         }).await
     }
 }

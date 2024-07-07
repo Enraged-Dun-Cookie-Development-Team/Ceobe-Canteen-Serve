@@ -105,7 +105,7 @@ impl CeobeOperateLogic {
         mongo.ceobe()
             .operation()
             .tool_link_mongo()
-            .create(tool_link.try_into().unwrap())
+            .create(tool_link.into())
             .await
             .unwrap();
 
@@ -124,9 +124,8 @@ impl CeobeOperateLogic {
         mongo.ceobe()
             .operation()
             .tool_link_mongo()
-            .update(tool_link.try_into().unwrap())
-            .await
-            .unwrap();
+            .update(tool_link.into())
+            .await?;
 
         const PATHS: [PurgeCachePath; 1] =
             [OperationTcCdnPath::TOOL_LINK_LIST];
@@ -144,8 +143,7 @@ impl CeobeOperateLogic {
             .operation()
             .tool_link_mongo()
             .delete(id)
-            .await
-            .unwrap();
+            .await?;
 
         const PATHS: [PurgeCachePath; 1] =
             [OperationTcCdnPath::TOOL_LINK_LIST];
@@ -162,8 +160,7 @@ impl CeobeOperateLogic {
             .operation()
             .tool_link_mongo()
             .list()
-            .await
-            .unwrap();
+            .await?;
 
         Ok(tool_link_list.into_iter().map(|v| v.try_into().unwrap()).collect())
     }

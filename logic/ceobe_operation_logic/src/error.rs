@@ -1,16 +1,18 @@
 use std::{convert::Infallible, string::FromUtf8Error};
 
+use thiserror::Error;
+
 use persistence::ceobe_operate::{
     announcement::OperateError as AnnouncementOperateError,
-    sql_models::tool_link::CheckError,
     resource::OperateError as ResourceOperateError,
+    sql_models::tool_link::CheckError,
     tool_link::OperateError as ToolLinkIOperateError,
     video::OperateError as VideoOperateError,
 };
+use persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
 use request_clients::error::ChannelClose;
 use status_err::StatusErr;
 use tencent_cloud_server::error::TcCloudError;
-use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
@@ -52,6 +54,10 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     TcCloudError(#[from] TcCloudError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    MongoError(#[from] OperateMongoError),
 }
 
 impl From<Infallible> for LogicError {
