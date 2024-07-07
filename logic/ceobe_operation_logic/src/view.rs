@@ -247,6 +247,17 @@ pub struct ToolLinkCreateMongoReq {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkUpdateMongoReq {
+    pub id: String,
+    pub localized_name: LocalizedLanguage,
+    pub localized_description: LocalizedLanguage,
+    pub localized_slogen: LocalizedLanguage,
+    pub localized_tags: LocalizedTags,
+    pub icon_url: String,
+    pub links: Vec<LinkMongoReq>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct ToolLinkCreateMongoResp {
     pub id: String,
     pub localized_name: LocalizedLanguage,
@@ -255,6 +266,11 @@ pub struct ToolLinkCreateMongoResp {
     pub localized_tags: LocalizedTags,
     pub icon_url: String,
     pub links: Vec<Link>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkDeleteMongoReq {
+    pub id: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -311,4 +327,20 @@ impl TryInto<ToolLinkCreateMongoResp>  for ToolLink {
         })
     }
     
+}
+
+impl TryFrom<ToolLinkUpdateMongoReq> for ToolLink {
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+
+    fn try_from(value: ToolLinkUpdateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateError> {
+        Ok(ToolLink {
+            id: bson::Uuid::parse_str(value.id).unwrap(),
+            localized_name: value.localized_name,
+            localized_description: value.localized_description,
+            localized_slogen: value.localized_slogen,
+            localized_tags: value.localized_tags,
+            icon_url: value.icon_url,
+            links: value.links.into_iter().map(|v| v.try_into().unwrap()).collect(),
+        })
+    }
 }

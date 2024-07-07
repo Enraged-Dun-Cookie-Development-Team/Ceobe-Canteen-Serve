@@ -18,7 +18,7 @@ use persistence::mongodb::MongoDatabaseOperate;
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use crate::{error::LogicResult, view::ToolLinkResp};
-use crate::view::{OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkCreateMongoResp};
+use crate::view::{OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkCreateMongoResp, ToolLinkUpdateMongoReq};
 
 use super::CeobeOperateLogic;
 
@@ -113,6 +113,44 @@ impl CeobeOperateLogic {
             [OperationTcCdnPath::TOOL_LINK_LIST];
         tc_cloud.purge_urls_cache(&PATHS).await?;
         
+        Ok(())
+    }
+
+    pub async fn update_tool_link_mongo(
+        mongo: MongoDatabaseOperate,
+        tc_cloud: TencentCloudManager,
+        tool_link: ToolLinkUpdateMongoReq,
+    ) -> LogicResult<()> {
+        mongo.ceobe()
+            .operation()
+            .tool_link_mongo()
+            .update(tool_link.try_into().unwrap())
+            .await
+            .unwrap();
+
+        const PATHS: [PurgeCachePath; 1] =
+            [OperationTcCdnPath::TOOL_LINK_LIST];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
+
+        Ok(())
+    }
+
+    pub async fn delete_tool_link_mongo(
+        mongo: MongoDatabaseOperate,
+        tc_cloud: TencentCloudManager,
+        id: String,
+    ) -> LogicResult<()> {
+        mongo.ceobe()
+            .operation()
+            .tool_link_mongo()
+            .delete(id)
+            .await
+            .unwrap();
+
+        const PATHS: [PurgeCachePath; 1] =
+            [OperationTcCdnPath::TOOL_LINK_LIST];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
+
         Ok(())
     }
 

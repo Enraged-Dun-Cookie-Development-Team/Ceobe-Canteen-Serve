@@ -8,6 +8,9 @@ pub use db_ops_prelude::mongo_models::ceobe::operation::tool_link::*;
 use crate::OperationDatabaseOperate;
 
 mod create;
+mod delete;
+mod list;
+mod update;
 
 pub struct ToolLinkOperate<'db, Conn>(&'db Conn);
 

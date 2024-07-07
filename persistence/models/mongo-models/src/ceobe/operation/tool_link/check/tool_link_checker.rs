@@ -18,7 +18,7 @@ use super::CheckError;
 )]
 #[derive(Debug, Deserialize)]
 pub struct ToolLinkChecker {
-    id: NoCheck<bson::Uuid>,
+    id: IdChecker,
     localized_name: NoCheck<LocalizedLanguage>,
     localized_description: NoCheck<LocalizedLanguage>,
     localized_slogen: NoCheck<LocalizedLanguage>,

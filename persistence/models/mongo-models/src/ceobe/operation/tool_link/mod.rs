@@ -1,4 +1,4 @@
-use crate::ceobe::operation::tool_link::check::tool_link_checker::ToolLinkChecker;
+pub use crate::ceobe::operation::tool_link::check::tool_link_checker::ToolLinkChecker;
 
 pub mod models;
 mod check;
