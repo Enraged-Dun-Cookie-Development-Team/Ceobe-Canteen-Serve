@@ -12,8 +12,8 @@ use crate::router::ServerRoute;
 
 mod announcement;
 mod resource;
-mod video;
 mod tool_link;
+mod video;
 
 pub(super) fn operation_router() -> ServerRoute {
     Router::new()

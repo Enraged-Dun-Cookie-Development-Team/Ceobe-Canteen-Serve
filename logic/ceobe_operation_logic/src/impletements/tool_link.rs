@@ -1,25 +1,23 @@
 use futures::future;
-
 use page_size::{
     request::Paginator,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
 };
 use persistence::{
+    bakery::{mansion::ToMansion, ToBakery},
     ceobe_operate::{
         sql_models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
         ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
+    mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
 };
-use persistence::bakery::mansion::ToMansion;
-use persistence::bakery::ToBakery;
-use persistence::mongodb::MongoDatabaseOperate;
-use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
-use tencent_cloud_server::cloud_manager::TencentCloudManager;
+use tencent_cloud_server::{
+    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
+};
 use crate::{error::LogicResult, view::ToolLinkResp};
 use crate::view::{OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkCreateMongoResp, ToolLinkUpdateMongoReq};
-
 use super::CeobeOperateLogic;
 
 impl CeobeOperateLogic {
@@ -112,7 +110,7 @@ impl CeobeOperateLogic {
         const PATHS: [PurgeCachePath; 1] =
             [OperationTcCdnPath::TOOL_LINK_LIST];
         tc_cloud.purge_urls_cache(&PATHS).await?;
-        
+
         Ok(())
     }
 

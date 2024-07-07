@@ -1,5 +1,8 @@
-use axum::{routing::{get, post}, Router};
-use axum::routing::delete;
+use axum::{
+    routing::{delete, get, post},
+    Router,
+};
+
 use crate::router::ServerRoute;
 
 pub struct CdnOperateToolLinkFrontend;
