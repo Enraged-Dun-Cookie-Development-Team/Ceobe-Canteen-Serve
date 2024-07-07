@@ -283,9 +283,9 @@ pub struct LinkMongoReq {
 }
 
 impl TryFrom<ToolLinkCreateMongoReq> for ToolLink {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
 
-    fn try_from(value: ToolLinkCreateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateError> {
+    fn try_from(value: ToolLinkCreateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateMongoError> {
         Ok(ToolLink {
             id: bson::Uuid::new(),
             localized_name: value.localized_name,
@@ -299,9 +299,9 @@ impl TryFrom<ToolLinkCreateMongoReq> for ToolLink {
 }
 
 impl TryFrom<LinkMongoReq> for Link {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
 
-    fn try_from(value: LinkMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateError> {
+    fn try_from(value: LinkMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateMongoError> {
         Ok(Link {
             primary: value.primary.unwrap_or(false),
             regionality: value.regionality,
@@ -313,7 +313,7 @@ impl TryFrom<LinkMongoReq> for Link {
 }
 
 impl TryInto<ToolLinkCreateMongoResp>  for ToolLink {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
 
     fn try_into(self) -> Result<ToolLinkCreateMongoResp, Self::Error> {
         Ok(ToolLinkCreateMongoResp{
@@ -330,9 +330,9 @@ impl TryInto<ToolLinkCreateMongoResp>  for ToolLink {
 }
 
 impl TryFrom<ToolLinkUpdateMongoReq> for ToolLink {
-    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateError;
+    type Error = persistence::ceobe_operate::tool_link_mongodb::OperateMongoError;
 
-    fn try_from(value: ToolLinkUpdateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateError> {
+    fn try_from(value: ToolLinkUpdateMongoReq) -> Result<Self, persistence::ceobe_operate::tool_link_mongodb::OperateMongoError> {
         Ok(ToolLink {
             id: bson::Uuid::parse_str(value.id).unwrap(),
             localized_name: value.localized_name,

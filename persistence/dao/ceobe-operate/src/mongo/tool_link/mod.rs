@@ -27,14 +27,14 @@ impl<'db, Conn> Deref for ToolLinkOperate<'db, Conn> {
 }
 
 #[derive(Debug, ThisError, StatusErr)]
-pub enum OperateError {
+pub enum OperateMongoError {
     #[error("数据库查询异常{0}")]
     Db(#[from] MongoDbError),
     #[error("数据库查询异常{0}")]
     Find(#[from] db_ops_prelude::mongodb::error::Error)
 }
 
-type OperateResult<T> = Result<T, OperateError>;
+type OperateResult<T> = Result<T, OperateMongoError>;
 
 impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
     pub fn tool_link_mongo(&self) -> ToolLinkOperate<'_, Conn> {
