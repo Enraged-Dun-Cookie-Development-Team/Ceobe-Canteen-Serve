@@ -4,8 +4,8 @@ pub use bakery::CdnBakeryMansionFrontend;
 pub use cookie::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 use operation::operation_router;
 pub use operation::{
-    CdnOperationAnnouncementFrontend, CdnOperationResourceFrontend,
-    CdnOperationVideoFrontend,CdnOperateToolLinkFrontend
+    CdnOperateToolLinkFrontend, CdnOperationAnnouncementFrontend,
+    CdnOperationResourceFrontend, CdnOperationVideoFrontend,
 };
 
 use self::cookie::cookie_router;

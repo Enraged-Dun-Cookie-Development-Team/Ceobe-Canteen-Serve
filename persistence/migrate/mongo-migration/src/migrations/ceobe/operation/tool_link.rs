@@ -1,8 +1,7 @@
 use async_trait::async_trait;
-use mongodb::{bson::doc, IndexModel, options::IndexOptions};
-
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::ceobe::operation::tool_link::models::ToolLink;
+use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
 const UNIQUE_VERSION_IDX: &str = "unique_id_idx";
 

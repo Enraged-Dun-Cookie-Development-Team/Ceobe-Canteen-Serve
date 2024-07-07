@@ -1,8 +1,9 @@
 pub mod tool_link_checker;
 
-use std::{convert::Infallible};
+use std::convert::Infallible;
+
 use mongodb::bson;
-use status_err::{StatusErr};
+use status_err::StatusErr;
 
 #[derive(Debug, thiserror::Error, StatusErr)]
 pub enum CheckError {

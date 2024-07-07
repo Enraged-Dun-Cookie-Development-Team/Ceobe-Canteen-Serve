@@ -16,9 +16,15 @@ use persistence::{
 use tencent_cloud_server::{
     cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
-use crate::{error::LogicResult, view::ToolLinkResp};
-use crate::view::{OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkCreateMongoResp, ToolLinkUpdateMongoReq};
+
 use super::CeobeOperateLogic;
+use crate::{
+    error::LogicResult,
+    view::{
+        OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkCreateMongoResp,
+        ToolLinkResp, ToolLinkUpdateMongoReq,
+    },
+};
 
 impl CeobeOperateLogic {
     pub async fn create_tool_link(
@@ -66,7 +72,7 @@ impl CeobeOperateLogic {
                 .tool_link()
                 .get_tool_link_total_number(),
         )
-            .await;
+        .await;
 
         let tool_list = tool_list?;
         let mut tool_links =
@@ -96,11 +102,11 @@ impl CeobeOperateLogic {
     }
 
     pub async fn create_tool_link_mongo(
-        mongo: MongoDatabaseOperate,
-        tc_cloud: TencentCloudManager,
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         tool_link: ToolLinkCreateMongoReq,
     ) -> LogicResult<()> {
-        mongo.ceobe()
+        mongo
+            .ceobe()
             .operation()
             .tool_link_mongo()
             .create(tool_link.into())
@@ -115,11 +121,11 @@ impl CeobeOperateLogic {
     }
 
     pub async fn update_tool_link_mongo(
-        mongo: MongoDatabaseOperate,
-        tc_cloud: TencentCloudManager,
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         tool_link: ToolLinkUpdateMongoReq,
     ) -> LogicResult<()> {
-        mongo.ceobe()
+        mongo
+            .ceobe()
             .operation()
             .tool_link_mongo()
             .update(tool_link.into())
@@ -133,11 +139,11 @@ impl CeobeOperateLogic {
     }
 
     pub async fn delete_tool_link_mongo(
-        mongo: MongoDatabaseOperate,
-        tc_cloud: TencentCloudManager,
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         id: String,
     ) -> LogicResult<()> {
-        mongo.ceobe()
+        mongo
+            .ceobe()
             .operation()
             .tool_link_mongo()
             .delete(id)
@@ -153,13 +159,12 @@ impl CeobeOperateLogic {
     pub async fn list_tool_link_mongo(
         mongo: MongoDatabaseOperate,
     ) -> LogicResult<Vec<ToolLinkCreateMongoResp>> {
-        let tool_link_list = mongo
-            .ceobe()
-            .operation()
-            .tool_link_mongo()
-            .list()
-            .await?;
+        let tool_link_list =
+            mongo.ceobe().operation().tool_link_mongo().list().await?;
 
-        Ok(tool_link_list.into_iter().map(|v| v.try_into().unwrap()).collect())
+        Ok(tool_link_list
+            .into_iter()
+            .map(|v| v.try_into().unwrap())
+            .collect())
     }
 }

@@ -1,9 +1,11 @@
 use std::ops::Deref;
 
-use db_ops_prelude::{StatusErr, ThisError};
-use db_ops_prelude::database_operates::sub_operate::{SubOperate, SuperOperate};
-use db_ops_prelude::mongo_connection::MongoDbError;
 pub use db_ops_prelude::mongo_models::ceobe::operation::tool_link::*;
+use db_ops_prelude::{
+    database_operates::sub_operate::{SubOperate, SuperOperate},
+    mongo_connection::MongoDbError,
+    StatusErr, ThisError,
+};
 
 use crate::OperationDatabaseOperate;
 
@@ -31,7 +33,7 @@ pub enum OperateMongoError {
     #[error("数据库查询异常{0}")]
     Db(#[from] MongoDbError),
     #[error("数据库查询异常{0}")]
-    Find(#[from] db_ops_prelude::mongodb::error::Error)
+    Find(#[from] db_ops_prelude::mongodb::error::Error),
 }
 
 type OperateResult<T> = Result<T, OperateMongoError>;

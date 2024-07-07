@@ -1,9 +1,7 @@
-use serde::{Deserialize, Serialize};
-use typed_builder::TypedBuilder;
-
 use persistence::{
     ceobe_operate::{
         announcement,
+        mongo_models::tool_link::models::{LocalizedLanguage, LocalizedTags},
         resource::{
             self, all_available,
             countdown::{self, CountdownType},
@@ -11,14 +9,15 @@ use persistence::{
         sql_models::tool_link::{
             self, models::model_tool_link::FrontendToolLink,
         },
+        tool_link_mongodb::models::{Link, ToolLink},
         video,
     },
     help_crates::naive_date_time_format,
+    mongodb::mongodb::bson,
 };
-use persistence::ceobe_operate::mongo_models::tool_link::models::{LocalizedLanguage, LocalizedTags};
-use persistence::ceobe_operate::tool_link_mongodb::models::{Link, ToolLink};
-use persistence::mongodb::mongodb::bson;
+use serde::{Deserialize, Serialize};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
+use typed_builder::TypedBuilder;
 
 use crate::error::LogicError;
 
@@ -109,10 +108,10 @@ pub struct Resource {
 }
 
 impl
-From<(
-    resource::all_available::Model,
-    Vec<resource::countdown::Model>,
-)> for Resource
+    From<(
+        resource::all_available::Model,
+        Vec<resource::countdown::Model>,
+    )> for Resource
 {
     fn from(
         (raa, cd): (
@@ -228,12 +227,12 @@ impl OperationTcCdnPath {
     /// 资源列表
     pub const RESOURCE_LIST_PATH: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/resource/get");
-    /// 视频列表
-    pub const VIDEO_LIST_PATH: PurgeCachePath =
-        PurgeCachePath::new("/cdn/operate/video/list");
     /// 友联列表
     pub const TOOL_LINK_LIST: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/toolLink/list");
+    /// 视频列表
+    pub const VIDEO_LIST_PATH: PurgeCachePath =
+        PurgeCachePath::new("/cdn/operate/video/list");
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -291,7 +290,11 @@ impl From<ToolLinkCreateMongoReq> for ToolLink {
             localized_slogen: value.localized_slogen,
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
-            links: value.links.into_iter().map(|v| v.try_into().unwrap()).collect(),
+            links: value
+                .links
+                .into_iter()
+                .map(|v| v.try_into().unwrap())
+                .collect(),
         }
     }
 }
@@ -331,7 +334,11 @@ impl From<ToolLinkUpdateMongoReq> for ToolLink {
             localized_slogen: value.localized_slogen,
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
-            links: value.links.into_iter().map(|v| v.try_into().unwrap()).collect(),
+            links: value
+                .links
+                .into_iter()
+                .map(|v| v.try_into().unwrap())
+                .collect(),
         }
     }
 }

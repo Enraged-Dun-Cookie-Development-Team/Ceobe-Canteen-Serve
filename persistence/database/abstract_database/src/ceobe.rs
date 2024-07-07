@@ -1,8 +1,8 @@
 use std::ops::Deref;
 
 use db_ops_prelude::database_operates::{
-    DatabaseOperate,
     sub_operate::{SubOperate, SuperOperate},
+    DatabaseOperate,
 };
 
 pub struct CeobeDatabaseOperate<'db, Conn>(&'db Conn);

@@ -28,7 +28,7 @@ pub mod ceobe_operate {
         pub use mongo_models::ceobe::operation::*;
         pub use sql_models::ceobe_operation::*;
     }
-    
+
     // TODO 等 tool_link 上綫刪除
     pub mod mongo_models {
         pub use mongo_models::ceobe::operation::tool_link;
