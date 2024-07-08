@@ -3,8 +3,16 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder, PartialEq)]
+#[builder(mutators(
+    pub fn force_update(&mut self){
+        self.force_update = true
+    }
+    pub fn set_force_update(&mut self,force:bool){
+        self.force_update = force
+    }
+))]
 pub struct ForceCtrl {
-    #[builder(setter(strip_bool))]
+    #[builder(via_mutators)]
     force_update: bool,
     previous_force_version: Version,
 }

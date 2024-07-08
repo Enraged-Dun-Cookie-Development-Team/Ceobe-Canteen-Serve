@@ -3,7 +3,7 @@ mod force;
 mod platform;
 mod primary;
 mod version;
-
+mod conv;
 pub use download_source::{DownloadSourceItem, ResourceUrl};
 pub use force::ForceCtrl;
 pub use platform::{ReleasePlatform, SupportPlatform};
