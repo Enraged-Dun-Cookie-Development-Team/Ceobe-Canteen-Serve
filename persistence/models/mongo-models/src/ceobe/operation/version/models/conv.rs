@@ -7,7 +7,7 @@ use crate::ceobe::operation::{
     version::models::{
         DownloadSourceItem, ForceCtrl, Primary,
         ReleasePlatform::{Desktop, Plugin, Pocket},
-        ReleaseVersion, ResourceUrl, SupportPlatform,
+        ReleaseVersion, ResourceUrl,
         SupportPlatform::{Android, MacOS, Windows},
     },
 };

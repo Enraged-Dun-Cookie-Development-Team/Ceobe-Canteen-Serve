@@ -6,12 +6,20 @@ use tracing::instrument;
 
 use checker::CheckExtract;
 use persistence::{
-    ceobe_operate::{ToCeobe, ToCeobeOperation},
+    ceobe_operate::{
+        models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
+    },
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
+    operate::operate_trait::OperateTrait,
 };
-use resp_result::{resp_try, FlagWrap};
-use tracing::instrument;
+
+use crate::{
+    router::CeobeOperationVersionFrontend,
+    serves::frontend::ceobe::operation::version::{
+        error::CeobeOperationVersionError, models::QueryReleaseVersion,
+    },
+};
 
 use super::{
     error::FlagVersionRespResult,
@@ -22,7 +30,6 @@ use super::{
     },
     view::{AppVersionView, DesktopVersionView, PluginVersionView},
 };
-use crate::router::CeobeOperationVersionFrontend;
 
 impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
@@ -129,5 +136,42 @@ impl CeobeOperationVersionFrontend {
             Ok(FlagWrap::new(data.map(Into::into), extra))
         })
         .await
+    }
+
+    #[resp_result]
+    // #[instrument(skip(db, modify))]
+    pub async fn release_version(
+        db: MongoDatabaseOperate, mut modify: modify_cache::CheckModify,
+        MapReject(QueryReleaseVersion { version, platform }): MapReject<
+            Query<QueryReleaseVersion>,
+            CeobeOperationVersionError,
+        >,
+    ) -> Result<FlagWrap<Option<ReleaseVersion>>, CeobeOperationVersionError>
+    {
+        modify
+            .cache_headers
+            .get_control()
+            .set_max_age(Duration::from_secs(60 * 60));
+        let release_info = match version {
+            None => {
+                db.ceobe()
+                    .operation()
+                    .release_version()
+                    .retrieve()
+                    .latest_by_platform(platform)
+                    .await?
+            }
+            Some(ver) => {
+                db.ceobe()
+                    .operation()
+                    .release_version()
+                    .retrieve()
+                    .by_version_platform(&ver, platform)
+                    .await?
+            }
+        };
+
+        let (release_info, modify) = modify.check_modify(release_info)?;
+        Ok(FlagWrap::new(release_info, modify))
     }
 }

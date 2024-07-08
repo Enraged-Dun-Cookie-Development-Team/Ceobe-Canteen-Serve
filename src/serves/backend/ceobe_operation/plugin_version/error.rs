@@ -1,6 +1,7 @@
 use axum::extract::rejection::JsonRejection;
 use persistence::ceobe_operate::plugin_version::{CheckError, OperateError};
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
+use persistence::ceobe_operate::release_version;
 
 use crate::error_generate;
 
@@ -10,6 +11,7 @@ error_generate! {
     Json = JsonRejection
     Check = CheckError
     DbOperate = OperateError
+    ReleaseDbOperate = release_version::Error
 }
 
 pub(super) type PluginRespResult<T> =
