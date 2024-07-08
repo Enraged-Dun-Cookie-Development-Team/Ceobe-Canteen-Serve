@@ -1,6 +1,6 @@
 use std::{error::Error as StdError, future::Future};
 
-pub use axum_core::extract::{FromRequestParts,FromRef};
+pub use axum_core::extract::{FromRef, FromRequestParts};
 pub use http::request::Parts;
 
 /// 获取数据库连接， 以及后续操作基本trait

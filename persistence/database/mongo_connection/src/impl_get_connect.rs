@@ -2,8 +2,7 @@ use core::{future::Future, marker::Send, pin::Pin};
 use std::convert::Infallible;
 
 use database_traits::get_connect::{
-    FromRef, FromRequestParts, GetDatabaseCollection, GetDatabaseConnect,
-    Parts,
+    FromRequestParts, GetDatabaseCollection, GetDatabaseConnect, Parts,
 };
 use serde::{Deserialize, Serialize};
 

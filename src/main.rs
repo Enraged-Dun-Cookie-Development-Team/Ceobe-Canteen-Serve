@@ -37,8 +37,7 @@ use tencent_cloud_server::axum_starter::TencentCloudPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
 
-use crate::bootstrap::decorator::Decroator;
-use crate::bootstrap::postprepare::migrate_version;
+use crate::bootstrap::{decorator::Decroator, postprepare::migrate_version};
 
 mod bootstrap;
 mod configs;
@@ -105,7 +104,6 @@ async fn main_task() {
         .graceful_shutdown(graceful_shutdown())
         .post_prepare(migrate_version)
         .preparing()
-        
         .await
         .expect("准备启动服务异常")
         .launch()

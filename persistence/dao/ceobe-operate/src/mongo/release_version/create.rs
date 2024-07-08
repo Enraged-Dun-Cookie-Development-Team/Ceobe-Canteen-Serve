@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use db_ops_prelude::{
     mongo_connection::MongoDbCollectionTrait,
     mongodb::{
@@ -5,11 +7,10 @@ use db_ops_prelude::{
         options::FindOneOptions,
     },
 };
-use serde::{Deserialize, Serialize};
 
 use super::{
-    models::{ReleaseVersion, Version},
-    Error, ReleaseVersionCreate, Result,
+    Error,
+    models::{ReleaseVersion, Version}, ReleaseVersionCreate, Result,
 };
 
 impl<'db, Conn> ReleaseVersionCreate<'db, Conn>
@@ -55,13 +56,14 @@ where
 }
 #[cfg(test)]
 mod test {
+    use serde::{Deserialize, Serialize};
 
     use abstract_database::ceobe::ToCeobe;
     use db_ops_prelude::{
-        database_operates::{operate_trait::OperateTrait, DatabaseOperate},
+        database_operates::{DatabaseOperate, operate_trait::OperateTrait},
         mongo_connection::{
-            database_traits::initial::{connect_db, connect_db_with_migrate},
-            get_mongo_collection, DatabaseManage, MongoConnect,
+            database_traits::initial::connect_db_with_migrate,
+            DatabaseManage, get_mongo_collection, MongoConnect,
             MongoDbConfig,
         },
         mongo_models::ceobe::operation::version::models::{
@@ -70,7 +72,6 @@ mod test {
         mongodb::bson::doc,
     };
     use mongo_migration::Migrator;
-    use serde::{Deserialize, Serialize};
 
     use crate::ToCeobeOperation;
 
@@ -88,7 +89,7 @@ mod test {
         .await
         .expect("connect to db Error");
 
-        let conn = DatabaseOperate::test_new(MongoConnect);
+        let conn = DatabaseOperate::new(MongoConnect);
         let collection = get_mongo_collection::<ReleaseVersion>()
             .expect("Collection Not Exist");
 

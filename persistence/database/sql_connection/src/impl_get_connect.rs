@@ -6,8 +6,8 @@ use std::{
 
 use database_traits::{
     get_connect::{
-        FromRef, FromRequestParts, GetDatabaseConnect,
-        GetDatabaseTransaction, Parts, TransactionOps,
+        FromRequestParts, GetDatabaseConnect, GetDatabaseTransaction, Parts,
+        TransactionOps,
     },
     BoxedResultSendFuture,
 };
