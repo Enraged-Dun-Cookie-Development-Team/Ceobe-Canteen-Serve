@@ -17,12 +17,13 @@ where
     Conn: MongoDbCollectionTrait<'db, ReleaseVersion>,
 {
     pub async fn one(
-        &'db self, release_version: ReleaseVersion,
+        &'db self, release_version: impl Into<ReleaseVersion>,
     ) -> Result<()> {
         #[derive(Debug, Deserialize, Serialize)]
         struct VersionOnly {
             version: Version,
         }
+        let release_version = release_version.into();
 
         let collection = self.get_collection()?;
 
