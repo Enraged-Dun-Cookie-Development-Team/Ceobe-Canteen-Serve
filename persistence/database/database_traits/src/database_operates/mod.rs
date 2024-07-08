@@ -10,7 +10,7 @@ pub struct DatabaseOperate<C> {
 }
 
 impl<C> DatabaseOperate<C> {
-    pub fn test_new(connect: C) -> Self { Self { connect } }
+    pub fn new(connect: C) -> Self { Self { connect } }
 }
 
 impl<C> DerefMut for DatabaseOperate<C> {

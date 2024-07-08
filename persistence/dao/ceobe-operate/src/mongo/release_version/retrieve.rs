@@ -96,7 +96,7 @@ mod test {
         .await
         .expect("connect to db Error");
 
-        let conn = DatabaseOperate::test_new(MongoConnect);
+        let conn = DatabaseOperate::new(MongoConnect);
         let collection = get_mongo_collection::<ReleaseVersion>()
             .expect("Collection Not Exist");
 

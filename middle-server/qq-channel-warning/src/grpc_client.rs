@@ -13,6 +13,15 @@ pub struct QqChannelGrpcService {
     client: LogClient<Channel>,
 }
 
+impl QqChannelGrpcService {
+    pub async fn new_with_uri(state: QqChannelGrpcState) -> Result<Self, error::Error> {
+        LogClient::connect(state.uri)
+            .await
+            .map_err(error::Error::Transport)
+            .map(|client| Self { client })
+    }
+}
+
 impl<S> FromRequestParts<S> for QqChannelGrpcService
 where
     S: Send,
@@ -62,8 +71,9 @@ impl QqChannelGrpcService {
 mod test {
     use tonic::transport::Channel;
 
+    use crate::{LogRequest, LogType, proto_reexport::LogClient};
+
     use super::QqChannelGrpcService;
-    use crate::{proto_reexport::LogClient, LogRequest, LogType};
 
     #[tokio::test]
     async fn test_send() {
