@@ -12,7 +12,7 @@ use crate::{
     get_now_naive_date_time,
 };
 
-#[derive(Debug, TypedBuilder,Clone)]
+#[derive(Debug, TypedBuilder, Clone)]
 pub struct CeobeOperationAppVersion {
     pub version: String,
     pub force: bool,

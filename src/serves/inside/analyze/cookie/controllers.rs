@@ -1,4 +1,5 @@
 use axum::Json;
+use axum_resp_result::{resp_try, MapReject};
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::NewCookieReq,
 };
@@ -9,7 +10,6 @@ use persistence::{
     redis::RedisConnect,
 };
 use qq_channel_warning::QqChannelGrpcService;
-use axum_resp_result::{resp_try, MapReject};
 use tracing::instrument;
 
 use super::error::{AnalyzeCookieError, AnalyzeCookieRResult};

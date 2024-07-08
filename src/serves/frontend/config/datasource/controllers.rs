@@ -1,3 +1,4 @@
+use axum_resp_result::rtry;
 use persistence::{
     fetcher::{
         datasource_config::ToDatasource,
@@ -6,7 +7,6 @@ use persistence::{
     },
     mysql::SqlDatabaseOperate,
 };
-use axum_resp_result::rtry;
 use tracing::instrument;
 
 use crate::{

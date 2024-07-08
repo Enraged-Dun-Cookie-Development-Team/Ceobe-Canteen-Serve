@@ -1,7 +1,7 @@
 use axum::Json;
+use axum_resp_result::{rtry, MapReject, RespResult};
 use fetcher_logic::implements::FetcherConfigLogic;
 use persistence::mysql::SqlDatabaseOperate;
-use axum_resp_result::{rtry, MapReject, RespResult};
 use serde_json::{Map, Value};
 use tracing::instrument;
 

@@ -1,3 +1,4 @@
+use axum_resp_result::resp_try;
 use checker::{CheckExtract, JsonCheckExtract};
 use persistence::{
     ceobe_operate::{models::app_version, ToCeobe, ToCeobeOperation},
@@ -5,7 +6,6 @@ use persistence::{
     mysql::SqlDatabaseOperate,
     operate::operate_trait::OperateTrait,
 };
-use axum_resp_result::resp_try;
 use tracing::instrument;
 
 use super::error::{AppRespResult, CeobeOperationAppVersionError};

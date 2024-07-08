@@ -1,4 +1,5 @@
 use axum::extract::rejection::QueryRejection;
+use axum_resp_result::FlagRespResult;
 use persistence::{
     ceobe_operate,
     ceobe_operate::{
@@ -7,7 +8,6 @@ use persistence::{
         release_version,
     },
 };
-use axum_resp_result::FlagRespResult;
 
 use crate::error_generate;
 

@@ -1,12 +1,12 @@
+use axum_resp_result::resp_try;
 use checker::{CheckExtract, JsonCheckExtract};
 use persistence::{
     ceobe_operate::{models::desktop_version, ToCeobe, ToCeobeOperation},
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
+    operate::operate_trait::OperateTrait,
 };
-use axum_resp_result::resp_try;
 use tracing::instrument;
-use persistence::operate::operate_trait::OperateTrait;
 
 use super::error::{CeobeOperationDesktopVersionError, DesktopRespResult};
 use crate::router::CeobeOpVersion;

@@ -1,10 +1,10 @@
+mod conv;
 mod download_source;
 mod force;
+mod modify_state;
 mod platform;
 mod primary;
 mod version;
-mod conv;
-mod modify_state;
 
 pub use download_source::{DownloadSourceItem, ResourceUrl};
 pub use force::ForceCtrl;

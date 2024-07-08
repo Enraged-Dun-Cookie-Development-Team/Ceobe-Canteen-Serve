@@ -6,7 +6,9 @@ use axum::{
     http::request::Parts,
     Form, Json,
 };
-use axum_resp_result::{FromRequestFamily, Nil, RespError, RespResult, ToInner};
+use axum_resp_result::{
+    FromRequestFamily, Nil, RespError, RespResult, ToInner,
+};
 
 use crate::{Checker as DataChecker, LiteArgs};
 

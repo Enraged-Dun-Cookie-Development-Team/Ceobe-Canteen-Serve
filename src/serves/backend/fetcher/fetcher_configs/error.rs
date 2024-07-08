@@ -1,7 +1,7 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
+use axum_resp_result::RespResult;
 use fetcher_logic::error::LogicError;
 use persistence::fetcher::config::OperateError;
-use axum_resp_result::RespResult;
 
 use crate::error_generate;
 

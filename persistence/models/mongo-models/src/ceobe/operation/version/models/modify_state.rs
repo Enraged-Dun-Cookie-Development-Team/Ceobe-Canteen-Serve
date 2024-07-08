@@ -3,7 +3,9 @@ use std::borrow::Cow;
 use modify_cache::ModifyState;
 use semver::Version;
 
-use crate::ceobe::operation::version::models::{ReleasePlatform, ReleaseVersion};
+use crate::ceobe::operation::version::models::{
+    ReleasePlatform, ReleaseVersion,
+};
 
 impl ModifyState for ReleaseVersion {
     type Identify = (Version, ReleasePlatform);

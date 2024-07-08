@@ -1,5 +1,5 @@
-use persistence::ceobe_operate::announcement;
 use axum_resp_result::FlagRespResult;
+use persistence::ceobe_operate::announcement;
 
 use crate::error_generate;
 

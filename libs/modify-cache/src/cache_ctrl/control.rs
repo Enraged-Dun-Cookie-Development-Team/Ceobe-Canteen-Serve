@@ -1,7 +1,7 @@
 use std::{ops::Add, time::Duration};
 
-use http::{header::CACHE_CONTROL, HeaderValue};
 use axum_resp_result::{ExtraFlag, ExtraFlags};
+use http::{header::CACHE_CONTROL, HeaderValue};
 
 #[derive(Debug, Default)]
 /// 可缓存性
