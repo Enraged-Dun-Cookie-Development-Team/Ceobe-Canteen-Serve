@@ -3,7 +3,7 @@ use persistence::{
     ceobe_operate::{models::desktop_version, ToCeobe, ToCeobeOperation},
     mysql::SqlDatabaseOperate,
 };
-use resp_result::resp_try;
+use axum_resp_result::resp_try;
 use tracing::instrument;
 
 use super::error::{CeobeOperationDesktopVersionError, DesktopRespResult};

@@ -1,7 +1,7 @@
 use checker::{JsonCheckExtract, QueryCheckExtract};
 use page_size::request::PageSizeChecker;
 use persistence::admin::models::username::Checker;
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 
 use self::error::AdminUserError;
 

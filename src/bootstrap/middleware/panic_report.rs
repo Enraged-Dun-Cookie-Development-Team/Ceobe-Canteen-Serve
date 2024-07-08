@@ -5,7 +5,7 @@ use qq_channel_warning::{
     qq_channel_logger, GrpcConfigTrait, LogRequest, LogType,
     QqChannelGrpcService,
 };
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 use tower_http::catch_panic::{CatchPanicLayer, ResponseForPanic};
 use tracing::{error, instrument};
 

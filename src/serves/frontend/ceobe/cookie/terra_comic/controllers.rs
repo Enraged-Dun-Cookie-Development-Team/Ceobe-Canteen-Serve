@@ -7,7 +7,7 @@ use persistence::{
     ceobe_cookie::models::analyze::models::TerraComicEpisodeInfo,
     mongodb::MongoDatabaseOperate,
 };
-use resp_result::{rtry, MapReject};
+use axum_resp_result::{rtry, MapReject};
 use tracing::instrument;
 
 use super::error::{CeobeCookieRResult, CeobeCookieTerraComicError};

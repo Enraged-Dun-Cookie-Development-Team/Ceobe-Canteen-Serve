@@ -6,7 +6,7 @@ use persistence::{
         models::{app_version, plugin_version},
     },
 };
-use resp_result::FlagRespResult;
+use axum_resp_result::FlagRespResult;
 
 use crate::error_generate;
 

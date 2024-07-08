@@ -3,7 +3,7 @@ use persistence::{
     ceobe_operate::{plugin_version::Checker, ToCeobe, ToCeobeOperation},
     mongodb::MongoDatabaseOperate,
 };
-use resp_result::resp_try;
+use axum_resp_result::resp_try;
 use tracing::instrument;
 
 use super::error::{CeobeOperationPluginVersionError, PluginRespResult};

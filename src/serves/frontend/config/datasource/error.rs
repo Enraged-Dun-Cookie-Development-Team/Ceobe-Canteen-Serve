@@ -1,6 +1,6 @@
 use axum::extract::rejection::QueryRejection;
 use persistence::fetcher::datasource_config::OperateError as DatasourceOperateError;
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 
 use crate::error_generate;
 

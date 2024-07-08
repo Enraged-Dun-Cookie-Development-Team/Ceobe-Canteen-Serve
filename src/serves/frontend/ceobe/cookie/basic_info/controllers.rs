@@ -2,7 +2,7 @@ use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::CookieNumberResp,
 };
 use persistence::mongodb::MongoDatabaseOperate;
-use resp_result::rtry;
+use axum_resp_result::rtry;
 use tracing::instrument;
 
 use super::error::CeobeCookieRResult;

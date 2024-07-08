@@ -4,7 +4,7 @@ use fetcher_logic::error::LogicError;
 use persistence::fetcher::{
     models::platform_config, platform_config::OperateError,
 };
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 
 use crate::error_generate;
 

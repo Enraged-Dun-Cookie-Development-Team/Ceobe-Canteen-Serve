@@ -7,7 +7,7 @@ use persistence::bakery::{
         checkers::CheckError, preludes::id_checker::MidChecker,
     },
 };
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 
 use crate::error_generate;
 

@@ -23,7 +23,7 @@ use persistence::{
 };
 use qiniu_cdn_upload::UploadWrap;
 use qq_channel_warning::QqChannelGrpcService;
-use resp_result::{resp_try, rtry, MapReject};
+use axum_resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
 
@@ -180,7 +180,7 @@ impl FetcherConfigControllers {
     pub async fn upload_avatar(
         qiniu: QiniuManager, multipart: Result<Multipart, MultipartRejection>,
     ) -> DatasourceConfigRResult<AvatarId> {
-        resp_result::resp_try(async move {
+        axum_resp_result::resp_try(async move {
             let mut multipart = multipart?;
             let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
 

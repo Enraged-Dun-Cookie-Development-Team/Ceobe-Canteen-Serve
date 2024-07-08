@@ -8,7 +8,7 @@ use http::{
     request::Parts,
     StatusCode,
 };
-use resp_result::{ExtraFlag, ExtraFlags};
+use axum_resp_result::{ExtraFlag, ExtraFlags};
 use tracing::warn;
 
 use crate::{

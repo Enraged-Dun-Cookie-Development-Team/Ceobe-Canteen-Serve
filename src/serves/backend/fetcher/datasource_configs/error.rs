@@ -10,7 +10,7 @@ use persistence::fetcher::{
     models::datasource_config::checkers::CheckError,
     platform_config::OperateError as PlatformOperateError,
 };
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
 
 use crate::error_generate;

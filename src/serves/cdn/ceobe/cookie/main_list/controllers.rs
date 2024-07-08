@@ -7,7 +7,7 @@ use persistence::{
     mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate,
     redis::RedisConnect,
 };
-use resp_result::{rtry, MapReject};
+use axum_resp_result::{rtry, MapReject};
 use tracing::instrument;
 
 use super::error::{CeobeCookieMainListError, CeobeCookieRResult};

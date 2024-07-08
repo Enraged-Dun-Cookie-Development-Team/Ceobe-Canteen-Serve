@@ -12,7 +12,7 @@ use checker::CheckExtract;
 use page_size::response::ListWithPageInfo;
 use persistence::mysql::SqlDatabaseOperate;
 use qiniu_cdn_upload::UploadWrap;
-use resp_result::{resp_try, MapReject};
+use axum_resp_result::{resp_try, MapReject};
 use tracing::instrument;
 
 use super::error::{
@@ -89,7 +89,7 @@ impl CeobeOpToolLink {
     pub async fn upload_avatar(
         qiniu: QiniuManager, multipart: Result<Multipart, MultipartRejection>,
     ) -> OperateToolLinkRResult<AvatarId> {
-        resp_result::resp_try(async move {
+        resp_try(async move {
             let mut multipart = multipart?;
             let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
 

@@ -4,7 +4,7 @@ use fetcher_logic::{
     view::{BackEndFetcherConfig, MaxLiveNumberResp, PlatformFilterReq},
 };
 use persistence::{mysql::SqlDatabaseOperate, redis::RedisConnect};
-use resp_result::{resp_try, rtry, MapReject};
+use axum_resp_result::{resp_try, rtry, MapReject};
 use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
 

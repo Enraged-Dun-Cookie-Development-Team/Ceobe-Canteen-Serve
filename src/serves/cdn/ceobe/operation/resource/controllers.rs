@@ -2,7 +2,7 @@ use ceobe_operation_logic::{
     impletements::CeobeOperateLogic, view::Resource,
 };
 use persistence::mysql::SqlDatabaseOperate;
-use resp_result::{rtry, RespResult};
+use axum_resp_result::{rtry, RespResult};
 use tracing::instrument;
 
 use super::error::ResourceRespResult;

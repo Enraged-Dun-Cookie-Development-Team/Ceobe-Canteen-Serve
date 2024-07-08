@@ -4,7 +4,7 @@ use axum::{
     body::Body as BoxBody, extract::OriginalUri, response::IntoResponse,
 };
 use http::Method;
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 use status_err::ErrPrefix;
 use tracing::{error, instrument, warn};
 

@@ -4,7 +4,7 @@ use persistence::ceobe_user::{
     models::check::CheckError as CeobeUserPropertyCheckError,
     property::OperateError,
 };
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 
 use crate::error_generate;
 

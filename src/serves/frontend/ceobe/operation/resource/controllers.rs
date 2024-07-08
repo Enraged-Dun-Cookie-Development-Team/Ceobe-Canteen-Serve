@@ -4,7 +4,7 @@ use persistence::{
     ceobe_operate::{ToCeobe, ToCeobeOperation},
     mysql::SqlDatabaseOperate,
 };
-use resp_result::{resp_try, FlagWrap};
+use axum_resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
 use super::{error::FlagResourceRespResult, view::Resource};

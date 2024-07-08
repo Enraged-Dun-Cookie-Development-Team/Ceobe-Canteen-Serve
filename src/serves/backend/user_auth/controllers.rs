@@ -11,7 +11,7 @@ use persistence::{
     mysql::SqlDatabaseOperate,
 };
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
-use resp_result::{resp_try, rtry, MapReject};
+use axum_resp_result::{resp_try, rtry, MapReject};
 use tracing::{debug, instrument};
 
 use super::{

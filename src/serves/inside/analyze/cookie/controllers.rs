@@ -9,7 +9,7 @@ use persistence::{
     redis::RedisConnect,
 };
 use qq_channel_warning::QqChannelGrpcService;
-use resp_result::{resp_try, MapReject};
+use axum_resp_result::{resp_try, MapReject};
 use tracing::instrument;
 
 use super::error::{AnalyzeCookieError, AnalyzeCookieRResult};
