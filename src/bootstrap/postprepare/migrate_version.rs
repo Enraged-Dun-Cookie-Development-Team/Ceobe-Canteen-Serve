@@ -143,7 +143,7 @@ pub async fn raw_migrate_version(
         Number = all_plugin_version.len()
     );
     for ver in all_plugin_version {
-        let crr_ver = ver.version.clone();
+        let crr_ver = ver.version;
         let result = mongo
             .ceobe()
             .operation()
