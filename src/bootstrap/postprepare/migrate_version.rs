@@ -143,7 +143,7 @@ pub async fn raw_migrate_version(
         Number = all_plugin_version.len()
     );
     for ver in all_plugin_version {
-        let crr_ver = ver.version.clone().to_string();
+        let crr_ver = ver.version.clone();
         let result = mongo
             .ceobe()
             .operation()
@@ -155,7 +155,7 @@ pub async fn raw_migrate_version(
         if let Err(err) = result {
             warn!(
                 Action = "迁移旧版Version",
-                Version = crr_ver,
+                Version = %crr_ver,
                 Platform = "插件端",
                 Error = %err
             );

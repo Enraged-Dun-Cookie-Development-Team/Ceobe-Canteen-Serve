@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use checker::{
     prefabs::{
         option_checker::OptionChecker,
@@ -75,4 +77,13 @@ pub type OptionDesktopVersionCheckerPretreat = QueryCheckExtract<
 pub struct QueryReleaseVersion {
     pub version: Option<semver::Version>,
     pub platform: ReleasePlatform,
+}
+
+impl Display for QueryReleaseVersion {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match &self.version {
+            Some(ver) => write!(f, "{}:{}", self.platform, ver),
+            None => write!(f, "{}", self.platform),
+        }
+    }
 }

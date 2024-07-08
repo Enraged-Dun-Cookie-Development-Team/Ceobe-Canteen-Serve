@@ -137,7 +137,8 @@ impl CeobeOperationVersionFrontend {
     }
 
     #[resp_result]
-    #[instrument(skip_all,fields(platform = %arg_2.0.platform))]
+    // TODO: 这里把挂载的东西一起带进去可能会好点？
+    #[instrument(skip_all,fields(version = %arg_2.0))]
     pub async fn release_version(
         db: MongoDatabaseOperate, mut modify: modify_cache::CheckModify,
         MapReject(QueryReleaseVersion { version, platform }): MapReject<
