@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-
 use db_ops_prelude::{
     mongo_connection::MongoDbCollectionTrait,
     mongodb::{
@@ -7,10 +5,11 @@ use db_ops_prelude::{
         options::FindOneOptions,
     },
 };
+use serde::{Deserialize, Serialize};
 
 use super::{
-    Error,
-    models::{ReleaseVersion, Version}, ReleaseVersionCreate, Result,
+    models::{ReleaseVersion, Version},
+    Error, ReleaseVersionCreate, Result,
 };
 
 impl<'db, Conn> ReleaseVersionCreate<'db, Conn>
@@ -56,14 +55,12 @@ where
 }
 #[cfg(test)]
 mod test {
-    use serde::{Deserialize, Serialize};
-
     use abstract_database::ceobe::ToCeobe;
     use db_ops_prelude::{
-        database_operates::{DatabaseOperate, operate_trait::OperateTrait},
+        database_operates::{operate_trait::OperateTrait, DatabaseOperate},
         mongo_connection::{
             database_traits::initial::connect_db_with_migrate,
-            DatabaseManage, get_mongo_collection, MongoConnect,
+            get_mongo_collection, DatabaseManage, MongoConnect,
             MongoDbConfig,
         },
         mongo_models::ceobe::operation::version::models::{
@@ -72,6 +69,7 @@ mod test {
         mongodb::bson::doc,
     };
     use mongo_migration::Migrator;
+    use serde::{Deserialize, Serialize};
 
     use crate::ToCeobeOperation;
 
