@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use serde::{Deserialize, Serialize};
 
 /// 下载源对应的平台
@@ -10,6 +12,22 @@ pub enum ReleasePlatform {
     Desktop,
     /// 口袋端（Android，IOS，WP等）
     Pocket,
+}
+
+impl Display for ReleasePlatform {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ReleasePlatform::Plugin => {
+                write!(f, "plugin")
+            }
+            ReleasePlatform::Desktop => {
+                write!(f, "desktop")
+            }
+            ReleasePlatform::Pocket => {
+                write!(f, "pocket")
+            }
+        }
+    }
 }
 
 /// 当前下载源支持的平台

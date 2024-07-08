@@ -1,9 +1,7 @@
 use std::time::Duration;
 
 use axum::extract::Query;
-use axum_resp_result::{FlagWrap, MapReject, resp_result, resp_try};
-use tracing::instrument;
-
+use axum_resp_result::{resp_result, resp_try, FlagWrap, MapReject};
 use checker::CheckExtract;
 use persistence::{
     ceobe_operate::{
@@ -13,13 +11,7 @@ use persistence::{
     mysql::SqlDatabaseOperate,
     operate::operate_trait::OperateTrait,
 };
-
-use crate::{
-    router::CeobeOperationVersionFrontend,
-    serves::frontend::ceobe::operation::version::{
-        error::CeobeOperationVersionError, models::QueryReleaseVersion,
-    },
-};
+use tracing::instrument;
 
 use super::{
     error::FlagVersionRespResult,
@@ -29,6 +21,12 @@ use super::{
         OptionPluginVersionCheckerPretreat,
     },
     view::{AppVersionView, DesktopVersionView, PluginVersionView},
+};
+use crate::{
+    router::CeobeOperationVersionFrontend,
+    serves::frontend::ceobe::operation::version::{
+        error::CeobeOperationVersionError, models::QueryReleaseVersion,
+    },
 };
 
 impl CeobeOperationVersionFrontend {
@@ -139,7 +137,7 @@ impl CeobeOperationVersionFrontend {
     }
 
     #[resp_result]
-    // #[instrument(skip(db, modify))]
+    #[instrument(skip_all,fields(platform = %arg_2.0.platform))]
     pub async fn release_version(
         db: MongoDatabaseOperate, mut modify: modify_cache::CheckModify,
         MapReject(QueryReleaseVersion { version, platform }): MapReject<

@@ -7,12 +7,11 @@ use checker::{
 };
 use persistence::ceobe_operate::{
     desktop_version,
-    models::app_version,
+    models::{app_version, version::models::ReleasePlatform},
     plugin_version::{self, version},
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
-use persistence::ceobe_operate::models::version::models::ReleasePlatform;
 
 use super::error::CeobeOperationVersionError;
 
@@ -72,8 +71,8 @@ pub type OptionDesktopVersionCheckerPretreat = QueryCheckExtract<
     CeobeOperationVersionError,
 >;
 
-#[derive(Deserialize,Clone,Debug)]
-pub struct QueryReleaseVersion{
-    pub version:Option<semver::Version>,
-    pub platform:ReleasePlatform
+#[derive(Deserialize, Clone, Debug)]
+pub struct QueryReleaseVersion {
+    pub version: Option<semver::Version>,
+    pub platform: ReleasePlatform,
 }
