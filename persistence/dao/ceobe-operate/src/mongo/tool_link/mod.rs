@@ -6,7 +6,6 @@ use db_ops_prelude::{
     mongo_connection::MongoDbError,
     StatusErr, ThisError,
 };
-
 use crate::OperationDatabaseOperate;
 
 mod create;
@@ -32,7 +31,7 @@ impl<'db, Conn> Deref for ToolLinkOperate<'db, Conn> {
 pub enum OperateMongoError {
     #[error("数据库查询异常{0}")]
     Db(#[from] MongoDbError),
-    #[error("数据库查询异常{0}")]
+    #[error("mongo 查询异常{0}")]
     Find(#[from] db_ops_prelude::mongodb::error::Error),
 }
 

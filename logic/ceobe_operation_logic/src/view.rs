@@ -247,7 +247,7 @@ pub struct ToolLinkCreateMongoReq {
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct ToolLinkUpdateMongoReq {
-    pub id: String,
+    pub id: bson::Uuid,
     pub localized_name: LocalizedLanguage,
     pub localized_description: LocalizedLanguage,
     pub localized_slogen: LocalizedLanguage,
@@ -328,7 +328,7 @@ impl Into<ToolLinkCreateMongoResp> for ToolLink {
 impl From<ToolLinkUpdateMongoReq> for ToolLink {
     fn from(value: ToolLinkUpdateMongoReq) -> Self {
         ToolLink {
-            id: bson::Uuid::parse_str(value.id).unwrap(),
+            id: value.id,
             localized_name: value.localized_name,
             localized_description: value.localized_description,
             localized_slogen: value.localized_slogen,
