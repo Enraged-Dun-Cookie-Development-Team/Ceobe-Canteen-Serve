@@ -1,4 +1,4 @@
-use axum::{extract::Query};
+use axum::extract::Query;
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
     view::{
@@ -7,6 +7,7 @@ use ceobe_operation_logic::{
     },
 };
 use checker::{CheckExtract, JsonCheckExtract};
+use page_size::response::ListWithPageInfo;
 use persistence::{
     ceobe_operate::tool_link_mongodb::{models, Checked, ToolLinkChecker},
     mongodb::MongoDatabaseOperate,
@@ -15,7 +16,9 @@ use resp_result::{resp_try, MapReject};
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
-use super::error::{CeobeOperateToolLinkError, CeobeToolLinkRResult};
+use super::error::{
+    CeobeOperateToolLinkError, CeobeToolLinkRResult, PageSizePretreatment,
+};
 use crate::router::CdnOperateToolLinkFrontend;
 
 type CreateToolLinkCheck =
@@ -25,9 +28,11 @@ impl CdnOperateToolLinkFrontend {
     #[instrument(ret, skip(mongo))]
     pub async fn list(
         mongo: MongoDatabaseOperate,
-    ) -> CeobeToolLinkRResult<Vec<ToolLinkCreateMongoResp>> {
+        CheckExtract(page_size): PageSizePretreatment,
+    ) -> CeobeToolLinkRResult<ListWithPageInfo<ToolLinkCreateMongoResp>> {
         resp_try(async {
-            Ok(CeobeOperateLogic::list_tool_link_mongo(mongo).await?)
+            Ok(CeobeOperateLogic::list_tool_link_mongo(mongo, page_size)
+                .await?)
         })
         .await
     }
@@ -85,22 +90,23 @@ impl CdnOperateToolLinkFrontend {
     }
 
     #[instrument(ret, skip(mongo, tc_cloud))]
-    pub async fn update(
+    pub async fn update_one(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         CheckExtract(Checked {
-                         id,
-                         localized_name,
-                         localized_description,
-                         localized_slogen,
-                         localized_tags,
-                         icon_url,
-                         links,
-                         ..
-                     }): CreateToolLinkCheck,
+            id,
+            localized_name,
+            localized_description,
+            localized_slogen,
+            localized_tags,
+            icon_url,
+            links,
+            ..
+        }): CreateToolLinkCheck,
     ) -> CeobeToolLinkRResult<()> {
         resp_try(async {
             Ok(CeobeOperateLogic::update_tool_link_mongo(
-                mongo, tc_cloud,
+                mongo,
+                tc_cloud,
                 ToolLinkUpdateMongoReq::builder()
                     .id(id)
                     .localized_name(localized_name)
@@ -138,7 +144,7 @@ impl CdnOperateToolLinkFrontend {
     }
 
     #[instrument(ret, skip(mongo, tc_cloud))]
-    pub async fn delete(
+    pub async fn delete_one(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         MapReject(ToolLinkDeleteMongoReq { id }): MapReject<
             Query<ToolLinkDeleteMongoReq>,

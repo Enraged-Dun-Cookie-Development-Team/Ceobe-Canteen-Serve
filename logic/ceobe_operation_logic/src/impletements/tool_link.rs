@@ -157,14 +157,27 @@ impl CeobeOperateLogic {
     }
 
     pub async fn list_tool_link_mongo(
-        mongo: MongoDatabaseOperate,
-    ) -> LogicResult<Vec<ToolLinkCreateMongoResp>> {
-        let tool_link_list =
-            mongo.ceobe().operation().tool_link_mongo().list().await?;
+        mongo: MongoDatabaseOperate, page_size: Paginator,
+    ) -> LogicResult<ListWithPageInfo<ToolLinkCreateMongoResp>> {
+        let tool_link_list = mongo
+            .ceobe()
+            .operation()
+            .tool_link_mongo()
+            .list(page_size)
+            .await?;
 
-        Ok(tool_link_list
+        let count = mongo
+            .ceobe()
+            .operation()
+            .tool_link_mongo()
+            .count(page_size)
+            .await?;
+
+        let result: Vec<ToolLinkCreateMongoResp> = tool_link_list
             .into_iter()
             .map(|v| v.try_into().unwrap())
-            .collect())
+            .collect();
+
+        Ok(result.with_page_info(page_size, count))
     }
 }
