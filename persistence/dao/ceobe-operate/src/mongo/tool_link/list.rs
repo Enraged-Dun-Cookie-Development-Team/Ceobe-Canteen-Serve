@@ -56,7 +56,7 @@ where
             .limit(Some(*page_size.size.deref() as u64))
             .build();
 
-        let mut count = db
+        let count = db
             .doing(|collection| {
                 collection.count_documents(None, count_options)
             })

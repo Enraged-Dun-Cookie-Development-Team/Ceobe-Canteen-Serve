@@ -53,7 +53,7 @@ impl Checker for IdChecker {
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = Option<String>;
 
-    fn check(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+    fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
         ready(match uncheck {
             None => Ok(bson::Uuid::new()),
             Some(id) => bson::Uuid::parse_str(id).map_err(Into::into),
@@ -70,7 +70,7 @@ impl Checker for StringToUrlChecker {
     type Fut = Ready<Result<Self::Checked, Self::Err>>;
     type Unchecked = String;
 
-    fn check(args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
-        ready(Url::parse(&uncheck).map(|v| uncheck).map_err(Into::into))
+    fn check(_args: Self::Args, uncheck: Self::Unchecked) -> Self::Fut {
+        ready(Url::parse(&uncheck).map(|_v| uncheck).map_err(Into::into))
     }
 }

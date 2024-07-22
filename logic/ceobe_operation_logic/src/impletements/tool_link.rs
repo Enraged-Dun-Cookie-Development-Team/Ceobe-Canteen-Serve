@@ -175,7 +175,7 @@ impl CeobeOperateLogic {
 
         let result: Vec<ToolLinkCreateMongoResp> = tool_link_list
             .into_iter()
-            .map(|v| v.try_into().unwrap())
+            .map(|v| v.into())
             .collect();
 
         Ok(result.with_page_info(page_size, count))

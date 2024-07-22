@@ -293,7 +293,7 @@ impl From<ToolLinkCreateMongoReq> for ToolLink {
             links: value
                 .links
                 .into_iter()
-                .map(|v| v.try_into().unwrap())
+                .map(|v| v.into())
                 .collect(),
         }
     }
@@ -311,16 +311,16 @@ impl From<LinkMongoReq> for Link {
     }
 }
 
-impl Into<ToolLinkCreateMongoResp> for ToolLink {
-    fn into(self) -> ToolLinkCreateMongoResp {
+impl From<ToolLink> for ToolLinkCreateMongoResp {
+    fn from(val: ToolLink) -> Self {
         ToolLinkCreateMongoResp {
-            id: self.id.to_string(),
-            localized_name: self.localized_name,
-            localized_description: self.localized_description,
-            localized_slogen: self.localized_slogen,
-            localized_tags: self.localized_tags,
-            icon_url: self.icon_url,
-            links: self.links,
+            id: val.id.to_string(),
+            localized_name: val.localized_name,
+            localized_description: val.localized_description,
+            localized_slogen: val.localized_slogen,
+            localized_tags: val.localized_tags,
+            icon_url: val.icon_url,
+            links: val.links,
         }
     }
 }
@@ -334,11 +334,7 @@ impl From<ToolLinkUpdateMongoReq> for ToolLink {
             localized_slogen: value.localized_slogen,
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
-            links: value
-                .links
-                .into_iter()
-                .map(|v| v.try_into().unwrap())
-                .collect(),
+            links: value.links.into_iter().map(|v| v.into()).collect(),
         }
     }
 }
