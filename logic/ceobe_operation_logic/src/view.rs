@@ -290,11 +290,7 @@ impl From<ToolLinkCreateMongoReq> for ToolLink {
             localized_slogen: value.localized_slogen,
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
-            links: value
-                .links
-                .into_iter()
-                .map(|v| v.into())
-                .collect(),
+            links: value.links.into_iter().map(|v| v.into()).collect(),
         }
     }
 }

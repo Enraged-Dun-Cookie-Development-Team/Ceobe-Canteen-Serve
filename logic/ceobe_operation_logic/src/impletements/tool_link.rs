@@ -173,10 +173,8 @@ impl CeobeOperateLogic {
             .count(page_size)
             .await?;
 
-        let result: Vec<ToolLinkCreateMongoResp> = tool_link_list
-            .into_iter()
-            .map(|v| v.into())
-            .collect();
+        let result: Vec<ToolLinkCreateMongoResp> =
+            tool_link_list.into_iter().map(|v| v.into()).collect();
 
         Ok(result.with_page_info(page_size, count))
     }
