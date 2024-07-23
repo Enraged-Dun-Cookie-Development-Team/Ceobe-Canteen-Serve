@@ -33,7 +33,6 @@ pub mod ceobe_operate {
     pub mod mongo_models {
         pub use mongo_models::ceobe::operation::tool_link;
     }
-
 }
 
 #[cfg(feature = "model-ceobe-user")]

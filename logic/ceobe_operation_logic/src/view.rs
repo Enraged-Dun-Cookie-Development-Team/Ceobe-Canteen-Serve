@@ -1,13 +1,13 @@
 use persistence::{
     ceobe_operate::{
         announcement,
+        models::tool_link::{
+            self, models::model_tool_link::FrontendToolLink,
+        },
         mongo_models::tool_link::models::{LocalizedLanguage, LocalizedTags},
         resource::{
             self, all_available,
             countdown::{self, CountdownType},
-        },
-        models::tool_link::{
-            self, models::model_tool_link::FrontendToolLink,
         },
         tool_link_mongodb::models::{Link, ToolLink},
         video,
