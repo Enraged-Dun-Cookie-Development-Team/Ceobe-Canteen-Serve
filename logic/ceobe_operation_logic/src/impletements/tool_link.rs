@@ -4,7 +4,6 @@ use page_size::{
     response::{GenerateListWithPageInfo, ListWithPageInfo},
 };
 use persistence::{
-    bakery::{mansion::ToMansion, ToBakery},
     ceobe_operate::{
         models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
         ToCeobeOperation,
