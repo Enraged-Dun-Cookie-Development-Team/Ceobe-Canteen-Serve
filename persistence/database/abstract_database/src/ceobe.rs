@@ -6,7 +6,6 @@ use db_ops_prelude::database_operates::{
 };
 
 pub struct CeobeDatabaseOperate<'db, Conn>(&'db Conn);
-pub struct CeobeMongoOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for CeobeDatabaseOperate<'db, Conn> {
     type Target = Conn;
