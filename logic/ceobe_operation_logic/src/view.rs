@@ -6,7 +6,7 @@ use persistence::{
             self, all_available,
             countdown::{self, CountdownType},
         },
-        sql_models::tool_link::{
+        models::tool_link::{
             self, models::model_tool_link::FrontendToolLink,
         },
         tool_link_mongodb::models::{Link, ToolLink},

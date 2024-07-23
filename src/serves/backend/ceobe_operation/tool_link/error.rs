@@ -9,7 +9,7 @@ use checker::{
     QueryCheckExtract,
 };
 use page_size::request::PageSizeChecker;
-use persistence::ceobe_operate::sql_models::tool_link::{
+use persistence::ceobe_operate::models::tool_link::{
     self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
 };
 use resp_result::RespResult;

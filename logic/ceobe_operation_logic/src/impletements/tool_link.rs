@@ -6,7 +6,7 @@ use page_size::{
 use persistence::{
     bakery::{mansion::ToMansion, ToBakery},
     ceobe_operate::{
-        sql_models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
+        models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
         ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
