@@ -12,6 +12,7 @@ use crate::OperationDatabaseOperate;
 mod create;
 mod delete;
 mod list;
+mod page;
 mod update;
 
 pub struct ToolLinkOperate<'db, Conn>(&'db Conn);

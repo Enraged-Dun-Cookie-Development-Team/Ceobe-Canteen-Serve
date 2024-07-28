@@ -3,8 +3,6 @@ use axum::{
     Router,
 };
 
-use crate::router::back_end::ceobe_operation::mongo::mongo_tool_link::mongo_tool_link_router;
-
 pub struct CeobeOpToolLink;
 
 pub fn tool_link_router() -> crate::router::ServerRoute {
@@ -14,5 +12,8 @@ pub fn tool_link_router() -> crate::router::ServerRoute {
         .route("/delete", delete(CeobeOpToolLink::delete_one))
         .route("/list", get(CeobeOpToolLink::list))
         .route("/uploadAvatar", post(CeobeOpToolLink::upload_avatar))
-        .merge(Router::new().nest("/mongo", mongo_tool_link_router()))
+        .route("/pageShow", get(CeobeOpToolLink::page))
+        .route("/createOne", post(CeobeOpToolLink::create_one_mongo))
+        .route("/updateOne", post(CeobeOpToolLink::update_one_mongo))
+        .route("/deleteOne", delete(CeobeOpToolLink::delete_one_mongo))
 }

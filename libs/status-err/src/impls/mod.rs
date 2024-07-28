@@ -238,7 +238,7 @@ status_error!(
 
 status_error!(
     bson::uuid::Error[
-        ErrPrefix::CHECKER,
+        ErrPrefix::PARSE,
         0x001F
     ]->"bson UUID解析异常"
 );

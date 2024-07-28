@@ -16,7 +16,6 @@ use crate::{
 };
 
 mod announcement;
-mod mongo;
 mod resource;
 mod tool_link;
 mod version;
