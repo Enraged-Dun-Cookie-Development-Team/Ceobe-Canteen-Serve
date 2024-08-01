@@ -29,6 +29,7 @@ use configs::{
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
+use mimalloc::MiMalloc;
 use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
@@ -36,8 +37,6 @@ use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tencent_cloud_server::axum_starter::TencentCloudPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
-
-use mimalloc::MiMalloc;
 
 use crate::bootstrap::decorator::Decroator;
 
