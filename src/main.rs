@@ -37,6 +37,8 @@ use tencent_cloud_server::axum_starter::TencentCloudPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
 
+use mimalloc::MiMalloc;
+
 use crate::bootstrap::decorator::Decroator;
 
 mod bootstrap;
@@ -48,9 +50,8 @@ mod router;
 mod serves;
 mod utils;
 
-#[cfg(not(target_env = "msvc"))]
 #[global_allocator]
-static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+static GLOBAL: MiMalloc = MiMalloc;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");

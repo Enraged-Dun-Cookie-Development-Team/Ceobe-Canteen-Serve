@@ -156,9 +156,7 @@ bitmap-convert.workspace = true
 bitmaps.workspace = true
 persistence = { workspace = true, features = ["prelude", "migrate"] }
 tencent-cloud-server.workspace = true
-
-[target.'cfg(not(target_env = "msvc"))'.dependencies]
-jemallocator = "0.5.4"
+mimalloc = "0.1.43"
 
 
 [dependencies.tokio]
