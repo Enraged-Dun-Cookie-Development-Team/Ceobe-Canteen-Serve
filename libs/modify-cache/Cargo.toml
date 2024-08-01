@@ -16,7 +16,7 @@ chrono = { workspace = true }
 http = "1"
 axum = { workspace = true, features = ["original-uri"] }
 async-trait = { workspace = true }
-resp-result = { workspace = true }
+axum-resp-result = { workspace = true }
 # utils
 thiserror = { workspace = true }
 base64 = "0.13"

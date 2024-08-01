@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use resp_result::{ConfigTrait, RespConfig, SignType, StatusSign};
+use axum_resp_result::{ConfigTrait, RespConfig, SignType, StatusSign};
 
 #[derive(Debug, serde::Deserialize)]
 pub struct RespResultConfig {
@@ -22,7 +22,7 @@ pub struct RespResultConfig {
 
 impl ConfigTrait for RespResultConfig {}
 
-impl resp_result::SerdeConfig for RespResultConfig {
+impl axum_resp_result::SerdeConfig for RespResultConfig {
     fn body_name(&self) -> Cow<'static, str> { self.body_name.clone().into() }
 
     fn err_msg_name(&self) -> Cow<'static, str> {

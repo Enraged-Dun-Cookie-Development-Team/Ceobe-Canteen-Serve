@@ -1,5 +1,5 @@
+use axum_resp_result::ConfigTrait;
 use axum_starter::prepare;
-use resp_result::ConfigTrait;
 
 use crate::utils::{
     mob_verify,
@@ -10,11 +10,11 @@ use crate::utils::{
 #[prepare(RResultConfig?)]
 fn resp_conf<C>(
     resp_result: &C,
-) -> Result<(), resp_result::SetRespResultConfigureError>
+) -> Result<(), axum_resp_result::SetRespResultConfigureError>
 where
     C: ConfigTrait,
 {
-    resp_result::try_set_config(resp_result)
+    axum_resp_result::try_set_config(resp_result)
 }
 
 /// 鉴权配置

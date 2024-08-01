@@ -1,4 +1,4 @@
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 
 pub mod controllers;
 pub(crate) mod error;

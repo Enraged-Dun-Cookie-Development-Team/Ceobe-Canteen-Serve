@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter};
+
 use checker::{
     prefabs::{
         option_checker::OptionChecker,
@@ -7,7 +9,7 @@ use checker::{
 };
 use persistence::ceobe_operate::{
     desktop_version,
-    models::app_version,
+    models::{app_version, version::models::ReleasePlatform},
     plugin_version::{self, version},
 };
 use serde::{Deserialize, Serialize};
@@ -70,3 +72,18 @@ pub type OptionDesktopVersionCheckerPretreat = QueryCheckExtract<
     OptionDesktopVersionChecker,
     CeobeOperationVersionError,
 >;
+
+#[derive(Deserialize, Clone, Debug)]
+pub struct QueryReleaseVersion {
+    pub version: Option<semver::Version>,
+    pub platform: ReleasePlatform,
+}
+
+impl Display for QueryReleaseVersion {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match &self.version {
+            Some(ver) => write!(f, "{}:{}", self.platform, ver),
+            None => write!(f, "{}", self.platform),
+        }
+    }
+}

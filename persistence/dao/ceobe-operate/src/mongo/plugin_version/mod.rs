@@ -51,6 +51,6 @@ type OperateResult<T> = Result<T, OperateError>;
 
 impl<'db, Conn> OperationDatabaseOperate<'db, Conn> {
     pub fn plugin_version(&self) -> PluginVersionOperate<'_, Conn> {
-        self.child()
+        SuperOperate::child(self)
     }
 }

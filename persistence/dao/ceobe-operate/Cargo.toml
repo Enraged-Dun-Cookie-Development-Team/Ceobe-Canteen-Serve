@@ -12,4 +12,9 @@ thiserror.workspace = true
 tracing.workspace = true
 abstract_database.workspace = true
 page_size.workspace = true
+serde = { version = "1.0.201", features = ["derive"] }
+
+[dev-dependencies]
+mongo-migration = { path = "../../migrate/mongo-migration" }
+tokio = { workspace = true, features = ["test-util"] }
 
