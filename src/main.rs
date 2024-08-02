@@ -29,6 +29,7 @@ use configs::{
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;
+use mimalloc::MiMalloc;
 use mob_push_server::axum_starter::MobPushPrepare;
 use qq_channel_warning::QqChannelPrepare;
 use request_clients::bili_client::BiliClientPrepare;
@@ -48,9 +49,8 @@ mod router;
 mod serves;
 mod utils;
 
-#[cfg(not(target_env = "msvc"))]
 #[global_allocator]
-static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+static GLOBAL: MiMalloc = MiMalloc;
 
 fn main() {
     let rt = tokio::runtime::Runtime::new().expect("Init Rt failure");
