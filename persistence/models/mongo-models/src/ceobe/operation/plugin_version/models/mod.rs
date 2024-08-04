@@ -13,7 +13,6 @@ use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
 pub mod spare_link;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-
 pub struct DownloadResource {
     pub crx: Url,
     pub spare_crx: Option<Url>,

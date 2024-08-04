@@ -4,13 +4,16 @@ use persistence::{
         models::tool_link::{
             self, models::model_tool_link::FrontendToolLink,
         },
+        mongo_models::tool_link::models::{LocalizedLanguage, LocalizedTags},
         resource::{
             self, all_available,
             countdown::{self, CountdownType},
         },
+        tool_link_mongodb::models::{Link, ToolLink},
         video,
     },
     help_crates::naive_date_time_format,
+    mongodb::mongodb::bson,
 };
 use serde::{Deserialize, Serialize};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
@@ -224,7 +227,110 @@ impl OperationTcCdnPath {
     /// 资源列表
     pub const RESOURCE_LIST_PATH: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/resource/get");
+    /// 友联列表
+    pub const TOOL_LINK_LIST: PurgeCachePath =
+        PurgeCachePath::new("/cdn/operate/toolLink/list");
     /// 视频列表
     pub const VIDEO_LIST_PATH: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/video/list");
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkCreateMongoReq {
+    pub localized_name: LocalizedLanguage,
+    pub localized_description: LocalizedLanguage,
+    pub localized_slogen: LocalizedLanguage,
+    pub localized_tags: LocalizedTags,
+    pub icon_url: String,
+    pub links: Vec<LinkMongoReq>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkUpdateMongoReq {
+    pub id: bson::Uuid,
+    pub localized_name: LocalizedLanguage,
+    pub localized_description: LocalizedLanguage,
+    pub localized_slogen: LocalizedLanguage,
+    pub localized_tags: LocalizedTags,
+    pub icon_url: String,
+    pub links: Vec<LinkMongoReq>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkCreateMongoResp {
+    pub id: String,
+    pub localized_name: LocalizedLanguage,
+    pub localized_description: LocalizedLanguage,
+    pub localized_slogen: LocalizedLanguage,
+    pub localized_tags: LocalizedTags,
+    pub icon_url: String,
+    pub links: Vec<Link>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct ToolLinkDeleteMongoReq {
+    pub id: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct LinkMongoReq {
+    pub primary: Option<bool>,
+    pub regionality: String,
+    pub service: String,
+    pub localized_name: LocalizedLanguage,
+    pub url: String,
+}
+
+impl From<ToolLinkCreateMongoReq> for ToolLink {
+    fn from(value: ToolLinkCreateMongoReq) -> Self {
+        ToolLink {
+            id: bson::Uuid::new(),
+            localized_name: value.localized_name,
+            localized_description: value.localized_description,
+            localized_slogen: value.localized_slogen,
+            localized_tags: value.localized_tags,
+            icon_url: value.icon_url,
+            links: value.links.into_iter().map(|v| v.into()).collect(),
+        }
+    }
+}
+
+impl From<LinkMongoReq> for Link {
+    fn from(value: LinkMongoReq) -> Self {
+        Link {
+            primary: value.primary.unwrap_or(false),
+            regionality: value.regionality,
+            service: value.service,
+            localized_name: value.localized_name,
+            url: value.url,
+        }
+    }
+}
+
+impl From<ToolLink> for ToolLinkCreateMongoResp {
+    fn from(val: ToolLink) -> Self {
+        ToolLinkCreateMongoResp {
+            id: val.id.to_string(),
+            localized_name: val.localized_name,
+            localized_description: val.localized_description,
+            localized_slogen: val.localized_slogen,
+            localized_tags: val.localized_tags,
+            icon_url: val.icon_url,
+            links: val.links,
+        }
+    }
+}
+
+impl From<ToolLinkUpdateMongoReq> for ToolLink {
+    fn from(value: ToolLinkUpdateMongoReq) -> Self {
+        ToolLink {
+            id: value.id,
+            localized_name: value.localized_name,
+            localized_description: value.localized_description,
+            localized_slogen: value.localized_slogen,
+            localized_tags: value.localized_tags,
+            icon_url: value.icon_url,
+            links: value.links.into_iter().map(|v| v.into()).collect(),
+        }
+    }
 }
