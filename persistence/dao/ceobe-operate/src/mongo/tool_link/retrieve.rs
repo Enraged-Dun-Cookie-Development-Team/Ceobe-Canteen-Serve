@@ -16,6 +16,21 @@ where
     Conn: MongoDbCollectionTrait<'db, ToolLink>,
 {
     #[instrument(skip(self), name = "list")]
+    pub async fn list(&'db self) -> OperateResult<Vec<ToolLink>> {
+        let db = self.get_collection()?;
+
+        let mut cursor =
+            db.doing(|collection| collection.find(None, None)).await?;
+
+        let mut result = Vec::<ToolLink>::new();
+        while let Some(doc) = cursor.next().await {
+            result.push(doc.map_err(MongoDbError::from)?)
+        }
+
+        Ok(result)
+    }
+
+    #[instrument(skip(self), name = "page")]
     pub async fn page(
         &'db self, page_size: Paginator,
     ) -> OperateResult<Vec<ToolLink>> {
@@ -41,7 +56,7 @@ where
         Ok(result)
     }
 
-    #[instrument(skip(self), name = "list")]
+    #[instrument(skip(self), name = "count")]
     pub async fn count(
         &'db self, page_size: Paginator,
     ) -> OperateResult<u64> {
