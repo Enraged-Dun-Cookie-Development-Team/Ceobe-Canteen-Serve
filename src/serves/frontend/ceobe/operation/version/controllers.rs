@@ -136,41 +136,5 @@ impl CeobeOperationVersionFrontend {
         .await
     }
 
-    #[resp_result]
-    // TODO: 这里把挂载的东西一起带进去可能会好点？
-    #[instrument(skip_all,fields(version = %arg_2.0))]
-    pub async fn release_version(
-        db: MongoDatabaseOperate, mut modify: modify_cache::CheckModify,
-        MapReject(QueryReleaseVersion { version, platform }): MapReject<
-            Query<QueryReleaseVersion>,
-            CeobeOperationVersionError,
-        >,
-    ) -> Result<FlagWrap<Option<ReleaseVersion>>, CeobeOperationVersionError>
-    {
-        modify
-            .cache_headers
-            .get_control()
-            .set_max_age(Duration::from_secs(60 * 60));
-        let release_info = match version {
-            None => {
-                db.ceobe()
-                    .operation()
-                    .release_version()
-                    .retrieve()
-                    .latest_by_platform(platform)
-                    .await?
-            }
-            Some(ver) => {
-                db.ceobe()
-                    .operation()
-                    .release_version()
-                    .retrieve()
-                    .by_version_platform(&ver, platform)
-                    .await?
-            }
-        };
 
-        let (release_info, modify) = modify.check_modify(release_info)?;
-        Ok(FlagWrap::new(release_info, modify))
-    }
 }

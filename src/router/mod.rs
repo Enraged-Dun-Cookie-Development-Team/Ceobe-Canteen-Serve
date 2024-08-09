@@ -7,7 +7,7 @@ pub use back_end::{
 pub use cdn::{
     CdnBakeryMansionFrontend, CdnCookieMainListFrontend,
     CdnCookieTempFrontend, CdnOperationAnnouncementFrontend,
-    CdnOperationResourceFrontend, CdnOperationVideoFrontend,
+    CdnOperationResourceFrontend, CdnOperationVideoFrontend,CdnOperationVersion
 };
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,
@@ -48,7 +48,7 @@ pub fn root_route() -> ServerRoute {
                     panic!("测试 Panic");
                 }
                 #[cfg(not(debug_assertions))]
-                resp_result::RespResult::<_, crate::error::NotAnError>::ok(
+                axum_resp_result::RespResult::<_, crate::error::NotAnError>::ok(
                     "不可以Panic",
                 )
             }),
