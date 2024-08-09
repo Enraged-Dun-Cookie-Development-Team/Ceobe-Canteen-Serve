@@ -46,7 +46,8 @@ where
         info!( release.platform = ?platform);
         let collection = self.get_collection()?;
         let filter = doc! {
-            "platform":to_bson(&platform)?
+            "platform":to_bson(&platform)?,
+            "yanked": false
         };
         let sort = doc! {
             "$natural": -1i32
