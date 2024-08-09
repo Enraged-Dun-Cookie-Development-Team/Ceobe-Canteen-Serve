@@ -1,14 +1,17 @@
 use axum::extract::Query;
-use axum_resp_result::{MapReject, resp_result};
+use axum_resp_result::{resp_result, MapReject};
+use persistence::{
+    ceobe_operate::{
+        models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
+    },
+    mongodb::MongoDatabaseOperate,
+    operate::operate_trait::OperateTrait,
+};
 use tracing::instrument;
-use persistence::ceobe_operate::models::version::models::ReleaseVersion;
-use persistence::ceobe_operate::{ToCeobe, ToCeobeOperation};
-use persistence::mongodb::MongoDatabaseOperate;
-use persistence::operate::operate_trait::OperateTrait;
+
+use super::{MapRejecter, QueryReleaseVersion, Result};
 use crate::router::CdnOperationVersion;
-use super::QueryReleaseVersion;
-use super::{Result,MapRejecter};
-impl CdnOperationVersion{
+impl CdnOperationVersion {
     #[resp_result]
     // TODO: 这里把挂载的东西一起带进去可能会好点？
     #[instrument(skip_all,fields(version = %arg_1.0))]
@@ -17,9 +20,7 @@ impl CdnOperationVersion{
         MapReject(QueryReleaseVersion { version, platform }): MapRejecter<
             Query<QueryReleaseVersion>,
         >,
-    ) -> Result<ReleaseVersion>
-    {
-
+    ) -> Result<ReleaseVersion> {
         let release_info = match version {
             None => {
                 db.ceobe()

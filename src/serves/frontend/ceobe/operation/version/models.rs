@@ -1,4 +1,4 @@
-use std::fmt::{Display, Formatter};
+use std::fmt::Display;
 
 use checker::{
     prefabs::{
@@ -9,7 +9,7 @@ use checker::{
 };
 use persistence::ceobe_operate::{
     desktop_version,
-    models::{app_version, version::models::ReleasePlatform},
+    models::app_version,
     plugin_version::{self, version},
 };
 use serde::{Deserialize, Serialize};
@@ -72,4 +72,3 @@ pub type OptionDesktopVersionCheckerPretreat = QueryCheckExtract<
     OptionDesktopVersionChecker,
     CeobeOperationVersionError,
 >;
-

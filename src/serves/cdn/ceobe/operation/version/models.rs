@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter};
-use serde::Deserialize;
+
 use persistence::ceobe_operate::models::version::models::ReleasePlatform;
+use serde::Deserialize;
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion {
