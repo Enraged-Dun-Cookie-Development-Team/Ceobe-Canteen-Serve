@@ -27,7 +27,7 @@ impl<'de> Deserialize<'de> for SkipField {
     where
         D: Deserializer<'de>,
     {
-        let _ = <() as Deserialize<'de>>::deserialize(deserializer)?;
+        let _ = <Option<()> as Deserialize<'de>>::deserialize(deserializer)?;
         Ok(Self)
     }
 }

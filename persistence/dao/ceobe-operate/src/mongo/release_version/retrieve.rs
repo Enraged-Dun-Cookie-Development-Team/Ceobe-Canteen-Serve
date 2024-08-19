@@ -1,9 +1,10 @@
 use db_ops_prelude::{
-    mongo_connection::MongoDbCollectionTrait,
+    futures::TryStreamExt,
+    mongo_connection::{MongoDbCollectionTrait, MongoDbError},
     mongo_models::ceobe::operation::version::models::ReleasePlatform,
     mongodb::{
         bson::{doc, to_bson},
-        options::FindOneOptions,
+        options::{FindOneOptions, FindOptions},
     },
 };
 use tracing::info;
@@ -62,6 +63,38 @@ where
             })
             .await?
             .ok_or(Error::VersionInfoNoExist)?;
+
+        Ok(ret)
+    }
+
+    pub async fn all(
+        &'db self, platform: Option<ReleasePlatform>, yanked: bool,
+    ) -> Result<Vec<ReleaseVersion>> {
+        let collection = self.get_collection()?;
+        let filter = match platform {
+            None => {
+                doc! {"yanked": yanked}
+            }
+            Some(plat) => {
+                doc! {
+                    "platform":to_bson(&plat)?,
+                    "yanked": yanked
+                }
+            }
+        };
+        let sort = doc! {
+            "$natural": -1i32
+        };
+
+        let ret = collection
+            .doing(|collection| {
+                collection
+                    .find(filter, FindOptions::builder().sort(sort).build())
+            })
+            .await?
+            .try_collect()
+            .await
+            .map_err(MongoDbError::Mongo)?;
 
         Ok(ret)
     }

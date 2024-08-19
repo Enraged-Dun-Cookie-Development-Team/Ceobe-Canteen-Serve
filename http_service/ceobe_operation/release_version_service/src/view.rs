@@ -1,8 +1,9 @@
 use std::fmt::{Display, Formatter};
 
-use persistence::ceobe_operate::models::version::models::ReleasePlatform;
 use semver::Version;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+
+use persistence::ceobe_operate::models::version::models::ReleasePlatform;
 use serve_utils::{OptionValueField, OptionViewField, ValueField};
 
 #[derive(Deserialize, Clone, Debug)]
@@ -30,5 +31,46 @@ impl Display for QueryReleaseVersion<OptionValueField<Version>> {
                 write!(f, "{}->{}", self.platform, ver)
             }
         }
+    }
+}
+
+#[derive(Debug, Deserialize,Default)]
+pub struct QueryVersionFilter {
+    pub platform: Option<ReleasePlatform>,
+    pub yanked: bool,
+}
+
+impl Display for QueryVersionFilter {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match &self.platform {
+            None => {
+                write!(f, "{{yanked: {} }}", self.yanked)
+            }
+            Some(plat) => {
+                write!(
+                    f,
+                    "{{yanked: {}, platform: {}}}",
+                    self.yanked, plat
+                )
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use serve_utils::SkipField;
+
+    use crate::view::QueryReleaseVersion;
+
+    #[test]
+    fn test_de() {
+        let js = serde_json::json!({
+            "platform":"desktop"
+        });
+        let v = serde_json::from_value::<QueryReleaseVersion<SkipField>>(js)
+            .expect("Err");
+
+        println!("{v:?}")
     }
 }

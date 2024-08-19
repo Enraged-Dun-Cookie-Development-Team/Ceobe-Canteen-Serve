@@ -13,3 +13,4 @@ status-err.workspace = true
 http.workspace = true
 axum-resp-result.workspace = true
 tracing.workspace = true
+serde_json.workspace = true

@@ -1,13 +1,14 @@
 use serve_utils::{
-    axum::{routing::get, Router},
-    endpoint::CDN,
+    axum::{
+        routing::{get, post},
+        Router,
+    },
+    endpoint::{AdminEnd, CDN},
     ControllerRouter, HandlerMapReject, HandlerResult,
 };
-use serve_utils::axum::routing::post;
-use serve_utils::endpoint::AdminEnd;
 
-mod cdn;
 mod admin_end;
+mod cdn;
 
 pub(crate) type Result<T> = HandlerResult<T, crate::ReleaseVersionController>;
 pub(crate) type MapRejecter<T> =
@@ -23,14 +24,15 @@ impl<S: Send + Clone + Sync + 'static> ControllerRouter<S, CDN>
     }
 }
 
-
 impl<S: Send + Clone + Sync + 'static> ControllerRouter<S, AdminEnd>
-for crate::ReleaseVersionController
+    for crate::ReleaseVersionController
 {
-    const BASE_URI: &'static str = "/version";
+    const BASE_URI: &'static str = "/release_version";
 
     fn route(self) -> Router<S> {
-        Router::new().route("/yank", post(Self::yank_version))
+        Router::new()
+            .route("/yank", post(Self::yank_version))
+            .route("/create", post(Self::new_version))
+            .route("/all", get(Self::all_version))
     }
 }
-
