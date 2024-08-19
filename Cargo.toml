@@ -35,6 +35,7 @@ members = [
     "./logic/*",
     "./global/*",
     "./service/*",
+    "http_service/ceobe_operation/*",
 ]
 
 [workspace.dependencies]
@@ -108,6 +109,7 @@ hex = "0.4"
 serde_qs = "0.13.0"
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 mime = "0.3.16"
+serve-utils = {version = "0.1.0", path="libs/serve_utils"}
 
 [dependencies]
 
