@@ -16,15 +16,15 @@ where
         &'db self, platform: &ReleasePlatform, version: &Version,
     ) -> Result<()> {
         let collection = self.get_collection()?;
-
+        let filter = doc! {
+            "platform": to_bson(platform)?,
+            "version": to_bson(version)?,
+            "yanked":false
+        };
         collection
             .doing(|collection| {
                 collection.find_one_and_update(
-                    doc! {
-                        "platform": to_bson(platform)?,
-                        "version": to_bson(version)?,
-                        "yanked":false
-                    },
+                    filter,
                     doc! {
                         "$set":{
                             "yanked": true

@@ -111,6 +111,9 @@ request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 mime = "0.3.16"
 serve-utils = {version = "0.1.0", path="libs/serve_utils"}
 tower = { version = "0.4", features = ["limit"] }
+status-err={path = "./libs/status-err"}
+
+
 [dependencies]
 
 # async
@@ -164,6 +167,8 @@ bitmaps.workspace = true
 persistence = { workspace = true, features = ["prelude", "migrate"] }
 tencent-cloud-server.workspace = true
 semver = { version = "1.0.23", features = ["serde"] }
+release_version_service = { version = "0.1.0", path = "http_service/ceobe_operation/release_version_service" }
+serve_utils = { version = "0.1.0", path = "libs/serve_utils" }
 
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = "0.5.4"
@@ -189,7 +194,7 @@ path = "./libs/range-limit"
 path = "./libs/logger"
 
 [dependencies.status-err]
-path = "./libs/status-err"
+workspace = true
 
 [dependencies.axum-resp-result]
 workspace = true

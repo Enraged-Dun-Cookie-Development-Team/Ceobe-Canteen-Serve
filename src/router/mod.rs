@@ -7,7 +7,7 @@ pub use back_end::{
 pub use cdn::{
     CdnBakeryMansionFrontend, CdnCookieMainListFrontend,
     CdnCookieTempFrontend, CdnOperationAnnouncementFrontend,
-    CdnOperationResourceFrontend, CdnOperationVersion,
+    CdnOperationResourceFrontend,
     CdnOperationVideoFrontend,
 };
 pub use front_end::{

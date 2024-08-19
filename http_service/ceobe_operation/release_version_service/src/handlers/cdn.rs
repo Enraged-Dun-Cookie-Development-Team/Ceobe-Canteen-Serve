@@ -1,23 +1,18 @@
-use axum::extract::Query;
-use axum_resp_result::{resp_result, MapReject};
 use persistence::{
-    ceobe_operate::{
-        models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
-    },
+    ceobe_operate::{ToCeobe, ToCeobeOperation},
     mongodb::MongoDatabaseOperate,
     operate::operate_trait::OperateTrait,
 };
-use tracing::instrument;
-
-use super::{MapRejecter, QueryReleaseVersion, Result};
-use crate::router::CdnOperationVersion;
-impl CdnOperationVersion {
+use persistence::ceobe_operate::models::version::models::ReleaseVersion;
+use serve_utils::{axum::extract::Query, axum_resp_result::{resp_result, MapReject}, OptionValueField, tracing::instrument};
+use crate::view::QueryReleaseVersion;
+use super::{MapRejecter, Result};
+impl crate::ReleaseVersionController {
     #[resp_result]
-    // TODO: 这里把挂载的东西一起带进去可能会好点？
     #[instrument(skip_all,fields(version = %arg_1.0))]
     pub async fn release_version(
         db: MongoDatabaseOperate,
-        MapReject(QueryReleaseVersion { version, platform }): MapRejecter<
+        MapReject(QueryReleaseVersion { version:OptionValueField(version), platform }): MapRejecter<
             Query<QueryReleaseVersion>,
         >,
     ) -> Result<ReleaseVersion> {

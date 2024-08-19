@@ -5,7 +5,7 @@ pub use cookie::{CdnCookieMainListFrontend, CdnCookieTempFrontend};
 use operation::operation_router;
 pub use operation::{
     CdnOperationAnnouncementFrontend, CdnOperationResourceFrontend,
-    CdnOperationVersion, CdnOperationVideoFrontend,
+     CdnOperationVideoFrontend,
 };
 
 use self::cookie::cookie_router;

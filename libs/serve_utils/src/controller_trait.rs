@@ -58,7 +58,5 @@ pub trait ControllerError {
     type Error;
 }
 
-pub type HandlerResult<T, C: ControllerError> =
-    Result<T, <C as ControllerError>::Error>;
-pub type HandlerMapReject<T: ToInner, C: ControllerError> =
-    MapReject<T, <C as ControllerError>::Error>;
+pub type HandlerResult<T, C> = Result<T, <C as ControllerError>::Error>;
+pub type HandlerMapReject<T, C> = MapReject<T, <C as ControllerError>::Error>;
