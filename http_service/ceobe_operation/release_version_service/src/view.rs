@@ -1,9 +1,8 @@
 use std::fmt::{Display, Formatter};
 
-use semver::Version;
-use serde::{Deserialize, Serialize};
-
 use persistence::ceobe_operate::models::version::models::ReleasePlatform;
+use semver::Version;
+use serde::Deserialize;
 use serve_utils::{OptionValueField, OptionViewField, ValueField};
 
 #[derive(Deserialize, Clone, Debug)]
@@ -34,7 +33,7 @@ impl Display for QueryReleaseVersion<OptionValueField<Version>> {
     }
 }
 
-#[derive(Debug, Deserialize,Default)]
+#[derive(Debug, Deserialize, Default)]
 pub struct QueryVersionFilter {
     pub platform: Option<ReleasePlatform>,
     pub yanked: bool,
@@ -47,11 +46,7 @@ impl Display for QueryVersionFilter {
                 write!(f, "{{yanked: {} }}", self.yanked)
             }
             Some(plat) => {
-                write!(
-                    f,
-                    "{{yanked: {}, platform: {}}}",
-                    self.yanked, plat
-                )
+                write!(f, "{{yanked: {}, platform: {}}}", self.yanked, plat)
             }
         }
     }

@@ -7,7 +7,7 @@ pub use video::CdnOperationVideoFrontend;
 
 use self::{
     announcement::announcement_router, resource::resource_router,
-     video::video_router,
+    video::video_router,
 };
 use crate::router::ServerRoute;
 

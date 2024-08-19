@@ -1,6 +1,6 @@
 mod create;
-mod retrieve;
 mod delete;
+mod retrieve;
 
 use db_ops_prelude::{
     mongo_connection::{database_traits::dao_operator, MongoDbError},
@@ -35,7 +35,7 @@ pub enum Error {
         http_code = "HttpCode::CONFLICT"
     ))]
     VersionTooOld(models::Version, models::ReleasePlatform),
-    
+
     #[error("Bson序列化失败")]
     #[status_err(err(err_code = 0x0004, prefix = "ErrPrefix::MONGO_DB",))]
     Bson(#[from] db_ops_prelude::mongodb::bson::ser::Error),

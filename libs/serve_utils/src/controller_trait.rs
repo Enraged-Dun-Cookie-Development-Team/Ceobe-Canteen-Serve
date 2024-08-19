@@ -2,7 +2,7 @@ use std::{convert::Infallible, marker::PhantomData};
 
 use axum::{routing::Route, Router};
 use axum_core::{extract::Request, response::IntoResponse};
-use axum_resp_result::{MapReject, ToInner};
+use axum_resp_result::MapReject;
 use tower::{Layer, Service};
 
 use crate::EndpointType;
@@ -17,7 +17,7 @@ where
 
     fn route(self) -> Router<S> { Router::new() }
 
-    fn layer<L: Clone>(self, layer: L) -> LayeredController<Self, S>
+    fn layer<L>(self, layer: L) -> LayeredController<Self, S>
     where
         L: Layer<Route> + Clone + Send + 'static,
         L::Service: Service<Request> + Clone + Send + 'static,

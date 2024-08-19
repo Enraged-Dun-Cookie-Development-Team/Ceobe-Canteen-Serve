@@ -1,5 +1,4 @@
-
-pub trait EndpointType{}
+pub trait EndpointType {}
 
 pub struct UserEnd;
 

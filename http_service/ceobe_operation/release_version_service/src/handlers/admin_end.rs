@@ -9,7 +9,7 @@ use serve_utils::{
     axum::{extract::Query, Json},
     axum_resp_result::{resp_result, MapReject},
     tracing::instrument,
-    SkipField, ValueField,
+    ValueField,
 };
 
 use crate::{

@@ -33,7 +33,7 @@ pub struct ReleaseVersion {
     /// 该版本的可用下载源
     #[builder(via_mutators)]
     download_source: Vec<DownloadSourceItem>,
-    #[builder(default=false)]
+    #[builder(default = false)]
     yanked: bool,
 }
 

@@ -29,8 +29,11 @@ where
 #[cfg(test)]
 mod test {
     use axum::Router;
-    use crate::{endpoint::AdminEnd, ControllerRouter, ControllerRouterExt};
-    use crate::endpoint_type::UserEnd;
+
+    use crate::{
+        endpoint::AdminEnd, endpoint_type::UserEnd, ControllerRouter,
+        ControllerRouterExt,
+    };
 
     pub struct TestController;
 
@@ -41,19 +44,16 @@ mod test {
     }
 
     impl<S: Send + Sync + 'static + Clone> ControllerRouter<S, UserEnd>
-    for TestController
+        for TestController
     {
         const BASE_URI: &'static str = "/test";
     }
     #[test]
-    fn test_ctrl(){
+    fn test_ctrl() {
         let _:Router = Router::new()
             .nest_controller(TestController,UserEnd)
             .nest_controller(TestController,AdminEnd)
             // .nest_controller(TestController,CDN)
-            
             ;
-        
-        
     }
 }

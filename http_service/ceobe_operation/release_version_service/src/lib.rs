@@ -1,6 +1,5 @@
-mod handlers;
 mod error;
+mod handlers;
 mod view;
 
 pub struct ReleaseVersionController;
-

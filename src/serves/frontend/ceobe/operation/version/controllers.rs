@@ -18,10 +18,7 @@ use super::{
     },
     view::{AppVersionView, DesktopVersionView, PluginVersionView},
 };
-use crate::{
-    router::CeobeOperationVersionFrontend,
-  
-};
+use crate::router::CeobeOperationVersionFrontend;
 
 impl CeobeOperationVersionFrontend {
     // 获取app对应版本信息
