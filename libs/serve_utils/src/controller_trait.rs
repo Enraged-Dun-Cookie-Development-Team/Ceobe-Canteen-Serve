@@ -5,9 +5,13 @@ use axum_core::{extract::Request, response::IntoResponse};
 use axum_resp_result::{MapReject, ToInner};
 use tower::{Layer, Service};
 
-pub trait ControllerRouter<S>
+use crate::EndpointType;
+
+pub trait ControllerRouter<S, E>
 where
     S: Clone + Send + Sync + 'static,
+    E: EndpointType,
+    Self: Sized,
 {
     const BASE_URI: &'static str;
 
@@ -39,12 +43,13 @@ impl<C, S> LayeredController<C, S> {
     }
 }
 
-impl<S, C> ControllerRouter<S> for LayeredController<C, S>
+impl<S, C, E> ControllerRouter<S, E> for LayeredController<C, S>
 where
     S: Clone + Send + Sync + 'static,
-    C: ControllerRouter<S>,
+    C: ControllerRouter<S, E>,
+    E: EndpointType,
 {
-    const BASE_URI: &'static str = <C as ControllerRouter<S>>::BASE_URI;
+    const BASE_URI: &'static str = <C as ControllerRouter<S, E>>::BASE_URI;
 
     fn route(self) -> Router<S> { self.inner }
 }

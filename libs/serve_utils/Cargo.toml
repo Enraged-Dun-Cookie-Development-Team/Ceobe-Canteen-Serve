@@ -10,5 +10,5 @@ axum-resp-result.workspace = true
 serde.workspace = true
 status-err = { version = "0.1.0", path = "../status-err" }
 thiserror.workspace = true
-tower = "0.5.0"
+tower.workspace = true
 tracing.workspace = true

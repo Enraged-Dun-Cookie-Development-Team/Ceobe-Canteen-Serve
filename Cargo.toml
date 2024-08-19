@@ -110,7 +110,7 @@ serde_qs = "0.13.0"
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 mime = "0.3.16"
 serve-utils = {version = "0.1.0", path="libs/serve_utils"}
-
+tower = { version = "0.4", features = ["limit"] }
 [dependencies]
 
 # async
@@ -141,7 +141,7 @@ reqwest = { workspace = true }
 sha2 = { workspace = true }
 tap = { workspace = true }
 thiserror = { workspace = true }
-tower = { version = "0.4", features = ["limit"] }
+tower.workspace = true
 tower-http = { version = "0.5", features = ["trace", "catch-panic", "set-header", "compression-full", "auth", "add-extension", "cors"] }
 typed-builder = { workspace = true }
 url = { workspace = true }
