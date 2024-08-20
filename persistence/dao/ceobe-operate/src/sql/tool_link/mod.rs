@@ -1,19 +1,15 @@
-use std::ops::Deref;
 
 use db_ops_prelude::{
-    database_operates::sub_operate::{SubOperate, SuperOperate},
-    sea_orm, ErrPrefix, StatusErr, ThisError,
+    ErrPrefix, sea_orm, StatusErr, ThisError,
 };
 
-use crate::OperationDatabaseOperate;
+pub use crate::common::tool_link::ToolLinkOperate;
 
 mod create;
 mod delete;
 mod retrieve;
 mod update;
 mod verify;
-
-pub use crate::common::tool_link::ToolLinkOperate;
 
 #[derive(Debug, ThisError, StatusErr)]
 pub enum OperateError {

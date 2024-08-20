@@ -1,17 +1,14 @@
-use std::ops::Deref;
 
+use db_ops_prelude::{ mongo_connection::MongoDbError, mongodb, StatusErr, ThisError};
 pub use db_ops_prelude::mongo_models::ceobe::operation::tool_link::*;
-use db_ops_prelude::{database_operates::sub_operate::{SubOperate, SuperOperate}, mongo_connection::MongoDbError, mongodb, StatusErr, ThisError};
 use db_ops_prelude::mongodb::error::Error;
-use crate::OperationDatabaseOperate;
+
+pub use crate::common::tool_link::ToolLinkOperate;
 
 mod create;
 mod delete;
 mod retrieve;
 mod update;
-
-pub use crate::common::tool_link::ToolLinkOperate;
-
 
 #[derive(Debug, ThisError, StatusErr)]
 pub enum OperateError {
