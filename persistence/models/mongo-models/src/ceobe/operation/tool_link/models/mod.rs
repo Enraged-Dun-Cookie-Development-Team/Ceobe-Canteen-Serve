@@ -31,7 +31,7 @@ pub struct Link {
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
     name = "ToolLinkUpdate",
-    extra(derive(Debug,Clone,Serialize))
+    extra(derive(Debug, Clone, Serialize))
 ))]
 pub struct ToolLink {
     #[sub_model(ignore("ToolLinkUpdate"))]

@@ -11,10 +11,10 @@ use self::{
     video::video_router,
 };
 use crate::{
+    middleware::authorize::AuthorizeLayer,
     new_auth_level,
     utils::user_authorize::auth_level::prefabs::{Chef, Cooker, Outsourcing},
 };
-use crate::middleware::authorize::AuthorizeLayer;
 
 mod announcement;
 mod resource;
@@ -30,7 +30,6 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .nest("/resource", resource_router())
         .nest("/toolLink", tool_link_router())
         .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
- 
 }
 
 new_auth_level! {

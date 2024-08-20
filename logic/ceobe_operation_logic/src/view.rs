@@ -19,6 +19,7 @@ use serde::{Deserialize, Serialize};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use typed_builder::TypedBuilder;
 use url::Url;
+
 use crate::error::LogicError;
 
 #[derive(Debug, Clone, Deserialize, TypedBuilder)]
@@ -256,8 +257,6 @@ pub struct ToolLinkUpdateMongoReq {
     pub links: Vec<LinkMongoReq>,
 }
 
-
-
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct ToolLinkDeleteMongoReq {
     pub id: bson::Uuid,
@@ -297,8 +296,6 @@ impl From<LinkMongoReq> for Link {
         }
     }
 }
-
-
 
 impl From<ToolLinkUpdateMongoReq> for ToolLink {
     fn from(value: ToolLinkUpdateMongoReq) -> Self {

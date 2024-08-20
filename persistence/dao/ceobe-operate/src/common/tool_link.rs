@@ -1,5 +1,9 @@
 use std::ops::Deref;
-use db_ops_prelude::database_operates::sub_operate::{SubOperate, SuperOperate};
+
+use db_ops_prelude::database_operates::sub_operate::{
+    SubOperate, SuperOperate,
+};
+
 use crate::OperationDatabaseOperate;
 
 pub struct ToolLinkOperate<'c, C>(&'c C);

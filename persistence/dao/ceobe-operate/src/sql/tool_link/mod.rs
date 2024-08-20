@@ -1,7 +1,4 @@
-
-use db_ops_prelude::{
-    ErrPrefix, sea_orm, StatusErr, ThisError,
-};
+use db_ops_prelude::{sea_orm, ErrPrefix, StatusErr, ThisError};
 
 pub use crate::common::tool_link::ToolLinkOperate;
 
@@ -24,4 +21,3 @@ pub enum OperateError {
     ToolLinkNotFound(i32),
 }
 type OperateResult<T> = Result<T, OperateError>;
-

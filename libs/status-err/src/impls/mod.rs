@@ -242,3 +242,10 @@ status_error!(
         0x008
     ]->"bson UUID解析异常"
 );
+
+status_error!(
+    bson::ser::Error[
+        ErrPrefix::CHECKER,
+        0x0016
+    ]-> "Bson 序列化异常"
+);

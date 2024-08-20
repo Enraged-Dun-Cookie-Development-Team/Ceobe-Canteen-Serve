@@ -8,6 +8,7 @@ use db_ops_prelude::database_operates::sub_operate::{
 
 #[path = "sql/announcement/mod.rs"] pub mod announcement;
 #[path = "sql/app_version/mod.rs"] pub mod app_version;
+mod common;
 #[path = "sql/desktop_version/mod.rs"]
 pub mod desktop_version;
 #[path = "mongo/plugin_version/mod.rs"]
@@ -17,7 +18,6 @@ pub mod plugin_version;
 #[path = "mongo/tool_link/mod.rs"]
 pub mod tool_link_mongodb;
 #[path = "sql/video/mod.rs"] pub mod video;
-mod common;
 
 pub struct OperationDatabaseOperate<'db, Conn>(&'db Conn);
 

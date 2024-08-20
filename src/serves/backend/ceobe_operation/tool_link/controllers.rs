@@ -7,15 +7,16 @@ use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
     view::{
         DeleteOneToolLinkReq, LinkMongoReq, ToolLinkCreateMongoReq,
-        ToolLinkDeleteMongoReq, ToolLinkResp,
-        ToolLinkUpdateMongoReq,
+        ToolLinkDeleteMongoReq, ToolLinkResp, ToolLinkUpdateMongoReq,
     },
 };
 use ceobe_qiniu_upload::QiniuManager;
 use checker::{CheckExtract, JsonCheckExtract};
 use page_size::response::ListWithPageInfo;
 use persistence::{
-    ceobe_operate::tool_link_mongodb::{models, Checked, ToolLinkChecker},
+    ceobe_operate::tool_link_mongodb::{
+        models, models::ToolLink, Checked, ToolLinkChecker,
+    },
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
 };
@@ -23,7 +24,7 @@ use qiniu_cdn_upload::UploadWrap;
 use resp_result::{resp_try, MapReject};
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
-use persistence::ceobe_operate::tool_link_mongodb::models::ToolLink;
+
 use super::error::{
     CeobeOperateToolLinkError, CeobeToolLinkRResult, OperateToolLinkError,
     OperateToolLinkRResult, PageSizePretreatment, ToolLinkPretreatment,
@@ -188,7 +189,7 @@ impl CeobeOpToolLink {
             id,
             localized_name,
             localized_description,
-                         localized_slogan,
+            localized_slogan,
             localized_tags,
             icon_url,
             links,

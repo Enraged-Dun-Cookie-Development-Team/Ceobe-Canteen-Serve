@@ -9,10 +9,9 @@ use persistence::{
         tool_link_mongodb::models::ToolLink, ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
-    mongodb::MongoDatabaseOperate,
+    mongodb::{mongodb::bson, MongoDatabaseOperate},
     mysql::SqlDatabaseOperate,
 };
-use persistence::mongodb::mongodb::bson;
 use tencent_cloud_server::{
     cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
@@ -21,8 +20,8 @@ use super::CeobeOperateLogic;
 use crate::{
     error::LogicResult,
     view::{
-        OperationTcCdnPath, ToolLinkCreateMongoReq,
-        ToolLinkResp, ToolLinkUpdateMongoReq,
+        OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkResp,
+        ToolLinkUpdateMongoReq,
     },
 };
 

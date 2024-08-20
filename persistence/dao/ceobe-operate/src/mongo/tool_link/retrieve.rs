@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 use db_ops_prelude::{
     futures::StreamExt,
     mongo_connection::{MongoDbCollectionTrait, MongoDbError},

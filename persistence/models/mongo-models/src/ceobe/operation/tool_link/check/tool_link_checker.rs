@@ -1,19 +1,14 @@
+use checker::prefabs::{
+    collect_checkers::iter_checkers::IntoIterChecker, no_check::NoCheck,
+};
 use mongodb::bson;
 use serde::Deserialize;
 use url::Url;
 
-use checker::{
-    Checker,
-    prefabs::{
-        collect_checkers::iter_checkers::IntoIterChecker, no_check::NoCheck,
-    },
-};
-
+use super::CheckError;
 use crate::ceobe::operation::tool_link::models::{
     Link, LocalizedLanguage, LocalizedTags, ToolLink,
 };
-
-use super::CheckError;
 
 #[checker::check_gen(
     uncheck = ToolLinkUnCheck,
