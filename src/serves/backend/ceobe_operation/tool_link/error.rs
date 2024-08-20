@@ -13,7 +13,7 @@ use persistence::ceobe_operate::{
     models::tool_link::{
         self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
     },
-    tool_link_mongodb::{CheckError, OperateMongoError},
+    tool_link_mongodb::{CheckError, OperateError},
 };
 use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
@@ -60,7 +60,7 @@ error_generate! {
     Json = JsonRejection
     Query = QueryRejection
     Logic = LogicError
-    DbOperate = OperateMongoError
+    DbOperate = OperateError
     Check = CheckError
     PageSize = NonZeroUnsignedError
 }

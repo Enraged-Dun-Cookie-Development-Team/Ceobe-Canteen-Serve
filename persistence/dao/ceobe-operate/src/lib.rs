@@ -17,6 +17,8 @@ pub mod plugin_version;
 #[path = "mongo/tool_link/mod.rs"]
 pub mod tool_link_mongodb;
 #[path = "sql/video/mod.rs"] pub mod video;
+mod common;
+
 pub struct OperationDatabaseOperate<'db, Conn>(&'db Conn);
 
 impl<'db, Conn> Deref for OperationDatabaseOperate<'db, Conn> {

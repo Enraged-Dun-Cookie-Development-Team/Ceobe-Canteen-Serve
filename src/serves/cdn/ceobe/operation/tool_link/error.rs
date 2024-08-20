@@ -2,7 +2,7 @@ use axum::extract::rejection::{JsonRejection, QueryRejection};
 use ceobe_operation_logic::error::LogicError;
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use persistence::ceobe_operate::tool_link_mongodb::{
-    CheckError, OperateMongoError,
+    CheckError, OperateError,
 };
 use resp_result::RespResult;
 
@@ -14,7 +14,7 @@ error_generate! {
     Json = JsonRejection
     Query = QueryRejection
     Logic = LogicError
-    DbOperate = OperateMongoError
+    DbOperate = OperateError
     Check = CheckError
     PageSize = NonZeroUnsignedError
 }
