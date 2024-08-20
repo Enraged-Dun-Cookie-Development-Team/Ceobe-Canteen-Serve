@@ -21,6 +21,7 @@ pub struct LocalizedTags {
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct Link {
+    #[serde(default)]
     pub primary: bool,
     pub regionality: String,
     pub service: String,
@@ -31,7 +32,7 @@ pub struct Link {
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
     name = "ToolLinkUpdate",
-    extra(derive(Debug, Clone, Serialize))
+    extra(derive(Debug, Clone, Serialize, Deserialize))
 ))]
 pub struct ToolLink {
     #[sub_model(ignore("ToolLinkUpdate"))]
@@ -42,4 +43,27 @@ pub struct ToolLink {
     pub localized_tags: LocalizedTags,
     pub icon_url: Url,
     pub links: Vec<Link>,
+}
+
+impl From<ToolLinkUpdate> for ToolLink {
+    fn from(
+        ToolLinkUpdate {
+            localized_name,
+            localized_description,
+            localized_slogan,
+            localized_tags,
+            icon_url,
+            links,
+        }: ToolLinkUpdate,
+    ) -> Self {
+        ToolLink {
+            id: bson::Uuid::new(),
+            localized_name,
+            localized_description,
+            localized_slogan,
+            localized_tags,
+            icon_url,
+            links,
+        }
+    }
 }

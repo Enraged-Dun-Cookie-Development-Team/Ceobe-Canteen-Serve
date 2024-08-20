@@ -127,7 +127,7 @@ impl CeobeOperateLogic {
             .ceobe()
             .operation()
             .tool_link()
-            .update(tool_link.into())
+            .update(tool_link)
             .await?;
 
         const PATHS: [PurgeCachePath; 1] =
