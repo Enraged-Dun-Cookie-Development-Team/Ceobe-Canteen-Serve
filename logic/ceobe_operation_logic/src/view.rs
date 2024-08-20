@@ -18,7 +18,7 @@ use persistence::{
 use serde::{Deserialize, Serialize};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use typed_builder::TypedBuilder;
-
+use url::Url;
 use crate::error::LogicError;
 
 #[derive(Debug, Clone, Deserialize, TypedBuilder)]
@@ -239,9 +239,9 @@ impl OperationTcCdnPath {
 pub struct ToolLinkCreateMongoReq {
     pub localized_name: LocalizedLanguage,
     pub localized_description: LocalizedLanguage,
-    pub localized_slogen: LocalizedLanguage,
+    pub localized_slogan: LocalizedLanguage,
     pub localized_tags: LocalizedTags,
-    pub icon_url: String,
+    pub icon_url: Url,
     pub links: Vec<LinkMongoReq>,
 }
 
@@ -250,26 +250,17 @@ pub struct ToolLinkUpdateMongoReq {
     pub id: bson::Uuid,
     pub localized_name: LocalizedLanguage,
     pub localized_description: LocalizedLanguage,
-    pub localized_slogen: LocalizedLanguage,
+    pub localized_slogan: LocalizedLanguage,
     pub localized_tags: LocalizedTags,
-    pub icon_url: String,
+    pub icon_url: Url,
     pub links: Vec<LinkMongoReq>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-pub struct ToolLinkCreateMongoResp {
-    pub id: String,
-    pub localized_name: LocalizedLanguage,
-    pub localized_description: LocalizedLanguage,
-    pub localized_slogen: LocalizedLanguage,
-    pub localized_tags: LocalizedTags,
-    pub icon_url: String,
-    pub links: Vec<Link>,
-}
+
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct ToolLinkDeleteMongoReq {
-    pub id: String,
+    pub id: bson::Uuid,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
@@ -278,7 +269,7 @@ pub struct LinkMongoReq {
     pub regionality: String,
     pub service: String,
     pub localized_name: LocalizedLanguage,
-    pub url: String,
+    pub url: Url,
 }
 
 impl From<ToolLinkCreateMongoReq> for ToolLink {
@@ -287,7 +278,7 @@ impl From<ToolLinkCreateMongoReq> for ToolLink {
             id: bson::Uuid::new(),
             localized_name: value.localized_name,
             localized_description: value.localized_description,
-            localized_slogen: value.localized_slogen,
+            localized_slogan: value.localized_slogan,
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
             links: value.links.into_iter().map(|v| v.into()).collect(),
@@ -307,19 +298,7 @@ impl From<LinkMongoReq> for Link {
     }
 }
 
-impl From<ToolLink> for ToolLinkCreateMongoResp {
-    fn from(val: ToolLink) -> Self {
-        ToolLinkCreateMongoResp {
-            id: val.id.to_string(),
-            localized_name: val.localized_name,
-            localized_description: val.localized_description,
-            localized_slogen: val.localized_slogen,
-            localized_tags: val.localized_tags,
-            icon_url: val.icon_url,
-            links: val.links,
-        }
-    }
-}
+
 
 impl From<ToolLinkUpdateMongoReq> for ToolLink {
     fn from(value: ToolLinkUpdateMongoReq) -> Self {
@@ -327,7 +306,7 @@ impl From<ToolLinkUpdateMongoReq> for ToolLink {
             id: value.id,
             localized_name: value.localized_name,
             localized_description: value.localized_description,
-            localized_slogen: value.localized_slogen,
+            localized_slogan: value.localized_slogan,
             localized_tags: value.localized_tags,
             icon_url: value.icon_url,
             links: value.links.into_iter().map(|v| v.into()).collect(),

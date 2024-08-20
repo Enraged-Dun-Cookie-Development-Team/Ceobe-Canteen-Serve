@@ -7,7 +7,7 @@ use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
     view::{
         DeleteOneToolLinkReq, LinkMongoReq, ToolLinkCreateMongoReq,
-        ToolLinkCreateMongoResp, ToolLinkDeleteMongoReq, ToolLinkResp,
+        ToolLinkDeleteMongoReq, ToolLinkResp,
         ToolLinkUpdateMongoReq,
     },
 };
@@ -23,7 +23,7 @@ use qiniu_cdn_upload::UploadWrap;
 use resp_result::{resp_try, MapReject};
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
-
+use persistence::ceobe_operate::tool_link_mongodb::models::ToolLink;
 use super::error::{
     CeobeOperateToolLinkError, CeobeToolLinkRResult, OperateToolLinkError,
     OperateToolLinkRResult, PageSizePretreatment, ToolLinkPretreatment,
@@ -118,10 +118,10 @@ impl CeobeOpToolLink {
     }
 
     #[instrument(ret, skip(mongo))]
-    pub async fn page(
+    pub async fn all_with_paginator(
         mongo: MongoDatabaseOperate,
         CheckExtract(page_size): PageSizePretreatment,
-    ) -> CeobeToolLinkRResult<ListWithPageInfo<ToolLinkCreateMongoResp>> {
+    ) -> CeobeToolLinkRResult<ListWithPageInfo<ToolLink>> {
         resp_try(async {
             Ok(CeobeOperateLogic::page_tool_link_mongo(mongo, page_size)
                 .await?)
@@ -135,7 +135,7 @@ impl CeobeOpToolLink {
         CheckExtract(Checked {
             localized_name,
             localized_description,
-            localized_slogen,
+            localized_slogan,
             localized_tags,
             icon_url,
             links,
@@ -149,7 +149,7 @@ impl CeobeOpToolLink {
                 ToolLinkCreateMongoReq::builder()
                     .localized_name(localized_name)
                     .localized_description(localized_description)
-                    .localized_slogen(localized_slogen)
+                    .localized_slogan(localized_slogan)
                     .localized_tags(localized_tags)
                     .icon_url(icon_url)
                     .links(
@@ -188,7 +188,7 @@ impl CeobeOpToolLink {
             id,
             localized_name,
             localized_description,
-            localized_slogen,
+                         localized_slogan,
             localized_tags,
             icon_url,
             links,
@@ -203,7 +203,7 @@ impl CeobeOpToolLink {
                     .id(id)
                     .localized_name(localized_name)
                     .localized_description(localized_description)
-                    .localized_slogen(localized_slogen)
+                    .localized_slogan(localized_slogan)
                     .localized_tags(localized_tags)
                     .icon_url(icon_url)
                     .links(

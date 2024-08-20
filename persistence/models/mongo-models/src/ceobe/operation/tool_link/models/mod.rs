@@ -2,6 +2,7 @@ use mongodb::bson;
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;
+use url::Url;
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct LocalizedLanguage {
@@ -24,7 +25,7 @@ pub struct Link {
     pub regionality: String,
     pub service: String,
     pub localized_name: LocalizedLanguage,
-    pub url: String,
+    pub url: Url,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
@@ -37,8 +38,8 @@ pub struct ToolLink {
     pub id: bson::Uuid,
     pub localized_name: LocalizedLanguage,
     pub localized_description: LocalizedLanguage,
-    pub localized_slogen: LocalizedLanguage,
+    pub localized_slogan: LocalizedLanguage,
     pub localized_tags: LocalizedTags,
-    pub icon_url: String,
+    pub icon_url: Url,
     pub links: Vec<Link>,
 }

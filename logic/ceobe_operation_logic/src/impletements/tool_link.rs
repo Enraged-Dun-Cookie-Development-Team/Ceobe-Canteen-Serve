@@ -6,12 +6,13 @@ use page_size::{
 use persistence::{
     ceobe_operate::{
         models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
-        ToCeobeOperation,
+        tool_link_mongodb::models::ToolLink, ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
 };
+use persistence::mongodb::mongodb::bson;
 use tencent_cloud_server::{
     cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
@@ -20,7 +21,7 @@ use super::CeobeOperateLogic;
 use crate::{
     error::LogicResult,
     view::{
-        OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkCreateMongoResp,
+        OperationTcCdnPath, ToolLinkCreateMongoReq,
         ToolLinkResp, ToolLinkUpdateMongoReq,
     },
 };
@@ -139,14 +140,9 @@ impl CeobeOperateLogic {
 
     pub async fn delete_tool_link_mongo(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
-        id: String,
+        id: bson::Uuid,
     ) -> LogicResult<()> {
-        mongo
-            .ceobe()
-            .operation()
-            .tool_link()
-            .delete(id)
-            .await?;
+        mongo.ceobe().operation().tool_link().delete(id).await?;
 
         const PATHS: [PurgeCachePath; 1] =
             [OperationTcCdnPath::TOOL_LINK_LIST];
@@ -157,7 +153,7 @@ impl CeobeOperateLogic {
 
     pub async fn page_tool_link_mongo(
         mongo: MongoDatabaseOperate, page_size: Paginator,
-    ) -> LogicResult<ListWithPageInfo<ToolLinkCreateMongoResp>> {
+    ) -> LogicResult<ListWithPageInfo<ToolLink>> {
         let tool_link_list = mongo
             .ceobe()
             .operation()
@@ -172,21 +168,15 @@ impl CeobeOperateLogic {
             .count_with_paginator(page_size)
             .await?;
 
-        let result: Vec<ToolLinkCreateMongoResp> =
-            tool_link_list.into_iter().map(|v| v.into()).collect();
-
-        Ok(result.with_page_info(page_size, count))
+        Ok(tool_link_list.with_page_info(page_size, count))
     }
 
     pub async fn list_tool_link_mongo(
         mongo: MongoDatabaseOperate,
-    ) -> LogicResult<Vec<ToolLinkCreateMongoResp>> {
+    ) -> LogicResult<Vec<ToolLink>> {
         let tool_link_list =
             mongo.ceobe().operation().tool_link().all().await?;
 
-        let result: Vec<ToolLinkCreateMongoResp> =
-            tool_link_list.into_iter().map(|v| v.into()).collect();
-
-        Ok(result)
+        Ok(tool_link_list)
     }
 }
