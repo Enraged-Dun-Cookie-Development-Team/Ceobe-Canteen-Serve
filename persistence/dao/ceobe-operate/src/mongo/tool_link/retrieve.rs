@@ -52,14 +52,12 @@ where
     }
 
     #[instrument(skip(self))]
-    pub async fn count_with_paginator(
-        &'db self, paginator: Paginator,
+    pub async fn count(
+        &'db self,
     ) -> OperateResult<u64> {
         let db = self.get_collection()?;
 
         let count_options = CountOptions::builder()
-            .skip(paginator.offset())
-            .limit(paginator.limit())
             .build();
 
         let count = db

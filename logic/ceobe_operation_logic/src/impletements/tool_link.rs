@@ -164,7 +164,7 @@ impl CeobeOperateLogic {
             .ceobe()
             .operation()
             .tool_link()
-            .count_with_paginator(page_size)
+            .count()
             .await?;
 
         Ok(tool_link_list.with_page_info(page_size, count))
