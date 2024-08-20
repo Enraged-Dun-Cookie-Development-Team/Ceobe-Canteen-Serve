@@ -107,7 +107,7 @@ impl CeobeOperateLogic {
         mongo
             .ceobe()
             .operation()
-            .tool_link_mongo()
+            .tool_link()
             .create(tool_link.into())
             .await
             .unwrap();
@@ -126,7 +126,7 @@ impl CeobeOperateLogic {
         mongo
             .ceobe()
             .operation()
-            .tool_link_mongo()
+            .tool_link()
             .update(tool_link.into())
             .await?;
 
@@ -144,7 +144,7 @@ impl CeobeOperateLogic {
         mongo
             .ceobe()
             .operation()
-            .tool_link_mongo()
+            .tool_link()
             .delete(id)
             .await?;
 
@@ -161,14 +161,14 @@ impl CeobeOperateLogic {
         let tool_link_list = mongo
             .ceobe()
             .operation()
-            .tool_link_mongo()
+            .tool_link()
             .page(page_size)
             .await?;
 
         let count = mongo
             .ceobe()
             .operation()
-            .tool_link_mongo()
+            .tool_link()
             .count(page_size)
             .await?;
 
@@ -182,7 +182,7 @@ impl CeobeOperateLogic {
         mongo: MongoDatabaseOperate,
     ) -> LogicResult<Vec<ToolLinkCreateMongoResp>> {
         let tool_link_list =
-            mongo.ceobe().operation().tool_link_mongo().list().await?;
+            mongo.ceobe().operation().tool_link().list().await?;
 
         let result: Vec<ToolLinkCreateMongoResp> =
             tool_link_list.into_iter().map(|v| v.into()).collect();

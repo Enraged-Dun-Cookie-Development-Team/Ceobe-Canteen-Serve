@@ -13,7 +13,7 @@ mod retrieve;
 mod update;
 mod verify;
 
-use crate::common::tool_link::ToolLinkOperate;
+pub use crate::common::tool_link::ToolLinkOperate;
 
 #[derive(Debug, ThisError, StatusErr)]
 pub enum OperateError {

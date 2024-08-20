@@ -4,13 +4,13 @@ use crate::OperationDatabaseOperate;
 
 pub struct ToolLinkOperate<'c, C>(&'c C);
 
-impl<'c, C> Deref for crate::tool_link::ToolLinkOperate<'c, C> {
+impl<'c, C> Deref for ToolLinkOperate<'c, C> {
     type Target = C;
 
     fn deref(&self) -> &Self::Target { self.0 }
 }
 
-impl<'c, C> SubOperate<'c> for crate::tool_link::ToolLinkOperate<'c, C> {
+impl<'c, C> SubOperate<'c> for ToolLinkOperate<'c, C> {
     type Parent = OperationDatabaseOperate<'c, C>;
 
     fn from_parent(parent: &'c Self::Parent) -> Self { Self(parent) }

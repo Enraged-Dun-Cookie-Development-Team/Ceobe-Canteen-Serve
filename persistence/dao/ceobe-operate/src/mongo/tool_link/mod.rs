@@ -10,7 +10,7 @@ mod delete;
 mod retrieve;
 mod update;
 
-use crate::common::tool_link::ToolLinkOperate;
+pub use crate::common::tool_link::ToolLinkOperate;
 
 
 #[derive(Debug, ThisError, StatusErr)]
