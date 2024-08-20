@@ -15,8 +15,8 @@ impl<'db, Conn> ToolLinkOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, ToolLink>,
 {
-    #[instrument(skip(self), name = "list")]
-    pub async fn list(&'db self) -> OperateResult<Vec<ToolLink>> {
+    #[instrument(skip(self))]
+    pub async fn all(&'db self) -> OperateResult<Vec<ToolLink>> {
         let db = self.get_collection()?;
 
         let mut cursor =
@@ -30,18 +30,15 @@ where
         Ok(result)
     }
 
-    #[instrument(skip(self), name = "page")]
-    pub async fn page(
-        &'db self, page_size: Paginator,
+    #[instrument(skip(self))]
+    pub async fn all_with_paginator(
+        &'db self, paginator: Paginator,
     ) -> OperateResult<Vec<ToolLink>> {
         let db = self.get_collection()?;
 
         let find_options = FindOptions::builder()
-            .skip(Some(
-                ((page_size.page.deref() - 1) * page_size.size.deref())
-                    as u64,
-            ))
-            .limit(Some(*page_size.size.deref() as i64))
+            .skip(paginator.offset())
+            .limit(paginator.limit() as i64)
             .build();
 
         let mut cursor = db
@@ -56,18 +53,15 @@ where
         Ok(result)
     }
 
-    #[instrument(skip(self), name = "count")]
-    pub async fn count(
-        &'db self, page_size: Paginator,
+    #[instrument(skip(self))]
+    pub async fn count_with_paginator(
+        &'db self, paginator: Paginator,
     ) -> OperateResult<u64> {
         let db = self.get_collection()?;
 
         let count_options = CountOptions::builder()
-            .skip(Some(
-                ((page_size.page.deref() - 1) * page_size.size.deref())
-                    as u64,
-            ))
-            .limit(Some(*page_size.size.deref() as u64))
+            .skip(paginator.offset())
+            .limit(paginator.limit())
             .build();
 
         let count = db

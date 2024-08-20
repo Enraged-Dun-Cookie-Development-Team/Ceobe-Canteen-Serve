@@ -162,14 +162,14 @@ impl CeobeOperateLogic {
             .ceobe()
             .operation()
             .tool_link()
-            .page(page_size)
+            .all_with_paginator(page_size)
             .await?;
 
         let count = mongo
             .ceobe()
             .operation()
             .tool_link()
-            .count(page_size)
+            .count_with_paginator(page_size)
             .await?;
 
         let result: Vec<ToolLinkCreateMongoResp> =
@@ -182,7 +182,7 @@ impl CeobeOperateLogic {
         mongo: MongoDatabaseOperate,
     ) -> LogicResult<Vec<ToolLinkCreateMongoResp>> {
         let tool_link_list =
-            mongo.ceobe().operation().tool_link().list().await?;
+            mongo.ceobe().operation().tool_link().all().await?;
 
         let result: Vec<ToolLinkCreateMongoResp> =
             tool_link_list.into_iter().map(|v| v.into()).collect();

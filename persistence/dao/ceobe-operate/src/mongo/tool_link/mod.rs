@@ -14,6 +14,8 @@ mod update;
 pub enum OperateError {
     #[error("数据库查询异常{0}")]
     Db(#[from] MongoDbError),
+    #[error(transparent)]
+    Bson(#[from] mongodb::bson::ser::Error)
 }
 
 impl From<mongodb::error::Error> for OperateError {

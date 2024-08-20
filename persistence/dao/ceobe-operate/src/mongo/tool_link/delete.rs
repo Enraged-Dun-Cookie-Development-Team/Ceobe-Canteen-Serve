@@ -11,7 +11,7 @@ impl<'db, Conn> ToolLinkOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, ToolLink>,
 {
-    #[instrument(skip(self), name = "list")]
+    #[instrument(skip(self))]
     pub async fn delete(&'db self, id: String) -> OperateResult<()> {
         let db = self.get_collection()?;
 

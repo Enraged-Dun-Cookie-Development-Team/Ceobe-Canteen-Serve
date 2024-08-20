@@ -8,7 +8,7 @@ impl<'db, Conn> ToolLinkOperate<'db, Conn>
 where
     Conn: MongoDbCollectionTrait<'db, ToolLink>,
 {
-    #[instrument(skip(self), name = "create")]
+    #[instrument(skip(self))]
     pub async fn create(&'db self, tool_link: ToolLink) -> OperateResult<()> {
         let db = self.get_collection()?;
 
