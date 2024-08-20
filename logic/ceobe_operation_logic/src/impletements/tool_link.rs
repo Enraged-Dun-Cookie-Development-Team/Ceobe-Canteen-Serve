@@ -160,12 +160,7 @@ impl CeobeOperateLogic {
             .all_with_paginator(page_size)
             .await?;
 
-        let count = mongo
-            .ceobe()
-            .operation()
-            .tool_link()
-            .count()
-            .await?;
+        let count = mongo.ceobe().operation().tool_link().count().await?;
 
         Ok(tool_link_list.with_page_info(page_size, count))
     }

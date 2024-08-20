@@ -52,13 +52,10 @@ where
     }
 
     #[instrument(skip(self))]
-    pub async fn count(
-        &'db self,
-    ) -> OperateResult<u64> {
+    pub async fn count(&'db self) -> OperateResult<u64> {
         let db = self.get_collection()?;
 
-        let count_options = CountOptions::builder()
-            .build();
+        let count_options = CountOptions::builder().build();
 
         let count = db
             .doing(|collection| {
