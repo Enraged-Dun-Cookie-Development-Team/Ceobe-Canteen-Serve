@@ -3,7 +3,7 @@ use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::ceobe::operation::tool_link::models::ToolLink;
 use mongodb::{bson::doc, options::IndexOptions, IndexModel};
 
-const UNIQUE_VERSION_IDX: &str = "unique_id_idx";
+const UNIQUE_ID_IDX: &str = "unique_id_idx";
 
 pub struct Migration;
 
@@ -24,7 +24,7 @@ impl MigrationTrait for Migration {
                     })
                     .options(
                         IndexOptions::builder()
-                            .name(UNIQUE_VERSION_IDX.to_owned())
+                            .name(UNIQUE_ID_IDX.to_owned())
                             .unique(true)
                             .build(),
                     )
