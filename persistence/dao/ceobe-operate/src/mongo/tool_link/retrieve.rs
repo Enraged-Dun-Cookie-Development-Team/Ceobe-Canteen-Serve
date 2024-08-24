@@ -1,5 +1,5 @@
 use db_ops_prelude::{
-    futures::StreamExt,
+    futures::{StreamExt, TryStreamExt},
     mongo_connection::{MongoDbCollectionTrait, MongoDbError},
     mongodb::options::{CountOptions, FindOptions},
 };
@@ -39,14 +39,11 @@ where
             .limit(paginator.limit() as i64)
             .build();
 
-        let mut cursor = db
+        let result = db
             .doing(|collection| collection.find(None, find_options))
+            .await?
+            .try_collect()
             .await?;
-
-        let mut result = Vec::<ToolLink>::new();
-        while let Some(doc) = cursor.next().await {
-            result.push(doc.map_err(MongoDbError::from)?)
-        }
 
         Ok(result)
     }
