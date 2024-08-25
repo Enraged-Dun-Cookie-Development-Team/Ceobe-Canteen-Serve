@@ -49,6 +49,8 @@ pub enum SupportPlatform {
     Safari,
     /// 微软的Internet Explorer 浏览器
     IE,
+    /// 其他使用ZIP安装的浏览器
+    BrowserZIP,
     // pocket
     Android,
     Ios,
