@@ -33,7 +33,6 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .nest("/toolLink", tool_link_router())
         .nest_controller(ReleaseVersionController, AdminEnd)
         .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
-
 }
 
 new_auth_level! {

@@ -2,8 +2,8 @@ pub use announcement::CdnOperationAnnouncementFrontend;
 use axum::Router;
 use release_version_service::ReleaseVersionController;
 pub use resource::CdnOperationResourceFrontend;
-pub use tool_link::CdnOperateToolLinkFrontend;
 use serve_utils::{endpoint::CDN, ControllerRouterExt};
+pub use tool_link::CdnOperateToolLinkFrontend;
 pub use video::CdnOperationVideoFrontend;
 
 use self::{
