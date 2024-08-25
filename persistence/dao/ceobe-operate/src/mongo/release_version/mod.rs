@@ -30,7 +30,7 @@ pub enum Error {
     VersionInfoNoExist,
     #[error("新版本的版本号过旧, 新版本号应大于 {1:?}:{0}")]
     #[status_err(err(
-        err_code = 0x00016,
+        err_code = 0x00017,
         prefix = "ErrPrefix::CHECKER",
         http_code = "HttpCode::CONFLICT"
     ))]

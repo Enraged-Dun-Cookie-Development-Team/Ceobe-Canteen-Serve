@@ -1,23 +1,28 @@
 use axum::{
-    extract::{multipart::MultipartRejection, Multipart},
+    extract::{multipart::MultipartRejection, Multipart, Query},
     Json,
 };
 use axum_resp_result::{resp_try, MapReject};
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
-    view::{DeleteOneToolLinkReq, ToolLinkResp},
+    view::{DeleteOneToolLinkReq, ToolLinkDeleteMongoReq, ToolLinkResp},
 };
 use ceobe_qiniu_upload::QiniuManager;
-use checker::CheckExtract;
+use checker::{CheckExtract, JsonCheckExtract};
 use page_size::response::ListWithPageInfo;
-use persistence::mysql::SqlDatabaseOperate;
+use persistence::{
+    ceobe_operate::tool_link_mongodb::{models::ToolLink, ToolLinkChecker},
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
+};
 use qiniu_cdn_upload::UploadWrap;
+use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
 use super::error::{
-    OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment,
-    ToolLinkPretreatment,
+    CeobeOperateToolLinkError, CeobeToolLinkRResult, OperateToolLinkError,
+    OperateToolLinkRResult, PageSizePretreatment, ToolLinkPretreatment,
 };
 use crate::{
     router::CeobeOpToolLink,
@@ -25,6 +30,9 @@ use crate::{
         error::FieldNotExist, ToolAvatarPayload,
     },
 };
+
+type CreateToolLinkCheck =
+    JsonCheckExtract<ToolLinkChecker, CeobeOperateToolLinkError>;
 
 impl CeobeOpToolLink {
     /// 新增一个工具
@@ -101,6 +109,67 @@ impl CeobeOpToolLink {
                 .map(|resp| AvatarId::from_resp(resp, &qiniu))?;
 
             Ok(resp)
+        })
+        .await
+    }
+
+    #[instrument(ret, skip(mongo))]
+    pub async fn all_with_paginator(
+        mongo: MongoDatabaseOperate,
+        CheckExtract(page_size): PageSizePretreatment,
+    ) -> CeobeToolLinkRResult<ListWithPageInfo<ToolLink>> {
+        resp_try(async {
+            Ok(CeobeOperateLogic::page_tool_link_mongo(mongo, page_size)
+                .await?)
+        })
+        .await
+    }
+
+    #[instrument(ret, skip(mongo, tc_cloud))]
+    pub async fn create_one_mongo(
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
+        CheckExtract(tool_link): CreateToolLinkCheck,
+    ) -> CeobeToolLinkRResult<()> {
+        resp_try(async {
+            Ok(CeobeOperateLogic::create_tool_link_mongo(
+                mongo,
+                tc_cloud,
+                tool_link.into(),
+            )
+            .await?)
+        })
+        .await
+    }
+
+    #[instrument(ret, skip(mongo, tc_cloud))]
+    pub async fn update_one_mongo(
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
+        CheckExtract(tool_link): CreateToolLinkCheck,
+    ) -> CeobeToolLinkRResult<()> {
+        resp_try(async {
+            Ok(CeobeOperateLogic::update_tool_link_mongo(
+                mongo, tc_cloud, tool_link,
+            )
+            .await?)
+        })
+        .await
+    }
+
+    #[instrument(ret, skip(mongo, tc_cloud))]
+    pub async fn delete_one_mongo(
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
+        MapReject(ToolLinkDeleteMongoReq { id }): MapReject<
+            Query<ToolLinkDeleteMongoReq>,
+            CeobeOperateToolLinkError,
+        >,
+    ) -> CeobeToolLinkRResult<()> {
+        resp_try(async {
+            Ok(
+                CeobeOperateLogic::delete_tool_link_mongo(
+                    mongo, tc_cloud, id,
+                )
+                .await?,
+            )
         })
         .await
     }

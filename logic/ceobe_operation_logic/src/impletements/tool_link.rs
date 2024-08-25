@@ -6,14 +6,24 @@ use page_size::{
 use persistence::{
     ceobe_operate::{
         models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
-        ToCeobeOperation,
+        tool_link_mongodb::models::ToolLink, ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
+    mongodb::{mongodb::bson, MongoDatabaseOperate},
     mysql::SqlDatabaseOperate,
+};
+use tencent_cloud_server::{
+    cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
 
 use super::CeobeOperateLogic;
-use crate::{error::LogicResult, view::ToolLinkResp};
+use crate::{
+    error::LogicResult,
+    view::{
+        OperationTcCdnPath, ToolLinkCreateMongoReq, ToolLinkResp,
+        ToolLinkUpdateMongoReq,
+    },
+};
 
 impl CeobeOperateLogic {
     pub async fn create_tool_link(
@@ -88,5 +98,79 @@ impl CeobeOperateLogic {
         }
 
         Ok(tool_links)
+    }
+
+    pub async fn create_tool_link_mongo(
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
+        tool_link: ToolLinkCreateMongoReq,
+    ) -> LogicResult<()> {
+        mongo
+            .ceobe()
+            .operation()
+            .tool_link()
+            .create(tool_link.into())
+            .await
+            .unwrap();
+
+        const PATHS: [PurgeCachePath; 1] =
+            [OperationTcCdnPath::TOOL_LINK_LIST];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
+
+        Ok(())
+    }
+
+    pub async fn update_tool_link_mongo(
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
+        tool_link: ToolLinkUpdateMongoReq,
+    ) -> LogicResult<()> {
+        mongo
+            .ceobe()
+            .operation()
+            .tool_link()
+            .update(tool_link)
+            .await?;
+
+        const PATHS: [PurgeCachePath; 1] =
+            [OperationTcCdnPath::TOOL_LINK_LIST];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
+
+        Ok(())
+    }
+
+    pub async fn delete_tool_link_mongo(
+        mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
+        id: bson::Uuid,
+    ) -> LogicResult<()> {
+        mongo.ceobe().operation().tool_link().delete(id).await?;
+
+        const PATHS: [PurgeCachePath; 1] =
+            [OperationTcCdnPath::TOOL_LINK_LIST];
+        tc_cloud.purge_urls_cache(&PATHS).await?;
+
+        Ok(())
+    }
+
+    pub async fn page_tool_link_mongo(
+        mongo: MongoDatabaseOperate, page_size: Paginator,
+    ) -> LogicResult<ListWithPageInfo<ToolLink>> {
+        let tool_link_list = mongo
+            .ceobe()
+            .operation()
+            .tool_link()
+            .all_with_paginator(page_size)
+            .await?;
+
+        let count = mongo.ceobe().operation().tool_link().count().await?;
+
+        Ok(tool_link_list.with_page_info(page_size, count))
+    }
+
+    pub async fn list_tool_link_mongo(
+        mongo: MongoDatabaseOperate,
+    ) -> LogicResult<Vec<ToolLink>> {
+        let tool_link_list =
+            mongo.ceobe().operation().tool_link().all().await?;
+
+        Ok(tool_link_list)
     }
 }

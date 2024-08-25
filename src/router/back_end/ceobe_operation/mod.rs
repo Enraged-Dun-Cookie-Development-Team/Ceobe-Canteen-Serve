@@ -30,13 +30,10 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .nest("/video", video_router())
         .nest("/version", version_router())
         .nest("/resource", resource_router())
+        .nest("/toolLink", tool_link_router())
         .nest_controller(ReleaseVersionController, AdminEnd)
         .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
-        .merge(
-            Router::new()
-                .nest("/toolLink", tool_link_router())
-                .route_layer(AuthorizeLayer::<CeobeTools>::new()),
-        )
+
 }
 
 new_auth_level! {

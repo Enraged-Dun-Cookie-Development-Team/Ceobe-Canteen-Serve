@@ -6,8 +6,9 @@ pub use back_end::{
 };
 pub use cdn::{
     CdnBakeryMansionFrontend, CdnCookieMainListFrontend,
-    CdnCookieTempFrontend, CdnOperationAnnouncementFrontend,
-    CdnOperationResourceFrontend, CdnOperationVideoFrontend,
+    CdnCookieTempFrontend, CdnOperateToolLinkFrontend,
+    CdnOperationAnnouncementFrontend, CdnOperationResourceFrontend,
+    CdnOperationVideoFrontend,
 };
 pub use front_end::{
     BakeryMansionFrontend, CeobeOperationAnnouncementFrontend,

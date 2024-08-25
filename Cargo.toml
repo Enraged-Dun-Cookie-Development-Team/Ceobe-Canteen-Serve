@@ -169,9 +169,7 @@ tencent-cloud-server.workspace = true
 semver = { version = "1.0.23", features = ["serde"] }
 release_version_service = { version = "0.1.0", path = "http_service/ceobe_operation/release_version_service" }
 serve_utils = { version = "0.1.0", path = "libs/serve_utils" }
-
-[target.'cfg(not(target_env = "msvc"))'.dependencies]
-jemallocator = "0.5.4"
+mimalloc = "0.1.43"
 
 
 [dependencies.tokio]
