@@ -6,7 +6,7 @@ use db_ops_prelude::{
     },
 };
 use serde::{Deserialize, Serialize};
-
+use crate::release_version::verify::suitable_version;
 use super::{
     models::{ReleaseVersion, Version},
     Error, ReleaseVersionCreate, Result,
@@ -19,33 +19,13 @@ where
     pub async fn one(
         &'db self, release_version: impl Into<ReleaseVersion>,
     ) -> Result<()> {
-        #[derive(Debug, Deserialize, Serialize)]
-        struct VersionOnly {
-            version: Version,
-        }
+
         let release_version = release_version.into();
 
         let collection = self.get_collection()?;
 
         // 找到当前平台的最新的发布版本，与当前添加版本比较。新版本必须更新
-        let filter = doc! {"platform":to_bson(&release_version.platform)?};
-        let exist_latest_version = collection
-            .with_mapping::<VersionOnly>()
-            .doing(|collection| {
-                collection.find_one(
-                    filter,
-                    FindOneOptions::builder()
-                        .sort(doc! {"$natural": -1i32})
-                        .projection(doc! {"version":1i32})
-                        .build(),
-                )
-            })
-            .await?;
-        if let Some(VersionOnly { version }) = exist_latest_version {
-            if release_version.version <= version {
-                Err(Error::VersionTooOld(version, release_version.platform))?;
-            }
-        }
+        suitable_version(&collection,&release_version).await?;
 
         collection
             .doing(|collection| collection.insert_one(release_version, None))
