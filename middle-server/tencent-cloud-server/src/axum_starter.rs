@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use axum_starter::{prepare, state::AddState};
+pub use general_request_client::client::RequestClient;
 use secrecy::SecretString;
 
 pub use crate::cloud_manager::PartTencentCloudManagerState;

@@ -16,7 +16,7 @@ pub enum Error {
     #[error(transparent)]
     Json(#[from] JsonRejection),
     #[error(transparent)]
-    TencentCDN(#[from]TcCloudError)
+    TencentCDN(#[from] TcCloudError),
 }
 
 impl ControllerError for crate::ReleaseVersionController {

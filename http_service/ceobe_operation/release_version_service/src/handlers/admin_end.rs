@@ -62,8 +62,7 @@ impl crate::ReleaseVersionController {
     #[resp_result]
     #[instrument(skip_all,fields(version = %(arg_2.0.version)))]
     pub async fn new_version(
-        db: MongoDatabaseOperate,
-        tencent_cloud: TencentCloudManager,
+        db: MongoDatabaseOperate, tencent_cloud: TencentCloudManager,
         MapReject(release): MapRejecter<Json<ReleaseVersion>>,
     ) -> Result<()> {
         db.ceobe()

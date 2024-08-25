@@ -1,16 +1,8 @@
-use db_ops_prelude::{
-    mongo_connection::MongoDbCollectionTrait,
-    mongodb::{
-        bson::{doc, to_bson},
-        options::FindOneOptions,
-    },
-};
+use db_ops_prelude::mongo_connection::MongoDbCollectionTrait;
 use serde::{Deserialize, Serialize};
+
+use super::{models::ReleaseVersion, ReleaseVersionCreate, Result};
 use crate::release_version::verify::suitable_version;
-use super::{
-    models::{ReleaseVersion, Version},
-    Error, ReleaseVersionCreate, Result,
-};
 
 impl<'db, Conn> ReleaseVersionCreate<'db, Conn>
 where
@@ -19,13 +11,12 @@ where
     pub async fn one(
         &'db self, release_version: impl Into<ReleaseVersion>,
     ) -> Result<()> {
-
         let release_version = release_version.into();
 
         let collection = self.get_collection()?;
 
         // 找到当前平台的最新的发布版本，与当前添加版本比较。新版本必须更新
-        suitable_version(&collection,&release_version).await?;
+        suitable_version(&collection, &release_version).await?;
 
         collection
             .doing(|collection| collection.insert_one(release_version, None))

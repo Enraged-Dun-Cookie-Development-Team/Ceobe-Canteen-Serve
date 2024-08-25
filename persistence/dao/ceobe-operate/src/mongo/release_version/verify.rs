@@ -10,7 +10,7 @@ use db_ops_prelude::{
 };
 use serde::{Deserialize, Serialize};
 
-use super::{Error,Result};
+use super::{Error, Result};
 pub(super) async fn suitable_version(
     collection: &CollectionGuard<ReleaseVersion>,
     release_version: &ReleaseVersion,

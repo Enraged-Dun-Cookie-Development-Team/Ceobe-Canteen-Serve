@@ -1,3 +1,4 @@
+use persistence::operate::FromRef;
 use serve_utils::{
     axum::{
         routing::{get, post},
@@ -5,6 +6,9 @@ use serve_utils::{
     },
     endpoint::{AdminEnd, CDN},
     ControllerRouter, HandlerMapReject, HandlerResult,
+};
+use tencent_cloud_server::axum_starter::{
+    PartTencentCloudManagerState, RequestClient,
 };
 
 mod admin_end;
@@ -24,8 +28,11 @@ impl<S: Send + Clone + Sync + 'static> ControllerRouter<S, CDN>
     }
 }
 
-impl<S: Send + Clone + Sync + 'static> ControllerRouter<S, AdminEnd>
-    for crate::ReleaseVersionController
+impl<S> ControllerRouter<S, AdminEnd> for crate::ReleaseVersionController
+where
+    S: Send + Clone + Sync + 'static,
+    PartTencentCloudManagerState: FromRef<S>,
+    RequestClient: FromRef<S>,
 {
     const BASE_URI: &'static str = "/release_version";
 
