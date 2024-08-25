@@ -9,8 +9,11 @@ use checker::{
     QueryCheckExtract,
 };
 use page_size::request::PageSizeChecker;
-use persistence::ceobe_operate::models::tool_link::{
-    self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
+use persistence::ceobe_operate::{
+    models::tool_link::{
+        self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
+    },
+    tool_link_mongodb::{CheckError, OperateError},
 };
 use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
@@ -50,3 +53,16 @@ impl StatusErr for FieldNotExist {
 
     fn code(&self) -> u16 { 0x0011 }
 }
+
+error_generate! {
+    pub CeobeOperateToolLinkError
+
+    Json = JsonRejection
+    Query = QueryRejection
+    Logic = LogicError
+    DbOperate = OperateError
+    Check = CheckError
+    PageSize = NonZeroUnsignedError
+}
+pub(super) type CeobeToolLinkRResult<T> =
+    RespResult<T, CeobeOperateToolLinkError>;

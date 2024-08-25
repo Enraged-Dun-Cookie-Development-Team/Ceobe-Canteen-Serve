@@ -15,3 +15,23 @@ impl<E: EntityTrait> WithPagination for Select<E> {
             .limit(*size.deref() as u64)
     }
 }
+#[derive(Debug, Clone, Copy)]
+pub struct Paginate {
+    pub offset: u64,
+    pub limit: u64,
+}
+
+impl Paginator {
+    pub fn offset(&self) -> u64 {
+        ((self.page.deref() - 1) * self.size.deref()) as u64
+    }
+
+    pub fn limit(&self) -> u64 { *self.size.deref() as u64 }
+
+    pub fn to_paginate(&self) -> Paginate {
+        Paginate {
+            offset: self.offset(),
+            limit: self.limit(),
+        }
+    }
+}

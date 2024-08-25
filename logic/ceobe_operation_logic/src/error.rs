@@ -5,6 +5,7 @@ use persistence::ceobe_operate::{
     models::tool_link::CheckError,
     resource::OperateError as ResourceOperateError,
     tool_link::OperateError as ToolLinkIOperateError,
+    tool_link_mongodb::OperateError,
     video::OperateError as VideoOperateError,
 };
 use request_clients::error::ChannelClose;
@@ -52,6 +53,10 @@ pub enum LogicError {
     #[error(transparent)]
     #[status_err(err = "transparent")]
     TcCloudError(#[from] TcCloudError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    MongoError(#[from] OperateError),
 }
 
 impl From<Infallible> for LogicError {

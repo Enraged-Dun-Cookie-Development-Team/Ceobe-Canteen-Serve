@@ -8,9 +8,11 @@ use persistence::{
             self, all_available,
             countdown::{self, CountdownType},
         },
+        tool_link_mongodb::models::{Link, ToolLink, ToolLinkUpdate},
         video,
     },
     help_crates::naive_date_time_format,
+    mongodb::mongodb::bson,
 };
 use serde::{Deserialize, Serialize};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
@@ -224,7 +226,21 @@ impl OperationTcCdnPath {
     /// 资源列表
     pub const RESOURCE_LIST_PATH: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/resource/get");
+    /// 友联列表
+    pub const TOOL_LINK_LIST: PurgeCachePath =
+        PurgeCachePath::new("/cdn/operate/toolLink/list");
     /// 视频列表
     pub const VIDEO_LIST_PATH: PurgeCachePath =
         PurgeCachePath::new("/cdn/operate/video/list");
 }
+
+pub type ToolLinkCreateMongoReq = ToolLinkUpdate;
+
+pub type ToolLinkUpdateMongoReq = ToolLink;
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ToolLinkDeleteMongoReq {
+    pub id: bson::Uuid,
+}
+
+pub type LinkMongoReq = Link;
