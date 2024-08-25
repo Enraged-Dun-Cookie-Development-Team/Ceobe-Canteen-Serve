@@ -1,5 +1,4 @@
 use db_ops_prelude::mongo_connection::MongoDbCollectionTrait;
-use serde::{Deserialize, Serialize};
 
 use super::{models::ReleaseVersion, ReleaseVersionCreate, Result};
 use crate::release_version::verify::suitable_version;
