@@ -67,13 +67,13 @@ impl From<plugin_version::Checked> for ReleaseVersion {
             )
             .add_download_source(
                 DownloadSourceItem::builder()
-                    .name("ZIP")
+                    .name("ZIP 包下载")
                     .primary_url(
                         ResourceUrl::builder().name(Primary).url(zip).build(),
                     )
                     .extend_spare_url(spare_zip.map(|url| {
                         ResourceUrl::builder()
-                            .name("Zip备用")
+                            .name("ZIP备用")
                             .url(url)
                             .manual()
                             .build()
