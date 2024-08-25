@@ -4,6 +4,7 @@ use persistence::ceobe_operate::models::version::models::ReleasePlatform;
 use semver::Version;
 use serde::Deserialize;
 use serve_utils::{OptionValueField, OptionViewField, ValueField};
+use tencent_cloud_server::cdn::purge_urls_cache::{PurgeCachePath, PurgeUrlsCache};
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion<
@@ -50,6 +51,14 @@ impl Display for QueryVersionFilter {
             }
         }
     }
+}
+
+pub struct TencentCDNPath;
+
+impl TencentCDNPath{
+    pub const LATEST_VERSION:PurgeCachePath = PurgeCachePath::new("/cdn/operate/version/fetch");
+
+
 }
 
 #[cfg(test)]

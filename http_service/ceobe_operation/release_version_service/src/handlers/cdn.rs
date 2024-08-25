@@ -11,7 +11,6 @@ use serve_utils::{
     tracing::instrument,
     OptionValueField,
 };
-
 use super::{MapRejecter, Result};
 use crate::view::QueryReleaseVersion;
 impl crate::ReleaseVersionController {
@@ -42,7 +41,6 @@ impl crate::ReleaseVersionController {
                     .await?
             }
         };
-
         Ok(release_info)
     }
 }

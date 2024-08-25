@@ -11,17 +11,18 @@ use serve_utils::{
     tracing::instrument,
     ValueField,
 };
+use tencent_cloud_server::cloud_manager::TencentCloudManager;
 
 use crate::{
     handlers::{MapRejecter, Result},
-    view::{QueryReleaseVersion, QueryVersionFilter},
+    view::{QueryReleaseVersion, QueryVersionFilter, TencentCDNPath},
 };
 
 impl crate::ReleaseVersionController {
     #[resp_result]
-    #[instrument(skip_all,fields(version = %arg_1.0))]
+    #[instrument(skip_all,fields(version = %arg_2.0))]
     pub async fn yank_version(
-        db: MongoDatabaseOperate,
+        db: MongoDatabaseOperate, tencent_cloud: TencentCloudManager,
         MapReject(QueryReleaseVersion {
             version: ValueField(version),
             platform,
@@ -34,6 +35,9 @@ impl crate::ReleaseVersionController {
             .release_version()
             .delete()
             .yank(&platform, &version)
+            .await?;
+        tencent_cloud
+            .purge_urls_cache(&Some(TencentCDNPath::LATEST_VERSION))
             .await?;
         Ok(())
     }
@@ -56,9 +60,10 @@ impl crate::ReleaseVersionController {
     }
 
     #[resp_result]
-    #[instrument(skip_all,fields(version = %(arg_1.0.version)))]
+    #[instrument(skip_all,fields(version = %(arg_2.0.version)))]
     pub async fn new_version(
         db: MongoDatabaseOperate,
+        tencent_cloud: TencentCloudManager,
         MapReject(release): MapRejecter<Json<ReleaseVersion>>,
     ) -> Result<()> {
         db.ceobe()
@@ -66,6 +71,9 @@ impl crate::ReleaseVersionController {
             .release_version()
             .create()
             .one(release)
+            .await?;
+        tencent_cloud
+            .purge_urls_cache(&Some(TencentCDNPath::LATEST_VERSION))
             .await?;
         Ok(())
     }

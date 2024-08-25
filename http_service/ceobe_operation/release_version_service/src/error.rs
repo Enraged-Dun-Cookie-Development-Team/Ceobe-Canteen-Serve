@@ -4,6 +4,7 @@ use serve_utils::{
     status_err::StatusErr,
     ControllerError, ThisError,
 };
+use tencent_cloud_server::error::TcCloudError;
 
 #[derive(Debug, ThisError, StatusErr)]
 #[status_err(resp_err)]
@@ -14,6 +15,8 @@ pub enum Error {
     Query(#[from] QueryRejection),
     #[error(transparent)]
     Json(#[from] JsonRejection),
+    #[error(transparent)]
+    TencentCDN(#[from]TcCloudError)
 }
 
 impl ControllerError for crate::ReleaseVersionController {
