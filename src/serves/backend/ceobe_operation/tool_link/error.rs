@@ -13,7 +13,7 @@ use persistence::ceobe_operate::{
     models::tool_link::{
         self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
     },
-    tool_link_mongodb::{ OperateError},
+    tool_link_mongodb::OperateError,
 };
 use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
@@ -55,5 +55,5 @@ impl StatusErr for FieldNotExist {
     fn code(&self) -> u16 { 0x0011 }
 }
 
-pub type  CeobeOperateToolLinkError = OperateToolLinkError;
+pub type CeobeOperateToolLinkError = OperateToolLinkError;
 pub type CeobeToolLinkRResult<T> = OperateToolLinkRResult<T>;
