@@ -13,7 +13,7 @@ use persistence::ceobe_operate::{
     models::tool_link::{
         self, checkers::tool_link_data::PreCheckCeobeOperationToolLinkChecker,
     },
-    tool_link_mongodb::{CheckError, OperateError},
+    tool_link_mongodb::{ OperateError},
 };
 use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
@@ -32,6 +32,7 @@ error_generate! {
     Multipart = MultipartError
     MultipartReject = MultipartRejection
     Field = FieldNotExist
+    DbOperate = OperateError
 }
 
 pub type OperateToolLinkRResult<T> = RespResult<T, OperateToolLinkError>;
@@ -54,15 +55,5 @@ impl StatusErr for FieldNotExist {
     fn code(&self) -> u16 { 0x0011 }
 }
 
-error_generate! {
-    pub CeobeOperateToolLinkError
-
-    Json = JsonRejection
-    Query = QueryRejection
-    Logic = LogicError
-    DbOperate = OperateError
-    Check = CheckError
-    PageSize = NonZeroUnsignedError
-}
-pub(super) type CeobeToolLinkRResult<T> =
-    RespResult<T, CeobeOperateToolLinkError>;
+pub type  CeobeOperateToolLinkError = OperateToolLinkError;
+pub type CeobeToolLinkRResult<T> = OperateToolLinkRResult<T>;

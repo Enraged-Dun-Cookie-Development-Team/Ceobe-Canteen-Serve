@@ -2,7 +2,7 @@ use axum::extract::rejection::{JsonRejection, QueryRejection};
 use ceobe_operation_logic::error::LogicError;
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use persistence::ceobe_operate::tool_link_mongodb::{
-    CheckError, OperateError,
+    OperateError,
 };
 use resp_result::RespResult;
 
@@ -15,7 +15,6 @@ error_generate! {
     Query = QueryRejection
     Logic = LogicError
     DbOperate = OperateError
-    Check = CheckError
     PageSize = NonZeroUnsignedError
 }
 pub(super) type CeobeToolLinkRResult<T> =
