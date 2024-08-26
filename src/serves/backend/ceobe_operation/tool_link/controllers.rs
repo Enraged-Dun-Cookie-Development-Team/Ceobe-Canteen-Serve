@@ -129,7 +129,7 @@ impl CeobeOpToolLink {
     pub async fn create_one_mongo(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         MapReject(tool_link): MapReject<Json<ToolLinkCreateMongoReq>,CeobeOperateToolLinkError>,
-    ) -> CeobeToolLinkRResult<()> {
+    ) -> CeobeToolLinkRResult<bson::Uuid> {
         resp_try(async {
             Ok(CeobeOperateLogic::create_tool_link_mongo(
                 mongo,
