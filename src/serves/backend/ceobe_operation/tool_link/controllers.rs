@@ -1,29 +1,27 @@
 use axum::{
-    extract::{multipart::MultipartRejection, Multipart, Query},
+    extract::{Multipart, multipart::MultipartRejection, Query},
     Json,
 };
+use resp_result::{MapReject, resp_try};
+use tracing::instrument;
+
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
     view::{DeleteOneToolLinkReq, ToolLinkDeleteMongoReq, ToolLinkResp},
 };
+use ceobe_operation_logic::view::ToolLinkCreateMongoReq;
 use ceobe_qiniu_upload::QiniuManager;
-use checker::{CheckExtract, JsonCheckExtract};
+use checker::CheckExtract;
 use page_size::response::ListWithPageInfo;
 use persistence::{
-    ceobe_operate::tool_link_mongodb::{models::ToolLink, ToolLinkChecker},
+    ceobe_operate::tool_link_mongodb::models::ToolLink,
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
 };
 use qiniu_cdn_upload::UploadWrap;
-use resp_result::{resp_try, MapReject};
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
-use tracing::instrument;
 
-use super::error::{
-    CeobeOperateToolLinkError, CeobeToolLinkRResult, OperateToolLinkError,
-    OperateToolLinkRResult, PageSizePretreatment, ToolLinkPretreatment,
-};
 use crate::{
     router::CeobeOpToolLink,
     serves::backend::ceobe_operation::tool_link::{
@@ -31,8 +29,10 @@ use crate::{
     },
 };
 
-type CreateToolLinkCheck =
-    JsonCheckExtract<ToolLinkChecker, CeobeOperateToolLinkError>;
+use super::error::{
+    CeobeOperateToolLinkError, CeobeToolLinkRResult, OperateToolLinkError,
+    OperateToolLinkRResult, PageSizePretreatment, ToolLinkPretreatment,
+};
 
 impl CeobeOpToolLink {
     /// 新增一个工具
@@ -128,13 +128,13 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(mongo, tc_cloud))]
     pub async fn create_one_mongo(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
-        CheckExtract(tool_link): CreateToolLinkCheck,
+        MapReject(tool_link): MapReject<Json<ToolLinkCreateMongoReq>,CeobeOperateToolLinkError>,
     ) -> CeobeToolLinkRResult<()> {
         resp_try(async {
             Ok(CeobeOperateLogic::create_tool_link_mongo(
                 mongo,
                 tc_cloud,
-                tool_link.into(),
+                tool_link,
             )
             .await?)
         })
@@ -144,7 +144,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(mongo, tc_cloud))]
     pub async fn update_one_mongo(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
-        CheckExtract(tool_link): CreateToolLinkCheck,
+        MapReject(tool_link): MapReject<Json<ToolLink>,CeobeOperateToolLinkError>,
     ) -> CeobeToolLinkRResult<()> {
         resp_try(async {
             Ok(CeobeOperateLogic::update_tool_link_mongo(
