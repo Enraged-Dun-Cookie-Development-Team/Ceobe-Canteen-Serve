@@ -23,8 +23,8 @@ use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
 use super::error::{
-    CeobeOperateToolLinkError, CeobeToolLinkRResult, OperateToolLinkError,
-    OperateToolLinkRResult, PageSizePretreatment, ToolLinkPretreatment,
+    OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment, 
+    ToolLinkPretreatment,
 };
 use crate::{
     router::CeobeOpToolLink,
@@ -116,7 +116,7 @@ impl CeobeOpToolLink {
     pub async fn all_with_paginator(
         mongo: MongoDatabaseOperate,
         CheckExtract(page_size): PageSizePretreatment,
-    ) -> CeobeToolLinkRResult<ListWithPageInfo<ToolLink>> {
+    ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLink>> {
         resp_try(async {
             Ok(CeobeOperateLogic::page_tool_link_mongo(mongo, page_size)
                 .await?)
@@ -129,9 +129,9 @@ impl CeobeOpToolLink {
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         MapReject(tool_link): MapReject<
             Json<ToolLinkCreateMongoReq>,
-            CeobeOperateToolLinkError,
+            OperateToolLinkError,
         >,
-    ) -> CeobeToolLinkRResult<bson::Uuid> {
+    ) -> OperateToolLinkRResult<bson::Uuid> {
         resp_try(async {
             Ok(CeobeOperateLogic::create_tool_link_mongo(
                 mongo, tc_cloud, tool_link,
@@ -146,9 +146,9 @@ impl CeobeOpToolLink {
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         MapReject(tool_link): MapReject<
             Json<ToolLink>,
-            CeobeOperateToolLinkError,
+            OperateToolLinkError,
         >,
-    ) -> CeobeToolLinkRResult<()> {
+    ) -> OperateToolLinkRResult<()> {
         resp_try(async {
             Ok(CeobeOperateLogic::update_tool_link_mongo(
                 mongo, tc_cloud, tool_link,
@@ -163,9 +163,9 @@ impl CeobeOpToolLink {
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         MapReject(ToolLinkDeleteMongoReq { id }): MapReject<
             Query<ToolLinkDeleteMongoReq>,
-            CeobeOperateToolLinkError,
+            OperateToolLinkError,
         >,
-    ) -> CeobeToolLinkRResult<()> {
+    ) -> OperateToolLinkRResult<()> {
         resp_try(async {
             Ok(
                 CeobeOperateLogic::delete_tool_link_mongo(

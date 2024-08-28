@@ -54,6 +54,3 @@ impl StatusErr for FieldNotExist {
 
     fn code(&self) -> u16 { 0x0011 }
 }
-
-pub type CeobeOperateToolLinkError = OperateToolLinkError;
-pub type CeobeToolLinkRResult<T> = OperateToolLinkRResult<T>;
