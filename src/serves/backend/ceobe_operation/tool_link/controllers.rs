@@ -23,7 +23,7 @@ use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
 use super::error::{
-    OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment, 
+    OperateToolLinkError, OperateToolLinkRResult, PageSizePretreatment,
     ToolLinkPretreatment,
 };
 use crate::{
@@ -144,10 +144,7 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(mongo, tc_cloud))]
     pub async fn update_one_mongo(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
-        MapReject(tool_link): MapReject<
-            Json<ToolLink>,
-            OperateToolLinkError,
-        >,
+        MapReject(tool_link): MapReject<Json<ToolLink>, OperateToolLinkError>,
     ) -> OperateToolLinkRResult<()> {
         resp_try(async {
             Ok(CeobeOperateLogic::update_tool_link_mongo(
