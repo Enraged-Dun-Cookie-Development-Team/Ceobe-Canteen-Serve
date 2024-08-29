@@ -103,12 +103,14 @@ impl CeobeOperateLogic {
     pub async fn create_tool_link_mongo(
         mongo: MongoDatabaseOperate, tc_cloud: TencentCloudManager,
         tool_link: ToolLinkCreateMongoReq,
-    ) -> LogicResult<()> {
+    ) -> LogicResult<bson::Uuid> {
+        let tool_link = ToolLink::from(tool_link);
+        let id = tool_link.id;
         mongo
             .ceobe()
             .operation()
             .tool_link()
-            .create(tool_link.into())
+            .create(tool_link)
             .await
             .unwrap();
 
@@ -116,7 +118,7 @@ impl CeobeOperateLogic {
             [OperationTcCdnPath::TOOL_LINK_LIST];
         tc_cloud.purge_urls_cache(&PATHS).await?;
 
-        Ok(())
+        Ok(id)
     }
 
     pub async fn update_tool_link_mongo(

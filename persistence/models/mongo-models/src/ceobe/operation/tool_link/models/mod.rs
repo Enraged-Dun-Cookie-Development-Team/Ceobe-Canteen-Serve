@@ -45,6 +45,8 @@ pub struct ToolLink {
     pub links: Vec<Link>,
 }
 
+pub type ToolLinkCreate = ToolLinkUpdate;
+
 impl From<ToolLinkUpdate> for ToolLink {
     fn from(
         ToolLinkUpdate {
