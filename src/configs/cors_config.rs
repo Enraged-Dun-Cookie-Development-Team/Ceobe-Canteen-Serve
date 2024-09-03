@@ -1,3 +1,5 @@
+use std::{collections::HashSet, sync::Arc};
+
 use http::{HeaderValue, Method};
 use serde::{Deserialize, Deserializer};
 
@@ -9,12 +11,18 @@ pub struct CorsConfigImpl {
     allow_origins: Vec<HeaderValue>,
     #[serde(alias = "methods", deserialize_with = "de_methods")]
     allow_methods: Vec<Method>,
+    #[serde(alias = "paths")]
+    pass_paths: Arc<HashSet<String>>,
 }
 
 impl CorsConfigTrait for CorsConfigImpl {
     fn allow_origins(&self) -> Vec<HeaderValue> { self.allow_origins.clone() }
 
     fn allow_methods(&self) -> Vec<Method> { self.allow_methods.clone() }
+    
+    fn bypass_paths(&self) -> Arc<HashSet<String>> {
+        self.pass_paths.clone()
+    }
 }
 
 fn de_origins<'de, D: Deserializer<'de>>(

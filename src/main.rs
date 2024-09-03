@@ -14,8 +14,7 @@ use bootstrap::{
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
     middleware::{
-        cors::PrepareCors, panic_report::PrepareCatchPanic,
-        tracing_request::PrepareRequestTracker,
+        cors::ConditionCorsPrepare, panic_report::PrepareCatchPanic, tracing_request::PrepareRequestTracker
     },
 };
 use ceobe_qiniu_upload::QiniuUpload;
@@ -95,7 +94,7 @@ async fn main_task() {
         // router
         .prepare_route(RouteV1)
         .prepare_route(RouterFallback)
-        .prepare_middleware::<Route, _>(PrepareCors::<_, CorsConfigImpl>)
+        .prepare_middleware::<Route, _>(ConditionCorsPrepare::<_, CorsConfigImpl>)
         .prepare_middleware::<Route, _>(
             PrepareCatchPanic::<_, QqChannelConfig>,
         )
