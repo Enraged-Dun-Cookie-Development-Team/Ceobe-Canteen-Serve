@@ -163,6 +163,7 @@ impl<
 {
     type Item = Result<MobPushRequester<'manager>, serde_json::Error>;
 
+    #[allow(clippy::needless_borrows_for_generic_args)]
     fn next(&mut self) -> Option<Self::Item> {
         self.buffer.clear();
         let users = BatchUsers::new(&mut self.users)?;

@@ -1,5 +1,5 @@
+#![allow(clippy::duplicated_attributes)]
 extern crate serde;
-
 use std::{
     io::{stdout, Write},
     time::Duration,
