@@ -4,7 +4,7 @@ use axum_starter::{prepare, PrepareMiddlewareEffect};
 use http::{HeaderValue, Method};
 use tower_http::cors::CorsLayer;
 
-use std::{task::Poll};
+use std::task::Poll;
 
 use tower::{Layer, Service};
 use tower_http::cors::{Any, Cors};
@@ -70,6 +70,21 @@ pub struct ConditionCorsLayer {
     bypass_paths: Arc<HashSet<String>>
 }
 
+impl ConditionCorsLayer {
+
+    fn from_config(config:&impl CorsConfigTrait)->Self{
+        Self { 
+            bypass_cors: CorsLayer::new()
+                .allow_origin(Any)
+                .allow_methods(Any),
+            default_cors: CorsLayer::new()
+                .allow_origin(config.allow_origins())
+                .allow_methods(config.allow_methods()),
+            bypass_paths: config.bypass_paths(),
+        } 
+    }
+}
+
 impl<S: Clone> Layer<S> for ConditionCorsLayer {
     type Service = ConditionCors<S>;
 
@@ -77,34 +92,27 @@ impl<S: Clone> Layer<S> for ConditionCorsLayer {
         ConditionCors {
             bypass_cors: self.bypass_cors.layer(inner.clone()),
             default_cors: self.default_cors.layer(inner),
-            bypass_paths: self.bypass_paths.clone(),
+            bypass_paths: Arc::clone(&self.bypass_paths),
         }
     }
 }
 
-pub struct ConditionCorsMiddlewarePrepare<T: CorsConfigTrait>(T);
 
-impl<S: Clone, T: CorsConfigTrait + 'static> PrepareMiddlewareEffect<S>
-    for ConditionCorsMiddlewarePrepare<T>
+impl<S: Clone,> PrepareMiddlewareEffect<S>
+    for ConditionCorsLayer
 {
     type Middleware = ConditionCorsLayer;
 
     fn take(self, _: &mut axum_starter::StateCollector) -> Self::Middleware {
-        ConditionCorsLayer {
-            bypass_cors: CorsLayer::new()
-                .allow_origin(Any)
-                .allow_methods(Any),
-            default_cors: CorsLayer::new()
-                .allow_origin(self.0.allow_origins())
-                .allow_methods(self.0.allow_methods()),
-            bypass_paths: self.0.bypass_paths(),
-        }
+        self
     }
 }
 
+pub type ConditionCorsEffect = ConditionCorsLayer;
+
 #[prepare(ConditionCorsPrepare)]
-pub fn prepare_condition_cors<T: CorsConfigTrait + Clone>(
+pub fn prepare_condition_cors<T: CorsConfigTrait>(
     config: &T,
-) -> ConditionCorsMiddlewarePrepare<T> {
-    ConditionCorsMiddlewarePrepare(config.clone())
+) -> ConditionCorsEffect {
+    ConditionCorsEffect::from_config(config)
 }

@@ -12,7 +12,7 @@ pub struct CorsConfigImpl {
     #[serde(alias = "methods", deserialize_with = "de_methods")]
     allow_methods: Vec<Method>,
     #[serde(alias = "paths")]
-    pass_paths: Arc<HashSet<String>>,
+    bypass_route: Arc<HashSet<String>>,
 }
 
 impl CorsConfigTrait for CorsConfigImpl {
@@ -21,7 +21,7 @@ impl CorsConfigTrait for CorsConfigImpl {
     fn allow_methods(&self) -> Vec<Method> { self.allow_methods.clone() }
     
     fn bypass_paths(&self) -> Arc<HashSet<String>> {
-        self.pass_paths.clone()
+        Arc::clone(&self.bypass_route)
     }
 }
 
