@@ -22,7 +22,7 @@ pub enum AuthLevel {
     #[serde(rename = "architect")]
     #[sea_orm(string_value = "architect")]
     Architect,
-    #[serde(rename = "outsourcing")]
-    #[sea_orm(string_value = "outsourcing")]
-    Outsourcing,
+    #[serde(rename = "porter")]
+    #[sea_orm(string_value = "porter")]
+    Porter,
 }

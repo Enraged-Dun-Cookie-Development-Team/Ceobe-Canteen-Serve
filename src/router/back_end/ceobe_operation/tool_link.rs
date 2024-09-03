@@ -3,6 +3,9 @@ use axum::{
     Router,
 };
 
+use super::{CeobeOperationAuth, CeobeTools};
+use crate::middleware::authorize::AuthorizeLayer;
+
 pub struct CeobeOpToolLink;
 
 pub fn tool_link_router() -> crate::router::ServerRoute {
@@ -11,9 +14,17 @@ pub fn tool_link_router() -> crate::router::ServerRoute {
         .route("/update", post(CeobeOpToolLink::update_one))
         .route("/delete", delete(CeobeOpToolLink::delete_one))
         .route("/list", get(CeobeOpToolLink::list))
-        .route("/uploadAvatar", post(CeobeOpToolLink::upload_avatar))
-        .route("/pageShow", get(CeobeOpToolLink::all_with_paginator))
-        .route("/createOne", post(CeobeOpToolLink::create_one_mongo))
-        .route("/updateOne", post(CeobeOpToolLink::update_one_mongo))
-        .route("/deleteOne", delete(CeobeOpToolLink::delete_one_mongo))
+        .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
+        .merge(
+            Router::new()
+                .route("/uploadAvatar", post(CeobeOpToolLink::upload_avatar))
+                .route("/pageShow", get(CeobeOpToolLink::all_with_paginator))
+                .route("/createOne", post(CeobeOpToolLink::create_one_mongo))
+                .route("/updateOne", post(CeobeOpToolLink::update_one_mongo))
+                .route(
+                    "/deleteOne",
+                    delete(CeobeOpToolLink::delete_one_mongo),
+                )
+                .route_layer(AuthorizeLayer::<CeobeTools>::new()),
+        )
 }
