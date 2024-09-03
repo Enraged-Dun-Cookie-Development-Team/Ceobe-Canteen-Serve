@@ -19,7 +19,7 @@ impl CorsConfigTrait for CorsConfigImpl {
     fn allow_origins(&self) -> Vec<HeaderValue> { self.allow_origins.clone() }
 
     fn allow_methods(&self) -> Vec<Method> { self.allow_methods.clone() }
-    
+
     fn bypass_paths(&self) -> Arc<HashSet<String>> {
         Arc::clone(&self.bypass_route)
     }

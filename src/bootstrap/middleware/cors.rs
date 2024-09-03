@@ -1,14 +1,9 @@
-use std::{collections::HashSet, sync::Arc};
+use std::{collections::HashSet, sync::Arc, task::Poll};
 
 use axum_starter::{prepare, PrepareMiddlewareEffect};
 use http::{HeaderValue, Method};
-use tower_http::cors::CorsLayer;
-
-use std::task::Poll;
-
 use tower::{Layer, Service};
-use tower_http::cors::{Any, Cors};
-
+use tower_http::cors::{Any, Cors, CorsLayer};
 
 pub trait CorsConfigTrait {
     fn allow_origins(&self) -> Vec<HeaderValue>;
@@ -31,11 +26,9 @@ where
     Req: Default,
     Resp: Default,
 {
-    type Response = <Cors<S> as Service<http::Request<Req>>>::Response;
-
     type Error = <Cors<S> as Service<http::Request<Req>>>::Error;
-
     type Future = <Cors<S> as Service<http::Request<Req>>>::Future;
+    type Response = <Cors<S> as Service<http::Request<Req>>>::Response;
 
     fn poll_ready(
         &mut self, cx: &mut std::task::Context<'_>,
@@ -45,7 +38,7 @@ where
             self.default_cors.poll_ready(cx),
         ) {
             (Poll::Ready(bypass), Poll::Ready(default)) => {
-                Poll::Ready(bypass.and_then(|_| default))
+                Poll::Ready(bypass.and(default))
             }
             (Poll::Ready(_), Poll::Pending) => Poll::Pending,
             (Poll::Pending, Poll::Ready(_)) => Poll::Pending,
@@ -57,7 +50,8 @@ where
         let uri = req.uri().path();
         if self.bypass_paths.contains(uri) {
             self.bypass_cors.call(req)
-        } else {
+        }
+        else {
             self.default_cors.call(req)
         }
     }
@@ -67,13 +61,12 @@ where
 pub struct ConditionCorsLayer {
     bypass_cors: CorsLayer,
     default_cors: CorsLayer,
-    bypass_paths: Arc<HashSet<String>>
+    bypass_paths: Arc<HashSet<String>>,
 }
 
 impl ConditionCorsLayer {
-
-    fn from_config(config:&impl CorsConfigTrait)->Self{
-        Self { 
+    fn from_config(config: &impl CorsConfigTrait) -> Self {
+        Self {
             bypass_cors: CorsLayer::new()
                 .allow_origin(Any)
                 .allow_methods(Any),
@@ -81,7 +74,7 @@ impl ConditionCorsLayer {
                 .allow_origin(config.allow_origins())
                 .allow_methods(config.allow_methods()),
             bypass_paths: config.bypass_paths(),
-        } 
+        }
     }
 }
 
@@ -97,10 +90,7 @@ impl<S: Clone> Layer<S> for ConditionCorsLayer {
     }
 }
 
-
-impl<S: Clone,> PrepareMiddlewareEffect<S>
-    for ConditionCorsLayer
-{
+impl<S: Clone> PrepareMiddlewareEffect<S> for ConditionCorsLayer {
     type Middleware = ConditionCorsLayer;
 
     fn take(self, _: &mut axum_starter::StateCollector) -> Self::Middleware {
