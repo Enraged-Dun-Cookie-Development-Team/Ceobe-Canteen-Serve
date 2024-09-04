@@ -3,10 +3,11 @@ use db_ops_prelude::{
     mongo_connection::{MongoDbCollectionTrait, MongoDbError},
     mongo_models::ceobe::operation::version::models::ReleasePlatform,
     mongodb::{
-        bson::{doc, to_bson},
+        bson::{doc, to_bson, Document},
         options::{FindOneOptions, FindOptions},
     },
 };
+use page_size::request::Paginator;
 use tracing::info;
 
 use super::{
@@ -68,29 +69,29 @@ where
     }
 
     pub async fn all(
-        &'db self, platform: Option<ReleasePlatform>, yanked: bool,
+        &'db self, platform: Option<ReleasePlatform>,
+        paginate: impl Into<Option<Paginator>>, yanked: bool,
     ) -> Result<Vec<ReleaseVersion>> {
         let collection = self.get_collection()?;
-        let filter = match platform {
-            None => {
-                doc! {"yanked": yanked}
-            }
-            Some(plat) => {
-                doc! {
-                    "platform":to_bson(&plat)?,
-                    "yanked": yanked
-                }
-            }
-        };
+        let filter = generate_platform_filter_document(platform, yanked)?;
         let sort = doc! {
             "$natural": -1i32
         };
 
+        let options = FindOptions::builder().sort(sort);
+
+        let options = if let Some(paginator) = paginate.into() {
+            options
+                .limit((paginator.limit() as i64).into())
+                .skip(paginator.offset() as _)
+                .build()
+        }
+        else {
+            options.build()
+        };
+
         let ret = collection
-            .doing(|collection| {
-                collection
-                    .find(filter, FindOptions::builder().sort(sort).build())
-            })
+            .doing(|collection| collection.find(filter, options))
             .await?
             .try_collect()
             .await
@@ -98,6 +99,35 @@ where
 
         Ok(ret)
     }
+
+    pub async fn total_num(
+        &'db self, platform: Option<ReleasePlatform>, yanked: bool,
+    ) -> Result<usize> {
+        let collection = self.get_collection()?;
+        let filter = generate_platform_filter_document(platform, yanked)?;
+
+        let ret = collection
+            .doing(|collection| collection.count_documents(filter, None))
+            .await?;
+
+        Ok(ret as _)
+    }
+}
+
+fn generate_platform_filter_document(
+    platform: Option<ReleasePlatform>, yanked: bool,
+) -> Result<Document> {
+    Ok(match platform {
+        None => {
+            doc! {"yanked": yanked}
+        }
+        Some(plat) => {
+            doc! {
+                "platform":to_bson(&plat)?,
+                "yanked": yanked
+            }
+        }
+    })
 }
 
 #[cfg(test)]

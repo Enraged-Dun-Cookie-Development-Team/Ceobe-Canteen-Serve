@@ -1,3 +1,5 @@
+use checker::{prefabs::option_checker::OptionChecker, QueryCheckExtract};
+use page_size::request::PageSizeChecker;
 use persistence::{
     ceobe_operate::{
         models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
@@ -7,13 +9,14 @@ use persistence::{
 };
 use serve_utils::{
     axum::{extract::Query, Json},
-    axum_resp_result::{resp_result, MapReject},
+    axum_resp_result::{MapReject, resp_result},
     tracing::instrument,
     ValueField,
 };
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
 
 use crate::{
+    error::Error,
     handlers::{MapRejecter, Result},
     view::{QueryReleaseVersion, QueryVersionFilter, TencentCDNPath},
 };
@@ -46,7 +49,10 @@ impl crate::ReleaseVersionController {
     #[instrument(skip_all)]
     pub async fn all_version(
         db: MongoDatabaseOperate,
-        MapReject(filter): MapRejecter<Query<Option<QueryVersionFilter>>>,
+        MapReject(paginator): MapRejecter<
+            QueryCheckExtract<OptionChecker<PageSizeChecker>, Error>,
+        >,
+        MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
     ) -> Result<Vec<ReleaseVersion>> {
         let filter = filter.unwrap_or_default();
         let ret = db
@@ -54,7 +60,25 @@ impl crate::ReleaseVersionController {
             .operation()
             .release_version()
             .retrieve()
-            .all(filter.platform, filter.yanked)
+            .all(filter.platform, paginator, filter.yanked)
+            .await?;
+
+        Ok(ret)
+    }
+
+    #[resp_result]
+    #[instrument(skip_all)]
+    pub async fn released_version_num(
+        db: MongoDatabaseOperate,
+        MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
+    ) -> Result<usize> {
+        let filter = filter.unwrap_or_default();
+        let ret = db
+            .ceobe()
+            .operation()
+            .release_version()
+            .retrieve()
+            .total_num(filter.platform, filter.yanked)
             .await?;
         Ok(ret)
     }
