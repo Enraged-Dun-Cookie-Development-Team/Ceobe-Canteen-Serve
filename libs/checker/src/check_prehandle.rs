@@ -115,7 +115,6 @@ where
 impl<Pre, C, E> ToInner for CheckExtract<Pre, C, E>
 where
     C: CheckFetchFamily<Pre, E> + Sized,
-    <C::Checker as DataChecker>::Unchecked: Send,
 {
     type Inner = <C::Checker as DataChecker>::Checked;
 

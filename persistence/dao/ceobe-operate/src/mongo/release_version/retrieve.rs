@@ -82,8 +82,8 @@ where
 
         let options = if let Some(paginator) = paginate.into() {
             options
-                .limit((paginator.limit() as i64).into())
-                .skip(paginator.offset() as _)
+                .limit(Some(paginator.limit() as i64))
+                .skip(paginator.offset())
                 .build()
         }
         else {

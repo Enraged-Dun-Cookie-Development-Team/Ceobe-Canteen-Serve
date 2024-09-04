@@ -1,3 +1,4 @@
+use checker::prefabs::num_check::NonZeroUnsignedError;
 use persistence::ceobe_operate::release_version::Error as MongoError;
 use serve_utils::{
     axum::extract::rejection::{JsonRejection, QueryRejection},
@@ -17,6 +18,8 @@ pub enum Error {
     Json(#[from] JsonRejection),
     #[error(transparent)]
     TencentCDN(#[from] TcCloudError),
+    #[error(transparent)]
+    InvalidPaginator(#[from]NonZeroUnsignedError)
 }
 
 impl ControllerError for crate::ReleaseVersionController {
