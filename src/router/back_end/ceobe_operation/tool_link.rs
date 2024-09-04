@@ -3,7 +3,7 @@ use axum::{
     Router,
 };
 
-use super::{CeobeOperationAuth, CeobeTools};
+use super::CeobeTools;
 use crate::middleware::authorize::AuthorizeLayer;
 
 pub struct CeobeOpToolLink;
