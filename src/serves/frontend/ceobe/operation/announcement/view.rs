@@ -42,15 +42,6 @@ impl From<announcement::Model> for AnnouncementItem {
     }
 }
 
-#[cfg(test)]
-mod test {
-    #[test]
-    fn test_url() {
-        let url = url::Url::parse("icon");
-        println!("{url:?}")
-    }
-}
-
 /// 用于请求头缓存信息生成
 pub struct AnnouncementItems(pub(super) Vec<AnnouncementItem>);
 impl AnnouncementItems {
@@ -65,5 +56,14 @@ impl ModifyState for AnnouncementItems {
 
     fn get_identify(&self) -> Cow<'_, Self::Identify> {
         Cow::Borrowed(&self.0)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn test_url() {
+        let url = url::Url::parse("icon");
+        println!("{url:?}")
     }
 }
