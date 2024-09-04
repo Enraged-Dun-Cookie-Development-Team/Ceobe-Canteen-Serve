@@ -112,6 +112,16 @@ where
     type Checker = C;
 }
 
+impl<Pre, C, E> ToInner for CheckExtract<Pre, C, E>
+where
+    C: CheckFetchFamily<Pre, E> + Sized,
+    <C::Checker as DataChecker>::Unchecked: Send,
+{
+    type Inner = <C::Checker as DataChecker>::Checked;
+
+    fn to_inner(self) -> Self::Inner { self.0 }
+}
+
 pub type JsonCheckExtract<C, E> =
     CheckExtract<Json<<C as DataChecker>::Unchecked>, C, E>;
 
