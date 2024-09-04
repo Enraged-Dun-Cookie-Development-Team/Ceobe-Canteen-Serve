@@ -3,18 +3,21 @@ use axum::{
     Router,
 };
 
-use super::CeobeTools;
+use super::{CeobeOperationAuth, CeobeTools};
 use crate::middleware::authorize::AuthorizeLayer;
 
 pub struct CeobeOpToolLink;
 
 pub fn tool_link_router() -> crate::router::ServerRoute {
     Router::new()
-        .route("/create", post(CeobeOpToolLink::create_one))
-        .route("/update", post(CeobeOpToolLink::update_one))
-        .route("/delete", delete(CeobeOpToolLink::delete_one))
-        .route("/list", get(CeobeOpToolLink::list))
-        .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
+        .merge(
+            Router::new()
+                .route("/create", post(CeobeOpToolLink::create_one))
+                .route("/update", post(CeobeOpToolLink::update_one))
+                .route("/delete", delete(CeobeOpToolLink::delete_one))
+                .route("/list", get(CeobeOpToolLink::list))
+                .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new()),
+        )
         .merge(
             Router::new()
                 .route("/uploadAvatar", post(CeobeOpToolLink::upload_avatar))
