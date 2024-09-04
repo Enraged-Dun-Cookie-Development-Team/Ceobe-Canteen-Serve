@@ -19,7 +19,7 @@ pub enum Error {
     #[error(transparent)]
     TencentCDN(#[from] TcCloudError),
     #[error(transparent)]
-    InvalidPaginator(#[from]NonZeroUnsignedError)
+    InvalidPaginator(#[from] NonZeroUnsignedError),
 }
 
 impl ControllerError for crate::ReleaseVersionController {

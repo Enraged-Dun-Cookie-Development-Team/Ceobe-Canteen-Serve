@@ -1,4 +1,6 @@
-use checker::{CheckExtract, prefabs::option_checker::OptionChecker, QueryCheckExtract};
+use checker::{
+    prefabs::option_checker::OptionChecker, CheckExtract, QueryCheckExtract,
+};
 use page_size::request::PageSizeChecker;
 use persistence::{
     ceobe_operate::{
@@ -9,7 +11,7 @@ use persistence::{
 };
 use serve_utils::{
     axum::{extract::Query, Json},
-    axum_resp_result::{MapReject, resp_result},
+    axum_resp_result::{resp_result, MapReject},
     tracing::instrument,
     ValueField,
 };
@@ -49,9 +51,10 @@ impl crate::ReleaseVersionController {
     #[instrument(skip_all)]
     pub async fn all_version(
         db: MongoDatabaseOperate,
-        CheckExtract(paginator): 
-            QueryCheckExtract<OptionChecker<PageSizeChecker>, Error>,
-        
+        CheckExtract(paginator): QueryCheckExtract<
+            OptionChecker<PageSizeChecker>,
+            Error,
+        >,
         MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
     ) -> Result<Vec<ReleaseVersion>> {
         let filter = filter.unwrap_or_default();

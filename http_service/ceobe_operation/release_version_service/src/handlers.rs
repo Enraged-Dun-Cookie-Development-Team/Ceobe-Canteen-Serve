@@ -41,6 +41,6 @@ where
             .route("/yank", post(Self::yank_version))
             .route("/create", post(Self::new_version))
             .route("/all", get(Self::all_version))
-            .route("/total_num",get(Self::released_version_num))
+            .route("/total_num", get(Self::released_version_num))
     }
 }
