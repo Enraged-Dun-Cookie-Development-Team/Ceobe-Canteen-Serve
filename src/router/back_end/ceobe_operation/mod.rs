@@ -28,8 +28,8 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .nest("/video", video_router())
         .nest("/version", version_router())
         .nest("/resource", resource_router())
-        .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
         .nest("/toolLink", tool_link_router())
+        .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
 }
 
 new_auth_level! {
