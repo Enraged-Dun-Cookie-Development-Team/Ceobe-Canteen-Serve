@@ -5,20 +5,13 @@ use checker::{
     prefabs::option_checker::OptionChecker, CheckExtract, QueryCheckExtract,
 };
 use page_size::{request::PageSizeChecker, response::ListWithPageInfo};
-use persistence::{
-    ceobe_operate::{
-        models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
-    },
-    mongodb::MongoDatabaseOperate,
-    operate::operate_trait::OperateTrait,
-};
+use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
     axum::{extract::Query, Json},
     axum_resp_result::{resp_result, MapReject},
     tracing::instrument,
     ValueField,
 };
-use tencent_cloud_server::cloud_manager::TencentCloudManager;
 
 use crate::{
     error::Error,
@@ -65,8 +58,9 @@ impl crate::ReleaseVersionController {
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
     ) -> Result<usize> {
-        let QueryVersionFilter { platform, yanked } = filter.unwrap_or_default();
-        let ret =logic.count(platform, yanked).await?; 
+        let QueryVersionFilter { platform, yanked } =
+            filter.unwrap_or_default();
+        let ret = logic.count(platform, yanked).await?;
         Ok(ret)
     }
 
@@ -76,7 +70,7 @@ impl crate::ReleaseVersionController {
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(release): MapRejecter<Json<ReleaseVersion>>,
     ) -> Result<()> {
-        logic.new(release).await?;
+        logic.create_new(release).await?;
         Ok(())
     }
 }

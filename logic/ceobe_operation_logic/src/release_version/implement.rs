@@ -1,5 +1,8 @@
 use db_ops_prelude::database_operates::operate_trait::OperateTrait;
-use page_size::{request::Paginator, response::{GenerateListWithPageInfo, ListWithPageInfo}};
+use page_size::{
+    request::Paginator,
+    response::{GenerateListWithPageInfo, ListWithPageInfo},
+};
 use persistence::{
     ceobe_operate::{
         models::version::models::{ReleasePlatform, ReleaseVersion},
@@ -47,24 +50,28 @@ impl ReleaseVersionLogic {
             Some(paginator) => {
                 let total = self.count(platform, yanked).await?;
                 Ok(msg.with_page_info(paginator, total as _))
-            },
+            }
             None => Ok(msg.with_plain()),
         }
-        
     }
 
-    pub async fn count(&self,platform: Option<ReleasePlatform>,yanked: bool)->LogicResult<usize>{
-        let count = self.mongodb
-        .ceobe()
-        .operation()
-        .release_version()
-        .retrieve()
-        .total_num(platform, yanked)
-        .await?;
-    Ok(count)
+    pub async fn count(
+        &self, platform: Option<ReleasePlatform>, yanked: bool,
+    ) -> LogicResult<usize> {
+        let count = self
+            .mongodb
+            .ceobe()
+            .operation()
+            .release_version()
+            .retrieve()
+            .total_num(platform, yanked)
+            .await?;
+        Ok(count)
     }
 
-    pub async fn new(&self, release: ReleaseVersion) -> LogicResult<()> {
+    pub async fn create_new(
+        &self, release: ReleaseVersion,
+    ) -> LogicResult<()> {
         self.mongodb
             .ceobe()
             .operation()
@@ -78,10 +85,13 @@ impl ReleaseVersionLogic {
         Ok(())
     }
 
-    pub async fn fetch(&self, version: Option<Version>,platform: ReleasePlatform)->LogicResult<ReleaseVersion>{
+    pub async fn fetch(
+        &self, version: Option<Version>, platform: ReleasePlatform,
+    ) -> LogicResult<ReleaseVersion> {
         let release_info = match version {
             None => {
-                self.mongodb.ceobe()
+                self.mongodb
+                    .ceobe()
                     .operation()
                     .release_version()
                     .retrieve()
@@ -89,7 +99,8 @@ impl ReleaseVersionLogic {
                     .await?
             }
             Some(ver) => {
-                self.mongodb.ceobe()
+                self.mongodb
+                    .ceobe()
                     .operation()
                     .release_version()
                     .retrieve()

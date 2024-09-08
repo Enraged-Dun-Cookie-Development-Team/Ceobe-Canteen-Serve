@@ -84,15 +84,11 @@ where
 
 #[cfg(test)]
 mod test {
-    use checker::{
-        prefabs::num_check::NonZeroUnsignedChecker,
-        Checker,
-    };
+    use checker::{prefabs::num_check::NonZeroUnsignedChecker, Checker};
     use serde_json::json;
 
-    use crate::request::Paginator;
-
     use super::GenerateListWithPageInfo;
+    use crate::request::Paginator;
     #[test]
     fn test_serde_paginator() {
         let a = Some("AAA");
@@ -114,20 +110,23 @@ mod test {
 
         let value = serde_json::to_value(&page).unwrap();
 
-        assert_eq!(value,json!({
-            "list":["AAA"],
-            "page_size":{
-                
-                "page":11,
-                "size":2,
-                "total_count":25,
-                "total_page":13
+        assert_eq!(
+            value,
+            json!({
+                "list":["AAA"],
+                "page_size":{
 
-            }
-        }));
+                    "page":11,
+                    "size":2,
+                    "total_count":25,
+                    "total_page":13
+
+                }
+            })
+        );
 
         let no_page = Some("AAA").with_plain();
         let value = serde_json::to_value(&no_page).unwrap();
-        assert_eq!(value,json!(["AAA"]))
+        assert_eq!(value, json!(["AAA"]))
     }
 }

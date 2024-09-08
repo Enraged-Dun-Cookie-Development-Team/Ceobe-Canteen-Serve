@@ -42,6 +42,8 @@ mod error;
 mod implement;
 pub mod view;
 
-use self::error::{Rejection,LogicResult};
-use self::view::*;
 pub use self::error::Error;
+use self::{
+    error::{LogicResult, Rejection},
+    view::*,
+};

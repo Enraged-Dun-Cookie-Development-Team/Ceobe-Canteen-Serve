@@ -1,3 +1,5 @@
+#![allow(clippy::needless_borrows_for_generic_args)]
+
 pub use config::app_info::MobPushConfigTrait;
 use device_info::DeviceInfo;
 pub use error::MobPushError;

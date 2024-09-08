@@ -1,13 +1,7 @@
 use ceobe_operation_logic::{
     release_version::ReleaseVersionLogic, CeobeOperationLogic,
 };
-use persistence::{
-    ceobe_operate::{
-        models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
-    },
-    mongodb::MongoDatabaseOperate,
-    operate::operate_trait::OperateTrait,
-};
+use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
     axum::extract::Query,
     axum_resp_result::{resp_result, MapReject},

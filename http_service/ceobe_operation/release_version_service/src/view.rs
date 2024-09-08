@@ -4,7 +4,6 @@ use persistence::ceobe_operate::models::version::models::ReleasePlatform;
 use semver::Version;
 use serde::Deserialize;
 use serve_utils::{OptionValueField, OptionViewField, ValueField};
-use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion<
@@ -52,8 +51,6 @@ impl Display for QueryVersionFilter {
         }
     }
 }
-
-
 
 #[cfg(test)]
 mod test {

@@ -8,7 +8,7 @@ use sub_model::SubModel;
 use typed_builder::TypedBuilder;
 
 use crate::{RecordUnit, RecordUnitUpdater, SetRecordUnit};
-
+#[allow(clippy::duplicated_attributes)]
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(
     all(
