@@ -1,7 +1,10 @@
+use ceobe_operation_logic::{
+    release_version::ReleaseVersionLogic, CeobeOperationLogic,
+};
 use checker::{
     prefabs::option_checker::OptionChecker, CheckExtract, QueryCheckExtract,
 };
-use page_size::request::PageSizeChecker;
+use page_size::{request::PageSizeChecker, response::ListWithPageInfo};
 use persistence::{
     ceobe_operate::{
         models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
@@ -20,14 +23,14 @@ use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use crate::{
     error::Error,
     handlers::{MapRejecter, Result},
-    view::{QueryReleaseVersion, QueryVersionFilter, TencentCDNPath},
+    view::{QueryReleaseVersion, QueryVersionFilter},
 };
 
 impl crate::ReleaseVersionController {
     #[resp_result]
-    #[instrument(skip_all,fields(version = %arg_2.0))]
+    #[instrument(skip_all,fields(version = %arg_1.0))]
     pub async fn yank_version(
-        db: MongoDatabaseOperate, tencent_cloud: TencentCloudManager,
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryReleaseVersion {
             version: ValueField(version),
             platform,
@@ -35,36 +38,23 @@ impl crate::ReleaseVersionController {
             Query<QueryReleaseVersion<ValueField<semver::Version>>>,
         >,
     ) -> Result<()> {
-        db.ceobe()
-            .operation()
-            .release_version()
-            .delete()
-            .yank(&platform, &version)
-            .await?;
-        tencent_cloud
-            .purge_urls_cache(&Some(TencentCDNPath::LATEST_VERSION))
-            .await?;
+        logic.yank(&version, &platform).await?;
         Ok(())
     }
 
     #[resp_result]
     #[instrument(skip_all)]
     pub async fn all_version(
-        db: MongoDatabaseOperate,
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
         CheckExtract(paginator): QueryCheckExtract<
             OptionChecker<PageSizeChecker>,
             Error,
         >,
         MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
-    ) -> Result<Vec<ReleaseVersion>> {
-        let filter = filter.unwrap_or_default();
-        let ret = db
-            .ceobe()
-            .operation()
-            .release_version()
-            .retrieve()
-            .all(filter.platform, paginator, filter.yanked)
-            .await?;
+    ) -> Result<ListWithPageInfo<ReleaseVersion>> {
+        let QueryVersionFilter { platform, yanked } =
+            filter.unwrap_or_default();
+        let ret = logic.all(paginator, platform, yanked).await?;
 
         Ok(ret)
     }
@@ -72,35 +62,21 @@ impl crate::ReleaseVersionController {
     #[resp_result]
     #[instrument(skip_all)]
     pub async fn released_version_num(
-        db: MongoDatabaseOperate,
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
     ) -> Result<usize> {
-        let filter = filter.unwrap_or_default();
-        let ret = db
-            .ceobe()
-            .operation()
-            .release_version()
-            .retrieve()
-            .total_num(filter.platform, filter.yanked)
-            .await?;
+        let QueryVersionFilter { platform, yanked } = filter.unwrap_or_default();
+        let ret =logic.count(platform, yanked).await?; 
         Ok(ret)
     }
 
     #[resp_result]
-    #[instrument(skip_all,fields(version = %(arg_2.0.version)))]
+    #[instrument(skip_all,fields(version = %(arg_1.0.version)))]
     pub async fn new_version(
-        db: MongoDatabaseOperate, tencent_cloud: TencentCloudManager,
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(release): MapRejecter<Json<ReleaseVersion>>,
     ) -> Result<()> {
-        db.ceobe()
-            .operation()
-            .release_version()
-            .create()
-            .one(release)
-            .await?;
-        tencent_cloud
-            .purge_urls_cache(&Some(TencentCDNPath::LATEST_VERSION))
-            .await?;
+        logic.new(release).await?;
         Ok(())
     }
 }

@@ -11,15 +11,13 @@ use tencent_cloud_server::error::TcCloudError;
 #[status_err(resp_err)]
 pub enum Error {
     #[error(transparent)]
-    Mongo(#[from] MongoError),
-    #[error(transparent)]
     Query(#[from] QueryRejection),
     #[error(transparent)]
     Json(#[from] JsonRejection),
     #[error(transparent)]
-    TencentCDN(#[from] TcCloudError),
-    #[error(transparent)]
     InvalidPaginator(#[from] NonZeroUnsignedError),
+    #[error(transparent)]
+    Logic(#[from]ceobe_operation_logic::release_version::Error)
 }
 
 impl ControllerError for crate::ReleaseVersionController {

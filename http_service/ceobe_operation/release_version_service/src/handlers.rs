@@ -18,8 +18,12 @@ pub(crate) type Result<T> = HandlerResult<T, crate::ReleaseVersionController>;
 pub(crate) type MapRejecter<T> =
     HandlerMapReject<T, crate::ReleaseVersionController>;
 
-impl<S: Send + Clone + Sync + 'static> ControllerRouter<S, CDN>
-    for crate::ReleaseVersionController
+impl<S> ControllerRouter<S, CDN>for crate::ReleaseVersionController
+where
+    S: Send + Clone + Sync + 'static,
+    PartTencentCloudManagerState: FromRef<S>,
+    RequestClient: FromRef<S>,
+    
 {
     const BASE_URI: &'static str = "/version";
 

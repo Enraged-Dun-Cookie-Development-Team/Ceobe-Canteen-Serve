@@ -1,3 +1,6 @@
+use ceobe_operation_logic::{
+    release_version::ReleaseVersionLogic, CeobeOperationLogic,
+};
 use persistence::{
     ceobe_operate::{
         models::version::models::ReleaseVersion, ToCeobe, ToCeobeOperation,
@@ -18,30 +21,14 @@ impl crate::ReleaseVersionController {
     #[resp_result]
     #[instrument(skip_all,fields(version = %arg_1.0))]
     pub async fn release_version(
-        db: MongoDatabaseOperate,
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryReleaseVersion {
             version: OptionValueField(version),
             platform,
         }): MapRejecter<Query<QueryReleaseVersion>>,
     ) -> Result<ReleaseVersion> {
-        let release_info = match version {
-            None => {
-                db.ceobe()
-                    .operation()
-                    .release_version()
-                    .retrieve()
-                    .latest_by_platform(platform)
-                    .await?
-            }
-            Some(ver) => {
-                db.ceobe()
-                    .operation()
-                    .release_version()
-                    .retrieve()
-                    .by_version_platform(&ver, platform)
-                    .await?
-            }
-        };
+        let release_info = logic.fetch(version, platform).await?;
+
         Ok(release_info)
     }
 }
