@@ -29,6 +29,8 @@ where
     fn with_page_info(
         self, page_size: Paginator, count: u64,
     ) -> ListWithPageInfo<Self::Item>;
+
+    fn with_plain(self)->ListWithPageInfo<Self::Item>;
 }
 
 impl<T> GenerateListWithPageInfo for T
@@ -49,5 +51,9 @@ where
                     .ceil() as u64,
             },
         }
+    }
+
+    fn with_plain(self)->ListWithPageInfo<Self::Item>{
+        todo!()
     }
 }

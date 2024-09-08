@@ -53,12 +53,7 @@ impl Display for QueryVersionFilter {
     }
 }
 
-pub struct TencentCDNPath;
 
-impl TencentCDNPath {
-    pub const LATEST_VERSION: PurgeCachePath =
-        PurgeCachePath::new("/cdn/operate/version/fetch");
-}
 
 #[cfg(test)]
 mod test {
