@@ -53,18 +53,6 @@ impl crate::ReleaseVersionController {
     }
 
     #[resp_result]
-    #[instrument(skip_all)]
-    pub async fn released_version_num(
-        logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
-    ) -> Result<usize> {
-        let QueryVersionFilter { platform, yanked } =
-            filter.unwrap_or_default();
-        let ret = logic.count(platform, yanked).await?;
-        Ok(ret)
-    }
-
-    #[resp_result]
     #[instrument(skip_all,fields(version = %(arg_1.0.version)))]
     pub async fn new_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
