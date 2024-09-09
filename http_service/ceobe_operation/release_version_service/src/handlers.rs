@@ -44,5 +44,11 @@ where
             .route("/yank", post(Self::yank_version))
             .route("/create", post(Self::new_version))
             .route("/all", get(Self::all_version))
+            .nest(
+                "/modify",
+                Router::new()
+                    .route("/description", post(Self::modify_description))
+                    .route("/download_resource", post(Self::modify_resource)),
+            )
     }
 }

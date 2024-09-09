@@ -1,11 +1,15 @@
-use db_ops_prelude::database_operates::operate_trait::OperateTrait;
+use db_ops_prelude::{
+    database_operates::operate_trait::OperateTrait, tracing::log::Log,
+};
 use page_size::{
     request::Paginator,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
 };
 use persistence::{
     ceobe_operate::{
-        models::version::models::{ReleasePlatform, ReleaseVersion},
+        models::version::models::{
+            DownloadSourceItem, ReleasePlatform, ReleaseVersion,
+        },
         ToCeobeOperation,
     },
     ceobe_user::ToCeobe,
@@ -109,5 +113,34 @@ impl ReleaseVersionLogic {
             }
         };
         Ok(release_info)
+    }
+
+    pub async fn update_description(
+        &self, version: Version, platform: ReleasePlatform,
+        description: Option<String>,
+    ) -> LogicResult<()> {
+        self.mongodb
+            .ceobe()
+            .operation()
+            .release_version()
+            .update()
+            .description(version, platform, description)
+            .await?;
+        Ok(())
+    }
+
+    pub async fn update_resource(
+        &self, version: Version, release_platform: ReleasePlatform,
+        resources: Vec<DownloadSourceItem>,
+    ) -> LogicResult<()> {
+        self.mongodb
+            .ceobe()
+            .operation()
+            .release_version()
+            .update()
+            .download_resource(version, release_platform, resources)
+            .await?;
+        
+        Ok(())
     }
 }

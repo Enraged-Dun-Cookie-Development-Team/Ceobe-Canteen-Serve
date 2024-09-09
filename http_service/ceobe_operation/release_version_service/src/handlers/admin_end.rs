@@ -12,11 +12,15 @@ use serve_utils::{
     tracing::instrument,
     ValueField,
 };
+use tracing::log::__private_api::log;
 
 use crate::{
     error::Error,
     handlers::{MapRejecter, Result},
-    view::{QueryReleaseVersion, QueryVersionFilter},
+    view::{
+        QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate,
+        UpdateDescription, UpdateDownloadResource,
+    },
 };
 
 impl crate::ReleaseVersionController {
@@ -59,6 +63,50 @@ impl crate::ReleaseVersionController {
         MapReject(release): MapRejecter<Json<ReleaseVersion>>,
     ) -> Result<()> {
         logic.create_new(release).await?;
+        Ok(())
+    }
+
+    #[resp_result]
+    #[instrument(skip_all,fields(
+        version = %(arg_1.0.version),
+    ))]
+    pub async fn modify_description(
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
+        MapReject(QueryVersionUpdate {
+            version:
+                QueryReleaseVersion {
+                    version: ValueField(version),
+                    platform,
+                },
+            set: UpdateDescription { description },
+        }): MapRejecter<Json<QueryVersionUpdate<UpdateDescription>>>,
+    ) -> Result<()> {
+        logic
+            .update_description(version, platform, description)
+            .await?;
+        Ok(())
+    }
+
+    #[resp_result]
+    #[instrument(skip_all,fields(
+        version = %(arg_1.0.version),
+    ))]
+    pub async fn modify_resource(
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
+        MapReject(QueryVersionUpdate {
+            version:
+                QueryReleaseVersion {
+                    version: ValueField(version),
+                    platform,
+                },
+            set: UpdateDownloadResource { download_source },
+        }): MapRejecter<
+            Json<QueryVersionUpdate<UpdateDownloadResource>>,
+        >,
+    ) -> Result<()> {
+        logic
+            .update_resource(version, platform, download_source)
+            .await?;
         Ok(())
     }
 }

@@ -7,7 +7,7 @@ pub(super) fn generate_set_document<T: Serialize>(
 ) -> super::Result<Document> {
     let doc = doc! {
       key:{
-            "$set" : to_bson(value)?
+            "$set" : to_bson(&value)?
         }
     };
 
