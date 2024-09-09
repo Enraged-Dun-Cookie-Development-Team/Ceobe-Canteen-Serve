@@ -43,15 +43,18 @@ pub fn root_route() -> ServerRoute {
         .nest("/qiniuCdn", qiniu_cdn_router())
         .route(
             "/panic",
-            get(|| async {
-                #[cfg(debug_assertions)]
-                {
-                    panic!("测试 Panic");
+            get(|| {
+                async {
+                    #[cfg(debug_assertions)]
+                    {
+                        let f =||->&str{panic!("测试 Panic")};
+                        f()
+                    }
+                    #[cfg(not(debug_assertions))]
+                    axum_resp_result::RespResult::<_, crate::error::NotAnError>::ok(
+                        "不可以Panic",
+                    )
                 }
-                #[cfg(not(debug_assertions))]
-                axum_resp_result::RespResult::<_, crate::error::NotAnError>::ok(
-                    "不可以Panic",
-                )
             }),
         )
 }

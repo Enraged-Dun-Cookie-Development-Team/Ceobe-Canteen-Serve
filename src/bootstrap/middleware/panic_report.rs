@@ -49,17 +49,14 @@ impl ResponseForPanic for PanicReportHandle {
         &mut self, err: Box<dyn std::any::Any + Send + 'static>,
     ) -> http::Response<Self::ResponseBody> {
         // TODO: 推送panic到频道好像有问题
-        let err = if let Some(msg) = err
+
+        let err = err
             .downcast_ref::<String>()
             .map(String::as_str)
             .or_else(|| err.downcast_ref::<&str>().copied())
-        {
-            msg
-        }
-        else {
-            "Unknown Panic Message"
-        }
-        .to_owned();
+            .unwrap_or("Unknown Panic Message")
+            .to_owned();
+
         error!(unexpectedPanic.detail = err);
         let service = self.0.clone();
         tokio::spawn(async move {

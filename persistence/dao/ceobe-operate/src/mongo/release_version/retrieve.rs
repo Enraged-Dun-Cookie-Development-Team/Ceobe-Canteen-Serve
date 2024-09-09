@@ -9,11 +9,12 @@ use db_ops_prelude::{
 };
 use page_size::request::Paginator;
 use tracing::info;
-use crate::release_version::common::generate_release_version_filter;
+
 use super::{
     models::{ReleaseVersion, Version},
     Error, ReleaseVersionRetrieve, Result,
 };
+use crate::release_version::common::generate_release_version_filter;
 
 impl<'db, Conn> ReleaseVersionRetrieve<'db, Conn>
 where
@@ -26,7 +27,7 @@ where
         info!(release.version = %version, release.platform = ?platform);
         let collection = self.get_collection()?;
 
-        let filter = generate_release_version_filter(version,&platform)?;
+        let filter = generate_release_version_filter(version, &platform)?;
 
         let ret = collection
             .doing(|collection| collection.find_one(filter, None))
@@ -35,7 +36,6 @@ where
                 Error::VersionNotFind(version.to_owned(), platform)
             })?;
         Ok(ret)
-        
     }
 
     /// 根据平台返回最新的版本信息

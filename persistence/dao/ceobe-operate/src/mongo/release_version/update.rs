@@ -3,10 +3,11 @@ use db_ops_prelude::{
     mongo_models::ceobe::operation::version::models::{
         DownloadSourceItem, ReleasePlatform, ReleaseVersion, Version,
     },
-    mongodb::bson::{doc, to_bson, Document},
 };
-use serde::Serialize;
-use crate::release_version::common::{generate_release_version_filter, generate_set_document};
+
+use crate::release_version::common::{
+    generate_release_version_filter, generate_set_document,
+};
 
 impl<'db, C> super::ReleaseVersionUpdate<'db, C>
 where
@@ -46,4 +47,3 @@ where
         Ok(())
     }
 }
-

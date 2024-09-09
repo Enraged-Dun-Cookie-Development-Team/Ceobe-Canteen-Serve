@@ -12,7 +12,6 @@ use serve_utils::{
     tracing::instrument,
     ValueField,
 };
-use tracing::log::__private_api::log;
 
 use crate::{
     error::Error,

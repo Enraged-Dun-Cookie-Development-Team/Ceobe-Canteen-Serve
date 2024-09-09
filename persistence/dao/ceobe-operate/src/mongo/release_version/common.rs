@@ -1,6 +1,10 @@
+use db_ops_prelude::{
+    mongo_models::ceobe::operation::version::models::{
+        ReleasePlatform, Version,
+    },
+    mongodb::bson::{doc, to_bson, Document},
+};
 use serde::Serialize;
-use db_ops_prelude::mongo_models::ceobe::operation::version::models::{ReleasePlatform, Version};
-use db_ops_prelude::mongodb::bson::{doc, Document, to_bson};
 
 pub(super) fn generate_set_document<T: Serialize>(
     key: &str, value: T,

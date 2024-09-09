@@ -1,18 +1,13 @@
-use db_ops_prelude::{
-    database_operates::operate_trait::OperateTrait, tracing::log::Log,
-};
+use db_ops_prelude::database_operates::operate_trait::OperateTrait;
 use page_size::{
     request::Paginator,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
 };
-use persistence::{
-    ceobe_operate::{
-        models::version::models::{
-            DownloadSourceItem, ReleasePlatform, ReleaseVersion,
-        },
-        ToCeobeOperation,
+use persistence::ceobe_operate::{
+    models::version::models::{
+        DownloadSourceItem, ReleasePlatform, ReleaseVersion,
     },
-    ceobe_user::ToCeobe,
+    ToCeobe, ToCeobeOperation,
 };
 use semver::Version;
 
@@ -140,7 +135,7 @@ impl ReleaseVersionLogic {
             .update()
             .download_resource(version, release_platform, resources)
             .await?;
-        
+
         Ok(())
     }
 }
