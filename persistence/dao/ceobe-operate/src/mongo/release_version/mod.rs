@@ -2,6 +2,8 @@ mod create;
 mod delete;
 mod retrieve;
 mod verify;
+mod update;
+mod common;
 
 use db_ops_prelude::{
     mongo_connection::{database_traits::dao_operator, MongoDbError},
