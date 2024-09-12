@@ -18,9 +18,9 @@ use crate::{
     handlers::{MapRejecter, Result},
     view::{
         QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate,
+        UpdatePayload,
     },
 };
-use crate::view::UpdatePayload;
 
 impl crate::ReleaseVersionController {
     #[resp_result]
@@ -77,14 +77,16 @@ impl crate::ReleaseVersionController {
                     version: ValueField(version),
                     platform,
                 },
-            set:UpdatePayload{ description, download_source },
+            set:
+                UpdatePayload {
+                    description,
+                    download_source,
+                },
         }): MapRejecter<Json<QueryVersionUpdate>>,
     ) -> Result<()> {
         logic
-            .update(version, platform, description,download_source)
+            .update(version, platform, description, download_source)
             .await?;
         Ok(())
     }
-
-
 }

@@ -61,13 +61,10 @@ pub struct QueryVersionUpdate {
     pub set: UpdatePayload,
 }
 #[derive(Debug, Deserialize, Default)]
-pub struct UpdatePayload{
+pub struct UpdatePayload {
     pub description: Option<String>,
     pub download_source: Vec<DownloadSourceItem>,
 }
-
-
-
 
 #[cfg(test)]
 mod test {

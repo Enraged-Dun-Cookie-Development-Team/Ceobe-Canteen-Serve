@@ -112,7 +112,7 @@ impl ReleaseVersionLogic {
 
     pub async fn update(
         &self, version: Version, platform: ReleasePlatform,
-        description: Option<String>,resources: Vec<DownloadSourceItem>,
+        description: Option<String>, resources: Vec<DownloadSourceItem>,
     ) -> LogicResult<()> {
         self.mongodb
             .ceobe()

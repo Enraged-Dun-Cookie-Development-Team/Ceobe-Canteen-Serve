@@ -1,12 +1,11 @@
 use persistence::{
     ceobe_operate::{
         video::{self, bv::Bv},
-        ToCeobeOperation,
+        ToCeobe, ToCeobeOperation,
     },
     help_crates::tracing::{event, Level},
     mysql::SqlDatabaseOperate,
 };
-use persistence::ceobe_operate::ToCeobe;
 use request_clients::bili_client::QueryBiliVideo;
 use tencent_cloud_server::{
     cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
