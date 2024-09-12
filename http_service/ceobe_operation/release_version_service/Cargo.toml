@@ -1,0 +1,20 @@
+[package]
+name = "release_version_service"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+persistence = { workspace = true, features = ["model-ceobe-operate", "help-crates"] }
+semver = "1.0.23"
+serve_utils = { version = "0.1.0", path = "../../../libs/serve_utils" }
+serde = { version = "1.0.201", features = ["derive"] }
+thiserror.workspace = true
+status-err.workspace = true
+http.workspace = true
+axum-resp-result.workspace = true
+tracing.workspace = true
+serde_json.workspace = true
+tencent-cloud-server.workspace = true
+checker = { version = "0.1.0", path = "../../../libs/checker" }
+page_size.workspace = true
+ceobe_operation_logic = { version = "0.1.0", path = "../../../logic/ceobe_operation_logic" }

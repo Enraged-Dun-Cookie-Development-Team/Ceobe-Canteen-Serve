@@ -18,6 +18,18 @@ pub struct MongoDbConfig {
     db_name: String,
 }
 
+impl Default for MongoDbConfig {
+    fn default() -> Self {
+        Self {
+            username: "ceobe".into(),
+            password: "114514".into(),
+            host: host_default(),
+            port: port_default(),
+            db_name: "ceobe_canteen".into(),
+        }
+    }
+}
+
 impl DbConnectConfig for MongoDbConfig {
     fn scheme(&self) -> &str { "mongodb" }
 

@@ -53,12 +53,10 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::set_nx`]
-    pub async fn set_if_not_exist<RV>(
+    pub async fn set_if_not_exist(
         &mut self, value: T::Input,
-    ) -> RedisResult<RV>
-    where
-        RV: FromRedisValue,
-    {
+    ) -> RedisResult<()>
+where {
         self.redis.set_nx(&*self.key, value).await
     }
 
@@ -66,12 +64,9 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::set_ex`]
-    pub async fn set_with_expire<RV>(
+    pub async fn set_with_expire(
         &mut self, value: T::Input, duration: Duration,
-    ) -> RedisResult<RV>
-    where
-        RV: FromRedisValue,
-    {
+    ) -> RedisResult<()> {
         self.redis
             .set_ex(&*self.key, value, duration.as_secs() as _)
             .await

@@ -1,3 +1,5 @@
+#![allow(clippy::manual_unwrap_or_default)]
+
 use darling::FromDeriveInput;
 use input_loading::derive_info::StatusErrorDeriveInfo;
 use proc_macro::TokenStream;

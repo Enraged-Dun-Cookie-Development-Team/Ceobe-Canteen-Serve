@@ -24,3 +24,4 @@ pub type MongoDatabaseOperate =
     database_traits::database_operates::DatabaseOperate<MongoConnect>;
 
 pub use mongodb;
+pub use static_vars::{get_mongo_collection, get_mongo_database};

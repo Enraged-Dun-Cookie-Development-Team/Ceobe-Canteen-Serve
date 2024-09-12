@@ -14,7 +14,7 @@ check-obj-macro = { path = "../../macros/check-obj-macro" }
 num-traits = "0.2"
 async-trait = { workspace = true }
 axum = { workspace = true }
-resp-result = { workspace = true }
+axum-resp-result.workspace = true
 serde_json = { workspace = true }
 thiserror = { workspace = true }
 smallvec = { workspace = true }

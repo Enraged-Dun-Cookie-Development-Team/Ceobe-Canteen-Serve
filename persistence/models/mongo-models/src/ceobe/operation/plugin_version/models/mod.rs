@@ -28,7 +28,7 @@ pub struct DownloadResource {
 #[sub_model(all(
     vis = "pub",
     name = "PluginVersionChecked",
-    extra(derive(Debug, TypedBuilder))
+    extra(derive(Debug, TypedBuilder, Clone))
 ))]
 pub struct PluginVersion {
     pub version: Version,

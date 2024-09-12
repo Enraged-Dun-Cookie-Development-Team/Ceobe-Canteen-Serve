@@ -2,6 +2,7 @@ use axum::extract::{
     multipart::{MultipartError, MultipartRejection},
     rejection::{JsonRejection, QueryRejection},
 };
+use axum_resp_result::RespResult;
 use ceobe_operation_logic::error::LogicError;
 use ceobe_qiniu_upload::Error as QiniuError;
 use checker::{
@@ -15,7 +16,6 @@ use persistence::ceobe_operate::{
     },
     tool_link_mongodb::OperateError,
 };
-use resp_result::RespResult;
 use status_err::{ErrPrefix, StatusErr};
 
 use crate::error_generate;

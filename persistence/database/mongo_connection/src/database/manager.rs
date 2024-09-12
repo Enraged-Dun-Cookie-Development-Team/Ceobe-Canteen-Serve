@@ -47,13 +47,13 @@ impl DatabaseManage {
     }
 
     /// 对完成获取的数据库进行数据操作
-    /// - handle 为一个异步操作闭包
-    /// 形如 `async fn function(&Collection<C>)->Result<O, E>`
+    /// - handle 为一个异步操作闭包 形如 `async fn
+    ///   function(&Collection<C>)->Result<O, E>`
     ///
     /// - 这里要求 E 允许 `MongodbError` 可以转换为E
     ///
-    /// - 函数通过泛型参数自动识别并寻找对应的Collection
-    /// 如果Collection 未被创建，就会允许失败
+    /// - 函数通过泛型参数自动识别并寻找对应的Collection 如果Collection
+    ///   未被创建，就会允许失败
     pub async fn doing<F, C, Fut, O>(
         &self, handle: F,
     ) -> Result<O, MongoDbError>

@@ -25,7 +25,7 @@ pub mod ceobe_operate {
     pub use dao_ceobe_operate::*;
 
     pub mod models {
-        pub use mongo_models::ceobe::operation::plugin_version;
+        pub use mongo_models::ceobe::operation::{plugin_version, version};
         pub use sql_models::ceobe_operation::*;
     }
 

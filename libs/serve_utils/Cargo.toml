@@ -1,0 +1,14 @@
+[package]
+name = "serve_utils"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum.workspace = true
+axum-core.workspace = true
+axum-resp-result.workspace = true
+serde.workspace = true
+status-err = { version = "0.1.0", path = "../status-err" }
+thiserror.workspace = true
+tower.workspace = true
+tracing.workspace = true

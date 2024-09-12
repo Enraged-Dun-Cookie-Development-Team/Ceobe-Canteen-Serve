@@ -1,6 +1,8 @@
 pub use announcement::CeobeOperationAnnouncement;
 use axum::Router;
+use release_version_service::ReleaseVersionController;
 pub use resource::CeobeOpResource;
+use serve_utils::{endpoint::AdminEnd, ControllerRouterExt};
 pub use tool_link::CeobeOpToolLink;
 pub use version::CeobeOpVersion;
 pub use video::CeobeOperationVideo;
@@ -29,6 +31,7 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .nest("/version", version_router())
         .nest("/resource", resource_router())
         .nest("/toolLink", tool_link_router())
+        .nest_controller(ReleaseVersionController, AdminEnd)
         .route_layer(AuthorizeLayer::<CeobeOperationAuth>::new())
 }
 

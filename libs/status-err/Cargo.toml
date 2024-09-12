@@ -35,7 +35,7 @@ workspace = true
 [dependencies.range-limit]
 path = "../range-limit"
 
-[dependencies.resp-result]
+[dependencies.axum-resp-result]
 workspace = true
 features = ["extra-error"]
 

@@ -19,6 +19,8 @@ request-clients.workspace = true
 reqwest.workspace = true
 tencent-cloud-server.workspace = true
 serde_qs.workspace = true
+semver = "1.0.23"
+db-ops-prelude.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"

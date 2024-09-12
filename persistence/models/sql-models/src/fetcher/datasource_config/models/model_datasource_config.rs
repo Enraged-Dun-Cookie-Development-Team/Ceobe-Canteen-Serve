@@ -9,6 +9,7 @@ use crate::{
     NaiveDateTime, SoftDelete,
 };
 
+#[allow(clippy::duplicated_attributes)]
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_datasource_config")]
 #[sub_model(

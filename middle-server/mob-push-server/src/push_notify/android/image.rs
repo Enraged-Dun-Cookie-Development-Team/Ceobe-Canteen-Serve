@@ -25,7 +25,7 @@ impl Image {
     ///
     /// - 透传消息不支持
     /// - 小米厂商对图片尺寸有严格要求，不符合要求则不会按照大图样式进行推送，
-    /// 具体要求为：宽高固定为876*324px，格式需为PNG/JPG/JPEG，大小小于1M
+    ///   具体要求为：宽高固定为876*324px，格式需为PNG/JPG/JPEG，大小小于1M
     /// - OPPO厂商大图需要申请权限，否则会报错导致客户端收不到推送消息
     pub fn new_image(image_url: impl Into<String>) -> Self {
         Self::Image(image_url.into())

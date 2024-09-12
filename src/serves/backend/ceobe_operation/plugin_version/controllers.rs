@@ -1,9 +1,10 @@
+use axum_resp_result::resp_try;
 use checker::{CheckExtract, JsonCheckExtract};
 use persistence::{
     ceobe_operate::{plugin_version::Checker, ToCeobe, ToCeobeOperation},
     mongodb::MongoDatabaseOperate,
+    operate::operate_trait::OperateTrait,
 };
-use resp_result::resp_try;
 use tracing::instrument;
 
 use super::error::{CeobeOperationPluginVersionError, PluginRespResult};
@@ -22,7 +23,13 @@ impl CeobeOpVersion {
             db.ceobe()
                 .operation()
                 .plugin_version()
-                .update_new(version)
+                .update_new(version.clone())
+                .await?;
+            db.ceobe()
+                .operation()
+                .release_version()
+                .create()
+                .one(version)
                 .await?;
 
             Ok(())
