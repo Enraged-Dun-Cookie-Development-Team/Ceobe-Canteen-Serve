@@ -110,30 +110,24 @@ impl ReleaseVersionLogic {
         Ok(release_info)
     }
 
-    pub async fn update_description(
+    pub async fn update(
         &self, version: Version, platform: ReleasePlatform,
-        description: Option<String>,
+        description: Option<String>,resources: Vec<DownloadSourceItem>,
     ) -> LogicResult<()> {
         self.mongodb
             .ceobe()
             .operation()
             .release_version()
             .update()
-            .description(version, platform, description)
+            .description(version.clone(), platform, description)
             .await?;
-        Ok(())
-    }
 
-    pub async fn update_resource(
-        &self, version: Version, release_platform: ReleasePlatform,
-        resources: Vec<DownloadSourceItem>,
-    ) -> LogicResult<()> {
         self.mongodb
             .ceobe()
             .operation()
             .release_version()
             .update()
-            .download_resource(version, release_platform, resources)
+            .download_resource(version, platform, resources)
             .await?;
 
         Ok(())

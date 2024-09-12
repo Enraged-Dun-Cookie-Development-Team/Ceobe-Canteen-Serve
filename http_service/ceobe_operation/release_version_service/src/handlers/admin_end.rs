@@ -18,9 +18,9 @@ use crate::{
     handlers::{MapRejecter, Result},
     view::{
         QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate,
-        UpdateDescription, UpdateDownloadResource,
     },
 };
+use crate::view::UpdatePayload;
 
 impl crate::ReleaseVersionController {
     #[resp_result]
@@ -77,35 +77,14 @@ impl crate::ReleaseVersionController {
                     version: ValueField(version),
                     platform,
                 },
-            set: UpdateDescription { description },
-        }): MapRejecter<Json<QueryVersionUpdate<UpdateDescription>>>,
+            set:UpdatePayload{ description, download_source },
+        }): MapRejecter<Json<QueryVersionUpdate>>,
     ) -> Result<()> {
         logic
-            .update_description(version, platform, description)
+            .update(version, platform, description,download_source)
             .await?;
         Ok(())
     }
 
-    #[resp_result]
-    #[instrument(skip_all,fields(
-        version = %(arg_1.0.version),
-    ))]
-    pub async fn modify_resource(
-        logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        MapReject(QueryVersionUpdate {
-            version:
-                QueryReleaseVersion {
-                    version: ValueField(version),
-                    platform,
-                },
-            set: UpdateDownloadResource { download_source },
-        }): MapRejecter<
-            Json<QueryVersionUpdate<UpdateDownloadResource>>,
-        >,
-    ) -> Result<()> {
-        logic
-            .update_resource(version, platform, download_source)
-            .await?;
-        Ok(())
-    }
+
 }

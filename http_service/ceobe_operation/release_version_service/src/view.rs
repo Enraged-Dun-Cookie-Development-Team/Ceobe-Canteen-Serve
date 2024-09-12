@@ -55,27 +55,24 @@ impl Display for QueryVersionFilter {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct QueryVersionUpdate<T> {
+pub struct QueryVersionUpdate {
     pub version: QueryReleaseVersion<ValueField<Version>>,
     #[serde(rename = "$set")]
-    pub set: T,
+    pub set: UpdatePayload,
 }
-
-// TODO: 更新结构讨论
 #[derive(Debug, Deserialize, Default)]
-pub struct UpdateDescription {
-    #[serde(default)]
+pub struct UpdatePayload{
     pub description: Option<String>,
-}
-
-#[derive(Debug, Deserialize, Default)]
-pub struct UpdateDownloadResource {
-    #[serde(default)]
     pub download_source: Vec<DownloadSourceItem>,
 }
 
+
+
+
 #[cfg(test)]
 mod test {
+    use serde::Deserialize;
+    use serde_json::json;
     use serve_utils::SkipField;
 
     use crate::view::QueryReleaseVersion;

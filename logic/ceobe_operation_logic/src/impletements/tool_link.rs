@@ -8,10 +8,10 @@ use persistence::{
         models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
         tool_link_mongodb::models::ToolLink, ToCeobeOperation,
     },
-    ceobe_user::ToCeobe,
     mongodb::{mongodb::bson, MongoDatabaseOperate},
     mysql::SqlDatabaseOperate,
 };
+use persistence::ceobe_operate::ToCeobe;
 use tencent_cloud_server::{
     cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };

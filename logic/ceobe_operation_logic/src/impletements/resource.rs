@@ -1,8 +1,8 @@
 use persistence::{
     ceobe_operate::{resource, ToCeobeOperation},
-    ceobe_user::ToCeobe,
     mysql::SqlDatabaseOperate,
 };
+use persistence::ceobe_operate::ToCeobe;
 use tencent_cloud_server::{
     cdn::purge_urls_cache::PurgeCachePath, cloud_manager::TencentCloudManager,
 };
