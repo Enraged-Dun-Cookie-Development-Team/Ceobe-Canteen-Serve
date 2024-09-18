@@ -19,16 +19,21 @@ pub struct LocalizedTags {
     pub en_us: Vec<String>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all_fields = "SCREAMING_SNAKE_CASE")]
+pub enum Region {
+    ChinaMainland,
+    ExceptChinaMainland,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct Link {
     #[serde(default)]
     pub primary: bool,
-    pub regionality: String,
-    pub service: String,
+    pub regionality: Region,
     pub localized_name: LocalizedLanguage,
     pub url: Url,
 }
-
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
     name = "ToolLinkUpdate",
