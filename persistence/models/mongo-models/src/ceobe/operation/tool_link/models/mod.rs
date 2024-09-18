@@ -20,10 +20,9 @@ pub struct LocalizedTags {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
-pub enum AuthLevel {
-    #[serde(rename = "CHINA_MAINLAND")]
+#[serde(rename_all_fields = "SCREAMING_SNAKE_CASE")]
+pub enum Region {
     ChinaMainland,
-    #[serde(rename = "EXCEPT_CHINA_MAINLAND")]
     ExceptChinaMainland,
 }
 
@@ -31,7 +30,7 @@ pub enum AuthLevel {
 pub struct Link {
     #[serde(default)]
     pub primary: bool,
-    pub regionality: AuthLevel,
+    pub regionality: Region,
     pub localized_name: LocalizedLanguage,
     pub url: Url,
 }
