@@ -15,9 +15,11 @@ pub struct TimeoutDecorator(
 );
 
 impl PrepareDecorator for TimeoutDecorator {
-    type OutFut< Fut, T> = LocalBoxFuture<'static,Result<T,PrepareError>>
-
-        where Fut: Future<Output=Result<T, PrepareError>> +'static,T: 'static;
+    type OutFut<Fut, T>
+        = LocalBoxFuture<'static, Result<T, PrepareError>>
+    where
+        Fut: Future<Output = Result<T, PrepareError>> + 'static,
+        T: 'static;
 
     fn decorator<Fut, T>(
         &self, src: &'static str, in_fut: Fut,
