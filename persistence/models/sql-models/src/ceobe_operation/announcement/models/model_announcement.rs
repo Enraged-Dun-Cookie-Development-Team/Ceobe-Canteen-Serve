@@ -1,4 +1,7 @@
-use sea_orm::{entity::prelude::*, ActiveValue};
+use sea_orm::{entity::prelude::*, ActiveValue, ActiveValue::Set};
+use sql_connection::{
+    database_traits::has_scheme::Has, ext_traits::with_field::FieldOrder,
+};
 
 use crate::{NaiveDateTime, SoftDelete};
 
@@ -30,4 +33,10 @@ impl SoftDelete for ActiveModel {
     fn get_mut(&mut self) -> &mut ActiveValue<NaiveDateTime> {
         &mut self.delete_at
     }
+}
+
+impl Has<FieldOrder> for ActiveModel {
+    type Ty = i32;
+
+    fn set(&mut self, value: Self::Ty) { self.order = Set(value); }
 }
