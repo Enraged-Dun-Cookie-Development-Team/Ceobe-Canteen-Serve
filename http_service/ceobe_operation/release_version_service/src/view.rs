@@ -9,7 +9,9 @@ use serve_utils::{OptionValueField, OptionViewField, ValueField};
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion<
-    Version: OptionViewField<semver::Version> = OptionValueField<semver::Version>,
+    Version: OptionViewField<semver::Version> = OptionValueField<
+        semver::Version,
+    >,
 > {
     #[serde(skip_serializing_if = "OptionViewField::skip_serde")]
     pub version: Version,
