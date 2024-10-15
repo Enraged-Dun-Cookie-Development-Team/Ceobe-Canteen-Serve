@@ -1,6 +1,8 @@
 use std::fmt::{Display, Formatter};
 
-use persistence::ceobe_operate::models::version::models::ReleasePlatform;
+use persistence::ceobe_operate::models::version::models::{
+    DownloadSourceItem, ReleasePlatform,
+};
 use semver::Version;
 use serde::Deserialize;
 use serve_utils::{OptionValueField, OptionViewField, ValueField};
@@ -52,8 +54,22 @@ impl Display for QueryVersionFilter {
     }
 }
 
+#[derive(Debug, Deserialize)]
+pub struct QueryVersionUpdate {
+    pub version: QueryReleaseVersion<ValueField<Version>>,
+    #[serde(rename = "$set")]
+    pub set: UpdatePayload,
+}
+#[derive(Debug, Deserialize, Default)]
+pub struct UpdatePayload {
+    pub description: Option<String>,
+    pub download_source: Vec<DownloadSourceItem>,
+}
+
 #[cfg(test)]
 mod test {
+    use serde::Deserialize;
+    use serde_json::json;
     use serve_utils::SkipField;
 
     use crate::view::QueryReleaseVersion;

@@ -6,9 +6,8 @@ use page_size::{
 use persistence::{
     ceobe_operate::{
         models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
-        tool_link_mongodb::models::ToolLink, ToCeobeOperation,
+        tool_link_mongodb::models::ToolLink, ToCeobe, ToCeobeOperation,
     },
-    ceobe_user::ToCeobe,
     mongodb::{mongodb::bson, MongoDatabaseOperate},
     mysql::SqlDatabaseOperate,
 };

@@ -1,6 +1,8 @@
+mod common;
 mod create;
 mod delete;
 mod retrieve;
+mod update;
 mod verify;
 
 use db_ops_prelude::{

@@ -16,7 +16,10 @@ use serve_utils::{
 use crate::{
     error::Error,
     handlers::{MapRejecter, Result},
-    view::{QueryReleaseVersion, QueryVersionFilter},
+    view::{
+        QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate,
+        UpdatePayload,
+    },
 };
 
 impl crate::ReleaseVersionController {
@@ -59,6 +62,31 @@ impl crate::ReleaseVersionController {
         MapReject(release): MapRejecter<Json<ReleaseVersion>>,
     ) -> Result<()> {
         logic.create_new(release).await?;
+        Ok(())
+    }
+
+    #[resp_result]
+    #[instrument(skip_all,fields(
+        version = %(arg_1.0.version),
+    ))]
+    pub async fn modify_description(
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
+        MapReject(QueryVersionUpdate {
+            version:
+                QueryReleaseVersion {
+                    version: ValueField(version),
+                    platform,
+                },
+            set:
+                UpdatePayload {
+                    description,
+                    download_source,
+                },
+        }): MapRejecter<Json<QueryVersionUpdate>>,
+    ) -> Result<()> {
+        logic
+            .update(version, platform, description, download_source)
+            .await?;
         Ok(())
     }
 }

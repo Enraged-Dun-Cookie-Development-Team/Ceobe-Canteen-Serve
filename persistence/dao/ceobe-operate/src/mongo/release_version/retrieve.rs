@@ -14,6 +14,7 @@ use super::{
     models::{ReleaseVersion, Version},
     Error, ReleaseVersionRetrieve, Result,
 };
+use crate::release_version::common::generate_release_version_filter;
 
 impl<'db, Conn> ReleaseVersionRetrieve<'db, Conn>
 where
@@ -26,10 +27,7 @@ where
         info!(release.version = %version, release.platform = ?platform);
         let collection = self.get_collection()?;
 
-        let filter = doc! {
-            "version":to_bson(version)?,
-            "platform":to_bson(&platform)?
-        };
+        let filter = generate_release_version_filter(version, &platform)?;
 
         let ret = collection
             .doing(|collection| collection.find_one(filter, None))

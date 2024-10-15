@@ -3,12 +3,11 @@ use page_size::{
     request::Paginator,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
 };
-use persistence::{
-    ceobe_operate::{
-        models::version::models::{ReleasePlatform, ReleaseVersion},
-        ToCeobeOperation,
+use persistence::ceobe_operate::{
+    models::version::models::{
+        DownloadSourceItem, ReleasePlatform, ReleaseVersion,
     },
-    ceobe_user::ToCeobe,
+    ToCeobe, ToCeobeOperation,
 };
 use semver::Version;
 
@@ -109,5 +108,28 @@ impl ReleaseVersionLogic {
             }
         };
         Ok(release_info)
+    }
+
+    pub async fn update(
+        &self, version: Version, platform: ReleasePlatform,
+        description: Option<String>, resources: Vec<DownloadSourceItem>,
+    ) -> LogicResult<()> {
+        self.mongodb
+            .ceobe()
+            .operation()
+            .release_version()
+            .update()
+            .description(version.clone(), platform, description)
+            .await?;
+
+        self.mongodb
+            .ceobe()
+            .operation()
+            .release_version()
+            .update()
+            .download_resource(version, platform, resources)
+            .await?;
+
+        Ok(())
     }
 }
