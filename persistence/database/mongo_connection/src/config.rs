@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub trait DbConnectConfig: serde::de::DeserializeOwned {
     fn scheme(&self) -> &str;
     fn username(&self) -> &str;
@@ -5,6 +7,7 @@ pub trait DbConnectConfig: serde::de::DeserializeOwned {
     fn host(&self) -> &str;
     fn port(&self) -> u16;
     fn name(&self) -> &str;
+    fn query(&self) -> &HashMap<String, String>;
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -16,6 +19,8 @@ pub struct MongoDbConfig {
     #[serde(default = "port_default")]
     port: u16,
     db_name: String,
+    #[serde(default = "query_default")]
+    query: HashMap<String, String>,
 }
 
 impl DbConnectConfig for MongoDbConfig {
@@ -30,8 +35,12 @@ impl DbConnectConfig for MongoDbConfig {
     fn port(&self) -> u16 { self.port }
 
     fn name(&self) -> &str { &self.db_name }
+
+    fn query(&self) -> &HashMap<String, String> { &self.query }
 }
 
 fn host_default() -> String { "localhost".into() }
 
 fn port_default() -> u16 { 27017 }
+
+fn query_default() -> HashMap<String, String> { HashMap::new() }

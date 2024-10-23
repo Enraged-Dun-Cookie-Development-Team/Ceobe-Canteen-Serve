@@ -1,5 +1,6 @@
 use mongo_migrate_util::MigratorTrait;
 use mongodb::{options::ClientOptions, Database};
+use url::Url;
 
 use crate::{
     database::builder::DatabaseBuilder, static_vars::set_mongo_database,
@@ -52,16 +53,83 @@ async fn init_mongodb(url: &str) -> Result<MongoClient, MongoErr> {
 }
 
 fn format_url(cfg: &impl DbConnectConfig) -> String {
-    let s = format!(
-        "{}://{}:{}@{}:{}/{}?authSource=admin",
+    let mut s = Url::parse(&format!(
+        "{}://{}:{}@{}:{}/{}",
         cfg.scheme(),
         cfg.username(),
         urlencoding::encode(cfg.password()),
         cfg.host(),
         cfg.port(),
         cfg.name()
-    );
+    ))
+    .expect("MongoDb 连接URL生成异常");
 
-    tracing::info!(mongodb.URL = s);
-    s
+    // 添加查询参数
+    for (key, value) in cfg.query() {
+        s.query_pairs_mut().append_pair(key, value);
+    }
+
+    tracing::info!(mongodb.URL = s.to_string());
+    s.to_string()
+}
+
+#[cfg(test)]
+mod tests {
+
+    use std::collections::HashMap;
+
+    use super::*;
+
+    #[derive(Debug, serde::Deserialize)]
+    pub struct MongoDbConfig {
+        username: String,
+        password: String,
+        #[serde(default = "host_default")]
+        host: String,
+        #[serde(default = "port_default")]
+        port: u16,
+        db_name: String,
+        query: HashMap<String, String>,
+    }
+
+    impl DbConnectConfig for MongoDbConfig {
+        fn scheme(&self) -> &str { "mongodb" }
+
+        fn username(&self) -> &str { &self.username }
+
+        fn password(&self) -> &str { &self.password }
+
+        fn host(&self) -> &str { &self.host }
+
+        fn port(&self) -> u16 { self.port }
+
+        fn name(&self) -> &str { &self.db_name }
+
+        fn query(&self) -> &HashMap<String, String> { &self.query }
+    }
+
+    fn host_default() -> String { "localhost".into() }
+
+    fn port_default() -> u16 { 27017 }
+
+    #[test]
+    fn test_format_url() {
+        let mut query = HashMap::new();
+        query.insert("authSource".to_string(), "admin".to_string());
+        query.insert("directConnection".to_string(), "true".to_string());
+
+        let config = MongoDbConfig {
+            username: "user".to_string(),
+            password: "password".to_string(),
+            host: "localhost".to_string(),
+            port: 27017,
+            db_name: "mydb".to_string(),
+            query,
+        };
+
+        let expected_url = "mongodb://user:password@localhost:27017/mydb?\
+                            authSource=admin&directConnection=true";
+        let result = format_url(&config);
+        assert_eq!(result, expected_url);
+    }
 }
