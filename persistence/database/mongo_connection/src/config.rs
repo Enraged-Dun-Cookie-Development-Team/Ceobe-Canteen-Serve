@@ -19,6 +19,7 @@ pub struct MongoDbConfig {
     #[serde(default = "port_default")]
     port: u16,
     db_name: String,
+    #[serde(default = "query_default")]
     query: HashMap<String, String>,
 }
 
@@ -41,3 +42,5 @@ impl DbConnectConfig for MongoDbConfig {
 fn host_default() -> String { "localhost".into() }
 
 fn port_default() -> u16 { 27017 }
+
+fn query_default() -> HashMap<String, String> { HashMap::new() }
