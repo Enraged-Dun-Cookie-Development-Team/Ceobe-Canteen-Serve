@@ -1,6 +1,6 @@
 use mongo_migrate_util::MigratorTrait;
 use mongodb::{options::ClientOptions, Database};
-use url::{ParseError, Url};
+use url::Url;
 
 use crate::{
     database::builder::DatabaseBuilder, static_vars::set_mongo_database,
@@ -76,8 +76,9 @@ fn format_url(cfg: &impl DbConnectConfig) -> String {
 #[cfg(test)]
 mod tests {
 
-    use super::*;
     use std::collections::HashMap;
+
+    use super::*;
 
     #[derive(Debug, serde::Deserialize)]
     pub struct MongoDbConfig {
@@ -92,42 +93,24 @@ mod tests {
     }
 
     impl DbConnectConfig for MongoDbConfig {
-        fn scheme(&self) -> &str {
-            "mongodb"
-        }
+        fn scheme(&self) -> &str { "mongodb" }
 
-        fn username(&self) -> &str {
-            &self.username
-        }
+        fn username(&self) -> &str { &self.username }
 
-        fn password(&self) -> &str {
-            &self.password
-        }
+        fn password(&self) -> &str { &self.password }
 
-        fn host(&self) -> &str {
-            &self.host
-        }
+        fn host(&self) -> &str { &self.host }
 
-        fn port(&self) -> u16 {
-            self.port
-        }
+        fn port(&self) -> u16 { self.port }
 
-        fn name(&self) -> &str {
-            &self.db_name
-        }
+        fn name(&self) -> &str { &self.db_name }
 
-        fn query(&self) -> &HashMap<String, String> {
-            &self.query
-        }
+        fn query(&self) -> &HashMap<String, String> { &self.query }
     }
 
-    fn host_default() -> String {
-        "localhost".into()
-    }
+    fn host_default() -> String { "localhost".into() }
 
-    fn port_default() -> u16 {
-        27017
-    }
+    fn port_default() -> u16 { 27017 }
 
     #[test]
     fn test_format_url() {
@@ -144,8 +127,8 @@ mod tests {
             query,
         };
 
-        let expected_url =
-            "mongodb://user:password@localhost:27017/mydb?authSource=admin&directConnection=true";
+        let expected_url = "mongodb://user:password@localhost:27017/mydb?\
+                            authSource=admin&directConnection=true";
         let result = format_url(&config);
         assert_eq!(result, expected_url);
     }

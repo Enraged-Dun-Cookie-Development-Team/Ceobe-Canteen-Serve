@@ -36,7 +36,7 @@ impl DbConnectConfig for MongoDbConfig {
 
     fn name(&self) -> &str { &self.db_name }
 
-    fn query(&self) -> &HashMap<String, String> { &self.query}
+    fn query(&self) -> &HashMap<String, String> { &self.query }
 }
 
 fn host_default() -> String { "localhost".into() }
