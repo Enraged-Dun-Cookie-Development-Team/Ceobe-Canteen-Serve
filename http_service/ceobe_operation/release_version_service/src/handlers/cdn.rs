@@ -6,7 +6,7 @@ use serve_utils::{
     axum::extract::Query,
     axum_resp_result::{resp_result, MapReject},
     tracing::instrument,
-    OptionValueField,
+    OptionField,
 };
 
 use super::{MapRejecter, Result};
@@ -17,7 +17,7 @@ impl crate::ReleaseVersionController {
     pub async fn release_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryReleaseVersion {
-            version: OptionValueField(version),
+            version: OptionField(version),
             platform,
         }): MapRejecter<Query<QueryReleaseVersion>>,
     ) -> Result<ReleaseVersion> {

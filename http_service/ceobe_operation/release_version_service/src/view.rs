@@ -5,11 +5,11 @@ use persistence::ceobe_operate::models::version::models::{
 };
 use semver::Version;
 use serde::Deserialize;
-use serve_utils::{OptionValueField, OptionViewField, ValueField};
+use serve_utils::{OptionField, OptionViewField, ValueField};
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion<
-    Version: OptionViewField<semver::Version> = OptionValueField<
+    Version: OptionViewField<semver::Version> = OptionField<
         semver::Version,
     >,
 > {
@@ -24,7 +24,7 @@ impl Display for QueryReleaseVersion<ValueField<Version>> {
     }
 }
 
-impl Display for QueryReleaseVersion<OptionValueField<Version>> {
+impl Display for QueryReleaseVersion<OptionField<Version>> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match &self.version.0 {
             None => {

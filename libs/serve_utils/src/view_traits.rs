@@ -5,7 +5,7 @@ use crate::view_traits::_private::SealTrait;
 /// 用于view中的可选field
 ///
 /// 由于view可能存面向不同端有细微差别，
-/// 如果由于少量的字段区分重复整个view定义会带来大量代码冗余。
+/// 但是如果由于少量的字段区分重复整个view定义会带来大量代码冗余。
 /// 因此，提出了该trait
 ///
 /// ## Example
@@ -110,9 +110,9 @@ impl<T> OptionViewField<T> for ValueField<T> {
 }
 
 #[derive(Debug, Clone)]
-pub struct OptionValueField<T>(pub Option<T>);
+pub struct OptionField<T>(pub Option<T>);
 
-impl<'de, T: Deserialize<'de>> Deserialize<'de> for OptionValueField<T> {
+impl<'de, T: Deserialize<'de>> Deserialize<'de> for OptionField<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
@@ -123,7 +123,7 @@ impl<'de, T: Deserialize<'de>> Deserialize<'de> for OptionValueField<T> {
     }
 }
 
-impl<T: Serialize> Serialize for OptionValueField<T> {
+impl<T: Serialize> Serialize for OptionField<T> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -132,8 +132,8 @@ impl<T: Serialize> Serialize for OptionValueField<T> {
     }
 }
 
-impl<T> OptionViewField<T> for OptionValueField<T> {
+impl<T> OptionViewField<T> for OptionField<T> {
     fn skip_serde(&self) -> bool { self.0.is_none() }
 }
 
-impl<T> SealTrait for OptionValueField<T> {}
+impl<T> SealTrait for OptionField<T> {}
