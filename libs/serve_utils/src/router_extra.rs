@@ -36,10 +36,8 @@ pub struct ControllerRouter<S, E> {
     __phantom: PhantomData<E>,
 }
 
-impl<S, E> Into<Router<S>> for ControllerRouter<S, E> {
-    fn into(self) -> Router<S> {
-        self.router
-    }
+impl<S, E> From<ControllerRouter<S, E>> for Router<S> {
+    fn from(val: ControllerRouter<S, E>) -> Self { val.router }
 }
 
 impl<S, E> ControllerRouter<S, E>

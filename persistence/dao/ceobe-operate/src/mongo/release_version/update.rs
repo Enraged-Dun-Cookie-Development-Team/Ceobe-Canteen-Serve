@@ -6,9 +6,8 @@ use db_ops_prelude::{
     mongodb::bson::{doc, to_bson},
 };
 
-use crate::release_version::common::generate_release_version_filter;
-
 use super::Result;
+use crate::release_version::common::generate_release_version_filter;
 
 impl<'db, C> super::ReleaseVersionUpdate<'db, C>
 where

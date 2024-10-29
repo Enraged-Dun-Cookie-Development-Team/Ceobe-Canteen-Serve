@@ -1,4 +1,4 @@
-pub trait EndpointType:Default {}
+pub trait EndpointType: Default {}
 
 #[derive(Default)]
 pub struct UserEnd;

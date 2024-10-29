@@ -9,9 +9,7 @@ use serve_utils::{OptionField, OptionViewField, ValueField};
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion<
-    Version: OptionViewField<semver::Version> = OptionField<
-        semver::Version,
-    >,
+    Version: OptionViewField<semver::Version> = OptionField<semver::Version>,
 > {
     #[serde(skip_serializing_if = "OptionViewField::skip_serde")]
     pub version: Version,
@@ -70,8 +68,7 @@ pub struct UpdatePayload {
 
 #[cfg(test)]
 mod test {
-    
-    
+
     use serve_utils::SkipField;
 
     use crate::view::QueryReleaseVersion;
