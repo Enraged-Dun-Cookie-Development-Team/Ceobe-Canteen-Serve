@@ -6,11 +6,11 @@ mod view_traits;
 pub use axum;
 pub use axum_resp_result;
 pub use controller_trait::{
-    ControllerError, ControllerRouter, HandlerMapReject, HandlerResult,
-    LayeredController,
+    ControllerError, ControllerRoute, HandlerMapReject, HandlerResult,
+    LayeredController
 };
 pub use endpoint_type::EndpointType;
-pub use router_extra::ControllerRouterExt;
+pub use router_extra::{ControllerRouterExt,ControllerRouter};
 pub use status_err;
 pub use thiserror::Error as ThisError;
 pub use tracing;

@@ -7,7 +7,7 @@ use tower::{Layer, Service};
 
 use crate::EndpointType;
 
-pub trait ControllerRouter<S, E>
+pub trait ControllerRoute<S, E>
 where
     S: Clone + Send + Sync + 'static,
     E: EndpointType,
@@ -25,7 +25,7 @@ where
         <L::Service as Service<Request>>::Error: Into<Infallible> + 'static,
         <L::Service as Service<Request>>::Future: Send + 'static,
     {
-        LayeredController::new(ControllerRouter::route(self).layer(layer))
+        LayeredController::new(ControllerRoute::route(self).layer(layer))
     }
 }
 
@@ -43,13 +43,13 @@ impl<C, S> LayeredController<C, S> {
     }
 }
 
-impl<S, C, E> ControllerRouter<S, E> for LayeredController<C, S>
+impl<S, C, E> ControllerRoute<S, E> for LayeredController<C, S>
 where
     S: Clone + Send + Sync + 'static,
-    C: ControllerRouter<S, E>,
+    C: ControllerRoute<S, E>,
     E: EndpointType,
 {
-    const BASE_URI: &'static str = <C as ControllerRouter<S, E>>::BASE_URI;
+    const BASE_URI: &'static str = <C as ControllerRoute<S, E>>::BASE_URI;
 
     fn route(self) -> Router<S> { self.inner }
 }

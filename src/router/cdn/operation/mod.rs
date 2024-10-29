@@ -1,8 +1,7 @@
 pub use announcement::CdnOperationAnnouncementFrontend;
-use axum::Router;
 use release_version_service::ReleaseVersionController;
 pub use resource::CdnOperationResourceFrontend;
-use serve_utils::{endpoint::CDN, ControllerRouterExt};
+use serve_utils::{endpoint::CDN, ControllerRouter};
 pub use tool_link::CdnOperateToolLinkFrontend;
 pub use video::CdnOperationVideoFrontend;
 
@@ -18,10 +17,11 @@ mod tool_link;
 mod video;
 
 pub(super) fn operation_router() -> ServerRoute {
-    Router::new()
+    ControllerRouter::new(CDN)
         .nest("/video", video_router())
         .nest("/announcement", announcement_router())
         .nest("/resource", resource_router())
-        .nest_controller(ReleaseVersionController, CDN)
+        .nest_controller(ReleaseVersionController)
         .nest("/toolLink", tool_list_router())
+        .into()
 }

@@ -5,7 +5,7 @@ use serve_utils::{
         Router,
     },
     endpoint::{AdminEnd, CDN},
-    ControllerRouter, HandlerMapReject, HandlerResult,
+    ControllerRoute, HandlerMapReject, HandlerResult,
 };
 use tencent_cloud_server::axum_starter::{
     PartTencentCloudManagerState, RequestClient,
@@ -18,7 +18,7 @@ pub(crate) type Result<T> = HandlerResult<T, crate::ReleaseVersionController>;
 pub(crate) type MapRejecter<T> =
     HandlerMapReject<T, crate::ReleaseVersionController>;
 
-impl<S> ControllerRouter<S, CDN> for crate::ReleaseVersionController
+impl<S> ControllerRoute<S, CDN> for crate::ReleaseVersionController
 where
     S: Send + Clone + Sync + 'static,
     PartTencentCloudManagerState: FromRef<S>,
@@ -31,13 +31,13 @@ where
     }
 }
 
-impl<S> ControllerRouter<S, AdminEnd> for crate::ReleaseVersionController
+impl<S> ControllerRoute<S, AdminEnd> for crate::ReleaseVersionController
 where
     S: Send + Clone + Sync + 'static,
     PartTencentCloudManagerState: FromRef<S>,
     RequestClient: FromRef<S>,
 {
-    const BASE_URI: &'static str = "/release_version";
+    const BASE_URI: &'static str = "/releaseVersion";
 
     fn route(self) -> Router<S> {
         Router::new()
