@@ -31,7 +31,7 @@ pub(super) async fn suitable_version(
                 filter,
                 FindOneOptions::builder()
                     .sort(doc! {"$natural": -1i32})
-                    .projection(doc! {"version":1i32})
+                    .projection(doc! {"version": 1i32})
                     .build(),
             )
         })

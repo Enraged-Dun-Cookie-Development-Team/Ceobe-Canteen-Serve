@@ -21,7 +21,7 @@ impl ReleaseVersionLogic {
             .ceobe()
             .operation()
             .release_version()
-            .delete()
+            .update()
             .yank(platform, version)
             .await?;
 
@@ -119,15 +119,12 @@ impl ReleaseVersionLogic {
             .operation()
             .release_version()
             .update()
-            .description(version.clone(), platform, description)
-            .await?;
-
-        self.mongodb
-            .ceobe()
-            .operation()
-            .release_version()
-            .update()
-            .download_resource(version, platform, resources)
+            .description_and_resource(
+                version.clone(),
+                platform,
+                description,
+                resources,
+            )
             .await?;
 
         Ok(())

@@ -3,25 +3,31 @@ use db_ops_prelude::{
     mongo_models::ceobe::operation::version::models::{
         DownloadSourceItem, ReleasePlatform, ReleaseVersion, Version,
     },
+    mongodb::bson::{doc, to_bson},
 };
 
-use crate::release_version::common::{
-    generate_release_version_filter, generate_set_document,
-};
+use crate::release_version::common::generate_release_version_filter;
+
+use super::Result;
 
 impl<'db, C> super::ReleaseVersionUpdate<'db, C>
 where
     C: MongoDbCollectionTrait<'db, ReleaseVersion>,
 {
-    pub async fn description(
+    pub async fn description_and_resource(
         &'db self, version: Version, platform: ReleasePlatform,
         new_description: impl Into<Option<String>>,
-    ) -> super::Result<()> {
+        resource: Vec<DownloadSourceItem>,
+    ) -> Result<()> {
         let collection = self.get_collection()?;
 
         let filter = generate_release_version_filter(&version, &platform)?;
-        let update =
-            generate_set_document("description", new_description.into())?;
+        let update = doc! {
+            "$set":{
+                "description": to_bson(&new_description.into())?,
+                "download_source":to_bson(&resource)?
+            }
+        };
 
         collection
             .doing(|collection| collection.update_one(filter, update, None))
@@ -30,18 +36,28 @@ where
         Ok(())
     }
 
-    pub async fn download_resource(
-        &'db self, version: Version, release_platform: ReleasePlatform,
-        resource: Vec<DownloadSourceItem>,
-    ) -> super::Result<()> {
-        let collect = self.get_collection()?;
-
-        let filter =
-            generate_release_version_filter(&version, &release_platform)?;
-        let update = generate_set_document("download_source", resource)?;
-
-        collect
-            .doing(|collect| collect.update_one(filter, update, None))
+    /// 撤回一个已经发布的版本
+    pub async fn yank(
+        &'db self, platform: &ReleasePlatform, version: &Version,
+    ) -> Result<()> {
+        let collection = self.get_collection()?;
+        let filter = doc! {
+            "platform": to_bson(platform)?,
+            "version": to_bson(version)?,
+            "yanked":false
+        };
+        collection
+            .doing(|collection| {
+                collection.find_one_and_update(
+                    filter,
+                    doc! {
+                        "$set":{
+                            "yanked": true
+                        }
+                    },
+                    None,
+                )
+            })
             .await?;
 
         Ok(())
