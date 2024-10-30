@@ -14,7 +14,7 @@ use crate::view::QueryReleaseVersion;
 impl crate::ReleaseVersionController {
     #[resp_result]
     #[instrument(skip_all,fields(version = %arg_1.0))]
-    pub async fn release_version(
+    pub async fn fetch_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryReleaseVersion {
             version: OptionField(version),
