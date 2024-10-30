@@ -56,8 +56,9 @@ impl Display for QueryVersionFilter {
 
 #[derive(Debug, Deserialize)]
 pub struct QueryVersionUpdate {
+    #[serde(flatten)]
     pub version: QueryReleaseVersion<ValueField<Version>>,
-    #[serde(rename = "$set")]
+    #[serde(flatten)]
     pub set: UpdatePayload,
 }
 #[derive(Debug, Deserialize, Default)]
