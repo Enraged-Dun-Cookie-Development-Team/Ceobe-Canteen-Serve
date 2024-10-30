@@ -54,7 +54,7 @@ impl ReleaseVersionLogic {
         }
     }
 
-    pub async fn count(
+    async fn count(
         &self, platform: Option<ReleasePlatform>, yanked: bool,
     ) -> LogicResult<usize> {
         let count = self
