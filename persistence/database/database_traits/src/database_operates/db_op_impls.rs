@@ -32,10 +32,12 @@ where
     C: GetDatabaseTransaction,
 {
     type Error = C::Error;
-    type Transaction<'s> = C::Transaction<'s>
+    type Transaction<'s>
+        = C::Transaction<'s>
     where
         Self: 's;
-    type TransactionFuture<'s> = C::TransactionFuture<'s>
+    type TransactionFuture<'s>
+        = C::TransactionFuture<'s>
     where
         Self: 's;
 
@@ -48,7 +50,8 @@ impl<C, Collect> GetDatabaseCollection<Collect> for DatabaseOperate<C>
 where
     C: GetDatabaseCollection<Collect>,
 {
-    type CollectGuard<'s> =C::CollectGuard<'s>
+    type CollectGuard<'s>
+        = C::CollectGuard<'s>
     where
         Self: 's;
     type Error = C::Error;

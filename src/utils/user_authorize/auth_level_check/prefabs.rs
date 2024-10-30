@@ -35,13 +35,13 @@ impl AuthLevelVerify for Architect {
 }
 
 #[derive(Clone)]
-pub struct Outsourcing;
+pub struct Porter;
 
-impl AuthLevelVerify for Outsourcing {
-    fn auth_name() -> &'static str { "Outsourcing" }
+impl AuthLevelVerify for Porter {
+    fn auth_name() -> &'static str { "Porter" }
 
     fn verify(token_auth: &AuthLevel) -> bool {
-        matches!(token_auth, &AuthLevel::Outsourcing)
+        matches!(token_auth, &AuthLevel::Porter)
     }
 }
 
