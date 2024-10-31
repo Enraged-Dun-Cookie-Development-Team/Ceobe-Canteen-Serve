@@ -41,7 +41,7 @@ where
 
     fn route(self) -> Router<S> {
         Router::new()
-            .route("/yank", post(Self::yank_version))
+            .route("/markDelete", post(Self::make_delete_version))
             .route("/create", post(Self::new_version))
             .route("/all", get(Self::all_version))
             .route("/modify", post(Self::modify_description))

@@ -31,6 +31,7 @@ impl Default for MongoDbConfig {
             host: host_default(),
             port: port_default(),
             db_name: "ceobe_canteen".into(),
+            query: Default::default(),
         }
     }
 }

@@ -36,14 +36,14 @@ where
     }
 
     /// 撤回一个已经发布的版本
-    pub async fn yank(
+    pub async fn mark_deleted(
         &'db self, platform: &ReleasePlatform, version: &Version,
     ) -> Result<()> {
         let collection = self.get_collection()?;
         let filter = doc! {
             "platform": to_bson(platform)?,
             "version": to_bson(version)?,
-            "yanked":false
+            "deleted":false
         };
         collection
             .doing(|collection| {
@@ -51,7 +51,7 @@ where
                     filter,
                     doc! {
                         "$set":{
-                            "yanked": true
+                            "deleted": true
                         }
                     },
                     None,

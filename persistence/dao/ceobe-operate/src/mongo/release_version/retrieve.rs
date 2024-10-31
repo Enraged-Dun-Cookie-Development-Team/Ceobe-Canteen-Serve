@@ -47,7 +47,7 @@ where
         let collection = self.get_collection()?;
         let filter = doc! {
             "platform":to_bson(&platform)?,
-            "yanked": false
+            "deleted": false
         };
         let sort = doc! {
             "$natural": -1i32
@@ -68,10 +68,10 @@ where
 
     pub async fn all(
         &'db self, platform: Option<ReleasePlatform>,
-        paginate: impl Into<Option<Paginator>>, yanked: bool,
+        paginate: impl Into<Option<Paginator>>, deleted: bool,
     ) -> Result<Vec<ReleaseVersion>> {
         let collection = self.get_collection()?;
-        let filter = generate_platform_filter_document(platform, yanked)?;
+        let filter = generate_platform_filter_document(platform, deleted)?;
         let sort = doc! {
             "$natural": -1i32
         };
@@ -99,10 +99,10 @@ where
     }
 
     pub async fn total_num(
-        &'db self, platform: Option<ReleasePlatform>, yanked: bool,
+        &'db self, platform: Option<ReleasePlatform>, deleted: bool,
     ) -> Result<usize> {
         let collection = self.get_collection()?;
-        let filter = generate_platform_filter_document(platform, yanked)?;
+        let filter = generate_platform_filter_document(platform, deleted)?;
 
         let ret = collection
             .doing(|collection| collection.count_documents(filter, None))
@@ -113,16 +113,16 @@ where
 }
 
 fn generate_platform_filter_document(
-    platform: Option<ReleasePlatform>, yanked: bool,
+    platform: Option<ReleasePlatform>, deleted: bool,
 ) -> Result<Document> {
     Ok(match platform {
         None => {
-            doc! {"yanked": yanked}
+            doc! {"deleted": deleted}
         }
         Some(plat) => {
             doc! {
                 "platform":to_bson(&plat)?,
-                "yanked": yanked
+                "deleted": deleted
             }
         }
     })

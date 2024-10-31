@@ -38,17 +38,17 @@ impl Display for QueryReleaseVersion<OptionField<Version>> {
 #[derive(Debug, Deserialize, Default)]
 pub struct QueryVersionFilter {
     pub platform: Option<ReleasePlatform>,
-    pub yanked: bool,
+    pub deleted: bool,
 }
 
 impl Display for QueryVersionFilter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match &self.platform {
             None => {
-                write!(f, "{{yanked: {} }}", self.yanked)
+                write!(f, "{{deleted: {} }}", self.deleted)
             }
             Some(plat) => {
-                write!(f, "{{yanked: {}, platform: {}}}", self.yanked, plat)
+                write!(f, "{{deleted: {}, platform: {}}}", self.deleted, plat)
             }
         }
     }

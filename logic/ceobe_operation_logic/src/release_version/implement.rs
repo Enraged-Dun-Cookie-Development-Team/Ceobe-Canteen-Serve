@@ -14,7 +14,7 @@ use semver::Version;
 use super::{LogicResult, ReleaseVersionLogic, TencentCDNPath};
 
 impl ReleaseVersionLogic {
-    pub async fn yank(
+    pub async fn mark_deleted(
         &self, version: &Version, platform: &ReleasePlatform,
     ) -> LogicResult<()> {
         self.mongodb
@@ -22,7 +22,7 @@ impl ReleaseVersionLogic {
             .operation()
             .release_version()
             .update()
-            .yank(platform, version)
+            .mark_deleted(platform, version)
             .await?;
 
         self.tencent_cloud
@@ -34,7 +34,7 @@ impl ReleaseVersionLogic {
 
     pub async fn all(
         &self, paginator: Option<Paginator>,
-        platform: Option<ReleasePlatform>, yanked: bool,
+        platform: Option<ReleasePlatform>, deleted: bool,
     ) -> LogicResult<ListWithPageInfo<ReleaseVersion>> {
         let msg = self
             .mongodb
@@ -42,12 +42,12 @@ impl ReleaseVersionLogic {
             .operation()
             .release_version()
             .retrieve()
-            .all(platform, paginator, yanked)
+            .all(platform, paginator, deleted)
             .await?;
 
         match paginator {
             Some(paginator) => {
-                let total = self.count(platform, yanked).await?;
+                let total = self.count(platform, deleted).await?;
                 Ok(msg.with_page_info(paginator, total as _))
             }
             None => Ok(msg.with_plain()),
@@ -55,7 +55,7 @@ impl ReleaseVersionLogic {
     }
 
     async fn count(
-        &self, platform: Option<ReleasePlatform>, yanked: bool,
+        &self, platform: Option<ReleasePlatform>, deleted: bool,
     ) -> LogicResult<usize> {
         let count = self
             .mongodb
@@ -63,7 +63,7 @@ impl ReleaseVersionLogic {
             .operation()
             .release_version()
             .retrieve()
-            .total_num(platform, yanked)
+            .total_num(platform, deleted)
             .await?;
         Ok(count)
     }

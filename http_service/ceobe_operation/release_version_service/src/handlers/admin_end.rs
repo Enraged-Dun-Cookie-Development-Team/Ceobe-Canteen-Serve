@@ -25,7 +25,7 @@ use crate::{
 impl crate::ReleaseVersionController {
     #[resp_result]
     #[instrument(skip_all,fields(version = %arg_1.0))]
-    pub async fn yank_version(
+    pub async fn make_delete_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryReleaseVersion {
             version: ValueField(version),
@@ -34,7 +34,7 @@ impl crate::ReleaseVersionController {
             Query<QueryReleaseVersion<ValueField<semver::Version>>>,
         >,
     ) -> Result<()> {
-        logic.yank(&version, &platform).await?;
+        logic.mark_deleted(&version, &platform).await?;
         Ok(())
     }
 
@@ -48,9 +48,9 @@ impl crate::ReleaseVersionController {
         >,
         MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
     ) -> Result<ListWithPageInfo<ReleaseVersion>> {
-        let QueryVersionFilter { platform, yanked } =
+        let QueryVersionFilter { platform, deleted } =
             filter.unwrap_or_default();
-        let ret = logic.all(paginator, platform, yanked).await?;
+        let ret = logic.all(paginator, platform, deleted).await?;
 
         Ok(ret)
     }
