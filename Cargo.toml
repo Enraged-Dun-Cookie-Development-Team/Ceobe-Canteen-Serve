@@ -26,11 +26,16 @@ debug = 1
 members = [
     "libs/*",
     "persistence/persistence",
+    "persistence/dao/*",
+    "persistence/database/*",
+    "persistence/migrate/*",
+    "persistence/models/*",
     "./macros/*",
     "./middle-server/*",
     "./logic/*",
     "./global/*",
     "./service/*",
+    "http_service/ceobe_operation/*",
 ]
 
 [workspace.dependencies]
@@ -48,7 +53,8 @@ once_cell = "1"
 reqwest = { version = "0.12", default-features = false, features = [
     "rustls-tls",
 ] }
-resp-result = { version = "0.7", package = "axum-resp-result"}
+axum-resp-result = { version = "0.7.1"}
+
 sea-orm = { version = "0.12", default-features = false, features = [
     "sqlx-mysql",
     "runtime-tokio-rustls",
@@ -103,6 +109,10 @@ hex = "0.4"
 serde_qs = "0.13.0"
 request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 mime = "0.3.16"
+serve-utils = {version = "0.1.0", path="libs/serve_utils"}
+tower = { version = "0.4", features = ["limit"] }
+status-err={path = "./libs/status-err"}
+
 
 [dependencies]
 
@@ -134,7 +144,7 @@ reqwest = { workspace = true }
 sha2 = { workspace = true }
 tap = { workspace = true }
 thiserror = { workspace = true }
-tower = { version = "0.4", features = ["limit"] }
+tower.workspace = true
 tower-http = { version = "0.5", features = ["trace", "catch-panic", "set-header", "compression-full", "auth", "add-extension", "cors"] }
 typed-builder = { workspace = true }
 url = { workspace = true }
@@ -156,6 +166,9 @@ bitmap-convert.workspace = true
 bitmaps.workspace = true
 persistence = { workspace = true, features = ["prelude", "migrate"] }
 tencent-cloud-server.workspace = true
+semver = { version = "1.0.23", features = ["serde"] }
+release_version_service = { version = "0.1.0", path = "http_service/ceobe_operation/release_version_service" }
+serve_utils = { version = "0.1.0", path = "libs/serve_utils" }
 mimalloc = "0.1.43"
 
 
@@ -179,9 +192,9 @@ path = "./libs/range-limit"
 path = "./libs/logger"
 
 [dependencies.status-err]
-path = "./libs/status-err"
+workspace = true
 
-[dependencies.resp-result]
+[dependencies.axum-resp-result]
 workspace = true
 
 [dependencies.checker]

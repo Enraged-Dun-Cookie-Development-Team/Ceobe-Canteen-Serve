@@ -3,16 +3,17 @@ use checker::prefabs::{
     url_checker::UrlChecker, version_checker::VersionChecker,
 };
 use sea_orm::{IntoActiveModel, Set};
+use tracing_unwrap::ResultExt;
 use typed_builder::TypedBuilder;
 use url::Url;
 
-use super::CheckError;
+use super::{super::models::model_app_version, CheckError};
 use crate::{
     ceobe_operation::app_version::models::model_app_version::ActiveModel,
     get_now_naive_date_time,
 };
 
-#[derive(Debug, TypedBuilder)]
+#[derive(Debug, TypedBuilder, Clone)]
 pub struct CeobeOperationAppVersion {
     pub version: String,
     pub force: bool,
@@ -22,6 +23,33 @@ pub struct CeobeOperationAppVersion {
     pub spare_apk: Url,
     pub baidu: Url,
     pub baidu_text: String,
+}
+
+impl From<model_app_version::Model> for CeobeOperationAppVersion {
+    fn from(
+        model_app_version::Model {
+            version,
+            force,
+            last_force_version,
+            description,
+            apk,
+            spare_apk,
+            baidu,
+            baidu_text,
+            ..
+        }: model_app_version::Model,
+    ) -> Self {
+        Self {
+            version,
+            force,
+            last_force_version,
+            description,
+            apk: apk.parse().unwrap_or_log(),
+            spare_apk: spare_apk.parse().unwrap_or_log(),
+            baidu: baidu.parse().unwrap_or_log(),
+            baidu_text,
+        }
+    }
 }
 
 #[checker::check_gen(

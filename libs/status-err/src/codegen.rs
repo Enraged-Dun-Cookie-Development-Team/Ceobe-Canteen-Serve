@@ -177,7 +177,7 @@ macro_rules! error_wrapper {
 macro_rules! resp_error_impl {
     ($t:ty) => {
         /// 实现 Resp -error 可以作为RespResult的异常
-        impl ::resp_result::RespError for $t {
+        impl ::axum_resp_result::RespError for $t {
             fn log_message(&self) ->  std::borrow::Cow<'_, str> {
                 $crate::StatusErr::information(self)
             }

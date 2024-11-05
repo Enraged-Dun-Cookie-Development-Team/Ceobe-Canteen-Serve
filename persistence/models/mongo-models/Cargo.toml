@@ -17,6 +17,9 @@ modify-cache = { path = "../../../libs/modify-cache" }
 bool_or.workspace = true
 serde_json.workspace = true
 uuid.workspace = true
+semver = { version = "1.0.23", features = ["serde"] }
+sql-models = { version = "0.1.0", path = "../sql-models" }
+tracing-unwrap.workspace = true
 
 [dependencies.sub-model]
 workspace = true

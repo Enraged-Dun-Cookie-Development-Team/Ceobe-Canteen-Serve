@@ -2,6 +2,7 @@ use axum::{
     extract::{multipart::MultipartRejection, Multipart, Query},
     Json,
 };
+use axum_resp_result::{resp_try, MapReject};
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
@@ -18,7 +19,6 @@ use persistence::{
     mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate,
 };
 use qiniu_cdn_upload::UploadWrap;
-use resp_result::{resp_try, MapReject};
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
@@ -96,7 +96,7 @@ impl CeobeOpToolLink {
     pub async fn upload_avatar(
         qiniu: QiniuManager, multipart: Result<Multipart, MultipartRejection>,
     ) -> OperateToolLinkRResult<AvatarId> {
-        resp_result::resp_try(async move {
+        resp_try(async move {
             let mut multipart = multipart?;
             let field = multipart.next_field().await?.ok_or(FieldNotExist)?;
 

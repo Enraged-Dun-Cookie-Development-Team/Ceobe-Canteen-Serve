@@ -3,25 +3,25 @@ use std::any::Any;
 use axum::{
     body::Body as BoxBody, extract::OriginalUri, response::IntoResponse,
 };
+use axum_resp_result::RespResult;
 use http::Method;
-use resp_result::RespResult;
 use status_err::ErrPrefix;
 use tracing::{error, instrument, warn};
 
 #[macro_export]
-/// 1. 辅助构造枚举形式的Error,
-///   并提供 [Form](std::convert::Form)转换实现，
-///   和 [StatusErr](status_err::StatusErr)实现
-///     ```rust
+/// 1. 辅助构造枚举形式的Error, 并提供 [Form](std::convert::Form)转换实现， 和
+///    [StatusErr](status_err::StatusErr)实现
+///
+/// ```rust
 ///     error_generate!(
-///             // |------- 构造的枚举型异常的类型名称
-///         pub GolbalError
-///       // |--------------枚举类型的名称
-///       // |     |-------每一枚举类型内部的类型
-///         Io=std::io::Error  // 多个内部类型用空格区分
-///         Db=sea_orm::DbErr
+///     //      |------- 构造的枚举型异常的类型名称
+///     pub GolbalError
+///     // |--------------枚举类型的名称
+///     // |     |-------每一枚举类型内部的类型
+///       Io=std::io::Error  // 多个内部类型用空格区分
+///       Db=sea_orm::DbErr
 ///     );
-///     ```
+/// ```
 /// 2. 为现有类型生成包装类型
 /// ```rust
 ///     error_generate!(

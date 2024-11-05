@@ -64,7 +64,7 @@ mod inner_checker_info;
 /// 1. `uncheck` 传递一个标识符，用于作为生成的 `UnCheck` 的名称
 /// 2. `checked` 传递一个类型，为`Checked` 结构体的类型
 /// 3. `error` 传递一个类型， 为生成的 `Checker` 的异常统一映射目标类型，
-/// 要求所有的内部`Checker` 的 `Err` 都实现了 [Into](Into)
+///    要求所有的内部`Checker` 的 `Err` 都实现了 [Into](Into)
 ///
 /// 传递顺序不可打乱，使用`,` 分割，最后的`,` 可选
 ///
@@ -100,7 +100,8 @@ mod inner_checker_info;
 ///
 /// - 如果需要挂载额外的过程宏或者 `derive` 宏到 `Uncheck` 结构体上，可以在
 ///   [check_obj](macro@check_obj)
-/// 之下挂载宏，[check_obj](macro@check_obj)将会将其搬运到 `Uncheck` 结构体上
+///   之下挂载宏，[check_obj](macro@check_obj)将会将其搬运到 `Uncheck`
+///   结构体上
 /// - 生成的 `Uncheck` 与 `Checker` 的可见性 与 被挂载结构体的可见性 (`pub`)
 ///   一致
 /// - 生成的 `Uncheck` 中每一个域(field)的可见性 与
@@ -112,11 +113,9 @@ mod inner_checker_info;
 /// ## 生成什么？
 ///
 /// 1. `Uncheck` 结构体，名称通过过程宏参数提供
-/// 2. `Checker` 空白结构体，并为其实现
-/// `Checker`
-/// 3. `CheckerFut`
-/// [!Unpin](std::marker::Unpin) 的结构体，并为其实现
-/// [Future](std::future::Future) ，在其内部实现具体`check`过程
+/// 2. `Checker` 空白结构体，并为其实现 `Checker`
+/// 3. `CheckerFut` [!Unpin](std::marker::Unpin) 的结构体，并为其实现
+///    [Future](std::future::Future) ，在其内部实现具体`check`过程
 #[proc_macro_attribute]
 pub fn check_obj(params: TokenStream, item: TokenStream) -> TokenStream {
     let params = parse_macro_input!(params as checker_info::CheckerInfo);

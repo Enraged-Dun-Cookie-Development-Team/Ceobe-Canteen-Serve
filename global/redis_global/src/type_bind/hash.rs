@@ -40,12 +40,11 @@ where
         self.redis.hexists(&*self.key, field).await
     }
 
-    pub async fn set<'arg, RV, F>(
+    pub async fn set<'arg, F>(
         &mut self, field: F, value: T::Input,
-    ) -> RedisResult<RV>
+    ) -> RedisResult<()>
     where
         F: ToRedisArgs + Send + Sync + 'arg,
-        RV: FromRedisValue,
     {
         self.redis.hset(&*self.key, field, value).await
     }
@@ -97,10 +96,9 @@ where
     ///
     /// ## 参考
     /// - [`AsyncCommands::hdel`]
-    pub async fn remove<'arg, RV, F>(&mut self, field: F) -> RedisResult<RV>
+    pub async fn remove<'arg, F>(&mut self, field: F) -> RedisResult<()>
     where
         F: ToRedisArgs + Send + Sync + 'arg,
-        RV: FromRedisValue,
     {
         self.redis.hdel(&*self.key, field).await
     }

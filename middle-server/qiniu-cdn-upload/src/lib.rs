@@ -15,8 +15,7 @@ pub mod update_source;
 /// 通用七牛云上传接口
 ///
 /// - `uploader`: [`&Uploader`](Uploader) 七牛云上传器，可以通过
-///   [`QiniuManager`](ceobe_qiniu_upload::QiniuManager)
-/// 解引用获得
+///   [`QiniuManager`](ceobe_qiniu_upload::QiniuManager) 解引用获得
 /// - `source`: 原始待上传信息，可以从中获得待上传的内容和待上传的
 ///   `Content-Type`
 /// - `payload`: 指定荷载的信息，包括 上传七牛云的路径，如何从source

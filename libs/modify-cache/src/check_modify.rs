@@ -2,13 +2,13 @@ use std::convert::Infallible;
 
 use async_trait::async_trait;
 use axum::extract::{FromRequestParts, OriginalUri};
+use axum_resp_result::{ExtraFlag, ExtraFlags};
 use http::{
     header::{CONTENT_TYPE, ETAG, LAST_MODIFIED},
     method::Method,
     request::Parts,
     StatusCode,
 };
-use resp_result::{ExtraFlag, ExtraFlags};
 use tracing::warn;
 
 use crate::{

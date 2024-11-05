@@ -13,6 +13,8 @@ mod common;
 pub mod desktop_version;
 #[path = "mongo/plugin_version/mod.rs"]
 pub mod plugin_version;
+#[path = "mongo/release_version/mod.rs"]
+pub mod release_version;
 #[path = "sql/resource/mod.rs"] pub mod resource;
 #[path = "sql/tool_link/mod.rs"] pub mod tool_link;
 #[path = "mongo/tool_link/mod.rs"]

@@ -43,7 +43,7 @@ impl QiniuService {
                     .remove(&comb_id)
                     .await?;
             }
-        }
+        };
         Ok(())
     }
 

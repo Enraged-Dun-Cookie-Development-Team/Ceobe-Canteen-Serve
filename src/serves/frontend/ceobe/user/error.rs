@@ -1,10 +1,10 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
+use axum_resp_result::RespResult;
 use ceobe_user_logic::error::LogicError;
 use persistence::ceobe_user::{
     models::check::CheckError as CeobeUserPropertyCheckError,
     property::OperateError,
 };
-use resp_result::RespResult;
 
 use crate::error_generate;
 

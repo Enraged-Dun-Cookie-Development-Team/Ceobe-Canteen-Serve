@@ -6,7 +6,9 @@ use axum::{
     http::request::Parts,
     Form, Json,
 };
-use resp_result::{FromRequestFamily, Nil, RespError, RespResult, ToInner};
+use axum_resp_result::{
+    FromRequestFamily, Nil, RespError, RespResult, ToInner,
+};
 
 use crate::{Checker as DataChecker, LiteArgs};
 
@@ -108,6 +110,15 @@ where
     C: DataChecker,
 {
     type Checker = C;
+}
+
+impl<Pre, C, E> ToInner for CheckExtract<Pre, C, E>
+where
+    C: CheckFetchFamily<Pre, E> + Sized,
+{
+    type Inner = <C::Checker as DataChecker>::Checked;
+
+    fn to_inner(self) -> Self::Inner { self.0 }
 }
 
 pub type JsonCheckExtract<C, E> =

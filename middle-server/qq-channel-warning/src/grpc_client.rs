@@ -1,5 +1,5 @@
 use axum::extract::{FromRef, FromRequestParts};
-use resp_result::RespResult;
+use axum_resp_result::RespResult;
 use tonic::transport::Channel;
 
 use crate::{
@@ -13,12 +13,23 @@ pub struct QqChannelGrpcService {
     client: LogClient<Channel>,
 }
 
+impl QqChannelGrpcService {
+    pub async fn new_with_uri(
+        state: QqChannelGrpcState,
+    ) -> Result<Self, error::Error> {
+        LogClient::connect(state.uri)
+            .await
+            .map_err(error::Error::Transport)
+            .map(|client| Self { client })
+    }
+}
+
 impl<S> FromRequestParts<S> for QqChannelGrpcService
 where
     S: Send,
     QqChannelGrpcState: FromRef<S>,
 {
-    type Rejection = RespResult<resp_result::Nil, error::Error>;
+    type Rejection = RespResult<axum_resp_result::Nil, error::Error>;
 
     fn from_request_parts<'life0, 'life1, 'async_trait>(
         _parts: &'life0 mut axum::http::request::Parts, state: &'life1 S,

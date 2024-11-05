@@ -23,6 +23,19 @@ pub struct MongoDbConfig {
     query: HashMap<String, String>,
 }
 
+impl Default for MongoDbConfig {
+    fn default() -> Self {
+        Self {
+            username: "ceobe".into(),
+            password: "114514".into(),
+            host: host_default(),
+            port: port_default(),
+            db_name: "ceobe_canteen".into(),
+            query: Default::default(),
+        }
+    }
+}
+
 impl DbConnectConfig for MongoDbConfig {
     fn scheme(&self) -> &str { "mongodb" }
 

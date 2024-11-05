@@ -1,3 +1,4 @@
+use axum_resp_result::{resp_try, FlagWrap};
 use bakery_logic::{
     impletements::BakeryLogic, view::MansionRecentPredictResp,
 };
@@ -7,7 +8,6 @@ use persistence::{
     bakery::{mansion::ToMansion, ToBakery},
     mongodb::MongoDatabaseOperate,
 };
-use resp_result::{resp_try, FlagWrap};
 use tracing::instrument;
 
 use super::{

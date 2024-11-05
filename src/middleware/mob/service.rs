@@ -3,6 +3,7 @@ use axum::{
     extract::FromRequestParts,
     response::{IntoResponse, Response},
 };
+use axum_resp_result::RespResult;
 use bool_or::TrueOrError;
 use futures::future::BoxFuture;
 use http::Request;
@@ -11,7 +12,6 @@ use persistence::{
     ceobe_user::{models::models::UserMobId, ToCeobeUser},
     mongodb::MongoDatabaseOperate,
 };
-use resp_result::RespResult;
 use tap::Tap;
 use tower_http::auth::AsyncAuthorizeRequest;
 use tracing::{info, Instrument};

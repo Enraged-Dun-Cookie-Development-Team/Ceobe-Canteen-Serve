@@ -9,9 +9,11 @@ use nom::{
     IResult,
 };
 
+#[derive(Default, Debug)]
 pub enum ControlHeaders {
     IfNoneMatch(HashSet<String>),
     IfModifySince(NaiveDateTime),
+    #[default]
     None,
 }
 /// function action
