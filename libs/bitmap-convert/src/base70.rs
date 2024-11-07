@@ -51,7 +51,9 @@ impl BitmapBase70Conv for Bitmap<256> {
         // 转换成u8数组
         let mut bytes: Vec<u8> = Vec::new();
         for c in string.chars() {
-            let index = char_to_index.get(c as usize).ok_or(Error::NotConvertBitmap(string.clone()))?;
+            let index = char_to_index
+                .get(c as usize)
+                .ok_or(Error::NotConvertBitmap(string.clone()))?;
             bytes.push(*index);
         }
         let value = U256::from_radix_le(&bytes, radix)
