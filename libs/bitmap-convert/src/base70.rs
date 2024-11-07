@@ -20,13 +20,9 @@ impl BitmapBase70Conv for Bitmap<256> {
     type Error = Error;
 
     fn to_base_70(&self) -> Result<String, Self::Error> {
-        // 将字符串转换成索引
-        let mut char_to_index: [u8; 127] = [0; 127];
+        // 将索引转换成字符串
         let index_to_char: Vec<char> = BASE_70.chars().collect();
         let radix = index_to_char.len() as u32;
-        for (i, c) in index_to_char.iter().copied().enumerate() {
-            char_to_index[c as usize] = i as u8;
-        }
 
         // 转换bitmap成u8数组
         let value = U256::from_radix_le(self.as_bytes(), 256)
@@ -55,7 +51,8 @@ impl BitmapBase70Conv for Bitmap<256> {
         // 转换成u8数组
         let mut bytes: Vec<u8> = Vec::new();
         for c in string.chars() {
-            bytes.push(char_to_index[c as usize]);
+            let index = char_to_index.get(c as usize).ok_or(Error::NotConvertBitmap(string.clone()))?;
+            bytes.push(*index);
         }
         let value = U256::from_radix_le(&bytes, radix)
             .ok_or_else(|| Error::NotConvertBitmap(string.clone()))?;
