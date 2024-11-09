@@ -10,4 +10,3 @@ bitmaps.workspace = true
 bnum = "0.5.0"
 status-err = { version = "0.1.0", path = "../status-err" }
 thiserror.workspace = true
-once_cell = { workspace = true }

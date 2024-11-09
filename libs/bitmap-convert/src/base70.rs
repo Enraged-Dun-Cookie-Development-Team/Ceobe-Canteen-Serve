@@ -1,13 +1,14 @@
+use std::sync::LazyLock;
+
 use bitmaps::Bitmap;
 use bnum::types::U256;
-use once_cell::sync::Lazy;
 
 use crate::error::Error;
 
 const BASE_70: &str =
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~._()!*";
 // 字符转下标
-static CHAR_TO_INDEX: Lazy<[u8; 127]> = Lazy::new(|| {
+static CHAR_TO_INDEX: LazyLock<[u8; 127]> = LazyLock::new(|| {
     let mut char_to_index: [u8; 127] = [0; 127];
     let index_to_char = BASE_70.chars().collect::<Vec<char>>();
     for (i, c) in index_to_char.iter().enumerate() {
@@ -16,10 +17,10 @@ static CHAR_TO_INDEX: Lazy<[u8; 127]> = Lazy::new(|| {
     char_to_index
 });
 // 下标转字符
-static INDEX_TO_CHAR: Lazy<Vec<char>> =
-    Lazy::new(|| BASE_70.chars().collect());
+static INDEX_TO_CHAR: LazyLock<Vec<char>> =
+    LazyLock::new(|| BASE_70.chars().collect());
 // 字符数量
-static RADIX: Lazy<u32> = Lazy::new(|| INDEX_TO_CHAR.len() as u32);
+static RADIX: LazyLock<u32> = LazyLock::new(|| INDEX_TO_CHAR.len() as u32);
 
 pub trait BitmapBase70Conv {
     type Error;
