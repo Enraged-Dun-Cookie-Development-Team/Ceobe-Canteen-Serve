@@ -1,12 +1,11 @@
 use std::{
-    pin::Pin,
-    task::{Context, Poll},
+    marker::PhantomPinned, pin::Pin, str, task::{Context, Poll}
 };
 
-use futures::Future;
+use futures::{pin_mut, Future};
 use pin_project::pin_project;
 
-use crate::Checker;
+use crate::{prefabs::no_check::NoCheck, Checker};
 
 #[derive(Debug)]
 #[pin_project(project = EnumCheckFut)]
@@ -14,6 +13,15 @@ pub enum CheckFut<C: Checker> {
     Fut(#[pin] C::Fut),
     Checked(Option<C::Checked>),
 }
+
+// impl<C> SyncFuture for CheckFut<C> where C: Checker ,C::Fut:SyncFuture{
+//     fn into_inner(self)->Self::Output {
+//         match self{
+//             CheckFut::Fut(fut) => todo!(),
+//             CheckFut::Checked(_) => todo!(),
+//         }
+//     }
+// }
 
 impl<C: Checker> CheckFut<C> {
     pub fn is_finish(&self) -> bool {
@@ -32,6 +40,8 @@ impl<C: Checker> CheckFut<C> {
         }
     }
 }
+
+
 
 impl<C: Checker> Future for CheckFut<C> {
     type Output = Result<(), C::Err>;

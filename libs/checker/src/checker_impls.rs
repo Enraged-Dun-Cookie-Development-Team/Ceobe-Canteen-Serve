@@ -7,6 +7,7 @@ use futures::{pin_mut, Future};
 use crate::{
     checker::{Checker, LiteChecker, RefChecker},
     lite_args::LiteArgs,
+    sync_check::SyncFuture,
 };
 
 impl<S> Checker for S
@@ -35,6 +36,18 @@ pub struct CheckRefFut<S: RefChecker> {
     data: *const S::Target,
 }
 
+impl<S> SyncFuture for CheckRefFut<S>
+where
+    S: RefChecker,
+    S::Fut: SyncFuture,
+{
+    fn into_inner(self) -> Self::Output {
+        let iner = self.fut.into_inner()?;
+        let data = unsafe { Box::from_raw(self.data as *mut S::Target) };
+        Ok(*data)
+    }
+}
+
 unsafe impl<S: RefChecker> Send for CheckRefFut<S> {}
 
 impl<S: RefChecker> Future for CheckRefFut<S> {
@@ -49,14 +62,11 @@ impl<S: RefChecker> Future for CheckRefFut<S> {
         pin_mut!(task);
 
         match task.poll(cx) {
-            std::task::Poll::Ready(resp) => {
-                Poll::Ready(resp.map(|_i| {
-                    let data = *this.data;
-                    let data =
-                        unsafe { Box::from_raw(data as *mut S::Target) };
-                    *data
-                }))
-            }
+            std::task::Poll::Ready(resp) => Poll::Ready(resp.map(|_i| {
+                let data = *this.data;
+                let data = unsafe { Box::from_raw(data as *mut S::Target) };
+                *data
+            })),
             std::task::Poll::Pending => Poll::Pending,
         }
     }
@@ -94,8 +104,7 @@ mod test {
         fn ref_checker(_: Self::Args, target: &Self::Target) -> Self::Fut {
             let res = if target >= &0 {
                 Ok(())
-            }
-            else {
+            } else {
                 Err(OutOfRangeError)
             };
             ready(res)

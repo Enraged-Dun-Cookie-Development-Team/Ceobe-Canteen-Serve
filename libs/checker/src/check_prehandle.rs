@@ -9,6 +9,7 @@ use axum::{
 use axum_resp_result::{
     FromRequestFamily, Nil, RespError, RespResult, ToInner,
 };
+use serde::Deserialize;
 
 use crate::{Checker as DataChecker, LiteArgs};
 
@@ -132,3 +133,20 @@ pub type PathCheckExtract<C, E> =
 
 pub type QueryCheckExtract<C, E> =
     CheckExtract<Query<<C as DataChecker>::Unchecked>, C, E>;
+
+
+pub struct SerdeCheck<C:DataChecker>(C::Checked);
+
+impl<'de,C> Deserialize<'de> for SerdeCheck<C>
+where 
+C::Unchecked:Deserialize<'de>,
+C::Err:std::error::Error,
+C::Args:LiteArgs, C: DataChecker
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de> {
+        let uncheck =<C::Unchecked as Deserialize>::deserialize(deserializer)?;
+            todo!()
+    }
+}
