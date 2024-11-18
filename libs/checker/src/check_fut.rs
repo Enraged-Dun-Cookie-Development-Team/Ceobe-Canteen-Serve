@@ -1,17 +1,31 @@
 use std::{
-    marker::PhantomPinned, pin::Pin, str, task::{Context, Poll}
+    pin::Pin,
+    task::{Context, Poll},
 };
 
-use futures::{pin_mut, Future};
+use futures::Future;
 use pin_project::pin_project;
 
-use crate::{prefabs::no_check::NoCheck, Checker};
+use crate::{Checker, SyncFuture};
 
 #[derive(Debug)]
 #[pin_project(project = EnumCheckFut)]
 pub enum CheckFut<C: Checker> {
     Fut(#[pin] C::Fut),
     Checked(Option<C::Checked>),
+}
+
+impl<C: Checker> CheckFut<C>
+where
+    C::Fut: SyncFuture,
+{
+    pub fn into_inner(&mut self) -> Result<C::Checked, C::Err> {
+        let this = std::mem::replace(self, Self::Checked(None));
+        match this {
+            CheckFut::Fut(fut) => SyncFuture::into_inner(fut),
+            _ => unreachable!(),
+        }
+    }
 }
 
 // impl<C> SyncFuture for CheckFut<C> where C: Checker ,C::Fut:SyncFuture{
@@ -41,8 +55,6 @@ impl<C: Checker> CheckFut<C> {
     }
 }
 
-
-
 impl<C: Checker> Future for CheckFut<C> {
     type Output = Result<(), C::Err>;
 
@@ -50,16 +62,14 @@ impl<C: Checker> Future for CheckFut<C> {
         mut self: Pin<&mut Self>, cx: &mut Context<'_>,
     ) -> Poll<Self::Output> {
         match self.as_mut().project() {
-            EnumCheckFut::Fut(fut) => {
-                match fut.poll(cx) {
-                    Poll::Ready(Ok(checked)) => {
-                        self.set(Self::Checked(checked.into()));
-                        Poll::Ready(Ok(()))
-                    }
-                    Poll::Ready(Err(err)) => Poll::Ready(Err(err)),
-                    Poll::Pending => Poll::Pending,
+            EnumCheckFut::Fut(fut) => match fut.poll(cx) {
+                Poll::Ready(Ok(checked)) => {
+                    self.set(Self::Checked(checked.into()));
+                    Poll::Ready(Ok(()))
                 }
-            }
+                Poll::Ready(Err(err)) => Poll::Ready(Err(err)),
+                Poll::Pending => Poll::Pending,
+            },
             // the future is finish, will always return ready
             EnumCheckFut::Checked(_) => Poll::Ready(Ok(())),
         }

@@ -4,7 +4,7 @@ use std::{fmt::Debug, marker::PhantomData, pin::Pin, task::Poll};
 
 use futures::Future;
 
-use crate::Checker;
+use crate::{Checker, SyncFuture};
 
 /// 对 Slice 全部元素进行检查，一个错误就全部退出
 #[derive(Debug, Default)]
@@ -69,6 +69,24 @@ where
     result: Vec<C::Checked>,
     pending: Option<<C as Checker>::Fut>,
     _phantom: PhantomData<O>,
+}
+
+impl<S, O, C> SyncFuture for SliceCheckerFut<S, O, C>
+where
+    S: IntoIterator,
+    O: FromIterator<C::Checked>,
+    C: Checker<Unchecked = S::Item>,
+    C::Args: Clone,
+    C::Fut : SyncFuture
+{
+    fn into_inner(mut self)->Self::Output {
+        for uncheck in self.iter{
+           let check_fut =  C::check(self.args.clone(), uncheck);
+           let checked = SyncFuture::into_inner(check_fut)?;
+           self.result.push(checked);
+        }
+        Ok(O::from_iter( self.result.into_iter()))
+    }
 }
 
 impl<S, O, C> SliceCheckerFut<S, O, C>

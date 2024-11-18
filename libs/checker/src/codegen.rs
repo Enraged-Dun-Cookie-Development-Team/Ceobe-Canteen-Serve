@@ -15,7 +15,8 @@ mod test {
     #[check_obj_macro::check_obj(
         uncheck = TestUncheck,
         checked = TestChecked,
-        error = Infallible
+        error = Infallible,
+        sync
     )]
     pub struct TestChecker {
         a: NoCheck<i32>,
