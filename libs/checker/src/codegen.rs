@@ -42,4 +42,24 @@ mod test {
             }
         )
     }
+
+    #[test]
+    fn test_pre_lite_check_sync() {
+        let uncheck = TestUncheck {
+            a: CheckRequire::new(NoCheck::new(), 112),
+            b: CheckRequire::new(NoCheck::new(), "121212".into()),
+        };
+
+        let init = CheckRequire::new(TestChecker, uncheck);
+
+        let resp = init.sync_lite_check().unwrap();
+
+        assert_eq!(
+            resp,
+            TestChecked {
+                a: 112,
+                b: "121212".into()  
+            }
+        )
+    }
 }
