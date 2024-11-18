@@ -22,7 +22,7 @@ use crate::{
 impl crate::ReleaseVersionController {
     #[resp_result]
     #[instrument(skip_all,fields(version = %arg_1.0))]
-    pub async fn make_delete_version(
+    pub async fn mark_delete_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryReleaseVersion {
             version: ValueField(version),
