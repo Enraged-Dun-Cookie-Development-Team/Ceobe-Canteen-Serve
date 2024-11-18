@@ -42,7 +42,7 @@ where
     S::Fut: SyncFuture,
 {
     fn into_inner(self) -> Self::Output {
-        let iner = self.fut.into_inner()?;
+        self.fut.into_inner()?;
         let data = unsafe { Box::from_raw(self.data as *mut S::Target) };
         Ok(*data)
     }

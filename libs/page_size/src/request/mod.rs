@@ -16,7 +16,8 @@ pub struct Paginator {
 #[check_obj(
     uncheck = PageSizeUncheck,
     checked = Paginator,
-    error = NonZeroUnsignedError
+    error = NonZeroUnsignedError,
+    sync
 )]
 #[derive(Debug, Deserialize)]
 pub struct PageSizeChecker {

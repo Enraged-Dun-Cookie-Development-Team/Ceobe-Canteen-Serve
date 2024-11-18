@@ -1,20 +1,16 @@
 use ceobe_operation_logic::{
     release_version::ReleaseVersionLogic, CeobeOperationLogic,
 };
-use checker::{
-    prefabs::option_checker::OptionChecker, CheckExtract, QueryCheckExtract,
-};
-use page_size::{request::PageSizeChecker, response::ListWithPageInfo};
+use checker::SerdeCheck;
+use page_size::response::ListWithPageInfo;
 use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
     axum::{extract::Query, Json},
     axum_resp_result::{resp_result, MapReject},
-    tracing::instrument,
-    ValueField,
+    tracing::instrument, ValueField,
 };
 
 use crate::{
-    error::Error,
     handlers::{MapRejecter, Result},
     view::{
         QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate,
@@ -42,14 +38,13 @@ impl crate::ReleaseVersionController {
     #[instrument(skip_all)]
     pub async fn all_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        CheckExtract(paginator): QueryCheckExtract<
-            OptionChecker<PageSizeChecker>,
-            Error,
-        >,
-        MapReject(filter): MapRejecter<Json<Option<QueryVersionFilter>>>,
+        MapReject(filter): MapRejecter<Query<Option<QueryVersionFilter>>>,
     ) -> Result<ListWithPageInfo<ReleaseVersion>> {
-        let QueryVersionFilter { platform, deleted } =
-            filter.unwrap_or_default();
+        let QueryVersionFilter {
+            platform,
+            deleted,
+            paginator: ValueField(SerdeCheck(paginator)),
+        } = filter.unwrap_or_default();
         let ret = logic.all(paginator, platform, deleted).await?;
 
         Ok(ret)

@@ -80,9 +80,10 @@ impl<V> OptionViewField<V> for SkipField {
 
 impl SealTrait for SkipField {}
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone,Default)]
 #[repr(transparent)]
 pub struct ValueField<T>(pub T);
+
 
 impl<'de, T: Deserialize<'de>> Deserialize<'de> for ValueField<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -111,6 +112,12 @@ impl<T> OptionViewField<T> for ValueField<T> {
 
 #[derive(Debug, Clone)]
 pub struct OptionField<T>(pub Option<T>);
+
+impl<T> Default for OptionField<T> {
+    fn default() -> Self {
+        Self(None)
+    }
+}
 
 impl<'de, T: Deserialize<'de>> Deserialize<'de> for OptionField<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
