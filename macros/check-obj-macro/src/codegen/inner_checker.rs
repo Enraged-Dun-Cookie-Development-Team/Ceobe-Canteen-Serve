@@ -76,7 +76,7 @@ impl InnerChecker {
         }
     }
 
-    pub fn get_checking_fut_sync_bound(&'c self) -> SyncFutureBound<'_> {
+    pub fn get_checking_fut_sync_bound(&self) -> SyncFutureBound<'_> {
         SyncFutureBound {
             check: &self.checker,
         }
