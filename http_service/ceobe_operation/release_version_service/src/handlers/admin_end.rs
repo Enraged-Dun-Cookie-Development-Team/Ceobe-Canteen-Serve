@@ -7,7 +7,8 @@ use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
     axum::{extract::Query, Json},
     axum_resp_result::{resp_result, MapReject},
-    tracing::instrument, ValueField,
+    tracing::instrument,
+    ValueField,
 };
 
 use crate::{

@@ -1,5 +1,7 @@
 use std::{
-     marker::PhantomData, pin::Pin, task::{Context, Poll}
+    marker::PhantomData,
+    pin::Pin,
+    task::{Context, Poll},
 };
 
 use futures::{ready, Future};
@@ -55,17 +57,17 @@ where
     P: Checker<Unchecked = C::Checked>,
     E: From<C::Err>,
     E: From<P::Err>,
-    C::Fut:SyncFuture,
-    P::Fut:SyncFuture,
+    C::Fut: SyncFuture,
+    P::Fut: SyncFuture,
 {
-    fn into_inner(self)->Self::Output {
+    fn into_inner(self) -> Self::Output {
         match self {
             PostCheckFut::Checker(fut, Some(args), _) => {
                 let mid = SyncFuture::into_inner(fut)?;
                 let p_fut = P::check(args, mid);
                 let out = SyncFuture::into_inner(p_fut)?;
                 Ok(out)
-            },
+            }
             _ => unreachable!(),
         }
     }

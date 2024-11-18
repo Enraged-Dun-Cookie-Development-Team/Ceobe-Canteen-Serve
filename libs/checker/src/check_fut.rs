@@ -62,14 +62,16 @@ impl<C: Checker> Future for CheckFut<C> {
         mut self: Pin<&mut Self>, cx: &mut Context<'_>,
     ) -> Poll<Self::Output> {
         match self.as_mut().project() {
-            EnumCheckFut::Fut(fut) => match fut.poll(cx) {
-                Poll::Ready(Ok(checked)) => {
-                    self.set(Self::Checked(checked.into()));
-                    Poll::Ready(Ok(()))
+            EnumCheckFut::Fut(fut) => {
+                match fut.poll(cx) {
+                    Poll::Ready(Ok(checked)) => {
+                        self.set(Self::Checked(checked.into()));
+                        Poll::Ready(Ok(()))
+                    }
+                    Poll::Ready(Err(err)) => Poll::Ready(Err(err)),
+                    Poll::Pending => Poll::Pending,
                 }
-                Poll::Ready(Err(err)) => Poll::Ready(Err(err)),
-                Poll::Pending => Poll::Pending,
-            },
+            }
             // the future is finish, will always return ready
             EnumCheckFut::Checked(_) => Poll::Ready(Ok(())),
         }

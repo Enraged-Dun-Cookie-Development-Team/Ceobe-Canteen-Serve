@@ -2,19 +2,25 @@ use core::fmt::Debug;
 
 use serde::Deserialize;
 
-use crate::{checker::LiteChecker, lite_args::LiteArgs, CheckFut, Checker, SyncFuture};
+use crate::{
+    checker::LiteChecker, lite_args::LiteArgs, CheckFut, Checker, SyncFuture,
+};
 
 pub struct CheckRequire<D: Checker>(D::Unchecked);
 
-impl<D: Checker > CheckRequire<D>
-where D::Fut:SyncFuture
+impl<D: Checker> CheckRequire<D>
+where
+    D::Fut: SyncFuture,
 {
-    pub fn sync_check(self,args:D::Args)->Result<D::Checked,D::Err>{
+    pub fn sync_check(self, args: D::Args) -> Result<D::Checked, D::Err> {
         let check_fut = D::check(args, self.0);
         SyncFuture::into_inner(check_fut)
     }
 
-    pub fn sync_lite_check(self)->Result<D::Checked,D::Err> where D::Args:LiteArgs{
+    pub fn sync_lite_check(self) -> Result<D::Checked, D::Err>
+    where
+        D::Args: LiteArgs,
+    {
         self.sync_check(LiteArgs::get_arg())
     }
 }

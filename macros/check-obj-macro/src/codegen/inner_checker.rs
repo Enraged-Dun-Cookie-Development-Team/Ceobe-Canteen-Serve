@@ -1,4 +1,3 @@
-
 use quote::{quote, ToTokens};
 use syn::{Attribute, Ident, Type, Visibility};
 
@@ -12,9 +11,7 @@ pub struct InnerChecker {
 }
 
 impl InnerChecker {
-    pub fn get_name(&self) -> &Ident {
-        &self.field_name
-    }
+    pub fn get_name(&self) -> &Ident { &self.field_name }
 
     pub fn get_uncheck_field(&self) -> UncheckField<'_> {
         UncheckField { inner: self }
@@ -79,7 +76,7 @@ impl InnerChecker {
         }
     }
 
-    pub fn get_checking_fut_sync_bound<'c>(&'c self) -> SyncFutureBound<'c> {
+    pub fn get_checking_fut_sync_bound(&'c self) -> SyncFutureBound<'_> {
         SyncFutureBound {
             check: &self.checker,
         }
@@ -87,7 +84,7 @@ impl InnerChecker {
 
     pub fn get_sync_fut_unwrap<'c, 'r>(
         &'c self, root: &'r Ident, builder: &'r Ident,
-    ) -> SyncCheckFuture<'c,'r> {
+    ) -> SyncCheckFuture<'c, 'r> {
         SyncCheckFuture {
             name: &self.field_name,
             root,

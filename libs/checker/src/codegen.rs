@@ -58,7 +58,7 @@ mod test {
             resp,
             TestChecked {
                 a: 112,
-                b: "121212".into()  
+                b: "121212".into()
             }
         )
     }

@@ -77,15 +77,15 @@ where
     O: FromIterator<C::Checked>,
     C: Checker<Unchecked = S::Item>,
     C::Args: Clone,
-    C::Fut : SyncFuture
+    C::Fut: SyncFuture,
 {
-    fn into_inner(mut self)->Self::Output {
-        for uncheck in self.iter{
-           let check_fut =  C::check(self.args.clone(), uncheck);
-           let checked = SyncFuture::into_inner(check_fut)?;
-           self.result.push(checked);
+    fn into_inner(mut self) -> Self::Output {
+        for uncheck in self.iter {
+            let check_fut = C::check(self.args.clone(), uncheck);
+            let checked = SyncFuture::into_inner(check_fut)?;
+            self.result.push(checked);
         }
-        Ok(O::from_iter( self.result.into_iter()))
+        Ok(O::from_iter(self.result))
     }
 }
 

@@ -16,7 +16,7 @@ pub struct CheckObj {
     attrs: Vec<Attribute>,
     inner_checkers: Vec<InnerChecker>,
 
-    sync_impl:bool
+    sync_impl: bool,
 }
 
 impl From<(CheckerInfo, InnerCheckerInfo)> for CheckObj {
@@ -26,7 +26,7 @@ impl From<(CheckerInfo, InnerCheckerInfo)> for CheckObj {
                 uncheck_name,
                 checked,
                 error,
-                sync
+                sync,
             },
             InnerCheckerInfo {
                 attrs,
@@ -44,7 +44,7 @@ impl From<(CheckerInfo, InnerCheckerInfo)> for CheckObj {
             checker_vis: vis,
             attrs,
             inner_checkers: field.into_iter().map(Into::into).collect(),
-            sync_impl:sync
+            sync_impl: sync,
         }
     }
 }
@@ -59,7 +59,7 @@ impl ToTokens for CheckObj {
             checker_vis,
             attrs,
             inner_checkers,
-            sync_impl
+            sync_impl,
         } = self;
         let root = &format_ident!("this");
         let builder = &format_ident!("builder");
@@ -89,7 +89,6 @@ impl ToTokens for CheckObj {
             .iter()
             .map(|v| v.get_checking_poll(root, context, error));
 
-   
         let checker_fut_token = quote::quote! {
             #checker_vis struct #fut_token{
                 __pinned : std::marker::PhantomPinned,
@@ -119,7 +118,7 @@ impl ToTokens for CheckObj {
                 }
             }
 
-            
+
 
         };
 
@@ -127,33 +126,32 @@ impl ToTokens for CheckObj {
 
         if *sync_impl {
             let sync_fut_bound = inner_checkers
-            .iter()
-            .map(|v| v.get_checking_fut_sync_bound());
-        let sync_exec = inner_checkers
-            .iter()
-            .map(|v| v.get_sync_fut_unwrap(root, builder));
+                .iter()
+                .map(|v| v.get_checking_fut_sync_bound());
+            let sync_exec = inner_checkers
+                .iter()
+                .map(|v| v.get_sync_fut_unwrap(root, builder));
 
-        let sync_fut_token = quote::quote!{
-            impl checker::SyncFuture for #fut_token
-            where
-             #(
-                #sync_fut_bound
-             ),*
-            {
-                fn into_inner(mut self)-><Self as std::future::Future>::Output{
-                    let #builder = <#checked>::builder();
-                    let #root = &mut self;
-                    #(
-                        #sync_exec
-                    )*
+            let sync_fut_token = quote::quote! {
+                impl checker::SyncFuture for #fut_token
+                where
+                 #(
+                    #sync_fut_bound
+                 ),*
+                {
+                    fn into_inner(mut self)-><Self as std::future::Future>::Output{
+                        let #builder = <#checked>::builder();
+                        let #root = &mut self;
+                        #(
+                            #sync_exec
+                        )*
 
-                    Ok(#builder.build())
+                        Ok(#builder.build())
+                    }
                 }
-            }
-        };
+            };
 
-        tokens.extend(sync_fut_token);
-
+            tokens.extend(sync_fut_token);
         }
 
         // checker

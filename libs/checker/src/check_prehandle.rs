@@ -120,9 +120,7 @@ where
 {
     type Inner = <C::Checker as DataChecker>::Checked;
 
-    fn to_inner(self) -> Self::Inner {
-        self.0
-    }
+    fn to_inner(self) -> Self::Inner { self.0 }
 }
 
 pub type JsonCheckExtract<C, E> =
@@ -152,9 +150,7 @@ impl<C: DataChecker> Default for SerdeCheck<C>
 where
     C::Checked: Default,
 {
-    fn default() -> Self {
-        Self(Default::default())
-    }
+    fn default() -> Self { Self(Default::default()) }
 }
 
 impl<'de, C> Deserialize<'de> for SerdeCheck<C>

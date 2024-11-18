@@ -30,14 +30,14 @@ pub enum OptionCheckerFut<C: Checker> {
 impl<C> SyncFuture for OptionCheckerFut<C>
 where
     C: Checker,
-    C::Fut:SyncFuture
+    C::Fut: SyncFuture,
 {
     fn into_inner(self) -> Self::Output {
-        match self{
+        match self {
             OptionCheckerFut::None => Ok(None),
             OptionCheckerFut::Some(fut) => {
                 SyncFuture::into_inner(fut).map(Some)
-            },
+            }
         }
     }
 }
@@ -50,10 +50,12 @@ impl<C: Checker> Future for OptionCheckerFut<C> {
     ) -> Poll<Self::Output> {
         match self.project() {
             EnumProj::None => Poll::Ready(Ok(None)),
-            EnumProj::Some(task) => match task.poll(cx) {
-                Poll::Ready(result) => Poll::Ready(result.map(Some)),
-                Poll::Pending => Poll::Pending,
-            },
+            EnumProj::Some(task) => {
+                match task.poll(cx) {
+                    Poll::Ready(result) => Poll::Ready(result.map(Some)),
+                    Poll::Pending => Poll::Pending,
+                }
+            }
         }
     }
 }

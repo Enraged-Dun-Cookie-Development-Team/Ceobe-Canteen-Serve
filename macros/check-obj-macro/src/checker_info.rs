@@ -32,22 +32,22 @@ impl Parse for CheckerInfo {
             let lookahead = input.lookahead1();
             if !lookahead.peek(Ident) {
                 false
-            } else {
+            }
+            else {
                 let sync_ident = input.parse::<Ident>()?;
                 if sync_ident == "sync" {
                     true
-                } else {
+                }
+                else {
                     Err(syn::Error::new(
                         sync_ident.span(),
-                        format!(
-                            "expect `sync`,but get {}",
-                            sync_ident.to_string()
-                        ),
+                        format!("expect `sync`,but get {}", sync_ident),
                     ))?;
                     false
                 }
             }
-        } else {
+        }
+        else {
             false
         };
 

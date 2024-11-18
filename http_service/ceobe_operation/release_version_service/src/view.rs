@@ -79,9 +79,8 @@ mod test {
     use serde_json::json;
     use serve_utils::SkipField;
 
-    use crate::view::QueryReleaseVersion;
-
     use super::QueryVersionFilter;
+    use crate::view::QueryReleaseVersion;
 
     #[test]
     fn test_de() {
@@ -95,17 +94,18 @@ mod test {
     }
 
     #[test]
-    fn test_query_qyery(){
-       // QueryVersionFilter
-        
-       let json = json!({
-        "platform" : "plugin",
-        "deleted":true,
-        "page":11,
-        "size":12
-       });
+    fn test_query_qyery() {
+        // QueryVersionFilter
 
-       let org = serde_json::from_value::<QueryVersionFilter>(json).expect("deseralize failure");
-       println!("{org:?}")
+        let json = json!({
+         "platform" : "plugin",
+         "deleted":true,
+         "page":11,
+         "size":12
+        });
+
+        let org = serde_json::from_value::<QueryVersionFilter>(json)
+            .expect("deseralize failure");
+        println!("{org:?}")
     }
 }

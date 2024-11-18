@@ -62,11 +62,14 @@ impl<S: RefChecker> Future for CheckRefFut<S> {
         pin_mut!(task);
 
         match task.poll(cx) {
-            std::task::Poll::Ready(resp) => Poll::Ready(resp.map(|_i| {
-                let data = *this.data;
-                let data = unsafe { Box::from_raw(data as *mut S::Target) };
-                *data
-            })),
+            std::task::Poll::Ready(resp) => {
+                Poll::Ready(resp.map(|_i| {
+                    let data = *this.data;
+                    let data =
+                        unsafe { Box::from_raw(data as *mut S::Target) };
+                    *data
+                }))
+            }
             std::task::Poll::Pending => Poll::Pending,
         }
     }
@@ -104,7 +107,8 @@ mod test {
         fn ref_checker(_: Self::Args, target: &Self::Target) -> Self::Fut {
             let res = if target >= &0 {
                 Ok(())
-            } else {
+            }
+            else {
                 Err(OutOfRangeError)
             };
             ready(res)
