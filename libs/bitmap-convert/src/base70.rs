@@ -53,8 +53,8 @@ impl BitmapBase70Conv for Bitmap<256> {
         for c in string.chars() {
             let index = CHAR_TO_INDEX
                 .get(c as usize)
-                .ok_or(Error::NotConvertBitmap(string.clone()))?;
-            match *index {
+                .copied();
+            match index.flatten() {
                 None => return Err(Error::NotConvertBitmap(string.clone())),
                 Some(i) => bytes.push(i),
             }
