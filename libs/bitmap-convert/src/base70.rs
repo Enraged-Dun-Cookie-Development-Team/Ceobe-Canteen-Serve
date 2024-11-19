@@ -8,11 +8,11 @@ use crate::error::Error;
 const BASE_70: &[u8] =
     b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~._()!*";
 // 字符转下标
-static CHAR_TO_INDEX: LazyLock<[u8; 127]> = LazyLock::new(|| {
+static CHAR_TO_INDEX: LazyLock<[Option<u8>; 127]> = LazyLock::new(|| {
     // u8::MAX字符为ÿ，我们不会用到
-    let mut char_to_index: [u8; 127] = [u8::MAX; 127];
+    let mut char_to_index: [Option<u8>; 127] = [Option::None; 127];
     for (i, c) in BASE_70.iter().enumerate() {
-        char_to_index[*c as usize] = i as u8;
+        char_to_index[*c as usize] = Some(i as u8);
     }
     char_to_index
 });
@@ -54,10 +54,10 @@ impl BitmapBase70Conv for Bitmap<256> {
             let index = CHAR_TO_INDEX
                 .get(c as usize)
                 .ok_or(Error::NotConvertBitmap(string.clone()))?;
-            if *index == u8::MAX {
-                return Err(Error::NotConvertBitmap(string.clone()));
+            match *index {
+                None => return Err(Error::NotConvertBitmap(string.clone())),
+                Some(i) => bytes.push(i),
             }
-            bytes.push(*index);
         }
         let value = U256::from_radix_le(&bytes, RADIX)
             .ok_or_else(|| Error::NotConvertBitmap(string.clone()))?;
