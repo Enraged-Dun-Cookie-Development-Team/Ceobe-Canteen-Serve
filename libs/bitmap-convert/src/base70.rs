@@ -117,15 +117,20 @@ mod tests {
 
     #[test]
     fn test_invalid_char() {
-        let result: Result<Bitmap<256>, _> = BitmapBase70Conv::from_base_70("ugAU#@r!()Mi".to_owned());
-        
+        let result: Result<Bitmap<256>, _> =
+            BitmapBase70Conv::from_base_70("ugAU#@r!()Mi".to_owned());
+
         assert!(result.is_err());
     }
 
     #[test]
     fn test_invalid_str() {
         let decoded_bitmap: Result<Bitmap<256>, _> =
-            BitmapBase70Conv::from_base_70("ugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()Mi".to_owned());
+            BitmapBase70Conv::from_base_70(
+                "ugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!\
+                 ()MiugAUr!()MiugAUr!()MiugAUr!()Mi"
+                    .to_owned(),
+            );
         assert!(decoded_bitmap.is_err());
     }
 }
