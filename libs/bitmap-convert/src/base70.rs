@@ -5,22 +5,18 @@ use bnum::types::U256;
 
 use crate::error::Error;
 
-const BASE_70: &str =
-    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~._()!*";
+const BASE_70: &'static [u8] =
+    b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~._()!*";
 // 字符转下标
 static CHAR_TO_INDEX: LazyLock<[u8; 127]> = LazyLock::new(|| {
     let mut char_to_index: [u8; 127] = [0; 127];
-    let index_to_char = BASE_70.chars().collect::<Vec<char>>();
-    for (i, c) in index_to_char.iter().enumerate() {
+    for (i, c) in BASE_70.iter().enumerate() {
         char_to_index[*c as usize] = i as u8;
     }
     char_to_index
 });
-// 下标转字符
-static INDEX_TO_CHAR: LazyLock<Vec<char>> =
-    LazyLock::new(|| BASE_70.chars().collect());
 // 字符数量
-static RADIX: LazyLock<u32> = LazyLock::new(|| INDEX_TO_CHAR.len() as u32);
+const RADIX: u32 = BASE_70.len() as u32;
 
 pub trait BitmapBase70Conv {
     type Error;
@@ -39,12 +35,11 @@ impl BitmapBase70Conv for Bitmap<256> {
         // 转换bitmap成u8数组
         let value = U256::from_radix_le(self.as_bytes(), 256)
             .ok_or(Error::LargeThen256)?;
-        let bytes = value.to_radix_le(*RADIX);
-
+        let bytes = value.to_radix_le(RADIX);
         // 转换为70进制的字符
         Ok(bytes
             .into_iter()
-            .map(|b| INDEX_TO_CHAR[b as usize])
+            .map(|b| BASE_70[b as usize] as char)
             .collect())
     }
 
@@ -60,7 +55,7 @@ impl BitmapBase70Conv for Bitmap<256> {
                 .ok_or(Error::NotConvertBitmap(string.clone()))?;
             bytes.push(*index);
         }
-        let value = U256::from_radix_le(&bytes, *RADIX)
+        let value = U256::from_radix_le(&bytes, RADIX)
             .ok_or_else(|| Error::NotConvertBitmap(string.clone()))?;
         let binding = value.to_radix_le(256);
         let bytes_not_complete = binding.as_slice();
@@ -73,5 +68,45 @@ impl BitmapBase70Conv for Bitmap<256> {
 
         Bitmap::<256>::try_from(bytes_complete)
             .map_err(|_| Error::NotConvertBitmap(string))
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use bitmaps::Bitmap;
+
+    fn generate_sample_bitmap() -> Bitmap<256> {
+        let mut bitmap = Bitmap::<256>::new();
+        for i in 1..=40 {
+            bitmap.set(i, true);  // 设置第i位为 true
+        }
+        return bitmap;
+    }
+
+    #[test]
+    fn test_to_base_70() {
+        let bitmap = generate_sample_bitmap();
+        
+        // 将 bitmap 转换为 base70 字符串
+        let base70_string = bitmap.to_base_70().unwrap();
+        
+        // 确保 base70 字符串不为空
+        assert!(!base70_string.is_empty());
+        
+        // 额外验证：可以输出看看转换后的字符串是什么
+        println!("Base70 encoded string: {}", base70_string);
+
+        assert_eq!("ugAUrMi".to_owned(), base70_string);
+    }
+
+    #[test]
+    fn test_from_base_70() {
+        let bitmap = generate_sample_bitmap();
+        
+        let decoded_bitmap = BitmapBase70Conv::from_base_70("ugAUrMi".to_owned()).unwrap();
+
+        assert_eq!(bitmap, decoded_bitmap);
     }
 }
