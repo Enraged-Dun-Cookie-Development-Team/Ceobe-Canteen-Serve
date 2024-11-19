@@ -9,7 +9,8 @@ const BASE_70: &[u8] =
     b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~._()!*";
 // 字符转下标
 static CHAR_TO_INDEX: LazyLock<[u8; 127]> = LazyLock::new(|| {
-    let mut char_to_index: [u8; 127] = [0; 127];
+    // u8::MAX字符为ÿ，我们不会用到
+    let mut char_to_index: [u8; 127] = [u8::MAX; 127];
     for (i, c) in BASE_70.iter().enumerate() {
         char_to_index[*c as usize] = i as u8;
     }
@@ -53,6 +54,9 @@ impl BitmapBase70Conv for Bitmap<256> {
             let index = CHAR_TO_INDEX
                 .get(c as usize)
                 .ok_or(Error::NotConvertBitmap(string.clone()))?;
+            if *index == u8::MAX {
+                return Err(Error::NotConvertBitmap(string.clone()));
+            }
             bytes.push(*index);
         }
         let value = U256::from_radix_le(&bytes, RADIX)
@@ -109,5 +113,19 @@ mod tests {
             BitmapBase70Conv::from_base_70("ugAUrMi".to_owned()).unwrap();
 
         assert_eq!(bitmap, decoded_bitmap);
+    }
+
+    #[test]
+    fn test_invalid_char() {
+        let result: Result<Bitmap<256>, _> = BitmapBase70Conv::from_base_70("ugAU#@r!()Mi".to_owned());
+        
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_invalid_str() {
+        let decoded_bitmap: Result<Bitmap<256>, _> =
+            BitmapBase70Conv::from_base_70("ugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()MiugAUr!()Mi".to_owned());
+        assert!(decoded_bitmap.is_err());
     }
 }
