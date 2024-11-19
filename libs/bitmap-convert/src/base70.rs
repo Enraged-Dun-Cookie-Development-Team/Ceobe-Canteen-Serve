@@ -5,7 +5,7 @@ use bnum::types::U256;
 
 use crate::error::Error;
 
-const BASE_70: &'static [u8] =
+const BASE_70: &[u8] =
     b"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-~._()!*";
 // 字符转下标
 static CHAR_TO_INDEX: LazyLock<[u8; 127]> = LazyLock::new(|| {
@@ -71,16 +71,16 @@ impl BitmapBase70Conv for Bitmap<256> {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
-    use super::*;
     use bitmaps::Bitmap;
+
+    use super::*;
 
     fn generate_sample_bitmap() -> Bitmap<256> {
         let mut bitmap = Bitmap::<256>::new();
         for i in 1..=40 {
-            bitmap.set(i, true);  // 设置第i位为 true
+            bitmap.set(i, true); // 设置第i位为 true
         }
         return bitmap;
     }
@@ -88,13 +88,13 @@ mod tests {
     #[test]
     fn test_to_base_70() {
         let bitmap = generate_sample_bitmap();
-        
+
         // 将 bitmap 转换为 base70 字符串
         let base70_string = bitmap.to_base_70().unwrap();
-        
+
         // 确保 base70 字符串不为空
         assert!(!base70_string.is_empty());
-        
+
         // 额外验证：可以输出看看转换后的字符串是什么
         println!("Base70 encoded string: {}", base70_string);
 
@@ -104,8 +104,9 @@ mod tests {
     #[test]
     fn test_from_base_70() {
         let bitmap = generate_sample_bitmap();
-        
-        let decoded_bitmap = BitmapBase70Conv::from_base_70("ugAUrMi".to_owned()).unwrap();
+
+        let decoded_bitmap =
+            BitmapBase70Conv::from_base_70("ugAUrMi".to_owned()).unwrap();
 
         assert_eq!(bitmap, decoded_bitmap);
     }
