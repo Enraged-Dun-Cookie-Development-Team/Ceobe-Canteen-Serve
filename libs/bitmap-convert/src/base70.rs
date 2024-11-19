@@ -53,11 +53,10 @@ impl BitmapBase70Conv for Bitmap<256> {
         for c in string.chars() {
             let index = CHAR_TO_INDEX
                 .get(c as usize)
-                .copied();
-            match index.flatten() {
-                None => return Err(Error::NotConvertBitmap(string.clone())),
-                Some(i) => bytes.push(i),
-            }
+                .copied()
+                .flatten()
+                .ok_or(Error::NotConvertBitmap(string.clone()))?;
+            bytes.push(index);
         }
         let value = U256::from_radix_le(&bytes, RADIX)
             .ok_or_else(|| Error::NotConvertBitmap(string.clone()))?;
