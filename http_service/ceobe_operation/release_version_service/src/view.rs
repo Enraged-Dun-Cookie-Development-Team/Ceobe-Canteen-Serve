@@ -1,5 +1,7 @@
 use std::fmt::{Display, Formatter};
 
+use checker::{prefabs::option_checker::OptionChecker, SerdeCheck};
+use page_size::request::PageSizeChecker;
 use persistence::ceobe_operate::models::version::models::{
     DownloadSourceItem, ReleasePlatform,
 };
@@ -36,9 +38,13 @@ impl Display for QueryReleaseVersion<OptionField<Version>> {
 }
 
 #[derive(Debug, Deserialize, Default)]
-pub struct QueryVersionFilter {
+pub struct QueryVersionFilter<Paginator:OptionViewField<SerdeCheck<OptionChecker<PageSizeChecker>>>
+= ValueField<SerdeCheck<OptionChecker<PageSizeChecker>>>
+> {
     pub platform: Option<ReleasePlatform>,
     pub deleted: bool,
+    #[serde(flatten)]
+    pub paginator :Paginator,
 }
 
 impl Display for QueryVersionFilter {
@@ -70,8 +76,10 @@ pub struct UpdatePayload {
 #[cfg(test)]
 mod test {
 
+    use serde_json::json;
     use serve_utils::SkipField;
 
+    use super::QueryVersionFilter;
     use crate::view::QueryReleaseVersion;
 
     #[test]
@@ -83,5 +91,21 @@ mod test {
             .expect("Err");
 
         println!("{v:?}")
+    }
+
+    #[test]
+    fn test_query_qyery() {
+        // QueryVersionFilter
+
+        let json = json!({
+         "platform" : "plugin",
+         "deleted":true,
+         "page":11,
+         "size":12
+        });
+
+        let org = serde_json::from_value::<QueryVersionFilter>(json)
+            .expect("deseralize failure");
+        println!("{org:?}")
     }
 }

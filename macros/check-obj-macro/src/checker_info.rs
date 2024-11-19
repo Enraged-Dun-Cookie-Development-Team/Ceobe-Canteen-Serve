@@ -4,11 +4,12 @@ use syn::{
 };
 use typed_builder::TypedBuilder;
 
-#[derive(Debug, TypedBuilder)]
+#[derive(TypedBuilder)]
 pub(crate) struct CheckerInfo {
     pub(crate) uncheck_name: syn::Ident,
     pub(crate) checked: Type,
     pub(crate) error: Type,
+    pub(crate) sync: bool,
 }
 
 impl Parse for CheckerInfo {
@@ -25,12 +26,36 @@ impl Parse for CheckerInfo {
 
         let (error, _lookahead) = parse_ty(&input, lookahead, "error")?;
 
-        let _ = input.parse::<Token!(,)>().ok();
+        // let _ = ;
+
+        let sync = if input.parse::<Token!(,)>().is_ok() {
+            let lookahead = input.lookahead1();
+            if !lookahead.peek(Ident) {
+                false
+            }
+            else {
+                let sync_ident = input.parse::<Ident>()?;
+                if sync_ident == "sync" {
+                    true
+                }
+                else {
+                    Err(syn::Error::new(
+                        sync_ident.span(),
+                        format!("expect `sync`,but get {}", sync_ident),
+                    ))?;
+                    false
+                }
+            }
+        }
+        else {
+            false
+        };
 
         Ok(Self {
             uncheck_name: uncheck,
             checked,
             error,
+            sync,
         })
     }
 }
@@ -85,6 +110,19 @@ fn parse_ty<'a>(
 
     Ok((ty, lookahead))
 }
+
+// fn parse_sync<'a>(
+//     input:&'a ParseStream,lookahead:Lookahead1<'a>
+// )->syn::Result<(bool,Lookahead1<'a>)>{
+//     if !lookahead.peek(Ident) {
+//         return Ok((false,lookahead));
+//     }
+//     let ident: Ident = input.parse()?;
+//     if ident != "sync" {
+//         Err(syn::Error::new(ident.span(), format!("expect `sync`")))?;
+//     }
+//     Ok((true,lookahead))
+// }
 
 #[cfg(test)]
 mod test {

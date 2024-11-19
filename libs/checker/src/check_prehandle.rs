@@ -1,4 +1,5 @@
 use core::marker::Send;
+use std::fmt::Debug;
 
 use async_trait::async_trait;
 use axum::{
@@ -9,8 +10,9 @@ use axum::{
 use axum_resp_result::{
     FromRequestFamily, Nil, RespError, RespResult, ToInner,
 };
+use serde::Deserialize;
 
-use crate::{Checker as DataChecker, LiteArgs};
+use crate::{Checker as DataChecker, LiteArgs, SyncFuture};
 
 pub struct CheckExtract<Previous, C, E>(
     pub <C::Checker as DataChecker>::Checked,
@@ -132,3 +134,43 @@ pub type PathCheckExtract<C, E> =
 
 pub type QueryCheckExtract<C, E> =
     CheckExtract<Query<<C as DataChecker>::Unchecked>, C, E>;
+
+pub struct SerdeCheck<C: DataChecker>(pub C::Checked);
+
+impl<C: DataChecker> Debug for SerdeCheck<C>
+where
+    C::Checked: Debug,
+{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_tuple("SerdeCheck").field(&self.0).finish()
+    }
+}
+
+impl<C: DataChecker> Default for SerdeCheck<C>
+where
+    C::Checked: Default,
+{
+    fn default() -> Self { Self(Default::default()) }
+}
+
+impl<'de, C> Deserialize<'de> for SerdeCheck<C>
+where
+    C::Unchecked: Deserialize<'de>,
+    C::Err: std::error::Error,
+    C::Args: LiteArgs,
+    C: DataChecker,
+    C::Fut: SyncFuture,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let uncheck =
+            <C::Unchecked as Deserialize>::deserialize(deserializer)?;
+        let check_fut = C::check(LiteArgs::get_arg(), uncheck);
+        let ret = SyncFuture::into_inner(check_fut).map_err(|err| {
+            serde::de::Error::custom(format!("Invalid Value: {err}"))
+        })?;
+        Ok(SerdeCheck(ret))
+    }
+}

@@ -15,6 +15,8 @@ pub struct CheckObj {
     checker_vis: Visibility,
     attrs: Vec<Attribute>,
     inner_checkers: Vec<InnerChecker>,
+
+    sync_impl: bool,
 }
 
 impl From<(CheckerInfo, InnerCheckerInfo)> for CheckObj {
@@ -24,6 +26,7 @@ impl From<(CheckerInfo, InnerCheckerInfo)> for CheckObj {
                 uncheck_name,
                 checked,
                 error,
+                sync,
             },
             InnerCheckerInfo {
                 attrs,
@@ -41,6 +44,7 @@ impl From<(CheckerInfo, InnerCheckerInfo)> for CheckObj {
             checker_vis: vis,
             attrs,
             inner_checkers: field.into_iter().map(Into::into).collect(),
+            sync_impl: sync,
         }
     }
 }
@@ -55,6 +59,7 @@ impl ToTokens for CheckObj {
             checker_vis,
             attrs,
             inner_checkers,
+            sync_impl,
         } = self;
         let root = &format_ident!("this");
         let builder = &format_ident!("builder");
@@ -112,9 +117,42 @@ impl ToTokens for CheckObj {
                     std::task::Poll::Ready(Ok(#builder.build()))
                 }
             }
+
+
+
         };
 
         tokens.extend(checker_fut_token);
+
+        if *sync_impl {
+            let sync_fut_bound = inner_checkers
+                .iter()
+                .map(|v| v.get_checking_fut_sync_bound());
+            let sync_exec = inner_checkers
+                .iter()
+                .map(|v| v.get_sync_fut_unwrap(root, builder));
+
+            let sync_fut_token = quote::quote! {
+                impl checker::SyncFuture for #fut_token
+                where
+                 #(
+                    #sync_fut_bound
+                 ),*
+                {
+                    fn into_inner(mut self)-><Self as std::future::Future>::Output{
+                        let #builder = <#checked>::builder();
+                        let #root = &mut self;
+                        #(
+                            #sync_exec
+                        )*
+
+                        Ok(#builder.build())
+                    }
+                }
+            };
+
+            tokens.extend(sync_fut_token);
+        }
 
         // checker
         let check_err_bounds =

@@ -75,6 +75,22 @@ impl InnerChecker {
             builder,
         }
     }
+
+    pub fn get_checking_fut_sync_bound(&self) -> SyncFutureBound<'_> {
+        SyncFutureBound {
+            check: &self.checker,
+        }
+    }
+
+    pub fn get_sync_fut_unwrap<'c, 'r>(
+        &'c self, root: &'r Ident, builder: &'r Ident,
+    ) -> SyncCheckFuture<'c, 'r> {
+        SyncCheckFuture {
+            name: &self.field_name,
+            root,
+            builder,
+        }
+    }
 }
 
 impl From<InnerCheckerField> for InnerChecker {
@@ -253,6 +269,41 @@ impl<'c, 'r> ToTokens for CheckingFutFinal<'c, 'r> {
         } = self;
         let token = quote! {
             let #builder = #builder.#name(#root.#name.take());
+        };
+        tokens.extend(token)
+    }
+}
+
+pub struct SyncCheckFuture<'c, 'r> {
+    name: &'c Ident,
+    root: &'r Ident,
+    builder: &'r Ident,
+}
+
+impl<'c, 'r> ToTokens for SyncCheckFuture<'c, 'r> {
+    fn to_tokens(&self, tokens: &mut quote::__private::TokenStream) {
+        let Self {
+            name,
+            root,
+            builder,
+        } = self;
+        let token = quote! {
+            let #builder = #builder.#name(#root.#name.into_inner()?);
+        };
+        tokens.extend(token);
+    }
+}
+
+pub struct SyncFutureBound<'c> {
+    check: &'c Type,
+}
+
+impl<'c> ToTokens for SyncFutureBound<'c> {
+    fn to_tokens(&self, tokens: &mut quote::__private::TokenStream) {
+        let ty = self.check;
+
+        let token = quote! {
+            < #ty  as checker::Checker >::Fut : checker::SyncFuture
         };
         tokens.extend(token)
     }

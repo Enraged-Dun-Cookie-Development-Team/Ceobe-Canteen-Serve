@@ -2,7 +2,7 @@ use std::{marker::PhantomData, task::Poll};
 
 use futures::Future;
 
-use crate::Checker;
+use crate::{sync_check::SyncFuture, Checker};
 
 pub struct OptionChecker<C: Checker>(PhantomData<C>);
 
@@ -25,6 +25,21 @@ impl<C: Checker> Checker for OptionChecker<C> {
 pub enum OptionCheckerFut<C: Checker> {
     None,
     Some(#[pin] <C as Checker>::Fut),
+}
+
+impl<C> SyncFuture for OptionCheckerFut<C>
+where
+    C: Checker,
+    C::Fut: SyncFuture,
+{
+    fn into_inner(self) -> Self::Output {
+        match self {
+            OptionCheckerFut::None => Ok(None),
+            OptionCheckerFut::Some(fut) => {
+                SyncFuture::into_inner(fut).map(Some)
+            }
+        }
+    }
 }
 
 impl<C: Checker> Future for OptionCheckerFut<C> {

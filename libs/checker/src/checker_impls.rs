@@ -7,6 +7,7 @@ use futures::{pin_mut, Future};
 use crate::{
     checker::{Checker, LiteChecker, RefChecker},
     lite_args::LiteArgs,
+    sync_check::SyncFuture,
 };
 
 impl<S> Checker for S
@@ -33,6 +34,18 @@ pub struct CheckRefFut<S: RefChecker> {
     #[pin]
     fut: S::Fut,
     data: *const S::Target,
+}
+
+impl<S> SyncFuture for CheckRefFut<S>
+where
+    S: RefChecker,
+    S::Fut: SyncFuture,
+{
+    fn into_inner(self) -> Self::Output {
+        self.fut.into_inner()?;
+        let data = unsafe { Box::from_raw(self.data as *mut S::Target) };
+        Ok(*data)
+    }
 }
 
 unsafe impl<S: RefChecker> Send for CheckRefFut<S> {}

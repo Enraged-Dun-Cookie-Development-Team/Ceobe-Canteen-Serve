@@ -7,7 +7,7 @@ use std::{
 use futures::{ready, Future};
 use pin_project::pin_project;
 
-use crate::Checker;
+use crate::{sync_check::SyncFuture, Checker};
 
 /// 追加checker
 ///
@@ -49,6 +49,28 @@ where
 {
     Checker(#[pin] C::Fut, Option<P::Args>, PhantomData<E>),
     PostChecker(#[pin] <P as Checker>::Fut),
+}
+
+impl<C, P, E> SyncFuture for PostCheckFut<C, P, E>
+where
+    C: Checker,
+    P: Checker<Unchecked = C::Checked>,
+    E: From<C::Err>,
+    E: From<P::Err>,
+    C::Fut: SyncFuture,
+    P::Fut: SyncFuture,
+{
+    fn into_inner(self) -> Self::Output {
+        match self {
+            PostCheckFut::Checker(fut, Some(args), _) => {
+                let mid = SyncFuture::into_inner(fut)?;
+                let p_fut = P::check(args, mid);
+                let out = SyncFuture::into_inner(p_fut)?;
+                Ok(out)
+            }
+            _ => unreachable!(),
+        }
+    }
 }
 
 impl<C, P, E> PostCheckFut<C, P, E>

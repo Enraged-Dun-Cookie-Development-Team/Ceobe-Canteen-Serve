@@ -15,7 +15,8 @@ mod test {
     #[check_obj_macro::check_obj(
         uncheck = TestUncheck,
         checked = TestChecked,
-        error = Infallible
+        error = Infallible,
+        sync
     )]
     pub struct TestChecker {
         a: NoCheck<i32>,
@@ -32,6 +33,26 @@ mod test {
         let init = CheckRequire::new(TestChecker, uncheck);
 
         let resp = init.lite_checking().await.unwrap();
+
+        assert_eq!(
+            resp,
+            TestChecked {
+                a: 112,
+                b: "121212".into()
+            }
+        )
+    }
+
+    #[test]
+    fn test_pre_lite_check_sync() {
+        let uncheck = TestUncheck {
+            a: CheckRequire::new(NoCheck::new(), 112),
+            b: CheckRequire::new(NoCheck::new(), "121212".into()),
+        };
+
+        let init = CheckRequire::new(TestChecker, uncheck);
+
+        let resp = init.sync_lite_check().unwrap();
 
         assert_eq!(
             resp,
