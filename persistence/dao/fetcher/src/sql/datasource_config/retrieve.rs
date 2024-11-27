@@ -219,6 +219,7 @@ where
             .column(Column::Datasource)
             .column(Column::DbUniqueKey)
             .filter(Column::DeleteAt.eq(get_zero_data_time()))
+            .filter(Column::Visual.eq(true))
             .into_model::<FrontendDatasource>()
             .all(db)
             .await?;
