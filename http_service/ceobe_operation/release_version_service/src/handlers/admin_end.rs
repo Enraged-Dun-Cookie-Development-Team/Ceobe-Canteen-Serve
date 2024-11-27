@@ -39,14 +39,14 @@ impl crate::ReleaseVersionController {
     #[instrument(skip_all)]
     pub async fn all_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        MapReject(filter): MapRejecter<Query<Option<QueryVersionFilter>>>,
-    ) -> Result<ListWithPageInfo<ReleaseVersion>> {
-        let QueryVersionFilter {
+        MapReject(QueryVersionFilter {
             platform,
             deleted,
-            paginator: ValueField(SerdeCheck(paginator)),
-        } = filter.unwrap_or_default();
-        let ret = logic.all(paginator, platform, deleted).await?;
+            paginator: SerdeCheck(paginator),
+        }): MapRejecter<Query<QueryVersionFilter>>,
+    ) -> Result<ListWithPageInfo<ReleaseVersion>> {
+
+        let ret = logic.all(paginator.into(), platform, deleted).await?;
 
         Ok(ret)
     }

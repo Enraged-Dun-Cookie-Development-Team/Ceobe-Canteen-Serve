@@ -1,4 +1,5 @@
 use core::fmt::Debug;
+use std::str::FromStr;
 
 use serde::Deserialize;
 
@@ -7,6 +8,17 @@ use crate::{
 };
 
 pub struct CheckRequire<D: Checker>(D::Unchecked);
+
+impl<D: Checker> FromStr for CheckRequire<D>
+where D::Unchecked:FromStr
+{
+    type Err = <D::Unchecked as FromStr>::Err;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let uncheck = FromStr::from_str(s)?;
+        Ok(Self(uncheck))
+    }
+}
 
 impl<D: Checker> CheckRequire<D>
 where

@@ -37,14 +37,13 @@ impl Display for QueryReleaseVersion<OptionField<Version>> {
     }
 }
 
-#[derive(Debug, Deserialize, Default)]
-pub struct QueryVersionFilter<Paginator:OptionViewField<SerdeCheck<OptionChecker<PageSizeChecker>>>
-= ValueField<SerdeCheck<OptionChecker<PageSizeChecker>>>
-> {
+#[derive(Debug, Deserialize)]
+pub struct QueryVersionFilter{
     pub platform: Option<ReleasePlatform>,
+    #[serde(default)]
     pub deleted: bool,
     #[serde(flatten)]
-    pub paginator :Paginator,
+    pub paginator: SerdeCheck<PageSizeChecker>,
 }
 
 impl Display for QueryVersionFilter {
@@ -76,8 +75,12 @@ pub struct UpdatePayload {
 #[cfg(test)]
 mod test {
 
-    use serde_json::json;
-    use serve_utils::SkipField;
+    use checker::SerdeCheck;
+    use http::Uri;
+
+    use page_size::request::PageSizeChecker;
+    use serde::Deserialize;
+    use serve_utils::{axum::extract::Query, SkipField};
 
     use super::QueryVersionFilter;
     use crate::view::QueryReleaseVersion;
@@ -94,18 +97,15 @@ mod test {
     }
 
     #[test]
-    fn test_query_qyery() {
+    fn test_query_query() {
+
         // QueryVersionFilter
+        let uri: Uri = "http://example.com/path?deleted=false&page=11&size=12"
+            .parse()
+            .expect("Bad uri");
+        let reg = Query::<QueryVersionFilter>::try_from_uri(&uri)
+            .expect("Error Parse Query");
 
-        let json = json!({
-         "platform" : "plugin",
-         "deleted":true,
-         "page":11,
-         "size":12
-        });
-
-        let org = serde_json::from_value::<QueryVersionFilter>(json)
-            .expect("deseralize failure");
-        println!("{org:?}")
+        println!("{reg:?}")
     }
 }
