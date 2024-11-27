@@ -24,4 +24,4 @@ pub type Checked<C> = <C as Checker>::Checked;
 pub type Uncheck<C> = <C as Checker>::Unchecked;
 mod sync_check;
 
-pub use serde_with::{self,serde_as,DisplayFromStr};
+pub use serde_with::{self, serde_as, DisplayFromStr};

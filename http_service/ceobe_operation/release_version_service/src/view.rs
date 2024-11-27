@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-use checker::{prefabs::option_checker::OptionChecker, SerdeCheck};
+use checker::SerdeCheck;
 use page_size::request::PageSizeChecker;
 use persistence::ceobe_operate::models::version::models::{
     DownloadSourceItem, ReleasePlatform,
@@ -38,7 +38,7 @@ impl Display for QueryReleaseVersion<OptionField<Version>> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct QueryVersionFilter{
+pub struct QueryVersionFilter {
     pub platform: Option<ReleasePlatform>,
     #[serde(default)]
     pub deleted: bool,
@@ -77,7 +77,6 @@ mod test {
 
     use checker::SerdeCheck;
     use http::Uri;
-
     use page_size::request::PageSizeChecker;
     use serde::Deserialize;
     use serve_utils::{axum::extract::Query, SkipField};
@@ -98,11 +97,11 @@ mod test {
 
     #[test]
     fn test_query_query() {
-
         // QueryVersionFilter
-        let uri: Uri = "http://example.com/path?deleted=false&page=11&size=12"
-            .parse()
-            .expect("Bad uri");
+        let uri: Uri =
+            "http://example.com/path?deleted=false&page=11&size=12"
+                .parse()
+                .expect("Bad uri");
         let reg = Query::<QueryVersionFilter>::try_from_uri(&uri)
             .expect("Error Parse Query");
 

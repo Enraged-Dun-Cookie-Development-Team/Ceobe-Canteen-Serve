@@ -3,7 +3,7 @@ use checker::{
     prefabs::num_check::{
         NonZeroUnsigned, NonZeroUnsignedChecker, NonZeroUnsignedError,
     },
-    serde_as,DisplayFromStr
+    serde_as, DisplayFromStr,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -19,12 +19,12 @@ pub struct Paginator {
     error = NonZeroUnsignedError,
     sync
 )]
-#[serde_as(crate="::checker::serde_with")]
+#[serde_as(crate = "::checker::serde_with")]
 #[derive(Debug, Deserialize)]
 pub struct PageSizeChecker {
-    #[serde_as(as="DisplayFromStr")]
+    #[serde_as(as = "DisplayFromStr")]
     page: NonZeroUnsignedChecker<usize>,
-    #[serde_as(as="DisplayFromStr")]
+    #[serde_as(as = "DisplayFromStr")]
     size: NonZeroUnsignedChecker<usize>,
 }
 

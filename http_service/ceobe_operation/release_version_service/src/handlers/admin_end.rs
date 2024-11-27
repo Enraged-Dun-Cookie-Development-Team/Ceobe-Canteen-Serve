@@ -45,7 +45,6 @@ impl crate::ReleaseVersionController {
             paginator: SerdeCheck(paginator),
         }): MapRejecter<Query<QueryVersionFilter>>,
     ) -> Result<ListWithPageInfo<ReleaseVersion>> {
-
         let ret = logic.all(paginator.into(), platform, deleted).await?;
 
         Ok(ret)

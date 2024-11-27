@@ -10,7 +10,8 @@ use crate::{
 pub struct CheckRequire<D: Checker>(D::Unchecked);
 
 impl<D: Checker> FromStr for CheckRequire<D>
-where D::Unchecked:FromStr
+where
+    D::Unchecked: FromStr,
 {
     type Err = <D::Unchecked as FromStr>::Err;
 
