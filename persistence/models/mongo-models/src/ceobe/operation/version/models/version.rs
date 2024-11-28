@@ -34,6 +34,7 @@ pub struct ReleaseVersion {
     #[builder(via_mutators)]
     download_source: Vec<DownloadSourceItem>,
     #[builder(default = false)]
+    #[serde(default)]
     deleted: bool,
 }
 
