@@ -115,14 +115,24 @@ where
 fn generate_platform_filter_document(
     platform: Option<ReleasePlatform>, deleted: bool,
 ) -> Result<Document> {
-    Ok(match platform {
-        None => {
-            doc! {"deleted": deleted}
+    Ok(match (platform,deleted) {
+        (None,false) => {
+            doc! {
+                "deleted": false
+            }
         }
-        Some(plat) => {
+        (Some(plat),false) => {
             doc! {
                 "platform":to_bson(&plat)?,
-                "deleted": deleted
+                "deleted": false
+            }
+        }
+        (None,true)=>{
+            doc! {}
+        }
+        (Some(plat),true)=>{
+            doc! {
+                "platform":to_bson(&plat)?,
             }
         }
     })
@@ -146,9 +156,19 @@ mod test {
         mongodb::bson::doc,
     };
     use mongo_migration::Migrator;
-
+    use crate::release_version::retrieve::generate_platform_filter_document;
     use crate::ToCeobeOperation;
-
+    
+    #[test]
+    fn test_deleted_filter(){
+        let doc = generate_platform_filter_document(Some(Desktop),false).expect("Err");
+        assert_eq!(doc,doc! {"platform": "desktop","deleted":false});
+        
+        let doc = generate_platform_filter_document(Some(Desktop),true).expect("err");
+        assert_eq!(doc, doc! {"platform": "desktop"})
+        
+    }
+    
     #[tokio::test]
     async fn test_retrieve_version() {
         connect_db_with_migrate::<DatabaseManage, _, _>(
