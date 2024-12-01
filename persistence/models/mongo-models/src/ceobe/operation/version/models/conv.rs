@@ -41,12 +41,10 @@ impl From<plugin_version::Checked> for ReleaseVersion {
             .description(description)
             .platform(Plugin)
             .previous_mandatory_version(Version::new(
-                        major as _,
-                        minor as _,
-                        security as _,
-                    ))
-                    
-            
+                major as _,
+                minor as _,
+                security as _,
+            ))
             .add_download_source(
                 DownloadSourceItem::builder()
                     .name("CRX")
@@ -119,16 +117,16 @@ impl From<app_version::Checked> for ReleaseVersion {
             apk,
             spare_apk,
             baidu,
-            baidu_text,..
+            baidu_text,
+            ..
         }: app_version::Checked,
     ) -> Self {
         ReleaseVersion::builder()
             // 经过校验的version,没有问题
             .version(version.parse().unwrap_or_log())
             .previous_mandatory_version(
-                        last_force_version.parse().unwrap_or_log(),
-                    )
-                    
+                last_force_version.parse().unwrap_or_log(),
+            )
             .platform(Pocket)
             .description(description)
             .add_download_source(
@@ -175,16 +173,16 @@ impl From<desktop_version::Checked> for ReleaseVersion {
             dmg,
             spare_dmg,
             baidu,
-            baidu_text,..
+            baidu_text,
+            ..
         }: desktop_version::Checked,
     ) -> Self {
         ReleaseVersion::builder()
             // 经过校验的version,没有问题
             .version(version.parse().unwrap_or_log())
             .previous_mandatory_version(
-                        last_force_version.parse().unwrap_or_log(),
-                    )
-                    
+                last_force_version.parse().unwrap_or_log(),
+            )
             .platform(Desktop)
             .description(description)
             .add_download_source(

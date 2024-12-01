@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 use crate::ceobe::operation::version::models::{
-    download_source::DownloadSourceItem,
-    platform::ReleasePlatform,
+    download_source::DownloadSourceItem, platform::ReleasePlatform,
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder, PartialEq)]
@@ -56,9 +55,7 @@ mod test {
     fn test_version_serde() {
         let ver = ReleaseVersion::builder()
             .version(Version::new(1, 13, 2))
-            .previous_mandatory_version(
-                Version::new(1, 0, 0)
-            )
+            .previous_mandatory_version(Version::new(1, 0, 0))
             .description("Abc")
             .platform(ReleasePlatform::Desktop)
             .add_download_source(
@@ -88,9 +85,9 @@ mod test {
                             .name("百度云备用")
                             .build(),
                     )
-                    
                     .build(),
-            ).deleted(false)
+            )
+            .deleted(false)
             .build();
 
         let serde =
