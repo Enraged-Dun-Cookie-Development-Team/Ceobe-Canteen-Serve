@@ -85,8 +85,9 @@ mod test {
                             .name("百度云备用")
                             .build(),
                     )
+                    
                     .build(),
-            )
+            ).deleted(false)
             .build();
 
         let serde =
@@ -118,7 +119,8 @@ mod test {
                             }
                     ]
                     }
-                ]
+                ],
+                "deleted":false,
 
             })
         );
