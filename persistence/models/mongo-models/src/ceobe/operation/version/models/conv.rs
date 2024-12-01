@@ -5,7 +5,7 @@ use tracing_unwrap::ResultExt;
 use crate::ceobe::operation::{
     plugin_version::{self, DownloadResource, SpareLink},
     version::models::{
-        DownloadSourceItem, ForceCtrl, Primary,
+        DownloadSourceItem, Primary,
         ReleasePlatform::{Desktop, Plugin, Pocket},
         ReleaseVersion, ResourceUrl,
         SupportPlatform::{Android, MacOS, Windows},
@@ -40,16 +40,11 @@ impl From<plugin_version::Checked> for ReleaseVersion {
             .version(Version::new(major as _, minor as _, security as _))
             .description(description)
             .platform(Plugin)
-            .force(
-                ForceCtrl::builder()
-                    .force_update()
-                    .previous_force_version(Version::new(
-                        major as _,
-                        minor as _,
-                        security as _,
-                    ))
-                    .build(),
-            )
+            .previous_mandatory_version(Version::new(
+                major as _,
+                minor as _,
+                security as _,
+            ))
             .add_download_source(
                 DownloadSourceItem::builder()
                     .name("CRX")
@@ -117,25 +112,20 @@ impl From<app_version::Checked> for ReleaseVersion {
     fn from(
         app_version::Checked {
             version,
-            force,
             last_force_version,
             description,
             apk,
             spare_apk,
             baidu,
             baidu_text,
+            ..
         }: app_version::Checked,
     ) -> Self {
         ReleaseVersion::builder()
             // 经过校验的version,没有问题
             .version(version.parse().unwrap_or_log())
-            .force(
-                ForceCtrl::builder()
-                    .set_force_update(force)
-                    .previous_force_version(
-                        last_force_version.parse().unwrap_or_log(),
-                    )
-                    .build(),
+            .previous_mandatory_version(
+                last_force_version.parse().unwrap_or_log(),
             )
             .platform(Pocket)
             .description(description)
@@ -176,7 +166,6 @@ impl From<desktop_version::Checked> for ReleaseVersion {
     fn from(
         desktop_version::Checked {
             version,
-            force,
             last_force_version,
             description,
             exe,
@@ -185,18 +174,14 @@ impl From<desktop_version::Checked> for ReleaseVersion {
             spare_dmg,
             baidu,
             baidu_text,
+            ..
         }: desktop_version::Checked,
     ) -> Self {
         ReleaseVersion::builder()
             // 经过校验的version,没有问题
             .version(version.parse().unwrap_or_log())
-            .force(
-                ForceCtrl::builder()
-                    .set_force_update(force)
-                    .previous_force_version(
-                        last_force_version.parse().unwrap_or_log(),
-                    )
-                    .build(),
+            .previous_mandatory_version(
+                last_force_version.parse().unwrap_or_log(),
             )
             .platform(Desktop)
             .description(description)

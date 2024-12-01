@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 
 use crate::ceobe::operation::version::models::{
-    download_source::DownloadSourceItem, force::ForceCtrl,
-    platform::ReleasePlatform,
+    download_source::DownloadSourceItem, platform::ReleasePlatform,
 };
 
 #[derive(Debug, Serialize, Deserialize, Clone, TypedBuilder, PartialEq)]
@@ -23,7 +22,7 @@ pub struct ReleaseVersion {
     /// 当前要发布的版本号
     pub version: Version,
     /// 发布的版本更新控制
-    force: ForceCtrl,
+    previous_mandatory_version: Version,
     /// 发布的版本的说明
     #[builder(default, setter(into, strip_option))]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -45,18 +44,19 @@ mod test {
 
     use crate::ceobe::operation::version::models::{
         platform::SupportPlatform, primary::Primary, DownloadSourceItem,
-        ForceCtrl, ReleasePlatform, ReleaseVersion, ResourceUrl,
+        ReleasePlatform, ReleaseVersion, ResourceUrl,
     };
-
+    #[test]
+    fn test_sem_version_serde() {
+        let ver = Version::new(1, 1, 1);
+        let s = serde_json::to_string(&ver).unwrap();
+        assert_eq!(s, "\"1.1.1\"")
+    }
     #[test]
     fn test_version_serde() {
         let ver = ReleaseVersion::builder()
             .version(Version::new(1, 13, 2))
-            .force(
-                ForceCtrl::builder()
-                    .previous_force_version(Version::new(1, 0, 0))
-                    .build(),
-            )
+            .previous_mandatory_version(Version::new(1, 0, 0))
             .description("Abc")
             .platform(ReleasePlatform::Desktop)
             .add_download_source(
@@ -88,6 +88,7 @@ mod test {
                     )
                     .build(),
             )
+            .deleted(false)
             .build();
 
         let serde =
@@ -96,10 +97,7 @@ mod test {
             serde,
             json!({
                 "version": "1.13.2",
-                "force": {
-                    "force_update": false,
-                    "previous_force_version": "1.0.0"
-                },
+                "previous_mandatory_version": "1.0.0",
                 "description": "Abc",
                 "platform": "desktop",
                 "download_source": [
@@ -119,7 +117,8 @@ mod test {
                             }
                     ]
                     }
-                ]
+                ],
+                "deleted":false,
 
             })
         );
