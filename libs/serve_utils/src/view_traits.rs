@@ -1,7 +1,7 @@
+pub mod const_field;
+mod option_field;
 mod skip_field;
 mod value_field;
-mod option_field;
-pub mod const_field;
 
 /// 用于view中的可选field
 ///
@@ -49,14 +49,13 @@ pub trait OptionViewField<V>: _private::SealTrait {
 }
 
 pub trait FetchViewValue<T> {
-    fn fetch(self)->T;
+    fn fetch(self) -> T;
 }
 
 mod _private {
     pub trait SealTrait {}
 }
 
+pub use option_field::OptionField;
 pub use skip_field::SkipField;
 pub use value_field::ValueField;
-pub use option_field::OptionField;
-

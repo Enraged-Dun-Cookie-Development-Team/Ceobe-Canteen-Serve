@@ -5,15 +5,13 @@ use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
     axum::{extract::Query, Json},
     axum_resp_result::{resp_result, MapReject},
-    tracing::instrument, ValueField,
+    tracing::instrument,
+    ValueField,
 };
 
 use crate::{
     handlers::{MapRejecter, Result},
-    view::{
-        QueryReleaseVersion, QueryVersionUpdate,
-        UpdatePayload,
-    },
+    view::{QueryReleaseVersion, QueryVersionUpdate, UpdatePayload},
 };
 
 impl crate::ReleaseVersionController {
@@ -31,8 +29,6 @@ impl crate::ReleaseVersionController {
         logic.mark_deleted(&version, &platform).await?;
         Ok(())
     }
-
-
 
     #[resp_result]
     #[instrument(skip_all,fields(version = %(arg_1.0.version)))]

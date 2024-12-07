@@ -1,29 +1,28 @@
-
+use paste::paste;
 use serde::{Deserialize, Serialize};
 
-use super::{OptionViewField, _private::SealTrait,FetchViewValue};
-use paste::paste;
+use super::{FetchViewValue, OptionViewField, _private::SealTrait};
 
 macro_rules! const_field_def {
     ($t:ty => $id:ident) => {
         paste!{
             #[derive(Debug, Clone, Default)]
             pub struct [<Const $id Field>]<const V:$t>;
-            
+
             impl<const V:$t> OptionViewField<$t> for [<Const $id Field>]<V> {
                 fn skip_serde(&self) -> bool {
                     false
                 }
             }
-            
+
             impl<const V:$t> SealTrait for [<Const $id Field>]<V> {}
-            
+
             impl<const V: $t> FetchViewValue<$t> for [<Const $id Field>]<V>  {
                 fn fetch(self)->$t {
                     V
                 }
             }
-            
+
             impl<'de, const V:$t> Deserialize<'de> for [<Const $id Field>]<V> {
                 fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
                 where
@@ -32,14 +31,14 @@ macro_rules! const_field_def {
                     Ok(Self)
                 }
             }
-            
+
             impl<const V:$t> Serialize for [<Const $id Field>]<V> {
                 fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
                 where
                 S: serde::Serializer {
                     <$t as Serialize>::serialize(&V, serializer)
                 }
-            }            
+            }
         }
     };
     [$($t:ty => $id:ident)*]=>{

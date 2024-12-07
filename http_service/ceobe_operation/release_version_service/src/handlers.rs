@@ -3,7 +3,10 @@ use serve_utils::{
     axum::{
         routing::{get, post},
         Router,
-    }, const_field::ConstBoolField, endpoint::{AdminEnd, CDN}, ControllerRoute, HandlerMapReject, HandlerResult, ValueField
+    },
+    const_field::ConstBoolField,
+    endpoint::{AdminEnd, CDN},
+    ControllerRoute, HandlerMapReject, HandlerResult, ValueField,
 };
 use tencent_cloud_server::axum_starter::{
     PartTencentCloudManagerState, RequestClient,
