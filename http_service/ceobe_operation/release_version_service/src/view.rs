@@ -38,8 +38,10 @@ impl Display for QueryReleaseVersion<OptionField<Version>> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct QueryVersionFilter {
-    pub platform: Option<ReleasePlatform>,
+pub struct QueryVersionFilter<
+Platform: OptionViewField<ReleasePlatform> = OptionField<ReleasePlatform>,
+> {
+    pub platform: Platform,
     #[serde(default)]
     pub deleted: bool,
     #[serde(flatten)]
@@ -48,7 +50,7 @@ pub struct QueryVersionFilter {
 
 impl Display for QueryVersionFilter {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match &self.platform {
+        match &self.platform.0 {
             None => {
                 write!(f, "{{deleted: {} }}", self.deleted)
             }

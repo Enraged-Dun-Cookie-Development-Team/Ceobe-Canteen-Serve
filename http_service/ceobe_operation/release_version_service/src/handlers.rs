@@ -27,7 +27,9 @@ where
     const BASE_URI: &'static str = "/version";
 
     fn route(self) -> Router<S> {
-        Router::new().route("/fetch", get(Self::fetch_version))
+        Router::new()
+            .route("/fetch", get(Self::fetch_version))
+            .route("/all", get(Self::all_version_by_platform))
     }
 }
 

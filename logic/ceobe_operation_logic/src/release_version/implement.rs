@@ -26,7 +26,7 @@ impl ReleaseVersionLogic {
             .await?;
 
         self.tencent_cloud
-            .purge_urls_cache(&Some(TencentCDNPath::LATEST_VERSION))
+            .purge_urls_cache(&[TencentCDNPath::LATEST_VERSION, TencentCDNPath::VERSION_LIST])
             .await?;
 
         Ok(())
@@ -79,7 +79,7 @@ impl ReleaseVersionLogic {
             .one(release)
             .await?;
         self.tencent_cloud
-            .purge_urls_cache(&Some(TencentCDNPath::LATEST_VERSION))
+            .purge_urls_cache(&[TencentCDNPath::LATEST_VERSION, TencentCDNPath::VERSION_LIST])
             .await?;
         Ok(())
     }
@@ -126,7 +126,9 @@ impl ReleaseVersionLogic {
                 resources,
             )
             .await?;
-
+        self.tencent_cloud
+            .purge_urls_cache(&[TencentCDNPath::LATEST_VERSION, TencentCDNPath::VERSION_LIST])
+            .await?;
         Ok(())
     }
 }

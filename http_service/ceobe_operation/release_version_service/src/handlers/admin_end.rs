@@ -5,10 +5,7 @@ use checker::SerdeCheck;
 use page_size::response::ListWithPageInfo;
 use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
-    axum::{extract::Query, Json},
-    axum_resp_result::{resp_result, MapReject},
-    tracing::instrument,
-    ValueField,
+    axum::{extract::Query, Json}, axum_resp_result::{resp_result, MapReject}, tracing::instrument, OptionField, ValueField
 };
 
 use crate::{
@@ -40,7 +37,7 @@ impl crate::ReleaseVersionController {
     pub async fn all_version(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryVersionFilter {
-            platform,
+            platform: OptionField(platform),
             deleted,
             paginator: SerdeCheck(paginator),
         }): MapRejecter<Query<QueryVersionFilter>>,
