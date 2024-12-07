@@ -30,20 +30,5 @@ impl crate::ReleaseVersionController {
         Ok(release_info)
     }
 
-    #[resp_result]
-    #[instrument(skip_all)]
-    pub async fn all_version_by_platform(
-        logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        MapReject(QueryVersionFilter {
-            platform: ValueField(platform),
-            paginator: SerdeCheck(paginator),
-            ..
-        }): MapRejecter<
-            Query<QueryVersionFilter<ValueField<ReleasePlatform>>>,
-        >,
-    ) -> Result<ListWithPageInfo<ReleaseVersion>> {
-        let ret = logic.all(paginator.into(), Some(platform), false).await?;
 
-        Ok(ret)
-    }
 }

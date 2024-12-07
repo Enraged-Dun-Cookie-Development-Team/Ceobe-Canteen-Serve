@@ -3,9 +3,7 @@ use serve_utils::{
     axum::{
         routing::{get, post},
         Router,
-    },
-    endpoint::{AdminEnd, CDN},
-    ControllerRoute, HandlerMapReject, HandlerResult,
+    }, const_field::ConstBoolField, endpoint::{AdminEnd, CDN}, ControllerRoute, HandlerMapReject, HandlerResult, ValueField
 };
 use tencent_cloud_server::axum_starter::{
     PartTencentCloudManagerState, RequestClient,
@@ -13,6 +11,7 @@ use tencent_cloud_server::axum_starter::{
 
 mod admin_end;
 mod cdn;
+mod common;
 
 pub(crate) type Result<T> = HandlerResult<T, crate::ReleaseVersionController>;
 pub(crate) type MapRejecter<T> =
@@ -29,7 +28,7 @@ where
     fn route(self) -> Router<S> {
         Router::new()
             .route("/fetch", get(Self::fetch_version))
-            .route("/all", get(Self::all_version_by_platform))
+            .route("/all", get(Self::all_version::<ConstBoolField<false>>))
     }
 }
 
@@ -45,7 +44,7 @@ where
         Router::new()
             .route("/markDelete", post(Self::mark_delete_version))
             .route("/create", post(Self::new_version))
-            .route("/all", get(Self::all_version))
+            .route("/all", get(Self::all_version::<ValueField<bool>>))
             .route("/modify", post(Self::modify_description))
     }
 }
