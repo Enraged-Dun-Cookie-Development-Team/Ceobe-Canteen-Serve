@@ -1,7 +1,10 @@
 use paste::paste;
 use serde::{Deserialize, Serialize};
 
-use super::{FetchViewValue, FetchOptionViewValue, OptionViewField, _private::SealTrait};
+use super::{
+    FetchOptionViewValue, FetchViewValue, OptionViewField,
+    _private::SealTrait,
+};
 
 macro_rules! const_field_def {
     ($t:ty => $id:ident) => {
@@ -22,7 +25,7 @@ macro_rules! const_field_def {
                     V
                 }
             }
-            
+
             impl<const T: $t> FetchOptionViewValue<$t> for [<Const $id Field>]<T> {
                 fn fetch_option(self) -> Option<$t> { Some(T) }
             }

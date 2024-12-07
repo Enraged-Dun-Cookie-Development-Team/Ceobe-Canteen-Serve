@@ -8,7 +8,8 @@ use persistence::ceobe_operate::models::version::models::{
     ReleasePlatform, ReleaseVersion,
 };
 use serve_utils::{
-    axum::extract::Query, FetchViewValue, FetchOptionViewValue, OptionViewField,
+    axum::extract::Query, FetchOptionViewValue, FetchViewValue,
+    OptionViewField,
 };
 use tracing::instrument;
 

@@ -1,7 +1,8 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use super::{
-    FetchViewValue, FetchOptionViewValue, OptionViewField, _private::SealTrait,
+    FetchOptionViewValue, FetchViewValue, OptionViewField,
+    _private::SealTrait,
 };
 
 #[derive(Debug, Clone, Default)]
