@@ -3,7 +3,9 @@ use ceobe_operation_logic::{
 };
 use checker::SerdeCheck;
 use page_size::response::ListWithPageInfo;
-use persistence::ceobe_operate::models::version::models::{ReleasePlatform, ReleaseVersion};
+use persistence::ceobe_operate::models::version::models::{
+    ReleasePlatform, ReleaseVersion,
+};
 use serve_utils::{
     axum::extract::Query,
     axum_resp_result::{resp_result, MapReject},
@@ -36,7 +38,9 @@ impl crate::ReleaseVersionController {
             platform: ValueField(platform),
             paginator: SerdeCheck(paginator),
             ..
-        }): MapRejecter<Query<QueryVersionFilter<ValueField<ReleasePlatform>>>>,
+        }): MapRejecter<
+            Query<QueryVersionFilter<ValueField<ReleasePlatform>>>,
+        >,
     ) -> Result<ListWithPageInfo<ReleaseVersion>> {
         let ret = logic.all(paginator.into(), Some(platform), false).await?;
 

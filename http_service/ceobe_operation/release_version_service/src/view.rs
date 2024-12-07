@@ -39,7 +39,7 @@ impl Display for QueryReleaseVersion<OptionField<Version>> {
 
 #[derive(Debug, Deserialize)]
 pub struct QueryVersionFilter<
-Platform: OptionViewField<ReleasePlatform> = OptionField<ReleasePlatform>,
+    Platform: OptionViewField<ReleasePlatform> = OptionField<ReleasePlatform>,
 > {
     pub platform: Platform,
     #[serde(default)]
