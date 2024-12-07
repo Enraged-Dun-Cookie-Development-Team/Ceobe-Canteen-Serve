@@ -1,6 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use super::{OptionViewField, _private::SealTrait};
+use super::{GetOptionViewValue, OptionViewField, _private::SealTrait};
 
 /// View 中可选field的可以跳过情况
 #[derive(Default, Debug, Clone, Copy)]
@@ -27,6 +27,10 @@ impl<'de> Deserialize<'de> for SkipField {
 
 impl<V> OptionViewField<V> for SkipField {
     fn skip_serde(&self) -> bool { true }
+}
+
+impl<T> GetOptionViewValue<T> for SkipField {
+    fn get_option(self) -> Option<T> { None }
 }
 
 impl SealTrait for SkipField {}

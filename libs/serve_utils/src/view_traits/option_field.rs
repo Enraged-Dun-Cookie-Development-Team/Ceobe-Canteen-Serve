@@ -1,6 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use super::{OptionViewField, _private::SealTrait};
+use super::{GetOptionViewValue, OptionViewField, _private::SealTrait};
 
 #[derive(Debug, Clone)]
 pub struct OptionField<T>(pub Option<T>);
@@ -31,6 +31,10 @@ impl<T: Serialize> Serialize for OptionField<T> {
 
 impl<T> OptionViewField<T> for OptionField<T> {
     fn skip_serde(&self) -> bool { self.0.is_none() }
+}
+
+impl<T> GetOptionViewValue<T> for OptionField<T> {
+    fn get_option(self) -> Option<T> { self.0 }
 }
 
 impl<T> SealTrait for OptionField<T> {}

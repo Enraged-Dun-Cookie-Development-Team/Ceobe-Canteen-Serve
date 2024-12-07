@@ -15,8 +15,8 @@ pub use status_err;
 pub use thiserror::Error as ThisError;
 pub use tracing;
 pub use view_traits::{
-    const_field, FetchViewValue, OptionField, OptionViewField, SkipField,
-    ValueField,
+    const_field, FetchViewValue, GetOptionViewValue, OptionField,
+    OptionViewField, SkipField, ValueField,
 };
 
 pub mod endpoint {

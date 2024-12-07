@@ -4,9 +4,11 @@ use ceobe_operation_logic::{
 };
 use checker::SerdeCheck;
 use page_size::response::ListWithPageInfo;
-use persistence::ceobe_operate::models::version::models::ReleaseVersion;
+use persistence::ceobe_operate::models::version::models::{
+    ReleasePlatform, ReleaseVersion,
+};
 use serve_utils::{
-    axum::extract::Query, FetchViewValue, OptionField, OptionViewField,
+    axum::extract::Query, FetchViewValue, GetOptionViewValue, OptionViewField,
 };
 use tracing::instrument;
 
@@ -18,16 +20,18 @@ impl ReleaseVersionController {
     #[instrument(skip_all)]
     pub async fn all_version<
         D: OptionViewField<bool> + FetchViewValue<bool>,
+        P: OptionViewField<ReleasePlatform>
+            + GetOptionViewValue<ReleasePlatform>,
     >(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        MapReject(QueryVersionFilter::<D> {
-            platform: OptionField(platform),
+        MapReject(QueryVersionFilter::<D, P> {
+            platform,
             deleted,
             paginator: SerdeCheck(paginator),
-        }): MapRejecter<Query<QueryVersionFilter<D>>>,
+        }): MapRejecter<Query<QueryVersionFilter<D, P>>>,
     ) -> Result<ListWithPageInfo<ReleaseVersion>> {
         let ret = logic
-            .all(paginator.into(), platform, deleted.fetch())
+            .all(paginator.into(), platform.get_option(), deleted.fetch())
             .await?;
 
         Ok(ret)
