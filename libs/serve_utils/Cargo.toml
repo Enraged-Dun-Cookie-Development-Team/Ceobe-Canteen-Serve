@@ -7,6 +7,7 @@ edition = "2021"
 axum.workspace = true
 axum-core.workspace = true
 axum-resp-result.workspace = true
+paste = "1.0.15"
 serde.workspace = true
 status-err = { version = "0.1.0", path = "../status-err" }
 thiserror.workspace = true
