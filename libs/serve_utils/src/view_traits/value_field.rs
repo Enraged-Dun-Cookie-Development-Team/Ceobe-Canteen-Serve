@@ -1,11 +1,19 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use super::{OptionViewField, _private::SealTrait};
+use super::{FetchViewValue, OptionViewField, _private::SealTrait};
 
 
 #[derive(Debug, Clone, Default)]
 #[repr(transparent)]
 pub struct ValueField<T>(pub T);
+
+impl<T> FetchViewValue<T> for ValueField<T> {
+    fn fetch(self)->T {
+        self.0
+    }
+}
+
+
 
 impl<'de, T: Deserialize<'de>> Deserialize<'de> for ValueField<T> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>

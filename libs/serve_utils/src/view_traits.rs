@@ -48,6 +48,10 @@ pub trait OptionViewField<V>: _private::SealTrait {
     fn skip_serde(&self) -> bool;
 }
 
+pub trait FetchViewValue<T> {
+    fn fetch(self)->T;
+}
+
 mod _private {
     pub trait SealTrait {}
 }
