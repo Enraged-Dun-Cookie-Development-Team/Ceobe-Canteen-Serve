@@ -8,7 +8,7 @@ use persistence::ceobe_operate::models::version::models::{
     ReleasePlatform, ReleaseVersion,
 };
 use serve_utils::{
-    axum::extract::Query, FetchViewValue, GetOptionViewValue, OptionViewField,
+    axum::extract::Query, FetchViewValue, FetchOptionViewValue, OptionViewField,
 };
 use tracing::instrument;
 
@@ -21,7 +21,7 @@ impl ReleaseVersionController {
     pub async fn all_version<
         D: OptionViewField<bool> + FetchViewValue<bool>,
         P: OptionViewField<ReleasePlatform>
-            + GetOptionViewValue<ReleasePlatform>,
+            + FetchOptionViewValue<ReleasePlatform>,
     >(
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryVersionFilter::<D, P> {
@@ -31,7 +31,7 @@ impl ReleaseVersionController {
         }): MapRejecter<Query<QueryVersionFilter<D, P>>>,
     ) -> Result<ListWithPageInfo<ReleaseVersion>> {
         let ret = logic
-            .all(paginator.into(), platform.get_option(), deleted.fetch())
+            .all(paginator.into(), platform.fetch_option(), deleted.fetch())
             .await?;
 
         Ok(ret)

@@ -15,7 +15,7 @@ pub use status_err;
 pub use thiserror::Error as ThisError;
 pub use tracing;
 pub use view_traits::{
-    const_field, FetchViewValue, GetOptionViewValue, OptionField,
+    const_field, FetchViewValue, FetchOptionViewValue, OptionField,
     OptionViewField, SkipField, ValueField,
 };
 

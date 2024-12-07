@@ -1,7 +1,7 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use super::{
-    FetchViewValue, GetOptionViewValue, OptionViewField, _private::SealTrait,
+    FetchViewValue, FetchOptionViewValue, OptionViewField, _private::SealTrait,
 };
 
 #[derive(Debug, Clone, Default)]
@@ -12,8 +12,8 @@ impl<T> FetchViewValue<T> for ValueField<T> {
     fn fetch(self) -> T { self.0 }
 }
 
-impl<T> GetOptionViewValue<T> for ValueField<T> {
-    fn get_option(self) -> Option<T> { Some(self.0) }
+impl<T> FetchOptionViewValue<T> for ValueField<T> {
+    fn fetch_option(self) -> Option<T> { Some(self.0) }
 }
 
 impl<'de, T: Deserialize<'de>> Deserialize<'de> for ValueField<T> {

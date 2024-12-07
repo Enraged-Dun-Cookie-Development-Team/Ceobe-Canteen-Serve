@@ -52,8 +52,8 @@ pub trait FetchViewValue<T> {
     fn fetch(self) -> T;
 }
 
-pub trait GetOptionViewValue<T> {
-    fn get_option(self) -> Option<T>;
+pub trait FetchOptionViewValue<T> {
+    fn fetch_option(self) -> Option<T>;
 }
 
 mod _private {
