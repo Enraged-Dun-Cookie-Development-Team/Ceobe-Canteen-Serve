@@ -1,8 +1,6 @@
 use ceobe_operation_logic::{
     release_version::ReleaseVersionLogic, CeobeOperationLogic,
 };
-use checker::SerdeCheck;
-use page_size::response::ListWithPageInfo;
 use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
     axum::{extract::Query, Json},
@@ -13,10 +11,7 @@ use serve_utils::{
 
 use crate::{
     handlers::{MapRejecter, Result},
-    view::{
-        QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate,
-        UpdatePayload,
-    },
+    view::{QueryReleaseVersion, QueryVersionUpdate, UpdatePayload},
 };
 
 impl crate::ReleaseVersionController {
@@ -33,21 +28,6 @@ impl crate::ReleaseVersionController {
     ) -> Result<()> {
         logic.mark_deleted(&version, &platform).await?;
         Ok(())
-    }
-
-    #[resp_result]
-    #[instrument(skip_all)]
-    pub async fn all_version(
-        logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        MapReject(QueryVersionFilter {
-            platform,
-            deleted,
-            paginator: SerdeCheck(paginator),
-        }): MapRejecter<Query<QueryVersionFilter>>,
-    ) -> Result<ListWithPageInfo<ReleaseVersion>> {
-        let ret = logic.all(paginator.into(), platform, deleted).await?;
-
-        Ok(ret)
     }
 
     #[resp_result]

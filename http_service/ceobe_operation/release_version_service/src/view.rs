@@ -38,17 +38,20 @@ impl Display for QueryReleaseVersion<OptionField<Version>> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct QueryVersionFilter {
-    pub platform: Option<ReleasePlatform>,
+pub struct QueryVersionFilter<
+    Delete: OptionViewField<bool>,
+    Platform: OptionViewField<ReleasePlatform> = OptionField<ReleasePlatform>,
+> {
+    pub platform: Platform,
     #[serde(default)]
-    pub deleted: bool,
+    pub deleted: Delete,
     #[serde(flatten)]
     pub paginator: SerdeCheck<PageSizeChecker>,
 }
 
-impl Display for QueryVersionFilter {
+impl<D: Display + OptionViewField<bool>> Display for QueryVersionFilter<D> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match &self.platform {
+        match &self.platform.0 {
             None => {
                 write!(f, "{{deleted: {} }}", self.deleted)
             }
@@ -75,11 +78,8 @@ pub struct UpdatePayload {
 #[cfg(test)]
 mod test {
 
-    use checker::SerdeCheck;
     use http::Uri;
-    use page_size::request::PageSizeChecker;
-    use serde::Deserialize;
-    use serve_utils::{axum::extract::Query, SkipField};
+    use serve_utils::{axum::extract::Query, SkipField, ValueField};
 
     use super::QueryVersionFilter;
     use crate::view::QueryReleaseVersion;
@@ -102,8 +102,9 @@ mod test {
             "http://example.com/path?deleted=false&page=11&size=12"
                 .parse()
                 .expect("Bad uri");
-        let reg = Query::<QueryVersionFilter>::try_from_uri(&uri)
-            .expect("Error Parse Query");
+        let reg =
+            Query::<QueryVersionFilter<ValueField<bool>>>::try_from_uri(&uri)
+                .expect("Error Parse Query");
 
         println!("{reg:?}")
     }

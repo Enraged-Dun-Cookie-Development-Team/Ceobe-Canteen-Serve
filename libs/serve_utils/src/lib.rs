@@ -14,7 +14,10 @@ pub use router_extra::{ControllerRouter, ControllerRouterExt};
 pub use status_err;
 pub use thiserror::Error as ThisError;
 pub use tracing;
-pub use view_traits::{OptionField, OptionViewField, SkipField, ValueField};
+pub use view_traits::{
+    const_field, FetchOptionViewValue, FetchViewValue, OptionField,
+    OptionViewField, SkipField, ValueField,
+};
 
 pub mod endpoint {
     pub use crate::endpoint_type::{AdminEnd, Internal, UserEnd, CDN};
