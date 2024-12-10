@@ -10,9 +10,7 @@ use persistence::{
 };
 use semver::Version;
 use serde::Deserialize;
-use serve_utils::{
-    const_field::ConstBoolField, OptionField, OptionViewField, ValueField,
-};
+use serve_utils::{OptionField, OptionViewField, ValueField};
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion<

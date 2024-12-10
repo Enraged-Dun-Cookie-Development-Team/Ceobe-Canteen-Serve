@@ -9,7 +9,8 @@ use persistence::{
 use serve_utils::{
     axum::extract::Query,
     axum_resp_result::{resp_result, MapReject},
-    tracing::instrument, OptionField,
+    tracing::instrument,
+    OptionField,
 };
 
 use super::{MapRejecter, Result};
@@ -38,13 +39,7 @@ impl crate::ReleaseVersionController {
             first_id,
         }): MapRejecter<Query<QueryVersionNextIdFilter>>,
     ) -> Result<ListWithNextId<ReleaseVersion, ObjectId>> {
-        let ret = logic
-            .all_by_page_id(
-                first_id,
-                platform,
-                false,
-            )
-            .await?;
+        let ret = logic.all_by_page_id(first_id, platform, false).await?;
 
         Ok(ret)
     }
