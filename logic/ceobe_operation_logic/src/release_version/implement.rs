@@ -151,7 +151,7 @@ impl ReleaseVersionLogic {
     }
 
     pub async fn all_by_page_id(
-        &self, first_id: Option<ObjectId>, platform: Option<ReleasePlatform>,
+        &self, first_id: Option<ObjectId>, platform: ReleasePlatform,
         deleted: bool,
     ) -> LogicResult<ListWithNextId<ReleaseVersion, ObjectId>> {
         let list = task::spawn({
@@ -162,7 +162,7 @@ impl ReleaseVersionLogic {
                     .operation()
                     .release_version()
                     .retrieve()
-                    .all_by_first_id(platform, first_id, deleted, 10)
+                    .all_by_first_id(Some(platform), first_id, deleted, 10)
                     .await
             }
         });
@@ -174,7 +174,7 @@ impl ReleaseVersionLogic {
                     .operation()
                     .release_version()
                     .retrieve()
-                    .get_next_id(platform, first_id, deleted, 10)
+                    .get_next_id(Some(platform), first_id, deleted, 10)
                     .await
             }
         });

@@ -68,13 +68,8 @@ impl<D: Display + OptionViewField<bool>> Display for QueryVersionFilter<D> {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct QueryVersionNextIdFilter<
-    Delete: OptionViewField<bool> = ConstBoolField<false>,
-    Platform: OptionViewField<ReleasePlatform> = ValueField<ReleasePlatform>,
-> {
-    pub platform: Platform,
-    #[serde(default)]
-    pub deleted: Delete,
+pub struct QueryVersionNextIdFilter {
+    pub platform: ReleasePlatform,
     #[serde(default)]
     pub first_id: Option<ObjectId>,
 }

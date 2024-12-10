@@ -9,8 +9,7 @@ use persistence::{
 use serve_utils::{
     axum::extract::Query,
     axum_resp_result::{resp_result, MapReject},
-    tracing::instrument,
-    FetchOptionViewValue, FetchViewValue, OptionField,
+    tracing::instrument, OptionField,
 };
 
 use super::{MapRejecter, Result};
@@ -36,15 +35,14 @@ impl crate::ReleaseVersionController {
         logic: CeobeOperationLogic<ReleaseVersionLogic>,
         MapReject(QueryVersionNextIdFilter {
             platform,
-            deleted,
             first_id,
         }): MapRejecter<Query<QueryVersionNextIdFilter>>,
     ) -> Result<ListWithNextId<ReleaseVersion, ObjectId>> {
         let ret = logic
             .all_by_page_id(
                 first_id,
-                platform.fetch_option(),
-                deleted.fetch(),
+                platform,
+                false,
             )
             .await?;
 
