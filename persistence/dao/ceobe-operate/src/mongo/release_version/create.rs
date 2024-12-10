@@ -34,7 +34,7 @@ mod test {
             MongoDbConfig,
         },
         mongo_models::ceobe::operation::version::models::{
-            ForceCtrl, ReleasePlatform::Pocket, ReleaseVersion, Version,
+            ReleasePlatform::Pocket, ReleaseVersion, Version,
         },
         mongodb::bson::doc,
     };
@@ -88,11 +88,7 @@ mod test {
             .one(
                 ReleaseVersion::builder()
                     .version(Version::new(6, 0, 0))
-                    .force(
-                        ForceCtrl::builder()
-                            .previous_force_version(Version::new(1, 0, 0))
-                            .build(),
-                    )
+                    .previous_mandatory_version(Version::new(1, 0, 0))
                     .platform(Pocket)
                     .build(),
             )
@@ -109,11 +105,7 @@ mod test {
             .one(
                 ReleaseVersion::builder()
                     .version(Version::new(5, 8, 1))
-                    .force(
-                        ForceCtrl::builder()
-                            .previous_force_version(Version::new(1, 0, 0))
-                            .build(),
-                    )
+                    .previous_mandatory_version(Version::new(1, 0, 0))
                     .platform(Pocket)
                     .build(),
             )

@@ -1,15 +1,11 @@
-use persistence::{
-    ceobe_operate::models::version::models::ReleasePlatform, operate::FromRef,
-};
+use persistence::operate::FromRef;
 use serve_utils::{
     axum::{
         routing::{get, post},
         Router,
     },
-    const_field::ConstBoolField,
     endpoint::{AdminEnd, CDN},
-    ControllerRoute, HandlerMapReject, HandlerResult, OptionField,
-    ValueField,
+    ControllerRoute, HandlerMapReject, HandlerResult,
 };
 use tencent_cloud_server::axum_starter::{
     PartTencentCloudManagerState, RequestClient,
@@ -17,7 +13,6 @@ use tencent_cloud_server::axum_starter::{
 
 mod admin_end;
 mod cdn;
-mod common;
 
 pub(crate) type Result<T> = HandlerResult<T, crate::ReleaseVersionController>;
 pub(crate) type MapRejecter<T> =
@@ -34,13 +29,7 @@ where
     fn route(self) -> Router<S> {
         Router::new()
             .route("/fetch", get(Self::fetch_version))
-            .route(
-                "/all",
-                get(Self::all_version::<
-                    ConstBoolField<false>,
-                    ValueField<ReleasePlatform>,
-                >),
-            )
+            .route("/all", get(Self::all_version_by_next_id))
     }
 }
 
@@ -56,13 +45,7 @@ where
         Router::new()
             .route("/markDelete", post(Self::mark_delete_version))
             .route("/create", post(Self::new_version))
-            .route(
-                "/all",
-                get(Self::all_version::<
-                    ValueField<bool>,
-                    OptionField<ReleasePlatform>,
-                >),
-            )
+            .route("/all", get(Self::all_version))
             .route("/modify", post(Self::modify_description))
     }
 }

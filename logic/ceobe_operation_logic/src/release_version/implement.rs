@@ -1,4 +1,8 @@
-use db_ops_prelude::database_operates::operate_trait::OperateTrait;
+use db_ops_prelude::{
+    database_operates::operate_trait::OperateTrait,
+    mongodb::bson::oid::ObjectId,
+};
+use page_next_id::response::{GenerateListWithNextId, ListWithNextId};
 use page_size::{
     request::Paginator,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
@@ -10,10 +14,28 @@ use persistence::ceobe_operate::{
     ToCeobe, ToCeobeOperation,
 };
 use semver::Version;
+use tokio::task;
 
 use super::{LogicResult, ReleaseVersionLogic, TencentCDNPath};
 
 impl ReleaseVersionLogic {
+    async fn purge_version_cache(
+        &self, version: &Option<Version>, platform: &ReleasePlatform,
+    ) -> LogicResult<()> {
+        self.tencent_cloud
+            .purge_urls_cache(&[
+                // 最新版本
+                TencentCDNPath::LATEST_VERSION(&None, platform)?,
+                // 当前版本
+                TencentCDNPath::LATEST_VERSION(version, platform)?,
+                // 分页第一页
+                TencentCDNPath::VERSION_LIST(&None, platform)?,
+            ])
+            .await?;
+
+        Ok(())
+    }
+
     pub async fn mark_deleted(
         &self, version: &Version, platform: &ReleasePlatform,
     ) -> LogicResult<()> {
@@ -25,11 +47,7 @@ impl ReleaseVersionLogic {
             .mark_deleted(platform, version)
             .await?;
 
-        self.tencent_cloud
-            .purge_urls_cache(&[
-                TencentCDNPath::LATEST_VERSION,
-                TencentCDNPath::VERSION_LIST,
-            ])
+        self.purge_version_cache(&Some(version.clone()), platform)
             .await?;
 
         Ok(())
@@ -79,13 +97,9 @@ impl ReleaseVersionLogic {
             .operation()
             .release_version()
             .create()
-            .one(release)
+            .one(release.clone())
             .await?;
-        self.tencent_cloud
-            .purge_urls_cache(&[
-                TencentCDNPath::LATEST_VERSION,
-                TencentCDNPath::VERSION_LIST,
-            ])
+        self.purge_version_cache(&Some(release.version), &release.platform)
             .await?;
         Ok(())
     }
@@ -132,12 +146,42 @@ impl ReleaseVersionLogic {
                 resources,
             )
             .await?;
-        self.tencent_cloud
-            .purge_urls_cache(&[
-                TencentCDNPath::LATEST_VERSION,
-                TencentCDNPath::VERSION_LIST,
-            ])
-            .await?;
+        self.purge_version_cache(&Some(version), &platform).await?;
         Ok(())
+    }
+
+    pub async fn all_by_page_id(
+        &self, first_id: Option<ObjectId>, platform: ReleasePlatform,
+        deleted: bool,
+    ) -> LogicResult<ListWithNextId<ReleaseVersion, ObjectId>> {
+        let list = task::spawn({
+            let mongodb = self.mongodb.clone();
+            async move {
+                mongodb
+                    .ceobe()
+                    .operation()
+                    .release_version()
+                    .retrieve()
+                    .all_by_first_id(Some(platform), first_id, deleted, 10)
+                    .await
+            }
+        });
+        let next_id = task::spawn({
+            let mongodb = self.mongodb.clone();
+            async move {
+                mongodb
+                    .ceobe()
+                    .operation()
+                    .release_version()
+                    .retrieve()
+                    .get_next_id(Some(platform), first_id, deleted, 10)
+                    .await
+            }
+        });
+
+        let list = list.await??;
+        let next_id = next_id.await??;
+
+        Ok(list.with_page_next_id_info(next_id))
     }
 }

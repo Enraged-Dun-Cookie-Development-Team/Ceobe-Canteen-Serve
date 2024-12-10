@@ -111,6 +111,7 @@ request-clients = { version = "0.1.0", path = "middle-server/request-clients" }
 mime = "0.3.16"
 tower = { version = "0.4", features = ["limit"] }
 status-err={path = "./libs/status-err"}
+page_next_id =  { version = "0.1.0", path = "./libs/page_next_id" }
 
 
 [dependencies]
