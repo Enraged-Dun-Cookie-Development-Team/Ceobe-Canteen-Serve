@@ -21,6 +21,8 @@ tencent-cloud-server.workspace = true
 serde_qs.workspace = true
 semver = "1.0.23"
 db-ops-prelude.workspace = true
+tokio.workspace = true
+page_next_id.workspace = true
 
 [dependencies.checker]
 path = "../../libs/checker"

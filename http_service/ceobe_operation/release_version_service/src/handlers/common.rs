@@ -16,25 +16,25 @@ use tracing::instrument;
 use super::{MapRejecter, Result};
 use crate::{view::QueryVersionFilter, ReleaseVersionController};
 
-impl ReleaseVersionController {
-    #[resp_result]
-    #[instrument(skip_all)]
-    pub async fn all_version<
-        D: OptionViewField<bool> + FetchViewValue<bool>,
-        P: OptionViewField<ReleasePlatform>
-            + FetchOptionViewValue<ReleasePlatform>,
-    >(
-        logic: CeobeOperationLogic<ReleaseVersionLogic>,
-        MapReject(QueryVersionFilter::<D, P> {
-            platform,
-            deleted,
-            paginator: SerdeCheck(paginator),
-        }): MapRejecter<Query<QueryVersionFilter<D, P>>>,
-    ) -> Result<ListWithPageInfo<ReleaseVersion>> {
-        let ret = logic
-            .all(paginator.into(), platform.fetch_option(), deleted.fetch())
-            .await?;
+// impl ReleaseVersionController {
+//     #[resp_result]
+//     #[instrument(skip_all)]
+//     pub async fn all_version<
+//         D: OptionViewField<bool> + FetchViewValue<bool>,
+//         P: OptionViewField<ReleasePlatform>
+//             + FetchOptionViewValue<ReleasePlatform>,
+//     >(
+//         logic: CeobeOperationLogic<ReleaseVersionLogic>,
+//         MapReject(QueryVersionFilter::<D, P> {
+//             platform,
+//             deleted,
+//             paginator: SerdeCheck(paginator),
+//         }): MapRejecter<Query<QueryVersionFilter<D, P>>>,
+//     ) -> Result<ListWithPageInfo<ReleaseVersion>> {
+//         let ret = logic
+//             .all(paginator.into(), platform.fetch_option(), deleted.fetch())
+//             .await?;
 
-        Ok(ret)
-    }
-}
+//         Ok(ret)
+//     }
+// }

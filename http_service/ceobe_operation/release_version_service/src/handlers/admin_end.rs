@@ -1,17 +1,16 @@
 use ceobe_operation_logic::{
     release_version::ReleaseVersionLogic, CeobeOperationLogic,
 };
-use persistence::ceobe_operate::models::version::models::ReleaseVersion;
+use checker::SerdeCheck;
+use page_size::response::ListWithPageInfo;
+use persistence::{ceobe_operate::models::version::models::ReleaseVersion, ceobe_user::property::delete};
 use serve_utils::{
-    axum::{extract::Query, Json},
-    axum_resp_result::{resp_result, MapReject},
-    tracing::instrument,
-    ValueField,
+    axum::{extract::Query, Json}, axum_resp_result::{resp_result, MapReject}, const_field::ConstBoolField, tracing::instrument, OptionField, ValueField
 };
 
 use crate::{
     handlers::{MapRejecter, Result},
-    view::{QueryReleaseVersion, QueryVersionUpdate, UpdatePayload},
+    view::{QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate, UpdatePayload},
 };
 
 impl crate::ReleaseVersionController {
@@ -64,4 +63,20 @@ impl crate::ReleaseVersionController {
             .await?;
         Ok(())
     }
+
+    #[resp_result]
+    #[instrument(skip_all)]
+    pub async fn all_version(
+        logic: CeobeOperationLogic<ReleaseVersionLogic>,
+        MapReject(QueryVersionFilter {
+            platform: OptionField(platform),
+            deleted: ValueField(deleted),
+            paginator: SerdeCheck(paginator),
+        }): MapRejecter<Query<QueryVersionFilter<ValueField<bool>>>>,
+    ) -> Result<ListWithPageInfo<ReleaseVersion>> {
+        let ret = logic.all(paginator.into(), platform, deleted).await?;
+
+        Ok(ret)
+    }
+    
 }

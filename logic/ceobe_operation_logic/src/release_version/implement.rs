@@ -1,4 +1,5 @@
-use db_ops_prelude::database_operates::operate_trait::OperateTrait;
+use db_ops_prelude::{database_operates::operate_trait::OperateTrait, mongodb::bson::oid::ObjectId};
+use page_next_id::response::{GenerateListWithNextId, ListWithNextId};
 use page_size::{
     request::Paginator,
     response::{GenerateListWithPageInfo, ListWithPageInfo},
@@ -10,6 +11,7 @@ use persistence::ceobe_operate::{
     ToCeobe, ToCeobeOperation,
 };
 use semver::Version;
+use tokio::task;
 
 use super::{LogicResult, ReleaseVersionLogic, TencentCDNPath};
 
@@ -139,5 +141,40 @@ impl ReleaseVersionLogic {
             ])
             .await?;
         Ok(())
+    }
+
+    pub async fn all_by_page_id(
+        &self, first_id: Option<ObjectId>,
+        platform: Option<ReleasePlatform>, deleted: bool,
+    ) -> LogicResult<ListWithNextId<ReleaseVersion, ObjectId>> {
+        let list = task::spawn({
+            let mongodb = self.mongodb.clone();
+            async move {
+                mongodb
+                    .ceobe()
+                    .operation()
+                    .release_version()
+                    .retrieve()
+                    .all_by_first_id(platform, first_id, deleted, 10)
+                    .await
+            }
+        });
+        let next_id = task::spawn({
+            let mongodb = self.mongodb.clone();
+            async move {
+                mongodb
+                    .ceobe()
+                    .operation()
+                    .release_version()
+                    .retrieve()
+                    .get_next_id(platform, first_id, deleted, 10)
+                    .await
+            }
+        });
+
+        let list = list.await??;
+        let next_id = next_id.await??;
+
+        Ok(list.with_page_next_id_info(next_id))
     }
 }

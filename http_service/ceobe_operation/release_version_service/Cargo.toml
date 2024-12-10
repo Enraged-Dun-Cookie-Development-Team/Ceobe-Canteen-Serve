@@ -18,3 +18,4 @@ tencent-cloud-server.workspace = true
 checker = { version = "0.1.0", path = "../../../libs/checker" }
 page_size.workspace = true
 ceobe_operation_logic = { version = "0.1.0", path = "../../../logic/ceobe_operation_logic" }
+page_next_id.workspace = true
