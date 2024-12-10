@@ -16,6 +16,23 @@ use tokio::task;
 use super::{LogicResult, ReleaseVersionLogic, TencentCDNPath};
 
 impl ReleaseVersionLogic {
+    async fn purge_version_cache(
+        &self, version: &Option<Version>, platform: &ReleasePlatform
+    ) -> LogicResult<()> {
+        self.tencent_cloud
+        .purge_urls_cache(&[
+            // 最新版本
+            TencentCDNPath::LATEST_VERSION(&None, platform)?,
+            // 当前版本
+            TencentCDNPath::LATEST_VERSION(version, platform)?,
+            // 分页第一页
+            TencentCDNPath::VERSION_LIST(&None, platform)?,
+        ])
+        .await?;
+
+        Ok(())
+    }
+
     pub async fn mark_deleted(
         &self, version: &Version, platform: &ReleasePlatform,
     ) -> LogicResult<()> {
@@ -27,12 +44,7 @@ impl ReleaseVersionLogic {
             .mark_deleted(platform, version)
             .await?;
 
-        self.tencent_cloud
-            .purge_urls_cache(&[
-                TencentCDNPath::LATEST_VERSION,
-                TencentCDNPath::VERSION_LIST,
-            ])
-            .await?;
+        self.purge_version_cache(&Some(version.clone()), platform).await?;
 
         Ok(())
     }
@@ -81,14 +93,9 @@ impl ReleaseVersionLogic {
             .operation()
             .release_version()
             .create()
-            .one(release)
+            .one(release.clone())
             .await?;
-        self.tencent_cloud
-            .purge_urls_cache(&[
-                TencentCDNPath::LATEST_VERSION,
-                TencentCDNPath::VERSION_LIST,
-            ])
-            .await?;
+        self.purge_version_cache(&Some(release.version), &release.platform).await?;
         Ok(())
     }
 
@@ -134,12 +141,7 @@ impl ReleaseVersionLogic {
                 resources,
             )
             .await?;
-        self.tencent_cloud
-            .purge_urls_cache(&[
-                TencentCDNPath::LATEST_VERSION,
-                TencentCDNPath::VERSION_LIST,
-            ])
-            .await?;
+        self.purge_version_cache(&Some(version), &platform).await?;
         Ok(())
     }
 

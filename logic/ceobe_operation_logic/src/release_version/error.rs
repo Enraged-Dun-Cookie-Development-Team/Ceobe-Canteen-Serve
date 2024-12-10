@@ -17,6 +17,10 @@ pub enum Error {
     #[error(transparent)]
     #[status_err(err(prefix = "ErrPrefix::SERVE", err_code = 0x0003,))]
     JoinError(#[from] JoinError),
+
+    #[error(transparent)]
+    #[status_err(err = "transparent")]
+    SerdeQs(#[from] serde_qs::Error),
 }
 
 pub(super) type LogicResult<T> = core::result::Result<T, Error>;

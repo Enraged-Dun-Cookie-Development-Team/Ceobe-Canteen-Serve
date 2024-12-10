@@ -17,7 +17,6 @@ use tencent_cloud_server::axum_starter::{
 
 mod admin_end;
 mod cdn;
-mod common;
 
 pub(crate) type Result<T> = HandlerResult<T, crate::ReleaseVersionController>;
 pub(crate) type MapRejecter<T> =
