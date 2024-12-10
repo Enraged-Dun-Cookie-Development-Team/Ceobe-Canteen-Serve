@@ -1,0 +1,8 @@
+[package]
+name = "page_next_id"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde.workspace = true
+mongodb.workspace = true
