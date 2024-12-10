@@ -2,12 +2,17 @@ use std::fmt::{Display, Formatter};
 
 use checker::SerdeCheck;
 use page_size::request::PageSizeChecker;
-use persistence::{ceobe_operate::models::version::models::{
-    DownloadSourceItem, ReleasePlatform,
-}, mongodb::mongodb::bson::oid::ObjectId};
+use persistence::{
+    ceobe_operate::models::version::models::{
+        DownloadSourceItem, ReleasePlatform,
+    },
+    mongodb::mongodb::bson::oid::ObjectId,
+};
 use semver::Version;
 use serde::Deserialize;
-use serve_utils::{const_field::ConstBoolField, OptionField, OptionViewField, ValueField};
+use serve_utils::{
+    const_field::ConstBoolField, OptionField, OptionViewField, ValueField,
+};
 
 #[derive(Deserialize, Clone, Debug)]
 pub struct QueryReleaseVersion<
@@ -61,7 +66,6 @@ impl<D: Display + OptionViewField<bool>> Display for QueryVersionFilter<D> {
         }
     }
 }
-
 
 #[derive(Debug, Deserialize)]
 pub struct QueryVersionNextIdFilter<

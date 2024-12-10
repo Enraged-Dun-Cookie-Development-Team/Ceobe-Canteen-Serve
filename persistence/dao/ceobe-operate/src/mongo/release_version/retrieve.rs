@@ -1,9 +1,11 @@
 use db_ops_prelude::{
     futures::TryStreamExt,
-    mongo_connection::{CollectionGuard, MongoDbCollectionTrait, MongoDbError},
+    mongo_connection::{
+        CollectionGuard, MongoDbCollectionTrait, MongoDbError,
+    },
     mongo_models::ceobe::operation::version::models::{OId, ReleasePlatform},
     mongodb::{
-        bson::{doc, oid::{self, ObjectId}, to_bson, Document},
+        bson::{doc, oid::ObjectId, to_bson, Document},
         options::{FindOneOptions, FindOptions},
     },
 };
@@ -71,7 +73,8 @@ where
         paginate: impl Into<Option<Paginator>>, deleted: bool,
     ) -> Result<Vec<ReleaseVersion>> {
         let collection = self.get_collection()?;
-        let filter = generate_platform_filter_document(platform, deleted, None)?;
+        let filter =
+            generate_platform_filter_document(platform, deleted, None)?;
         let sort = doc! {
             "$natural": -1i32
         };
@@ -102,7 +105,8 @@ where
         &'db self, platform: Option<ReleasePlatform>, deleted: bool,
     ) -> Result<usize> {
         let collection = self.get_collection()?;
-        let filter = generate_platform_filter_document(platform, deleted, None)?;
+        let filter =
+            generate_platform_filter_document(platform, deleted, None)?;
 
         let ret = collection
             .doing(|collection| collection.count_documents(filter, None))
@@ -116,15 +120,16 @@ where
         first_id: Option<ObjectId>, deleted: bool, page_size: u64,
     ) -> Result<Vec<ReleaseVersion>> {
         let collection = self.get_collection()?;
-        let filter = generate_platform_filter_document(platform, deleted, first_id)?;
+        let filter =
+            generate_platform_filter_document(platform, deleted, first_id)?;
         let sort = doc! {
             "_id": -1i32
         };
 
         let options = FindOptions::builder()
-                .sort(sort)
-                .limit(page_size as i64)
-                .build();
+            .sort(sort)
+            .limit(page_size as i64)
+            .build();
 
         let ret = collection
             .doing(|collection| collection.find(filter, options))
@@ -141,18 +146,18 @@ where
         first_id: Option<ObjectId>, deleted: bool, page_size: u64,
     ) -> Result<Option<ObjectId>> {
         let collection = self.get_collection()?;
-        let collection: &CollectionGuard<OId> =
-            &collection.with_mapping();
-        let filter = generate_platform_filter_document(platform, deleted, first_id)?;
+        let collection: &CollectionGuard<OId> = &collection.with_mapping();
+        let filter =
+            generate_platform_filter_document(platform, deleted, first_id)?;
         let sort = doc! {
             "_id": -1i32
         };
 
         let options = FindOneOptions::builder()
-                .projection(doc! {"_id": 1})
-                .sort(sort)
-                .skip(page_size)
-                .build();
+            .projection(doc! {"_id": 1})
+            .sort(sort)
+            .skip(page_size)
+            .build();
 
         let oid = collection
             .doing(|collection| collection.find_one(filter, options))
@@ -165,7 +170,8 @@ where
 }
 
 fn generate_platform_filter_document(
-    platform: Option<ReleasePlatform>, deleted: bool, first_id: Option<ObjectId>
+    platform: Option<ReleasePlatform>, deleted: bool,
+    first_id: Option<ObjectId>,
 ) -> Result<Document> {
     Ok(match (platform, deleted, first_id) {
         (None, false, None) => {
@@ -247,12 +253,14 @@ mod test {
 
     #[test]
     fn test_deleted_filter() {
-        let doc = generate_platform_filter_document(Some(Desktop), false, None)
-            .expect("Err");
+        let doc =
+            generate_platform_filter_document(Some(Desktop), false, None)
+                .expect("Err");
         assert_eq!(doc, doc! {"platform": "desktop","deleted":false});
 
-        let doc = generate_platform_filter_document(Some(Desktop), true, None)
-            .expect("err");
+        let doc =
+            generate_platform_filter_document(Some(Desktop), true, None)
+                .expect("err");
         assert_eq!(doc, doc! {"platform": "desktop"})
     }
 

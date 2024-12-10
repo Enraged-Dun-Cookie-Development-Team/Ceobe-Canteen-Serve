@@ -3,14 +3,20 @@ use ceobe_operation_logic::{
 };
 use checker::SerdeCheck;
 use page_size::response::ListWithPageInfo;
-use persistence::{ceobe_operate::models::version::models::ReleaseVersion, ceobe_user::property::delete};
+use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
-    axum::{extract::Query, Json}, axum_resp_result::{resp_result, MapReject}, const_field::ConstBoolField, tracing::instrument, OptionField, ValueField
+    axum::{extract::Query, Json},
+    axum_resp_result::{resp_result, MapReject},
+    tracing::instrument,
+    OptionField, ValueField,
 };
 
 use crate::{
     handlers::{MapRejecter, Result},
-    view::{QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate, UpdatePayload},
+    view::{
+        QueryReleaseVersion, QueryVersionFilter, QueryVersionUpdate,
+        UpdatePayload,
+    },
 };
 
 impl crate::ReleaseVersionController {
@@ -78,5 +84,4 @@ impl crate::ReleaseVersionController {
 
         Ok(ret)
     }
-    
 }

@@ -1,4 +1,7 @@
-use db_ops_prelude::{database_operates::operate_trait::OperateTrait, mongodb::bson::oid::ObjectId};
+use db_ops_prelude::{
+    database_operates::operate_trait::OperateTrait,
+    mongodb::bson::oid::ObjectId,
+};
 use page_next_id::response::{GenerateListWithNextId, ListWithNextId};
 use page_size::{
     request::Paginator,
@@ -17,18 +20,18 @@ use super::{LogicResult, ReleaseVersionLogic, TencentCDNPath};
 
 impl ReleaseVersionLogic {
     async fn purge_version_cache(
-        &self, version: &Option<Version>, platform: &ReleasePlatform
+        &self, version: &Option<Version>, platform: &ReleasePlatform,
     ) -> LogicResult<()> {
         self.tencent_cloud
-        .purge_urls_cache(&[
-            // 最新版本
-            TencentCDNPath::LATEST_VERSION(&None, platform)?,
-            // 当前版本
-            TencentCDNPath::LATEST_VERSION(version, platform)?,
-            // 分页第一页
-            TencentCDNPath::VERSION_LIST(&None, platform)?,
-        ])
-        .await?;
+            .purge_urls_cache(&[
+                // 最新版本
+                TencentCDNPath::LATEST_VERSION(&None, platform)?,
+                // 当前版本
+                TencentCDNPath::LATEST_VERSION(version, platform)?,
+                // 分页第一页
+                TencentCDNPath::VERSION_LIST(&None, platform)?,
+            ])
+            .await?;
 
         Ok(())
     }
@@ -44,7 +47,8 @@ impl ReleaseVersionLogic {
             .mark_deleted(platform, version)
             .await?;
 
-        self.purge_version_cache(&Some(version.clone()), platform).await?;
+        self.purge_version_cache(&Some(version.clone()), platform)
+            .await?;
 
         Ok(())
     }
@@ -95,7 +99,8 @@ impl ReleaseVersionLogic {
             .create()
             .one(release.clone())
             .await?;
-        self.purge_version_cache(&Some(release.version), &release.platform).await?;
+        self.purge_version_cache(&Some(release.version), &release.platform)
+            .await?;
         Ok(())
     }
 
@@ -146,8 +151,8 @@ impl ReleaseVersionLogic {
     }
 
     pub async fn all_by_page_id(
-        &self, first_id: Option<ObjectId>,
-        platform: Option<ReleasePlatform>, deleted: bool,
+        &self, first_id: Option<ObjectId>, platform: Option<ReleasePlatform>,
+        deleted: bool,
     ) -> LogicResult<ListWithNextId<ReleaseVersion, ObjectId>> {
         let list = task::spawn({
             let mongodb = self.mongodb.clone();

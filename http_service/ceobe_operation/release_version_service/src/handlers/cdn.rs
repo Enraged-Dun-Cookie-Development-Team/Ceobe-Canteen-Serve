@@ -2,9 +2,15 @@ use ceobe_operation_logic::{
     release_version::ReleaseVersionLogic, CeobeOperationLogic,
 };
 use page_next_id::response::ListWithNextId;
-use persistence::{ceobe_operate::models::version::models::ReleaseVersion, mongodb::mongodb::bson::oid::ObjectId};
+use persistence::{
+    ceobe_operate::models::version::models::ReleaseVersion,
+    mongodb::mongodb::bson::oid::ObjectId,
+};
 use serve_utils::{
-    axum::extract::Query, axum_resp_result::{resp_result, MapReject}, tracing::instrument, FetchOptionViewValue, FetchViewValue, OptionField, ValueField
+    axum::extract::Query,
+    axum_resp_result::{resp_result, MapReject},
+    tracing::instrument,
+    FetchOptionViewValue, FetchViewValue, OptionField,
 };
 
 use super::{MapRejecter, Result};
@@ -34,7 +40,13 @@ impl crate::ReleaseVersionController {
             first_id,
         }): MapRejecter<Query<QueryVersionNextIdFilter>>,
     ) -> Result<ListWithNextId<ReleaseVersion, ObjectId>> {
-        let ret = logic.all_by_page_id(first_id, platform.fetch_option(), deleted.fetch()).await?;
+        let ret = logic
+            .all_by_page_id(
+                first_id,
+                platform.fetch_option(),
+                deleted.fetch(),
+            )
+            .await?;
 
         Ok(ret)
     }

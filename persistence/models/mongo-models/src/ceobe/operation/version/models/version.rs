@@ -43,7 +43,6 @@ pub struct OId {
     pub _id: ObjectId,
 }
 
-
 #[cfg(test)]
 mod test {
     use semver::Version;
