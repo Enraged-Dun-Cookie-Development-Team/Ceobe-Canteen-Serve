@@ -1,5 +1,4 @@
 use _private::NextIdTrait;
-use mongodb::bson::oid::ObjectId;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]

@@ -2,9 +2,7 @@ use ceobe_operation_logic::{
     release_version::ReleaseVersionLogic, CeobeOperationLogic,
 };
 use page_next_id::response::ListWithNextId;
-use persistence::{
-    ceobe_operate::models::version::models::ReleaseVersion
-};
+use persistence::ceobe_operate::models::version::models::ReleaseVersion;
 use serve_utils::{
     axum::extract::Query,
     axum_resp_result::{resp_result, MapReject},
