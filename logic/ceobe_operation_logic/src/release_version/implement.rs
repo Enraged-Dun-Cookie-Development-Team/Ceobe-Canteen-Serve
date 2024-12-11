@@ -153,7 +153,7 @@ impl ReleaseVersionLogic {
     pub async fn all_by_page_id(
         &self, first_id: Option<ObjectId>, platform: ReleasePlatform,
         deleted: bool,
-    ) -> LogicResult<ListWithNextId<ReleaseVersion, ObjectId>> {
+    ) -> LogicResult<ListWithNextId<ReleaseVersion, String>> {
         let list = task::spawn({
             let mongodb = self.mongodb.clone();
             async move {
@@ -182,6 +182,6 @@ impl ReleaseVersionLogic {
         let list = list.await??;
         let next_id = next_id.await??;
 
-        Ok(list.with_page_next_id_info(next_id))
+        Ok(list.with_page_next_id_info(next_id.map(|id| id.to_string())))
     }
 }
