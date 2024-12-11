@@ -1,3 +1,4 @@
+use mongodb::bson::oid::ObjectId;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -35,6 +36,11 @@ pub struct ReleaseVersion {
     #[builder(default = false)]
     #[serde(default)]
     deleted: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct OId {
+    pub _id: ObjectId,
 }
 
 #[cfg(test)]
