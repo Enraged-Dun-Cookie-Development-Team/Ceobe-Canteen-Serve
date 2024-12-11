@@ -13,6 +13,7 @@ use serde::Deserialize;
 use serve_utils::{OptionField, OptionViewField, ValueField};
 
 #[derive(Deserialize, Clone, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct QueryReleaseVersion<
     Version: OptionViewField<semver::Version> = OptionField<semver::Version>,
 > {
@@ -66,6 +67,7 @@ impl<D: Display + OptionViewField<bool>> Display for QueryVersionFilter<D> {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct QueryVersionNextIdFilter {
     pub platform: ReleasePlatform,
     #[serde(default)]

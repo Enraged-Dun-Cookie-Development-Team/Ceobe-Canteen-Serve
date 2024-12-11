@@ -1,5 +1,4 @@
 use _private::NextIdTrait;
-use mongodb::bson::oid::ObjectId;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
@@ -43,5 +42,4 @@ where
 }
 
 // 支持成为NextId的类型
-impl NextIdTrait for ObjectId {}
 impl NextIdTrait for String {}
