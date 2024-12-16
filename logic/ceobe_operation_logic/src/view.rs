@@ -17,6 +17,7 @@ use persistence::{
 use serde::{Deserialize, Serialize};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use typed_builder::TypedBuilder;
+use url::Url;
 
 use crate::error::LogicError;
 
@@ -73,8 +74,7 @@ impl TryInto<ToolLinkResp> for FrontendToolLink {
 pub struct AnnouncementResp {
     pub start_time: String,
     pub over_time: String,
-    pub content: String,
-    pub img_url: String,
+    pub html: String,
     pub notice: bool,
 }
 
@@ -89,11 +89,16 @@ impl From<announcement::Model> for AnnouncementResp {
             ..
         }: announcement::Model,
     ) -> Self {
+        let image = Url::parse(&img_url)
+            .map(|url| url.to_string())
+            .unwrap_or_else(|_| format!(r#"/assets/image/{img_url}.png"#));
+
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
-            content,
-            img_url,
+            html: format!(
+                r#"<div class="online-area"><img class="online-title-img radius" src="{image}"/><div>{content}</div></div>"#,
+            ),
             notice,
         }
     }
