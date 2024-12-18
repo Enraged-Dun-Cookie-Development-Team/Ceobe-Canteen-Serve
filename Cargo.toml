@@ -115,7 +115,6 @@ page_next_id =  { version = "0.1.0", path = "./libs/page_next_id" }
 
 
 [dependencies]
-
 # async
 async-trait = { workspace = true }
 # axum
