@@ -114,7 +114,6 @@ status-err={path = "./libs/status-err"}
 
 
 [dependencies]
-home ="0.5.9"
 # async
 async-trait = { workspace = true }
 # axum
