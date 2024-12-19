@@ -124,15 +124,11 @@ impl From<announcement::Model> for AnnouncementBackResp {
             ..
         }: announcement::Model,
     ) -> Self {
-        let image = Url::parse(&img_url)
-            .map(|url| url.to_string())
-            .unwrap_or_else(|_| format!(r#"/assets/image/{img_url}.png"#));
-
         Self {
             start_time: naive_date_time_format(start_time),
             over_time: naive_date_time_format(over_time),
             content,
-            img_url: image,
+            img_url,
             notice,
         }
     }
