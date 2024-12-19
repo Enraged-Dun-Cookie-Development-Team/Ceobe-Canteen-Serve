@@ -71,14 +71,14 @@ impl TryInto<ToolLinkResp> for FrontendToolLink {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
-pub struct AnnouncementResp {
+pub struct AnnouncementFrontResp {
     pub start_time: String,
     pub over_time: String,
     pub html: String,
     pub notice: bool,
 }
 
-impl From<announcement::Model> for AnnouncementResp {
+impl From<announcement::Model> for AnnouncementFrontResp {
     fn from(
         announcement::Model {
             start_time,
@@ -99,6 +99,40 @@ impl From<announcement::Model> for AnnouncementResp {
             html: format!(
                 r#"<div class="online-area"><img class="online-title-img radius" src="{image}"/><div>{content}</div></div>"#,
             ),
+            notice,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
+pub struct AnnouncementBackResp {
+    pub start_time: String,
+    pub over_time: String,
+    pub content: String,
+    pub img_url: String,
+    pub notice: bool,
+}
+
+impl From<announcement::Model> for AnnouncementBackResp {
+    fn from(
+        announcement::Model {
+            start_time,
+            over_time,
+            content,
+            img_url,
+            notice,
+            ..
+        }: announcement::Model,
+    ) -> Self {
+        let image = Url::parse(&img_url)
+            .map(|url| url.to_string())
+            .unwrap_or_else(|_| format!(r#"/assets/image/{img_url}.png"#));
+
+        Self {
+            start_time: naive_date_time_format(start_time),
+            over_time: naive_date_time_format(over_time),
+            content,
+            img_url: image,
             notice,
         }
     }

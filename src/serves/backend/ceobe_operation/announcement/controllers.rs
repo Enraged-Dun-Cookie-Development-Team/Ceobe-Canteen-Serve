@@ -1,6 +1,6 @@
 use axum_resp_result::resp_try;
 use ceobe_operation_logic::{
-    impletements::CeobeOperateLogic, view::AnnouncementResp,
+    impletements::CeobeOperateLogic, view::AnnouncementBackResp,
 };
 use checker::{
     prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
@@ -29,9 +29,14 @@ impl CeobeOperationAnnouncement {
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
         db: SqlDatabaseOperate,
-    ) -> AnnouncementRespResult<Vec<AnnouncementResp>> {
+    ) -> AnnouncementRespResult<Vec<AnnouncementBackResp>> {
         resp_try(async {
-            Ok(CeobeOperateLogic::get_announcement_list(db).await?)
+            Ok(
+                CeobeOperateLogic::get_announcement_list::<
+                    AnnouncementBackResp,
+                >(db)
+                .await?,
+            )
         })
         .await
     }

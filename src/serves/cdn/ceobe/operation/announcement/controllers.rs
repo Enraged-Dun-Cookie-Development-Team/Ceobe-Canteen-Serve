@@ -1,6 +1,6 @@
 use axum_resp_result::resp_try;
 use ceobe_operation_logic::{
-    impletements::CeobeOperateLogic, view::AnnouncementResp,
+    impletements::CeobeOperateLogic, view::AnnouncementFrontResp,
 };
 use persistence::mysql::SqlDatabaseOperate;
 use tracing::instrument;
@@ -13,9 +13,12 @@ impl CdnOperationAnnouncementFrontend {
     #[instrument(ret, skip(db))]
     pub async fn get_announcement_list(
         db: SqlDatabaseOperate,
-    ) -> AnnouncementRespResult<Vec<AnnouncementResp>> {
+    ) -> AnnouncementRespResult<Vec<AnnouncementFrontResp>> {
         resp_try(async {
-            Ok(CeobeOperateLogic::get_announcement_list(db).await?)
+            Ok(CeobeOperateLogic::get_announcement_list::<
+                AnnouncementFrontResp,
+            >(db)
+            .await?)
         })
         .await
     }
