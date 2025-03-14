@@ -4,7 +4,7 @@ on:
   # for debug
   # pull_request:
   push:
-    branches: [ master ]
+    branches: [ dev ]
     tags:
       - "v*"
 jobs:
@@ -32,7 +32,7 @@ jobs:
       -
         name: Build and push release
         uses: docker/build-push-action@v4
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: "startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'"
         with:
           context: .
           push: true
@@ -44,7 +44,7 @@ jobs:
       - 
         name: Build and push latest
         uses: docker/build-push-action@v4
-        if: "!startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'"
+        if: "startsWith(github.ref, 'refs/heads/dev') && github.event_name == 'push'"
         with:
           context: .
           push: true
