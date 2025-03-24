@@ -35,7 +35,7 @@ members = [
     "./logic/*",
     "./global/*",
     "./service/*",
-    "http_service/ceobe_operation/*",
+    "http_service/ceobe_operation/*", "middle-server/authorize-server",
 ]
 
 [workspace.dependencies]

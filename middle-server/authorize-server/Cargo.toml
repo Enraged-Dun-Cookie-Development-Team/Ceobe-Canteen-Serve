@@ -1,0 +1,17 @@
+[package]
+name = "authorize-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum.workspace = true
+axum-starter.workspace = true
+hmac.workspace = true
+rand = "0.9.0"
+sha2.workspace = true
+tracing.workspace = true
+tracing-unwrap.workspace = true
+urlencoding.workspace = true
+serde = { version = "1.0.201", features = ["derive"] }
+jsonwebtoken = "9.3.1"
+chrono.workspace = true
