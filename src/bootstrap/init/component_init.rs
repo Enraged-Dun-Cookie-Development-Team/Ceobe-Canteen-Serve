@@ -22,4 +22,3 @@ where
 {
     mob_verify::set_auth_config(user_auth)
 }
-

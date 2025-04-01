@@ -4,7 +4,6 @@ use persistence::admin;
 /// 用户权限信息
 pub type AuthInfo = admin::models::Model;
 
-
 /// 权限等级鉴定模块
 pub mod auth_level {
     pub mod prefabs {
@@ -12,10 +11,6 @@ pub mod auth_level {
     }
 }
 pub type PasswordEncoder =
-crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
+    crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
 
-
-
-
-pub mod config{
-}
+pub mod config {}

@@ -5,6 +5,7 @@ use std::{
     time::Duration,
 };
 
+use authorize_server::axum_starter::AuthorizePrepare;
 use axum::routing::Route;
 use axum_starter::ServerPrepare;
 use bootstrap::{
@@ -37,7 +38,7 @@ use scheduler_notifier::axum_starter::ScheduleNotifierPrepare;
 use tencent_cloud_server::axum_starter::TencentCloudPrepare;
 use tower_http::compression::CompressionLayer;
 use tracing_unwrap::ResultExt;
-use authorize_server::axum_starter::AuthorizePrepare;
+
 use crate::bootstrap::{decorator::Decroator, postprepare::migrate_version};
 
 mod bootstrap;
@@ -79,7 +80,7 @@ async fn main_task() {
         // components
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(BackendAuthConfig::<_, AuthConfig>)
-        .prepare(AuthorizePrepare::<_,AuthConfig>)
+        .prepare(AuthorizePrepare::<_, AuthConfig>)
         .prepare_state(RequestClientPrepare)
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
         .prepare_state(BiliClientPrepare)

@@ -1,8 +1,8 @@
-
 use chrono::Local;
 use jsonwebtoken::{decode, encode, Algorithm, Header, Validation};
-use serde::{Deserialize, Serialize};
 use persistence::admin;
+use serde::{Deserialize, Serialize};
+
 use crate::configure::LocalAuthConfig;
 
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
@@ -25,9 +25,9 @@ impl UserClaim {
             expiration_time: issue_time + 3600 * 24 * 365 * 2,
         }
     }
-    
-    pub fn from_model(model:admin::models::Model)->Self{
-        Self::new(model.id,model.num_pwd_change)
+
+    pub fn from_model(model: admin::models::Model) -> Self {
+        Self::new(model.id, model.num_pwd_change)
     }
 }
 

@@ -39,6 +39,3 @@ macro_rules! mix_role_gen {
         }
     };
 }
-
-
-

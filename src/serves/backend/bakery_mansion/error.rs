@@ -6,11 +6,11 @@ use persistence::bakery::{
     mansion::OperateError, models::mansion::preludes::CheckError,
 };
 
-use crate::{error_generate};
+use crate::error_generate;
 
 error_generate!(
     pub MansionError
-    
+
     Path = PathRejection
     Json = JsonRejection
     // request entity error

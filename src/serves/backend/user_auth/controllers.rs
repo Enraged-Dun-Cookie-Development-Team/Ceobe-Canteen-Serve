@@ -14,6 +14,7 @@ use persistence::{
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
+
 use super::{
     error::AdminUserError,
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
@@ -26,7 +27,7 @@ use crate::{
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
-    utils::user_authorize::{AuthInfo,  PasswordEncoder, User},
+    utils::user_authorize::{AuthInfo, PasswordEncoder, User},
 };
 
 crate::quick_struct! {
@@ -128,12 +129,14 @@ impl UserAuthBackend {
                             PasswordEncoder::verify(src, &dst)
                         })
                     },
-                    User::from_model
+                    User::from_model,
                 )
                 .await??;
 
             // 生成用户token
-            let token = token_info.to_jwt_token().expect_or_log("Conv To JWT Token Error");
+            let token = token_info
+                .to_jwt_token()
+                .expect_or_log("Conv To JWT Token Error");
 
             // 返回用户token
             let user_token = UserToken { token };
@@ -178,7 +181,10 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
         db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
-        MapReject(ChangePassword{new_password,old_password}): MapReject<Json<ChangePassword>, AdminUserError>,
+        MapReject(ChangePassword {
+            new_password,
+            old_password,
+        }): MapReject<Json<ChangePassword>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
             let id = user.id;
@@ -195,12 +201,13 @@ impl UserAuthBackend {
                         PasswordEncoder::encode(Cow::Borrowed(pwd))
                             .map(|pwd| pwd.to_string())
                     },
-                    User::from_model
-                  
+                    User::from_model,
                 )
                 .await??;
 
-            let token = generate_token.to_jwt_token().expect_or_log("Conv to JWT Failure");
+            let token = generate_token
+                .to_jwt_token()
+                .expect_or_log("Conv to JWT Failure");
 
             // 返回用户token
             let user_token = UserToken { token };

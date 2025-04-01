@@ -5,9 +5,8 @@ use axum::{
     http::{HeaderName, Request},
 };
 use jsonwebtoken::{DecodingKey, EncodingKey};
-
 use tracing::warn;
-use tracing_unwrap::{ ResultExt};
+use tracing_unwrap::ResultExt;
 
 pub trait AuthConfig {
     fn jwt_key(&self) -> &[u8];

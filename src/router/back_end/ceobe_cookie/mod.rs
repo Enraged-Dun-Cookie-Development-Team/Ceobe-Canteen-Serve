@@ -1,12 +1,9 @@
+use authorize_server::{mix_role_gen, roles::Chef};
 use axum::Router;
-use authorize_server::mix_role_gen;
-use authorize_server::roles::Chef;
 pub use newest::CeobeCookieNewestBackend;
 
 use self::newest::newest_router;
-use crate::{
-    middleware::authorize::AuthorizeLayer,
-};
+use crate::middleware::authorize::AuthorizeLayer;
 
 mod newest;
 
