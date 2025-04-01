@@ -3,7 +3,7 @@ use std::borrow::Cow;
 pub use http::StatusCode as HttpCode;
 pub use status_err_derive::StatusErr;
 pub use thiserror::Error as ThisError;
-
+pub use http;
 pub mod codegen;
 mod impls;
 pub mod status_code;
