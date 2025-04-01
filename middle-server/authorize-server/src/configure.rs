@@ -1,14 +1,13 @@
-use std::{borrow::Cow, cell::OnceCell, str::FromStr, sync::OnceLock};
+use std::{borrow::Cow, str::FromStr, sync::OnceLock};
 
 use axum::{
     body::Body,
     http::{HeaderName, Request},
 };
-use hmac::{Hmac, Mac};
 use jsonwebtoken::{DecodingKey, EncodingKey};
-use sha2::Sha256;
+
 use tracing::warn;
-use tracing_unwrap::{OptionExt, ResultExt};
+use tracing_unwrap::{ ResultExt};
 
 pub trait AuthConfig {
     fn jwt_key(&self) -> &[u8];

@@ -1,15 +1,31 @@
+/// 生成组合模式的用户权限等级
+///
+/// ## example
+///
+/// ```rust
+/// use authorize_server::mix_role_gen;
+/// use authorize_server::roles::{Architect,Cooker};
+/// mix_role_gen! {
+///   //|-------------------可见性
+///   //|   |---------------权限名称
+///    pub MansionAuth=>[
+///        Architect // 内部的具体权限，可以嵌套
+///        Cooker
+///    ]
+/// }
+/// ```
 #[macro_export]
 macro_rules! mix_role_gen {
     {
-        $vis:vis $name:ident
+        $v:vis $name:ident
         =>
         [
             $(
                 $ex:ty
-            ),*$(,)?
+            )*
         ]
     } => {
-        #[derive(Debug,Clone)]
+        #[derive(Debug, Clone)]
         $v struct $name;
 
         impl $crate::roles::UserRoleVerify for $name{
@@ -23,3 +39,6 @@ macro_rules! mix_role_gen {
         }
     };
 }
+
+
+

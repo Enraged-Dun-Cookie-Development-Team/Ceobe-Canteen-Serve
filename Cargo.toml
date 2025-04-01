@@ -169,6 +169,7 @@ semver = { version = "1.0.23", features = ["serde"] }
 release_version_service = { version = "0.1.0", path = "http_service/ceobe_operation/release_version_service" }
 serve_utils = { version = "0.1.0", path = "libs/serve_utils" }
 mimalloc = "0.1.43"
+authorize-server = { version = "0.1.0", path = "middle-server/authorize-server" }
 
 
 [dependencies.tokio]

@@ -24,7 +24,7 @@ use crate::{
     configure::get_authorize_information,
     middleware::error::AuthorizeError,
     roles::{AuthorizationAccessDenyError, UserRoleVerify},
-    token::UserClaim,
+    payload::UserClaim,
 };
 
 pub struct UserAuthorize<L>(PhantomData<L>);
@@ -38,9 +38,9 @@ impl<L> Default for UserAuthorize<L> {
 }
 
 impl<L: UserRoleVerify> AsyncAuthorizeRequest<Body> for UserAuthorize<L> {
-    type Future = BoxFuture<'static, Result<Request<Body>, Response>>;
     type RequestBody = Body;
     type ResponseBody = Body;
+    type Future = BoxFuture<'static, Result<Request<Body>, Response>>;
 
     fn authorize(&mut self, request: Request<Body>) -> Self::Future {
         Box::pin(

@@ -13,7 +13,7 @@ use persistence::{
 };
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use tracing::{debug, instrument};
-
+use tracing_unwrap::ResultExt;
 use super::{
     error::AdminUserError,
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
@@ -26,7 +26,7 @@ use crate::{
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
-    utils::user_authorize::{AuthInfo, GenerateToken, PasswordEncoder, User},
+    utils::user_authorize::{AuthInfo,  PasswordEncoder, User},
 };
 
 crate::quick_struct! {
@@ -128,17 +128,12 @@ impl UserAuthBackend {
                             PasswordEncoder::verify(src, &dst)
                         })
                     },
-                    |user| {
-                        User {
-                            id: user.id,
-                            num_pwd_change: user.num_pwd_change,
-                        }
-                    },
+                    User::from_model
                 )
                 .await??;
 
             // 生成用户token
-            let token = token_info.generate().unwrap();
+            let token = token_info.to_jwt_token().expect_or_log("Conv To JWT Token Error");
 
             // 返回用户token
             let user_token = UserToken { token };
@@ -203,16 +198,12 @@ impl UserAuthBackend {
                         PasswordEncoder::encode(Cow::Borrowed(pwd))
                             .map(|pwd| pwd.to_string())
                     },
-                    |user| {
-                        User {
-                            id: user.id,
-                            num_pwd_change: user.num_pwd_change,
-                        }
-                    },
+                    User::from_model
+                  
                 )
                 .await??;
 
-            let token = generate_token.generate().unwrap();
+            let token = generate_token.to_jwt_token().expect_or_log("Conv to JWT Failure");
 
             // 返回用户token
             let user_token = UserToken { token };

@@ -1,9 +1,8 @@
-use std::time::SystemTime;
 
 use chrono::Local;
 use jsonwebtoken::{decode, encode, Algorithm, Header, Validation};
 use serde::{Deserialize, Serialize};
-
+use persistence::admin;
 use crate::configure::LocalAuthConfig;
 
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
@@ -25,6 +24,10 @@ impl UserClaim {
             issue_time,
             expiration_time: issue_time + 3600 * 24 * 365 * 2,
         }
+    }
+    
+    pub fn from_model(model:admin::models::Model)->Self{
+        Self::new(model.id,model.num_pwd_change)
     }
 }
 
@@ -52,7 +55,7 @@ impl UserClaim {
 mod test {
     use crate::{
         configure::{AuthConfig, LocalAuthConfig},
-        token::UserClaim,
+        payload::UserClaim,
     };
 
     struct TestConfig;

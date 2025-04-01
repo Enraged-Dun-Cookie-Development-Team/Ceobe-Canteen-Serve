@@ -2,7 +2,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-
+use authorize_server::mix_role_gen;
 use crate::{
     middleware::authorize::AuthorizeLayer,
     utils::user_authorize::auth_level::prefabs::{Architect, Chef},
@@ -19,7 +19,7 @@ pub(super) fn bakery_mansion_router() -> crate::router::ServerRoute {
         .route_layer(AuthorizeLayer::<MansionAuth>::new())
 }
 
-crate::new_auth_level! {
+mix_role_gen! {
     pub MansionAuth=>[
         Chef
         Architect

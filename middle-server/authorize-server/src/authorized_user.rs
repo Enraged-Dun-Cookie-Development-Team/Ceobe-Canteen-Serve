@@ -4,7 +4,7 @@ use std::{
 };
 
 use axum::{async_trait, extract::FromRequestParts};
-use axum_resp_result::{Nil, RespError, RespResult};
+use axum_resp_result::{Nil,  RespResult};
 use persistence::{admin, operate::Parts};
 use status_err::{resp_error_impl, status_error, ErrPrefix, HttpCode};
 

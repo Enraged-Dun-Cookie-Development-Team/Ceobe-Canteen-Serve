@@ -9,6 +9,7 @@ use crate::{middleware::service::UserAuthorize, roles::UserRoleVerify};
 
 type InnerLayer<L> = AsyncRequireAuthorizationLayer<UserAuthorize<L>>;
 
+#[derive(Clone)]
 pub struct AuthorizeLayer<L: UserRoleVerify>(InnerLayer<L>);
 
 impl<S, L> Layer<S> for AuthorizeLayer<L>
