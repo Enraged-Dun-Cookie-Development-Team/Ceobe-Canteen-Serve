@@ -1,7 +1,7 @@
-
 use std::time::SystemTime;
+
 use chrono::Local;
-use jsonwebtoken::{Algorithm, decode, encode, Header, Validation};
+use jsonwebtoken::{decode, encode, Algorithm, Header, Validation};
 use serde::{Deserialize, Serialize};
 
 use crate::configure::LocalAuthConfig;
@@ -10,12 +10,10 @@ use crate::configure::LocalAuthConfig;
 pub struct UserClaim {
     id: i32,
     password_version: u32,
-    #[serde(rename="exp")]
+    #[serde(rename = "exp")]
     expiration_time: usize,
-    #[serde(rename="iat")]
-    issue_time:usize
-
-
+    #[serde(rename = "iat")]
+    issue_time: usize,
 }
 
 impl UserClaim {
@@ -25,7 +23,7 @@ impl UserClaim {
             id: user_id,
             password_version,
             issue_time,
-            expiration_time:issue_time +  3600 * 24 * 365 * 2,
+            expiration_time: issue_time + 3600 * 24 * 365 * 2,
         }
     }
 }
@@ -44,45 +42,44 @@ impl UserClaim {
     ) -> jsonwebtoken::errors::Result<Self> {
         let key = LocalAuthConfig::decoder_key();
         let mut validation = Validation::new(Algorithm::HS384);
-        validation.set_required_spec_claims(&["iat","exp"]);
+        validation.set_required_spec_claims(&["iat", "exp"]);
         let payload = decode::<Self>(payload, key, &validation)?;
         Ok(payload.claims)
     }
 }
 
-
 #[cfg(test)]
-mod test{
-    use crate::configure::{AuthConfig, LocalAuthConfig};
-    use crate::token::UserClaim;
+mod test {
+    use crate::{
+        configure::{AuthConfig, LocalAuthConfig},
+        token::UserClaim,
+    };
 
     struct TestConfig;
 
     impl AuthConfig for TestConfig {
-        fn jwt_key(&self) -> &[u8] {
-            b"abcdefghijklmn"
-        }
+        fn jwt_key(&self) -> &[u8] { b"abcdefghijklmn" }
     }
     #[test]
-    fn test_generate_jwt(){
+    fn test_generate_jwt() {
         LocalAuthConfig::set(&TestConfig);
 
-        let user = UserClaim::new(1,1);
+        let user = UserClaim::new(1, 1);
 
         let token = user.to_jwt_token().expect("TO JWT Error");
 
         println!("Token is : {token}")
     }
 
-
     #[test]
-    fn test_decode_jwt(){
+    fn test_decode_jwt() {
         LocalAuthConfig::set(&TestConfig);
-        let user = UserClaim::new(1,1);
+        let user = UserClaim::new(1, 1);
 
         let token = user.to_jwt_token().expect("TO JWT Error");
-        let payload = UserClaim::from_jwt_token(&token).expect("Decoder Error");
+        let payload =
+            UserClaim::from_jwt_token(&token).expect("Decoder Error");
 
-        assert_eq!(payload,user)
+        assert_eq!(payload, user)
     }
 }

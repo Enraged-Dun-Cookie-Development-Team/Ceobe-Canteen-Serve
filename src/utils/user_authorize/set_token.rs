@@ -15,30 +15,32 @@ impl GenerateToken for User {
 }
 
 #[cfg(test)]
-mod test{
-    use crate::utils::mob_verify::MobIdConfig;
-    use crate::utils::user_authorize::config::AuthConfig;
-    use crate::utils::user_authorize::{GenerateToken, set_auth_config, User};
+mod test {
+    use crate::utils::{
+        mob_verify::MobIdConfig,
+        user_authorize::{
+            config::AuthConfig, set_auth_config, GenerateToken, User,
+        },
+    };
 
     struct TestConfig;
 
-    impl MobIdConfig for TestConfig {
-    }
+    impl MobIdConfig for TestConfig {}
 
     impl AuthConfig for TestConfig {
-        fn jwt_key(&self) -> &[u8] {
-            b"abcdefghijklmn"
-        }
+        fn jwt_key(&self) -> &[u8] { b"abcdefghijklmn" }
     }
-    
+
     #[test]
-    fn test_generate_jwt(){
+    fn test_generate_jwt() {
         set_auth_config(&TestConfig);
-        let user = User{ id: 1, num_pwd_change: 1  };
-        
+        let user = User {
+            id: 1,
+            num_pwd_change: 1,
+        };
+
         let jwt = user.generate().unwrap();
-        
-        println!("Token is : {}",jwt)
-        
+
+        println!("Token is : {}", jwt)
     }
 }
