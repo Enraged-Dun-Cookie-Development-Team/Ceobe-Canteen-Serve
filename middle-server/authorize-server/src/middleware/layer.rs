@@ -1,20 +1,21 @@
-use axum::body::Body;
-use axum::response::Response;
+use axum::{body::Body, response::Response};
 use http::Request;
 use tower::{Layer, Service};
-use tower_http::auth::{AsyncRequireAuthorization, AsyncRequireAuthorizationLayer};
-use crate::middleware::service::UserAuthorize;
-use crate::roles::UserRoleVerify;
+use tower_http::auth::{
+    AsyncRequireAuthorization, AsyncRequireAuthorizationLayer,
+};
+
+use crate::{middleware::service::UserAuthorize, roles::UserRoleVerify};
 
 type InnerLayer<L> = AsyncRequireAuthorizationLayer<UserAuthorize<L>>;
 
-pub struct AuthorizeLayer<L:UserRoleVerify>(InnerLayer<L>);
+pub struct AuthorizeLayer<L: UserRoleVerify>(InnerLayer<L>);
 
 impl<S, L> Layer<S> for AuthorizeLayer<L>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
     S::Error: Send + 'static,
-    L:UserRoleVerify,
+    L: UserRoleVerify,
 {
     type Service = AsyncRequireAuthorization<S, UserAuthorize<L>>;
 

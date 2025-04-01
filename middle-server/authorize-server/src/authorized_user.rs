@@ -1,12 +1,12 @@
-use std::borrow::Cow;
-use std::fmt::{Debug, Formatter};
-use std::ops::Deref;
-use axum::async_trait;
-use axum::extract::FromRequestParts;
+use std::{
+    fmt::{Debug, Formatter},
+    ops::Deref,
+};
+
+use axum::{async_trait, extract::FromRequestParts};
 use axum_resp_result::{Nil, RespError, RespResult};
-use persistence::admin;
-use persistence::operate::Parts;
-use status_err::{status_error, ErrPrefix, HttpCode, resp_error_impl};
+use persistence::{admin, operate::Parts};
+use status_err::{resp_error_impl, status_error, ErrPrefix, HttpCode};
 
 #[derive(Clone)]
 pub struct AuthorizedUser(pub admin::models::Model);
@@ -15,8 +15,12 @@ pub struct AuthorizedUser(pub admin::models::Model);
 impl<S> FromRequestParts<S> for AuthorizedUser {
     type Rejection = RespResult<Nil, NoAuthorizeLayerError>;
 
-    async fn from_request_parts(parts: &mut Parts, _: &S) -> Result<Self, Self::Rejection> {
-        parts.extensions.remove::<Self>()
+    async fn from_request_parts(
+        parts: &mut Parts, _: &S,
+    ) -> Result<Self, Self::Rejection> {
+        parts
+            .extensions
+            .remove::<Self>()
             .ok_or(NoAuthorizeLayerError)
             .map_err(RespResult::err)
     }
@@ -35,12 +39,10 @@ impl Debug for AuthorizedUser {
 impl Deref for AuthorizedUser {
     type Target = admin::models::Model;
 
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
+    fn deref(&self) -> &Self::Target { &self.0 }
 }
 
-#[derive(Debug,thiserror::Error)]
+#[derive(Debug, thiserror::Error)]
 #[error("缺少Authorize鉴权中间件")]
 pub struct NoAuthorizeLayerError;
 

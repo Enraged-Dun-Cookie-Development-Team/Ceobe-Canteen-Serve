@@ -7,9 +7,7 @@ use crate::roles::UserRoleVerify;
 pub struct AuthorizationAccessDenyError(&'static str);
 
 impl AuthorizationAccessDenyError {
-    pub fn new<T: UserRoleVerify>() -> Self {
-        Self(T::ROLE_NAME)
-    }
+    pub fn new<T: UserRoleVerify>() -> Self { Self(T::ROLE_NAME) }
 }
 
 status_error!(

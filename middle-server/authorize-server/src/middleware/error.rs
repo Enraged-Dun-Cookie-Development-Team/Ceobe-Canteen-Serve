@@ -1,9 +1,8 @@
 use crypto_str::inner_encoders::bcrypt::BcryptError;
-use persistence::admin::user::OperateError;
-use persistence::help_crates::StatusErr;
+use persistence::{admin::user::OperateError, help_crates::StatusErr};
+use status_err::{http::StatusCode, ErrPrefix};
+
 use crate::roles::AuthorizationAccessDenyError;
-use status_err::ErrPrefix;
-use  status_err::http::StatusCode;
 #[derive(Debug, thiserror::Error, StatusErr)]
 #[status_err(resp_err)]
 pub enum AuthorizeError {
@@ -37,6 +36,4 @@ pub enum AuthorizeError {
         http_code = "StatusCode::NOT_FOUND"
     ))]
     TokenInfoNotFound,
-
-
 }

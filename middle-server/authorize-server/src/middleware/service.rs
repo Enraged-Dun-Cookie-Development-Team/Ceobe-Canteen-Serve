@@ -1,23 +1,31 @@
 use std::marker::PhantomData;
-use axum::body::Body;
-use axum::extract::FromRequestParts;
-use axum::response::{IntoResponse, Response};
-use axum_resp_result::RespResult;
-use tower_http::auth::AsyncAuthorizeRequest;
-use tracing::{info, Instrument, warn};
-use tracing_unwrap::OptionExt;
-use persistence::admin::ToAdmin;
-use persistence::admin::user::{OperateError, ToUser};
-use persistence::help_crates::futures::future::BoxFuture;
-use persistence::help_crates::tap::Tap;
-use persistence::mysql::SqlDatabaseOperate;
-use status_err::http::Request;
-use crate::authorized_user::AuthorizedUser;
-use crate::configure::get_authorize_information;
-use crate::middleware::error::AuthorizeError;
-use crate::roles::{AuthorizationAccessDenyError, UserRoleVerify};
-use crate::token::UserClaim;
 
+use axum::{
+    body::Body,
+    extract::FromRequestParts,
+    response::{IntoResponse, Response},
+};
+use axum_resp_result::RespResult;
+use persistence::{
+    admin::{
+        user::{OperateError, ToUser},
+        ToAdmin,
+    },
+    help_crates::{futures::future::BoxFuture, tap::Tap},
+    mysql::SqlDatabaseOperate,
+};
+use status_err::http::Request;
+use tower_http::auth::AsyncAuthorizeRequest;
+use tracing::{info, warn, Instrument};
+use tracing_unwrap::OptionExt;
+
+use crate::{
+    authorized_user::AuthorizedUser,
+    configure::get_authorize_information,
+    middleware::error::AuthorizeError,
+    roles::{AuthorizationAccessDenyError, UserRoleVerify},
+    token::UserClaim,
+};
 
 pub struct UserAuthorize<L>(PhantomData<L>);
 
@@ -29,10 +37,10 @@ impl<L> Default for UserAuthorize<L> {
     fn default() -> Self { Self(PhantomData) }
 }
 
-impl<L:UserRoleVerify > AsyncAuthorizeRequest<Body> for UserAuthorize<L> {
+impl<L: UserRoleVerify> AsyncAuthorizeRequest<Body> for UserAuthorize<L> {
+    type Future = BoxFuture<'static, Result<Request<Body>, Response>>;
     type RequestBody = Body;
     type ResponseBody = Body;
-    type Future = BoxFuture<'static, Result<Request<Body>, Response>>;
 
     fn authorize(&mut self, request: Request<Body>) -> Self::Future {
         Box::pin(
@@ -43,21 +51,24 @@ impl<L:UserRoleVerify > AsyncAuthorizeRequest<Body> for UserAuthorize<L> {
                         break 'auth Err(AuthorizeError::TokenNotFound);
                     };
 
-                    let UserClaim { id, password_version,.. } =
-                        match UserClaim::from_jwt_token(&token)
-                            .map_err(AuthorizeError::from)
-                        {
-                            Ok(user) => user,
-                            Err(err) => break 'auth Err(err),
-                        };
+                    let UserClaim {
+                        id,
+                        password_version,
+                        ..
+                    } = match UserClaim::from_jwt_token(&token)
+                        .map_err(AuthorizeError::from)
+                    {
+                        Ok(user) => user,
+                        Err(err) => break 'auth Err(err),
+                    };
 
                     let (mut parts, body) = request.into_parts();
                     let db = SqlDatabaseOperate::from_request_parts(
                         &mut parts,
                         &(),
                     )
-                        .await
-                        .unwrap();
+                    .await
+                    .unwrap();
                     let req = Request::from_parts(parts, body);
                     let user = match db
                         .admin()
@@ -93,9 +104,7 @@ impl<L:UserRoleVerify > AsyncAuthorizeRequest<Body> for UserAuthorize<L> {
                             uri = %req.uri()
                         );
                         break 'auth Err(AuthorizeError::AuthorizeLevel(
-                            AuthorizationAccessDenyError::new::<L>(
-                                
-                            ),
+                            AuthorizationAccessDenyError::new::<L>(),
                         ));
                     };
 
@@ -111,11 +120,11 @@ impl<L:UserRoleVerify > AsyncAuthorizeRequest<Body> for UserAuthorize<L> {
                             .expect_none_or_log("Authorize Layer Exist")
                     }))
                 }
-                    .map_err(|err| RespResult::<(), _>::Err(err).into_response());
+                .map_err(|err| RespResult::<(), _>::Err(err).into_response());
 
                 result
             }
-                .instrument(tracing::info_span!("authorization")),
+            .instrument(tracing::info_span!("authorization")),
         )
     }
 }

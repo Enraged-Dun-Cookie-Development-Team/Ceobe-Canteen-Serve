@@ -10,9 +10,10 @@ use checker::prefabs::{
     num_check::NonZeroUnsignedError, version_checker::VersionInvalidError,
 };
 use http::StatusCode;
+use jsonwebtoken::errors::Error as JwtError;
 use serde_json::Error as JsonError;
 use tonic::transport;
-use jsonwebtoken::errors::Error as JwtError;
+
 use crate::{status_error, ErrPrefix, StatusErr};
 
 mod mongodb;
