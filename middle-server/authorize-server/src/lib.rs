@@ -3,6 +3,8 @@ mod configure;
 mod token;
 
 pub mod roles;
+pub mod middleware;
+mod authorized_user;
 
 pub use persistence::admin::models::AuthLevel;
 

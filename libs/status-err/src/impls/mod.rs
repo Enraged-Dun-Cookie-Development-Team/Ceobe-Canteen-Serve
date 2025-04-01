@@ -12,7 +12,7 @@ use checker::prefabs::{
 use http::StatusCode;
 use serde_json::Error as JsonError;
 use tonic::transport;
-
+use jsonwebtoken::errors::Error as JwtError;
 use crate::{status_error, ErrPrefix, StatusErr};
 
 mod mongodb;
@@ -43,6 +43,12 @@ ParseIntError[
 
 status_error!(
 jwt::Error[
+    ErrPrefix::PARSE, 0x0003
+    ] -> "Jwt解析异常"
+);
+
+status_error!(
+JwtError[
     ErrPrefix::PARSE, 0x0003
     ] -> "Jwt解析异常"
 );

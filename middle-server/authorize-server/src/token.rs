@@ -8,8 +8,8 @@ use crate::configure::LocalAuthConfig;
 
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct UserClaim {
-    id: i32,
-    password_version: u32,
+    pub(crate) id: i32,
+    pub(crate) password_version: u32,
     #[serde(rename = "exp")]
     expiration_time: usize,
     #[serde(rename = "iat")]
