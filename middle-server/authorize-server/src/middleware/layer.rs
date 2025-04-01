@@ -12,6 +12,12 @@ type InnerLayer<L> = AsyncRequireAuthorizationLayer<UserAuthorize<L>>;
 #[derive(Clone)]
 pub struct AuthorizeLayer<L: UserRoleVerify>(InnerLayer<L>);
 
+impl<L: UserRoleVerify> Default for AuthorizeLayer<L> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<S, L> Layer<S> for AuthorizeLayer<L>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,

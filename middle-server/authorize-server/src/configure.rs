@@ -41,7 +41,7 @@ impl LocalAuthConfig {
         // generate static str
         let header = cfg.token_header();
         let header =
-            HeaderName::from_str(&header).expect_or_log("非法的请求头名称");
+            HeaderName::from_str(header).expect_or_log("非法的请求头名称");
 
         Self {
             encoder_key,
