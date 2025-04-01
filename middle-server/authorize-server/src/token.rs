@@ -54,7 +54,7 @@ impl UserClaim {
 #[cfg(test)]
 mod test{
     use crate::configure::{AuthConfig, LocalAuthConfig};
-    use crate::token::payloads::UserClaim;
+    use crate::token::UserClaim;
 
     struct TestConfig;
 
