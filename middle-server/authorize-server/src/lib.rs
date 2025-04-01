@@ -5,3 +5,5 @@ mod token;
 pub mod roles;
 
 pub use persistence::admin::models::AuthLevel;
+
+pub use authorized_user::{AuthorizedUser, NoAuthorizeLayerError};
