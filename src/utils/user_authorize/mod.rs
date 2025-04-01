@@ -15,9 +15,7 @@ pub type PasswordEncoder =
 crypto_str::inner_encoders::bcrypt::DefaultBcryptEncoder;
 
 
-pub mod error{
-    pub use authorize_server::NoAuthorizeLayerError as AuthError;
-}
+
 
 pub mod config{
 }

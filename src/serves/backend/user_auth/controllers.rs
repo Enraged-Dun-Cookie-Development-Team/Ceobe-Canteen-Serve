@@ -178,13 +178,10 @@ impl UserAuthBackend {
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
         db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
-        MapReject(body): MapReject<Json<ChangePassword>, AdminUserError>,
+        MapReject(ChangePassword{new_password,old_password}): MapReject<Json<ChangePassword>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
             let id = user.id;
-
-            let old_password = body.old_password;
-            let new_password = body.new_password;
 
             let generate_token = db
                 .admin()

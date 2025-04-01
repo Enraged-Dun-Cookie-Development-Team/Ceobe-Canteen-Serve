@@ -3,12 +3,11 @@ use axum_resp_result::RespResult;
 use ceobe_operation_logic::error::LogicError;
 use persistence::ceobe_operate::video;
 
-use crate::{error_generate, utils::user_authorize::error::AuthError};
+use crate::{error_generate};
 
 error_generate! {
     pub CeobeOperationVideoError
-
-    Auth = AuthError
+    
     Url = url::ParseError
     Json = JsonRejection
     Query = QueryRejection

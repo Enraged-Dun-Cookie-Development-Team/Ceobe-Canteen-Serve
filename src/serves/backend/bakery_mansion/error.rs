@@ -6,14 +6,14 @@ use persistence::bakery::{
     mansion::OperateError, models::mansion::preludes::CheckError,
 };
 
-use crate::{error_generate, utils::user_authorize::error::AuthError};
+use crate::{error_generate};
 
 error_generate!(
     pub MansionError
-    // request entity error
-    Auth = AuthError
+    
     Path = PathRejection
     Json = JsonRejection
+    // request entity error
     Query = QueryRejection
     //db error
     Mongo = OperateError
