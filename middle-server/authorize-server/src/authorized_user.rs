@@ -1,20 +1,17 @@
-use std::{
-    fmt::Debug,
-    ops::Deref,
-};
+use std::{fmt::Debug, ops::Deref};
 
 use axum::{async_trait, extract::FromRequestParts};
 use axum_resp_result::{Nil, RespResult};
-
 use persistence::operate::Parts;
-use status_err::{ErrPrefix, HttpCode, resp_error_impl, status_error};
+use status_err::{resp_error_impl, status_error, ErrPrefix, HttpCode};
 
-#[derive(Clone,Debug)]
-pub struct AuthorizedUser<T:Send + Sync + Clone+'static>(pub T);
+#[derive(Clone, Debug)]
+pub struct AuthorizedUser<T: Send + Sync + Clone + 'static>(pub T);
 
 #[async_trait]
-impl<S,T> FromRequestParts<S> for AuthorizedUser<T>
-where T:Send +Sync +Clone+'static
+impl<S, T> FromRequestParts<S> for AuthorizedUser<T>
+where
+    T: Send + Sync + Clone + 'static,
 {
     type Rejection = RespResult<Nil, NoAuthorizeLayerError>;
 
@@ -29,9 +26,7 @@ where T:Send +Sync +Clone+'static
     }
 }
 
-
-
-impl<T:Send +Sync +Clone +'static> Deref for AuthorizedUser<T> {
+impl<T: Send + Sync + Clone + 'static> Deref for AuthorizedUser<T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target { &self.0 }

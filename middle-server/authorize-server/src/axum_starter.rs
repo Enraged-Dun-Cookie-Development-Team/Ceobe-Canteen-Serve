@@ -1,4 +1,5 @@
 use axum_starter::prepare;
+
 use crate::admin::{AuthConfig, LocalAuthConfig};
 
 #[prepare(AuthorizePrepare)]

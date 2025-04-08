@@ -14,11 +14,18 @@ pub struct AuthorizeLayer<L>(InnerLayer<L>)
 where
     L: AuthorVerifier;
 
+impl<L> Default for AuthorizeLayer<L>
+where
+    L: AuthorVerifier + Default,
+{
+    fn default() -> Self { Self::new() }
+}
+
 impl<L> AuthorizeLayer<L>
 where
-    L:  AuthorVerifier + Default
+    L: AuthorVerifier + Default,
 {
-    pub fn new()->Self{
+    pub fn new() -> Self {
         Self(InnerLayer::new(UserAuthorize::new(L::default())))
     }
 }

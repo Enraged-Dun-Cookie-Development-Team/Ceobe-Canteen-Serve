@@ -1,5 +1,8 @@
 use std::borrow::Cow;
 
+use authorize_server::{
+    admin::AuthorizedAdminUser, AuthorizedUser, JwtTokenConv,
+};
 use axum::{extract::Query, Json};
 use axum_resp_result::{resp_try, rtry, MapReject};
 use checker::CheckExtract;
@@ -14,8 +17,7 @@ use persistence::{
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
-use authorize_server::admin::AuthorizedAdminUser;
-use authorize_server::{AuthorizedUser, JwtTokenConv};
+
 use super::{
     error::AdminUserError,
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},

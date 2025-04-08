@@ -14,5 +14,4 @@ pub trait UserRoleVerify {
     fn access_verify(level: &AuthLevel) -> bool;
 }
 
-pub use base_roles::{Any, Architect, Chef, Cooker, Nil, Porter};
 pub use error::AuthorizationAccessDenyError;

@@ -1,9 +1,6 @@
 use std::{borrow::Cow, str::FromStr, sync::OnceLock};
 
-use axum::{
-    body::Body,
-    http::{HeaderName, Request},
-};
+use axum::http::HeaderName;
 use http::request::Parts;
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use tracing::warn;

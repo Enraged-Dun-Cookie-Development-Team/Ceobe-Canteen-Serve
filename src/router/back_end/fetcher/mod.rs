@@ -1,13 +1,11 @@
+use authorize_server::admin::{base_roles::Chef, AdminAuthorizeLayer};
 use axum::{routing::post, Router};
-use authorize_server::admin::AdminAuthorizeLayer;
-use authorize_server::admin::base_roles::Chef;
+
 use self::{
     datasource::fetcher_datasource_config, detail::fetcher_detail_config,
     global::fetcher_global_config, platform::fetcher_platform_config,
 };
-use crate::{router::ServerRoute,
-
-};
+use crate::router::ServerRoute;
 
 pub mod datasource;
 mod detail;
