@@ -133,7 +133,6 @@ hex = { workspace = true }
 hmac = { workspace = true }
 http-body = "1"
 #encrypt
-jwt = "0.16.0"
 md-5 = "0.10"
 once_cell = { workspace = true }
 pin-project = "1"

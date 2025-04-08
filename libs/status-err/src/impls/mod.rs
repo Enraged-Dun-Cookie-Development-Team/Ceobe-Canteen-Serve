@@ -43,12 +43,6 @@ ParseIntError[
 );
 
 status_error!(
-jwt::Error[
-    ErrPrefix::PARSE, 0x0003
-    ] -> "Jwt解析异常"
-);
-
-status_error!(
 JwtError[
     ErrPrefix::PARSE, 0x0003
     ] -> "Jwt解析异常"
