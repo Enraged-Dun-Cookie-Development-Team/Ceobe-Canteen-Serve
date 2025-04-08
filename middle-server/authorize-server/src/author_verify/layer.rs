@@ -5,28 +5,31 @@ use tower_http::auth::{
     AsyncRequireAuthorization, AsyncRequireAuthorizationLayer,
 };
 
-use crate::{middleware::service::UserAuthorize, roles::UserRoleVerify};
+use crate::author_verify::{service::UserAuthorize, AuthorVerifier};
 
 type InnerLayer<L> = AsyncRequireAuthorizationLayer<UserAuthorize<L>>;
 
 #[derive(Clone)]
-pub struct AuthorizeLayer<L: UserRoleVerify>(InnerLayer<L>);
+pub struct AuthorizeLayer<L>(InnerLayer<L>)
+where
+    L: AuthorVerifier;
 
-impl<L: UserRoleVerify> Default for AuthorizeLayer<L> {
-    fn default() -> Self { Self::new() }
+impl<L> AuthorizeLayer<L>
+where
+    L:  AuthorVerifier + Default
+{
+    pub fn new()->Self{
+        Self(InnerLayer::new(UserAuthorize::new(L::default())))
+    }
 }
 
 impl<S, L> Layer<S> for AuthorizeLayer<L>
 where
+    L: AuthorVerifier + Clone,
     S: Service<Request<Body>, Response = Response> + Send + 'static + Clone,
     S::Error: Send + 'static,
-    L: UserRoleVerify,
 {
     type Service = AsyncRequireAuthorization<S, UserAuthorize<L>>;
 
     fn layer(&self, inner: S) -> Self::Service { self.0.layer(inner) }
-}
-
-impl<L: UserRoleVerify> AuthorizeLayer<L> {
-    pub fn new() -> Self { Self(InnerLayer::new(UserAuthorize::default())) }
 }

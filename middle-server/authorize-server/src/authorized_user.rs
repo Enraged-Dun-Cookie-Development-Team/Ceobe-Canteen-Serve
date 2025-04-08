@@ -1,18 +1,21 @@
 use std::{
-    fmt::{Debug, Formatter},
+    fmt::Debug,
     ops::Deref,
 };
 
 use axum::{async_trait, extract::FromRequestParts};
 use axum_resp_result::{Nil, RespResult};
-use persistence::{admin, operate::Parts};
-use status_err::{resp_error_impl, status_error, ErrPrefix, HttpCode};
 
-#[derive(Clone)]
-pub struct AuthorizedUser(pub admin::models::Model);
+use persistence::operate::Parts;
+use status_err::{ErrPrefix, HttpCode, resp_error_impl, status_error};
+
+#[derive(Clone,Debug)]
+pub struct AuthorizedUser<T:Send + Sync + Clone+'static>(pub T);
 
 #[async_trait]
-impl<S> FromRequestParts<S> for AuthorizedUser {
+impl<S,T> FromRequestParts<S> for AuthorizedUser<T>
+where T:Send +Sync +Clone+'static
+{
     type Rejection = RespResult<Nil, NoAuthorizeLayerError>;
 
     async fn from_request_parts(
@@ -26,18 +29,10 @@ impl<S> FromRequestParts<S> for AuthorizedUser {
     }
 }
 
-impl Debug for AuthorizedUser {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("AuthorizeInfo")
-            .field("name", &self.0.username)
-            .field("auth_level", &self.0.auth)
-            .field("token_version", &self.0.num_pwd_change)
-            .finish()
-    }
-}
 
-impl Deref for AuthorizedUser {
-    type Target = admin::models::Model;
+
+impl<T:Send +Sync +Clone +'static> Deref for AuthorizedUser<T> {
+    type Target = T;
 
     fn deref(&self) -> &Self::Target { &self.0 }
 }
