@@ -4,13 +4,12 @@
 ///
 /// ```rust
 /// use authorize_server::mix_role_gen;
-/// use authorize_server::roles::{Architect,Cooker};
 /// mix_role_gen! {
 ///   //|-------------------可见性
 ///   //|   |---------------权限名称
 ///    pub MansionAuth=>[
-///        Architect // 内部的具体权限，可以嵌套
-///        Cooker
+///        authorize_server::admin::base_roles::Architect // 内部的具体权限，可以嵌套
+///        authorize_server::admin::base_roles::Cooker
 ///    ]
 /// }
 /// ```
@@ -28,12 +27,12 @@ macro_rules! mix_role_gen {
         #[derive(Debug, Clone)]
         $v struct $name;
 
-        impl $crate::roles::UserRoleVerify for $name{
+        impl $crate::admin::UserRoleVerify for $name{
             const ROLE_NAME: &'static str = stringify!($name);
 
             fn access_verify(level: &$crate::AuthLevel) -> bool {
                 $(
-                    <$ex as $crate::roles::UserRoleVerify>::access_verify(level)
+                    <$ex as $crate::admin::UserRoleVerify>::access_verify(level)
                 )||*
             }
         }

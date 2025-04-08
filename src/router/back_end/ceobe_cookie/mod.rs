@@ -1,5 +1,6 @@
-use authorize_server::{mix_role_gen, roles::Chef};
+use authorize_server::{mix_role_gen};
 use axum::Router;
+use authorize_server::admin::base_roles::Chef;
 pub use newest::CeobeCookieNewestBackend;
 
 use self::newest::newest_router;

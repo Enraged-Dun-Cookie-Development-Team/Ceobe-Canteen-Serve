@@ -14,7 +14,8 @@ use persistence::{
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
-
+use authorize_server::admin::AuthorizedAdminUser;
+use authorize_server::{AuthorizedUser, JwtTokenConv};
 use super::{
     error::AdminUserError,
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
@@ -147,7 +148,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip_all)]
     pub async fn get_info(
-        AuthorizeInfo(user): AuthorizeInfo,
+        AuthorizedUser(user): AuthorizedAdminUser,
     ) -> AdminUserRResult<UserInfo> {
         let AuthInfo { auth, username, .. } = user;
 
@@ -161,7 +162,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_username(
-        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlDatabaseOperate, AuthorizedUser(user): AuthorizeInfo,
         CheckExtract(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         resp_try(async {
@@ -180,7 +181,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
-        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlDatabaseOperate, AuthorizedUser(user): AuthorizeInfo,
         MapReject(ChangePassword {
             new_password,
             old_password,

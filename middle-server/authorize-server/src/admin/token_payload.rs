@@ -2,8 +2,8 @@ use chrono::Local;
 use jsonwebtoken::{decode, encode, Algorithm, Header, Validation};
 use persistence::admin;
 use serde::{Deserialize, Serialize};
-
-use crate::configure::LocalAuthConfig;
+use crate::admin::configure::LocalAuthConfig;
+use crate::token_conv::JwtTokenConv;
 
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct UserClaim {
@@ -31,16 +31,8 @@ impl UserClaim {
     }
 }
 
-impl UserClaim {
-    pub fn to_jwt_token(
-        &self,
-    ) -> Result<String, jsonwebtoken::errors::Error> {
-        let key = LocalAuthConfig::encoder_key();
-        let header = Header::new(Algorithm::HS384);
-        encode(&header, self, key)
-    }
-
-    pub fn from_jwt_token(
+impl JwtTokenConv for UserClaim {
+    fn from_jwt_token(
         payload: &str,
     ) -> jsonwebtoken::errors::Result<Self> {
         let key = LocalAuthConfig::decoder_key();
@@ -49,14 +41,21 @@ impl UserClaim {
         let payload = decode::<Self>(payload, key, &validation)?;
         Ok(payload.claims)
     }
+
+    fn to_jwt_token(
+        &self,
+    ) -> Result<String, jsonwebtoken::errors::Error> {
+        let key = LocalAuthConfig::encoder_key();
+        let header = Header::new(Algorithm::HS384);
+        encode(&header, self, key)
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::{
-        configure::{AuthConfig, LocalAuthConfig},
-        payload::UserClaim,
-    };
+    use crate::admin::configure::{AuthConfig, LocalAuthConfig};
+    use crate::admin::token_payload::UserClaim;
+    use crate::token_conv::JwtTokenConv;
 
     struct TestConfig;
 

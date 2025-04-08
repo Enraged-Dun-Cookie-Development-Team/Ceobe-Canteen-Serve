@@ -2,11 +2,8 @@ use axum::{
     routing::{delete, get, post},
     Router,
 };
-
-use crate::{
-    middleware::authorize::AuthorizeLayer,
-    utils::user_authorize::auth_level::prefabs::{Any, Chef},
-};
+use authorize_server::admin::AdminAuthorizeLayer;
+use authorize_server::admin::base_roles::{Any, Chef};
 
 pub struct UserAuthBackend;
 
@@ -16,7 +13,7 @@ pub(super) fn user_auth_router() -> crate::router::ServerRoute {
         .route("/userList", get(UserAuthBackend::user_list))
         .route("/changeAuth", post(UserAuthBackend::change_auth))
         .route("/deleteUser", delete(UserAuthBackend::delete_one_user))
-        .route_layer(AuthorizeLayer::<Chef>::new())
+        .route_layer(AdminAuthorizeLayer::<Chef>::new())
         .merge(
             Router::new()
                 .route(
@@ -28,7 +25,7 @@ pub(super) fn user_auth_router() -> crate::router::ServerRoute {
                     post(UserAuthBackend::change_password),
                 )
                 .route("/info", get(UserAuthBackend::get_info))
-                .route_layer(AuthorizeLayer::<Any>::new()),
+                .route_layer(AdminAuthorizeLayer::<Any>::new()),
         )
         // no middle ware cover
         .route("/login", post(UserAuthBackend::login))

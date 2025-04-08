@@ -1,4 +1,4 @@
-pub use authorize_server::UserClaim as User;
+pub use authorize_server::admin::UserClaim as User;
 use persistence::admin;
 
 /// 用户权限信息
@@ -7,7 +7,7 @@ pub type AuthInfo = admin::models::Model;
 /// 权限等级鉴定模块
 pub mod auth_level {
     pub mod prefabs {
-        pub use authorize_server::roles::base_roles::*;
+        pub use authorize_server::admin::base_roles::*;
     }
 }
 pub type PasswordEncoder =

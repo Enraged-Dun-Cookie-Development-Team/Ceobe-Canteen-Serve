@@ -4,6 +4,7 @@ use axum::{
     body::Body,
     http::{HeaderName, Request},
 };
+use http::request::Parts;
 use jsonwebtoken::{DecodingKey, EncodingKey};
 use tracing::warn;
 use tracing_unwrap::ResultExt;
@@ -81,8 +82,8 @@ impl LocalAuthConfig {
     }
 }
 
-pub fn get_authorize_information(req: &Request<Body>) -> Option<Cow<str>> {
-    req.headers()
+pub fn get_authorize_information(req: &Parts) -> Option<Cow<str>> {
+    req.headers
         .get(LocalAuthConfig::header_name())
         .and_then(|v| v.to_str().ok())
         .and_then(|s| urlencoding::decode(s).ok())

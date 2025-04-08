@@ -1,6 +1,5 @@
 use axum_starter::prepare;
-
-use crate::configure::{AuthConfig, LocalAuthConfig};
+use crate::admin::{AuthConfig, LocalAuthConfig};
 
 #[prepare(AuthorizePrepare)]
 pub fn authorize_config<C>(cfg: &C)

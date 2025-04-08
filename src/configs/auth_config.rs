@@ -20,7 +20,7 @@ crate::quick_struct! {
 fn default_token() -> String { String::from("token") }
 fn default_mob() -> String { String::from("mob-id") }
 
-impl authorize_server::AuthConfig for AuthConfig {
+impl authorize_server::admin::AuthConfig for AuthConfig {
     fn jwt_key(&self) -> &[u8] { &self.jwt }
 
     fn token_header(&self) -> &str { &self.header_name }
