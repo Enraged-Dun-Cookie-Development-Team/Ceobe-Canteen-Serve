@@ -11,7 +11,7 @@ use axum::routing::Route;
 use axum_starter::ServerPrepare;
 use bootstrap::{
     init::{
-        component_init::{BackendAuthConfig, RResultConfig},
+        component_init::{ RResultConfig},
         db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },

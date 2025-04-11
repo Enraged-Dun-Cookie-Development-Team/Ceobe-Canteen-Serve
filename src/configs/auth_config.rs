@@ -1,9 +1,7 @@
 use std::ops::Deref;
-use http::HeaderName;
 use rand::RngCore;
 use serde::Deserialize;
 
-use crate::utils::mob_verify::MobIdConfig;
 
 crate::quick_struct! {
     #[derive(Default)]

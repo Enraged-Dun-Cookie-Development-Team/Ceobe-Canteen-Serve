@@ -12,7 +12,7 @@ use persistence::{
     redis::RedisConnect,
 };
 use tracing::instrument;
-
+use authorize_server::AuthorizedUser;
 use super::error::{CeobeUserError, CeobeUserRResult};
 use crate::{middleware::mob::MobIdInfo, router::CeobeUserFrontend};
 
@@ -32,7 +32,7 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo, redis_client))]
     pub async fn get_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        redis_client: RedisConnect, MobIdInfo(mob_id): MobIdInfo,
+        redis_client: RedisConnect, AuthorizedUser(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<DatasourceConfig> {
         Ok(rtry!(
             CeobeUserLogic::get_datasource_by_user(
@@ -50,7 +50,7 @@ impl CeobeUserFrontend {
     #[instrument(ret, skip(db, mongo))]
     pub async fn update_datasource_config_by_user(
         db: SqlDatabaseOperate, mongo: MongoDatabaseOperate,
-        MobIdInfo(mob_id): MobIdInfo,
+        AuthorizedUser(mob_id): MobIdInfo,
         MapReject(datasource_config): MapReject<
             Json<UserDatasource>,
             CeobeUserError,
@@ -71,7 +71,7 @@ impl CeobeUserFrontend {
     /// 更新用户最后活跃时间
     #[instrument(ret, skip(mongo))]
     pub async fn update_user_access_time(
-        mongo: MongoDatabaseOperate, MobIdInfo(mob_id): MobIdInfo,
+        mongo: MongoDatabaseOperate, AuthorizedUser(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<()> {
         Ok(rtry!(
             mongo
