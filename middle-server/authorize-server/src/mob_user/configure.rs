@@ -1,12 +1,14 @@
 use std::borrow::Cow;
+use std::str::FromStr;
 use std::sync::OnceLock;
 use http::HeaderName;
 use http::request::Parts;
 use tracing::warn;
+use tracing_unwrap::ResultExt;
 
 pub trait MobUserAuthConfig{
-    fn header(&self)->HeaderName{
-        HeaderName::from_static("mob-id")
+    fn header(&self)->&str{
+        "mob-id"
     }
 }
 
@@ -18,7 +20,7 @@ pub(crate) struct LocalMobUserAuthConfig{
 
 impl LocalMobUserAuthConfig {
     pub(crate) fn from_config<C:MobUserAuthConfig>(cfg:&C)->Self{
-        let header = cfg.header();
+        let header =HeaderName::from_str( cfg.header()).expect_or_log("非法的请求头名称");
         Self{header}
     }
 }

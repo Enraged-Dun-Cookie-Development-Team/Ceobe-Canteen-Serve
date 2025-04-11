@@ -1,5 +1,5 @@
 use std::ops::Deref;
-
+use http::HeaderName;
 use rand::RngCore;
 use serde::Deserialize;
 
@@ -26,8 +26,9 @@ impl authorize_server::admin::AuthConfig for AuthConfig {
     fn token_header(&self) -> &str { &self.header_name }
 }
 
-impl MobIdConfig for AuthConfig {
-    fn mob_header(&self) -> String { self.mob_header.clone() }
+impl authorize_server::mob_user::MobUserAuthConfig for AuthConfig {
+    fn header(&self) -> &str {&self.mob_header}
+        
 }
 
 #[derive(serde::Serialize, Clone, Debug)]
