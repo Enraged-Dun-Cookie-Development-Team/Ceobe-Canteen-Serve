@@ -1,15 +1,19 @@
 use http::request::Parts;
+use persistence::{
+    ceobe_user::{models::models::UserMobId, ToCeobe, ToCeobeUser},
+    help_crates::{
+        bool_or::TrueOrError, futures::future::BoxFuture, ErrPrefix,
+        HttpCode, StatusErr,
+    },
+    mongodb::MongoDatabaseOperate,
+    operate::FromRequestParts,
+};
 use tracing::info;
-use persistence::ceobe_user::models::models::UserMobId;
-use persistence::ceobe_user::{ToCeobe, ToCeobeUser};
-use persistence::help_crates::StatusErr;
-use crate::{AuthorizedUser, AuthorizeLayer, AuthorVerifier};
-use persistence::help_crates::{ErrPrefix,HttpCode};
-use persistence::help_crates::bool_or::TrueOrError;
-use persistence::help_crates::futures::future::BoxFuture;
-use persistence::mongodb::MongoDatabaseOperate;
-use persistence::operate::FromRequestParts;
-use crate::mob_user::configure::get_authorize_information;
+
+use crate::{
+    mob_user::configure::get_authorize_information, AuthorVerifier,
+    AuthorizeLayer, AuthorizedUser,
+};
 
 pub type MobUserInfo = UserMobId;
 
@@ -17,32 +21,43 @@ pub type MobUserAuthorizeLayer = AuthorizeLayer<MobUser>;
 
 pub type AuthorizedMobUser = AuthorizedUser<MobUserInfo>;
 
-#[derive(Clone,Default)]
+#[derive(Clone, Default)]
 pub struct MobUser;
 
 impl AuthorVerifier for MobUser {
     type AuthorizedUser = MobUserInfo;
     type Error = MobUserAuthorizeError;
-    type Future = BoxFuture<'static,Result<MobUserInfo,Self::Error>>;
+    type Future = BoxFuture<'static, Result<MobUserInfo, Self::Error>>;
 
     fn authorize(&mut self, mut request_parts: Parts) -> Self::Future {
-        Box::pin(
-            async move{
-        let mob_id = get_authorize_information(&request_parts)
-            .ok_or(MobUserAuthorizeError::MobIdFieldNotFound)?.to_string();
-                
-                let db = MongoDatabaseOperate::from_request_parts(&mut request_parts,&()).await.unwrap();
-                
-                db.ceobe().user().property().is_exist_user(&mob_id).await
-                    .map_err(|_|MobUserAuthorizeError::UserDatabaseOperateError)?
-                .true_or_with(||MobUserAuthorizeError::MobIdNotExist(mob_id.clone()))?;
+        Box::pin(async move {
+            let mob_id = get_authorize_information(&request_parts)
+                .ok_or(MobUserAuthorizeError::MobIdFieldNotFound)?
+                .to_string();
 
-                info!(user.mob_id = %mob_id);
-                
-                Ok(UserMobId{mob_id:mob_id.to_string()})
-            }
-        )
-        
+            let db = MongoDatabaseOperate::from_request_parts(
+                &mut request_parts,
+                &(),
+            )
+            .await
+            .unwrap();
+
+            db.ceobe()
+                .user()
+                .property()
+                .is_exist_user(&mob_id)
+                .await
+                .map_err(|_| MobUserAuthorizeError::UserDatabaseOperateError)?
+                .true_or_with(|| {
+                    MobUserAuthorizeError::MobIdNotExist(mob_id.clone())
+                })?;
+
+            info!(user.mob_id = %mob_id);
+
+            Ok(UserMobId {
+                mob_id: mob_id.to_string(),
+            })
+        })
     }
 }
 

@@ -1,7 +1,6 @@
 use axum_resp_result::ConfigTrait;
 use axum_starter::prepare;
 
-
 /// rresult配置
 #[prepare(RResultConfig?)]
 fn resp_conf<C>(

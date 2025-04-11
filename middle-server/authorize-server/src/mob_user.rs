@@ -1,10 +1,9 @@
-mod configure;
 mod auth_processor;
-
+mod configure;
 
 pub use auth_processor::{
-    MobUser, MobUserAuthorizeError, MobUserAuthorizeLayer,AuthorizedMobUser,MobUserInfo
+    AuthorizedMobUser, MobUser, MobUserAuthorizeError, MobUserAuthorizeLayer,
+    MobUserInfo,
 };
-
-pub use configure::MobUserAuthConfig;
 pub(crate) use configure::LocalMobUserAuthConfig;
+pub use configure::MobUserAuthConfig;

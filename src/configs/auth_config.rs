@@ -1,7 +1,7 @@
 use std::ops::Deref;
+
 use rand::RngCore;
 use serde::Deserialize;
-
 
 crate::quick_struct! {
     #[derive(Default)]
@@ -25,8 +25,7 @@ impl authorize_server::admin::AuthConfig for AuthConfig {
 }
 
 impl authorize_server::mob_user::MobUserAuthConfig for AuthConfig {
-    fn header(&self) -> &str {&self.mob_header}
-        
+    fn header(&self) -> &str { &self.mob_header }
 }
 
 #[derive(serde::Serialize, Clone, Debug)]

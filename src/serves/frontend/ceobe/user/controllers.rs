@@ -1,3 +1,4 @@
+use authorize_server::AuthorizedUser;
 use axum::Json;
 use axum_resp_result::{rtry, MapReject};
 use ceobe_user_logic::{
@@ -12,7 +13,7 @@ use persistence::{
     redis::RedisConnect,
 };
 use tracing::instrument;
-use authorize_server::AuthorizedUser;
+
 use super::error::{CeobeUserError, CeobeUserRResult};
 use crate::{middleware::mob::MobIdInfo, router::CeobeUserFrontend};
 

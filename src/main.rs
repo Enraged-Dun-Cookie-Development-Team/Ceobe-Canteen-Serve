@@ -5,13 +5,14 @@ use std::{
     time::Duration,
 };
 
-use authorize_server::axum_starter::AdminAuthorizePrepare;
-use authorize_server::axum_starter::MobUserAuthorizePrepare;
+use authorize_server::axum_starter::{
+    AdminAuthorizePrepare, MobUserAuthorizePrepare,
+};
 use axum::routing::Route;
 use axum_starter::ServerPrepare;
 use bootstrap::{
     init::{
-        component_init::{ RResultConfig},
+        component_init::RResultConfig,
         db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
         service_init::{graceful_shutdown, RouteV1, RouterFallback},
     },
@@ -81,7 +82,7 @@ async fn main_task() {
         // components
         .prepare(RResultConfig::<_, RespResultConfig>)
         .prepare(AdminAuthorizePrepare::<_, AuthConfig>)
-        .prepare(MobUserAuthorizePrepare::<_,AuthConfig>)
+        .prepare(MobUserAuthorizePrepare::<_, AuthConfig>)
         .prepare_state(RequestClientPrepare)
         .prepare_state(QiniuUpload::<_, QiniuUploadConfig>)
         .prepare_state(BiliClientPrepare)

@@ -4,8 +4,8 @@ mod authorized_user;
 
 pub mod admin;
 mod author_verify;
-mod token_conv;
 pub mod mob_user;
+mod token_conv;
 
 pub use author_verify::{AuthorVerifier, AuthorizeLayer, UserAuthorize};
 pub use authorized_user::{AuthorizedUser, NoAuthorizeLayerError};
