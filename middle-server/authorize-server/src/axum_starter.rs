@@ -1,11 +1,20 @@
 use axum_starter::prepare;
 
 use crate::admin::{AuthConfig, LocalAuthConfig};
+use crate::mob_user::{LocalMobUserAuthConfig, MobUserAuthConfig};
 
-#[prepare(AuthorizePrepare)]
-pub fn authorize_config<C>(cfg: &C)
+#[prepare(AdminAuthorizePrepare)]
+pub fn admin_authorize_config<C>(cfg: &C)
 where
     C: AuthConfig,
 {
     LocalAuthConfig::set(cfg)
+}
+
+#[prepare(MobUserAuthorizePrepare)]
+pub fn mob_user_authorize_config<C>(cfg:&C)
+where
+    C: MobUserAuthConfig
+{
+    LocalMobUserAuthConfig::set(cfg)
 }

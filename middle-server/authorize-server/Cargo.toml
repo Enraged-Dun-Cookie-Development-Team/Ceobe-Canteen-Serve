@@ -15,7 +15,7 @@ urlencoding.workspace = true
 serde = { version = "1.0.201", features = ["derive"] }
 jsonwebtoken = "9.3.1"
 chrono.workspace = true
-persistence = { workspace = true, features = ["help-crates", "model-admin"] }
+persistence = { workspace = true, features = ["help-crates", "model-admin","model-ceobe-user"] }
 status-err.workspace = true
 thiserror.workspace = true
 tower.workspace = true
