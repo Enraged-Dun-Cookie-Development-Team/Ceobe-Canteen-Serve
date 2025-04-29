@@ -4,7 +4,7 @@ use authorize_server::{
     admin::AuthorizedAdminUser, AuthorizedUser, JwtTokenConv,
 };
 use axum::{extract::Query, Json};
-use axum_resp_result::{resp_try, rtry, MapReject};
+use axum_resp_result::{resp_try, MapReject, resp_result};
 use checker::CheckExtract;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
@@ -32,6 +32,7 @@ use crate::{
     },
     utils::user_authorize::{AuthInfo, PasswordEncoder, User},
 };
+use crate::serves::backend::user_auth::error::SelfDeleteError;
 
 crate::quick_struct! {
     pub NewUserAuthLevel {
@@ -255,15 +256,19 @@ impl UserAuthBackend {
         })
         .await
     }
-
+    /// 删除用户
     #[instrument(ret, skip(db))]
-    // 删除用户
+    #[resp_result]
     pub async fn delete_one_user(
         db: SqlDatabaseOperate,
-        MapReject(body): MapReject<Json<DeleteOneUserReq>, AdminUserError>,
-    ) -> AdminUserRResult<()> {
-        let uid = body.id;
-        rtry!(db.admin().user().delete_one(uid).await);
-        Ok(()).into()
+        AuthorizedUser(user):AuthorizedAdminUser,
+        MapReject(DeleteOneUserReq{id}): MapReject<Json<DeleteOneUserReq>, AdminUserError>,
+    ) -> Result<(),AdminUserError> {
+        if user.id == id { 
+            Err(SelfDeleteError.into())
+        }else{
+        db.admin().user().delete_one(id).await?;
+            Ok(())
+        }
     }
 }
