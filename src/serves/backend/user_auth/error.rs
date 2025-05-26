@@ -1,8 +1,8 @@
 use axum::extract::rejection::{JsonRejection, QueryRejection};
 use checker::prefabs::num_check::NonZeroUnsignedError;
 use crypto_str::inner_encoders::bcrypt::BcryptError;
+use http::StatusCode;
 use status_err::status_error;
-
 crate::error_generate!(
     pub AdminUserError
     Json = JsonRejection
@@ -14,4 +14,9 @@ crate::error_generate!(
     SelfDelete = SelfDeleteError
 );
 use status_err::ErrPrefix;
-status_error!(pub SelfDeleteError[ErrPrefix::CHECKER,0018]=>"正在试图抹除自身存在");
+status_error!(
+    pub SelfDeleteError[
+        ErrPrefix::CHECKER,
+        0x0018:StatusCode::FORBIDDEN
+    ] => "正在试图抹除自身存在"
+);
