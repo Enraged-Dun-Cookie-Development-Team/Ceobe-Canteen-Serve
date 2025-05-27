@@ -6,7 +6,7 @@ on:
       - 'ErrorReference.md' # 你需要监听更新的文件路径
 
 jobs:
-  update-wiki-j_job:
+  update-wiki:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,6 +30,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
+          cd wiki
           git add .
           git commit -m "Update wiki from main repo"
 
