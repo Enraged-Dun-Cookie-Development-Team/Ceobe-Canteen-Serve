@@ -1,0 +1,42 @@
+name: Update Wiki
+
+on:
+  push:
+    branch:
+      - master
+    paths:
+      - 'ErrorReference.md' # 你需要监听更新的文件路径
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: code
+
+      - name: Checkout wiki
+        uses: actions/checkout@v3
+        with:
+          repository: Enraged-Dun-Cookie-Development-Team/Ceobe-Canteen-Serve.wiki
+          token: ${{ secrets.WIKI_TOKEN }}
+          path: wiki
+
+      - name: Update wiki file
+        run: |
+          cp code/ErrorReference.md wiki/异常列表.md
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          cd wiki
+          git add .
+          git commit -m "Update wiki from main repo"
+
+      - name: Push changes
+        run: |
+          cd wiki
+          git push origin master

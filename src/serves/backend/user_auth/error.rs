@@ -17,6 +17,6 @@ use status_err::ErrPrefix;
 status_error!(
     pub SelfDeleteError[
         ErrPrefix::CHECKER,
-        0x0018:StatusCode::FORBIDDEN
+        0x001F:StatusCode::FORBIDDEN
     ] => "正在试图抹除自身存在"
 );
