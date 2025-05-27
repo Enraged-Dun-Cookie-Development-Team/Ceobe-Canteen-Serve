@@ -1,9 +1,8 @@
 use std::borrow::Cow;
 
-pub use http::StatusCode as HttpCode;
+pub use http::{self, StatusCode as HttpCode};
 pub use status_err_derive::StatusErr;
 pub use thiserror::Error as ThisError;
-
 pub mod codegen;
 mod impls;
 pub mod status_code;

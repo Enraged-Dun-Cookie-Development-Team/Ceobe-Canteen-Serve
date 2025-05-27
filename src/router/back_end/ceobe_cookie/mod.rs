@@ -1,11 +1,9 @@
+use authorize_server::{admin::base_roles::Chef, mix_role_gen};
 use axum::Router;
 pub use newest::CeobeCookieNewestBackend;
 
 use self::newest::newest_router;
-use crate::{
-    middleware::authorize::AuthorizeLayer, new_auth_level,
-    utils::user_authorize::auth_level::prefabs::Chef,
-};
+use crate::middleware::authorize::AuthorizeLayer;
 
 mod newest;
 
@@ -15,7 +13,7 @@ pub(super) fn ceobe_cookie_router() -> crate::router::ServerRoute {
         .route_layer(AuthorizeLayer::<CeobeCookieAuth>::new())
 }
 
-new_auth_level! {
+mix_role_gen! {
     pub CeobeCookieAuth=>[
         Chef
     ]

@@ -9,7 +9,6 @@ reqwest = { workspace = true }
 axum = { workspace = true, features = ["multipart"] }
 http = "1"
 http_02 = {package = "http",version = "0.2"}
-jwt = "0.16.0"
 url = { workspace = true }
 bcrypt = "0.13"
 mongodb = { workspace = true }
@@ -22,6 +21,7 @@ thiserror = { workspace = true }
 tonic = "0.9.2"
 serde_qs.workspace = true
 hmac.workspace = true
+jsonwebtoken = "9.3.1"
 
 [dependencies.serde]
 workspace = true

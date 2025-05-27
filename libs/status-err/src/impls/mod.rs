@@ -10,6 +10,7 @@ use checker::prefabs::{
     num_check::NonZeroUnsignedError, version_checker::VersionInvalidError,
 };
 use http::StatusCode;
+use jsonwebtoken::errors::Error as JwtError;
 use serde_json::Error as JsonError;
 use tonic::transport;
 
@@ -42,7 +43,7 @@ ParseIntError[
 );
 
 status_error!(
-jwt::Error[
+JwtError[
     ErrPrefix::PARSE, 0x0003
     ] -> "Jwt解析异常"
 );

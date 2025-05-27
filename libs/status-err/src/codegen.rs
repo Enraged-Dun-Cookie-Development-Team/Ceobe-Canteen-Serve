@@ -2,22 +2,26 @@
 /// 辅助构造Status error 的宏
 /// 1. 新建Unit 类型的异常，并为其实现[crate::StatusErr](crate::StatusErr)
 /// ```rust
+/// use status_err::{status_error,ErrPrefix,HttpCode};
+///
 /// status_error!{
 /// //   |----------新建异常类型的可见性
 /// //   |      |------- 新建异常的类型名称
 ///     pub BadFraction
 ///     [
 ///         ErrPrefix::CHECKER, //  新建类型的前缀码类型
-///         0003: StatusCode::NOT_FOUND
+///         0003: HttpCode::NOT_FOUND
 /// //         |     |----新建异常的Http状态码(可以省略，如果不提供，
 /// //         |          将使用前缀码默认http状态码)                 
 /// //         |----------新建类型的异常标识码(唯一)             
 ///     ]=>"错误的Fraction值范围(0~5)"
 /// //             |--------新建异常的描述内容
 /// }
-///     ```
+///  ```
 /// 2. 为已有类型实现 [crate::StatusErr](crate::StatusErr)
 /// ```rust
+/// use status_err::{status_error,ErrPrefix,HttpCode};
+///
 /// status_error!(
 /// //       |-------------已有类型名称
 ///     std::io::Error
@@ -29,7 +33,7 @@
 /// //         |--为已有类型实现时使用的Http状态码
 /// //         |  (可以省略，如果不提供，
 /// //         |   将使用前缀码默认http状态码)             
-///         StatusCode::INTERNAL_SERVER_ERROR   
+///         HttpCode::INTERNAL_SERVER_ERROR   
 ///     ]
 /// );
 /// ```
@@ -68,7 +72,7 @@ macro_rules! status_error {
                 $code
             }
             #[inline]
-            fn http_code(&self) -> http::StatusCode {
+            fn http_code(&self) -> $crate::http::StatusCode {
                 $status
             }
         }
@@ -117,7 +121,7 @@ macro_rules! status_error {
                     $code
                 }
                 #[inline]
-                fn http_code(&self) -> http::StatusCode {
+                fn http_code(&self) -> $crate::http::StatusCode {
                     $status
                 }
             }
@@ -133,7 +137,7 @@ macro_rules! status_error {
                     $code
                 }
                 #[inline]
-                fn http_code(&self) -> http::StatusCode {
+                fn http_code(&self) ->  $crate::http::StatusCode {
                     $status
                 }
             }

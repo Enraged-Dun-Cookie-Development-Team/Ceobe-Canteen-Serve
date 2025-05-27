@@ -1,7 +1,7 @@
+use std::ops::Deref;
+
 use rand::RngCore;
 use serde::Deserialize;
-
-use crate::utils::{mob_verify::MobIdConfig, user_authorize::config};
 
 crate::quick_struct! {
     #[derive(Default)]
@@ -18,18 +18,24 @@ crate::quick_struct! {
 fn default_token() -> String { String::from("token") }
 fn default_mob() -> String { String::from("mob-id") }
 
-impl config::AuthConfig for AuthConfig {
-    fn jwt_key(&self) -> &[u8] { &self.jwt.0 }
+impl authorize_server::admin::AuthConfig for AuthConfig {
+    fn jwt_key(&self) -> &[u8] { &self.jwt }
 
-    fn token_header(&self) -> String { self.header_name.clone() }
+    fn token_header(&self) -> &str { &self.header_name }
 }
 
-impl MobIdConfig for AuthConfig {
-    fn mob_header(&self) -> String { self.mob_header.clone() }
+impl authorize_server::mob_user::MobUserAuthConfig for AuthConfig {
+    fn header(&self) -> &str { &self.mob_header }
 }
 
 #[derive(serde::Serialize, Clone, Debug)]
 pub struct Jwt([u8; 32]);
+
+impl Deref for Jwt {
+    type Target = [u8];
+
+    fn deref(&self) -> &Self::Target { &self.0 }
+}
 
 impl Default for Jwt {
     fn default() -> Self {

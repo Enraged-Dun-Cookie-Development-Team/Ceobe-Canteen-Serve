@@ -1,4 +1,5 @@
 pub use announcement::CeobeOperationAnnouncement;
+use authorize_server::mix_role_gen;
 use release_version_service::ReleaseVersionController;
 pub use resource::CeobeOpResource;
 use serve_utils::{endpoint::AdminEnd, ControllerRouter};
@@ -13,7 +14,6 @@ use self::{
 };
 use crate::{
     middleware::authorize::AuthorizeLayer,
-    new_auth_level,
     utils::user_authorize::auth_level::prefabs::{Chef, Cooker, Porter},
 };
 
@@ -35,13 +35,13 @@ pub(super) fn ceobe_operation_router() -> crate::router::ServerRoute {
         .into()
 }
 
-new_auth_level! {
+mix_role_gen! {
     pub CeobeOperationAuth=>[
         Chef
         Cooker
     ]
 }
-new_auth_level! {
+mix_role_gen! {
     pub CeobeTools=>[
         Chef
         Cooker

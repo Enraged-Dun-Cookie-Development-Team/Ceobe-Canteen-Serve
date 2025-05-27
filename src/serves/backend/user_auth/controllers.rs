@@ -1,7 +1,10 @@
 use std::borrow::Cow;
 
+use authorize_server::{
+    admin::AuthorizedAdminUser, AuthorizedUser, JwtTokenConv,
+};
 use axum::{extract::Query, Json};
-use axum_resp_result::{resp_try, rtry, MapReject};
+use axum_resp_result::{resp_result, resp_try, MapReject};
 use checker::CheckExtract;
 use crypto_str::Encoder;
 use futures::{future, TryFutureExt};
@@ -13,6 +16,7 @@ use persistence::{
 };
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use tracing::{debug, instrument};
+use tracing_unwrap::ResultExt;
 
 use super::{
     error::AdminUserError,
@@ -23,10 +27,11 @@ use crate::{
     middleware::authorize::AuthorizeInfo,
     router::UserAuthBackend,
     serves::backend::user_auth::{
+        error::SelfDeleteError,
         view::{CreateUser, UserInfo, UserName, UserToken},
         AdminUserRResult,
     },
-    utils::user_authorize::{AuthInfo, GenerateToken, PasswordEncoder, User},
+    utils::user_authorize::{AuthInfo, PasswordEncoder, User},
 };
 
 crate::quick_struct! {
@@ -128,17 +133,14 @@ impl UserAuthBackend {
                             PasswordEncoder::verify(src, &dst)
                         })
                     },
-                    |user| {
-                        User {
-                            id: user.id,
-                            num_pwd_change: user.num_pwd_change,
-                        }
-                    },
+                    User::from_model,
                 )
                 .await??;
 
             // 生成用户token
-            let token = token_info.generate().unwrap();
+            let token = token_info
+                .to_jwt_token()
+                .expect_or_log("Conv To JWT Token Error");
 
             // 返回用户token
             let user_token = UserToken { token };
@@ -149,7 +151,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip_all)]
     pub async fn get_info(
-        AuthorizeInfo(user): AuthorizeInfo,
+        AuthorizedUser(user): AuthorizedAdminUser,
     ) -> AdminUserRResult<UserInfo> {
         let AuthInfo { auth, username, .. } = user;
 
@@ -163,7 +165,7 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_username(
-        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
+        db: SqlDatabaseOperate, AuthorizedUser(user): AuthorizeInfo,
         CheckExtract(username): UsernamePretreatment,
     ) -> AdminUserRResult<UserName> {
         resp_try(async {
@@ -182,14 +184,14 @@ impl UserAuthBackend {
 
     #[instrument(ret, skip(db, user))]
     pub async fn change_password(
-        db: SqlDatabaseOperate, AuthorizeInfo(user): AuthorizeInfo,
-        MapReject(body): MapReject<Json<ChangePassword>, AdminUserError>,
+        db: SqlDatabaseOperate, AuthorizedUser(user): AuthorizeInfo,
+        MapReject(ChangePassword {
+            new_password,
+            old_password,
+        }): MapReject<Json<ChangePassword>, AdminUserError>,
     ) -> AdminUserRResult<UserToken> {
         resp_try(async {
             let id = user.id;
-
-            let old_password = body.old_password;
-            let new_password = body.new_password;
 
             let generate_token = db
                 .admin()
@@ -203,16 +205,13 @@ impl UserAuthBackend {
                         PasswordEncoder::encode(Cow::Borrowed(pwd))
                             .map(|pwd| pwd.to_string())
                     },
-                    |user| {
-                        User {
-                            id: user.id,
-                            num_pwd_change: user.num_pwd_change,
-                        }
-                    },
+                    User::from_model,
                 )
                 .await??;
 
-            let token = generate_token.generate().unwrap();
+            let token = generate_token
+                .to_jwt_token()
+                .expect_or_log("Conv to JWT Failure");
 
             // 返回用户token
             let user_token = UserToken { token };
@@ -258,14 +257,22 @@ impl UserAuthBackend {
         .await
     }
 
+    /// 删除用户
     #[instrument(ret, skip(db))]
-    // 删除用户
+    #[resp_result]
     pub async fn delete_one_user(
-        db: SqlDatabaseOperate,
-        MapReject(body): MapReject<Json<DeleteOneUserReq>, AdminUserError>,
-    ) -> AdminUserRResult<()> {
-        let uid = body.id;
-        rtry!(db.admin().user().delete_one(uid).await);
-        Ok(()).into()
+        db: SqlDatabaseOperate, AuthorizedUser(user): AuthorizedAdminUser,
+        MapReject(DeleteOneUserReq { id }): MapReject<
+            Json<DeleteOneUserReq>,
+            AdminUserError,
+        >,
+    ) -> Result<(), AdminUserError> {
+        if user.id == id {
+            Err(SelfDeleteError.into())
+        }
+        else {
+            db.admin().user().delete_one(id).await?;
+            Ok(())
+        }
     }
 }
