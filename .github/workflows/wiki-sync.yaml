@@ -2,6 +2,8 @@ name: Update Wiki
 
 on:
   push:
+    branch:
+      - master
     paths:
       - 'ErrorReference.md' # 你需要监听更新的文件路径
 
