@@ -240,7 +240,7 @@ status_error!(
 status_error!(
     bson::uuid::Error[
         ErrPrefix::PARSE,
-        0x008
+        0x000B
     ]->"bson UUID解析异常"
 );
 
