@@ -36,4 +36,5 @@ jobs:
 
       - name: Push changes
         run: |
+          cd wiki
           git push origin main
