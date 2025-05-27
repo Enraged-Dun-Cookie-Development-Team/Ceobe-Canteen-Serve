@@ -226,7 +226,7 @@ status_error!(
 status_error!(
     hmac::digest::InvalidLength[
         ErrPrefix::PARSE,
-        0x000B
+        0x000C
     ]->"HMAC加密长度错误"
 );
 
