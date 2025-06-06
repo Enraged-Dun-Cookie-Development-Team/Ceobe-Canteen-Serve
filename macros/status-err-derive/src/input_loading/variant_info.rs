@@ -1,5 +1,5 @@
 use darling::{ast, FromMeta, FromVariant};
-use syn::{spanned::Spanned, Expr, Ident, LitInt};
+use syn::{spanned::Spanned, Expr, Ident, LitInt, Type};
 
 use super::field_info::FieldInfo;
 
@@ -11,6 +11,12 @@ pub struct NormalVariant {
     pub(crate) prefix: Expr,
     pub(crate) http_code: Option<Expr>,
 }
+#[derive(Debug, FromMeta)]
+pub struct BindVariant {
+    pub(crate) bind: Type,
+}
+
+
 
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Default)]
@@ -18,13 +24,10 @@ pub enum VariantInnerInfo {
     #[default]
     Transparent,
     Create(NormalVariant),
+    Bind(BindVariant),
 }
 
 impl FromMeta for VariantInnerInfo {
-    fn from_list(items: &[syn::NestedMeta]) -> darling::Result<Self> {
-        Ok(Self::Create(NormalVariant::from_list(items)?))
-    }
-
     fn from_meta(item: &syn::Meta) -> darling::Result<Self> {
         match item {
             syn::Meta::Path(ident) => {
@@ -40,11 +43,27 @@ impl FromMeta for VariantInnerInfo {
                 }
             }
             syn::Meta::List(ref value) => {
-                Self::from_list(
-                    &value.nested.iter().cloned().collect::<Vec<_>>()[..],
-                )
+                if value.path.is_ident("err") {
+                    let items =
+                        &value.nested.iter().cloned().collect::<Vec<_>>()[..];
+                    BindVariant::from_list(items)
+                        .map(|bind| Self::Bind(bind))
+                        .or_else(|_| {
+                            NormalVariant::from_list(items)
+                                .map(|create| Self::Create(create))
+                        })
+                }
+                else {
+                    Err(syn::Error::new(
+                        value.path.span(),
+                        "only support `err` or `bind`",
+                    )
+                    .into())
+                }
             }
-            syn::Meta::NameValue(v) => Self::from_value(&v.lit),
+            syn::Meta::NameValue(value) => {
+                Self::from_value(&value.lit)
+            }
         }
     }
 
@@ -87,7 +106,7 @@ impl VariantInfo {
                     ))
                 }
             }
-            VariantInnerInfo::Create(_) => Ok(()),
+            VariantInnerInfo::Create(_) | VariantInnerInfo::Bind(_) => Ok(()),
         }
     }
 }
@@ -128,6 +147,22 @@ mod test {
         )
         .unwrap();
 
+        let v = VariantInfo::from_variant(&meta).expect("V");
+
+        println!("{v:?}")
+    }
+    #[test]
+    fn test_bind() {
+        let meta: Variant = syn::parse_str(
+            r#"
+        #[status_err(
+            err="AAA"
+
+        )]
+        Var(String)
+        "#,
+        )
+        .unwrap();
         let v = VariantInfo::from_variant(&meta).expect("V");
 
         println!("{v:?}")

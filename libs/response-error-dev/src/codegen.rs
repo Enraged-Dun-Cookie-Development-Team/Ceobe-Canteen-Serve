@@ -36,14 +36,14 @@ impl<'s> ToTokens for ErrorGen<'s> {
             #[doc=#doc_description]
             pub struct #ident;
 
-            impl #ident{
-                pub fn mark(&self)->char{ #mark}
+            impl super::GenError for #ident{
+                fn mark(&self)->char{ #mark}
 
-                pub fn status_code(&self)->http::StatusCode {http::StatusCode::from_u16(#status_code).unwrap()}
+                fn status_code(&self)->http::StatusCode {http::StatusCode::from_u16(#status_code).unwrap()}
 
-                pub fn description(&self)->&'static str{#description}
+                fn description(&self)->&'static str{#description}
 
-                pub fn code(&self)->u16 {#code}
+                fn code(&self)->u16 {#code}
             }
         };
         tokens.extend(code)

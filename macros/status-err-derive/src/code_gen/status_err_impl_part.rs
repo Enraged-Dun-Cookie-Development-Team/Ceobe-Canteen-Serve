@@ -1,10 +1,15 @@
 use darling::{ast::Style, ToTokens};
 use quote::__private::TokenStream;
+use quote::quote;
 use syn::Ident;
 
-use crate::input_loading::variant_info::{
-    NormalVariant, VariantInfo, VariantInnerInfo,
-};
+use crate::input_loading::variant_info::{BindVariant, NormalVariant, VariantInfo, VariantInnerInfo};
+
+impl ToTokens for BindVariant {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.bind.to_tokens(tokens)
+    }
+}
 
 pub struct InfoImplToken<'s> {
     error_name: &'s Ident,
@@ -89,6 +94,13 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
                     }
                 }
             }
+            VariantInnerInfo::Bind(ty)=>{
+                quote! {
+                    Self::#ident #style => {
+                        std::borrow::Cow::Borrowed(<#ty as ::status_err::GenError>::description(&#ty))
+                    }
+                }
+            }
         };
         tokens.extend(token)
     }
@@ -125,6 +137,13 @@ impl<'s> ToTokens for PrefixImplToken<'s> {
                 quote::quote! {
                     Self::#ident #style =>{
                         #prefix
+                    }
+                }
+            }
+            VariantInnerInfo::Bind(ty)=>{
+                quote! {
+                    Self::#ident #style =>{
+                        ::status_err::ErrPrefix::mark_only(<#ty as ::status_err::GenError>::mark(&#ty))
                     }
                 }
             }
@@ -166,6 +185,13 @@ impl<'s> ToTokens for CodeImplToken<'s> {
                 quote::quote! {
                     Self::#ident #style =>{
                         #error_code
+                    }
+                }
+            }
+            VariantInnerInfo::Bind(ty)=>{
+                quote! {
+                    Self::#ident #style => {
+                        <#ty as ::status_err::GenError>::code(&#ty)
                     }
                 }
             }
@@ -215,6 +241,13 @@ impl<'s> ToTokens for HttpCodeImplToken<'s> {
                 quote::quote! {
                     Self::#ident #style =>{
                         ::status_err::StatusErr::status(self).http_code()
+                    }
+                }
+            }
+            VariantInnerInfo::Bind(ty)=>{
+                quote! {
+                    Self::#ident #style =>{
+                        <#ty as ::status_err::GenError>::status_code(&#ty)
                     }
                 }
             }

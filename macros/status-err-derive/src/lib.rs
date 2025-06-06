@@ -33,7 +33,7 @@ mod input_loading;
 ///     - `prefix = `ErrPrefix::NOT_FOUND`` 响应时状态码前缀，必须
 ///     - `http_code = "HttpCode::NOT_FOUND"` 特殊指定 Http
 ///       状态码，默认为前缀默认状态码
-///
+/// - `err(bind = "gen-err")` 绑定到特定的已生成的 Error, 其中 `gen-err`为GenError实现
 /// ## Example
 ///
 /// ```rust

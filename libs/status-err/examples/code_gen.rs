@@ -1,12 +1,16 @@
 use status_err::{ErrPrefix, HttpCode, StatusErr};
-
+use status_err::generated_error::haaaa_kind::HumError;
 fn main() {
     let e = TestErr::Else {
         start: String::from("Abc"),
     };
 
-    println!("{}", e.information());
-    println!("{}", e.respond_msg())
+    println!("{}", StatusErr::code(&e));
+    println!("{}", StatusErr::prefix(&e));
+    
+    let e = TestErr::Binding;
+    
+    println!("{}{:04x}",StatusErr::prefix(&e),StatusErr::code(&e));
 }
 
 #[derive(Debug, status_err::ThisError, status_err::StatusErr)]
@@ -23,4 +27,7 @@ pub enum TestErr {
         http_code = "HttpCode::NOT_FOUND"
     ))]
     Else { start: String },
+    #[error("binding Error")]
+    #[status_err(err(bind = "HumError"))]
+    Binding
 }

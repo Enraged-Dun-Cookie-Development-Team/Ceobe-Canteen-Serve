@@ -111,6 +111,8 @@ async fn admin_authorize<L: UserRoleVerify>(
     Ok(user)
 }
 
+
+
 #[derive(Debug, thiserror::Error, StatusErr)]
 #[status_err(resp_err)]
 pub enum AdminAuthorizeError {

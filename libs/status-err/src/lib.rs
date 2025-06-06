@@ -1,8 +1,12 @@
 use std::borrow::Cow;
 
 pub use http::{self, StatusCode as HttpCode};
-pub use status_err_derive::StatusErr;
+use http::StatusCode;
 pub use thiserror::Error as ThisError;
+
+pub use generated_error::GenError;
+pub use status_err_derive::StatusErr;
+
 pub mod codegen;
 mod impls;
 pub mod status_code;
@@ -37,6 +41,10 @@ impl std::fmt::Display for ErrPrefix {
 }
 
 impl ErrPrefix {
+    pub fn mark_only(mark:char)->Self{
+        Self(mark,StatusCode::default())
+    }
+    
     /// 数据检查时产生的异常
     pub const CHECKER: Self = Self('C', HttpCode::BAD_REQUEST);
     /// IO 过程中异常
@@ -80,6 +88,16 @@ impl ErrPrefix {
 }
 
 pub mod generated_error {
-
-    include!(env!("ERR_CFG_PATH"));
+    pub trait GenError{
+    fn mark(&self)->char;
+        fn status_code(&self)->http::StatusCode;
+        fn description(&self)->&'static str;
+        fn code(&self)->u16;
 }
+    
+    
+    include!(env!("ERR_CFG_PATH"));
+    
+   
+}
+
