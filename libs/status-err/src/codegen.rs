@@ -1,5 +1,3 @@
-use crate::generated_error::haaaa_kind::HumError;
-
 #[macro_export]
 /// 辅助构造Status error 的宏
 /// 1. 新建Unit 类型的异常，并为其实现[crate::StatusErr](crate::StatusErr)
@@ -44,7 +42,7 @@ use crate::generated_error::haaaa_kind::HumError;
 /// ```rust
 /// use status_err::generated_error::haaaa_kind::HumError;
 /// use status_err::status_error;
-/// 
+///
 /// status_error!(std::io::Error=>HumError);
 /// ```
 /// 
@@ -52,7 +50,7 @@ use crate::generated_error::haaaa_kind::HumError;
 /// ```rust
 ///  use status_err::generated_error::haaaa_kind::HumError as HumGenError;
 ///  use status_err::status_error;
-/// 
+///
 ///  status_error!(new pub HumError["蛤？"]=>HumGenError);
 /// ```
 macro_rules! status_error {
@@ -197,7 +195,7 @@ macro_rules! status_error {
             }
         }
         impl std::error::Error for $name{}
-        
+
         impl $crate::StatusErr for $name{
             #[inline]
             fn respond_msg(&self) -> std::borrow::Cow<'_, str> {

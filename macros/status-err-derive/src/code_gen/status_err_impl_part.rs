@@ -1,9 +1,10 @@
 use darling::{ast::Style, ToTokens};
-use quote::__private::TokenStream;
-use quote::quote;
+use quote::{__private::TokenStream, quote};
 use syn::Ident;
 
-use crate::input_loading::variant_info::{BindVariant, NormalVariant, VariantInfo, VariantInnerInfo};
+use crate::input_loading::variant_info::{
+    BindVariant, NormalVariant, VariantInfo, VariantInnerInfo,
+};
 
 impl ToTokens for BindVariant {
     fn to_tokens(&self, tokens: &mut TokenStream) {
@@ -94,7 +95,7 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
                     }
                 }
             }
-            VariantInnerInfo::Bind(ty)=>{
+            VariantInnerInfo::Bind(ty) => {
                 quote! {
                     Self::#ident #style => {
                         std::borrow::Cow::Borrowed(<#ty as ::status_err::GenError>::description(&#ty))
@@ -140,7 +141,7 @@ impl<'s> ToTokens for PrefixImplToken<'s> {
                     }
                 }
             }
-            VariantInnerInfo::Bind(ty)=>{
+            VariantInnerInfo::Bind(ty) => {
                 quote! {
                     Self::#ident #style =>{
                         ::status_err::ErrPrefix::mark_only(<#ty as ::status_err::GenError>::mark(&#ty))
@@ -188,7 +189,7 @@ impl<'s> ToTokens for CodeImplToken<'s> {
                     }
                 }
             }
-            VariantInnerInfo::Bind(ty)=>{
+            VariantInnerInfo::Bind(ty) => {
                 quote! {
                     Self::#ident #style => {
                         <#ty as ::status_err::GenError>::code(&#ty)
@@ -244,7 +245,7 @@ impl<'s> ToTokens for HttpCodeImplToken<'s> {
                     }
                 }
             }
-            VariantInnerInfo::Bind(ty)=>{
+            VariantInnerInfo::Bind(ty) => {
                 quote! {
                     Self::#ident #style =>{
                         <#ty as ::status_err::GenError>::status_code(&#ty)

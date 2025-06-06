@@ -16,8 +16,6 @@ pub struct BindVariant {
     pub(crate) bind: Type,
 }
 
-
-
 #[allow(clippy::large_enum_variant)]
 #[derive(Debug, Default)]
 pub enum VariantInnerInfo {
@@ -46,12 +44,9 @@ impl FromMeta for VariantInnerInfo {
                 if value.path.is_ident("err") {
                     let items =
                         &value.nested.iter().cloned().collect::<Vec<_>>()[..];
-                    BindVariant::from_list(items)
-                        .map(|bind| Self::Bind(bind))
-                        .or_else(|_| {
-                            NormalVariant::from_list(items)
-                                .map(|create| Self::Create(create))
-                        })
+                    BindVariant::from_list(items).map(Self::Bind).or_else(
+                        |_| NormalVariant::from_list(items).map(Self::Create),
+                    )
                 }
                 else {
                     Err(syn::Error::new(
@@ -61,9 +56,7 @@ impl FromMeta for VariantInnerInfo {
                     .into())
                 }
             }
-            syn::Meta::NameValue(value) => {
-                Self::from_value(&value.lit)
-            }
+            syn::Meta::NameValue(value) => Self::from_value(&value.lit),
         }
     }
 

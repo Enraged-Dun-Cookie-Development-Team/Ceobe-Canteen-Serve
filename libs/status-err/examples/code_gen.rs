@@ -1,5 +1,6 @@
-use status_err::{ErrPrefix, HttpCode, StatusErr};
-use status_err::generated_error::haaaa_kind::HumError;
+use status_err::{
+    generated_error::haaaa_kind::HumError, ErrPrefix, HttpCode, StatusErr,
+};
 fn main() {
     let e = TestErr::Else {
         start: String::from("Abc"),
@@ -7,10 +8,10 @@ fn main() {
 
     println!("{}", StatusErr::code(&e));
     println!("{}", StatusErr::prefix(&e));
-    
+
     let e = TestErr::Binding;
-    
-    println!("{}{:04x}",StatusErr::prefix(&e),StatusErr::code(&e));
+
+    println!("{}{:04x}", StatusErr::prefix(&e), StatusErr::code(&e));
 }
 
 #[derive(Debug, status_err::ThisError, status_err::StatusErr)]
@@ -29,5 +30,5 @@ pub enum TestErr {
     Else { start: String },
     #[error("binding Error")]
     #[status_err(err(bind = "HumError"))]
-    Binding
+    Binding,
 }
