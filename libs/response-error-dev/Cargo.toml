@@ -1,0 +1,10 @@
+[package]
+name = "response-error-dev"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+http.workspace = true
+quote = "1.0.40"
+serde.workspace = true
+toml = "0.8.22"

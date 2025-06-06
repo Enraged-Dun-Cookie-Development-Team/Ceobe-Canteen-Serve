@@ -1,0 +1,11 @@
+mark='A'
+description="A类错误"
+defaultStatus=404
+
+[[error]]
+ident="FirstError"
+description='第一类接触'
+
+[[error]]
+ident="SecondeError"
+description='第二类接触'
