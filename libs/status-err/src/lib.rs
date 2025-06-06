@@ -83,4 +83,3 @@ pub mod generated_error {
 
     include!(env!("ERR_CFG_PATH"));
 }
-
