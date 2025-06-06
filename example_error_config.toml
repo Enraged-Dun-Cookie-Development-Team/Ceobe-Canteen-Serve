@@ -1,11 +1,23 @@
+[[kind]]
 mark='A'
+ident="unknown"
 description="A类错误"
 defaultStatus=404
 
-[[error]]
+[[kind.error]]
 ident="FirstError"
 description='第一类接触'
 
-[[error]]
+[[kind.error]]
 ident="SecondeError"
 description='第二类接触'
+
+[[kind]]
+mark='😋'
+ident="haaaa"
+description = "美味错误"
+defaultStatus=418
+
+[[kind.error]]
+ident="Hum"
+description="啊？"

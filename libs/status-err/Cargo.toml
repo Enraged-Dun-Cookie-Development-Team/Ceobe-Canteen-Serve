@@ -42,3 +42,6 @@ features = ["extra-error"]
 
 [dependencies.checker]
 path = "../checker"
+
+[build-dependencies]
+response-error-dev = { version = "0.1.0", path = "../response-error-dev" }

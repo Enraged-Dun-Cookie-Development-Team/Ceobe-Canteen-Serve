@@ -78,3 +78,9 @@ impl ErrPrefix {
     #[inline]
     pub fn get_status(&self) -> http::StatusCode { self.1 }
 }
+
+pub mod generated_error {
+
+    include!(env!("ERR_CFG_PATH"));
+}
+
