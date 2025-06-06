@@ -1,3 +1,5 @@
+use crate::generated_error::haaaa_kind::HumError;
+
 #[macro_export]
 /// 辅助构造Status error 的宏
 /// 1. 新建Unit 类型的异常，并为其实现[crate::StatusErr](crate::StatusErr)
@@ -36,6 +38,22 @@
 ///         HttpCode::INTERNAL_SERVER_ERROR   
 ///     ]
 /// );
+/// ```
+/// 
+/// 3. 将已有类型绑定到[GenError]上
+/// ```rust
+/// use status_err::generated_error::haaaa_kind::HumError;
+/// use status_err::status_error;
+/// 
+/// status_error!(std::io::Error=>HumError);
+/// ```
+/// 
+/// 4. 创建新类型，并绑定到[GenError]上
+/// ```rust
+///  use status_err::generated_error::haaaa_kind::HumError as HumGenError;
+///  use status_err::status_error;
+/// 
+///  status_error!(new pub HumError["蛤？"]=>HumGenError);
 /// ```
 macro_rules! status_error {
     {
@@ -148,8 +166,58 @@ macro_rules! status_error {
     ($t: ty[$pre: expr, $code: literal ])=>{
         $crate::status_error!($t[$pre , $code:$pre.get_status()]);
     };
-}
+    ($t: ty => $gen:expr)=>{
+        impl $crate::StatusErr for $t{
+            #[inline]
+            fn respond_msg(&self) -> std::borrow::Cow<'_, str> {
+                $crate::GenError::description(&$gen).into()
+            }
+            #[inline]
+            fn prefix(&self) -> $crate::ErrPrefix{
+                $crate::ErrPrefix::mark_only($crate::GenError::mark(&$gen))
+            }
+            #[inline]
+            fn code(&self) -> u16{
+                $crate::GenError::code(&$gen)
+            }
+            #[inline]
+            fn http_code(&self) -> $crate::http::StatusCode {
+                $crate::GenError::status_code(&$gen)
+            }
+        }
+    };
+    (new $v:vis $name: ident [$des:literal] => $gen:expr)=>{
+        #[derive(Debug,Clone)]
+        $v struct $name;
 
+        impl std::fmt::Display for $name{
+            #[inline]
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(f,"{} Error : {}",stringify!($name),$des)
+            }
+        }
+        impl std::error::Error for $name{}
+        
+        impl $crate::StatusErr for $name{
+            #[inline]
+            fn respond_msg(&self) -> std::borrow::Cow<'_, str> {
+                $crate::GenError::description(&$gen).into()
+            }
+            #[inline]
+            fn prefix(&self) -> $crate::ErrPrefix{
+                $crate::ErrPrefix::mark_only($crate::GenError::mark(&$gen))
+            }
+            #[inline]
+            fn code(&self) -> u16{
+                $crate::GenError::code(&$gen)
+            }
+            #[inline]
+            fn http_code(&self) -> $crate::http::StatusCode {
+                $crate::GenError::status_code(&$gen)
+            }
+        }
+    }
+}
 /// 将外部异常类型进行简单封装的宏
 #[macro_export]
 macro_rules! error_wrapper {
