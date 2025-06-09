@@ -18,6 +18,7 @@ pub struct PreCheckFetcherDatasourceConfig {
     unique_key: Option<String>,
     config: Map<String, Value>,
     jump_url: Option<Url>,
+    visual: bool
 }
 
 #[derive(Debug, TypedBuilder)]
@@ -30,6 +31,7 @@ pub struct FetcherDatasourceConfig {
     pub unique_key: DatasourceUnique,
     pub config: Map<String, Value>,
     pub jump_url: Option<Url>,
+    pub visual: bool,
 }
 
 pub struct UniqueKeyChecker;
@@ -79,6 +81,7 @@ impl Checker for UniqueKeyChecker {
                     .nickname(uncheck.nickname)
                     .unique_key(unique)
                     .jump_url(uncheck.jump_url)
+                    .visual(uncheck.visual)
                     .build()
             }),
         )

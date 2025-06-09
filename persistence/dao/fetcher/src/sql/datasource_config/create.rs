@@ -20,6 +20,7 @@ impl DatasourceOperate<'_, NoConnect> {
             datasource.avatar = config.avatar.to_string(),
             datasouce.config = ?config.config,
             datasouce.jump_url = ?config.jump_url,
+            datasouce.visual = ?config.visual,
         );
         match Self::find_delete_model_by_datasource_and_unique_key(
             db,

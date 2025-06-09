@@ -24,7 +24,7 @@ use crate::{
 };
 
 #[check_obj(
-    uncheck = FetcherDatasourceConfigUncheck,
+    uncheck = FetcherqqDatasourceConfigUncheck,
     checked = PreCheckFetcherDatasourceConfig,
     error = CheckError
 )]
@@ -38,6 +38,7 @@ pub struct PreCheckFetcherDatasourceConfigChecker {
     pub unique_key: OptionChecker<NoCheck<String>>,
     pub config: NoCheck<Map<String, Value>>,
     pub jump_url: OptionChecker<UrlChecker>,
+    pub visual: NoCheck<bool>
 }
 
 pub type FetcherDatasourceConfigChecker = PostChecker<
@@ -60,6 +61,7 @@ impl IntoActiveModel<ActiveModel> for FetcherDatasourceConfig {
                 .expect_or_log("config为非法json格式")),
             db_unique_key: Set(self.unique_key),
             jump_url: Set(self.jump_url.map(|url| url.to_string())),
+            visual: Set(self.visual),
             ..Default::default()
         };
         active.id.set_optional(self.id);
@@ -91,6 +93,7 @@ impl Model {
             db_unique_key: Set(self.db_unique_key),
             delete_at: Set(self.delete_at),
             jump_url: Set(new_model.jump_url.map(|url| url.to_string())),
+            visual: Set(self.visual),
         };
         active.soft_recover();
         active
