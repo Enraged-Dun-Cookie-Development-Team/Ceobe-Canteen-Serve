@@ -27,7 +27,7 @@ impl<'s> ToTokens for ErrorGen<'s> {
         } = self;
         let doc_description = format!(
             "## 响应异常  \n- `{mark}`: {mark_description}  \n- ErrorCode: \
-             {mark}{code:04x}: {description}  \n- HttpCode: {status_code}"
+             {mark}{code:04X}: {description}  \n- HttpCode: {status_code}"
         );
         let status_code = status_code.as_u16();
         let ident = format_ident!("{ident}Error");

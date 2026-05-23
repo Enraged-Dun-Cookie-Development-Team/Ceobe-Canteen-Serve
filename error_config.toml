@@ -1,0 +1,446 @@
+[[kind]]
+mark = 'A'
+ident = "unauthorized"
+description = "权限认证异常"
+defaultStatus = 401
+
+[[kind.error]]
+ident = "BcryptError"
+description = "密码校验异常"
+statusCode = 500
+
+[[kind.error]]
+ident = "NoAuthorizeLayerError"
+description = "缺少Authorize鉴权中间件"
+statusCode = 500
+
+[[kind.error]]
+ident = "AuthorizationAccessDenyError"
+description = "权限不足！要求用户权限等级不满足"
+
+[[kind.error]]
+ident = "AdminTokenNotFound"
+description = "Token 信息未找到"
+
+[[kind.error]]
+ident = "AdminTokenInvalid"
+description = "Token 已经失效"
+
+[[kind.error]]
+ident = "AdminTokenInfoNotFound"
+description = "Token 对应信息不存在"
+statusCode = 404
+
+[[kind.error]]
+ident = "UserNotExist"
+description = "指定用户不存在"
+statusCode = 404
+
+[[kind.error]]
+ident = "ConflictUsername"
+description = "用户名冲突"
+statusCode = 400
+
+[[kind.error]]
+ident = "PasswordNoChange"
+description = "密码未更改"
+statusCode = 400
+
+[[kind.error]]
+ident = "PasswordWrong"
+description = "密码校验错误"
+statusCode = 401
+
+[[kind.error]]
+ident = "MobIdFieldNotFound"
+description = "Mob id 字段未找到"
+
+[[kind.error]]
+ident = "MobIdNotExist"
+description = "Mob id 不存在"
+
+[[kind.error]]
+ident = "NoMobIdLayer"
+description = "缺少MobId鉴权中间件"
+statusCode = 500
+
+[[kind.error]]
+ident = "UserDatabaseOperateError"
+description = "Mongo用户表查询失败"
+
+[[kind]]
+mark = 'C'
+ident = "checker"
+description = "数据检查异常"
+defaultStatus = 400
+
+[[kind.error]]
+ident = "RangeLimit"
+description = "范围检查未通过"
+
+[[kind.error]]
+ident = "JsonError"
+description = "Json请求解析异常"
+
+[[kind.error]]
+ident = "JsonRejection"
+description = "Json请求解析异常"
+
+[[kind.error]]
+ident = "PathRejection"
+description = "Path数据加载异常"
+
+[[kind.error]]
+ident = "QueryRejection"
+description = "请求的Query解析失败"
+
+[[kind.error]]
+ident = "BincodeError"
+description = "Bincode序列化/反序列化异常"
+
+[[kind.error]]
+ident = "MultipartRejection"
+description = "获取MultiPart异常"
+
+[[kind.error]]
+ident = "MultipartError"
+description = "解析MultiPart异常"
+
+[[kind.error]]
+ident = "NonZeroUnsigned"
+description = "预期为0值取得非0值"
+
+[[kind.error]]
+ident = "HasRemError"
+description = "值无法被整除"
+
+[[kind.error]]
+ident = "JsonObjError"
+description = "Json对象不符合预期"
+
+[[kind.error]]
+ident = "BsonOidError"
+description = "ObjectId反序列化失败"
+
+[[kind.error]]
+ident = "VersionInvalidError"
+description = "Version格式检查错误"
+
+[[kind.error]]
+ident = "BsonSerError"
+description = "Bson序列化异常"
+
+[[kind.error]]
+ident = "LargeThen256"
+description = "数据源超出256个"
+
+[[kind.error]]
+ident = "PlatformNotFound"
+description = "该平台不存在"
+
+[[kind.error]]
+ident = "PlatFromNotSame"
+description = "Platform不一致"
+
+[[kind.error]]
+ident = "MobPushError"
+description = "MobPush异常"
+statusCode = 409
+
+[[kind.error]]
+ident = "CookieIdError"
+description = "CookieId错误"
+statusCode = 409
+
+[[kind.error]]
+ident = "UpdateCookieIdCacheFailure"
+description = "更新饼id缓存失效"
+
+[[kind.error]]
+ident = "MobIdNotExistInUser"
+description = "mobId不存在"
+
+[[kind.error]]
+ident = "DatasourcesEmpty"
+description = "数据源列表为空"
+
+[[kind.error]]
+ident = "NoDeletePlatformHasDatasource"
+description = "该平台下存在数据源，无法删除平台"
+statusCode = 409
+
+[[kind.error]]
+ident = "DatasourceCombExist"
+description = "数据源组合已经存在"
+statusCode = 409
+
+[[kind.error]]
+ident = "SelfDeleteError"
+description = "正在试图抹除自身存在"
+statusCode = 403
+
+[[kind.error]]
+ident = "MultiAllAvailable"
+description = "存在多个可用的资源全可用的记录"
+statusCode = 500
+
+[[kind.error]]
+ident = "UserMobIdExist"
+description = "用户Mob ID已经存在"
+statusCode = 409
+
+[[kind.error]]
+ident = "VersionIdExist"
+description = "指定版本信息已经存在"
+statusCode = 409
+
+[[kind.error]]
+ident = "MansionIdExist"
+description = "指定ID的饼学大厦已经存在"
+statusCode = 409
+
+[[kind.error]]
+ident = "VersionTooOld"
+description = "新版本的版本号过旧"
+statusCode = 409
+
+[[kind.error]]
+ident = "FieldNotExist"
+description = "Field不存在"
+
+[[kind.error]]
+ident = "UniqueKeyInvalid"
+description = "Unique key未找到"
+
+[[kind.error]]
+ident = "UnknownMansionIdFormat"
+description = "未知饼学大厦ID格式"
+
+[[kind.error]]
+ident = "BadFraction"
+description = "错误的Fraction值范围"
+
+[[kind.error]]
+ident = "UnknownPredictType"
+description = "未知的预期确信度等级"
+
+[[kind.error]]
+ident = "WrongBv"
+description = "Bv号错误"
+
+[[kind.error]]
+ident = "VersionFormat"
+description = "版本号格式错误"
+
+[[kind]]
+mark = 'P'
+ident = "parse"
+description = "解析异常"
+defaultStatus = 400
+
+[[kind.error]]
+ident = "UrlParseError"
+description = "Url解析异常"
+
+[[kind.error]]
+ident = "ParseIntError"
+description = "数字转换异常"
+
+[[kind.error]]
+ident = "JwtError"
+description = "Jwt解析异常"
+
+[[kind.error]]
+ident = "ChronoParseError"
+description = "日期转换异常"
+
+[[kind.error]]
+ident = "FromUtf8Error"
+description = "字符串编码异常"
+statusCode = 500
+
+[[kind.error]]
+ident = "ToStrError"
+description = "HTTP请求头内容解析异常"
+
+[[kind.error]]
+ident = "InvalidHeaderValue"
+description = "非法HTTP请求头内容"
+statusCode = 500
+
+[[kind.error]]
+ident = "BsonDeError"
+description = "bson反序列化错误"
+
+[[kind.error]]
+ident = "BsonUuidError"
+description = "bson UUID解析异常"
+
+[[kind.error]]
+ident = "NotConvertBitmap"
+description = "无法正确转换成Bitmap"
+
+[[kind.error]]
+ident = "SerdeQsError"
+description = "Query序列化/反序列化异常"
+
+[[kind.error]]
+ident = "HmacInvalidLength"
+description = "HMAC加密长度错误"
+
+[[kind]]
+mark = 'F'
+ident = "serve"
+description = "服务器内部异常"
+defaultStatus = 500
+
+[[kind.error]]
+ident = "ServicePanic"
+description = "服务器发生未预期的异常"
+
+[[kind.error]]
+ident = "ChannelClose"
+description = "管道发生未预期关闭"
+
+[[kind.error]]
+ident = "JoinError"
+description = "任务执行异常"
+
+[[kind]]
+mark = 'S'
+ident = "not_found"
+description = "资源未找到"
+defaultStatus = 404
+
+[[kind.error]]
+ident = "RouteNotExist"
+description = "该路由不存在，请检查请求路径"
+
+[[kind.error]]
+ident = "ReqwestError"
+description = "发起请求时异常"
+statusCode = 500
+
+[[kind.error]]
+ident = "DatasourceNotFound"
+description = "蹲饼器Datasource不存在"
+
+[[kind.error]]
+ident = "DatasourcesNotFound"
+description = "Datasources有不存在"
+
+[[kind.error]]
+ident = "NoneAllAvailable"
+description = "没有可用的资源全可用的记录"
+
+[[kind.error]]
+ident = "VersionIdNoExist"
+description = "指定版本信息不存在"
+
+[[kind.error]]
+ident = "NotVersion"
+description = "还没有版本信息"
+
+[[kind.error]]
+ident = "ToolLinkNotFound"
+description = "工具链接不存在"
+
+[[kind.error]]
+ident = "UserMobIdNotExist"
+description = "用户Mob ID不存在"
+
+[[kind.error]]
+ident = "MansionNotFound"
+description = "指定饼学大厦ID未找到"
+
+[[kind]]
+mark = 'I'
+ident = "io"
+description = "IO异常"
+defaultStatus = 500
+
+[[kind.error]]
+ident = "IoError"
+description = "IO时出现异常"
+
+[[kind.error]]
+ident = "FmtError"
+description = "格式化文本异常"
+
+[[kind]]
+mark = 'L'
+ident = "logger_report"
+description = "日志上报异常"
+defaultStatus = 500
+
+[[kind.error]]
+ident = "TransportError"
+description = "与Grpc服务端建立连接失败"
+
+[[kind.error]]
+ident = "TonicStatus"
+description = "Grpc service返回异常响应"
+
+[[kind.error]]
+ident = "PushLogFailure"
+description = "Push log to qq channel failure"
+
+[[kind]]
+mark = 'T'
+ident = "tc_cloud"
+description = "腾讯云服务异常"
+defaultStatus = 500
+
+[[kind.error]]
+ident = "TcCloud"
+description = "腾讯云响应异常"
+
+[[kind]]
+mark = 'Q'
+ident = "qi_niu"
+description = "七牛云上传异常"
+defaultStatus = 400
+
+[[kind.error]]
+ident = "QiniuHttp"
+description = "上传七牛云时出现异常"
+
+[[kind]]
+mark = 'G'
+ident = "mongo_db"
+description = "MongoDB数据库异常"
+defaultStatus = 500
+
+[[kind.error]]
+ident = "CollectionNotFound"
+description = "指定集合不存在"
+
+[[kind]]
+mark = 'R'
+ident = "redis_db"
+description = "Redis数据库异常"
+defaultStatus = 500
+
+[[kind.error]]
+ident = "RedisError"
+description = "Redis数据库异常"
+
+[[kind]]
+mark = 'D'
+ident = "sea_orm"
+description = "SQL数据库异常"
+defaultStatus = 500
+
+[[kind.error]]
+ident = "DbError"
+description = "SQL数据库异常"
+
+[[kind]]
+mark = '0'
+ident = "no_err"
+description = "正常响应"
+defaultStatus = 200
+
+[[kind.error]]
+ident = "NotAnError"
+description = ""

@@ -34,7 +34,7 @@ pub fn generate_wiki_markdown(
 
         for (i, err) in kind.error.iter().enumerate() {
             let code = (i as u16) + 1;
-            let err_code = format!("{}{:04x}", kind.mark, code);
+            let err_code = format!("{}{:04X}", kind.mark, code);
             let http_code =
                 err.http_code.unwrap_or(kind.default_status_code).as_u16();
 

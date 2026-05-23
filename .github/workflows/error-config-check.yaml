@@ -4,14 +4,14 @@ on:
   pull_request:
     branches: [master, deploy]
     paths:
-      - "example_error_config.toml"
+      - "error_config.toml"
       - "libs/response-error-dev/**"
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     env:
-      ERROR_CONFIG_PATH: ${{ vars.ERROR_CONFIG_PATH || 'example_error_config.toml' }}
+      ERROR_CONFIG_PATH: ${{ vars.ERROR_CONFIG_PATH || 'error_config.toml' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -19,7 +19,8 @@ jobs:
       - name: Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: 1.82.0
+          components: clippy
           default: true
 
       - name: Validate error config
