@@ -1,450 +1,194 @@
+# =========================================================
+# Ceobe Canteen 全局错误码配置
+# 错误码格式: {mark}{code:04X}  例如 A0001, C0004, F0001
+# 编辑后运行: cargo run --example error-config-cli -- validate error_config.toml
+# =========================================================
+#
+# Kind 索引:
+#   A → 权限认证异常 | C → 数据检查异常 | P → 解析异常
+#   F → 服务器内部异常 | S → 资源未找到 | I → IO异常
+#   L → 日志上报异常 | T → 腾讯云服务异常 | Q → 七牛云上传异常
+#   G → MongoDB数据库异常 | R → Redis数据库异常 | D → SQL数据库异常
+#   0 → 正常响应
+
 [[kind]]
 mark = 'A'
 ident = "unauthorized"
-description = "权限认证异常"
-defaultStatus = 401
-
-[[kind.error]]
-ident = "Bcrypt"
-description = "密码校验异常"
-statusCode = 500
-
-[[kind.error]]
-ident = "NoAuthorizeLayer"
-description = "缺少Authorize鉴权中间件"
-statusCode = 500
-
-[[kind.error]]
-ident = "AuthorizationAccessDeny"
-description = "权限不足！要求用户权限等级不满足"
-
-[[kind.error]]
-ident = "AdminTokenNotFound"
-description = "Token 信息未找到"
-
-[[kind.error]]
-ident = "AdminTokenInvalid"
-description = "Token 已经失效"
-
-[[kind.error]]
-ident = "AdminTokenInfoNotFound"
-description = "Token 对应信息不存在"
-statusCode = 404
-
-[[kind.error]]
-ident = "UserNotExist"
-description = "指定用户不存在"
-statusCode = 404
-
-[[kind.error]]
-ident = "ConflictUsername"
-description = "用户名冲突"
-statusCode = 400
-
-[[kind.error]]
-ident = "PasswordNoChange"
-description = "密码未更改"
-statusCode = 400
-
-[[kind.error]]
-ident = "PasswordWrong"
-description = "密码校验错误"
-statusCode = 401
-
-[[kind.error]]
-ident = "MobIdFieldNotFound"
-description = "Mob id 字段未找到"
-
-[[kind.error]]
-ident = "MobIdNotExist"
-description = "Mob id 不存在"
-
-[[kind.error]]
-ident = "NoMobIdLayer"
-description = "缺少MobId鉴权中间件"
-statusCode = 500
-
-[[kind.error]]
-ident = "UserDatabaseOperate"
-description = "Mongo用户表查询失败"
+desc = "权限认证异常"
+default = 401
+error = [
+    { ident = "Bcrypt", desc = "密码校验异常", http = 500 },
+    { ident = "NoAuthorizeLayer", desc = "缺少Authorize鉴权中间件", http = 500 },
+    { ident = "AuthorizationAccessDeny", desc = "权限不足！要求用户权限等级不满足" },
+    { ident = "AdminTokenNotFound", desc = "Token 信息未找到" },
+    { ident = "AdminTokenInvalid", desc = "Token 已经失效" },
+    { ident = "AdminTokenInfoNotFound", desc = "Token 对应信息不存在", http = 404 },
+    { ident = "UserNotExist", desc = "指定用户不存在", http = 404 },
+    { ident = "ConflictUsername", desc = "用户名冲突", http = 400 },
+    { ident = "PasswordNoChange", desc = "密码未更改", http = 400 },
+    { ident = "PasswordWrong", desc = "密码校验错误", http = 401 },
+    { ident = "MobIdFieldNotFound", desc = "Mob id 字段未找到" },
+    { ident = "MobIdNotExist", desc = "Mob id 不存在" },
+    { ident = "NoMobIdLayer", desc = "缺少MobId鉴权中间件", http = 500 },
+    { ident = "UserDatabaseOperate", desc = "Mongo用户表查询失败" },
+]
 
 [[kind]]
 mark = 'C'
 ident = "checker"
-description = "数据检查异常"
-defaultStatus = 400
-
-[[kind.error]]
-ident = "RangeLimit"
-description = "范围检查未通过"
-
-[[kind.error]]
-ident = "Json"
-description = "Json请求解析异常"
-
-[[kind.error]]
-ident = "JsonRejection"
-description = "Json请求解析异常"
-
-[[kind.error]]
-ident = "PathRejection"
-description = "Path数据加载异常"
-
-[[kind.error]]
-ident = "QueryRejection"
-description = "请求的Query解析失败"
-
-[[kind.error]]
-ident = "Bincode"
-description = "Bincode序列化/反序列化异常"
-
-[[kind.error]]
-ident = "MultipartRejection"
-description = "获取MultiPart异常"
-
-[[kind.error]]
-ident = "Multipart"
-description = "解析MultiPart异常"
-
-[[kind.error]]
-ident = "NonZeroUnsigned"
-description = "预期为0值取得非0值"
-
-[[kind.error]]
-ident = "HasRem"
-description = "值无法被整除"
-
-[[kind.error]]
-ident = "JsonObj"
-description = "Json对象不符合预期"
-
-[[kind.error]]
-ident = "BsonOid"
-description = "ObjectId反序列化失败"
-
-[[kind.error]]
-ident = "VersionInvalid"
-description = "Version格式检查错误"
-
-[[kind.error]]
-ident = "BsonSer"
-description = "Bson序列化异常"
-
-[[kind.error]]
-ident = "LargeThen256"
-description = "数据源超出256个"
-
-[[kind.error]]
-ident = "PlatformNotFound"
-description = "该平台不存在"
-
-[[kind.error]]
-ident = "PlatFromNotSame"
-description = "Platform不一致"
-
-[[kind.error]]
-ident = "MobPush"
-description = "MobPush异常"
-statusCode = 409
-
-[[kind.error]]
-ident = "CookieId"
-description = "CookieId错误"
-statusCode = 409
-
-[[kind.error]]
-ident = "UpdateCookieIdCacheFailure"
-description = "更新饼id缓存失效"
-
-[[kind.error]]
-ident = "MobIdNotExistInUser"
-description = "mobId不存在"
-
-[[kind.error]]
-ident = "DatasourcesEmpty"
-description = "数据源列表为空"
-
-[[kind.error]]
-ident = "NoDeletePlatformHasDatasource"
-description = "该平台下存在数据源，无法删除平台"
-statusCode = 409
-
-[[kind.error]]
-ident = "DatasourceCombExist"
-description = "数据源组合已经存在"
-statusCode = 409
-
-[[kind.error]]
-ident = "SelfDelete"
-description = "正在试图抹除自身存在"
-statusCode = 403
-
-[[kind.error]]
-ident = "MultiAllAvailable"
-description = "存在多个可用的资源全可用的记录"
-statusCode = 500
-
-[[kind.error]]
-ident = "UserMobIdExist"
-description = "用户Mob ID已经存在"
-statusCode = 409
-
-[[kind.error]]
-ident = "VersionIdExist"
-description = "指定版本信息已经存在"
-statusCode = 409
-
-[[kind.error]]
-ident = "MansionIdExist"
-description = "指定ID的饼学大厦已经存在"
-statusCode = 409
-
-[[kind.error]]
-ident = "VersionTooOld"
-description = "新版本的版本号过旧"
-statusCode = 409
-
-[[kind.error]]
-ident = "FieldNotExist"
-description = "Field不存在"
-
-[[kind.error]]
-ident = "UniqueKeyInvalid"
-description = "Unique key未找到"
-
-[[kind.error]]
-ident = "UnknownMansionIdFormat"
-description = "未知饼学大厦ID格式"
-
-[[kind.error]]
-ident = "BadFraction"
-description = "错误的Fraction值范围"
-
-[[kind.error]]
-ident = "UnknownPredictType"
-description = "未知的预期确信度等级"
-
-[[kind.error]]
-ident = "WrongBv"
-description = "Bv号错误"
-
-[[kind.error]]
-ident = "VersionFormat"
-description = "版本号格式错误"
+desc = "数据检查异常"
+default = 400
+error = [
+    { ident = "RangeLimit", desc = "范围检查未通过" },
+    { ident = "Json", desc = "Json请求解析异常" },
+    { ident = "JsonRejection", desc = "Json请求解析异常" },
+    { ident = "PathRejection", desc = "Path数据加载异常" },
+    { ident = "QueryRejection", desc = "请求的Query解析失败" },
+    { ident = "Bincode", desc = "Bincode序列化/反序列化异常" },
+    { ident = "MultipartRejection", desc = "获取MultiPart异常" },
+    { ident = "Multipart", desc = "解析MultiPart异常" },
+    { ident = "NonZeroUnsigned", desc = "预期为0值取得非0值" },
+    { ident = "HasRem", desc = "值无法被整除" },
+    { ident = "JsonObj", desc = "Json对象不符合预期" },
+    { ident = "BsonOid", desc = "ObjectId反序列化失败" },
+    { ident = "VersionInvalid", desc = "Version格式检查错误" },
+    { ident = "BsonSer", desc = "Bson序列化异常" },
+    { ident = "LargeThen256", desc = "数据源超出256个" },
+    { ident = "PlatformNotFound", desc = "该平台不存在" },
+    { ident = "PlatFromNotSame", desc = "Platform不一致" },
+    { ident = "MobPush", desc = "MobPush异常", http = 409 },
+    { ident = "CookieId", desc = "CookieId错误", http = 409 },
+    { ident = "UpdateCookieIdCacheFailure", desc = "更新饼id缓存失效" },
+    { ident = "MobIdNotExistInUser", desc = "mobId不存在" },
+    { ident = "DatasourcesEmpty", desc = "数据源列表为空" },
+    { ident = "NoDeletePlatformHasDatasource", desc = "该平台下存在数据源，无法删除平台", http = 409 },
+    { ident = "DatasourceCombExist", desc = "数据源组合已经存在", http = 409 },
+    { ident = "SelfDelete", desc = "正在试图抹除自身存在", http = 403 },
+    { ident = "MultiAllAvailable", desc = "存在多个可用的资源全可用的记录", http = 500 },
+    { ident = "UserMobIdExist", desc = "用户Mob ID已经存在", http = 409 },
+    { ident = "VersionIdExist", desc = "指定版本信息已经存在", http = 409 },
+    { ident = "MansionIdExist", desc = "指定ID的饼学大厦已经存在", http = 409 },
+    { ident = "VersionTooOld", desc = "新版本的版本号过旧", http = 409 },
+    { ident = "FieldNotExist", desc = "Field不存在" },
+    { ident = "UniqueKeyInvalid", desc = "Unique key未找到" },
+    { ident = "UnknownMansionIdFormat", desc = "未知饼学大厦ID格式" },
+    { ident = "BadFraction", desc = "错误的Fraction值范围" },
+    { ident = "UnknownPredictType", desc = "未知的预期确信度等级" },
+    { ident = "WrongBv", desc = "Bv号错误" },
+    { ident = "VersionFormat", desc = "版本号格式错误" },
+]
 
 [[kind]]
 mark = 'P'
 ident = "parse"
-description = "解析异常"
-defaultStatus = 400
-
-[[kind.error]]
-ident = "UrlParse"
-description = "Url解析异常"
-
-[[kind.error]]
-ident = "ParseInt"
-description = "数字转换异常"
-
-[[kind.error]]
-ident = "Jwt"
-description = "Jwt解析异常"
-
-[[kind.error]]
-ident = "ChronoParse"
-description = "日期转换异常"
-
-[[kind.error]]
-ident = "FromUtf8"
-description = "字符串编码异常"
-statusCode = 500
-
-[[kind.error]]
-ident = "ToStr"
-description = "HTTP请求头内容解析异常"
-
-[[kind.error]]
-ident = "InvalidHeaderValue"
-description = "非法HTTP请求头内容"
-statusCode = 500
-
-[[kind.error]]
-ident = "BsonDe"
-description = "bson反序列化错误"
-
-[[kind.error]]
-ident = "BsonUuid"
-description = "bson UUID解析异常"
-
-[[kind.error]]
-ident = "NotConvertBitmap"
-description = "无法正确转换成Bitmap"
-
-[[kind.error]]
-ident = "SerdeQs"
-description = "Query序列化/反序列化异常"
-
-[[kind.error]]
-ident = "HmacInvalidLength"
-description = "HMAC加密长度错误"
+desc = "解析异常"
+default = 400
+error = [
+    { ident = "UrlParse", desc = "Url解析异常" },
+    { ident = "ParseInt", desc = "数字转换异常" },
+    { ident = "Jwt", desc = "Jwt解析异常" },
+    { ident = "ChronoParse", desc = "日期转换异常" },
+    { ident = "FromUtf8", desc = "字符串编码异常", http = 500 },
+    { ident = "ToStr", desc = "HTTP请求头内容解析异常" },
+    { ident = "InvalidHeaderValue", desc = "非法HTTP请求头内容", http = 500 },
+    { ident = "BsonDe", desc = "bson反序列化错误" },
+    { ident = "BsonUuid", desc = "bson UUID解析异常" },
+    { ident = "NotConvertBitmap", desc = "无法正确转换成Bitmap" },
+    { ident = "SerdeQs", desc = "Query序列化/反序列化异常" },
+    { ident = "HmacInvalidLength", desc = "HMAC加密长度错误" },
+]
 
 [[kind]]
 mark = 'F'
 ident = "serve"
-description = "服务器内部异常"
-defaultStatus = 500
-
-[[kind.error]]
-ident = "ServicePanic"
-description = "服务器发生未预期的异常"
-
-[[kind.error]]
-ident = "ChannelClose"
-description = "管道发生未预期关闭"
-
-[[kind.error]]
-ident = "Join"
-description = "任务执行异常"
+desc = "服务器内部异常"
+default = 500
+error = [
+    { ident = "ServicePanic", desc = "服务器发生未预期的异常" },
+    { ident = "ChannelClose", desc = "管道发生未预期关闭" },
+    { ident = "Join", desc = "任务执行异常" },
+]
 
 [[kind]]
 mark = 'S'
 ident = "not_found"
-description = "资源未找到"
-defaultStatus = 404
-
-[[kind.error]]
-ident = "RouteNotExist"
-description = "该路由不存在，请检查请求路径"
-
-[[kind.error]]
-ident = "Reqwest"
-description = "发起请求时异常"
-statusCode = 500
-
-[[kind.error]]
-ident = "DatasourceNotFound"
-description = "蹲饼器Datasource不存在"
-
-[[kind.error]]
-ident = "DatasourcesNotFound"
-description = "Datasources有不存在"
-
-[[kind.error]]
-ident = "NoneAllAvailable"
-description = "没有可用的资源全可用的记录"
-
-[[kind.error]]
-ident = "VersionIdNoExist"
-description = "指定版本信息不存在"
-
-[[kind.error]]
-ident = "NotVersion"
-description = "还没有版本信息"
-
-[[kind.error]]
-ident = "ToolLinkNotFound"
-description = "工具链接不存在"
-
-[[kind.error]]
-ident = "UserMobIdNotExist"
-description = "用户Mob ID不存在"
-
-[[kind.error]]
-ident = "MansionNotFound"
-description = "指定饼学大厦ID未找到"
+desc = "资源未找到"
+default = 404
+error = [
+    { ident = "RouteNotExist", desc = "该路由不存在，请检查请求路径" },
+    { ident = "Reqwest", desc = "发起请求时异常", http = 500 },
+    { ident = "DatasourceNotFound", desc = "蹲饼器Datasource不存在" },
+    { ident = "DatasourcesNotFound", desc = "Datasources有不存在" },
+    { ident = "NoneAllAvailable", desc = "没有可用的资源全可用的记录" },
+    { ident = "VersionIdNoExist", desc = "指定版本信息不存在" },
+    { ident = "NotVersion", desc = "还没有版本信息" },
+    { ident = "ToolLinkNotFound", desc = "工具链接不存在" },
+    { ident = "UserMobIdNotExist", desc = "用户Mob ID不存在" },
+    { ident = "MansionNotFound", desc = "指定饼学大厦ID未找到" },
+]
 
 [[kind]]
 mark = 'I'
 ident = "io"
-description = "IO异常"
-defaultStatus = 500
-
-[[kind.error]]
-ident = "Io"
-description = "IO时出现异常"
-
-[[kind.error]]
-ident = "Fmt"
-description = "格式化文本异常"
+desc = "IO异常"
+default = 500
+error = [
+    { ident = "Io", desc = "IO时出现异常" },
+    { ident = "Fmt", desc = "格式化文本异常" },
+]
 
 [[kind]]
 mark = 'L'
 ident = "logger_report"
-description = "日志上报异常"
-defaultStatus = 500
-
-[[kind.error]]
-ident = "Transport"
-description = "与Grpc服务端建立连接失败"
-
-[[kind.error]]
-ident = "TonicStatus"
-description = "Grpc service返回异常响应"
-
-[[kind.error]]
-ident = "PushLogFailure"
-description = "Push log to qq channel failure"
+desc = "日志上报异常"
+default = 500
+error = [
+    { ident = "Transport", desc = "与Grpc服务端建立连接失败" },
+    { ident = "TonicStatus", desc = "Grpc service返回异常响应" },
+    { ident = "PushLogFailure", desc = "Push log to qq channel failure" },
+]
 
 [[kind]]
 mark = 'T'
 ident = "tc_cloud"
-description = "腾讯云服务异常"
-defaultStatus = 500
-
-[[kind.error]]
-ident = "TcCloud"
-description = "腾讯云响应异常"
+desc = "腾讯云服务异常"
+default = 500
+error = [{ ident = "TcCloud", desc = "腾讯云响应异常" }]
 
 [[kind]]
 mark = 'Q'
 ident = "qi_niu"
-description = "七牛云上传异常"
-defaultStatus = 400
-
-[[kind.error]]
-ident = "QiniuHttp"
-description = "上传七牛云时出现异常"
+desc = "七牛云上传异常"
+default = 400
+error = [{ ident = "QiniuHttp", desc = "上传七牛云时出现异常" }]
 
 [[kind]]
 mark = 'G'
 ident = "mongo_db"
-description = "MongoDB数据库异常"
-defaultStatus = 500
-
-[[kind.error]]
-ident = "MongoDb"
-description = "MongoDB数据库异常"
-
-[[kind.error]]
-ident = "CollectionNotFound"
-description = "指定集合不存在"
+desc = "MongoDB数据库异常"
+default = 500
+error = [
+    { ident = "MongoDb", desc = "MongoDB数据库异常" },
+    { ident = "CollectionNotFound", desc = "指定集合不存在" },
+]
 
 [[kind]]
 mark = 'R'
 ident = "redis_db"
-description = "Redis数据库异常"
-defaultStatus = 500
-
-[[kind.error]]
-ident = "Redis"
-description = "Redis数据库异常"
+desc = "Redis数据库异常"
+default = 500
+error = [{ ident = "Redis", desc = "Redis数据库异常" }]
 
 [[kind]]
 mark = 'D'
 ident = "sea_orm"
-description = "SQL数据库异常"
-defaultStatus = 500
-
-[[kind.error]]
-ident = "Db"
-description = "SQL数据库异常"
+desc = "SQL数据库异常"
+default = 500
+error = [{ ident = "Db", desc = "SQL数据库异常" }]
 
 [[kind]]
 mark = '0'
 ident = "no_err"
-description = "正常响应"
-defaultStatus = 200
-
-[[kind.error]]
-ident = "NotAn"
-description = ""
+desc = "正常响应"
+default = 200
+error = [{ ident = "NotAn", desc = "" }]

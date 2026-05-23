@@ -5,9 +5,11 @@ use serde::{Deserialize, Deserializer};
 pub struct ErrorType {
     pub mark: char,
     pub ident: String,
+    #[serde(alias = "desc")]
     pub description: String,
     #[serde(
         alias = "defaultStatus",
+        alias = "default",
         deserialize_with = "deserialize_status_code"
     )]
     pub default_status_code: StatusCode,
@@ -19,10 +21,12 @@ pub struct Error {
     pub ident: String,
     #[serde(
         rename = "statusCode",
+        alias = "http",
         deserialize_with = "deserialize_option_status_code",
         default
     )]
     pub http_code: Option<StatusCode>,
+    #[serde(alias = "desc")]
     pub description: String,
 }
 #[derive(Debug, Clone, Deserialize)]
