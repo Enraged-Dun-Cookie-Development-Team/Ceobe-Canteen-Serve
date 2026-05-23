@@ -30,6 +30,33 @@ pub struct ErrorCfg {
     pub kind: Vec<ErrorType>,
 }
 
+impl ErrorCfg {
+    /// 验证配置合法性：同 `[[kind]]` 内无重复 ident
+    pub fn validate(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+
+        for kind in &self.kind {
+            // 检查同一 kind 内 error ident 是否重复
+            let mut seen = std::collections::HashSet::new();
+            for err in &kind.error {
+                if !seen.insert(&err.ident) {
+                    errors.push(format!(
+                        "Kind `{}` (mark: {}): 重复的 error ident `{}`",
+                        kind.ident, kind.mark, err.ident
+                    ));
+                }
+            }
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        }
+        else {
+            Err(errors)
+        }
+    }
+}
+
 fn deserialize_status_code<'de, D: Deserializer<'de>>(
     d: D,
 ) -> Result<StatusCode, D::Error> {

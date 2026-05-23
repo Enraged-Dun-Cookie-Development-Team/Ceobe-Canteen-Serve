@@ -1,5 +1,6 @@
 mod codegen;
 mod payloads;
+mod wiki_gen;
 
 use std::{
     env,
@@ -8,7 +9,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::{codegen::ErrorGen, payloads::ErrorCfg};
+pub use payloads::ErrorCfg;
+pub use wiki_gen::generate_wiki_markdown;
+
+use crate::codegen::ErrorGen;
 
 pub fn encode_response_error(config: impl AsRef<Path>) {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());

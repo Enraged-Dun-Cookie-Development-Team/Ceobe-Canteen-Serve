@@ -1,0 +1,29 @@
+name: Error Config Check
+
+on:
+  pull_request:
+    branches: [master, deploy]
+    paths:
+      - "example_error_config.toml"
+      - "libs/response-error-dev/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      ERROR_CONFIG_PATH: ${{ vars.ERROR_CONFIG_PATH || 'example_error_config.toml' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+
+      - name: Validate error config
+        run: |
+          cargo run --manifest-path libs/response-error-dev/Cargo.toml \
+            --example error-config-cli -- \
+            validate "$ERROR_CONFIG_PATH"
