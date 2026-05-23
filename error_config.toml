@@ -5,17 +5,17 @@ description = "权限认证异常"
 defaultStatus = 401
 
 [[kind.error]]
-ident = "BcryptError"
+ident = "Bcrypt"
 description = "密码校验异常"
 statusCode = 500
 
 [[kind.error]]
-ident = "NoAuthorizeLayerError"
+ident = "NoAuthorizeLayer"
 description = "缺少Authorize鉴权中间件"
 statusCode = 500
 
 [[kind.error]]
-ident = "AuthorizationAccessDenyError"
+ident = "AuthorizationAccessDeny"
 description = "权限不足！要求用户权限等级不满足"
 
 [[kind.error]]
@@ -65,7 +65,7 @@ description = "缺少MobId鉴权中间件"
 statusCode = 500
 
 [[kind.error]]
-ident = "UserDatabaseOperateError"
+ident = "UserDatabaseOperate"
 description = "Mongo用户表查询失败"
 
 [[kind]]
@@ -79,7 +79,7 @@ ident = "RangeLimit"
 description = "范围检查未通过"
 
 [[kind.error]]
-ident = "JsonError"
+ident = "Json"
 description = "Json请求解析异常"
 
 [[kind.error]]
@@ -95,7 +95,7 @@ ident = "QueryRejection"
 description = "请求的Query解析失败"
 
 [[kind.error]]
-ident = "BincodeError"
+ident = "Bincode"
 description = "Bincode序列化/反序列化异常"
 
 [[kind.error]]
@@ -103,7 +103,7 @@ ident = "MultipartRejection"
 description = "获取MultiPart异常"
 
 [[kind.error]]
-ident = "MultipartError"
+ident = "Multipart"
 description = "解析MultiPart异常"
 
 [[kind.error]]
@@ -111,23 +111,23 @@ ident = "NonZeroUnsigned"
 description = "预期为0值取得非0值"
 
 [[kind.error]]
-ident = "HasRemError"
+ident = "HasRem"
 description = "值无法被整除"
 
 [[kind.error]]
-ident = "JsonObjError"
+ident = "JsonObj"
 description = "Json对象不符合预期"
 
 [[kind.error]]
-ident = "BsonOidError"
+ident = "BsonOid"
 description = "ObjectId反序列化失败"
 
 [[kind.error]]
-ident = "VersionInvalidError"
+ident = "VersionInvalid"
 description = "Version格式检查错误"
 
 [[kind.error]]
-ident = "BsonSerError"
+ident = "BsonSer"
 description = "Bson序列化异常"
 
 [[kind.error]]
@@ -143,12 +143,12 @@ ident = "PlatFromNotSame"
 description = "Platform不一致"
 
 [[kind.error]]
-ident = "MobPushError"
+ident = "MobPush"
 description = "MobPush异常"
 statusCode = 409
 
 [[kind.error]]
-ident = "CookieIdError"
+ident = "CookieId"
 description = "CookieId错误"
 statusCode = 409
 
@@ -175,7 +175,7 @@ description = "数据源组合已经存在"
 statusCode = 409
 
 [[kind.error]]
-ident = "SelfDeleteError"
+ident = "SelfDelete"
 description = "正在试图抹除自身存在"
 statusCode = 403
 
@@ -239,28 +239,28 @@ description = "解析异常"
 defaultStatus = 400
 
 [[kind.error]]
-ident = "UrlParseError"
+ident = "UrlParse"
 description = "Url解析异常"
 
 [[kind.error]]
-ident = "ParseIntError"
+ident = "ParseInt"
 description = "数字转换异常"
 
 [[kind.error]]
-ident = "JwtError"
+ident = "Jwt"
 description = "Jwt解析异常"
 
 [[kind.error]]
-ident = "ChronoParseError"
+ident = "ChronoParse"
 description = "日期转换异常"
 
 [[kind.error]]
-ident = "FromUtf8Error"
+ident = "FromUtf8"
 description = "字符串编码异常"
 statusCode = 500
 
 [[kind.error]]
-ident = "ToStrError"
+ident = "ToStr"
 description = "HTTP请求头内容解析异常"
 
 [[kind.error]]
@@ -269,11 +269,11 @@ description = "非法HTTP请求头内容"
 statusCode = 500
 
 [[kind.error]]
-ident = "BsonDeError"
+ident = "BsonDe"
 description = "bson反序列化错误"
 
 [[kind.error]]
-ident = "BsonUuidError"
+ident = "BsonUuid"
 description = "bson UUID解析异常"
 
 [[kind.error]]
@@ -281,7 +281,7 @@ ident = "NotConvertBitmap"
 description = "无法正确转换成Bitmap"
 
 [[kind.error]]
-ident = "SerdeQsError"
+ident = "SerdeQs"
 description = "Query序列化/反序列化异常"
 
 [[kind.error]]
@@ -303,7 +303,7 @@ ident = "ChannelClose"
 description = "管道发生未预期关闭"
 
 [[kind.error]]
-ident = "JoinError"
+ident = "Join"
 description = "任务执行异常"
 
 [[kind]]
@@ -317,7 +317,7 @@ ident = "RouteNotExist"
 description = "该路由不存在，请检查请求路径"
 
 [[kind.error]]
-ident = "ReqwestError"
+ident = "Reqwest"
 description = "发起请求时异常"
 statusCode = 500
 
@@ -360,11 +360,11 @@ description = "IO异常"
 defaultStatus = 500
 
 [[kind.error]]
-ident = "IoError"
+ident = "Io"
 description = "IO时出现异常"
 
 [[kind.error]]
-ident = "FmtError"
+ident = "Fmt"
 description = "格式化文本异常"
 
 [[kind]]
@@ -374,7 +374,7 @@ description = "日志上报异常"
 defaultStatus = 500
 
 [[kind.error]]
-ident = "TransportError"
+ident = "Transport"
 description = "与Grpc服务端建立连接失败"
 
 [[kind.error]]
@@ -412,6 +412,10 @@ description = "MongoDB数据库异常"
 defaultStatus = 500
 
 [[kind.error]]
+ident = "MongoDb"
+description = "MongoDB数据库异常"
+
+[[kind.error]]
 ident = "CollectionNotFound"
 description = "指定集合不存在"
 
@@ -422,7 +426,7 @@ description = "Redis数据库异常"
 defaultStatus = 500
 
 [[kind.error]]
-ident = "RedisError"
+ident = "Redis"
 description = "Redis数据库异常"
 
 [[kind]]
@@ -432,7 +436,7 @@ description = "SQL数据库异常"
 defaultStatus = 500
 
 [[kind.error]]
-ident = "DbError"
+ident = "Db"
 description = "SQL数据库异常"
 
 [[kind]]
@@ -442,5 +446,5 @@ description = "正常响应"
 defaultStatus = 200
 
 [[kind.error]]
-ident = "NotAnError"
+ident = "NotAn"
 description = ""

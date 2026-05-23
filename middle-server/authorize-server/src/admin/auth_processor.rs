@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use axum::extract::FromRequestParts;
 use crypto_str::inner_encoders::bcrypt::BcryptError;
-use http::{request::Parts, StatusCode};
+use http::request::Parts;
 use persistence::{
     admin::{
         user::{OperateError, ToUser},
@@ -11,7 +11,10 @@ use persistence::{
     help_crates::{futures::future::BoxFuture, StatusErr},
     mysql::SqlDatabaseOperate,
 };
-use status_err::ErrPrefix;
+use status_err::generated_error::unauthorized_kind::{
+    AdminTokenInfoNotFoundError, AdminTokenInvalidError,
+    AdminTokenNotFoundError,
+};
 use tracing::{info, warn};
 
 use crate::{
@@ -124,24 +127,14 @@ pub enum AdminAuthorizeError {
     AuthorizeLevel(#[from] AuthorizationAccessDenyError),
 
     #[error("Token 信息未找到")]
-    #[status_err(err(
-        prefix = "ErrPrefix::UNAUTHORIZED",
-        err_code = 0x0001
-    ))]
+    #[status_err(err(bind = "AdminTokenNotFoundError"))]
     TokenNotFound,
 
     #[error("Token 已经失效")]
-    #[status_err(err(
-        prefix = "ErrPrefix::UNAUTHORIZED",
-        err_code = 0x0006
-    ))]
+    #[status_err(err(bind = "AdminTokenInvalidError"))]
     TokenInvalid,
 
     #[error("Token 对应信息不存在")]
-    #[status_err(err(
-        prefix = "ErrPrefix::UNAUTHORIZED",
-        err_code = 0x0003,
-        http_code = "StatusCode::NOT_FOUND"
-    ))]
+    #[status_err(err(bind = "AdminTokenInfoNotFoundError"))]
     TokenInfoNotFound,
 }

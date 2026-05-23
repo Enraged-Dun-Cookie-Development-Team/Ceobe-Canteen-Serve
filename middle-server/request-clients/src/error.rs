@@ -1,11 +1,12 @@
-use status_err::ErrPrefix;
+use status_err::{
+    generated_error::serve_kind::ChannelCloseError, status_error,
+};
 
 #[derive(Debug, thiserror::Error)]
 #[error("管道发生未预期关闭")]
 pub struct ChannelClose;
 
-impl status_err::StatusErr for ChannelClose {
-    fn prefix(&self) -> ErrPrefix { ErrPrefix::SERVE }
-
-    fn code(&self) -> u16 { 0x0002 }
-}
+status_error!(
+    ChannelClose
+    => ChannelCloseError
+);

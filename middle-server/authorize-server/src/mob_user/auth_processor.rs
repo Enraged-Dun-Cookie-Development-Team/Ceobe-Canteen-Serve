@@ -2,11 +2,14 @@ use http::request::Parts;
 use persistence::{
     ceobe_user::{models::models::UserMobId, ToCeobe, ToCeobeUser},
     help_crates::{
-        bool_or::TrueOrError, futures::future::BoxFuture, ErrPrefix,
-        HttpCode, StatusErr,
+        bool_or::TrueOrError, futures::future::BoxFuture, StatusErr,
     },
     mongodb::MongoDatabaseOperate,
     operate::FromRequestParts,
+};
+use status_err::generated_error::unauthorized_kind::{
+    MobIdFieldNotFoundError, MobIdNotExistError, NoMobIdLayerError,
+    UserDatabaseOperateError,
 };
 use tracing::info;
 
@@ -65,34 +68,18 @@ impl AuthorVerifier for MobUser {
 #[status_err(resp_err)]
 pub enum MobUserAuthorizeError {
     #[error("Mob id 字段未找到")]
-    #[status_err(err(
-        prefix = "ErrPrefix::UNAUTHORIZED",
-        err_code = 0x000B,
-        resp_msg = "Mob字段不存在，请联系开发者"
-    ))]
+    #[status_err(err(bind = "MobIdFieldNotFoundError"))]
     MobIdFieldNotFound,
 
     #[error("Mob id:{0} 不存在")]
-    #[status_err(err(
-        prefix = "ErrPrefix::UNAUTHORIZED",
-        err_code = 0x000C,
-        resp_msg = "请携带正确的Mob Id进行请求"
-    ))]
+    #[status_err(err(bind = "MobIdNotExistError"))]
     MobIdNotExist(String),
 
     #[error("缺少MobId鉴权中间件")]
-    #[status_err(err(
-        prefix = "ErrPrefix::UNAUTHORIZED",
-        err_code = 0x000D,
-        http_code = "HttpCode::INTERNAL_SERVER_ERROR"
-    ))]
+    #[status_err(err(bind = "NoMobIdLayerError"))]
     NoMobIdLayer,
 
     #[error("Mongo用户表查询失败")]
-    #[status_err(err(
-        prefix = "ErrPrefix::UNAUTHORIZED",
-        err_code = 0x000E,
-        resp_msg = "系统错误，请联系开发者"
-    ))]
+    #[status_err(err(bind = "UserDatabaseOperateError"))]
     UserDatabaseOperateError,
 }

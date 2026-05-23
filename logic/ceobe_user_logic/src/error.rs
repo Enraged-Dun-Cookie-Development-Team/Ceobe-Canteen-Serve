@@ -16,39 +16,38 @@ use persistence::{
 };
 use qiniu_service::error::ServiceError as QiniuServiceError;
 use redis::RedisError;
-use status_err::{ErrPrefix, StatusErr};
+use status_err::{
+    generated_error::checker_kind::{
+        DatasourcesEmptyError, MobIdNotExistInUserError,
+        MobPushError as GenMobPushError,
+    },
+    StatusErr,
+};
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     DatasourceConfigOperateError(#[from] DatasourceConfigOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     DatasourceCombinationOperateError(
         #[from] DatasourceCombinationOperateError,
     ),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     DatasourceConfigCheckError(#[from] DatasourceConfigCheckError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     CeobeUserOperateError(#[from] CeobeUserOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     CeobeUserPropertyCheckerror(#[from] CeobeUserPropertyCheckError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     AnalyzeOperateError(#[from] AnalyzeOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     BitmapConvError(#[from] BitmapConvError),
 
     #[error("查询数据库异常: {0}")]
@@ -58,27 +57,18 @@ pub enum LogicError {
     Mongo(#[from] MongoDbError),
 
     #[error(transparent)]
-    #[status_err(err(prefix = "ErrPrefix::CHECKER", err_code = 0x001B,))]
+    #[status_err(err(bind = "GenMobPushError"))]
     MobPushError(#[from] MobPushError),
 
     #[error("mobId不存在")]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x001D,
-        resp_msg = "注册失败，请联系开发者"
-    ))]
+    #[status_err(err(bind = "MobIdNotExistInUserError"))]
     MobIdNotExist,
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     QiniuService(#[from] QiniuServiceError),
 
     #[error("数据源列表为空")]
-    #[status_err(err(
-        prefix = "ErrPrefix::CHECKER",
-        err_code = 0x001E,
-        resp_msg = "数据源列表为空"
-    ))]
+    #[status_err(err(bind = "DatasourcesEmptyError"))]
     DatasourcesEmpty,
 
     #[error("Redis异常: {0}")]

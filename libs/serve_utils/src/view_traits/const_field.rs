@@ -2,8 +2,8 @@ use paste::paste;
 use serde::{Deserialize, Serialize};
 
 use super::{
-    FetchOptionViewValue, FetchViewValue, OptionViewField,
-    _private::SealTrait,
+    _private::SealTrait, FetchOptionViewValue, FetchViewValue,
+    OptionViewField,
 };
 
 macro_rules! const_field_def {

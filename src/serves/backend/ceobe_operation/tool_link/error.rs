@@ -16,7 +16,9 @@ use persistence::ceobe_operate::{
     },
     tool_link_mongodb::OperateError,
 };
-use status_err::{ErrPrefix, StatusErr};
+use status_err::{
+    generated_error::checker_kind::FieldNotExistError, status_error,
+};
 
 use crate::error_generate;
 
@@ -49,8 +51,7 @@ pub type ToolLinkPretreatment = JsonCheckExtract<
 #[error("Field 不存在")]
 pub struct FieldNotExist;
 
-impl StatusErr for FieldNotExist {
-    fn prefix(&self) -> status_err::ErrPrefix { ErrPrefix::CHECKER }
-
-    fn code(&self) -> u16 { 0x0011 }
-}
+status_error!(
+    FieldNotExist
+    => FieldNotExistError
+);

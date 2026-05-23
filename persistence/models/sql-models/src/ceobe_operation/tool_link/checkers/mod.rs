@@ -20,7 +20,6 @@ pub enum CheckError {
     UniqueKeyInvalid(String),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     Json(#[from] serde_json::Error),
 }
 
