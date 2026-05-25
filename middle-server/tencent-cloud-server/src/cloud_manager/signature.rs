@@ -147,8 +147,11 @@ mod test {
         )
         .expect("Error");
         // TODO: 使用腾讯云在线签名验证检查实现
-        assert_eq!(signature,"TC3-HMAC-SHA256 Credential=secret_id/1970-01-01/cdn/tc3_request, \
+        assert_eq!(
+            signature,
+            "TC3-HMAC-SHA256 Credential=secret_id/1970-01-01/cdn/tc3_request, \
         SignedHeaders=content-type;host;x-tc-action, \
-        Signature=be22ca9278c0e59fe3f9abc8bc50c47d84a1f8ded7458d1e5c8b3f25c2f19774")
+        Signature=be22ca9278c0e59fe3f9abc8bc50c47d84a1f8ded7458d1e5c8b3f25c2f19774"
+        )
     }
 }

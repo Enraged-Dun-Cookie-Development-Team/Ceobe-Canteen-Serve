@@ -41,6 +41,8 @@ macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
         #[derive(Debug, status_err::ThisError, status_err::StatusErr)]
         #[status_err(resp_err)]
+        // TODO: 后续修复 large_enum_variant，考虑 Box 包装大变体
+        #[allow(clippy::large_enum_variant)]
         $v enum $err_name{
             $(
                 #[error(transparent)]

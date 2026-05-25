@@ -15,6 +15,8 @@ pub trait PayloadLocal {
     fn file_name(&self) -> &str { self.obj_name() }
 }
 
+#[allow(clippy::result_large_err)]
+// TODO: 后续修复 result_large_err，考虑 Box<error::Error>
 pub trait PayloadContent {
     fn content_type(&self) -> Mime;
 

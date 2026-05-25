@@ -26,6 +26,8 @@ use status_err::{
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
+// TODO: 后续修复 large_enum_variant，考虑 Box<QiniuServiceError>
+#[allow(clippy::large_enum_variant)]
 pub enum LogicError {
     #[error(transparent)]
     DatasourceConfigOperateError(#[from] DatasourceConfigOperateError),

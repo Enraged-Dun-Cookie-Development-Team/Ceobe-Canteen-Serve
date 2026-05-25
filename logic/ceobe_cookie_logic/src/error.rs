@@ -30,6 +30,8 @@ use thiserror::Error;
 use tokio::task::JoinError;
 
 #[derive(Debug, Error, StatusErr)]
+// TODO: 后续修复 large_enum_variant，考虑 Box 包装大变体
+#[allow(clippy::large_enum_variant)]
 pub enum LogicError {
     #[error(transparent)]
     TempListOperateError(#[from] TempListOperateError),

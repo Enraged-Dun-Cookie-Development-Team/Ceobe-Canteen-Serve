@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use tap::TapFallible;
-use tracing::{info, instrument, Span};
+use tracing::{Span, info, instrument};
 use uuid::Uuid;
 
 use db_ops_prelude::database_operates::NoConnect;
