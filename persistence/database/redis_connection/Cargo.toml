@@ -1,4 +1,4 @@
-﻿[package]
+[package]
 name = "redis_connection"
 version = "0.1.0"
 edition = "2024"

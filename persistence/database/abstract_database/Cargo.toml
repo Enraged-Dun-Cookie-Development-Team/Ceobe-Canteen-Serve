@@ -1,4 +1,4 @@
-﻿[package]
+[package]
 name = "abstract_database"
 version = "0.1.0"
 edition = "2024"

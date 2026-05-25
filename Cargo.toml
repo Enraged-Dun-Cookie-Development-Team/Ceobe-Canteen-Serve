@@ -1,4 +1,4 @@
-﻿[package]
+[package]
 name = "ceobe-canteen-serve"
 version = "0.1.1"
 edition = "2024"
