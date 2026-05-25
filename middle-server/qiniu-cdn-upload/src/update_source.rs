@@ -4,8 +4,8 @@ use axum::{
     body::Bytes,
     extract::multipart::{Field, MultipartError},
 };
-use futures::{io::Cursor, AsyncRead, Future};
-use mime::{Mime, APPLICATION_OCTET_STREAM};
+use futures::{AsyncRead, Future, io::Cursor};
+use mime::{APPLICATION_OCTET_STREAM, Mime};
 
 /// 上传七牛云的数据的数据源
 pub trait UploadSource {

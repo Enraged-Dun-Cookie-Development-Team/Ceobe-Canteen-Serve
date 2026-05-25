@@ -1,8 +1,8 @@
 use database_traits::{
+    BoxedResultFuture,
     initial::{
         DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
     },
-    BoxedResultFuture,
 };
 use redis::RedisError;
 

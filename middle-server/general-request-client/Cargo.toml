@@ -1,8 +1,8 @@
-[package]
+﻿[package]
 name = "general-request-client"
 version = "0.1.0"
-edition = "2021"
-description = "通用请求接口"
+edition = "2024"
+description = "閫氱敤璇锋眰鎺ュ彛"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

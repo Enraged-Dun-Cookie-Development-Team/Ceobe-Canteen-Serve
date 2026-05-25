@@ -1,6 +1,6 @@
 use axum::{
-    routing::{get, post},
     Router,
+    routing::{get, post},
 };
 
 use crate::{middleware::mob::MobVerifyLayer, router::ServerRoute};

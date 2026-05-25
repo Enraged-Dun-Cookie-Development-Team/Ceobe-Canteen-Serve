@@ -1,4 +1,4 @@
-use darling::{ast::Style, ToTokens};
+use darling::{ToTokens, ast::Style};
 use quote::{__private::TokenStream, quote};
 use syn::Ident;
 
@@ -73,7 +73,7 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::respond_msg(inner)
                     }
                 }
@@ -129,7 +129,7 @@ impl<'s> ToTokens for PrefixImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::prefix(inner)
                     }
                 }
@@ -175,7 +175,7 @@ impl<'s> ToTokens for CodeImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::code(inner)
                     }
                 }
@@ -223,7 +223,7 @@ impl<'s> ToTokens for HttpCodeImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::http_code(inner)
                     }
                 }

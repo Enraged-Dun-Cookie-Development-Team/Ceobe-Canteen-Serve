@@ -162,10 +162,10 @@ where
 mod test {
     use std::{convert::Infallible, pin::Pin, time::Duration};
 
-    use futures::{pin_mut, Future};
+    use futures::{Future, pin_mut};
 
     use super::SliceChecker;
-    use crate::{prefabs::no_check::NoCheck, CheckRequire, RefChecker};
+    use crate::{CheckRequire, RefChecker, prefabs::no_check::NoCheck};
 
     #[tokio::test]
     async fn test_slice_checker() {

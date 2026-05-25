@@ -5,8 +5,8 @@ use std::{
 
 use axum::{body::HttpBody, extract::FromRef, routing::get};
 use axum_starter::{
-    prepare, router::Route, FromStateCollector, LoggerInitialization,
-    PrepareRouteEffect, ServeAddress, ServerPrepare,
+    FromStateCollector, LoggerInitialization, PrepareRouteEffect,
+    ServeAddress, ServerPrepare, prepare, router::Route,
 };
 use ceobe_qiniu_upload::{
     BaseUrl, GetBucket, Manager, ObjectName, QiniuBaseUrl, QiniuManager,

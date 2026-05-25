@@ -7,8 +7,8 @@ use checker::{
 };
 
 use super::{
-    each_info::{EachInfoUncheck, InfoChecker},
     CheckError, MaxLimitString,
+    each_info::{EachInfoUncheck, InfoChecker},
 };
 use crate::bakery::mansion::preludes::{Daily, Info};
 

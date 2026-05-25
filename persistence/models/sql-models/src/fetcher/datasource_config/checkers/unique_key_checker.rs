@@ -1,7 +1,7 @@
 use checker::{
-    prefabs::str_len_checker::StrMaxCharLenChecker, Checker, RefChecker,
+    Checker, RefChecker, prefabs::str_len_checker::StrMaxCharLenChecker,
 };
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use serde_json::{Map, Value};
 use typed_builder::TypedBuilder;
 use url::Url;

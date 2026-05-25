@@ -1,6 +1,6 @@
 use std::{collections::HashSet, ops::Deref};
 
-use mongodb::{options::CreateIndexOptions, Collection, IndexModel};
+use mongodb::{Collection, IndexModel, options::CreateIndexOptions};
 use tap::Tap;
 use tracing::info;
 

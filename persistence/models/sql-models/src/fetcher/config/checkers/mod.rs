@@ -1,9 +1,9 @@
 use std::convert::Infallible;
 
+pub use CheckError::*;
 use checker::prefabs::no_remainder_checker::HasRemError;
 use status_err::StatusErr;
 use thiserror::Error;
-pub use CheckError::*;
 
 pub mod config_data;
 

@@ -2,7 +2,7 @@
 
 use std::task::Poll;
 
-use futures::{pin_mut, Future};
+use futures::{Future, pin_mut};
 
 use crate::{
     checker::{Checker, LiteChecker, RefChecker},
@@ -90,7 +90,7 @@ where
 
 #[cfg(test)]
 mod test {
-    use futures::future::{ready, Ready};
+    use futures::future::{Ready, ready};
 
     use crate::{CheckRequire, RefChecker};
 

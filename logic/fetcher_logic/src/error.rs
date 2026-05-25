@@ -16,10 +16,10 @@ use persistence::{
 };
 use redis::RedisError;
 use status_err::{
+    StatusErr,
     generated_error::checker_kind::{
         PlatFromNotSameError, PlatformNotFoundError,
     },
-    StatusErr,
 };
 use thiserror::Error;
 

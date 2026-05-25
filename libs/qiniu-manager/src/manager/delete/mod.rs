@@ -5,7 +5,7 @@ use tracing::info;
 mod delete_file;
 
 use super::ObjectName;
-use crate::{manager::delete::delete_file::DeleteIter, Error, Manager};
+use crate::{Error, Manager, manager::delete::delete_file::DeleteIter};
 
 const BATCH_SIZE: usize = 1000;
 

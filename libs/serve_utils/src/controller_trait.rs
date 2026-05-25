@@ -1,6 +1,6 @@
 use std::{convert::Infallible, marker::PhantomData};
 
-use axum::{routing::Route, Router};
+use axum::{Router, routing::Route};
 use axum_core::{extract::Request, response::IntoResponse};
 use axum_resp_result::MapReject;
 use tower::{Layer, Service};

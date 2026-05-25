@@ -1,5 +1,5 @@
 use checker::{
-    check_gen, prefabs::no_check::NoCheck, CheckRequire, LiteChecker,
+    CheckRequire, LiteChecker, check_gen, prefabs::no_check::NoCheck,
 };
 use typed_builder::TypedBuilder;
 

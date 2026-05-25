@@ -7,7 +7,7 @@ use db_ops_prelude::{
         UserDatasource, UserMobId, UserPropertyModel,
     },
     mongodb::{
-        bson::{doc, Document, Uuid},
+        bson::{Document, Uuid, doc},
         options::{FindOneOptions, FindOptions},
     },
     tap::Tap,

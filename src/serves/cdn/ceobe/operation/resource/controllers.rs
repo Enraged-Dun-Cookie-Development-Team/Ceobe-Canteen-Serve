@@ -1,4 +1,4 @@
-use axum_resp_result::{rtry, RespResult};
+use axum_resp_result::{RespResult, rtry};
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic, view::Resource,
 };

@@ -1,9 +1,9 @@
 use database_traits::{
+    BoxedResultFuture,
     initial::{
         DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
         DatabaseInitialMigration,
     },
-    BoxedResultFuture,
 };
 
 use crate::{DatabaseManage, DbConnectConfig, MongoConnectBuilder, MongoErr};

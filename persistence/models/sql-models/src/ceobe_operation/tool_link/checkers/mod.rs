@@ -1,9 +1,9 @@
 pub mod tags;
 use std::convert::Infallible;
 
+pub use CheckError::*;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
-pub use CheckError::*;
 
 pub mod tool_link_data;
 

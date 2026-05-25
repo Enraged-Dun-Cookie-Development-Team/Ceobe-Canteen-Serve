@@ -1,8 +1,8 @@
 use http::request::Parts;
 use persistence::{
-    ceobe_user::{models::models::UserMobId, ToCeobe, ToCeobeUser},
+    ceobe_user::{ToCeobe, ToCeobeUser, models::models::UserMobId},
     help_crates::{
-        bool_or::TrueOrError, futures::future::BoxFuture, StatusErr,
+        StatusErr, bool_or::TrueOrError, futures::future::BoxFuture,
     },
     mongodb::MongoDatabaseOperate,
     operate::FromRequestParts,
@@ -14,8 +14,8 @@ use status_err::generated_error::unauthorized_kind::{
 use tracing::info;
 
 use crate::{
-    mob_user::configure::get_authorize_information, AuthorVerifier,
-    AuthorizeLayer, AuthorizedUser,
+    AuthorVerifier, AuthorizeLayer, AuthorizedUser,
+    mob_user::configure::get_authorize_information,
 };
 
 pub type MobUserInfo = UserMobId;

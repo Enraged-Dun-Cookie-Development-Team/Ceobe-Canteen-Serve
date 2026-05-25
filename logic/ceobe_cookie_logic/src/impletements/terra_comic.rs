@@ -2,15 +2,15 @@ use std::collections::HashMap;
 
 use persistence::{
     ceobe_cookie::{
+        ToCeobe, ToCookie,
         models::{
             analyze::models::{
-                meta::TerraHistoricusExtra, CookieSimpleInfo,
-                TerraComicEpisodeInfo,
+                CookieSimpleInfo, TerraComicEpisodeInfo,
+                meta::TerraHistoricusExtra,
             },
             terra_comic::models::ComicInfoWithoutCid,
         },
         terra_comic::OperateError as TerraComicOperateError,
-        ToCeobe, ToCookie,
     },
     mongodb::MongoDatabaseOperate,
 };

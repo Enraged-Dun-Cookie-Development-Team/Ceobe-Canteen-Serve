@@ -1,6 +1,6 @@
 use db_ops_prelude::{
     mongo_connection::MongoDbCollectionTrait,
-    mongodb::bson::{doc, Uuid},
+    mongodb::bson::{Uuid, doc},
 };
 use tracing::instrument;
 

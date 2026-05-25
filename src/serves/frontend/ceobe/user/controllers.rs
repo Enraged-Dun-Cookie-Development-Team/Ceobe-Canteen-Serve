@@ -1,13 +1,13 @@
 use authorize_server::AuthorizedUser;
 use axum::Json;
-use axum_resp_result::{rtry, MapReject};
+use axum_resp_result::{MapReject, rtry};
 use ceobe_user_logic::{
     implements::CeobeUserLogic,
     view::{DatasourceCombResp, DatasourceConfig, MobIdReq},
 };
 use mob_push_server::PushManager;
 use persistence::{
-    ceobe_user::{models::models::UserDatasource, ToCeobe, ToCeobeUser},
+    ceobe_user::{ToCeobe, ToCeobeUser, models::models::UserDatasource},
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
     redis::RedisConnect,
@@ -74,15 +74,15 @@ impl CeobeUserFrontend {
     pub async fn update_user_access_time(
         mongo: MongoDatabaseOperate, AuthorizedUser(mob_id): MobIdInfo,
     ) -> CeobeUserRResult<()> {
-        Ok(rtry!(
+        rtry!(
             mongo
                 .ceobe()
                 .user()
                 .property()
                 .update_access_time(mob_id.mob_id)
                 .await
-        ))
-        .into()
+        );
+        Ok(()).into()
     }
 
     // 获取用户数据源配置

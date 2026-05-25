@@ -1,6 +1,6 @@
 use syn::{
-    parse::{Lookahead1, Parse, ParseStream},
     Ident, Token, Type,
+    parse::{Lookahead1, Parse, ParseStream},
 };
 use typed_builder::TypedBuilder;
 

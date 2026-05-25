@@ -1,6 +1,6 @@
 use axum::{
-    extract::{rejection::PathRejection, Path},
     Json,
+    extract::{Path, rejection::PathRejection},
 };
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::CombIdToCookieIdRep,

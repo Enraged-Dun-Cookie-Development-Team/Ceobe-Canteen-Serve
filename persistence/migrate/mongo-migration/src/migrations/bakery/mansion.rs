@@ -1,6 +1,6 @@
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::bakery::mansion::preludes::*;
-use mongodb::{bson::doc, options::IndexOptions, IndexModel};
+use mongodb::{IndexModel, bson::doc, options::IndexOptions};
 use tracing::{info, instrument};
 
 const MANSION_IDX_NAME: &str = "mansion_idx";

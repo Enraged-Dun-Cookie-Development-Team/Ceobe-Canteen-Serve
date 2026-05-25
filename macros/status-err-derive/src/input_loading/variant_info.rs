@@ -1,5 +1,5 @@
-use darling::{ast, FromMeta, FromVariant};
-use syn::{spanned::Spanned, Expr, Ident, LitInt, Type};
+use darling::{FromMeta, FromVariant, ast};
+use syn::{Expr, Ident, LitInt, Type, spanned::Spanned};
 
 use super::field_info::FieldInfo;
 
@@ -40,7 +40,7 @@ impl FromMeta for VariantInnerInfo {
                     .into())
                 }
             }
-            syn::Meta::List(ref value) => {
+            syn::Meta::List(value) => {
                 if value.path.is_ident("err") {
                     let items =
                         &value.nested.iter().cloned().collect::<Vec<_>>()[..];

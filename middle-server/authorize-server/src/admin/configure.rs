@@ -79,7 +79,7 @@ impl LocalAuthConfig {
     }
 }
 
-pub fn get_authorize_information(req: &Parts) -> Option<Cow<str>> {
+pub fn get_authorize_information(req: &Parts) -> Option<Cow<'_, str>> {
     req.headers
         .get(LocalAuthConfig::header_name())
         .and_then(|v| v.to_str().ok())

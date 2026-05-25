@@ -2,7 +2,7 @@ use ceobe_qiniu_upload::QiniuManager;
 use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
 use qiniu_service::QiniuService;
 use qq_channel_warning::QqChannelGrpcService;
-use redis_global::{redis_key::cookie_list::NewestCookies, RedisTypeBind};
+use redis_global::{RedisTypeBind, redis_key::cookie_list::NewestCookies};
 
 use super::CeobeCookieLogic;
 use crate::error::LogicResult;

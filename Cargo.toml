@@ -1,7 +1,7 @@
-[package]
+﻿[package]
 name = "ceobe-canteen-serve"
 version = "0.1.1"
-edition = "2021"
+edition = "2024"
 default-run = "server"
 
 [[bin]]

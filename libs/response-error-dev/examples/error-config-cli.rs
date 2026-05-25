@@ -6,7 +6,7 @@
 /// <output-dir>
 use std::{env, process};
 
-use response_error_dev::{generate_wiki_markdown, ErrorCfg};
+use response_error_dev::{ErrorCfg, generate_wiki_markdown};
 
 fn main() {
     let args: Vec<String> = env::args().collect();

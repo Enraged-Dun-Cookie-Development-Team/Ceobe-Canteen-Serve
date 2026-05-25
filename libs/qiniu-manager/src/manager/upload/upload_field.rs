@@ -1,10 +1,10 @@
 use tracing::instrument;
 
 use super::{
-    payload::{ByteUploader, PayloadLocal},
     ResponsePayload,
+    payload::{ByteUploader, PayloadLocal},
 };
-use crate::{error, Manager};
+use crate::{Manager, error};
 
 impl Manager {
     #[instrument(skip_all, fields(

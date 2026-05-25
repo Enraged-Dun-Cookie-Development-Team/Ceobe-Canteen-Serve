@@ -1,5 +1,5 @@
-use authorize_server::admin::{base_roles::Chef, AdminAuthorizeLayer};
-use axum::{routing::post, Router};
+use authorize_server::admin::{AdminAuthorizeLayer, base_roles::Chef};
+use axum::{Router, routing::post};
 
 use self::{
     datasource::fetcher_datasource_config, detail::fetcher_detail_config,

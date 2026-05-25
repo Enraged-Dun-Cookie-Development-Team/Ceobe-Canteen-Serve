@@ -8,5 +8,5 @@ pub use auth_processor::{
 };
 pub use configure::AuthConfig;
 pub(crate) use configure::LocalAuthConfig;
-pub use roles::{base_roles, AuthorizationAccessDenyError, UserRoleVerify};
+pub use roles::{AuthorizationAccessDenyError, UserRoleVerify, base_roles};
 pub use token_payload::UserClaim;

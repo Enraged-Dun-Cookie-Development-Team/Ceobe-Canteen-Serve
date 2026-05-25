@@ -1,6 +1,6 @@
 use syn::{
-    spanned::Spanned, Attribute, Field, Fields, FieldsNamed, Generics, Ident,
-    ItemStruct, Type, Visibility,
+    Attribute, Field, Fields, FieldsNamed, Generics, Ident, ItemStruct, Type,
+    Visibility, spanned::Spanned,
 };
 
 pub struct InnerCheckerInfo {

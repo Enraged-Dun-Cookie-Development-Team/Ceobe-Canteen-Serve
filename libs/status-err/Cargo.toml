@@ -1,5 +1,5 @@
-[package]
-edition = "2021"
+﻿[package]
+edition = "2024"
 name = "status-err"
 version = "0.1.0"
 

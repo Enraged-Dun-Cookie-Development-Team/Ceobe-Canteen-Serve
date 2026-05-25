@@ -1,4 +1,4 @@
-use axum::{routing::post, Router};
+use axum::{Router, routing::post};
 
 pub struct CeobeCookieNewestBackend;
 

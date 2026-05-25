@@ -1,12 +1,12 @@
 use std::{marker::PhantomData, ops::Deref};
 
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use range_limit::{
+    Error, RangeBound,
     limits::{
         double_end_limit::DoubleEndLimit, fix_size::FixedSize,
         max_limit::MaxLimit, min_limit::MinLimit,
     },
-    Error, RangeBound,
 };
 
 use crate::RefChecker;
@@ -54,7 +54,7 @@ mod test {
     use range_limit::limits::max_limit::MaxLimit;
 
     use crate::{
-        prefabs::str_len_checker::StrCharLenChecker, ToCheckRequire,
+        ToCheckRequire, prefabs::str_len_checker::StrCharLenChecker,
     };
 
     #[tokio::test]

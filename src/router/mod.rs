@@ -1,4 +1,4 @@
-use axum::{routing::get, Router};
+use axum::{Router, routing::get};
 pub use back_end::{
     BakeryMansionBackend, CeobeCookieNewestBackend, CeobeOpResource,
     CeobeOpToolLink, CeobeOpVersion, CeobeOperationAnnouncement,

@@ -1,6 +1,6 @@
-use serde::{de, Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de};
 
-use crate::{measurable::Measurable, RangeBound, RangeBoundLimit};
+use crate::{RangeBound, RangeBoundLimit, measurable::Measurable};
 
 impl<T: serde::Serialize, Rb> Serialize for RangeBoundLimit<T, Rb> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

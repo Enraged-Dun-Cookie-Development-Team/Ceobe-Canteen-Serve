@@ -5,7 +5,7 @@ use bitmaps::Bitmap;
 use futures::future;
 use persistence::{
     ceobe_cookie::{ToCeobe, ToCookie},
-    fetcher::{datasource_combination::ToDatasourceCombination, ToFetcher},
+    fetcher::{ToFetcher, datasource_combination::ToDatasourceCombination},
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
 };

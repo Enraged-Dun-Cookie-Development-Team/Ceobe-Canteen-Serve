@@ -1,8 +1,8 @@
 use status_err::{
+    StatusErr,
     generated_error::{
         checker_kind::LargeThen256Error, parse_kind::NotConvertBitmapError,
     },
-    StatusErr,
 };
 
 #[derive(Debug, thiserror::Error, StatusErr)]

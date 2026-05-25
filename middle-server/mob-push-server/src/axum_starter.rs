@@ -4,7 +4,7 @@ use axum_starter::{prepare, state::AddState};
 use secrecy::SecretString;
 use tokio::sync::{mpsc, oneshot};
 
-use crate::{push_manager::PartPushManagerState, MobPushConfigTrait};
+use crate::{MobPushConfigTrait, push_manager::PartPushManagerState};
 
 #[prepare(MobPushPrepare)]
 pub async fn init_mob_push<C>(config: &C) -> AddState<PartPushManagerState>

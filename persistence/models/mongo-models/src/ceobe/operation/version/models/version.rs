@@ -49,8 +49,8 @@ mod test {
     use serde_json::json;
 
     use crate::ceobe::operation::version::models::{
-        platform::SupportPlatform, primary::Primary, DownloadSourceItem,
-        ReleasePlatform, ReleaseVersion, ResourceUrl,
+        DownloadSourceItem, ReleasePlatform, ReleaseVersion, ResourceUrl,
+        platform::SupportPlatform, primary::Primary,
     };
     #[test]
     fn test_sem_version_serde() {

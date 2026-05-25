@@ -1,4 +1,4 @@
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 use syn::{Attribute, Ident, Type, Visibility};
 
 use crate::inner_checker_info::InnerCheckerField;

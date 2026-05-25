@@ -1,5 +1,5 @@
-use checker::{prefabs::url_checker::UrlChecker, Checker, LiteChecker};
-use futures::future::{ready, Ready};
+use checker::{Checker, LiteChecker, prefabs::url_checker::UrlChecker};
+use futures::future::{Ready, ready};
 use range_limit::limits::max_limit::MaxRangeLimit;
 
 use super::{CheckError, SpareLink};

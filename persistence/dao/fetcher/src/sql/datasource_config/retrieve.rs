@@ -103,7 +103,7 @@ where
         Ok(result).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
-                    let list = list.iter().map(|datasource|(&datasource.nickname)).collect::<SmallVec<[_;4]>>();
+                    let list = list.iter().map(|datasource|&datasource.nickname ).collect::<SmallVec<[_;4]>>();
                     info!(datasourceList.len = list.len(),  datasourceList.datasource = ?list );
                 });
             })
@@ -128,7 +128,7 @@ where
             .await?).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
-                    let list = list.iter().map(|platform|(&platform.nickname)).collect::<SmallVec<[_;4]>>();
+                    let list = list.iter().map(|platform|&platform.nickname ).collect::<SmallVec<[_;4]>>();
                     info!(platformList.len = list.len(),  platformList.platform.pType = ?list );
                 });
             })
@@ -226,7 +226,7 @@ where
         Ok(result).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
-                    let list = list.iter().map(|datasource|(&datasource.nickname)).collect::<SmallVec<[_;4]>>();
+                    let list = list.iter().map(|datasource|&datasource.nickname ).collect::<SmallVec<[_;4]>>();
                     info!(datasourceList.len = list.len(),  datasourceList.datasource = ?list );
                 });
             })

@@ -1,12 +1,12 @@
-use sea_orm::{entity::prelude::*, ActiveValue};
+use sea_orm::{ActiveValue, entity::prelude::*};
 use sub_model::SubModel;
 
 use crate::{
+    NaiveDateTime, SoftDelete,
     fetcher::{
         datasource_config::checkers::DatasourceUnique,
         platform_config::models::model_platform_config,
     },
-    NaiveDateTime, SoftDelete,
 };
 
 #[allow(clippy::duplicated_attributes)]

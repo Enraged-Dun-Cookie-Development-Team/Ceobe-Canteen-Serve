@@ -1,9 +1,9 @@
 use checker::{
+    QueryCheckExtract,
     prefabs::{
         option_checker::OptionChecker,
         version_checker::{Version, VersionChecker},
     },
-    QueryCheckExtract,
 };
 use persistence::ceobe_operate::{
     desktop_version,

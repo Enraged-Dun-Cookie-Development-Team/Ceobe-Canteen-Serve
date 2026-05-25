@@ -89,7 +89,7 @@ impl IosNotify {
 
 #[cfg(test)]
 mod test {
-    use super::{content_avaliable::ContentAvailable, IosNotify};
+    use super::{IosNotify, content_avaliable::ContentAvailable};
     use crate::push_notify::SerializeInformation;
 
     #[test]

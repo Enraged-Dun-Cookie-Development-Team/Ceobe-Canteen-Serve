@@ -6,7 +6,7 @@ use db_ops_prelude::{
     sql_models::fetcher::config::models::model_config::{self, Model},
 };
 use tap::TapFallible;
-use tracing::{info, instrument, Span};
+use tracing::{Span, info, instrument};
 
 use super::{ConfigOperate, OperateResult};
 

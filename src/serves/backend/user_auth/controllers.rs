@@ -1,35 +1,35 @@
 use std::borrow::Cow;
 
 use authorize_server::{
-    admin::AuthorizedAdminUser, AuthorizedUser, JwtTokenConv,
+    AuthorizedUser, JwtTokenConv, admin::AuthorizedAdminUser,
 };
-use axum::{extract::Query, Json};
-use axum_resp_result::{resp_result, resp_try, MapReject};
+use axum::{Json, extract::Query};
+use axum_resp_result::{MapReject, resp_result, resp_try};
 use checker::CheckExtract;
 use crypto_str::Encoder;
-use futures::{future, TryFutureExt};
+use futures::{TryFutureExt, future};
 use md5::{Digest, Md5};
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use persistence::{
-    admin::{models::AuthLevel, user::ToUser, ToAdmin},
+    admin::{ToAdmin, models::AuthLevel, user::ToUser},
     mysql::SqlDatabaseOperate,
 };
-use rand::{distributions::Alphanumeric, thread_rng, Rng};
+use rand::{Rng, distributions::Alphanumeric, thread_rng};
 use tracing::{debug, instrument};
 use tracing_unwrap::ResultExt;
 
 use super::{
+    PageSizePretreatment, UsernamePretreatment,
     error::AdminUserError,
     view::{ChangeAuthReq, ChangePassword, DeleteOneUserReq, UserTable},
-    PageSizePretreatment, UsernamePretreatment,
 };
 use crate::{
     middleware::authorize::AuthorizeInfo,
     router::UserAuthBackend,
     serves::backend::user_auth::{
+        AdminUserRResult,
         error::SelfDeleteError,
         view::{CreateUser, UserInfo, UserName, UserToken},
-        AdminUserRResult,
     },
     utils::user_authorize::{AuthInfo, PasswordEncoder, User},
 };

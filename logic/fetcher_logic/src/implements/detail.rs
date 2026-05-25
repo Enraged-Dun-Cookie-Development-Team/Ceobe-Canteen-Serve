@@ -4,6 +4,7 @@ use bool_or::TrueOrError;
 use checker::prefabs::post_checker::PostChecker;
 use persistence::{
     fetcher::{
+        ToFetcher,
         config::{ConfigOperate, ToConfig},
         datasource_config::DatasourceOperate,
         models::config::{
@@ -13,7 +14,6 @@ use persistence::{
             models::model_config::Model as FetcherConfigModel,
         },
         platform_config::PlatformOperate,
-        ToFetcher,
     },
     mysql::SqlDatabaseOperate,
     operate::{
@@ -21,7 +21,7 @@ use persistence::{
     },
 };
 use redis::AsyncCommands;
-use redis_global::{redis_key::fetcher::FetcherConfigKey, RedisTypeBind};
+use redis_global::{RedisTypeBind, redis_key::fetcher::FetcherConfigKey};
 use scheduler_notifier::SchedulerNotifier;
 
 use super::FetcherConfigLogic;

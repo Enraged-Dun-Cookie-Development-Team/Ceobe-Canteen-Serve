@@ -8,10 +8,10 @@ use page_size::{
     response::{GenerateListWithPageInfo, ListWithPageInfo},
 };
 use persistence::ceobe_operate::{
+    ToCeobe, ToCeobeOperation,
     models::version::models::{
         DownloadSourceItem, ReleasePlatform, ReleaseVersion,
     },
-    ToCeobe, ToCeobeOperation,
 };
 use semver::Version;
 use tokio::task;

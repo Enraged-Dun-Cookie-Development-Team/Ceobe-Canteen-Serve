@@ -6,11 +6,11 @@ use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
 use super::{
+    MansionRResult,
     models::{
         MansionBodyCheckerPretreatment, MidCheckerPretreatment,
         OptionMidCheckerPretreatment,
     },
-    MansionRResult,
 };
 use crate::router::BakeryMansionBackend;
 

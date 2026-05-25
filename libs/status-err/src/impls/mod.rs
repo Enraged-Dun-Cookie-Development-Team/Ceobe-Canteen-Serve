@@ -13,7 +13,7 @@ use jsonwebtoken::errors::Error as JwtError;
 use serde_json::Error as JsonError;
 use tonic::transport;
 
-use crate::{status_error, ErrPrefix, GenError, StatusErr};
+use crate::{ErrPrefix, GenError, StatusErr, status_error};
 
 mod mongodb;
 mod redis;

@@ -17,11 +17,11 @@ use persistence::{
 use qiniu_service::error::ServiceError as QiniuServiceError;
 use redis::RedisError;
 use status_err::{
+    StatusErr,
     generated_error::checker_kind::{
         DatasourcesEmptyError, MobIdNotExistInUserError,
         MobPushError as GenMobPushError,
     },
-    StatusErr,
 };
 use thiserror::Error;
 

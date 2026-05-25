@@ -2,9 +2,9 @@ use std::{fmt::Debug, path::Path};
 
 use axum::extract::multipart::{Field, MultipartError};
 use bytes::Bytes;
-use futures::{io::Cursor, AsyncRead};
+use futures::{AsyncRead, io::Cursor};
 use mime::Mime;
-use mime_guess::{mime::APPLICATION_OCTET_STREAM, MimeGuess};
+use mime_guess::{MimeGuess, mime::APPLICATION_OCTET_STREAM};
 use smallstr::SmallString;
 
 use crate::error;

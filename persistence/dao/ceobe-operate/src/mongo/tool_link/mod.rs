@@ -1,7 +1,7 @@
 pub use db_ops_prelude::mongo_models::ceobe::operation::tool_link::*;
 use db_ops_prelude::{
-    mongo_connection::MongoDbError, mongodb, mongodb::error::Error,
-    StatusErr, ThisError,
+    StatusErr, ThisError, mongo_connection::MongoDbError, mongodb,
+    mongodb::error::Error,
 };
 
 pub use crate::common::tool_link::ToolLinkOperate;

@@ -1,10 +1,10 @@
 pub use checkers::{
+    CheckError,
     resource_data::{
         CeobeOperationResource as Checked,
         CeobeOperationResourceChecker as Checker,
         CeobeOperationResourceUncheck as Uncheck,
     },
-    CheckError,
 };
 pub use models::{
     model_resource::{ActiveModel, Column, Entity, Model, Relation},

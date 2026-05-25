@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 use hex::ToHex;
-use hmac::{digest::InvalidLength, Hmac, Mac};
+use hmac::{Hmac, Mac, digest::InvalidLength};
 use sha2::{Digest, Sha256};
 use url::Url;
 

@@ -1,5 +1,5 @@
 use status_err::{
-    generated_error::logger_report_kind::PushLogFailureError, StatusErr,
+    StatusErr, generated_error::logger_report_kind::PushLogFailureError,
 };
 
 #[derive(Debug, thiserror::Error, StatusErr)]

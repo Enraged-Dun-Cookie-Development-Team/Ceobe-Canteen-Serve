@@ -1,6 +1,6 @@
 use std::ops::Rem;
 
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 
 use crate::RefChecker;
 

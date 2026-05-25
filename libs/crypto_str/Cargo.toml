@@ -1,19 +1,19 @@
-[package]
+﻿[package]
 name = "crypto_str"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 default = ["none", "trans", "bcrypt", "serde"]
-# 内置的加密算法
+# 鍐呯疆鐨勫姞瀵嗙畻娉?
 bcrypt = ["bcrypt_"]
 none = []
-# serde 支持
+# serde 鏀寔
 serde = ["serde_", "wrap"]
-# 钻换string支持
+# 閽绘崲string鏀寔
 trans = ["wrap"]
-# 封装支持
+# 灏佽鏀寔
 wrap = []
 
 [dependencies]

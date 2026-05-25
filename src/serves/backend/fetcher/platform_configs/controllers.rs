@@ -1,23 +1,23 @@
 use axum::Json;
-use axum_resp_result::{resp_try, rtry, MapReject};
+use axum_resp_result::{MapReject, resp_try, rtry};
 use checker::CheckExtract;
 use fetcher_logic::{implements::FetcherConfigLogic, view::OneIdReq};
 use futures::future;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use persistence::{
     fetcher::{
+        ToFetcher,
         models::platform_config::models::model_platform_config::{
             PlatformBasicInfo, PlatformHasDatasource,
         },
         platform_config::ToPlatform,
-        ToFetcher,
     },
     mysql::SqlDatabaseOperate,
 };
 use tracing::instrument;
 
 use super::{
-    error::PlatformConfigError, FetcherPlatformCheck, PageSizePretreatment,
+    FetcherPlatformCheck, PageSizePretreatment, error::PlatformConfigError,
 };
 use crate::{
     router::FetcherConfigControllers,

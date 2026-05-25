@@ -2,9 +2,8 @@ use std::{iter::Iterator, ops::Add};
 
 use db_ops_prelude::{
     chrono::{
-        self,
+        self, Duration, Local,
         format::{DelayedFormat, StrftimeItems},
-        Duration, Local,
     },
     futures::StreamExt,
     get_connect::GetDatabaseCollection,
@@ -15,7 +14,7 @@ use db_ops_prelude::{
         MansionId, Mid, ModelMansion, ModifyAt, RecentPredict,
     },
     mongodb::{
-        bson::{self, doc, DateTime, Document},
+        bson::{self, DateTime, Document, doc},
         options::FindOptions,
     },
     tap::Tap,

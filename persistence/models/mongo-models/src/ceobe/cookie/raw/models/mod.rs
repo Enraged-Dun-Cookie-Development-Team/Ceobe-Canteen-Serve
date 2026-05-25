@@ -1,4 +1,4 @@
-use mongodb::bson::{oid::ObjectId, Binary};
+use mongodb::bson::{Binary, oid::ObjectId};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sub_model::SubModel;

@@ -8,8 +8,9 @@ use std::{
 };
 
 use futures::{
-    future::{ok, Ready},
-    pin_mut, Future, Stream, StreamExt,
+    Future, Stream, StreamExt,
+    future::{Ready, ok},
+    pin_mut,
 };
 
 use crate::Checker;

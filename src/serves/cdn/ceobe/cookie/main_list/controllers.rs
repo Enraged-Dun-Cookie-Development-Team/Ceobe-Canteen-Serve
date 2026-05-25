@@ -1,5 +1,5 @@
 use axum::extract::Query;
-use axum_resp_result::{rtry, MapReject};
+use axum_resp_result::{MapReject, rtry};
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic,
     view::{CookieListReq, CookieListResp},

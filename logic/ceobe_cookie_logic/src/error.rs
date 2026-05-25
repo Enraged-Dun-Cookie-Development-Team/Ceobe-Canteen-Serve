@@ -18,13 +18,13 @@ use persistence::{
 };
 use redis::RedisError;
 use status_err::{
+    StatusErr,
     generated_error::{
         checker_kind::{
             MobPushError as GenMobPushError, UpdateCookieIdCacheFailureError,
         },
         serve_kind::JoinError as GenJoinError,
     },
-    StatusErr,
 };
 use thiserror::Error;
 use tokio::task::JoinError;

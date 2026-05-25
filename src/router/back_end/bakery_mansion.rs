@@ -1,7 +1,7 @@
 use authorize_server::mix_role_gen;
 use axum::{
-    routing::{get, post},
     Router,
+    routing::{get, post},
 };
 
 use crate::{

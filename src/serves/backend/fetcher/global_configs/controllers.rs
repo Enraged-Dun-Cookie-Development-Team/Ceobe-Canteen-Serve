@@ -1,5 +1,5 @@
 use axum::Json;
-use axum_resp_result::{rtry, MapReject, RespResult};
+use axum_resp_result::{MapReject, RespResult, rtry};
 use fetcher_logic::implements::FetcherConfigLogic;
 use persistence::mysql::SqlDatabaseOperate;
 use serde_json::{Map, Value};

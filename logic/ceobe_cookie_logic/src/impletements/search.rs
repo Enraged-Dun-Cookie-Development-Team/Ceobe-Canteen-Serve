@@ -6,15 +6,15 @@ use bitmap_convert::{
 use bitmaps::Bitmap;
 use persistence::{
     ceobe_cookie::{
-        models::analyze::models::{meta::Meta, CookieInfo},
         ToCeobe, ToCookie,
+        models::analyze::models::{CookieInfo, meta::Meta},
     },
     fetcher::{
+        ToFetcher,
         datasource_config::{
             OperateError as DatasourceOperateError, ToDatasource,
         },
         models::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
-        ToFetcher,
     },
     help_crates::mongodb::bson::oid::ObjectId,
     mongodb::MongoDatabaseOperate,

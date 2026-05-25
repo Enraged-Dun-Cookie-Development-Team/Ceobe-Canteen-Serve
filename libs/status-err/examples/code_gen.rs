@@ -1,5 +1,5 @@
 use status_err::{
-    generated_error::haaaa_kind::HumError, ErrPrefix, HttpCode, StatusErr,
+    ErrPrefix, HttpCode, StatusErr, generated_error::haaaa_kind::HumError,
 };
 fn main() {
     let e = TestErr::Else {

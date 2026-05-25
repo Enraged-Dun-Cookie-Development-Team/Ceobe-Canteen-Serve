@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::ceobe::operation::plugin_version::PluginVersion;
-use mongodb::{bson::doc, options::IndexOptions, IndexModel};
+use mongodb::{IndexModel, bson::doc, options::IndexOptions};
 
 const UNIQUE_VERSION_IDX: &str = "unique_version_idx";
 

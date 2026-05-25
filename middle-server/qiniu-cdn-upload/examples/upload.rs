@@ -8,10 +8,9 @@ use axum::{
     routing::post,
 };
 use axum_starter::{
-    prepare,
-    router::{Fallback, Route},
     Configure, FromStateCollector, PrepareRouteEffect, Provider,
-    ServerPrepare,
+    ServerPrepare, prepare,
+    router::{Fallback, Route},
 };
 use ceobe_qiniu_upload::{
     BaseUrl, GetBucket, QiniuBaseUrl, QiniuManager, QiniuUpload,

@@ -3,7 +3,7 @@
 use darling::FromDeriveInput;
 use input_loading::derive_info::StatusErrorDeriveInfo;
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, spanned::Spanned, Data, DeriveInput};
+use syn::{Data, DeriveInput, parse_macro_input, spanned::Spanned};
 
 #[macro_use]
 mod utils;

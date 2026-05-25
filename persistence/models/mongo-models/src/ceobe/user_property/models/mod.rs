@@ -2,7 +2,7 @@ use std::borrow::Cow;
 
 use chrono::Local;
 use modify_cache::ModifyState;
-use mongodb::bson::{doc, DateTime, Document, Uuid};
+use mongodb::bson::{DateTime, Document, Uuid, doc};
 use serde::{Deserialize, Serialize};
 use sub_model::SubModel;
 use typed_builder::TypedBuilder;

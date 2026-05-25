@@ -1,4 +1,4 @@
-use sea_orm::{entity::prelude::*, Set};
+use sea_orm::{Set, entity::prelude::*};
 use sub_model::SubModel;
 
 use crate::get_now_naive_date_time;

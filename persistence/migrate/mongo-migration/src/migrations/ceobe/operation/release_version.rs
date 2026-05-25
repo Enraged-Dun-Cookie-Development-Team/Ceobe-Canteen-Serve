@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::ceobe::operation::version::models::ReleaseVersion;
-use mongodb::{bson::doc, error::Error, options::IndexOptions, IndexModel};
+use mongodb::{IndexModel, bson::doc, error::Error, options::IndexOptions};
 
 const UNIQUE_KEY: &str = "unique_version_platform";
 

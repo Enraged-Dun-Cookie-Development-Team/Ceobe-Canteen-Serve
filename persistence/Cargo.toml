@@ -1,2 +1,2 @@
-[workspace]
+﻿[workspace]
 members = ["dao/*", "database/*", "migrate/*", "models/*","persistence"]

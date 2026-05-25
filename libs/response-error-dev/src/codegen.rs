@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use http::StatusCode;
 use proc_macro2::TokenStream;
-use quote::{format_ident, quote, ToTokens};
+use quote::{ToTokens, format_ident, quote};
 
 use crate::payloads::{ErrorCfg, ErrorType};
 
@@ -68,7 +68,7 @@ impl<'s> ErrorGen<'s> {
         let mut out = Vec::new();
 
         for (code, err) in error.error.iter().enumerate() {
-            let gen = ErrorGen {
+            let g = ErrorGen {
                 mark: error.mark,
                 mark_description: &error.description,
                 status_code: err
@@ -78,7 +78,7 @@ impl<'s> ErrorGen<'s> {
                 description: &err.description,
                 code: (code as u16) + 1,
             };
-            out.push(gen)
+            out.push(g)
         }
 
         out
@@ -107,9 +107,9 @@ mod test {
 
         let err = ErrorGen::from_error_cfg(&payload);
         for (k, v) in err {
-            let gen = ErrorGen::generate_kind_code(k, &v).to_string();
+            let g = ErrorGen::generate_kind_code(k, &v).to_string();
 
-            println!("{gen}")
+            println!("{g}")
         }
     }
 }
