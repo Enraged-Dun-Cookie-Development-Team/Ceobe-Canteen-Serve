@@ -10,7 +10,7 @@ use db_ops_prelude::{
     tap::TapFallible,
 };
 use page_size::{database::WithPagination, request::Paginator};
-use tracing::{info, instrument, Span};
+use tracing::{Span, info, instrument};
 
 use super::{OperateResult, ToolLinkOperate};
 
@@ -37,7 +37,7 @@ where
         .tap_ok(|list| {
             Span::current()
             .in_scope(||{
-                let list = list.iter().map(|tool_link|(&tool_link.nickname)).collect::<SmallVec<[_;4]>>();
+                let list = list.iter().map(|tool_link|&tool_link.nickname ).collect::<SmallVec<[_;4]>>();
                 info!(userList.len = list.len(),  userList.nicknames = ?list );
             })
             ;
@@ -55,7 +55,7 @@ where
         .tap_ok(|list| {
             Span::current()
             .in_scope(||{
-                let list = list.iter().map(|tool_link|(&tool_link.nickname)).collect::<SmallVec<[_;4]>>();
+                let list = list.iter().map(|tool_link|&tool_link.nickname ).collect::<SmallVec<[_;4]>>();
                 info!(userList.len = list.len(),  userList.nicknames = ?list );
             })
             ;

@@ -1,4 +1,4 @@
-use std::{convert::Infallible, num::ParseIntError};
+use std::num::ParseIntError;
 
 use ::mongodb::bson;
 use axum::extract::{
@@ -9,12 +9,11 @@ use checker::prefabs::{
     json_obj_check::JsonObjError, no_remainder_checker::HasRemError,
     num_check::NonZeroUnsignedError, version_checker::VersionInvalidError,
 };
-use http::StatusCode;
 use jsonwebtoken::errors::Error as JwtError;
 use serde_json::Error as JsonError;
 use tonic::transport;
 
-use crate::{status_error, ErrPrefix, StatusErr};
+use crate::{ErrPrefix, GenError, StatusErr, status_error};
 
 mod mongodb;
 mod redis;
@@ -22,231 +21,184 @@ mod sea_orm;
 // io prefix
 status_error!(
     std::io::Error
-    [
-        ErrPrefix::IO,
-        0x0001:StatusCode::INTERNAL_SERVER_ERROR
-    ] -> "IO时出现异常"
+    => crate::generated_error::io_kind::IoError
 );
 // parse prefix
 status_error!(
-url::ParseError[
-    ErrPrefix::PARSE,
-    0x0001
-    ] -> "Url 解析异常"
+url::ParseError
+    => crate::generated_error::parse_kind::UrlParseError
 );
 
 status_error!(
-ParseIntError[
-    ErrPrefix::PARSE,
-    0x0002
-    ] -> "数字转换异常"
+ParseIntError
+    => crate::generated_error::parse_kind::ParseIntError
 );
 
 status_error!(
-JwtError[
-    ErrPrefix::PARSE, 0x0003
-    ] -> "Jwt解析异常"
+JwtError
+    => crate::generated_error::parse_kind::JwtError
 );
 
 status_error!(
-chrono::ParseError[
-    ErrPrefix::PARSE, 0x0004
-    ] -> "日期转换异常"
+chrono::ParseError
+    => crate::generated_error::parse_kind::ChronoParseError
 );
 status_error!(
-std::string::FromUtf8Error[
-    ErrPrefix::PARSE,
-    0x0005:StatusCode::INTERNAL_SERVER_ERROR
-    ] -> "字符串编码异常"
+std::string::FromUtf8Error
+    => crate::generated_error::parse_kind::FromUtf8Error
 );
 
 status_error!(
-    http::header::ToStrError[
-        ErrPrefix::PARSE,
-        0x0006
-    ] -> "http 请求头内容解析异常"
+    http::header::ToStrError
+    => crate::generated_error::parse_kind::ToStrError
 );
 
 status_error!(
-    http_02::header::ToStrError[
-        ErrPrefix::PARSE,
-        0x0006
-    ] -> "http 请求头内容解析异常"
+    http_02::header::ToStrError
+    => crate::generated_error::parse_kind::ToStrError
 );
 
 status_error!(
-    http::header::InvalidHeaderValue[
-        ErrPrefix::PARSE,
-        0x0007: StatusCode::INTERNAL_SERVER_ERROR
-    ] -> "非法 Http 请求头内容"
+    http::header::InvalidHeaderValue
+    => crate::generated_error::parse_kind::InvalidHeaderValueError
 );
 
 status_error!(
-    http_02::header::InvalidHeaderValue[
-        ErrPrefix::PARSE,
-        0x0007: StatusCode::INTERNAL_SERVER_ERROR
-    ] -> "非法 Http 请求头内容"
+    http_02::header::InvalidHeaderValue
+    => crate::generated_error::parse_kind::InvalidHeaderValueError
 );
 
 status_error!(
-    bson::de::Error[
-        ErrPrefix::PARSE,
-        0x0009
-    ] -> "bson反序列化错误"
+    bson::de::Error
+    => crate::generated_error::parse_kind::BsonDeError
 );
 
 // check prefix
 status_error!(
-Infallible[
+    std::convert::Infallible[
     ErrPrefix::CHECKER,
     0x00_00
     ]->""
 );
 status_error!(
-    range_limit::Error[
-    ErrPrefix::CHECKER,
-    0x00_01
-    ] ->"范围检查未通过"
+    range_limit::Error
+    => crate::generated_error::checker_kind::RangeLimitError
 );
 status_error!(
-JsonError[
-    ErrPrefix::CHECKER,
-    0x00_04
-    ]->"`Json`请求解析异常"
+JsonError
+    => crate::generated_error::checker_kind::JsonError
 );
 
 status_error!(
-JsonRejection[
-    ErrPrefix::CHECKER,
-    0x00_04
-    ]->"`Json`请求解析异常"
+JsonRejection
+    => crate::generated_error::checker_kind::JsonRejectionError
 );
 status_error!(
-PathRejection[
-    ErrPrefix::CHECKER,
-    0x00_05
-    ]-> "`Path`数据加载异常"
+PathRejection
+    => crate::generated_error::checker_kind::PathRejectionError
 );
 status_error!(
-QueryRejection[
-    ErrPrefix::CHECKER,
-    0x00_07
-    ] -> "请求的`Query`解析失败"
+QueryRejection
+    => crate::generated_error::checker_kind::QueryRejectionError
 );
 status_error!(
-bincode::Error[
-    ErrPrefix::CHECKER,
-    0x00_0C
-    ] -> "`Bincode` 序列化/反序列化异常 "
+bincode::Error
+    => crate::generated_error::checker_kind::BincodeError
 );
 status_error!(
-    MultipartRejection[
-        ErrPrefix::CHECKER,
-        0x000F
-    ] -> "获取`MultiPart`异常 "
+    MultipartRejection
+    => crate::generated_error::checker_kind::MultipartRejectionError
 );
 
 status_error!(
-    MultipartError[
-        ErrPrefix::CHECKER,
-        0x000F
-    ] -> "解析`MultiPart`异常 "
+    MultipartError
+    => crate::generated_error::checker_kind::MultipartError
 );
 
 // authorized prefix
 status_error!(
-    bcrypt::BcryptError[
-        ErrPrefix::UNAUTHORIZED,
-        5:StatusCode::INTERNAL_SERVER_ERROR
-    ] -> "密码校验异常"
+    bcrypt::BcryptError
+    => crate::generated_error::unauthorized_kind::BcryptError
 );
 
 status_error!(
-    reqwest::Error[
-        ErrPrefix::NOT_FOUND,
-        3 : StatusCode::INTERNAL_SERVER_ERROR
-    ] -> "发起请求时异常"
+    reqwest::Error
+    => crate::generated_error::not_found_kind::ReqwestError
 );
 
 status_error!(
-    NonZeroUnsignedError[
-        ErrPrefix::CHECKER,
-        0x00_0E
-    ] -> "预期为0值取得非0值"
+    NonZeroUnsignedError
+    => crate::generated_error::checker_kind::NonZeroUnsignedError
 );
 
 impl<const RHS: u64> StatusErr for HasRemError<RHS> {
-    fn prefix(&self) -> ErrPrefix { ErrPrefix::CHECKER }
+    fn respond_msg(&self) -> std::borrow::Cow<'_, str> {
+        crate::generated_error::checker_kind::HasRemError
+            .description()
+            .into()
+    }
 
-    fn code(&self) -> u16 { 0x0014 }
+    fn prefix(&self) -> ErrPrefix {
+        ErrPrefix::mark_only(
+            crate::generated_error::checker_kind::HasRemError.mark(),
+        )
+    }
+
+    fn code(&self) -> u16 {
+        crate::generated_error::checker_kind::HasRemError.code()
+    }
+
+    fn http_code(&self) -> http::StatusCode {
+        crate::generated_error::checker_kind::HasRemError.status_code()
+    }
 }
 
 status_error!(
-    JsonObjError[
-        ErrPrefix::CHECKER,
-        0x0014
-    ]->"Json 对象不符合预期"
+    JsonObjError
+    => crate::generated_error::checker_kind::JsonObjError
 );
 
 status_error!(
-    transport::Error[
-        ErrPrefix::LOGGER_REPORT,
-        0x00_01
-    ]->"与Grpc服务端建立连接失败"
+    transport::Error
+    => crate::generated_error::logger_report_kind::TransportError
 );
 
 status_error!(
-    tonic::Status[
-        ErrPrefix::LOGGER_REPORT,
-        0x00_02
-    ]->"Grpc service返回异常响应"
+    tonic::Status
+    => crate::generated_error::logger_report_kind::TonicStatusError
 );
 
 status_error!(
-    bson::oid::Error[
-        ErrPrefix::CHECKER,
-        0x001C
-    ]->"ObjectId反序列化失败"
+    bson::oid::Error
+    => crate::generated_error::checker_kind::BsonOidError
 );
 
 status_error!(
-    VersionInvalidError[
-        ErrPrefix::CHECKER,
-        0x000A
-    ]->"Version格式检查错误"
+    VersionInvalidError
+    => crate::generated_error::checker_kind::VersionInvalidError
 );
 
 status_error!(
-    serde_qs::Error[
-        ErrPrefix::PARSE,
-        0x000A
-    ]->"Query 序列化、反序列化异常"
+    serde_qs::Error
+    => crate::generated_error::parse_kind::SerdeQsError
 );
 
 status_error!(
-    hmac::digest::InvalidLength[
-        ErrPrefix::PARSE,
-        0x000B
-    ]->"HMAC加密长度错误"
+    hmac::digest::InvalidLength
+    => crate::generated_error::parse_kind::HmacInvalidLengthError
 );
 
 status_error!(
-    core::fmt::Error[
-        ErrPrefix::IO,
-        0x0002
-    ]->"格式化文本异常"
+    core::fmt::Error
+    => crate::generated_error::io_kind::FmtError
 );
 
 status_error!(
-    bson::uuid::Error[
-        ErrPrefix::PARSE,
-        0x008
-    ]->"bson UUID解析异常"
+    bson::uuid::Error
+    => crate::generated_error::parse_kind::BsonUuidError
 );
 
 status_error!(
-    bson::ser::Error[
-        ErrPrefix::CHECKER,
-        0x0016
-    ]-> "Bson 序列化异常"
+    bson::ser::Error
+    => crate::generated_error::checker_kind::BsonSerError
 );

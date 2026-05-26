@@ -1,4 +1,4 @@
-use crate::{range_limit::SizeStatus, RangeBound};
+use crate::{RangeBound, range_limit::SizeStatus};
 
 #[derive(Default)]
 pub struct FixedSize<const S: usize>;

@@ -4,8 +4,8 @@ use url::Position;
 
 use crate::{
     cloud_manager::{
-        entities::{ServerVersion, Service, TencentCloudResponse},
         TencentCloudManager,
+        entities::{ServerVersion, Service, TencentCloudResponse},
     },
     error::TcCloudError,
     task_trait::{

@@ -1,9 +1,9 @@
 use checker::{
-    check_obj,
+    DisplayFromStr, check_obj,
     prefabs::num_check::{
         NonZeroUnsigned, NonZeroUnsignedChecker, NonZeroUnsignedError,
     },
-    serde_as, DisplayFromStr,
+    serde_as,
 };
 use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
@@ -33,9 +33,8 @@ mod test {
     use std::convert::Infallible;
 
     use checker::{
-        check_gen,
+        LiteChecker, check_gen,
         prefabs::{no_check::NoCheck, num_check::NonZeroUnsignedError},
-        LiteChecker,
     };
     use serde::Deserialize;
     use typed_builder::TypedBuilder;

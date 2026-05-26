@@ -5,7 +5,7 @@ use db_ops_prelude::{
     },
     mongo_models::ceobe::operation::version::models::{OId, ReleasePlatform},
     mongodb::{
-        bson::{doc, oid::ObjectId, to_bson, Document},
+        bson::{Document, doc, oid::ObjectId, to_bson},
         options::{FindOneOptions, FindOptions},
     },
 };
@@ -13,8 +13,8 @@ use page_size::request::Paginator;
 use tracing::info;
 
 use super::{
-    models::{ReleaseVersion, Version},
     Error, ReleaseVersionRetrieve, Result,
+    models::{ReleaseVersion, Version},
 };
 use crate::release_version::common::generate_release_version_filter;
 
@@ -232,11 +232,11 @@ fn generate_platform_filter_document(
 mod test {
     use abstract_database::ceobe::ToCeobe;
     use db_ops_prelude::{
-        database_operates::{operate_trait::OperateTrait, DatabaseOperate},
+        database_operates::{DatabaseOperate, operate_trait::OperateTrait},
         mongo_connection::{
+            DatabaseManage, MongoConnect, MongoDbConfig,
             database_traits::initial::connect_db_with_migrate,
-            get_mongo_collection, DatabaseManage, MongoConnect,
-            MongoDbConfig,
+            get_mongo_collection,
         },
         mongo_models::ceobe::operation::version::models::{
             ReleasePlatform::{Desktop, Pocket},
@@ -247,8 +247,8 @@ mod test {
     use mongo_migration::Migrator;
 
     use crate::{
-        release_version::retrieve::generate_platform_filter_document,
         ToCeobeOperation,
+        release_version::retrieve::generate_platform_filter_document,
     };
 
     #[test]

@@ -1,10 +1,10 @@
-use axum_starter::{prepare, PrepareMiddlewareEffect};
+use axum_starter::{PrepareMiddlewareEffect, prepare};
 use tower_http::{
+    LatencyUnit,
     classify::{ServerErrorsAsFailures, SharedClassifier},
     trace::{
         DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer,
     },
-    LatencyUnit,
 };
 use tracing::Level;
 
@@ -21,8 +21,8 @@ impl<S> PrepareMiddlewareEffect<S> for RequestTracker {
     }
 }
 
-pub fn tracing_request(
-) -> TraceLayer<SharedClassifier<ServerErrorsAsFailures>> {
+pub fn tracing_request()
+-> TraceLayer<SharedClassifier<ServerErrorsAsFailures>> {
     TraceLayer::new_for_http()
         .make_span_with(DefaultMakeSpan::new().level(Level::INFO))
         .on_response(

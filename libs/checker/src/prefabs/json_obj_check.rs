@@ -1,6 +1,6 @@
 use std::{collections::BTreeSet, marker::PhantomData};
 
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use serde_json::Value;
 use smallvec::SmallVec;
 

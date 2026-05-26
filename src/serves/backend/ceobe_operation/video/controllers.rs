@@ -1,10 +1,10 @@
-use axum_resp_result::{resp_try, rtry, RespResult};
+use axum_resp_result::{RespResult, resp_try, rtry};
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic, view::VideoItem,
 };
 use checker::{
-    prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
-    JsonCheckExtract, QueryCheckExtract,
+    CheckExtract, JsonCheckExtract, QueryCheckExtract,
+    prefabs::collect_checkers::iter_checkers::IntoIterChecker,
 };
 use persistence::{
     ceobe_operate::models::video::{self, bv::query::Checked as BvQuery},

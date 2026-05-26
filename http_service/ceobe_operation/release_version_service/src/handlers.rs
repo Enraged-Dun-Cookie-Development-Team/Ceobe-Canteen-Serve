@@ -1,11 +1,11 @@
 use persistence::operate::FromRef;
 use serve_utils::{
+    ControllerRoute, HandlerMapReject, HandlerResult,
     axum::{
-        routing::{get, post},
         Router,
+        routing::{get, post},
     },
     endpoint::{AdminEnd, CDN},
-    ControllerRoute, HandlerMapReject, HandlerResult,
 };
 use tencent_cloud_server::axum_starter::{
     PartTencentCloudManagerState, RequestClient,

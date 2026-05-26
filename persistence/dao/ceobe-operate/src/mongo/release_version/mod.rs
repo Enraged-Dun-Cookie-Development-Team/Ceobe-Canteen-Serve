@@ -6,8 +6,8 @@ mod update;
 mod verify;
 
 use db_ops_prelude::{
-    mongo_connection::{database_traits::dao_operator, MongoDbError},
     ErrPrefix, HttpCode, StatusErr, ThisError,
+    mongo_connection::{MongoDbError, database_traits::dao_operator},
 };
 
 use crate::OperationDatabaseOperate;

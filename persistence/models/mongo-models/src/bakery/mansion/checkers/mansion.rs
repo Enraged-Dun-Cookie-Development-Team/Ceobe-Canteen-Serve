@@ -1,14 +1,14 @@
 use checker::{
-    prefabs::collect_checkers::iter_checkers::IntoIterChecker, Checker,
+    Checker, prefabs::collect_checkers::iter_checkers::IntoIterChecker,
 };
-use futures::future::{err, ok, Ready};
-use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
+use futures::future::{Ready, err, ok};
+use range_limit::{RangeBoundLimit, limits::max_limit::MaxLimit};
 use serde::Deserialize;
 
 use super::{
+    CheckError,
     daily::{DailyChecker, DailyUncheck},
     id_checker::IdChecker,
-    CheckError,
 };
 use crate::bakery::mansion::preludes::{Daily, Mansion};
 

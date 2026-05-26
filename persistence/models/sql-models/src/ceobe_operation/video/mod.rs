@@ -1,9 +1,9 @@
 pub use checkers::{
+    CheckError,
     video_data::{
         CeobeOpVideo as Checked, CeobeOpVideoChecker as Checker,
         CeobeOpVideoUncheck as Uncheck,
     },
-    CheckError,
 };
 pub use models::model_video::{ActiveModel, Column, Entity, Model, Relation};
 

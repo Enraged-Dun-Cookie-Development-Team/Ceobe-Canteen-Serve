@@ -4,10 +4,10 @@ use async_trait::async_trait;
 use axum::extract::{FromRequestParts, OriginalUri};
 use axum_resp_result::{ExtraFlag, ExtraFlags};
 use http::{
+    StatusCode,
     header::{CONTENT_TYPE, ETAG, LAST_MODIFIED},
     method::Method,
     request::Parts,
-    StatusCode,
 };
 use tracing::warn;
 

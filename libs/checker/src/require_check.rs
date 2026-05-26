@@ -4,7 +4,7 @@ use std::str::FromStr;
 use serde::Deserialize;
 
 use crate::{
-    checker::LiteChecker, lite_args::LiteArgs, CheckFut, Checker, SyncFuture,
+    CheckFut, Checker, SyncFuture, checker::LiteChecker, lite_args::LiteArgs,
 };
 
 pub struct CheckRequire<D: Checker>(D::Unchecked);

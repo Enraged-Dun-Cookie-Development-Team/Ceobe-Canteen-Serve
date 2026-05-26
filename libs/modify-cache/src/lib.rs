@@ -1,6 +1,6 @@
 pub use cache_ctrl::{
-    control::{CacheControl, CacheMode, Revalidate, Transform},
     CacheHeaders,
+    control::{CacheControl, CacheMode, Revalidate, Transform},
 };
 pub use check_modify::CheckModify;
 pub use error::Error;

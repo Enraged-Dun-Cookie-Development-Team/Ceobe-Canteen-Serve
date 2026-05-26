@@ -1,6 +1,6 @@
 use std::{borrow::Cow, str::FromStr, sync::OnceLock};
 
-use http::{request::Parts, HeaderName};
+use http::{HeaderName, request::Parts};
 use tracing::warn;
 use tracing_unwrap::ResultExt;
 
@@ -50,7 +50,7 @@ impl LocalMobUserAuthConfig {
     }
 }
 
-pub(super) fn get_authorize_information(req: &Parts) -> Option<Cow<str>> {
+pub(super) fn get_authorize_information(req: &Parts) -> Option<Cow<'_, str>> {
     req.headers
         .get(LocalMobUserAuthConfig::get_header_name())
         .and_then(|v| v.to_str().ok())

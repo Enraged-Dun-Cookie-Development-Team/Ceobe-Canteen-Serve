@@ -1,9 +1,9 @@
 use std::{borrow::Cow, ops::Deref};
 
 use crate::{
+    Encoder,
     crypto::CryptoString,
     wrap::{Crypto, CryptoWarp, Raw},
-    Encoder,
 };
 
 impl<'de, E> serde_::Deserialize<'de> for CryptoWarp<Raw, E>

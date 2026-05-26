@@ -3,6 +3,9 @@ use sub_model::SubModel;
 
 use crate::fetcher::datasource_config::models::model_datasource_config;
 
+// TODO: 后续修复 duplicated_attributes（sub_model 为不同子类型分别派生
+// FromQueryResult）
+#[allow(clippy::duplicated_attributes)]
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, SubModel)]
 #[sea_orm(table_name = "fetcher_platform_config")]
 #[sub_model(

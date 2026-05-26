@@ -2,8 +2,8 @@ use db_ops_prelude::{
     chrono::NaiveDateTime,
     get_zero_data_time,
     sea_orm::{
-        sea_query::Expr, ColumnTrait, Condition, ConnectionTrait,
-        EntityTrait, QueryFilter,
+        ColumnTrait, Condition, ConnectionTrait, EntityTrait, QueryFilter,
+        sea_query::Expr,
     },
 };
 use tracing::info;

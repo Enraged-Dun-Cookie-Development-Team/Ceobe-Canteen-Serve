@@ -1,9 +1,10 @@
 use checker::{
-    prefabs::collect_checkers::iter_checkers::IntoIterChecker, LiteChecker,
-    ToCheckRequire,
+    LiteChecker, ToCheckRequire,
+    prefabs::collect_checkers::iter_checkers::IntoIterChecker,
 };
 use persistence::{
     fetcher::{
+        ToFetcher,
         global_config::ToGlobal,
         models::global_config::{
             checkers::global_config_data::{
@@ -11,7 +12,6 @@ use persistence::{
             },
             models::model_global_config::Model,
         },
-        ToFetcher,
     },
     mysql::SqlDatabaseOperate,
 };

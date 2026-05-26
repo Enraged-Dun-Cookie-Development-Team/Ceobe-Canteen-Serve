@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 
 use general_request_client::{
-    traits::{RequestBuilder, Requester},
     Method, Version,
+    traits::{RequestBuilder, Requester},
 };
 use url::Url;
 

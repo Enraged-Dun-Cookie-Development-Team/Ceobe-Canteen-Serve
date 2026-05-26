@@ -3,7 +3,10 @@ use std::{fmt::Debug, ops::Deref};
 use axum::{async_trait, extract::FromRequestParts};
 use axum_resp_result::{Nil, RespResult};
 use persistence::operate::Parts;
-use status_err::{resp_error_impl, status_error, ErrPrefix, HttpCode};
+use status_err::{
+    generated_error::unauthorized_kind::NoAuthorizeLayerError as GenNoAuthorizeLayerError,
+    resp_error_impl, status_error,
+};
 
 #[derive(Clone, Debug)]
 pub struct AuthorizedUser<T: Send + Sync + Clone + 'static>(pub T);
@@ -40,8 +43,5 @@ resp_error_impl!(NoAuthorizeLayerError);
 
 status_error!(
     NoAuthorizeLayerError
-    [
-        ErrPrefix::UNAUTHORIZED,
-        0x000A: HttpCode::INTERNAL_SERVER_ERROR
-    ]
+    => GenNoAuthorizeLayerError
 );

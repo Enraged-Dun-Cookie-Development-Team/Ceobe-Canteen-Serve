@@ -5,11 +5,11 @@ use std::{
 };
 
 use database_traits::{
+    BoxedResultSendFuture,
     get_connect::{
         FromRequestParts, GetDatabaseConnect, GetDatabaseTransaction, Parts,
         TransactionOps,
     },
-    BoxedResultSendFuture,
 };
 use sea_orm::{
     ConnectionTrait, DatabaseConnection, DatabaseTransaction, DbErr,

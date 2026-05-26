@@ -7,7 +7,7 @@ use bitmaps::Bitmap;
 use general_request_client::{client::RequestClient, traits::Requester};
 use http::{Method, Version};
 use scheduler_notifier::SchedulerUrl;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use tap::Tap;
 use tracing::instrument;
 use url::Url;

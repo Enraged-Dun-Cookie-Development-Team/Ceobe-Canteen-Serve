@@ -1,5 +1,5 @@
 use chrono::Local;
-use jsonwebtoken::{decode, encode, Algorithm, Header, Validation};
+use jsonwebtoken::{Algorithm, Header, Validation, decode, encode};
 use persistence::admin;
 use serde::{Deserialize, Serialize};
 

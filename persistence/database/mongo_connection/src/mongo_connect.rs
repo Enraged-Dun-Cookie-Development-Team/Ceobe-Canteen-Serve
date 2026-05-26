@@ -1,10 +1,10 @@
 use mongo_migrate_util::MigratorTrait;
-use mongodb::{options::ClientOptions, Database};
+use mongodb::{Database, options::ClientOptions};
 use url::Url;
 
 use crate::{
-    database::builder::DatabaseBuilder, static_vars::set_mongo_database,
     DbConnectConfig, MongoClient, MongoErr,
+    database::builder::DatabaseBuilder, static_vars::set_mongo_database,
 };
 
 pub struct MongoConnectBuilder {

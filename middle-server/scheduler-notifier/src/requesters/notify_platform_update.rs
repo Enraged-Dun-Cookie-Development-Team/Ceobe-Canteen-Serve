@@ -1,6 +1,6 @@
 use general_request_client::{
-    traits::{RequestBuilder, Requester},
     Method,
+    traits::{RequestBuilder, Requester},
 };
 use url::Url;
 

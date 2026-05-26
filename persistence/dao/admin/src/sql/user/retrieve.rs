@@ -6,15 +6,15 @@ use db_ops_prelude::{
         GetDatabaseConnect, GetDatabaseTransaction, TransactionOps,
     },
     sea_orm::{
-        sea_query::IntoCondition, ColumnTrait, Condition, ConnectionTrait,
-        DbErr, EntityTrait, PaginatorTrait, QueryFilter, QuerySelect,
+        ColumnTrait, Condition, ConnectionTrait, DbErr, EntityTrait,
+        PaginatorTrait, QueryFilter, QuerySelect, sea_query::IntoCondition,
     },
     smallvec::SmallVec,
     sql_models::admin_user,
 };
 use page_size::{database::WithPagination, request::Paginator};
 use tap::TapFallible;
-use tracing::{info, instrument, Span};
+use tracing::{Span, info, instrument};
 
 use super::{OperateError, OperateResult, UserOperate};
 
@@ -144,7 +144,7 @@ where
         .tap_ok(|list| {
             Span::current()
             .in_scope(||{
-                let list = list.iter().map(|user|(&user.username)).collect::<SmallVec<[_;4]>>();
+                let list = list.iter().map(|user|&user.username ).collect::<SmallVec<[_;4]>>();
                 info!(userList.len = list.len(),  userList.usernames = ?list );
             })
             ;

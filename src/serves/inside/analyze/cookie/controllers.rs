@@ -1,5 +1,5 @@
 use axum::Json;
-use axum_resp_result::{resp_try, MapReject};
+use axum_resp_result::{MapReject, resp_try};
 use ceobe_cookie_logic::{
     impletements::CeobeCookieLogic, view::NewCookieReq,
 };

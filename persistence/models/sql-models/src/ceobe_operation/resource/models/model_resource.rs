@@ -1,5 +1,5 @@
 use chrono::Local;
-use sea_orm::{entity::prelude::*, ActiveValue, FromQueryResult, Set};
+use sea_orm::{ActiveValue, FromQueryResult, Set, entity::prelude::*};
 use sub_model::SubModel;
 
 use super::{countdown_type::CountdownType, resource_type::ResourceType};

@@ -1,7 +1,6 @@
 use db_ops_prelude::{
-    mongo_connection::MongoDbCollectionTrait,
+    RecordUnit, SetRecordUnit, mongo_connection::MongoDbCollectionTrait,
     mongo_models::ceobe::operation::plugin_version::PluginVersion,
-    RecordUnit, SetRecordUnit,
 };
 use tracing::{info, instrument};
 

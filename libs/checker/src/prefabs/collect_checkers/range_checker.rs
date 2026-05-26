@@ -1,4 +1,4 @@
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use range_limit::RangeBoundLimit;
 
 use crate::Checker;

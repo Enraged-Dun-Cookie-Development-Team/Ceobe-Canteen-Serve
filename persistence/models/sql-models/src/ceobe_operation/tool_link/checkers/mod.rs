@@ -1,9 +1,9 @@
 pub mod tags;
 use std::convert::Infallible;
 
+pub use CheckError::*;
 use status_err::{ErrPrefix, StatusErr};
 use thiserror::Error;
-pub use CheckError::*;
 
 pub mod tool_link_data;
 
@@ -20,7 +20,6 @@ pub enum CheckError {
     UniqueKeyInvalid(String),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     Json(#[from] serde_json::Error),
 }
 

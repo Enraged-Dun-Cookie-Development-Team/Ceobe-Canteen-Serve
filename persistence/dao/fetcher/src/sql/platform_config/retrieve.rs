@@ -10,7 +10,7 @@ use db_ops_prelude::{
 };
 use page_size::{database::WithPagination, request::Paginator};
 use tap::TapFallible;
-use tracing::{info, instrument, Span};
+use tracing::{Span, info, instrument};
 
 use super::{OperateResult, PlatformOperate};
 
@@ -34,7 +34,7 @@ where
             .await?).tap_ok(|list| {
                 Span::current()
                 .in_scope(||{
-                    let list = list.iter().map(|platform|(&platform.type_id)).collect::<SmallVec<[_;4]>>();
+                    let list = list.iter().map(|platform|&platform.type_id ).collect::<SmallVec<[_;4]>>();
                     info!(platformList.len = list.len(),  platformList.platform.pType = ?list );
                 });
             })
@@ -73,7 +73,7 @@ where
             .await?).tap_ok(|list| {
                 Span::current()
                     .in_scope(||{
-                    let list = list.iter().map(|platform|(&platform.platform_name)).collect::<SmallVec<[_;4]>>();
+                    let list = list.iter().map(|platform|&platform.platform_name ).collect::<SmallVec<[_;4]>>();
                     info!(platformList.len = list.len(),  platformList.platform.name = ?list );
                 });
             })

@@ -1,7 +1,7 @@
 use codegen::check_obj::CheckObj;
 use inner_checker_info::InnerCheckerInfo;
 use proc_macro::TokenStream;
-use syn::{parse_macro_input, ItemStruct};
+use syn::{ItemStruct, parse_macro_input};
 
 mod codegen;
 #[macro_use]

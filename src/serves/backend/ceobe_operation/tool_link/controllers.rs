@@ -1,8 +1,8 @@
 use axum::{
-    extract::{multipart::MultipartRejection, Multipart, Query},
     Json,
+    extract::{Multipart, Query, multipart::MultipartRejection},
 };
-use axum_resp_result::{resp_try, MapReject};
+use axum_resp_result::{MapReject, resp_try};
 use ceobe_cookie_logic::view::AvatarId;
 use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
@@ -29,7 +29,7 @@ use super::error::{
 use crate::{
     router::CeobeOpToolLink,
     serves::backend::ceobe_operation::tool_link::{
-        error::FieldNotExist, ToolAvatarPayload,
+        ToolAvatarPayload, error::FieldNotExist,
     },
 };
 

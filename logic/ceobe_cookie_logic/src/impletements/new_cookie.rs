@@ -11,7 +11,7 @@ use persistence::{
         datasource_config::DatasourceOperate,
     },
     help_crates::chrono::Local,
-    mongodb::{mongodb::bson::oid::ObjectId, MongoDatabaseOperate},
+    mongodb::{MongoDatabaseOperate, mongodb::bson::oid::ObjectId},
     mysql::SqlDatabaseOperate,
     operate::{GetDatabaseConnect, GetMutDatabaseConnect},
     redis::RedisConnect,
@@ -19,9 +19,9 @@ use persistence::{
 use qiniu_service::model::DeleteObjectName;
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
 use redis_global::{
+    RedisTypeBind,
     redis_key::cookie_list::{CookieListKey, NewCombIdInfo},
     wrappers::Json,
-    RedisTypeBind,
 };
 
 use crate::{
@@ -95,10 +95,10 @@ impl CeobeCookieLogic {
                             let now = Local::now().timestamp_millis();
                             for new_cookie in new_cookies {
                                 // 如果饼时间超过2天，判断为补饼，不推送
-                                if let Some(time) = new_cookie.timestamp {
-                                    if now - time > 2 * 24 * 60 * 60 * 1000 {
-                                        continue;
-                                    }
+                                if let Some(time) = new_cookie.timestamp
+                                    && now - time > 2 * 24 * 60 * 60 * 1000
+                                {
+                                    continue;
                                 }
                                 // mob推送新饼
                                 let content = PushInfo::builder()
@@ -233,14 +233,13 @@ impl CeobeCookieLogic {
                 .bind(redis)
                 .try_get(&datasource)
                 .await?
+                && update_id != update_cookie
             {
-                if update_id != update_cookie {
-                    // 对已经被替换下的饼id设置ttl，2小时
-                    CookieListKey::NEW_UPDATE_COOKIE_ID
-                        .bind_with(redis, &update_cookie)
-                        .set_with_expire(true, Duration::from_secs(2 * 3600))
-                        .await?;
-                }
+                // 对已经被替换下的饼id设置ttl，2小时
+                CookieListKey::NEW_UPDATE_COOKIE_ID
+                    .bind_with(redis, &update_cookie)
+                    .set_with_expire(true, Duration::from_secs(2 * 3600))
+                    .await?;
             }
             // 对hash update_cookie表写入最新的更新饼id
             CookieListKey::NEW_UPDATE_COOKIES

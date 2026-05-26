@@ -3,8 +3,8 @@ use std::fmt::Debug;
 use db_ops_prelude::{
     get_connect::{GetDatabaseTransaction, TransactionOps},
     sea_orm::{
-        sea_query::IntoCondition, ActiveModelTrait, ColumnTrait,
-        ConnectionTrait, DbErr, IntoActiveModel, Set,
+        ActiveModelTrait, ColumnTrait, ConnectionTrait, DbErr,
+        IntoActiveModel, Set, sea_query::IntoCondition,
     },
     sql_models::admin_user::{self, AuthLevel},
 };

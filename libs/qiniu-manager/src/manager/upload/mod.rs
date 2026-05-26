@@ -3,7 +3,7 @@ use qiniu_upload_manager::AutoUploaderObjectParams;
 use tracing::info;
 
 use self::payload::{PayloadContent, PayloadLocal};
-use crate::{error, ManagedUploader, Manager};
+use crate::{ManagedUploader, Manager, error};
 
 pub mod payload;
 pub mod upload_field;

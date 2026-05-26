@@ -1,5 +1,5 @@
 use once_cell::sync::OnceCell;
-use redis::{aio::ConnectionManager, RedisError};
+use redis::{RedisError, aio::ConnectionManager};
 use tracing::{info, instrument};
 use url::Url;
 

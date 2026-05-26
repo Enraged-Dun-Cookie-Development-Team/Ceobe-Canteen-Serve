@@ -1,17 +1,16 @@
 use std::future::Future;
 
 use database_traits::{
+    BoxedResultFuture,
     initial::{
         DatabaseInitial, DatabaseInitialBasic, DatabaseInitialConnect,
         DatabaseInitialMigration,
     },
-    BoxedResultFuture,
 };
 
 use crate::{
-    config,
+    DbOptionsConfig, config,
     static_vars::{connect_to_sql_database, get_sql_database},
-    DbOptionsConfig,
 };
 
 pub struct SqlDatabase;

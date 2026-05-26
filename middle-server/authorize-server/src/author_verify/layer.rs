@@ -5,7 +5,7 @@ use tower_http::auth::{
     AsyncRequireAuthorization, AsyncRequireAuthorizationLayer,
 };
 
-use crate::author_verify::{service::UserAuthorize, AuthorVerifier};
+use crate::author_verify::{AuthorVerifier, service::UserAuthorize};
 
 type InnerLayer<L> = AsyncRequireAuthorizationLayer<UserAuthorize<L>>;
 

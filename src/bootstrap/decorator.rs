@@ -1,7 +1,7 @@
 use std::{future::Future, time::Duration};
 
-use axum_starter::{prepare, PrepareDecorator, PrepareError};
-use futures::{future::LocalBoxFuture, FutureExt, TryFutureExt};
+use axum_starter::{PrepareDecorator, PrepareError, prepare};
+use futures::{FutureExt, TryFutureExt, future::LocalBoxFuture};
 use tokio::time::timeout;
 
 #[prepare(sync Decroator)]

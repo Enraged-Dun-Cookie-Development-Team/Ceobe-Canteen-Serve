@@ -1,5 +1,5 @@
 pub use check::{
-    plugin_version_checker::PluginVersionChecker as Checker, CheckError,
+    CheckError, plugin_version_checker::PluginVersionChecker as Checker,
 };
 pub use checker::prefabs::version_checker::Version;
 pub use models::{

@@ -1,4 +1,4 @@
-use darling::{ast, util::Ignored, FromDeriveInput};
+use darling::{FromDeriveInput, ast, util::Ignored};
 use syn::Ident;
 
 use super::variant_info::VariantInfo;

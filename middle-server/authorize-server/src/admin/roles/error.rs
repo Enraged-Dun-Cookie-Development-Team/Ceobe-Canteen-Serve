@@ -1,4 +1,7 @@
-use status_err::{status_error, ErrPrefix};
+use status_err::{
+    generated_error::unauthorized_kind::AuthorizationAccessDenyError as GenAuthorizationAccessDenyError,
+    status_error,
+};
 
 use crate::admin::UserRoleVerify;
 
@@ -12,8 +15,5 @@ impl AuthorizationAccessDenyError {
 
 status_error!(
     AuthorizationAccessDenyError
-    [
-        ErrPrefix::UNAUTHORIZED,
-        2
-    ]
+    => GenAuthorizationAccessDenyError
 );

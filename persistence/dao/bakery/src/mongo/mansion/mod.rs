@@ -1,5 +1,6 @@
 use std::ops::Deref;
 
+pub use OperateError::*;
 use abstract_database::bakery::BakeryDatabaseOperate;
 use db_ops_prelude::{
     database_operates::sub_operate::{SubOperate, SuperOperate},
@@ -8,7 +9,6 @@ use db_ops_prelude::{
 };
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;
-pub use OperateError::*;
 
 mod create;
 mod delete;

@@ -1,6 +1,6 @@
 use db_ops_prelude::mongo_connection::MongoDbCollectionTrait;
 
-use super::{models::ReleaseVersion, ReleaseVersionCreate, Result};
+use super::{ReleaseVersionCreate, Result, models::ReleaseVersion};
 use crate::release_version::verify::suitable_version;
 
 impl<'db, Conn> ReleaseVersionCreate<'db, Conn>
@@ -27,11 +27,11 @@ where
 mod test {
     use abstract_database::ceobe::ToCeobe;
     use db_ops_prelude::{
-        database_operates::{operate_trait::OperateTrait, DatabaseOperate},
+        database_operates::{DatabaseOperate, operate_trait::OperateTrait},
         mongo_connection::{
+            DatabaseManage, MongoConnect, MongoDbConfig,
             database_traits::initial::connect_db_with_migrate,
-            get_mongo_collection, DatabaseManage, MongoConnect,
-            MongoDbConfig,
+            get_mongo_collection,
         },
         mongo_models::ceobe::operation::version::models::{
             ReleasePlatform::Pocket, ReleaseVersion, Version,

@@ -1,5 +1,5 @@
 use persistence::{
-    ceobe_operate::{announcement, ToCeobe, ToCeobeOperation},
+    ceobe_operate::{ToCeobe, ToCeobeOperation, announcement},
     mysql::SqlDatabaseOperate,
 };
 use serde::Serialize;

@@ -2,7 +2,7 @@ use db_ops_prelude::{
     mongo_models::ceobe::operation::version::models::{
         ReleasePlatform, Version,
     },
-    mongodb::bson::{doc, to_bson, Document},
+    mongodb::bson::{Document, doc, to_bson},
 };
 
 pub(super) fn generate_release_version_filter(

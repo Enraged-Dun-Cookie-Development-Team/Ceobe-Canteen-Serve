@@ -1,7 +1,7 @@
 extern crate serde;
 
 use std::{
-    io::{stdout, Write},
+    io::{Write, stdout},
     time::Duration,
 };
 
@@ -14,7 +14,7 @@ use bootstrap::{
     init::{
         component_init::RResultConfig,
         db_init::{MongoDbConnect, MysqlDbConnect, RedisDbConnect},
-        service_init::{graceful_shutdown, RouteV1, RouterFallback},
+        service_init::{RouteV1, RouterFallback, graceful_shutdown},
     },
     middleware::{
         cors::ConditionCorsPrepare, panic_report::PrepareCatchPanic,
@@ -23,12 +23,12 @@ use bootstrap::{
 };
 use ceobe_qiniu_upload::QiniuUpload;
 use configs::{
+    CONFIG_FILE_JSON, CONFIG_FILE_TOML, CONFIG_FILE_YAML, GlobalConfig,
     auth_config::AuthConfig, cors_config::CorsConfigImpl,
     mob_config::MobPushConfig, qiniu_secret::QiniuUploadConfig,
     qq_channel::QqChannelConfig, resp_result_config::RespResultConfig,
     schedule_notifier_config::ScheduleNotifierConfig,
-    tc_cloud_config::TcCloudConfig, GlobalConfig, CONFIG_FILE_JSON,
-    CONFIG_FILE_TOML, CONFIG_FILE_YAML,
+    tc_cloud_config::TcCloudConfig,
 };
 use figment::providers::{Env, Format, Json, Toml, Yaml};
 use general_request_client::axum_starter::RequestClientPrepare;

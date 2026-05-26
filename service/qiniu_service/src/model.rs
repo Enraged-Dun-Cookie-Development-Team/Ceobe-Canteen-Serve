@@ -1,4 +1,4 @@
-use std::future::{ready, Ready};
+use std::future::{Ready, ready};
 
 use ceobe_qiniu_upload::ObjectName;
 use futures::io::Cursor;

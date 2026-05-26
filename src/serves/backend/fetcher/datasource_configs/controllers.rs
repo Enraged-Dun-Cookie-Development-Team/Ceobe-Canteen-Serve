@@ -1,8 +1,8 @@
 use axum::{
-    extract::{multipart::MultipartRejection, Multipart, Query},
     Json,
+    extract::{Multipart, Query, multipart::MultipartRejection},
 };
-use axum_resp_result::{resp_try, rtry, MapReject};
+use axum_resp_result::{MapReject, resp_try, rtry};
 use ceobe_qiniu_upload::QiniuManager;
 use checker::CheckExtract;
 use fetcher_logic::{
@@ -16,8 +16,8 @@ use futures::future;
 use page_size::response::{GenerateListWithPageInfo, ListWithPageInfo};
 use persistence::{
     fetcher::{
-        datasource_config::ToDatasource, platform_config::ToPlatform,
-        ToFetcher,
+        ToFetcher, datasource_config::ToDatasource,
+        platform_config::ToPlatform,
     },
     mysql::SqlDatabaseOperate,
     redis::RedisConnect,
@@ -28,13 +28,13 @@ use scheduler_notifier::SchedulerNotifier;
 use tracing::instrument;
 
 use super::{
-    error::{DatasourceConfigError, DatasourceConfigRResult},
     FetcherDatasourceCheck, PageSizePretreatment,
+    error::{DatasourceConfigError, DatasourceConfigRResult},
 };
 use crate::{
     router::FetcherConfigControllers,
     serves::backend::fetcher::datasource_configs::{
-        error::FieldNotExist, view::AvatarId, DataSourceAvatarPayload,
+        DataSourceAvatarPayload, error::FieldNotExist, view::AvatarId,
     },
 };
 

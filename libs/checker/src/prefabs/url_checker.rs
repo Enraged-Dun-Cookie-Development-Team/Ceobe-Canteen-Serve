@@ -1,4 +1,4 @@
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use url::Url;
 
 use crate::Checker;

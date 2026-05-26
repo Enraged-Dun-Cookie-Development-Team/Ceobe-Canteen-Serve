@@ -3,7 +3,7 @@ use persistence::{
     connect::{connect_db, connect_db_with_migrate},
     mongodb,
     mongodb::{MongoDbConfig, MongoDbError},
-    mysql::{sea_orm::DbErr, DbConfig, Migrator, MigratorTrait, SqlDatabase},
+    mysql::{DbConfig, Migrator, MigratorTrait, SqlDatabase, sea_orm::DbErr},
     redis::{RedisDatabase, RedisDbConfig, RedisError},
 };
 use tracing::instrument;

@@ -5,7 +5,11 @@ use axum::{
 };
 use axum_resp_result::RespResult;
 use http::Method;
-use status_err::ErrPrefix;
+use status_err::generated_error::{
+    no_err_kind::NotAnError as GenNotAnError,
+    not_found_kind::RouteNotExistError as GenRouteNotExistError,
+    serve_kind::ServicePanicError as GenServicePanicError,
+};
 use tracing::{error, instrument, warn};
 
 #[macro_export]
@@ -37,6 +41,8 @@ macro_rules! error_generate {
     ($v:vis $err_name:ident $($v_name:ident=$inner_err:ty)+ ) => {
         #[derive(Debug, status_err::ThisError, status_err::StatusErr)]
         #[status_err(resp_err)]
+        // TODO: 后续修复 large_enum_variant，考虑 Box 包装大变体
+        #[allow(clippy::large_enum_variant)]
         $v enum $err_name{
             $(
                 #[error(transparent)]
@@ -100,31 +106,22 @@ macro_rules! error_generate {
 
 }
 
-status_err::status_error! {
-    pub RouteNotExistError[
-        ErrPrefix::NOT_FOUND,
-        0x_00_02
-    ]=>"该路由不存在，请检查请求路径"
-}
-
+status_err::status_error!(
+    new pub RouteNotExistError["该路由不存在，请检查请求路径"]
+    => GenRouteNotExistError
+);
 status_err::resp_error_impl!(RouteNotExistError);
 
-status_err::status_error! {
-    pub ServicePanic[
-        ErrPrefix::SERVE,
-        0x00_01
-    ]=>"服务器发生未预期的异常"
-}
-
+status_err::status_error!(
+    new pub ServicePanic["服务器发生未预期的异常"]
+    => GenServicePanicError
+);
 status_err::resp_error_impl!(ServicePanic);
 
-status_err::status_error! {
-    pub NotAnError[
-        ErrPrefix::NO_ERR,
-        0x00_00
-    ]=>""
-}
-
+status_err::status_error!(
+    new pub NotAnError[""]
+    => GenNotAnError
+);
 status_err::resp_error_impl!(NotAnError);
 
 #[instrument(name = "router-not-found")]

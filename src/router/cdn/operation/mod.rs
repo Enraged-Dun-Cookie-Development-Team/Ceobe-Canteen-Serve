@@ -1,7 +1,7 @@
 pub use announcement::CdnOperationAnnouncementFrontend;
 use release_version_service::ReleaseVersionController;
 pub use resource::CdnOperationResourceFrontend;
-use serve_utils::{endpoint::CDN, ControllerRouter};
+use serve_utils::{ControllerRouter, endpoint::CDN};
 pub use tool_link::CdnOperateToolLinkFrontend;
 pub use video::CdnOperationVideoFrontend;
 

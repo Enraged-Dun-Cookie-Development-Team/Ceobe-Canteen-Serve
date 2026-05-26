@@ -6,16 +6,16 @@ use bitmap_convert::{
 use bitmaps::Bitmap;
 use persistence::{
     ceobe_cookie::{
-        models::analyze::models::{meta::Meta, CookieInfo},
         ToCeobe, ToCookie,
+        models::analyze::models::{CookieInfo, meta::Meta},
     },
     fetcher::{
+        ToFetcher,
         datasource_combination::ToDatasourceCombination,
         datasource_config::{
             OperateError as DatasourceOperateError, ToDatasource,
         },
         models::datasource_config::models::model_datasource_config::DatasourceBasicInfo,
-        ToFetcher,
     },
     mongodb::MongoDatabaseOperate,
     mysql::SqlDatabaseOperate,
@@ -23,9 +23,9 @@ use persistence::{
     redis::RedisConnect,
 };
 use redis_global::{
+    RedisTypeBind, RedisTypeTrait,
     redis_key::cookie_list::{CookieListKey, NewUpdateCookieId},
     wrappers::Json,
-    RedisTypeBind, RedisTypeTrait,
 };
 use tokio::task::{self, JoinHandle};
 

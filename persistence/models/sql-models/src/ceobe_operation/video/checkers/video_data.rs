@@ -11,10 +11,10 @@ use typed_builder::TypedBuilder;
 use url::Url;
 
 use super::{
-    bv::{Bv, BvChecker},
     CheckError,
+    bv::{Bv, BvChecker},
 };
-use crate::{ceobe_operation::video::models::model_video, SoftDelete};
+use crate::{SoftDelete, ceobe_operation::video::models::model_video};
 
 #[derive(Debug, TypedBuilder)]
 pub struct CeobeOpVideo {

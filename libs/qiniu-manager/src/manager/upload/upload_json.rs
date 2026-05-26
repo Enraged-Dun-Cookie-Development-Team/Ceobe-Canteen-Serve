@@ -4,10 +4,10 @@ use serde::Serialize;
 use tracing::instrument;
 
 use super::{
-    payload::{PayloadContent, PayloadLocal},
     ResponsePayload,
+    payload::{PayloadContent, PayloadLocal},
 };
-use crate::{error, Manager};
+use crate::{Manager, error};
 
 impl Manager {
     #[instrument(

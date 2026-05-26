@@ -2,7 +2,7 @@ use std::{marker::PhantomData, task::Poll};
 
 use futures::Future;
 
-use crate::{sync_check::SyncFuture, Checker};
+use crate::{Checker, sync_check::SyncFuture};
 
 pub struct OptionChecker<C: Checker>(PhantomData<C>);
 

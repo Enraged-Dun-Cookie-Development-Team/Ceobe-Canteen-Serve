@@ -1,8 +1,8 @@
 use std::ops::Deref;
 
 use db_ops_prelude::database_operates::{
-    sub_operate::{SubOperate, SuperOperate},
     DatabaseOperate,
+    sub_operate::{SubOperate, SuperOperate},
 };
 
 pub struct BakeryDatabaseOperate<'db, Conn>(&'db Conn);

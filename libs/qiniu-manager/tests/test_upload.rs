@@ -2,7 +2,7 @@ use ceobe_qiniu_upload::{
     FilePayload, JsonPayload, Manager, PayloadLocal, SecretConfig,
 };
 use serde::Deserialize;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 #[derive(Debug, Deserialize)]
 pub struct SecretConfigure {

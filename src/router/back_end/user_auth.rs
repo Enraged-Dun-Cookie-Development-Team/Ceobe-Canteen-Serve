@@ -1,10 +1,10 @@
 use authorize_server::admin::{
-    base_roles::{Any, Chef},
     AdminAuthorizeLayer,
+    base_roles::{Any, Chef},
 };
 use axum::{
-    routing::{delete, get, post},
     Router,
+    routing::{delete, get, post},
 };
 
 pub struct UserAuthBackend;

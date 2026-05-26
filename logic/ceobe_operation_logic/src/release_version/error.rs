@@ -19,7 +19,6 @@ pub enum Error {
     JoinError(#[from] JoinError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     SerdeQs(#[from] serde_qs::Error),
 }
 

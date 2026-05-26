@@ -1,6 +1,6 @@
 use std::{fmt::Display, marker::PhantomData, ops::Deref};
 
-use futures::future::{ok, ready, Ready};
+use futures::future::{Ready, ok, ready};
 use num_traits::{Unsigned, Zero};
 use serde::Serialize;
 

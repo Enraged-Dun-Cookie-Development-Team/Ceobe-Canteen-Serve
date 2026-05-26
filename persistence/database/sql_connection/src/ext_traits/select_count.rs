@@ -1,10 +1,10 @@
 use sea_orm::{
-    sea_query::{Asterisk, Expr, SimpleExpr},
     ColumnTrait, EntityTrait, FromQueryResult, QuerySelect, Select,
     SelectModel, Selector,
+    sea_query::{Asterisk, Expr, SimpleExpr},
 };
 
-use super::{Count, CountNonZero, CountZero, COUNT_NAME};
+use super::{COUNT_NAME, Count, CountNonZero, CountZero};
 
 /// 计数指定列的
 pub trait QueryCountByColumn: Sized {

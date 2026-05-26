@@ -1,4 +1,4 @@
-use serde::{ser::SerializeStruct, Serialize};
+use serde::{Serialize, ser::SerializeStruct};
 
 pub struct BatchUsers<'u, 's, const BATCH_SIZE: usize> {
     pub users: &'u [&'s str],

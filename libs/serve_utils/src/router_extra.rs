@@ -1,7 +1,7 @@
 use std::{convert::Infallible, marker::PhantomData};
 
 use axum::{
-    extract::Request, response::IntoResponse, routing::Route, Router,
+    Router, extract::Request, response::IntoResponse, routing::Route,
 };
 use tower::{Layer, Service};
 
@@ -111,8 +111,8 @@ mod test {
     use axum::Router;
 
     use crate::{
-        endpoint::AdminEnd, endpoint_type::UserEnd, ControllerRoute,
-        ControllerRouterExt,
+        ControllerRoute, ControllerRouterExt, endpoint::AdminEnd,
+        endpoint_type::UserEnd,
     };
 
     pub struct TestController;

@@ -1,9 +1,9 @@
 use persistence::{
     ceobe_operate::{
-        video::{self, bv::Bv},
         ToCeobe, ToCeobeOperation,
+        video::{self, bv::Bv},
     },
-    help_crates::tracing::{event, Level},
+    help_crates::tracing::{Level, event},
     mysql::SqlDatabaseOperate,
 };
 use request_clients::bili_client::QueryBiliVideo;

@@ -9,7 +9,7 @@ use futures::future::ok;
 use tracing::{info, instrument};
 use url::Url;
 
-use crate::{config::BaseUrl, GetBucket, Manager, SecretConfig};
+use crate::{GetBucket, Manager, SecretConfig, config::BaseUrl};
 
 pub type QiniuUploadState = Arc<Manager>;
 

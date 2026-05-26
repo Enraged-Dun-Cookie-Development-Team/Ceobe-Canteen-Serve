@@ -1,7 +1,7 @@
 use std::{convert::Infallible, sync::Arc};
 
 use axum_core::extract::{FromRef, FromRequestParts};
-use futures::{future::ok, Future};
+use futures::{Future, future::ok};
 use general_request_client::{
     client::RequestClient,
     traits::{ClientResult, Requester},
@@ -10,9 +10,8 @@ use http::request::Parts;
 use url::Url;
 
 use crate::{
-    config::SchedulerNotifierConfig,
-    requesters::notify_platform_update::NotifyPlatformUpdate, NotifyPath,
-    NotifyRequester,
+    NotifyPath, NotifyRequester, config::SchedulerNotifierConfig,
+    requesters::notify_platform_update::NotifyPlatformUpdate,
 };
 
 #[derive(Debug, Clone)]

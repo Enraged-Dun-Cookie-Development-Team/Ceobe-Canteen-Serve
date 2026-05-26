@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::ceobe::cookie::raw::models::RawModel;
-use mongodb::{bson::doc, options::IndexOptions, IndexModel};
+use mongodb::{IndexModel, bson::doc, options::IndexOptions};
 
 const SOURCE_CONFIG_ID_IDX: &str = "source_config_id_idx";
 

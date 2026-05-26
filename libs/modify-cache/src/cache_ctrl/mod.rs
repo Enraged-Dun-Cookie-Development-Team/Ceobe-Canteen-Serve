@@ -2,8 +2,8 @@ use std::{borrow::Cow, ops::Add};
 
 use axum_resp_result::{ExtraFlag, ExtraFlags};
 use http::{
-    header::{HeaderName, CONTENT_LOCATION, VARY},
     Uri,
+    header::{CONTENT_LOCATION, HeaderName, VARY},
 };
 
 use self::control::CacheControl;

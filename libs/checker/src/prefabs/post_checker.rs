@@ -4,10 +4,10 @@ use std::{
     task::{Context, Poll},
 };
 
-use futures::{ready, Future};
+use futures::{Future, ready};
 use pin_project::pin_project;
 
-use crate::{sync_check::SyncFuture, Checker};
+use crate::{Checker, sync_check::SyncFuture};
 
 /// 追加checker
 ///

@@ -6,7 +6,6 @@ use thiserror::Error;
 #[derive(Debug, Error, StatusErr)]
 pub enum ServiceError {
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     Upload(#[from] QiniuError),
 
     #[error(transparent)]

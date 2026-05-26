@@ -1,9 +1,9 @@
 use axum::Router;
 
-use self::{datasource::datasource_router, fetcher::fetcher_router};
 pub use self::{
     datasource::ConfigDatasourceFrontend, fetcher::ConfigFetcherFrontend,
 };
+use self::{datasource::datasource_router, fetcher::fetcher_router};
 use crate::router::ServerRoute;
 
 pub mod datasource;
