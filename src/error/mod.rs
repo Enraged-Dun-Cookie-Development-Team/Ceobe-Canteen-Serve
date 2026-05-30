@@ -137,6 +137,7 @@ pub async fn not_exist(
 }
 
 #[instrument(skip_all)]
+#[deprecated(note = "暂时没用使用")]
 pub fn serve_panic(
     error: Box<dyn Any + Send + 'static>,
 ) -> http::Response<BoxBody> {
