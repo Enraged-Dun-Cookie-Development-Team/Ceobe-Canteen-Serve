@@ -79,10 +79,10 @@ impl NotifySerialize for AndroidNotify {
 #[cfg(test)]
 mod test {
     use super::{
+        AndroidNotify,
         badge::Badge,
         notify_style::{CustomStyle, NotifyStyle, StyleId},
         sound::WarnSound,
-        AndroidNotify,
     };
     use crate::push_notify::{Notify, SerializeInformation};
 

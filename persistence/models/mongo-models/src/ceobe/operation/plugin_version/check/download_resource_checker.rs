@@ -4,7 +4,7 @@ use checker::prefabs::{
 use serde::Deserialize;
 
 use super::{
-    spare_link_checker::SpareLinkChecker, CheckError, DownloadResource,
+    CheckError, DownloadResource, spare_link_checker::SpareLinkChecker,
 };
 
 #[checker::check_gen(

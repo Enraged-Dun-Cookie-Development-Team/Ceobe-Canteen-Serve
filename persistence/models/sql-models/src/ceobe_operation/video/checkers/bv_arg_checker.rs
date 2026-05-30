@@ -2,8 +2,8 @@ use checker::check_gen;
 use typed_builder::TypedBuilder;
 
 use super::{
-    bv::{Bv, BvChecker},
     CheckError,
+    bv::{Bv, BvChecker},
 };
 
 #[derive(Debug, TypedBuilder)]

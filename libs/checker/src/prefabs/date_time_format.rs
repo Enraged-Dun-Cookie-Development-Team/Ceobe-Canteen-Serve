@@ -1,5 +1,5 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 
 use crate::Checker;
 

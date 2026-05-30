@@ -1,6 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use super::{FetchOptionViewValue, OptionViewField, _private::SealTrait};
+use super::{_private::SealTrait, FetchOptionViewValue, OptionViewField};
 
 /// View 中可选field的可以跳过情况
 #[derive(Default, Debug, Clone, Copy)]

@@ -34,6 +34,8 @@ mod test_bcrypt {
 
         println!("encode pwd: {}", encode_pwd);
         assert!(encode_pwd.len() < 64);
-        assert!(DefaultBcryptEncoder::verify(&encode_pwd, &"123456").unwrap());
+        assert!(
+            DefaultBcryptEncoder::verify(&encode_pwd, &"123456").unwrap()
+        );
     }
 }

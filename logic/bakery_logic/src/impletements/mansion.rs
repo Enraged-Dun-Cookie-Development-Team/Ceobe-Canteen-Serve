@@ -1,12 +1,12 @@
 use chrono::Duration;
 use persistence::{
     bakery::{
+        ToBakery,
         mansion::ToMansion,
         models::mansion::{
             checked::{Mansion, Mid},
             models::{MansionId, ModelMansion},
         },
-        ToBakery,
     },
     help_crates::tracing::debug,
     mongodb::MongoDatabaseOperate,

@@ -2,7 +2,7 @@ pub use announcement::CeobeOperationAnnouncement;
 use authorize_server::mix_role_gen;
 use release_version_service::ReleaseVersionController;
 pub use resource::CeobeOpResource;
-use serve_utils::{endpoint::AdminEnd, ControllerRouter};
+use serve_utils::{ControllerRouter, endpoint::AdminEnd};
 pub use tool_link::CeobeOpToolLink;
 pub use version::CeobeOpVersion;
 pub use video::CeobeOperationVideo;

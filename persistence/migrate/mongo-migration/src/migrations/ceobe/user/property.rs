@@ -1,6 +1,6 @@
 use mongo_migrate_util::{CollectManage, MigrationTrait};
 use mongo_models::ceobe::user_property::models::UserPropertyModel;
-use mongodb::{bson::doc, options::IndexOptions, IndexModel};
+use mongodb::{IndexModel, bson::doc, options::IndexOptions};
 use tracing::{info, instrument};
 
 const MOB_IDX_NAME: &str = "mob_idx";

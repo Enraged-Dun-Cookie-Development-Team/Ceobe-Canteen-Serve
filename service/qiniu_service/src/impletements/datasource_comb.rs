@@ -1,12 +1,12 @@
 use ceobe_qiniu_upload::QiniuManager;
 use persistence::{operate::GetMutDatabaseConnect, redis::RedisConnect};
 use qq_channel_warning::{LogRequest, LogType, QqChannelGrpcService};
-use redis_global::{redis_key::cookie_list::CookieListKey, RedisTypeBind};
+use redis_global::{RedisTypeBind, redis_key::cookie_list::CookieListKey};
 
 use crate::{
+    QiniuService,
     error::ServiceResult,
     model::{CombIdToCookieId, CombIdToCookieIdPlayLoad, DeleteObjectName},
-    QiniuService,
 };
 
 impl QiniuService {

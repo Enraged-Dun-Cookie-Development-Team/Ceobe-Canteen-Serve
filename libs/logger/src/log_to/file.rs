@@ -6,9 +6,9 @@ use std::{
 
 use tracing::Subscriber;
 use tracing_subscriber::{
-    fmt::{format, MakeWriter},
-    registry::LookupSpan,
     Layer,
+    fmt::{MakeWriter, format},
+    registry::LookupSpan,
 };
 
 use super::TimeFormat;

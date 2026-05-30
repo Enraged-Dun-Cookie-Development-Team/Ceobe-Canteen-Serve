@@ -1,5 +1,5 @@
 use checker::Checker;
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 
 use super::CheckError;
 

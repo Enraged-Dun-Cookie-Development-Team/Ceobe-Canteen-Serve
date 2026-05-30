@@ -2,11 +2,11 @@ use std::collections::HashSet;
 
 use chrono::NaiveDateTime;
 use nom::{
+    IResult,
     bytes::complete::{tag, take_till1},
     combinator::opt,
     multi::separated_list1,
     sequence::tuple,
-    IResult,
 };
 
 #[derive(Default, Debug)]

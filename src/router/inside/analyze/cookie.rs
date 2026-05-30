@@ -1,4 +1,4 @@
-use axum::{routing::post, Router};
+use axum::{Router, routing::post};
 
 use crate::{
     middleware::datasource_comb_mutex::DatasourceCombMutexLayer,

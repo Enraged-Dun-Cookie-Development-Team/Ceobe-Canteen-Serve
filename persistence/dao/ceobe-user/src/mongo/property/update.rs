@@ -4,7 +4,7 @@ use db_ops_prelude::{
     chrono::Local,
     mongo_connection::MongoDbCollectionTrait,
     mongo_models::ceobe::user_property::models::UserPropertyModel,
-    mongodb::bson::{doc, DateTime, Uuid},
+    mongodb::bson::{DateTime, Uuid, doc},
 };
 use tracing::{info, instrument};
 

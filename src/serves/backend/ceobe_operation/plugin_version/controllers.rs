@@ -1,7 +1,7 @@
 use axum_resp_result::resp_try;
 use checker::{CheckExtract, JsonCheckExtract};
 use persistence::{
-    ceobe_operate::{plugin_version::Checker, ToCeobe, ToCeobeOperation},
+    ceobe_operate::{ToCeobe, ToCeobeOperation, plugin_version::Checker},
     mongodb::MongoDatabaseOperate,
     operate::operate_trait::OperateTrait,
 };

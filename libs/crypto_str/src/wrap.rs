@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use crate::{crypto::CryptoString, Encoder};
+use crate::{Encoder, crypto::CryptoString};
 
 pub(crate) mod private {
     pub trait CryptoSource {}

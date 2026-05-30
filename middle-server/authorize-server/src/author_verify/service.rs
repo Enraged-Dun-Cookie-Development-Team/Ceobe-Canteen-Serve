@@ -10,7 +10,7 @@ use tower_http::auth::AsyncAuthorizeRequest;
 use tracing::Instrument;
 use tracing_unwrap::OptionExt;
 
-use crate::{author_verify::AuthorVerifier, AuthorizedUser};
+use crate::{AuthorizedUser, author_verify::AuthorVerifier};
 
 #[derive(Default, Clone)]
 pub struct UserAuthorize<V>(V);

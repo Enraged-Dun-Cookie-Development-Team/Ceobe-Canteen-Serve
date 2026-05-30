@@ -1,5 +1,5 @@
 use checker::Checker;
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 
 use super::{CheckError, MaxLimitString};
 use crate::bakery::mansion::{checked::Info, preludes::Predict};

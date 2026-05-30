@@ -8,11 +8,11 @@ use secrecy::{ExposeSecret, SecretString};
 use tokio::sync::{mpsc, oneshot};
 
 use crate::{
+    PushEntity,
     push_models::{
-        batch_push_payload::BatchPush, batch_user::BatchUsers, BATCH_SIZE,
+        BATCH_SIZE, batch_push_payload::BatchPush, batch_user::BatchUsers,
     },
     requester::{FetchDeviceInfoRequester, MobPushRequester},
-    PushEntity,
 };
 
 #[derive(Debug, Clone)]
@@ -152,13 +152,13 @@ pub struct RequesterIter<
 }
 
 impl<
-        'user,
-        'string,
-        'payload,
-        'manager,
-        const BATCH_SIZE: usize,
-        E: PushEntity,
-    > Iterator
+    'user,
+    'string,
+    'payload,
+    'manager,
+    const BATCH_SIZE: usize,
+    E: PushEntity,
+> Iterator
     for RequesterIter<'user, 'string, 'payload, 'manager, BATCH_SIZE, E>
 {
     type Item = Result<MobPushRequester<'manager>, serde_json::Error>;

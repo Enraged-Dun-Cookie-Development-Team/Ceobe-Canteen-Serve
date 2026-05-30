@@ -1,6 +1,6 @@
 mod ceobe_operation_tool_link;
 pub use sea_orm_migration::MigratorTrait;
-use sea_orm_migration::{async_trait, MigrationTrait};
+use sea_orm_migration::{MigrationTrait, async_trait};
 
 mod admin;
 mod ceobe_cookie_search_content;

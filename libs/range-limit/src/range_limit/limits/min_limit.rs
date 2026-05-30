@@ -1,6 +1,6 @@
 use crate::{
-    range_limit::{RangeBound, SizeStatus},
     RangeBoundLimit,
+    range_limit::{RangeBound, SizeStatus},
 };
 
 #[derive(Default)]

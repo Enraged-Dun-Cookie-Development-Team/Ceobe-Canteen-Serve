@@ -39,6 +39,8 @@ impl CeobeCookieLogic {
             }))
             .await;
 
+        #[allow(clippy::result_large_err)]
+        // TODO: 后续修复 result_large_err
         let count_list = count_list.into_iter().try_fold::<_, _, Result<
             Vec<u64>,
             LogicError,

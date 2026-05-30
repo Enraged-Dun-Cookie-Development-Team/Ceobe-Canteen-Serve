@@ -1,5 +1,5 @@
 use persistence::{
-    ceobe_operate::{resource, ToCeobe, ToCeobeOperation},
+    ceobe_operate::{ToCeobe, ToCeobeOperation, resource},
     mysql::SqlDatabaseOperate,
 };
 use tencent_cloud_server::{

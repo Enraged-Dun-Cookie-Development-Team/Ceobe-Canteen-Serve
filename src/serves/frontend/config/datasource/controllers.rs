@@ -1,9 +1,8 @@
 use axum_resp_result::rtry;
 use persistence::{
     fetcher::{
-        datasource_config::ToDatasource,
+        ToFetcher, datasource_config::ToDatasource,
         models::datasource_config::models::model_datasource_config::FrontendDatasource,
-        ToFetcher,
     },
     mysql::SqlDatabaseOperate,
 };

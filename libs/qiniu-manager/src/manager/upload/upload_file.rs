@@ -2,10 +2,10 @@ use qiniu_upload_manager::AutoUploaderObjectParams;
 use tracing::{info, instrument};
 
 use super::{
-    payload::{FilePayload, PayloadLocal},
     ResponsePayload,
+    payload::{FilePayload, PayloadLocal},
 };
-use crate::{error, Manager};
+use crate::{Manager, error};
 
 impl Manager {
     #[instrument(skip_all, fields(
@@ -13,6 +13,8 @@ impl Manager {
         qiniu.obj = payload.obj_name(),
         qiniu.file = payload.file_name()
     ))]
+    #[allow(clippy::result_large_err)]
+    // TODO: 后续修复 result_large_err
     pub async fn upload_file(
         &self, payload: impl PayloadLocal + FilePayload,
     ) -> Result<ResponsePayload, error::Error> {

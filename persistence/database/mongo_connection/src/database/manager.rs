@@ -1,5 +1,5 @@
 use std::{
-    any::{type_name, TypeId},
+    any::{TypeId, type_name},
     collections::HashMap,
     sync::Arc,
 };
@@ -10,7 +10,7 @@ use mongodb::{Client, Collection};
 use serde::{Deserialize, Serialize};
 
 use super::builder::DatabaseBuilder;
-use crate::{error::MongoDbError, MongoErr};
+use crate::{MongoErr, error::MongoDbError};
 
 mod collection_guard;
 

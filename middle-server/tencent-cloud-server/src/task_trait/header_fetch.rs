@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use http::{
-    header::{InvalidHeaderValue, AUTHORIZATION, CONTENT_TYPE, HOST},
     HeaderMap, HeaderName, HeaderValue,
+    header::{AUTHORIZATION, CONTENT_TYPE, HOST, InvalidHeaderValue},
 };
 use smallstr::SmallString;
 use url::{Position, Url};
@@ -188,9 +188,9 @@ mod test {
         cloud_manager::entities::{ServerVersion, Service},
         task_trait::{
             header_fetch::{
-                get_required_headers, to_header_map, Authorization,
-                ContentType, HeaderFetch, Host, TcAction, TcRegion,
-                TcTimestamp, TcToken, TcVersion,
+                Authorization, ContentType, HeaderFetch, Host, TcAction,
+                TcRegion, TcTimestamp, TcToken, TcVersion,
+                get_required_headers, to_header_map,
             },
             serde_content::Json,
             task_content::TaskContent,

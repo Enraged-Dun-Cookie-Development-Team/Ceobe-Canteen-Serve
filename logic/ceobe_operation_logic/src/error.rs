@@ -19,43 +19,33 @@ pub enum LogicError {
     Json(#[from] serde_json::Error),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     ToolLinkIOperateError(#[from] ToolLinkIOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     ToolLinkCheckError(#[from] CheckError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     AnnouncementOperateError(#[from] AnnouncementOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     ResourceOperateError(#[from] ResourceOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     Utf8(#[from] FromUtf8Error),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     ChannelClose(#[from] ChannelClose),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     Request(#[from] reqwest::Error),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     VideoOperateError(#[from] VideoOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     TcCloudError(#[from] TcCloudError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     MongoError(#[from] OperateError),
 }
 

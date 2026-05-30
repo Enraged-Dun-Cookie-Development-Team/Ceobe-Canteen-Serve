@@ -8,15 +8,12 @@ use thiserror::Error;
 #[derive(Debug, Error, StatusErr)]
 pub enum LogicError {
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     TempListOperateError(#[from] MansionOperateError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     TcCloudError(#[from] TcCloudError),
 
     #[error(transparent)]
-    #[status_err(err = "transparent")]
     SerdeQs(#[from] serde_qs::Error),
 }
 

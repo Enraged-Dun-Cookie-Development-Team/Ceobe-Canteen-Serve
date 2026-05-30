@@ -1,8 +1,8 @@
 use std::{borrow::Cow, time::Duration};
 
 use crate::{
-    push_notify::{android::AndroidNotify, ios::IosNotify},
     PushForward,
+    push_notify::{android::AndroidNotify, ios::IosNotify},
 };
 
 /// the trait of Entity for Push

@@ -1,10 +1,10 @@
 use std::borrow::Cow;
 
 use modify_cache::ModifyState;
-use sea_orm::{entity::prelude::*, ActiveValue, Set};
+use sea_orm::{ActiveValue, Set, entity::prelude::*};
 use serde::Serialize;
 
-use crate::{get_now_naive_date_time, NaiveDateTime, SoftDelete};
+use crate::{NaiveDateTime, SoftDelete, get_now_naive_date_time};
 
 #[derive(Debug, Clone, PartialEq, Eq, DeriveEntityModel, Serialize)]
 #[sea_orm(table_name = "ceobe_operation_app_version")]

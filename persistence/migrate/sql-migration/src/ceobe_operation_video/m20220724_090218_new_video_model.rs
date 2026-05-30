@@ -1,6 +1,6 @@
+pub use CeobeOperationVideo::{Table as DbTable, *};
 use sea_orm_migration::prelude::*;
 use time_utils::get_zero_data_time;
-pub use CeobeOperationVideo::{Table as DbTable, *};
 
 pub struct Migration;
 impl MigrationName for Migration {

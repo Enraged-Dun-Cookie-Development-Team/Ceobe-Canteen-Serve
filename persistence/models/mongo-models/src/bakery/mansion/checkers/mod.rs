@@ -1,4 +1,4 @@
-use range_limit::{limits::max_limit::MaxLimit, RangeBoundLimit};
+use range_limit::{RangeBoundLimit, limits::max_limit::MaxLimit};
 use status_err::{ErrPrefix, HttpCode, StatusErr};
 use thiserror::Error;
 

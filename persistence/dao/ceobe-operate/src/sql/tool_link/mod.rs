@@ -1,4 +1,4 @@
-use db_ops_prelude::{sea_orm, ErrPrefix, StatusErr, ThisError};
+use db_ops_prelude::{ErrPrefix, StatusErr, ThisError, sea_orm};
 
 pub use crate::common::tool_link::ToolLinkOperate;
 

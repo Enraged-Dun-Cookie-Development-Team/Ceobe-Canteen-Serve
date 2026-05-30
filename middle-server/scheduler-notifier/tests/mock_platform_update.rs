@@ -1,8 +1,8 @@
 use general_request_client::axum_starter::request_client_prepare;
 use http::StatusCode;
 use scheduler_notifier::{
-    notifies::NotifyPlatformUpdate, NotifyPath, PathOverwriteRequester,
-    SchedulerNotifier,
+    NotifyPath, PathOverwriteRequester, SchedulerNotifier,
+    notifies::NotifyPlatformUpdate,
 };
 
 pub struct MockPath;

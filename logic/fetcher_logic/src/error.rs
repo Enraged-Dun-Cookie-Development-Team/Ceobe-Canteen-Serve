@@ -15,7 +15,12 @@ use persistence::{
     help_crates::sea_orm,
 };
 use redis::RedisError;
-use status_err::{ErrPrefix, StatusErr};
+use status_err::{
+    StatusErr,
+    generated_error::checker_kind::{
+        PlatFromNotSameError, PlatformNotFoundError,
+    },
+};
 use thiserror::Error;
 
 #[derive(Debug, Error, StatusErr)]
@@ -59,7 +64,7 @@ pub enum LogicError {
     FetcherConfigCheckError(#[from] FetcherConfigCheckError),
 
     #[error("该平台不存在")]
-    #[status_err(err(err_code = 0x00_13, prefix = "ErrPrefix::CHECKER"))]
+    #[status_err(err(bind = "PlatformNotFoundError"))]
     PlatformNotFound,
 
     #[error("查询数据库异常: {0}")]
@@ -71,7 +76,7 @@ pub enum LogicError {
     #[error("Json 反/序列化失败 {0}")]
     Json(#[from] serde_json::Error),
     #[error("Platform 不一致")]
-    #[status_err(err(err_code = 0x00_16u16, prefix = "ErrPrefix::CHECKER"))]
+    #[status_err(err(bind = "PlatFromNotSameError"))]
     PlatFromNotSame,
 }
 

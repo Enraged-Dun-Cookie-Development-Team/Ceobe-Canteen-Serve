@@ -1,8 +1,8 @@
-use tracing::{level_filters::LevelFilter, Subscriber};
+use tracing::{Subscriber, level_filters::LevelFilter};
 use tracing_subscriber::{
-    layer::Layered, prelude::__tracing_subscriber_SubscriberExt,
-    registry::LookupSpan, util::SubscriberInitExt, EnvFilter, Layer,
-    Registry,
+    EnvFilter, Layer, Registry, layer::Layered,
+    prelude::__tracing_subscriber_SubscriberExt, registry::LookupSpan,
+    util::SubscriberInitExt,
 };
 
 use crate::{LogToFile, LogToStdout};

@@ -1,4 +1,4 @@
-use std::any::{type_name, TypeId};
+use std::any::{TypeId, type_name};
 
 use dashmap::{DashMap, DashSet};
 use mongodb::{Collection, Database};

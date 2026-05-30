@@ -1,8 +1,11 @@
 use std::borrow::Cow;
 
+pub use generated_error::GenError;
+use http::StatusCode;
 pub use http::{self, StatusCode as HttpCode};
 pub use status_err_derive::StatusErr;
 pub use thiserror::Error as ThisError;
+
 pub mod codegen;
 mod impls;
 pub mod status_code;
@@ -67,6 +70,8 @@ impl ErrPrefix {
     /// 权限认证异常
     pub const UNAUTHORIZED: Self = Self('A', HttpCode::UNAUTHORIZED);
 
+    pub fn mark_only(mark: char) -> Self { Self(mark, StatusCode::default()) }
+
     #[inline]
     pub const fn new(sign: char, status: HttpCode) -> Self {
         ErrPrefix(sign, status)
@@ -77,4 +82,15 @@ impl ErrPrefix {
 
     #[inline]
     pub fn get_status(&self) -> http::StatusCode { self.1 }
+}
+
+pub mod generated_error {
+    pub trait GenError {
+        fn mark(&self) -> char;
+        fn status_code(&self) -> http::StatusCode;
+        fn description(&self) -> &'static str;
+        fn code(&self) -> u16;
+    }
+
+    include!(env!("ERR_CFG_PATH"));
 }

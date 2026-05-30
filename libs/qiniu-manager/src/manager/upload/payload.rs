@@ -2,9 +2,9 @@ use std::{fmt::Debug, path::Path};
 
 use axum::extract::multipart::{Field, MultipartError};
 use bytes::Bytes;
-use futures::{io::Cursor, AsyncRead};
+use futures::{AsyncRead, io::Cursor};
 use mime::Mime;
-use mime_guess::{mime::APPLICATION_OCTET_STREAM, MimeGuess};
+use mime_guess::{MimeGuess, mime::APPLICATION_OCTET_STREAM};
 use smallstr::SmallString;
 
 use crate::error;
@@ -15,6 +15,8 @@ pub trait PayloadLocal {
     fn file_name(&self) -> &str { self.obj_name() }
 }
 
+#[allow(clippy::result_large_err)]
+// TODO: 后续修复 result_large_err，考虑 Box<error::Error>
 pub trait PayloadContent {
     fn content_type(&self) -> Mime;
 

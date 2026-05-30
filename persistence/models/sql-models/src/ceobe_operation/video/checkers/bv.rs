@@ -3,7 +3,7 @@ use std::{
     io::{Cursor, Write},
 };
 
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use once_cell::sync::Lazy;
 use regex::Regex;
 

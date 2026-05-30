@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use qiniu_objects_manager::Bucket;
-pub use upload::{upload_json::JsonPayload, ResponsePayload};
+pub use upload::{ResponsePayload, upload_json::JsonPayload};
 
 pub use self::{
     builder::{ManagedUploader, ManagerBuilder},

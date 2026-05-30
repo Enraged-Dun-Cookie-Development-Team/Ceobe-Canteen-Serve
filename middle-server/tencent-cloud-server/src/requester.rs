@@ -2,8 +2,8 @@ use std::marker::PhantomData;
 
 use chrono::{DateTime, Utc};
 use general_request_client::{
-    traits::{RequestBuilder, Requester},
     Method, Url, Version,
+    traits::{RequestBuilder, Requester},
 };
 use http::HeaderMap;
 use serde::Serialize;
@@ -14,8 +14,8 @@ use crate::{
     error::TcCloudError,
     task_trait::{
         header_fetch::{
-            to_header_map, Authorization, ContentType, HeaderFetch, Host,
-            TcAction, TcRegion, TcTimestamp, TcToken, TcVersion,
+            Authorization, ContentType, HeaderFetch, Host, TcAction,
+            TcRegion, TcTimestamp, TcToken, TcVersion, to_header_map,
         },
         task_request::TaskRequestTrait,
     },

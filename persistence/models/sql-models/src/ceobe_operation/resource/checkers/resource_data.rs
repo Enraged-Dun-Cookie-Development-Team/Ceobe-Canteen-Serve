@@ -10,11 +10,11 @@ use serde::Deserialize;
 use typed_builder::TypedBuilder;
 
 use super::{
+    CheckError,
     countdown::{CountdownCheck, CountdownChecker, CountdownUncheck},
     resource_all_available::{
         ResourceAllAvailableCheck, ResourceAllAvailableChecker,
     },
-    CheckError,
 };
 use crate::ceobe_operation::resource::models::model_resource;
 

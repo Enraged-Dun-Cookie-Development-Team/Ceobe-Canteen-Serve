@@ -1,4 +1,4 @@
-use serde::{ser::SerializeStruct, Serialize};
+use serde::{Serialize, ser::SerializeStruct};
 
 use crate::push_notify::NotifySerialize;
 

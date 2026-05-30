@@ -1,9 +1,9 @@
 use page_size::request::Paginator;
 use persistence::{
     fetcher::{
-        datasource_config::ToDatasource,
+        ToFetcher, datasource_config::ToDatasource,
         models::platform_config::models::model_platform_config::PlatformHasDatasource,
-        platform_config::ToPlatform, ToFetcher,
+        platform_config::ToPlatform,
     },
     mysql::SqlDatabaseOperate,
 };

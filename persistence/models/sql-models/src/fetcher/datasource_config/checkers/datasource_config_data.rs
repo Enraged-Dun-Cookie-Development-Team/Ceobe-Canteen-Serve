@@ -13,14 +13,14 @@ use tracing_unwrap::ResultExt;
 use uuid::Uuid;
 
 use super::{
-    unique_key_checker::PreCheckFetcherDatasourceConfig, CheckError,
-    FetcherDatasourceConfig, UniqueKeyChecker,
+    CheckError, FetcherDatasourceConfig, UniqueKeyChecker,
+    unique_key_checker::PreCheckFetcherDatasourceConfig,
 };
 use crate::{
+    SoftDelete,
     fetcher::datasource_config::models::model_datasource_config::{
         ActiveModel, Model,
     },
-    SoftDelete,
 };
 
 #[check_obj(

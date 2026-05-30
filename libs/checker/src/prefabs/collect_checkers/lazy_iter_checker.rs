@@ -3,8 +3,8 @@
 use std::{convert::Infallible, marker::PhantomData, pin::Pin, task::Poll};
 
 use futures::{
-    future::{ok, Ready},
     Future, Stream,
+    future::{Ready, ok},
 };
 
 use crate::Checker;

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use super::{FetchOptionViewValue, OptionViewField, _private::SealTrait};
+use super::{_private::SealTrait, FetchOptionViewValue, OptionViewField};
 
 #[derive(Debug, Clone)]
 pub struct OptionField<T>(pub Option<T>);

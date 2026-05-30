@@ -14,6 +14,6 @@ impl<T> Measurable for Vec<T> {
     fn size(&self) -> usize { self.len() }
 }
 
-impl<'s> Measurable for &'s str {
+impl Measurable for &str {
     fn size(&self) -> usize { self.len() }
 }

@@ -1,5 +1,5 @@
 use db_ops_prelude::{
-    futures::{future::join, StreamExt, TryStreamExt},
+    futures::{StreamExt, TryStreamExt, future::join},
     get_connect::{GetDatabaseTransaction, TransactionOps},
     get_zero_data_time,
     sea_orm::{
@@ -11,17 +11,18 @@ use db_ops_prelude::{
 use tracing::{info, instrument};
 
 use super::{
-    all_available, countdown, Column, Entity, OperateError, OperateResult,
-    ResourceOperate, ResourceType,
+    Column, Entity, OperateError, OperateResult, ResourceOperate,
+    ResourceType, all_available, countdown,
 };
 
 impl<C> ResourceOperate<'_, C> {
     #[instrument(ret, skip_all)]
-    pub async fn get_resource_all_available<'db, D>(
+    pub async fn get_resource_all_available<'s, 'db, D>(
         db: &'db D,
     ) -> OperateResult<all_available::Model>
     where
-        D: ConnectionTrait + StreamTrait,
+        'db: 's,
+        D: ConnectionTrait + StreamTrait + Send,
     {
         // finding raa
         let mut resp_stream = Entity::find()
@@ -53,11 +54,12 @@ impl<C> ResourceOperate<'_, C> {
     }
 
     #[instrument(skip_all)]
-    pub async fn get_all_countdown<'db, D>(
+    pub async fn get_all_countdown<'s, 'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<countdown::Model>>
     where
-        D: ConnectionTrait + StreamTrait,
+        'db: 's,
+        D: ConnectionTrait + StreamTrait + Send,
     {
         let resp_stream = Entity::find()
             .filter(

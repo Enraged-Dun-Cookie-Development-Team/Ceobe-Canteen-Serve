@@ -1,9 +1,9 @@
-use serde::{ser::SerializeStruct, Serialize};
+use serde::{Serialize, ser::SerializeStruct};
 
 use super::{
+    BATCH_SIZE,
     batch_user::BatchUsers,
     push_action::{Forward, PushNotify},
-    BATCH_SIZE,
 };
 use crate::PushEntity;
 

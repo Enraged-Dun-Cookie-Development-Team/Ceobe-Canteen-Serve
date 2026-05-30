@@ -2,7 +2,7 @@ use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    database::manager::DatabaseManage, CollectionGuard, MongoDbError,
+    CollectionGuard, MongoDbError, database::manager::DatabaseManage,
 };
 
 static MONGO_DATABASE_CONNECTION: OnceCell<DatabaseManage> = OnceCell::new();

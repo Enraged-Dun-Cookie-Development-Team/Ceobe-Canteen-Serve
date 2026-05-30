@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use axum_resp_result::{resp_try, FlagWrap};
+use axum_resp_result::{FlagWrap, resp_try};
 use checker::CheckExtract;
 use persistence::{
     ceobe_operate::{ToCeobe, ToCeobeOperation},

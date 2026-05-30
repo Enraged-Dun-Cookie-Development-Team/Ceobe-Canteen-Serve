@@ -3,8 +3,8 @@ use ceobe_operation_logic::{
     impletements::CeobeOperateLogic, view::AnnouncementBackResp,
 };
 use checker::{
-    prefabs::collect_checkers::iter_checkers::IntoIterChecker, CheckExtract,
-    JsonCheckExtract,
+    CheckExtract, JsonCheckExtract,
+    prefabs::collect_checkers::iter_checkers::IntoIterChecker,
 };
 use persistence::{
     ceobe_operate::models::announcement, mysql::SqlDatabaseOperate,

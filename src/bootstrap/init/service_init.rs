@@ -1,7 +1,6 @@
 use axum_starter::{
-    prepare,
+    PrepareRouteEffect, prepare,
     router::{Fallback, Nest},
-    PrepareRouteEffect,
 };
 use futures::FutureExt;
 use tracing::info;

@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use serde::{ser::SerializeStruct, Serialize};
+use serde::{Serialize, ser::SerializeStruct};
 
 use crate::request::Paginator;
 
@@ -84,7 +84,7 @@ where
 
 #[cfg(test)]
 mod test {
-    use checker::{prefabs::num_check::NonZeroUnsignedChecker, Checker};
+    use checker::{Checker, prefabs::num_check::NonZeroUnsignedChecker};
     use serde_json::json;
 
     use super::GenerateListWithPageInfo;

@@ -1,11 +1,11 @@
-use std::io::{stdout, Stdout, StdoutLock};
+use std::io::{Stdout, StdoutLock, stdout};
 
 use tap::Pipe;
 use tracing::Subscriber;
 use tracing_subscriber::{
-    fmt::{format, MakeWriter},
-    registry::LookupSpan,
     Layer,
+    fmt::{MakeWriter, format},
+    registry::LookupSpan,
 };
 
 use super::TimeFormat;

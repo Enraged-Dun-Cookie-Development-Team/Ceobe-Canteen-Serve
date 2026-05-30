@@ -52,11 +52,11 @@ mod test {
             select_count::{ColumnExpr, QueryCountByColumn},
         },
         sea_orm::{
+            ColumnTrait, DatabaseBackend, EntityTrait, QueryFilter,
+            QueryTrait, Select,
             sea_query::{
                 Alias, Expr, MysqlQueryBuilder, Query, SelectStatement,
             },
-            ColumnTrait, DatabaseBackend, EntityTrait, QueryFilter,
-            QueryTrait, Select,
         },
         sql_models::fetcher::{
             datasource_config::models::model_datasource_config,

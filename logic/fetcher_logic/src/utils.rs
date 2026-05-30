@@ -1,10 +1,10 @@
 use std::{
     collections::{
+        BTreeMap, HashMap,
         btree_map::Entry::{
             Occupied as BTreeOccupied, Vacant as BTreeVacant,
         },
         hash_map::Entry::{Occupied as HashOccupied, Vacant as HashVacant},
-        BTreeMap, HashMap,
     },
     hash::BuildHasher,
 };

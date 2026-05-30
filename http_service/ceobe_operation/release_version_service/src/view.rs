@@ -91,7 +91,7 @@ pub struct UpdatePayload {
 mod test {
 
     use http::Uri;
-    use serve_utils::{axum::extract::Query, SkipField, ValueField};
+    use serve_utils::{SkipField, ValueField, axum::extract::Query};
 
     use super::QueryVersionFilter;
     use crate::view::QueryReleaseVersion;

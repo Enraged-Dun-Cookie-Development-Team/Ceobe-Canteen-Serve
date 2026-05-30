@@ -43,7 +43,7 @@ lite_args!(A, B, C, D, E, F, G, I, J, K, L, M, N);
 mod test {
     use std::convert::Infallible;
 
-    use futures::future::{ok, Ready};
+    use futures::future::{Ready, ok};
 
     use crate::{CheckRequire, RefChecker};
 

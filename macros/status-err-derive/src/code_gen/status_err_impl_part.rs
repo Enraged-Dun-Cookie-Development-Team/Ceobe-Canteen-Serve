@@ -1,10 +1,16 @@
-use darling::{ast::Style, ToTokens};
-use quote::__private::TokenStream;
+use darling::{ToTokens, ast::Style};
+use quote::{__private::TokenStream, quote};
 use syn::Ident;
 
 use crate::input_loading::variant_info::{
-    NormalVariant, VariantInfo, VariantInnerInfo,
+    BindVariant, NormalVariant, VariantInfo, VariantInnerInfo,
 };
+
+impl ToTokens for BindVariant {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.bind.to_tokens(tokens)
+    }
+}
 
 pub struct InfoImplToken<'s> {
     error_name: &'s Ident,
@@ -67,7 +73,7 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::respond_msg(inner)
                     }
                 }
@@ -86,6 +92,13 @@ impl<'s> ToTokens for RespMsgImplToken<'s> {
                 quote::quote! {
                     Self::#ident #style =>{
                         std::borrow::Cow::Owned(<Self as ToString>::to_string(self))
+                    }
+                }
+            }
+            VariantInnerInfo::Bind(ty) => {
+                quote! {
+                    Self::#ident #style => {
+                        std::borrow::Cow::Borrowed(<#ty as ::status_err::GenError>::description(&#ty))
                     }
                 }
             }
@@ -116,7 +129,7 @@ impl<'s> ToTokens for PrefixImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::prefix(inner)
                     }
                 }
@@ -125,6 +138,13 @@ impl<'s> ToTokens for PrefixImplToken<'s> {
                 quote::quote! {
                     Self::#ident #style =>{
                         #prefix
+                    }
+                }
+            }
+            VariantInnerInfo::Bind(ty) => {
+                quote! {
+                    Self::#ident #style =>{
+                        ::status_err::ErrPrefix::mark_only(<#ty as ::status_err::GenError>::mark(&#ty))
                     }
                 }
             }
@@ -155,7 +175,7 @@ impl<'s> ToTokens for CodeImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::code(inner)
                     }
                 }
@@ -166,6 +186,13 @@ impl<'s> ToTokens for CodeImplToken<'s> {
                 quote::quote! {
                     Self::#ident #style =>{
                         #error_code
+                    }
+                }
+            }
+            VariantInnerInfo::Bind(ty) => {
+                quote! {
+                    Self::#ident #style => {
+                        <#ty as ::status_err::GenError>::code(&#ty)
                     }
                 }
             }
@@ -196,7 +223,7 @@ impl<'s> ToTokens for HttpCodeImplToken<'s> {
         let token = match self.info {
             VariantInnerInfo::Transparent => {
                 quote::quote! {
-                    Self::#ident(ref inner) => {
+                    Self::#ident(inner) => {
                         ::status_err::StatusErr::http_code(inner)
                     }
                 }
@@ -215,6 +242,13 @@ impl<'s> ToTokens for HttpCodeImplToken<'s> {
                 quote::quote! {
                     Self::#ident #style =>{
                         ::status_err::StatusErr::status(self).http_code()
+                    }
+                }
+            }
+            VariantInnerInfo::Bind(ty) => {
+                quote! {
+                    Self::#ident #style =>{
+                        <#ty as ::status_err::GenError>::status_code(&#ty)
                     }
                 }
             }

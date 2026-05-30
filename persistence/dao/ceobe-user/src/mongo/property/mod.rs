@@ -2,10 +2,10 @@ use std::ops::Deref;
 
 use db_ops_prelude::mongo_connection;
 use mongo_connection::{
+    MongoDbError,
     database_traits::database_operates::sub_operate::{
         SubOperate, SuperOperate,
     },
-    MongoDbError,
 };
 use status_err::{ErrPrefix, HttpCode};
 use thiserror::Error;

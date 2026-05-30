@@ -9,14 +9,14 @@ pub struct FormatStr {
 
 impl FromMeta for FormatStr {
     fn from_nested_meta(item: &syn::NestedMeta) -> darling::Result<Self> {
-        (match *item {
-            syn::NestedMeta::Lit(ref lit) => {
+        (match item {
+            syn::NestedMeta::Lit(lit) => {
                 Ok(Self {
                     raw_fmt: String::from_value(lit)?,
                     args: Default::default(),
                 })
             }
-            syn::NestedMeta::Meta(ref mi) => Self::from_meta(mi),
+            syn::NestedMeta::Meta(mi) => Self::from_meta(mi),
         })
         .map_err(|e| e.with_span(item))
     }
@@ -58,18 +58,18 @@ pub(crate) enum Args {
 
 impl FromMeta for Args {
     fn from_nested_meta(item: &syn::NestedMeta) -> darling::Result<Self> {
-        (match *item {
-            syn::NestedMeta::Lit(ref lit) => {
+        (match item {
+            syn::NestedMeta::Lit(lit) => {
                 Ok(Self::List(Expr::from_value(lit)?))
             }
-            syn::NestedMeta::Meta(ref mi) => Self::from_meta(mi),
+            syn::NestedMeta::Meta(mi) => Self::from_meta(mi),
         })
         .map_err(|e| e.with_span(item))
     }
 
     fn from_meta(item: &syn::Meta) -> darling::Result<Self> {
-        (match *item {
-            syn::Meta::NameValue(ref value) => Self::from_value(&value.lit),
+        (match item {
+            syn::Meta::NameValue(value) => Self::from_value(&value.lit),
             _ => {
                 Err(darling::Error::unexpected_type(
                     "only accept NameValue or Literal",

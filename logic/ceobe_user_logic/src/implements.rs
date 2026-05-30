@@ -9,18 +9,18 @@ use mob_push_server::PushManager;
 use persistence::{
     ceobe_cookie::{ToCeobe, ToCookie},
     ceobe_user::{
+        ToCeobeUser,
         models::{
             check::user_checker::{UserPropertyChecker, UserPropertyUncheck},
             models::{UserMobId, UserPropertyChecked},
         },
-        ToCeobeUser,
     },
     fetcher::{
+        ToFetcher,
         datasource_combination::ToDatasourceCombination,
         datasource_config::{
             OperateError as FetcherDatasourceOperateError, ToDatasource,
         },
-        ToFetcher,
     },
     help_crates::{
         bool_or::TrueOrError,
@@ -32,7 +32,7 @@ use persistence::{
     redis::RedisConnect,
 };
 use redis_global::{
-    redis_key::cookie_list::CookieListKey, wrappers::Json, RedisTypeBind,
+    RedisTypeBind, redis_key::cookie_list::CookieListKey, wrappers::Json,
 };
 use tokio::task;
 use tracing::warn;

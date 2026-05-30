@@ -2,7 +2,7 @@ use std::{convert::Infallible, future::Future, pin::Pin, sync::Arc};
 
 use axum_core::extract::{FromRef, FromRequestParts};
 use general_request_client::{
-    client::RequestClient, http::request::Parts, Url,
+    Url, client::RequestClient, http::request::Parts,
 };
 use secrecy::SecretString;
 

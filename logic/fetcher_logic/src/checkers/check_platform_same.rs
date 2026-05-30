@@ -1,6 +1,6 @@
 use bool_or::TrueOrError;
 use checker::RefChecker;
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use persistence::fetcher::models::config::checkers::config_data::FetcherConfig;
 
 use crate::error::LogicError;

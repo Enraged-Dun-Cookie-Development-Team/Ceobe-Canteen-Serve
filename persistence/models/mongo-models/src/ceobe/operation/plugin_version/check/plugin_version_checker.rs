@@ -3,8 +3,8 @@ use range_limit::limits::max_limit::MaxRangeLimit;
 use serde::Deserialize;
 
 use super::{
-    download_resource_checker::DownloadResourceChecker, CheckError,
-    PluginVersionChecked,
+    CheckError, PluginVersionChecked,
+    download_resource_checker::DownloadResourceChecker,
 };
 
 #[checker::check_gen(

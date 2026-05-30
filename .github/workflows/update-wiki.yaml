@@ -1,0 +1,55 @@
+name: Update Error Code Wiki
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "error_config.toml"
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+    env:
+      ERROR_CONFIG_PATH: ${{ vars.ERROR_CONFIG_PATH || 'error_config.toml' }}
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+
+      - name: Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.95.0
+          default: true
+
+      - name: Generate Wiki markdown
+        run: |
+          cargo run --manifest-path libs/response-error-dev/Cargo.toml \
+            --example error-config-cli -- \
+            wiki "$ERROR_CONFIG_PATH" ./wiki-output
+
+      - name: Checkout wiki repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Copy generated pages to wiki
+        shell: bash
+        run: |
+          cp -r ./wiki-output/* ./wiki/
+          ls -la ./wiki/
+
+      - name: Commit and push wiki
+        shell: bash
+        working-directory: ./wiki
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: auto-update error codes from config"
+            git push
+          fi

@@ -5,7 +5,7 @@ mod test {
     use typed_builder::TypedBuilder;
 
     use crate as checker;
-    use crate::{prefabs::no_check::NoCheck, CheckRequire};
+    use crate::{CheckRequire, prefabs::no_check::NoCheck};
 
     #[derive(Debug, TypedBuilder, PartialEq, Eq)]
     pub struct TestChecked {

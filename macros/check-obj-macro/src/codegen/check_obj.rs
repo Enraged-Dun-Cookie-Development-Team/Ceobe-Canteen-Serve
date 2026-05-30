@@ -1,4 +1,4 @@
-use quote::{format_ident, ToTokens};
+use quote::{ToTokens, format_ident};
 use syn::{Attribute, Ident, Type, Visibility};
 
 use super::inner_checker::InnerChecker;

@@ -74,7 +74,7 @@ mod test {
     use tonic::transport::Channel;
 
     use super::QqChannelGrpcService;
-    use crate::{proto_reexport::LogClient, LogRequest, LogType};
+    use crate::{LogRequest, LogType, proto_reexport::LogClient};
 
     #[tokio::test]
     async fn test_send() {

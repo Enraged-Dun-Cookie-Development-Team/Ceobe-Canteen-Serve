@@ -1,5 +1,5 @@
 use serde::{
-    de::Unexpected, Deserialize, Deserializer, Serialize, Serializer,
+    Deserialize, Deserializer, Serialize, Serializer, de::Unexpected,
 };
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]

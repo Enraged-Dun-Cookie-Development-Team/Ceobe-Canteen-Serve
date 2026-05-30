@@ -1,7 +1,7 @@
 use general_request_client::{
+    HeaderValue, Method, Url, Version,
     http::header::CONTENT_TYPE,
     traits::{RequestBuilder, Requester},
-    HeaderValue, Method, Url, Version,
 };
 use md5::Digest;
 

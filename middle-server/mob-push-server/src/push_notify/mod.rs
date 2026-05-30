@@ -1,6 +1,6 @@
 use std::ops::{Deref, DerefMut};
 
-use serde::{ser::SerializeStruct, Serialize, Serializer};
+use serde::{Serialize, Serializer, ser::SerializeStruct};
 
 pub mod android;
 pub mod ios;

@@ -1,6 +1,6 @@
 use std::{fmt::Display, marker::PhantomData};
 
-use futures::future::{ready, Ready};
+use futures::future::{Ready, ready};
 use serde::{Deserialize, Serialize};
 
 use crate::Checker;
