@@ -17,11 +17,12 @@ use super::{
 
 impl<C> ResourceOperate<'_, C> {
     #[instrument(ret, skip_all)]
-    pub async fn get_resource_all_available<'db, D>(
+    pub async fn get_resource_all_available<'s, 'db, D>(
         db: &'db D,
     ) -> OperateResult<all_available::Model>
     where
-        D: ConnectionTrait + StreamTrait,
+        'db: 's,
+        D: ConnectionTrait + StreamTrait + Send,
     {
         // finding raa
         let mut resp_stream = Entity::find()
@@ -53,11 +54,12 @@ impl<C> ResourceOperate<'_, C> {
     }
 
     #[instrument(skip_all)]
-    pub async fn get_all_countdown<'db, D>(
+    pub async fn get_all_countdown<'s, 'db, D>(
         db: &'db D,
     ) -> OperateResult<Vec<countdown::Model>>
     where
-        D: ConnectionTrait + StreamTrait,
+        'db: 's,
+        D: ConnectionTrait + StreamTrait + Send,
     {
         let resp_stream = Entity::find()
             .filter(

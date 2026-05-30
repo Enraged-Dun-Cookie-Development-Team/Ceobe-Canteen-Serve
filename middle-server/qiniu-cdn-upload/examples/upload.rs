@@ -1,7 +1,6 @@
 use std::{marker::PhantomData, net::Ipv4Addr};
 
 use axum::{
-    body::Body,
     extract::{FromRef, Multipart},
     http::StatusCode,
     response::Html,
