@@ -9,7 +9,7 @@ fn main() {
         )
         .field_attribute(
             "LogRequest.server",
-            "#[builder(default = (log_request::ServeType::Rust as i32))]",
+            "#[builder(default = log_request::ServeType::Rust as i32)]",
         )
         .field_attribute(
             "LogRequest.server",
