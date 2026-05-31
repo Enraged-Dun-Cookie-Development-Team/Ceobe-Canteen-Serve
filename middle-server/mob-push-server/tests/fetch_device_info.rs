@@ -1,5 +1,4 @@
-use mob_push_server::PushManager;
-
+use mob_push_server::{MobPushConfigTrait, PushManager};
 struct Cfg;
 
 include!("../../../mob_push_cfg.meta");

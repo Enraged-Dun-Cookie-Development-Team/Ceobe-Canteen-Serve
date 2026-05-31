@@ -136,6 +136,7 @@ pub async fn not_exist(
     RespResult::err(RouteNotExistError)
 }
 
+#[allow(dead_code)]
 #[instrument(skip_all)]
 pub fn serve_panic(
     error: Box<dyn Any + Send + 'static>,

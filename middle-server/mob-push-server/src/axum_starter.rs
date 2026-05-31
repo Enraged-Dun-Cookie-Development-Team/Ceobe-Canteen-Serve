@@ -6,7 +6,7 @@ use tokio::sync::{mpsc, oneshot};
 
 use crate::{MobPushConfigTrait, push_manager::PartPushManagerState};
 
-#[prepare(MobPushPrepare)]
+#[prepare(origin MobPushPrepare)]
 pub async fn init_mob_push<C>(config: &C) -> AddState<PartPushManagerState>
 where
     C: MobPushConfigTrait,

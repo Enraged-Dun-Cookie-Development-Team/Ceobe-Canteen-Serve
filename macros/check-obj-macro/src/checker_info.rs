@@ -4,7 +4,7 @@ use syn::{
 };
 use typed_builder::TypedBuilder;
 
-#[derive(TypedBuilder)]
+#[derive(TypedBuilder, Debug)]
 pub(crate) struct CheckerInfo {
     pub(crate) uncheck_name: syn::Ident,
     pub(crate) checked: Type,

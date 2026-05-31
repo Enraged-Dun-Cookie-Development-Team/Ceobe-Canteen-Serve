@@ -1,7 +1,6 @@
 use std::{marker::PhantomData, net::Ipv4Addr};
 
 use axum::{
-    body::Body,
     extract::{FromRef, Multipart},
     http::StatusCode,
     response::Html,
@@ -63,12 +62,12 @@ where
 }
 
 #[prepare(Router)]
-fn set_route() -> impl PrepareRouteEffect<State, Body> {
+fn set_route() -> impl PrepareRouteEffect<State> {
     Route::new("/upload", post(upload))
 }
 
 #[prepare(Fallback)]
-fn fall_back() -> impl PrepareRouteEffect<State, Body> {
+fn fall_back() -> impl PrepareRouteEffect<State> {
     Fallback::new(|| {
         async {
             (
@@ -97,7 +96,7 @@ async fn server() {
         .prepare_route(Fallback)
         .graceful_shutdown(ctrl_c().map(|_| ()))
         .convert_state()
-        .prepare_start()
+        .preparing()
         .await
         .expect("准备阶段异常")
         .launch()
@@ -119,7 +118,7 @@ async fn server() {
     )
 )]
 struct Config {
-    #[provider(ref, transparent)]
+    #[provider(r#ref, transparent)]
     qiniu: QiniuConfig,
 }
 
