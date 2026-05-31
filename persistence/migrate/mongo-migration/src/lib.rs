@@ -57,6 +57,15 @@ mod test {
             fn port(&self) -> u16 { 27017 }
 
             fn name(&self) -> &str { "ceobe_canteen" }
+
+            fn query(&self) -> &std::collections::HashMap<String, String> {
+                static EMPTY: std::sync::LazyLock<
+                    std::collections::HashMap<String, String>,
+                > = std::sync::LazyLock::new(|| {
+                    std::collections::HashMap::new()
+                });
+                &EMPTY
+            }
         }
 
         let _ = connect_db_with_migrate::<DatabaseManage, _, _>(

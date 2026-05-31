@@ -39,6 +39,17 @@ impl<T: Unsigned + Zero + 'static> Checker for NonZeroUnsignedChecker<T> {
 #[derive(Debug, Clone, Serialize)]
 pub struct NonZeroUnsigned<T: Unsigned + 'static>(T);
 
+impl<T: Unsigned + Zero + 'static> NonZeroUnsigned<T> {
+    pub fn new(value: T) -> Option<Self> {
+        if value.is_zero() {
+            None
+        }
+        else {
+            Some(NonZeroUnsigned(value))
+        }
+    }
+}
+
 impl<T: Unsigned + 'static + Copy> Copy for NonZeroUnsigned<T> {}
 
 impl<T: Unsigned + 'static> Deref for NonZeroUnsigned<T> {
