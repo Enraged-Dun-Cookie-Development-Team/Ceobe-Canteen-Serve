@@ -184,11 +184,14 @@ impl CeobeOperateLogic {
     }
 
     pub async fn list_tool_link_mongo(
-        mongo: MongoDatabaseOperate,
-        kinds: Vec<ToolLinkKind>,
+        mongo: MongoDatabaseOperate, kinds: Vec<ToolLinkKind>,
     ) -> LogicResult<Vec<ToolLink>> {
-        let tool_link_list =
-            mongo.ceobe().operation().tool_link().all_with_filter(&kinds).await?;
+        let tool_link_list = mongo
+            .ceobe()
+            .operation()
+            .tool_link()
+            .all_with_filter(&kinds)
+            .await?;
 
         Ok(tool_link_list)
     }

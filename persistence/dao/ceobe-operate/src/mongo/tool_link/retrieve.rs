@@ -1,7 +1,10 @@
 use db_ops_prelude::{
     futures::{StreamExt, TryStreamExt},
     mongo_connection::{MongoDbCollectionTrait, MongoDbError},
-    mongodb::{bson::doc, options::{CountOptions, FindOptions}},
+    mongodb::{
+        bson::doc,
+        options::{CountOptions, FindOptions},
+    },
 };
 use page_size::request::Paginator;
 use tracing::instrument;
@@ -34,15 +37,11 @@ where
     ) -> OperateResult<Vec<ToolLink>> {
         let db = self.get_collection()?;
 
-        let kind_strs: Vec<&str> = kinds
-            .iter()
-            .map(|k| k.as_str())
-            .collect();
+        let kind_strs: Vec<&str> = kinds.iter().map(|k| k.as_str()).collect();
         let filter = doc! { "kind": { "$in": kind_strs } };
 
-        let mut cursor = db
-            .doing(|collection| collection.find(filter, None))
-            .await?;
+        let mut cursor =
+            db.doing(|collection| collection.find(filter, None)).await?;
 
         let mut result = Vec::<ToolLink>::new();
         while let Some(doc) = cursor.next().await {
@@ -78,10 +77,7 @@ where
     ) -> OperateResult<Vec<ToolLink>> {
         let db = self.get_collection()?;
 
-        let kind_strs: Vec<&str> = kinds
-            .iter()
-            .map(|k| k.as_str())
-            .collect();
+        let kind_strs: Vec<&str> = kinds.iter().map(|k| k.as_str()).collect();
         let filter = doc! { "kind": { "$in": kind_strs } };
 
         let find_options = FindOptions::builder()

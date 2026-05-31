@@ -17,15 +17,12 @@ pub struct ToolLinkListQuery {
     pub kind: Vec<ToolLinkKind>,
 }
 
-fn default_kinds() -> Vec<ToolLinkKind> {
-    vec![ToolLinkKind::Arknights]
-}
+fn default_kinds() -> Vec<ToolLinkKind> { vec![ToolLinkKind::Arknights] }
 
 impl CdnOperateToolLinkFrontend {
     #[instrument(ret, skip(mongo))]
     pub async fn list(
-        mongo: MongoDatabaseOperate,
-        Query(query): Query<ToolLinkListQuery>,
+        mongo: MongoDatabaseOperate, Query(query): Query<ToolLinkListQuery>,
     ) -> CeobeToolLinkRResult<Vec<ToolLink>> {
         resp_try(async {
             Ok(CeobeOperateLogic::list_tool_link_mongo(mongo, query.kind)

@@ -19,7 +19,8 @@ use checker::{
 use page_size::{request::Paginator, response::ListWithPageInfo};
 use persistence::{
     ceobe_operate::tool_link_mongodb::models::{ToolLink, ToolLinkKind},
-    mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate,
+    mongodb::MongoDatabaseOperate,
+    mysql::SqlDatabaseOperate,
 };
 use qiniu_cdn_upload::UploadWrap;
 use serde::Deserialize;
@@ -37,9 +38,7 @@ use crate::{
     },
 };
 
-fn default_kinds() -> Vec<ToolLinkKind> {
-    vec![ToolLinkKind::Arknights]
-}
+fn default_kinds() -> Vec<ToolLinkKind> { vec![ToolLinkKind::Arknights] }
 
 #[derive(Debug, Deserialize)]
 pub struct ToolLinkPageQuery {
@@ -141,11 +140,10 @@ impl CeobeOpToolLink {
                 .ok_or(NonZeroUnsignedError)?;
             let size = NonZeroUnsigned::new(query.size)
                 .ok_or(NonZeroUnsignedError)?;
-            let paginator = Paginator::builder().page(page).size(size).build();
+            let paginator =
+                Paginator::builder().page(page).size(size).build();
             Ok(CeobeOperateLogic::page_tool_link_mongo_with_filter(
-                mongo,
-                paginator,
-                query.kind,
+                mongo, paginator, query.kind,
             )
             .await?)
         })

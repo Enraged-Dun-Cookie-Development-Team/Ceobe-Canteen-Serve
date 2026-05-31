@@ -52,9 +52,7 @@ impl ToolLinkKind {
     }
 }
 
-fn default_kinds() -> Vec<ToolLinkKind> {
-    vec![ToolLinkKind::Arknights]
-}
+fn default_kinds() -> Vec<ToolLinkKind> { vec![ToolLinkKind::Arknights] }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
