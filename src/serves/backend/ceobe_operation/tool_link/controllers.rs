@@ -8,21 +8,17 @@ use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
     view::{
         DeleteOneToolLinkReq, ToolLinkCreateMongoReq, ToolLinkDeleteMongoReq,
-        ToolLinkResp,
+        ToolLinkPageReq, ToolLinkResp,
     },
 };
 use ceobe_qiniu_upload::QiniuManager;
-use checker::{
-    CheckExtract,
-    prefabs::num_check::{NonZeroUnsigned, NonZeroUnsignedError},
-};
-use page_size::{request::Paginator, response::ListWithPageInfo};
+use checker::{CheckExtract, SerdeCheck};
+use page_size::response::ListWithPageInfo;
 use persistence::{
-    ceobe_operate::tool_link_mongodb::models::{ToolLink, ToolLinkKind},
+    ceobe_operate::tool_link_mongodb::models::ToolLink,
     mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate,
 };
 use qiniu_cdn_upload::UploadWrap;
-use serde::Deserialize;
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
 use tracing::instrument;
 
@@ -36,18 +32,6 @@ use crate::{
         ToolAvatarPayload, error::FieldNotExist,
     },
 };
-
-fn default_kinds() -> Vec<ToolLinkKind> {
-    vec![ToolLinkKind::Arknights]
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ToolLinkPageQuery {
-    pub page: usize,
-    pub size: usize,
-    #[serde(default = "default_kinds")]
-    pub kind: Vec<ToolLinkKind>,
-}
 
 impl CeobeOpToolLink {
     /// 新增一个工具
@@ -131,21 +115,14 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(mongo))]
     pub async fn all_with_paginator(
         mongo: MongoDatabaseOperate,
-        MapReject(query): MapReject<
-            Query<ToolLinkPageQuery>,
-            OperateToolLinkError,
-        >,
+        MapReject(ToolLinkPageReq {
+            kind,
+            paginator: SerdeCheck(paginator),
+        }): MapReject<Query<ToolLinkPageReq>, OperateToolLinkError>,
     ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLink>> {
         resp_try(async {
-            let page = NonZeroUnsigned::new(query.page)
-                .ok_or(NonZeroUnsignedError)?;
-            let size = NonZeroUnsigned::new(query.size)
-                .ok_or(NonZeroUnsignedError)?;
-            let paginator = Paginator::builder().page(page).size(size).build();
             Ok(CeobeOperateLogic::page_tool_link_mongo_with_filter(
-                mongo,
-                paginator,
-                query.kind,
+                mongo, paginator, kind,
             )
             .await?)
         })

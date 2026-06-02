@@ -50,10 +50,10 @@ impl ToolLinkKind {
             ToolLinkKind::Endfield => "endfield",
         }
     }
-}
 
-fn default_kinds() -> Vec<ToolLinkKind> {
-    vec![ToolLinkKind::Arknights]
+    pub fn default_kinds() -> Vec<ToolLinkKind> {
+        vec![ToolLinkKind::Arknights]
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
@@ -70,7 +70,7 @@ pub struct ToolLink {
     pub localized_tags: LocalizedTags,
     pub icon_url: Url,
     pub links: Vec<Link>,
-    #[serde(default = "default_kinds")]
+    #[serde(default = "ToolLinkKind::default_kinds")]
     pub kind: Vec<ToolLinkKind>,
 }
 
