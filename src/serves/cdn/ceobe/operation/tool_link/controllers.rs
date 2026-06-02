@@ -1,6 +1,8 @@
 use axum::extract::Query;
 use axum_resp_result::resp_try;
-use ceobe_operation_logic::{impletements::CeobeOperateLogic, view::ToolLinkListReq};
+use ceobe_operation_logic::{
+    impletements::CeobeOperateLogic, view::ToolLinkListReq,
+};
 use persistence::{
     ceobe_operate::tool_link_mongodb::models::ToolLink,
     mongodb::MongoDatabaseOperate,

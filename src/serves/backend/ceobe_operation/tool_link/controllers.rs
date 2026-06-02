@@ -12,14 +12,11 @@ use ceobe_operation_logic::{
     },
 };
 use ceobe_qiniu_upload::QiniuManager;
-use checker::{
-    CheckExtract, SerdeCheck,
-};
+use checker::{CheckExtract, SerdeCheck};
 use page_size::response::ListWithPageInfo;
 use persistence::{
     ceobe_operate::tool_link_mongodb::models::ToolLink,
-    mongodb::MongoDatabaseOperate,
-    mysql::SqlDatabaseOperate,
+    mongodb::MongoDatabaseOperate, mysql::SqlDatabaseOperate,
 };
 use qiniu_cdn_upload::UploadWrap;
 use tencent_cloud_server::cloud_manager::TencentCloudManager;
@@ -121,10 +118,7 @@ impl CeobeOpToolLink {
         MapReject(ToolLinkPageReq {
             kind,
             paginator: SerdeCheck(paginator),
-        }): MapReject<
-            Query<ToolLinkPageReq>,
-            OperateToolLinkError,
-        >,
+        }): MapReject<Query<ToolLinkPageReq>, OperateToolLinkError>,
     ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLink>> {
         resp_try(async {
             Ok(CeobeOperateLogic::page_tool_link_mongo_with_filter(
