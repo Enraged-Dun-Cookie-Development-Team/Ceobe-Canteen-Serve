@@ -8,7 +8,7 @@ use persistence::{
             self, all_available,
             countdown::{self, CountdownType},
         },
-        tool_link_mongodb::models::{Link, ToolLink, ToolLinkUpdate},
+        tool_link_mongodb::models::{Link, ToolLink, ToolLinkKind, ToolLinkUpdate},
         video,
     },
     help_crates::naive_date_time_format,
@@ -18,6 +18,9 @@ use serde::{Deserialize, Serialize};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use typed_builder::TypedBuilder;
 use url::Url;
+
+use checker::SerdeCheck;
+use page_size::request::PageSizeChecker;
 
 use crate::error::LogicError;
 
@@ -279,3 +282,17 @@ pub struct ToolLinkDeleteMongoReq {
 }
 
 pub type LinkMongoReq = Link;
+
+#[derive(Debug, Deserialize)]
+pub struct ToolLinkPageReq {
+    #[serde(default = "ToolLinkKind::default_kinds")]
+    pub kind: Vec<ToolLinkKind>,
+    #[serde(flatten)]
+    pub paginator: SerdeCheck<PageSizeChecker>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ToolLinkListReq {
+    #[serde(default = "ToolLinkKind::default_kinds")]
+    pub kind: Vec<ToolLinkKind>,
+}

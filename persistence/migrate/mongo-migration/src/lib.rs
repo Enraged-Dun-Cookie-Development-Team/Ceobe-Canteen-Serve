@@ -44,7 +44,10 @@ mod test {
     #[tokio::test]
     async fn test_migrate() {
         #[derive(Deserialize)]
-        pub struct MongoDbConfig;
+        pub struct MongoDbConfig {
+            #[serde(skip, default)]
+            query: std::collections::HashMap<String, String>,
+        }
         impl DbConnectConfig for MongoDbConfig {
             fn scheme(&self) -> &str { "mongodb" }
 
@@ -59,17 +62,14 @@ mod test {
             fn name(&self) -> &str { "ceobe_canteen" }
 
             fn query(&self) -> &std::collections::HashMap<String, String> {
-                static EMPTY: std::sync::LazyLock<
-                    std::collections::HashMap<String, String>,
-                > = std::sync::LazyLock::new(|| {
-                    std::collections::HashMap::new()
-                });
-                &EMPTY
+                &self.query
             }
         }
 
         let _ = connect_db_with_migrate::<DatabaseManage, _, _>(
-            &MongoDbConfig,
+            &MongoDbConfig {
+                query: std::collections::HashMap::new(),
+            },
             Migrator,
         )
         .await
