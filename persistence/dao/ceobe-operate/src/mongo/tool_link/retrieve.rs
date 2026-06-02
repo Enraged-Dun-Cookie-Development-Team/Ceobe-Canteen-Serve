@@ -1,13 +1,16 @@
 use db_ops_prelude::{
     futures::{StreamExt, TryStreamExt},
     mongo_connection::{MongoDbCollectionTrait, MongoDbError},
-    mongodb::options::{CountOptions, FindOptions},
+    mongodb::{
+        bson::doc,
+        options::{CountOptions, FindOptions},
+    },
 };
 use page_size::request::Paginator;
 use tracing::instrument;
 
 use super::{OperateResult, ToolLinkOperate};
-use crate::tool_link_mongodb::models::ToolLink;
+use crate::tool_link_mongodb::models::{ToolLink, ToolLinkKind};
 
 impl<'db, Conn> ToolLinkOperate<'db, Conn>
 where
@@ -19,6 +22,26 @@ where
 
         let mut cursor =
             db.doing(|collection| collection.find(None, None)).await?;
+
+        let mut result = Vec::<ToolLink>::new();
+        while let Some(doc) = cursor.next().await {
+            result.push(doc.map_err(MongoDbError::from)?)
+        }
+
+        Ok(result)
+    }
+
+    #[instrument(skip(self))]
+    pub async fn all_with_filter(
+        &'db self, kinds: &[ToolLinkKind],
+    ) -> OperateResult<Vec<ToolLink>> {
+        let db = self.get_collection()?;
+
+        let kind_strs: Vec<&str> = kinds.iter().map(|k| k.as_str()).collect();
+        let filter = doc! { "kind": { "$in": kind_strs } };
+
+        let mut cursor =
+            db.doing(|collection| collection.find(filter, None)).await?;
 
         let mut result = Vec::<ToolLink>::new();
         while let Some(doc) = cursor.next().await {
@@ -41,6 +64,29 @@ where
 
         let result = db
             .doing(|collection| collection.find(None, find_options))
+            .await?
+            .try_collect()
+            .await?;
+
+        Ok(result)
+    }
+
+    #[instrument(skip(self))]
+    pub async fn all_with_paginator_and_filter(
+        &'db self, paginator: Paginator, kinds: &[ToolLinkKind],
+    ) -> OperateResult<Vec<ToolLink>> {
+        let db = self.get_collection()?;
+
+        let kind_strs: Vec<&str> = kinds.iter().map(|k| k.as_str()).collect();
+        let filter = doc! { "kind": { "$in": kind_strs } };
+
+        let find_options = FindOptions::builder()
+            .skip(paginator.offset())
+            .limit(paginator.limit() as i64)
+            .build();
+
+        let result = db
+            .doing(|collection| collection.find(filter, find_options))
             .await?
             .try_collect()
             .await?;

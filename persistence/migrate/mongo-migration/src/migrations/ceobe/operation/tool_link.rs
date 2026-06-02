@@ -33,6 +33,19 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
+        // 为已有数据添加 kind 字段，默认 ["arknights"]
+        collection
+            .update_many(
+                doc! {
+                    "kind": { "$exists": false }
+                },
+                doc! {
+                    "$set": { "kind": ["arknights"] }
+                },
+                None,
+            )
+            .await?;
+
         Ok(())
     }
 }

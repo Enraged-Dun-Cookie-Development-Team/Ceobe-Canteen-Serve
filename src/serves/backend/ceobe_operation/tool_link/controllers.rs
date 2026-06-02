@@ -8,11 +8,11 @@ use ceobe_operation_logic::{
     impletements::CeobeOperateLogic,
     view::{
         DeleteOneToolLinkReq, ToolLinkCreateMongoReq, ToolLinkDeleteMongoReq,
-        ToolLinkResp,
+        ToolLinkPageReq, ToolLinkResp,
     },
 };
 use ceobe_qiniu_upload::QiniuManager;
-use checker::CheckExtract;
+use checker::{CheckExtract, SerdeCheck};
 use page_size::response::ListWithPageInfo;
 use persistence::{
     ceobe_operate::tool_link_mongodb::models::ToolLink,
@@ -115,11 +115,16 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(mongo))]
     pub async fn all_with_paginator(
         mongo: MongoDatabaseOperate,
-        CheckExtract(page_size): PageSizePretreatment,
+        MapReject(ToolLinkPageReq {
+            kind,
+            paginator: SerdeCheck(paginator),
+        }): MapReject<Query<ToolLinkPageReq>, OperateToolLinkError>,
     ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLink>> {
         resp_try(async {
-            Ok(CeobeOperateLogic::page_tool_link_mongo(mongo, page_size)
-                .await?)
+            Ok(CeobeOperateLogic::page_tool_link_mongo_with_filter(
+                mongo, paginator, kind,
+            )
+            .await?)
         })
         .await
     }

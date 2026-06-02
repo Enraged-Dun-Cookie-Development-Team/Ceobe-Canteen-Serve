@@ -34,6 +34,28 @@ pub struct Link {
     pub localized_name: LocalizedLanguage,
     pub url: Url,
 }
+
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum ToolLinkKind {
+    #[default]
+    Arknights,
+    Endfield,
+}
+
+impl ToolLinkKind {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            ToolLinkKind::Arknights => "arknights",
+            ToolLinkKind::Endfield => "endfield",
+        }
+    }
+
+    pub fn default_kinds() -> Vec<ToolLinkKind> {
+        vec![ToolLinkKind::Arknights]
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder, SubModel)]
 #[sub_model(all(
     name = "ToolLinkUpdate",
@@ -48,6 +70,8 @@ pub struct ToolLink {
     pub localized_tags: LocalizedTags,
     pub icon_url: Url,
     pub links: Vec<Link>,
+    #[serde(default = "ToolLinkKind::default_kinds")]
+    pub kind: Vec<ToolLinkKind>,
 }
 
 pub type ToolLinkCreate = ToolLinkUpdate;
@@ -61,6 +85,7 @@ impl From<ToolLinkUpdate> for ToolLink {
             localized_tags,
             icon_url,
             links,
+            kind,
         }: ToolLinkUpdate,
     ) -> Self {
         ToolLink {
@@ -71,6 +96,7 @@ impl From<ToolLinkUpdate> for ToolLink {
             localized_tags,
             icon_url,
             links,
+            kind,
         }
     }
 }

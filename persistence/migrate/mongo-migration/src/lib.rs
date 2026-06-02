@@ -44,7 +44,10 @@ mod test {
     #[tokio::test]
     async fn test_migrate() {
         #[derive(Deserialize)]
-        pub struct MongoDbConfig;
+        pub struct MongoDbConfig {
+            #[serde(skip, default)]
+            query: std::collections::HashMap<String, String>,
+        }
         impl DbConnectConfig for MongoDbConfig {
             fn scheme(&self) -> &str { "mongodb" }
 
@@ -57,10 +60,16 @@ mod test {
             fn port(&self) -> u16 { 27017 }
 
             fn name(&self) -> &str { "ceobe_canteen" }
+
+            fn query(&self) -> &std::collections::HashMap<String, String> {
+                &self.query
+            }
         }
 
         let _ = connect_db_with_migrate::<DatabaseManage, _, _>(
-            &MongoDbConfig,
+            &MongoDbConfig {
+                query: std::collections::HashMap::new(),
+            },
             Migrator,
         )
         .await

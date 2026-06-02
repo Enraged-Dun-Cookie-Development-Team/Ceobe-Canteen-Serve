@@ -7,7 +7,7 @@ use persistence::{
     ceobe_operate::{
         ToCeobe, ToCeobeOperation,
         models::tool_link::checkers::tool_link_data::CeobeOperationToolLink,
-        tool_link_mongodb::models::ToolLink,
+        tool_link_mongodb::models::{ToolLink, ToolLinkKind},
     },
     mongodb::{MongoDatabaseOperate, mongodb::bson},
     mysql::SqlDatabaseOperate,
@@ -167,11 +167,31 @@ impl CeobeOperateLogic {
         Ok(tool_link_list.with_page_info(page_size, count))
     }
 
+    pub async fn page_tool_link_mongo_with_filter(
+        mongo: MongoDatabaseOperate, page_size: Paginator,
+        kinds: Vec<ToolLinkKind>,
+    ) -> LogicResult<ListWithPageInfo<ToolLink>> {
+        let tool_link_list = mongo
+            .ceobe()
+            .operation()
+            .tool_link()
+            .all_with_paginator_and_filter(page_size, &kinds)
+            .await?;
+
+        let count = mongo.ceobe().operation().tool_link().count().await?;
+
+        Ok(tool_link_list.with_page_info(page_size, count))
+    }
+
     pub async fn list_tool_link_mongo(
-        mongo: MongoDatabaseOperate,
+        mongo: MongoDatabaseOperate, kinds: Vec<ToolLinkKind>,
     ) -> LogicResult<Vec<ToolLink>> {
-        let tool_link_list =
-            mongo.ceobe().operation().tool_link().all().await?;
+        let tool_link_list = mongo
+            .ceobe()
+            .operation()
+            .tool_link()
+            .all_with_filter(&kinds)
+            .await?;
 
         Ok(tool_link_list)
     }
