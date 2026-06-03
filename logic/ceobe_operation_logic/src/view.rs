@@ -1,5 +1,3 @@
-use checker::SerdeCheck;
-use page_size::request::PageSizeChecker;
 use persistence::{
     ceobe_operate::{
         announcement,
@@ -18,8 +16,9 @@ use persistence::{
     help_crates::naive_date_time_format,
     mongodb::mongodb::bson,
 };
-use serde::{Deserialize, Deserializer, Serialize};
-use serde::de::value::StrDeserializer;
+use serde::{
+    Deserialize, Deserializer, Serialize, de::value::StrDeserializer,
+};
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use typed_builder::TypedBuilder;
 use url::Url;
@@ -303,7 +302,6 @@ pub struct ToolLinkListReq {
     pub kind: Vec<ToolLinkKind>,
 }
 
-
 /// 逗号分隔的 kind 反序列化，兼容 URL query string
 ///
 /// # 输入格式
@@ -324,9 +322,11 @@ where
             let kinds: Vec<_> = s
                 .split(',')
                 .filter_map(|p| {
-                    ToolLinkKind::deserialize(
-                        StrDeserializer::<serde::de::value::Error>::new(p.trim()),
-                    )
+                    ToolLinkKind::deserialize(StrDeserializer::<
+                        serde::de::value::Error,
+                    >::new(
+                        p.trim()
+                    ))
                     .ok()
                 })
                 .collect();
