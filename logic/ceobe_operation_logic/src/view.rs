@@ -18,7 +18,8 @@ use persistence::{
     help_crates::naive_date_time_format,
     mongodb::mongodb::bson,
 };
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
+use serde::de::value::StrDeserializer;
 use tencent_cloud_server::cdn::purge_urls_cache::PurgeCachePath;
 use typed_builder::TypedBuilder;
 use url::Url;
@@ -286,14 +287,50 @@ pub type LinkMongoReq = Link;
 
 #[derive(Debug, Deserialize)]
 pub struct ToolLinkPageReq {
-    #[serde(default = "ToolLinkKind::default_kinds")]
+    #[serde(
+        default = "ToolLinkKind::default_kinds",
+        deserialize_with = "deserialize_kinds"
+    )]
     pub kind: Vec<ToolLinkKind>,
-    #[serde(flatten)]
-    pub paginator: SerdeCheck<PageSizeChecker>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct ToolLinkListReq {
-    #[serde(default = "ToolLinkKind::default_kinds")]
+    #[serde(
+        default = "ToolLinkKind::default_kinds",
+        deserialize_with = "deserialize_kinds"
+    )]
     pub kind: Vec<ToolLinkKind>,
+}
+
+
+/// 逗号分隔的 kind 反序列化，兼容 URL query string
+///
+/// # 输入格式
+/// - 不传 → 默认 `[Arknights]`
+/// - 空字符串 → 默认 `[Arknights]`
+/// - `"arknights"` → `[Arknights]`
+/// - `"endfield"` → `[Endfield]`
+/// - `"arknights,endfield"` → `[Arknights, Endfield]`
+fn deserialize_kinds<'de, D>(d: D) -> Result<Vec<ToolLinkKind>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: Option<String> = Option::deserialize(d)?;
+    match s {
+        None => Ok(ToolLinkKind::default_kinds()),
+        Some(ref s) if s.is_empty() => Ok(ToolLinkKind::default_kinds()),
+        Some(s) => {
+            let kinds: Vec<_> = s
+                .split(',')
+                .filter_map(|p| {
+                    ToolLinkKind::deserialize(
+                        StrDeserializer::<serde::de::value::Error>::new(p.trim()),
+                    )
+                    .ok()
+                })
+                .collect();
+            Ok(kinds)
+        }
+    }
 }

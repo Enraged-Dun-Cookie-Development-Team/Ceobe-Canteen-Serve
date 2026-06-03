@@ -115,14 +115,14 @@ impl CeobeOpToolLink {
     #[instrument(ret, skip(mongo))]
     pub async fn all_with_paginator(
         mongo: MongoDatabaseOperate,
+        CheckExtract(page_size): PageSizePretreatment,
         MapReject(ToolLinkPageReq {
             kind,
-            paginator: SerdeCheck(paginator),
         }): MapReject<Query<ToolLinkPageReq>, OperateToolLinkError>,
     ) -> OperateToolLinkRResult<ListWithPageInfo<ToolLink>> {
         resp_try(async {
             Ok(CeobeOperateLogic::page_tool_link_mongo_with_filter(
-                mongo, paginator, kind,
+                mongo, page_size, kind,
             )
             .await?)
         })
