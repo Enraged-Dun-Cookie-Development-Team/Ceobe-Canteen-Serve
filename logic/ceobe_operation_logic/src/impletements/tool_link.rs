@@ -152,21 +152,6 @@ impl CeobeOperateLogic {
         Ok(())
     }
 
-    pub async fn page_tool_link_mongo(
-        mongo: MongoDatabaseOperate, page_size: Paginator,
-    ) -> LogicResult<ListWithPageInfo<ToolLink>> {
-        let tool_link_list = mongo
-            .ceobe()
-            .operation()
-            .tool_link()
-            .all_with_paginator(page_size)
-            .await?;
-
-        let count = mongo.ceobe().operation().tool_link().count().await?;
-
-        Ok(tool_link_list.with_page_info(page_size, count))
-    }
-
     pub async fn page_tool_link_mongo_with_filter(
         mongo: MongoDatabaseOperate, page_size: Paginator,
         kinds: Vec<ToolLinkKind>,
@@ -178,7 +163,8 @@ impl CeobeOperateLogic {
             .all_with_paginator_and_filter(page_size, &kinds)
             .await?;
 
-        let count = mongo.ceobe().operation().tool_link().count().await?;
+        let count =
+            mongo.ceobe().operation().tool_link().count(&kinds).await?;
 
         Ok(tool_link_list.with_page_info(page_size, count))
     }

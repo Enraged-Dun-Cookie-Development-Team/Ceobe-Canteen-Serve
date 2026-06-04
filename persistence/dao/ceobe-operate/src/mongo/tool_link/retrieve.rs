@@ -52,26 +52,6 @@ where
     }
 
     #[instrument(skip(self))]
-    pub async fn all_with_paginator(
-        &'db self, paginator: Paginator,
-    ) -> OperateResult<Vec<ToolLink>> {
-        let db = self.get_collection()?;
-
-        let find_options = FindOptions::builder()
-            .skip(paginator.offset())
-            .limit(paginator.limit() as i64)
-            .build();
-
-        let result = db
-            .doing(|collection| collection.find(None, find_options))
-            .await?
-            .try_collect()
-            .await?;
-
-        Ok(result)
-    }
-
-    #[instrument(skip(self))]
     pub async fn all_with_paginator_and_filter(
         &'db self, paginator: Paginator, kinds: &[ToolLinkKind],
     ) -> OperateResult<Vec<ToolLink>> {
@@ -95,14 +75,19 @@ where
     }
 
     #[instrument(skip(self))]
-    pub async fn count(&'db self) -> OperateResult<u64> {
+    pub async fn count(
+        &'db self, kinds: &[ToolLinkKind],
+    ) -> OperateResult<u64> {
         let db = self.get_collection()?;
+
+        let kind_strs: Vec<&str> = kinds.iter().map(|k| k.as_str()).collect();
+        let filter = doc! { "kind": { "$in": kind_strs } };
 
         let count_options = CountOptions::builder().build();
 
         let count = db
             .doing(|collection| {
-                collection.count_documents(None, count_options)
+                collection.count_documents(filter, count_options)
             })
             .await
             .unwrap();
